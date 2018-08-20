@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <title>Multi-pitch Climbs around Europe</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+  <link href="../css/bootstrap-grid.css" rel="stylesheet" />
+  <link href="../css/style.css" rel="stylesheet" />
+  <script src="../climbs.js"></script>
+  <!-- fix the below hack -->
+  <style>
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+</style>
+</head>
+<body>
+<!-- Navbar -->
+  <nav>
+    <div class="container">
+      <a class="navbar-brand" href="http://www.multi-pitch.com" target="_blank">
+        <img src="../img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+      </a>
+        <ul>
+          <li>
+            <a href="/#filters">Find <span class="not-mobile">Your Climb</span></a>
+          </li>         
+      <li>
+            <a href="/about">About  <span class="not-mobile">Us</span></a>
+          </li>
+        </ul>
+    </div>
+  </nav>
+<!-- Main Body -->
+  <main id="main">
+    <div class="row">
+    <div id="map" style="width: 100%;position: relative;overflow: hidden;height: 100vh;display: block;min-height: 300px;"></div>
+    </div>
+  </main>
+<!--Footer-->
+  <footer class="page-footer text-center font-small mt-4" style="margin-top:-40px">
+    <div class="footer-copyright">
+      © 2018 Copyright: <a href="/" target="_blank"> multi-pitch.com </a>
+    </div>
+  </footer>
+<!-- SCRIPTS -->
+  <script>
+    var map;
+    var Markers = {};
+    var features = [];
+    
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 50.914835, lng: -4.559586},
+      zoom: 5,
+      mapTypeId: 'terrain'
+    });
+    
+    var iconBase = '../img/icons/';
+    var icons = {
+      climb: {
+        name: 'Climb',
+        icon: iconBase + 'climb-s.png'
+      }
+    };
+    
+    for (var i = 0; i < climbsData.climbs.length; i++) {
+      if(climbsData.climbs[i].status === 'publish'){
+	  
+        var lat = parseFloat(climbsData.climbs[i].geoLocation.split(',')[0]);
+        var lon = parseFloat(climbsData.climbs[i].geoLocation.split(',')[1]);
+        
+		/** THE BELOW IS ENVIRONMENT SENSITIVE! **/
+        var content = {
+          position: new google.maps.LatLng(lat,lon), 
+          type: 'climb',
+          id: climbsData.climbs[i].id,
+          title:'<strong><a href="/multi-pitch/?overview=' + climbsData.climbs[i].id + '">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong><br /><hr /><p><small>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade  + '</strong><br />Length: <strong>' + climbsData.climbs[i].length  + '</strong><br />Approch: <strong>' + climbsData.climbs[i].approchTime  + '</strong></small></p>'
+        };
+        features.push(content);
+      }
+    } 
+    
+    infowindow = new google.maps.InfoWindow();
+    
+     // Create markers.
+    features.forEach(function(feature) {
+      var marker = new google.maps.Marker({
+        position: feature.position,
+        icon: icons[feature.type].icon,
+         map: map
+      });
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(feature.title);
+          infowindow.setOptions({maxWidth: 200});
+          infowindow.open(map, marker);
+        }
+      }) (marker, i));
+      Markers[feature.id] = marker;
+    });
+    locate(0);
+  }  
+  function locate(marker_id) {
+    var myMarker = Markers[marker_id];
+    var markerPosition = myMarker.getPosition();
+    map.setCenter(markerPosition);
+    google.maps.event.trigger(myMarker, 'click');
+  }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM&callback=initMap"
+    async defer></script>
+</body>
+</html>

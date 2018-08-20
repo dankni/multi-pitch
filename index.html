@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <title>Only the best multi-pitch rock climbs</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+  <link href="css/bootstrap-grid.css" rel="stylesheet" />
+  <link href="css/flags.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  
+  <script src="climbs.js"></script>
+  <script src="imgs.js"></script>
+  <script src="js/main.js"></script>
+  
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="57x57" href="img/favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="img/favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="img/favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="img/favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="img/favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="img/favicon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="img/favicon/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TTPTWM6');</script>
+  
+</head>
+<body id="bdy">
+<!-- Navbar -->
+ <a 
+  class="ca3-scroll-down-link ca3-scroll-down-arrow not-mobile" 
+  data-ca3_iconfont="ETmodules" data-ca3_icon="" 
+  onClick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});'></a>
+  <nav>
+    <div class="container">
+      <a class="navbar-brand" href="http://www.multi-pitch.com" target="_blank">
+        <img src="img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+      </a>
+        <ul>
+          <li>
+            <a href="#filters" onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>Find <span class="not-mobile">Your Climb</span></a>
+          </li>
+        <!--  <li>
+            <a href="">Learn <span class="not-mobile">To Multi-Pitch</span></a>
+          </li>-->         
+          <li>
+            <a href="about">About  <span class="not-mobile">Us</span></a>
+          </li>
+        </ul>
+    </div>
+  </nav>
+
+<!-- Full Page Intro -->
+  <div class="view full-page-intro" style="background-image: url('img/heros/old-man-of-stoer-hero.jpg'); background-position:top left;background-repeat: no-repeat; background-size: cover;">
+    <div class="mask rgba-black-light d-flex align-items-center">
+      <div class="container">
+        <div class="row" >
+          <div class="col-md-3 white-text not-mobile">
+            <!--offsets text -->
+          </div>
+          <div class="col-md-9 mb-4 white-text hero">
+            <h1 class="display-4">Only the best multi&#8209;pitch&nbsp;climbs</h1>
+            <h3 class="display-6">Carefully curated & meticulously&nbsp;detailed</h3>
+            <hr class="hr-light">
+            <p class="mb-4 d-md-block">
+              <strong>
+                Muti-pitch.com is dedicated to cataloguing the best traditionally protected 
+                multi-pitch rock climbs that are at least 50m high. 
+                The initial focus of the site is on climbs graded from Difficult to Hard Very Severe. 
+              </strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<!-- Main Content -->
+  <main id="main">
+    <div class="container">
+      <section class="mt-5">
+        <div class="row">
+          <div class="col-md-12 mb-12">
+            <h3 class="h3">Find Your Climb</h3>
+            <p>
+              We are activly expnding and our selection of traditional multi-pitch rock 
+              climbs. The site is built on a <em>less but better</em> Philosophy.
+            </p>
+            <p>
+              These are the latest climbs we have cataloged and outlined in detail. There 
+              will soon be 2 main methods for finding your perfect multi-pitch rock climb, 
+			  you can either browse the <a href="map/">map view</a> to find nearby crags or you can use the 
+              list view with detailed filtering capabilities.
+            </p>
+            <form class="filters" id="filters">
+              <h4>Filter &amp; Sort Climbs</h4>
+              <div class="row">
+                <div class="col-md-4">
+                  <label>Grade </label>
+                  <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1" oninput="showVal(this.value, 'grade')"/><br />
+                  <p id="grade" class="current-values">
+                    <span id="grade1">Diff</span> to <span id="grade2">HVS</span>
+                  </p>
+                </div>
+                <div class="col-md-4">
+                  <label>Height </label>
+                  <input id="heightRange" type="range" multiple value="50,560" min="50" max="560" step="5" oninput="showVal(this.value, 'height')" /><br />
+                  <p id="height" class="current-values">
+                    <span id="height1">50</span>m to <span id="height2">560</span>m
+                  </p>
+                </div>
+                <div class="col-md-4">
+                  <label>Approch </label> 
+                  <input  id="approchRange"type="range" multiple value="0,200" min="0" max="200" step="10" oninput="showVal(this.value, 'approch')"  /><br />
+                  <p id="pitches" class="current-values">
+                    <span id="approch1">0</span> to <span id="approch2">200</span> mins
+                  </p>
+                </div>
+                <div class="col" style="text-align:center;padding-top:1rem;">
+                  <p style="display:inline-block">Sort Climbs: </p>
+                  <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();">
+                    <option value="length,ASC">Shortest Climbs First</option>
+                    <option value="length,DESC">Longest Climbs First</option>
+                    <option value="dataGrade,ASC">Easiest Climbs First</option>
+                    <option value="dataGrade,DESC">Hardest Climbs First</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row" id="cardHolder">
+          <div class="col-md-12 no-results" id="noResults" style="display:none">
+          <p>
+            <strong>No Climbs Found!</strong>
+          </p>     
+          <p>
+            <em>Adjust the filters to find great multipitch climbs to your linking!</em>
+          </p>
+        </div>
+      </section>    
+    </div>
+  </main>
+<!--Footer-->
+  <footer class="page-footer text-center font-small mt-4">
+    <div class="pt-4">
+      <a class="btn btn-outline-white" href="/about#contact" target="_blank" role="button">CONTACT
+      </a>
+      <a class="btn btn-outline-white" href="/about#disclaimer" target="_blank" role="button">DISCLAIMER
+      </a>
+    </div>
+    <div class="footer-copyright">
+      © 2018 Copyright: <a href="/" target="_blank"> multi-pitch.com </a>
+    </div>
+  </footer>
+  <a onClick="hideTile()" class="close" id="close"></a>
+  <div class="overlay" id="overlay"></div>
+  
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTPTWM6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+</body>
+</html>
