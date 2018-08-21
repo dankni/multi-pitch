@@ -1,9 +1,9 @@
-var climbImgs = {      
+const climbImgs = {      
 "imgs":[
  {
    "climbId": 1,
    "type": "crag",
-   "url": "img/tiles/The-Old-Man-of-Stoer-climb.jpg",
+   "url": "img/topos/stoer/The-Old-Man-of-Stoer-climb.jpg",
    "alt": "The Sea Stack Know as The Old Man of Stoer",
    "atributionURL": "https://commons.wikimedia.org/wiki/File:2011_Schotland_The_Old_Man_of_Stoer_30-05-2011_15-32-59.png",
    "attributionText": "image source"
@@ -367,5 +367,37 @@ var climbImgs = {
    "alt": "Chair Ladder Crag",
    "atributionURL": "http://www.cornishcamping.co.uk/photographs/cornish-seascapes/",
    "attributionText": "img: Cornish Camping"
+ },
+ {
+   "climbId": 15,
+   "type": "topo",
+   "url": "img/topos/devils-tower/devils-tower-durance-climb-topo.jpg",
+   "alt": "The Back of the Devils tower",
+   "atributionURL": "https://www.nps.gov/deto/planyourvisit/index.htm",
+   "attributionText": "img: national parks service"
+ },
+ {
+   "climbId": 2,
+   "type": "guidebook",
+   "url": "img/guidebooks/west-country-climbs.jpg",
+   "alt": "West Country Climbs by Rockfax",
+   "atributionURL": "https://www.rockfax.com/climbing-guides/books/west-country-climbs-2010/",
+   "attributionText": "West Country Climbs by Rockfax"
+ },
+ {
+   "climbId": 15,
+   "type": "tile",
+   "url": "img/tiles/devils-tower-wyoming.jpg",
+   "alt": "The Back of the Devils tower Wyoming",
+   "atributionURL": "https://www.nps.gov/deto/planyourvisit/climbing.htm",
+   "attributionText": "img: national parks service"
+ },
+ {
+   "climbId": 15,
+   "type": "crag",
+   "url": "img/topos/devils-tower/devils-tower-wyoming-crag.jpg",
+   "alt": "The Side of the Devils tower",
+   "atributionURL": "https://commons.wikimedia.org/wiki/File:Devils_Tower_as_Seen_From_the_Path_Along_the_Base.jpg",
+   "attributionText": "img source"
  }
 ]};

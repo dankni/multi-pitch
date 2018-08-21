@@ -1,4 +1,4 @@
-var climbsData = {
+const climbsData = {
 "climbs":[
  {
    "cliff": "Old Man of Stoer",
@@ -317,9 +317,32 @@ var climbsData = {
    "approchTime": 15,
    "approchDifficulty": 1,
    "rock": "Granite",
-   "intro": "Chair Ladder at Porthgwarra in Cornwall offers an exceptional range of climbing from the easier end of the scale but goes up to E3 for those looking for a challenge. Pegasus is one of the longer lines and sits at the Bulging Wall end of the crag. The route uses the corner crack at the start to ascend to the first belay, then weaves right to a belay in the corner, before going back left to the top. However there are multiple options for variation. There are also a varity of other lines on the crag that are 50m+ and range from VDiff to E3. South Face Direct is highly recomended.",
-   "approach": "TThere is paid parking in Porthgwarra and a path that leads to the coastguard lookout which is directly above the sea cliff. There is an option to abseil in on the east side of the crag, or you can scramble down via the west side of Zwarn Rinny. This scramble down approach should be avoided at high tide.",
+   "intro": "Chair Ladder at Porthgwarra in Cornwall offers an exceptional range of climbing from the easier end of the scale but goes up to E3 for those looking for a challenge. Pegasus is one of the longer lines and sits at the Bulging Wall end of the crag. The route uses the corner crack at the start to ascend to the first belay, then weaves right to a belay in the corner, before going back left to the top. However there are multiple options for variation. There are also a varity of other lines on the crag that are 50m+ and range from VDiff to E3. South Face Direct is highly recomended. ",
+   "approach": "There is paid parking in Porthgwarra and a path that leads to the coastguard lookout which is directly above the sea cliff. There is an option to abseil in on the east side of the crag, or you can scramble down via the west side of Zwarn Rinny. This scramble down approach should be avoided at high tide.",
    "incline": "Slab & Vertical",
    "face": "SW"
+ },
+ {
+   "cliff": "The Devils Tower",
+   "status": "publish",
+   "id": 15,
+   "country": "USA",
+   "county": "Wyoming ",
+   "routeName": "Durance",
+   "length": 152,
+   "pitches": 6,
+   "dataGrade": 6,
+   "tradGrade": "VS",
+   "techGrade": "4c",
+   "uiaaGrade": "YSD(5.8)",
+   "flag": "usa",
+   "geoLocation": "44.589680, -104.715252",
+   "approchTime": 5,
+   "approchDifficulty": 1,
+   "rock": "Phonolite",
+   "intro": "Durance Route on the Devils Tower in Wyoming is listed as one of the 50 classic climbs in North America. It's a 4-6 pitch in which the harder sections are mainly off-width and hand-cracks with a few spots of chimney. Don't forget to register at the Visitor's Center before and after the climb or you risk a fine. This is a crowded route so get on super early or be ready to follow others and possibly do the abseil decent in the dark with headtorches.  ",
+   "approach": "",
+   "incline": "Vertical",
+   "face": "S"
  }
 ]};

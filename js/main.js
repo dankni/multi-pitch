@@ -1,13 +1,15 @@
-// GLOBAL VARIABLES
-var root = "/multi-pitch/"; // adjust per enviroment
-
-// push state start
+/** 
+  GLOBAL VARIABLES 
+**/
+const root = "/"; // adjust per enviroment
 var start = document.URL;
-var history_data = {"Start": start};
+var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
 
 
-// MULTI RANGE SLIDER JS
+/**
+  THE SLIDER FUNCTION FOR FILTERS 
+**/
 (function() {
 "use strict";
 
@@ -94,7 +96,9 @@ else {
 
 })();
 
-// SHOW VALUES INLINE
+/**
+  SHOW THE CURRENT VALUE OF THE SLIDERS
+**/
 function showVal(values, field){
   
   var lowerValue = values.split(',')[0];
@@ -110,7 +114,9 @@ function showVal(values, field){
   filterCards();
 }
 
-// FILTER CARDS
+/**
+  A FUNCTION TO FILTER THE CARD BY THE USERS SELECTION
+**/
 function filterCards() {
   
   var resultCount = 0;
@@ -125,7 +131,7 @@ function filterCards() {
 
   var cards = document.getElementsByClassName('card');
 
-  for (var i = 0; i < cards.length; i++) {
+  for (let i = 0; i < cards.length; i++) {
     
     var dataGrade = cards[i].getAttribute('data-grade');
     var dataHeight = cards[i].getAttribute('data-height');
@@ -153,20 +159,20 @@ function filterCards() {
   }
 }
 
-// MULTI SORT 
+/**
+  FUNCTION TO SORT MULTIDIMENSIONAL ARRAYS
+**/
 if( typeof helper == 'undefined' ) {
   var helper = { } ;
 }
 
 helper.arr = {
-    /**
-     * Function to sort multidimensional array
-     * 
-     * param {array} [arr] Source array
-     * param {array} [columns] List of columns to sort
-     * param {array} [order_by] List of directions (ASC, DESC)
-     * returns {array}
-    */
+
+    // param {array} [arr] Source array
+    // param {array} [columns] List of columns to sort
+    // param {array} [order_by] List of directions (ASC, DESC)
+    // returns {array}
+
     multisort: function(arr, columns, order_by) {
         if(typeof columns == 'undefined') {
             columns = []
@@ -206,9 +212,11 @@ helper.arr = {
     }
 }
 
-// Publish cards from array
+/**
+  PUBLISH THE FRONT OF THE CARDS
+**/
 function publishCards(climbsArr){
-  for (var i = 0; i < climbsArr.length; i++) {
+  for (let i = 0; i < climbsArr.length; i++) {
 	 if(climbsArr[i].status === 'publish'){
 	  var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
       var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object 
@@ -237,7 +245,9 @@ function publishCards(climbsArr){
   }
 }
 
-/** SORT AND PUBLISH CARDS **/
+/** 
+  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
+**/
 function sortCards(sortBy, direction){
   var c = document.getElementsByClassName("card");
   while (c.length > 0) c[0].remove();
@@ -245,13 +255,16 @@ function sortCards(sortBy, direction){
   publishCards(climbsSorted);
 }
 
-/** SHOW FULL CLIMB INFO **/
+/** 
+  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
+**/
 function showTile(theId){
   var climb = climbsData.climbs.find(c => c.id === theId); // get the climb object by id
   var cImgs = climbImgs.imgs.filter(img => img.climbId === theId); 
   var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object 
   var cragImg = cImgs.find(img => img.type === 'crag'); 
   var topoImg = cImgs.find(img => img.type === 'topo'); 
+  var guideBook = guideBooks.books.find(book => book.climbId === theId);
 
   // a check to see if the user has landed on a page from a direct link
   if(isCardTurned != true){
@@ -283,12 +296,12 @@ function showTile(theId){
         </p>
     </div>`;
   } catch {
-    console.log('no route topo for climb with id:' + theId);
+	var routeTopo = '';
   }
   
   try {
      var cragImg = `
-       <div class="img-contaner">
+    <div class="img-contaner">
       <a href="${root}${cragImg.url}" target="blank" class="card-img-anch">
      <img src="${root}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
@@ -298,7 +311,61 @@ function showTile(theId){
       </p>
     </div>`;
   } catch {
-    console.log('no crag image for climb with id:' + theId);
+	var cragImg = '';
+  }
+
+  try {
+    if(guideBook.title != ""){
+      var guideBookModule = `
+	  <hr />
+	  <div class="row accordian">
+	    <div class="col">
+		  <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
+          <label for="tab-one" class="accordian-label">Guidebooks</label>
+          <div class="smaller accordian-content">
+		    <div>
+			  <img style="max-width:120px;float:left;padding-right:1rem;" src="${guideBook.imgURL}" alt="${guideBook.title}" /> 
+			  <p>
+			    <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
+			    ${guideBook.description}
+			    <br />
+			    <a href="${guideBook.abeLink}" target="blank">Availible on AbeBooks</a>
+			    R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
+				<small>ISBN: ${guideBook.isbn} </small>
+			  </p>
+			</div>
+          </div>
+        </div>
+      </div>
+      `;
+	} else {
+	  var guideBookModule = '';
+	}
+  } catch {
+	var guideBookModule = '';
+  }
+  
+  try{
+	if(climb.approach != ""){
+      var approachInfo = `
+	  <hr />
+	  <div class="row accordian">
+        <div class="col">
+		  <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
+          <label for="tab-two" class="accordian-label">Approach & Descent Infomation</label>
+          <div class="smaller accordian-content">
+            <div>
+			  <p>${climb.approach}</p>
+			</div>
+          </div>
+        </div>
+      </div>
+      `;
+	} else {
+      var approachInfo = '';
+	}	
+  } catch {
+	var approachInfo = '';
   }
   
   var fullCard = `
@@ -355,15 +422,8 @@ function showTile(theId){
               ${routeTopo}
         </div>
       </div>
-      <hr />
-      <div class="row">
-        <div class="col">
-        <p>Approach & Descent Infomation</p>
-        <p class="smaller">
-            ${climb.approach}
-          </p>
-        </div>
-      </div>
+	  ${approachInfo}
+	  ${guideBookModule}
       </div>
     </div>
   </div> 
@@ -371,7 +431,9 @@ function showTile(theId){
   document.getElementById('overlay').innerHTML = fullCard; 
 }
 
-// hide expanded card info
+/**
+  CLOASE THE CLIMB OVERVIEW - IE CLOSE THE BACK OF THE CARD
+**/
 function hideTile(){
   history.replaceState(start, 'The best multi-pitch climbs', root);
   isCardTurned = false; // ensure future clicks don't think its first load again
