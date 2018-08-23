@@ -260,11 +260,13 @@ function sortCards(sortBy, direction){
 **/
 function showTile(theId){
   var climb = climbsData.climbs.find(c => c.id === theId); // get the climb object by id
-  var cImgs = climbImgs.imgs.filter(img => img.climbId === theId); 
+  var cImgs = climbImgs.imgs.filter(img => img.climbId === theId);  //note find returns first vs fillter returns all.
   var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object 
   var cragImg = cImgs.find(img => img.type === 'crag'); 
   var topoImg = cImgs.find(img => img.type === 'topo'); 
-  var guideBook = guideBooks.books.find(book => book.climbId === theId);
+  var guideBook = guideBooks.books.find(book => book.climbId === theId); // ToDo: update to filter then allow multiple to show
+  var weather = weatherData.weatherLines.filter(w => w.climbId === theId);
+  var rain = weather.find(w => w.type === 'rainyDays');
 
   // a check to see if the user has landed on a page from a direct link
   if(isCardTurned != true){
@@ -329,7 +331,7 @@ function showTile(theId){
 			    <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
 			    ${guideBook.description}
 			    <br />
-			    <a href="${guideBook.abeLink}" target="blank">Availible on AbeBooks</a>
+			    <a href="${guideBook.link}" target="blank">Availible Here</a>
 			    R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
 				<small>ISBN: ${guideBook.isbn} </small>
 			  </p>
@@ -366,7 +368,31 @@ function showTile(theId){
 	}	
   } catch {
 	var approachInfo = '';
-  }
+	var approachInfo = '';
+  }  
+  
+/*  try{
+	if(rain.Jan != ""){
+      var weatherInfo = `
+	  <hr />
+	  <div class="row accordian">
+        <div class="col">
+		  <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
+          <label for="tab-three" class="accordian-label">/Seasonal Weather Infomation</label>
+          <div class="smaller accordian-content">
+            <div>
+			  <p>${rain.Jan}</p>
+			</div>
+          </div>
+        </div>
+      </div>
+      `;
+	} else {
+      var weatherInfo = '';
+	}	
+  } catch {
+	var weatherInfo = '';
+  }  */
   
   var fullCard = `
    <div class="card big-card">

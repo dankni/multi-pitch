@@ -65,9 +65,9 @@ const climbsData = {
    "approchDifficulty": 2,
    "rock": "Rhyolite",
    "intro": "A great crag and a great route, aptly named the great slab. There is only one technically demanding section up an often-damp corner. The route is long with a lot of variation possible.",
-   "approach": "",
+   "approach": "From Llanberis either take Britain's only Rack and Pinion Railway to the Halfway House, or make the walk from Llanberis. Walk up the road opposite the Royal Victoria Hotel, then take the path left which runs parallel with the Snowdon Mountain Railway. After the Halfway House a miner's path breaks off right to coast beneath the crag and above picturesque Llyn Du'r Arddu. Beware of rock fall. Calculate 2 hours for the walk-in.",
    "incline": "Slab",
-   "face": ""
+   "face": "N"
  },
  {
    "cliff": "Vratsa",
@@ -111,9 +111,9 @@ const climbsData = {
    "approchDifficulty": 3,
    "rock": "TBC",
    "intro": "Whilst it might seem like an amenable grade and reasonable length, this is a serious adventure on rock that is loose in places with limited reliable protection in places. Expect a long day our for this adventure! The route takes the landward facing ridge to the summit. You will need a small boat or canoe to get to the base and ideally a very calm sea in order to make a reasonably safe crossing. Expect a complicated descent requiring some down climbing and abseiling.",
-   "approach": "",
+   "approach": "Drive the 22 kilometre c class laneway from Ardara to the road end at An Port, the gateway to Irelands last great wilderness. Fom here on foot, follow the clifftop path for approx 2 kilometre to an outstanding viewpoint overlooking Glenlough Bay, Irelands largest raised shingle storm beach. From this viewpoint descend the very steep grass/scree slope for 200 or so metres and abseil from the two peg belay to the Entrance to Shambala storm beach. From the beach it is a 125 meter sea passage to the base of the stack.",
    "incline": "Slab",
-   "face": ""
+   "face": "E"
  },
  {
    "cliff": "Sass Pordoi",
@@ -340,9 +340,32 @@ const climbsData = {
    "approchTime": 5,
    "approchDifficulty": 1,
    "rock": "Phonolite",
-   "intro": "Durance Route on the Devils Tower in Wyoming is listed as one of the 50 classic climbs in North America. It's a 4-6 pitch in which the harder sections are mainly off-width and hand-cracks with a few spots of chimney. Don't forget to register at the Visitor's Center before and after the climb or you risk a fine. This is a crowded route so get on super early or be ready to follow others and possibly do the abseil decent in the dark with headtorches.  ",
+   "intro": "Durance Route on the Devils Tower in Wyoming is listed as one of the 50 classic climbs in North America. It's a 4-6 pitch route in which the harder sections are mainly off-width and hand-cracks with a few spots of chimney. Don't forget to register at the Visitor's Center before the climb or you risk a fine. This is a crowded route so get on super early or be ready to follow others and possibly do the abseil decent in the dark with headtorches.  ",
    "approach": "",
    "incline": "Vertical",
    "face": "S"
+ },
+ {
+   "cliff": "Lliwedd",
+   "status": "publish",
+   "id": 16,
+   "country": "Wales",
+   "county": "Gwynedd ",
+   "routeName": "Longlands Continuation",
+   "length": 280,
+   "pitches": 12,
+   "dataGrade": 4,
+   "tradGrade": "S",
+   "techGrade": "4b",
+   "uiaaGrade": "",
+   "flag": "wales",
+   "geoLocation": "53.060177,-4.053936",
+   "approchTime": 90,
+   "approchDifficulty": 2,
+   "rock": "Rhyolite",
+   "intro": "This is a huge climb set quite a long walk from civilisation. Technically it’s 3 climbs that flow into each other with a number of variants, eg you could swap out Avalanche and Red Wall for The Sword & Route 2 to up the grade to VS thanks to the first pitch. With everything that’s going on the route finding can be a challenge but most sections up the Eastern Buttress of Lliwedd are not too high in grade. Lliwedd itself was where British mountaineers trained before attempting to achieve the first accent of Everest.  ",
+   "approach": "From Pen Y Pass,  take the Miners track to the first lake and the rangers hut where a left turn takes you up towards the Lliwedd and away from the tarmacked tracks.",
+   "incline": "Slab",
+   "face": "N"
  }
 ]};

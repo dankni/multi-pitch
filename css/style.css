@@ -663,6 +663,7 @@ nav {
   display:block;
   z-index:5;
   padding:.5rem;
+  font-weight:100;
 }
 nav ul, nav ul li, nav ul li a{
   list-style:none;

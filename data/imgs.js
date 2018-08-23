@@ -377,14 +377,6 @@ const climbImgs = {
    "attributionText": "img: national parks service"
  },
  {
-   "climbId": 2,
-   "type": "guidebook",
-   "url": "img/guidebooks/west-country-climbs.jpg",
-   "alt": "West Country Climbs by Rockfax",
-   "atributionURL": "https://www.rockfax.com/climbing-guides/books/west-country-climbs-2010/",
-   "attributionText": "West Country Climbs by Rockfax"
- },
- {
    "climbId": 15,
    "type": "tile",
    "url": "img/tiles/devils-tower-wyoming.jpg",
@@ -399,5 +391,37 @@ const climbImgs = {
    "alt": "The Side of the Devils tower",
    "atributionURL": "https://commons.wikimedia.org/wiki/File:Devils_Tower_as_Seen_From_the_Path_Along_the_Base.jpg",
    "attributionText": "img source"
+ },
+ {
+   "climbId": 15,
+   "type": "map",
+   "url": "img/maps/evils-tower.png",
+   "alt": "The Devils Tower Location USA",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 16,
+   "type": "crag",
+   "url": "img/topos/lliwedd/lliwedd-butress.jpg",
+   "alt": "Lliwedd Buttress",
+   "atributionURL": "https://liamchesterblog.wordpress.com/2013/07/22/slanting-buttress-ridge-route-and-the-horseshoe/",
+   "attributionText": "img: Liam Chester"
+ },
+ {
+   "climbId": 16,
+   "type": "topo",
+   "url": "img/topos/lliwedd/longlands-red-wall-avalanche-topo-on-lliwedd.jpg",
+   "alt": "Topo for Avalanch to Red Wall to Longlands Continuation",
+   "atributionURL": "https://www.summitpost.org/y-lliwedd/268799",
+   "attributionText": "original image"
+ },
+ {
+   "climbId": 16,
+   "type": "tile",
+   "url": "img/tiles/lliwedd.jpg",
+   "alt": "Lliwedd Buttress",
+   "atributionURL": "http://footlesscrow.blogspot.com/2010/04/up-against-it.html",
+   "attributionText": "Footless Crow"
  }
 ]};

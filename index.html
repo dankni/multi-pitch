@@ -6,14 +6,18 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <title>Only the best multi-pitch rock climbs</title>
+  
+  <!-- Styles -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
   <link href="css/bootstrap-grid.css" rel="stylesheet" />
   <link href="css/flags.css" rel="stylesheet" />
   <link href="css/style.css" rel="stylesheet" />
   
+  <!-- JavaScripts -->
   <script src="data/climbs.js"></script>
   <script src="data/imgs.js"></script>
   <script src="data/guidebooks.js"></script>
+  <script src="data/weather.js"></script>
   <script src="js/main.js"></script>
   
   <!-- Favicons -->
@@ -47,18 +51,18 @@
   onClick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});'></a>
   <nav>
     <div class="container">
-      <a class="navbar-brand" href="http://www.multi-pitch.com" target="_blank">
-        <img src="img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+      <a class="navbar-brand" href="/">
+        <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
       </a>
         <ul>
           <li>
-            <a href="#filters" onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>Find <span class="not-mobile">Your Climb</span></a>
+            <a href="/#filters" onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>Find <span class="not-mobile">Your Climb</span></a>
           </li>
-        <!--  <li>
-            <a href="">Learn <span class="not-mobile">To Multi-Pitch</span></a>
-          </li>-->         
           <li>
-            <a href="about">About  <span class="not-mobile">Us</span></a>
+            <a href="/map">Map <span class="not-mobile">View</span></a>
+          </li>       
+          <li>
+            <a href="/about">About <span class="not-mobile">&amp; Contact Us</span></a>
           </li>
         </ul>
     </div>
