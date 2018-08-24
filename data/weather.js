@@ -95,5 +95,53 @@ const weatherData = {
    "Oct": 8,
    "Nov": 5,
    "Dec": 3
+ },
+ {
+   "climbId": 16,
+   "type": "rainyDays",
+   "Jan": 13,
+   "Feb": 10,
+   "Mar": 11,
+   "Apr": 9,
+   "May": 8,
+   "Jun": 8,
+   "Jul": 8,
+   "Aug": 9,
+   "Sep": 10,
+   "Oct": 14,
+   "Nov": 14,
+   "Dec": 14
+ },
+ {
+   "climbId": 16,
+   "type": "tempH",
+   "Jan": 8,
+   "Feb": 8,
+   "Mar": 9,
+   "Apr": 12,
+   "May": 15,
+   "Jun": 17,
+   "Jul": 19,
+   "Aug": 18,
+   "Sep": 17,
+   "Oct": 13,
+   "Nov": 10,
+   "Dec": 8
+ },
+ {
+   "climbId": 16,
+   "type": "tempL",
+   "Jan": 3,
+   "Feb": 2,
+   "Mar": 3,
+   "Apr": 4,
+   "May": 7,
+   "Jun": 10,
+   "Jul": 12,
+   "Aug": 12,
+   "Sep": 10,
+   "Oct": 8,
+   "Nov": 5,
+   "Dec": 3
  }
 ]};

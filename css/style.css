@@ -975,7 +975,7 @@ hr {
 }
 /* :checked */
 .accordian-input:checked ~ .accordian-content {
-  max-height: 20em;
+  max-height: 50em;
 }
 /* Icon */
 .accordian-label::after {
@@ -1035,4 +1035,50 @@ hr {
 }
 .marocco {
  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNjAwIiB2aWV3Qm94PSItNjAgLTQwIDEyMCA4MCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPg0KPHBhdGggZmlsbD0iI2MxMjcyZCIgZD0ibS02MC00MGgxMjB2ODBoLTEyMHoiLz4NCjxnIGZpbGw9IiMwYjQ1MjciIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIuODkiIHRyYW5zZm9ybT0ibWF0cml4KC40MzkyOSAwIDAgLjQ2MTg2IC04NC4zNDI5IC01Ny4wMDg5KSI+DQo8cGF0aCBkPSJtMTgxLjI1LDExMy4xODc1bC0zNC43ODEyLC4wMzEyIDM5LjU5MzgsMjguNzUgNS45Mzc1LTQuMzEyNS0yNC0xNy40Mzc1IDEwLjk2ODgtLjAzMTIgMi4yODEyLTd6Ii8+DQo8cGF0aCBkPSJtMjAyLjc2NTYsMTEzLjE5ODhsLTEwLjc3NzctMzMuMDY5My0xNS4xMDc3LDQ2LjU0MDEgNS45MzYyLDQuMzE0MyA5LjE2NzYtMjguMjEzOCAzLjQxOTMsMTAuNDIyMiA3LjM2MjMsLjAwNjV6Ii8+DQo8cGF0aCBkPSJtMjA5LjQwMzYsMTMzLjY2NWwyOC4xMjAzLTIwLjQ2OTItNDguOTMwOCwuMDEzNC0yLjI2ODcsNi45Nzg5IDI5LjY2NTksLjAwMDQtOC44NTU1LDYuNDcyNSAyLjI2ODksNy4wMDR6Ii8+DQo8cGF0aCBkPSJtMTkxLjk5MDUsMTQ2LjMwMjJsMjguMTU3LDIwLjQxODYtMTUuMTMzMi00Ni41MzE5LTcuMzM4NC0uMDAxMSA5LjE2NjksMjguMjE0MS04Ljg5MjMtNi40MjItNS45NjAxLDQuMzIyMnoiLz4NCjxwYXRoIGQ9Im0xNzQuNTkwOCwxMzMuNjQ2NmwtMTAuNzE4MywzMy4wODg2IDM5LjU3OC0yOC43NzE3LTIuMjY2Ni02Ljk3OTUtMjQuMDAwNSwxNy40MzY5IDMuMzU5OC0xMC40NDE2LTUuOTUyNC00LjMzMjd6Ii8+DQo8L2c+DQo8L3N2Zz4NCg==');
+}
+
+/** CHARTS **/
+.chart {
+  display: table;
+  table-layout: fixed;
+  width: 80%;
+  max-width: 800px;
+  height: 200px;
+  margin: 0 auto;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 2%, rgba(0, 0, 0, 0) 2%);
+  background-size: 100% 50px;
+  background-position: left top;
+  padding-bottom:2rem;
+}
+.chart li {
+  position: relative;
+  display: table-cell;
+  vertical-align: bottom;
+  height: 200px;
+  text-align:center;
+  font-size:0.9rem;
+}
+.chart span {
+  margin: 0 1em;
+  display: block;
+  background: rgba(209, 236, 250, 0.75);
+  animation: draw 1s ease-in-out;
+}
+.chart span:before {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  padding: 5px 1em 0;
+  display: block;
+  text-align: center;
+  content: attr(title);
+  word-wrap: break-word;
+  font-size:0.6rem;
+}
+
+@keyframes draw {
+  0% {
+    height: 0;
+  }
 }

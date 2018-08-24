@@ -217,28 +217,28 @@ helper.arr = {
 **/
 function publishCards(climbsArr){
   for (let i = 0; i < climbsArr.length; i++) {
-	 if(climbsArr[i].status === 'publish'){
-	  var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
+   if(climbsArr[i].status === 'publish'){
+    var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
       var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object 
 
       var card = `
-		<div data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-		  <img src="${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
-		  <div class="card-body">
-		  <h4>
-			<span class="flag ${climbsArr[i].flag}"></span>
-			${climbsArr[i].cliff}
-		  </h4>
-		  <p class="card-text">
-			<span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-				<span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
-			<span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
-			<span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
-			<span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
-		  </p>
-		  </div>
-		  <a class="open-tile" onclick="showTile(${climbsArr[i].id});">SHOW MORE INFO</a>
-		</div>`;
+    <div data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+      <img src="${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+      <div class="card-body">
+      <h4>
+      <span class="flag ${climbsArr[i].flag}"></span>
+      ${climbsArr[i].cliff}
+      </h4>
+      <p class="card-text">
+      <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
+        <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
+      <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
+      <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
+      <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
+      </p>
+      </div>
+      <a class="open-tile" onclick="showTile(${climbsArr[i].id});">SHOW MORE INFO</a>
+    </div>`;
     
       cardHolder.innerHTML += card; 
     }
@@ -298,7 +298,7 @@ function showTile(theId){
         </p>
     </div>`;
   } catch {
-	var routeTopo = '';
+  var routeTopo = '';
   }
   
   try {
@@ -313,147 +313,168 @@ function showTile(theId){
       </p>
     </div>`;
   } catch {
-	var cragImg = '';
+  var cragImg = '';
   }
 
   try {
     if(guideBook.title != ""){
       var guideBookModule = `
-	  <hr />
-	  <div class="row accordian">
-	    <div class="col">
-		  <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
-          <label for="tab-one" class="accordian-label">Guidebooks</label>
-          <div class="smaller accordian-content">
-		    <div>
-			  <img style="max-width:120px;float:left;padding-right:1rem;" src="${guideBook.imgURL}" alt="${guideBook.title}" /> 
-			  <p>
-			    <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
-			    ${guideBook.description}
-			    <br />
-			    <a href="${guideBook.link}" target="blank">Availible Here</a>
-			    R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
-				<small>ISBN: ${guideBook.isbn} </small>
-			  </p>
-			</div>
+    <hr />
+    <div class="row accordian">
+      <div class="col">
+        <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
+        <label for="tab-one" class="accordian-label">Guidebooks</label>
+        <div class="smaller accordian-content">
+          <div>
+            <img style="max-width:120px;float:left;padding-right:1rem;" src="${guideBook.imgURL}" alt="${guideBook.title}" /> 
+            <p>
+              <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
+              ${guideBook.description}
+              <br />
+              <a href="${guideBook.link}" target="blank">Availible Here</a>
+              R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
+              <small>ISBN: ${guideBook.isbn} </small>
+            </p>
           </div>
         </div>
       </div>
-      `;
-	} else {
-	  var guideBookModule = '';
-	}
+    </div>`;
+  } else {
+    var guideBookModule = '';
+  }
   } catch {
-	var guideBookModule = '';
+  var guideBookModule = '';
   }
   
   try{
-	if(climb.approach != ""){
+  if(climb.approach != ""){
       var approachInfo = `
-	  <hr />
-	  <div class="row accordian">
+    <hr />
+    <div class="row accordian">
         <div class="col">
-		  <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
+          <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
           <label for="tab-two" class="accordian-label">Approach & Descent Infomation</label>
           <div class="smaller accordian-content">
             <div>
-			  <p>${climb.approach}</p>
-			</div>
+              <p>${climb.approach}</p>
+            </div>
           </div>
         </div>
-      </div>
-      `;
-	} else {
+      </div>`;
+  } else {
       var approachInfo = '';
-	}	
+  }  
   } catch {
-	var approachInfo = '';
-	var approachInfo = '';
+  var approachInfo = '';
+  var approachInfo = '';
   }  
   
-/*  try{
-	if(rain.Jan != ""){
-      var weatherInfo = `
-	  <hr />
-	  <div class="row accordian">
-        <div class="col">
-		  <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
-          <label for="tab-three" class="accordian-label">/Seasonal Weather Infomation</label>
-          <div class="smaller accordian-content">
-            <div>
-			  <p>${rain.Jan}</p>
-			</div>
+  try{
+  if(rain.Jan != ""){
+    var jan = rain.Jan/20*100;
+    var feb = rain.Feb/20*100;
+    var mar = rain.Mar/20*100;
+    var apr = rain.Apr/20*100;
+    var may = rain.May/20*100;
+    var jun = rain.Jun/20*100;
+    var jul = rain.Jul/20*100;
+    var aug = rain.Aug/20*100;
+    var sep = rain.Sep/20*100;
+    var oct = rain.Oct/20*100;
+    var nov = rain.Nov/20*100;
+    var dec = rain.Dec/20*100;
+    var weatherInfo = `
+    <hr />
+    <div class="row accordian">
+      <div class="col">
+        <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
+        <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
+        <div class="smaller accordian-content">
+          <div>
+            <p>Estimated average number of rainy days in the month:</p>
+            <ul class="chart">
+              <li>${rain.Jan}<span style="height:${jan}%" title="Jan"></span></li>
+              <li>${rain.Feb}<span style="height:${feb}%" title="Feb"></span></li>
+              <li>${rain.Mar}<span style="height:${mar}%" title="Mar"></span></li>
+              <li>${rain.Apr}<span style="height:${apr}%" title="Apr"></span></li>
+              <li>${rain.May}<span style="height:${may}%" title="May"></span></li>
+              <li>${rain.Jun}<span style="height:${jun}%" title="Jun"></span></li>
+              <li>${rain.Jul}<span style="height:${jul}%" title="Jul"></span></li>
+              <li>${rain.Aug}<span style="height:${aug}%" title="Aug"></span></li>
+              <li>${rain.Sep}<span style="height:${sep}%" title="Sep"></span></li>
+              <li>${rain.Oct}<span style="height:${oct}%" title="Oct"></span></li>
+              <li>${rain.Nov}<span style="height:${nov}%" title="Nov"></span></li>
+              <li>${rain.Dec}<span style="height:${dec}%" title="Dec"></span></li>
+            </ul>
           </div>
         </div>
       </div>
-      `;
-	} else {
+    </div>`;
+  } else {
       var weatherInfo = '';
-	}	
+  }  
   } catch {
-	var weatherInfo = '';
-  }  */
+  var weatherInfo = '';
+  } 
   
   var fullCard = `
    <div class="card big-card">
     <div class="card-body" style="padding:0;">
       <div class="img-contaner">
-          <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
+        <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
           <img class="big-card-map" src="${mapUrl}" alt="${climb.cliff} location"/>
         </a>
-      <span class="txt-ovr-img map-txt">Open in Google Maps</span>
-    </div>
-    <div class="big-card-body">
-      <h4>
+        <span class="txt-ovr-img map-txt">Open in Google Maps</span>
+      </div>
+      <div class="big-card-body">
+        <h4>
           <span class="flag ${climb.flag}"></span>
-        ${climb.cliff} - ${climb.routeName}
-      </h4>
-      <p class="smaller">
-        ${climb.intro}
-      </p>
-      <div class="row">
-        <div class="col">
-        <div class="info-ring">
-          <span class="grade what">grade</span>
-        <span class="info-divider"></span>
-        <span class="grade amount">${climb.tradGrade}&nbsp;${climb.techGrade}</span>
-        </div>        
-       
-        <div class="info-ring">
-          <span class="grade what">length</span>
-        <span class="info-divider"></span>
-        <span class="grade amount">${climb.length}m</span>
-        </div>      
-        <div class="info-ring">
-          <span class="grade what">pitches</span>
-        <span class="info-divider"></span>
-        <span class="grade amount">${climb.pitches}</span>
+          ${climb.cliff} - ${climb.routeName}
+        </h4>
+        <p class="smaller">
+          ${climb.intro}
+        </p>
+        <div class="row">
+          <div class="col">
+            <div class="info-ring">
+              <span class="grade what">grade</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.tradGrade}&nbsp;${climb.techGrade}</span>
+            </div>        
+            <div class="info-ring">
+              <span class="grade what">length</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.length}m</span>
+            </div>      
+            <div class="info-ring">
+              <span class="grade what">pitches</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.pitches}</span>
+            </div>
+            <div class="info-ring">
+              <span class="grade what">approch</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.approchTime}<small>min</small></span>
+            </div>
+          </div>
         </div>
-        
-        <div class="info-ring">
-          <span class="grade what">approch</span>
-        <span class="info-divider"></span>
-        <span class="grade amount">${climb.approchTime}<small>min</small></span>
+        <hr />  
+        <div class="row">
+          <div class="col-sm">
+            <p>Crag Image</p>
+            ${cragImg}
+          </div>    
+          <div class="col-sm">
+            <p>The Route Topography</p>
+            ${routeTopo}
+         </div>
         </div>
-      </div>
-      </div>
-      <hr />  
-      <div class="row">
-        <div class="col-sm">
-        <p>Crag Image</p>
-                ${cragImg}
-        </div>    
-        <div class="col-sm">
-        <p>The Route Topography</p>
-              ${routeTopo}
-        </div>
-      </div>
-	  ${approachInfo}
-	  ${guideBookModule}
+        ${approachInfo}
+        ${guideBookModule}
+        ${weatherInfo}
       </div>
     </div>
-  </div> 
-  `;
+  </div>`;
   document.getElementById('overlay').innerHTML = fullCard; 
 }
 
