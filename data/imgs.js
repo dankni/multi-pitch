@@ -310,15 +310,15 @@ const climbImgs = {
    "url": "img/topos/montserrat/roca-gris-esparreguera-topo.jpg",
    "alt": "Topo for Esparreguera climb in Montserrat Spain",
    "atributionURL": "https://joanasin.blogspot.com/2017/01/montserrat-roca-gris-via-esparraguera.html",
-   "attributionText": "original image"
+   "attributionText": "image credit"
  },
  {
    "climbId": 12,
    "type": "tile",
-   "url": "img/tiles/grey-rock-at-montserrat.jpg",
+   "url": "img/tiles/grey-rock-at-montserrat-new.jpg",
    "alt": "Grey Rock at Montserrat",
-   "atributionURL": "",
-   "attributionText": ""
+   "atributionURL": "http://joanasin.blogspot.com/2012/01/roca-gris-via-esparraguera.html",
+   "attributionText": "original image"
  },
  {
    "climbId": 13,
@@ -422,6 +422,6 @@ const climbImgs = {
    "url": "img/tiles/lliwedd.jpg",
    "alt": "Lliwedd Buttress",
    "atributionURL": "http://footlesscrow.blogspot.com/2010/04/up-against-it.html",
-   "attributionText": "Footless Crow"
+   "attributionText": "original image"
  }
 ]};

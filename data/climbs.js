@@ -363,7 +363,7 @@ const climbsData = {
    "approchTime": 90,
    "approchDifficulty": 2,
    "rock": "Rhyolite",
-   "intro": "This is a huge climb set quite a long walk from civilisation. Technically it’s 3 climbs that flow into each other with a number of variants, eg you could swap out Avalanche and Red Wall for The Sword & Route 2 to up the grade to VS thanks to the first pitch. With everything that’s going on the route finding can be a challenge but most sections up the Eastern Buttress of Lliwedd are not too high in grade. Lliwedd itself was where British mountaineers trained before attempting to achieve the first accent of Everest.  ",
+   "intro": "This is a huge climb set quite a long walk from civilisation. Technically it’s 3 climbs: Avalanche then Red Wall then Longlands Continuation. These routes  flow into each other with a number of variants. For example you could swap out Avalanche and Red Wall for The Sword & Route 2. This would up the grade to Very Severe thanks to the first pitch of The Sword. With everything that’s going on on Y Lliwedd, the route finding can be a challenge but most sections up the Eastern Buttress of the crag are not too high in grade. Mount Y Lliwedd (colourless peak in English) was where British mountaineers trained before making some of the first attempts to summit Everest. ",
    "approach": "From Pen Y Pass,  take the Miners track to the first lake and the rangers hut where a left turn takes you up towards the Lliwedd and away from the tarmacked tracks.",
    "incline": "Slab",
    "face": "N"

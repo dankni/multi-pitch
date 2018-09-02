@@ -962,6 +962,11 @@ hr {
   display: block;
   padding: 0 0 0 1em;
   cursor: pointer;
+  transition:padding-left .5s ease;
+}
+.accordian-label:hover {
+  color:#0056b3;
+  padding-left:1.8rem;
 }
 .accordian-content {
   max-height: 0;
@@ -1041,14 +1046,14 @@ hr {
 .chart {
   display: table;
   table-layout: fixed;
-  width: 80%;
-  max-width: 800px;
+  width: 100%;
+  max-width: 500px;
   height: 200px;
-  margin: 0 auto;
+  margin: -20px auto 0 auto;
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 2%, rgba(0, 0, 0, 0) 2%);
   background-size: 100% 50px;
   background-position: left top;
-  padding-bottom:2rem;
+  padding:0 0 2rem 0;
 }
 .chart li {
   position: relative;
@@ -1056,13 +1061,16 @@ hr {
   vertical-align: bottom;
   height: 200px;
   text-align:center;
-  font-size:0.9rem;
+  font-size:0.5rem;
 }
 .chart span {
-  margin: 0 1em;
+  margin: 0 5px;
   display: block;
   background: rgba(209, 236, 250, 0.75);
   animation: draw 1s ease-in-out;
+}
+.temp span {
+  background: rgba(255, 212, 58, 0.8);
 }
 .chart span:before {
   position: absolute;
@@ -1073,7 +1081,7 @@ hr {
   display: block;
   text-align: center;
   content: attr(title);
-  word-wrap: break-word;
+  word-wrap: normal;
   font-size:0.6rem;
 }
 
