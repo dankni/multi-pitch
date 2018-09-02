@@ -245,8 +245,8 @@ const climbImgs = {
    "type": "tile",
    "url": "img/tiles/cwm-idwal-slabs.jpg",
    "alt": "The bowl of Cwm Idwal",
-   "atributionURL": "",
-   "attributionText": ""
+   "atributionURL": "https://climbmountains.wordpress.com/2010/06/10/new-ogwen-climbing-guidebook-out-now/",
+   "attributionText": "image credit"
  },
  {
    "climbId": 8,
@@ -287,6 +287,14 @@ const climbImgs = {
    "alt": "The South Ridge Direct Route on Cir Mhor",
    "atributionURL": "http://beantinblog.blogspot.com/2016/08/south-ridge-direct-cir-mhor-arran.html",
    "attributionText": "original image"
+ },
+ {
+   "climbId": 11,
+   "type": "map",
+   "url": "img/maps/cir-mhor.png",
+   "alt": "Cir Mhor Ridge location",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
  },
  {
    "climbId": 11,
@@ -423,5 +431,29 @@ const climbImgs = {
    "alt": "Lliwedd Buttress",
    "atributionURL": "http://footlesscrow.blogspot.com/2010/04/up-against-it.html",
    "attributionText": "original image"
+ },
+ {
+   "climbId": 14,
+   "type": "map",
+   "url": "img/maps/chair-ladder.jpg",
+   "alt": "Chair Ladder Location in Cornwall",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 16,
+   "type": "map",
+   "url": "img/maps/lliwedd-climbing-location-wales.jpg",
+   "alt": "Mount Y Lliwedd Location in Wales",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 12,
+   "type": "map",
+   "url": "img/maps/montserrat-climb-location.png",
+   "alt": "Grey Rock climb location at Montserrat",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
  }
 ]};

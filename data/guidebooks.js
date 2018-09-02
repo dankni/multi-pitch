@@ -2,7 +2,7 @@ const guideBooks = {
 "books":[
  {
    "climbId": 2,
-   "isbn": 9781873341377,
+   "isbn": "9781873341377",
    "title": "West Country Climbs",
    "type": "guidebook",
    "pg": 206,
@@ -14,7 +14,7 @@ const guideBooks = {
  },
  {
    "climbId": 1,
-   "isbn": 9781906095468,
+   "isbn": "9781906095468",
    "title": "Scottish Rock, Volume 2, North",
    "type": "guidebook",
    "pg": 266,
@@ -26,7 +26,7 @@ const guideBooks = {
  },
  {
    "climbId": 3,
-   "isbn": 9781873341827,
+   "isbn": "9781873341827",
    "title": "North Wales Climbs",
    "type": "guidebook",
    "pg": 149,
@@ -38,7 +38,7 @@ const guideBooks = {
  },
  {
    "climbId": 4,
-   "isbn": 9786199010518,
+   "isbn": "9786199010518",
    "title": "Vratsa Climbing Guide",
    "type": "guidebook",
    "pg": 169,
@@ -50,7 +50,7 @@ const guideBooks = {
  },
  {
    "climbId": 5,
-   "isbn": 9780902940994,
+   "isbn": "9780902940994",
    "title": "Rock Climbing in Donegal",
    "type": "guidebook",
    "pg": 80,
@@ -62,7 +62,7 @@ const guideBooks = {
  },
  {
    "climbId": 6,
-   "isbn": 9781873341971,
+   "isbn": "9781873341971",
    "title": "The Dolomites, Rock Climbs and Via Ferrata",
    "type": "guidebook",
    "pg": 175,
@@ -74,7 +74,7 @@ const guideBooks = {
  },
  {
    "climbId": 7,
-   "isbn": 9781873341827,
+   "isbn": "9781873341827",
    "title": "North Wales Climbs",
    "type": "guidebook",
    "pg": 191,
@@ -86,7 +86,7 @@ const guideBooks = {
  },
  {
    "climbId": 8,
-   "isbn": 9781873341377,
+   "isbn": "9781873341377",
    "title": "West Country Climbs",
    "type": "guidebook",
    "pg": 104,
@@ -98,7 +98,7 @@ const guideBooks = {
  },
  {
    "climbId": 9,
-   "isbn": 9788898609772,
+   "isbn": "9788898609772",
    "title": "Portugal, Rock climbs on the western tip of Europe",
    "type": "guidebook",
    "pg": 34,
@@ -110,7 +110,7 @@ const guideBooks = {
  },
  {
    "climbId": 10,
-   "isbn": 9781873341377,
+   "isbn": "9781873341377",
    "title": "West Country Climbs",
    "type": "guidebook",
    "pg": 128,
@@ -122,7 +122,7 @@ const guideBooks = {
  },
  {
    "climbId": 13,
-   "isbn": 9780902940994,
+   "isbn": "9780902940994",
    "title": "Rock Climbing in Donegal",
    "type": "guidebook",
    "pg": 80,
@@ -134,7 +134,7 @@ const guideBooks = {
  },
  {
    "climbId": 16,
-   "isbn": 9781873341827,
+   "isbn": "9781873341827",
    "title": "North Wales Climbs",
    "type": "guidebook",
    "pg": 156,
@@ -143,5 +143,41 @@ const guideBooks = {
    "link": "",
    "rrp": 24.99,
    "guidePrice": 21
+ },
+ {
+   "climbId": 11,
+   "isbn": "9781906095581",
+   "title": "Scottish Rock, Volume 1, South",
+   "type": "guidebook",
+   "pg": 32,
+   "description": "An extensive and well-made guidebook covering every worthwhile crag in Southern Scotland. The guides are clear with generally very good photography, however some of the longer routes lack the clear imagery of their single pitch counterparts.",
+   "imgURL": "img/guidebooks/scottish-rock-volume-1.jpg",
+   "link": "",
+   "rrp": 25,
+   "guidePrice": 20
+ },
+ {
+   "climbId": 14,
+   "isbn": "9781873341377",
+   "title": "West Country Climbs",
+   "type": "guidebook",
+   "pg": 258,
+   "description": "This book comes into its own for so many areas in the south west of Britain. This guide covers a huge mix of regions with clear images and good topography. The section on Chair Ladder is brilliant covers a great mix of multi-pitch routes across the grades.",
+   "imgURL": "img/guidebooks/west-country-climbs.jpg",
+   "link": "",
+   "rrp": 24.99,
+   "guidePrice": 20
+ },
+ {
+   "climbId": 12,
+   "isbn": "no ISBN",
+   "title": "Monterrat Free Climbs ",
+   "type": "guidebook",
+   "pg": 162,
+   "description": "A huge selection of over a thousand routes many of which are big wall multi-pitch climbs. Montserrat is well bolted area but many routes require a full trad rack. The book has some good topography but lacks details when to comes to the approach. The book is a tome of information but not brilliantly organised for such a recent publication. It is also at the more expensive end of guidebook prices, but can be purchased cheaper from mainland Europe. ",
+   "imgURL": "img/guidebooks/montserrat-free-climbs.jpg",
+   "link": "",
+   "rrp": 34,
+   "guidePrice": 34
  }
 ]};

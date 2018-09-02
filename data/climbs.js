@@ -360,7 +360,7 @@ const climbsData = {
    "uiaaGrade": "",
    "flag": "wales",
    "geoLocation": "53.060177,-4.053936",
-   "approchTime": 90,
+   "approchTime": 75,
    "approchDifficulty": 2,
    "rock": "Rhyolite",
    "intro": "This is a huge climb set quite a long walk from civilisation. Technically it’s 3 climbs: Avalanche then Red Wall then Longlands Continuation. These routes  flow into each other with a number of variants. For example you could swap out Avalanche and Red Wall for The Sword & Route 2. This would up the grade to Very Severe thanks to the first pitch of The Sword. With everything that’s going on on Y Lliwedd, the route finding can be a challenge but most sections up the Eastern Buttress of the crag are not too high in grade. Mount Y Lliwedd (colourless peak in English) was where British mountaineers trained before making some of the first attempts to summit Everest. ",
