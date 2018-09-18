@@ -155,7 +155,7 @@ const climbImgs = {
  {
    "climbId": 8,
    "type": "topo",
-   "url": "img/topos/lundy/devils-slide-topo.jpg",
+   "url": "img/topos/lundy/devils-slide-topo-maybe.jpg",
    "alt": "The Devils Slide Route Topography",
    "atributionURL": "https://www.pinterest.co.uk/tommacdonald714/",
    "attributionText": "Original By Tom MacDonald"
@@ -443,7 +443,7 @@ const climbImgs = {
  {
    "climbId": 16,
    "type": "map",
-   "url": "img/maps/lliwedd-climbing-location-wales.jpg",
+   "url": "img/maps/lliwedd-climbing-location-wales.png",
    "alt": "Mount Y Lliwedd Location in Wales",
    "atributionURL": "http://google.com/maps",
    "attributionText": "Google Map"
@@ -455,5 +455,69 @@ const climbImgs = {
    "alt": "Grey Rock climb location at Montserrat",
    "atributionURL": "http://google.com/maps",
    "attributionText": "Google Map"
+ },
+ {
+   "climbId": 17,
+   "type": "topo",
+   "url": "img/topos/stetind/stetind-south-pillar-route-topo.jpg",
+   "alt": "The Classic South Pillar climb on Stetind Mountain",
+   "atributionURL": "http://northernalpine.blogspot.com/2010/08/stetind-sydpillaren-guiding-south.html",
+   "attributionText": "original: Seth Harry"
+ },
+ {
+   "climbId": 17,
+   "type": "crag",
+   "url": "img/topos/stetind/stetind-mountain-south-side.jpg",
+   "alt": "An overview of Stetind Mountain",
+   "atributionURL": "http://www.stetind.nu",
+   "attributionText": "image source"
+ },
+ {
+   "climbId": 17,
+   "type": "tile",
+   "url": "img/tiles/stetind-mountain.jpg",
+   "alt": "Stetind Mountain offers incredible multi-pitch",
+   "atributionURL": "http://www.stetind.nu",
+   "attributionText": "image source"
+ },
+ {
+   "climbId": 17,
+   "type": "map",
+   "url": "img/maps/stetind.png",
+   "alt": "Location of Stetind in Norway",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 13,
+   "type": "map",
+   "url": "img/maps/sail-rock-location-donegal.png",
+   "alt": "Sail Rock location in Co. Donegal",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 18,
+   "type": "topo",
+   "url": "img/topos/scafell/scafell-route-for-keswick-brothers-climb.jpg",
+   "alt": "Topo for keswick Brothers Climb on Scafell Crag",
+   "atributionURL": "lakelandpilgrimage.blogspot.com/p/the-cathedrals.html",
+   "attributionText": "original image"
+ },
+ {
+   "climbId": 18,
+   "type": "crag",
+   "url": "img/topos/scafell/scarfell-pike-climbs.jpg",
+   "alt": "Scafell Crag in the Lake District",
+   "atributionURL": "https://www.thebmc.co.uk/zoomtopo/scafell/",
+   "attributionText": "view BMC super zoom"
+ },
+ {
+   "climbId": 18,
+   "type": "tile",
+   "url": "img/topos/scafell/scarfell-pike-climbs-s.jpg",
+   "alt": "Scafell Crag in the Lake District",
+   "atributionURL": "https://www.thebmc.co.uk/zoomtopo/scafell/",
+   "attributionText": "view BMC super zoom"
  }
 ]};

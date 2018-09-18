@@ -97,13 +97,15 @@
 	  
         var lat = parseFloat(climbsData.climbs[i].geoLocation.split(',')[0]);
         var lon = parseFloat(climbsData.climbs[i].geoLocation.split(',')[1]);
+	    var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsData.climbs[i].id);  //note find returns first vs fillter returns all.
+        var cragImg = cImgs.find(img => img.type === 'tile'); 
         
 		/** THE BELOW IS ENVIRONMENT SENSITIVE! **/
         var content = {
           position: new google.maps.LatLng(lat,lon), 
           type: 'climb',
           id: climbsData.climbs[i].id,
-          title:'<strong><a href="/?overview=' + climbsData.climbs[i].id + '">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong><br /><hr /><p><small>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade  + '</strong><br />Length: <strong>' + climbsData.climbs[i].length  + '</strong><br />Approch: <strong>' + climbsData.climbs[i].approchTime  + '</strong></small></p>'
+          title:'<strong><a href="/?overview=' + climbsData.climbs[i].id + '">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong><br /><img src="/' + cragImg.url + '" style="width:150px;" /><br /> <hr /><p><small>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade  + '</strong><br />Length: <strong>' + climbsData.climbs[i].length  + '</strong><br />Approch: <strong>' + climbsData.climbs[i].approchTime  + '</strong></small></p>'
         };
         features.push(content);
       }

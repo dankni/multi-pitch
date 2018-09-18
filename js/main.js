@@ -300,7 +300,7 @@ function showTile(theId){
         </p>
     </div>`;
   } catch {
-  var routeTopo = '';
+    var routeTopo = '';
   }
   
   try {
@@ -315,7 +315,7 @@ function showTile(theId){
       </p>
     </div>`;
   } catch {
-  var cragImg = '';
+    var cragImg = '';
   }
 
   try {
@@ -341,11 +341,11 @@ function showTile(theId){
         </div>
       </div>
     </div>`;
-  } else {
-    var guideBookModule = '';
-  }
+    } else {
+      var guideBookModule = '';
+    }
   } catch {
-  var guideBookModule = '';
+    var guideBookModule = '';
   }
   
   try{
@@ -363,12 +363,12 @@ function showTile(theId){
           </div>
         </div>
       </div>`;
-  } else {
+    } else {
       var approachInfo = '';
-  }  
+    }  
   } catch {
-  var approachInfo = '';
-  var approachInfo = '';
+    var approachInfo = '';
+    var approachInfo = '';
   }  
   var tempInfo = '';
     /** TODO: Refactor into on graph generator function **/
@@ -388,7 +388,9 @@ function showTile(theId){
       var decO = tempL.Dec/40*100; var decH = (tempH.Dec - tempL.Dec) /40*100;
 	
       tempInfo = `
-      <p>Estimated average high and low temperature in degrees celsiusfor the given month:</p>
+	  <p>
+	    Estimated average high and low temperature in degrees celsiusfor the given month:
+	  </p>
 	  <ul class="chart temp">
 	    <li>${tempH.Jan}<span style="height:${janH}%" title="Jan"></span><span style="height:${janO}%;background-color:rgba(0,0,0,0);">${tempL.Jan}</span></li>
 	    <li>${tempH.Feb}<span style="height:${febH}%" title="Feb"></span><span style="height:${febO}%;background-color:rgba(0,0,0,0);">${tempL.Feb}</span></li>
@@ -432,7 +434,14 @@ function showTile(theId){
         <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
         <div class="smaller accordian-content">
           <div>
-            <p>Estimated average number of rainy days in the month:</p>
+            <p>
+		      NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
+	          This could be quite far away and at a darmatically different elevation. 
+			  This means it could be considerably colder or wetter on some mountain climbs.</em>
+	        </p>
+	        <p>
+			  Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
+			</p>
             <ul class="chart">
               <li>${rain.Jan}<span style="height:${janR}%" title="Jan"></span></li>
               <li>${rain.Feb}<span style="height:${febR}%" title="Feb"></span></li>
@@ -521,6 +530,7 @@ function showTile(theId){
     </div>
   </div>`;
   document.getElementById('overlay').innerHTML = fullCard; 
+  document.title = climb.cliff + " - " + climb.routeName;
 }
 
 /**
@@ -532,6 +542,7 @@ function hideTile(){
   document.getElementById('close').setAttribute("style", "display:none;");
   document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
   document.getElementById('bdy').setAttribute("style", "");
+  document.title = "The best multi-pitch rock climbs";
 }
 
 // need to handel history.onPopstate ie. user presses back
