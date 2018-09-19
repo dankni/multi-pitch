@@ -120,7 +120,6 @@ function showVal(values, field){
 function filterCards() {
   
   var resultCount = 0;
-  
   var lowGrade = parseInt(document.getElementById('gradeRange').value.split(',')[0]);
   var highGrade = parseInt(document.getElementById('gradeRange').value.split(',')[1]);
   var lowHeight = parseInt(document.getElementById('heightRange').value.split(',')[0]);
