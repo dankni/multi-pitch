@@ -45,6 +45,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.multi-pitch.com/" />
   <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg" />
+  <meta property="og:image:type" content="image/jpg">
   
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TTPTWM6');</script>
@@ -124,7 +125,7 @@
                   <label>Grade </label>
                   <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1" oninput="showVal(this.value, 'grade')"/><br />
                   <p id="grade" class="current-values">
-                    <span id="grade1">Diff</span> to <span id="grade2">HVS</span>
+                    <span id="grade1">Diff</span> to <span id="grade2">E1</span>
                   </p>
                 </div>
                 <div class="col-md-4">
@@ -141,7 +142,21 @@
                     <span id="approch1">0</span> to <span id="approch2">200</span> mins
                   </p>
                 </div>
-                <div class="col" style="text-align:center;padding-top:1rem;">
+			  </div>
+			  <div class="col" style="text-align:left;padding-top:1rem;">
+			    <p>Exclude:
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag norway fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag england fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag wales fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag scotland fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag spain fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag italy fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag usa fliter-flag"></span>
+				<span onclick="this.classList.toggle('disabled-flag');" class="flag ireland fliter-flag"></span>
+				</p>
+			  </div>
+			  <div class="row">
+                <div class="col" style="text-align:center;">
                   <p style="display:inline-block">Sort Climbs: </p>
                   <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();">
                     <option value="length,ASC">Shortest Climbs First</option>

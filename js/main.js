@@ -105,7 +105,7 @@ function showVal(values, field){
   var higherValue = values.split(',')[1];
   
   if (field == 'grade'){
-    const gradeMappings = { 1: 'Diff', 2: 'VDiff', 3: 'HVD', 4: 'Sev', 5: 'HS', 6: 'VS', 7: 'HVS' };
+    const gradeMappings = { 1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1' };
     lowerValue = gradeMappings[parseInt(lowerValue)];
     higherValue = gradeMappings[parseInt(higherValue)];
   }
