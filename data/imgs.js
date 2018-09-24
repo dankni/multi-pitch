@@ -519,5 +519,37 @@ const climbImgs = {
    "alt": "Scafell Crag in the Lake District",
    "atributionURL": "https://www.thebmc.co.uk/zoomtopo/scafell/",
    "attributionText": "view BMC super zoom"
+ },
+ {
+   "climbId": 18,
+   "type": "map",
+   "url": "img/maps/scafell-crag-location.png",
+   "alt": "Scafell Crag location",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 20,
+   "type": "crag",
+   "url": "img/topos/mournes/slieve-beg-crag-in-the-mournes.jpg",
+   "alt": "slieve beg crag in the mournes",
+   "atributionURL": "https://www.geograph.ie/profile/7056",
+   "attributionText": "img: Eric Jones"
+ },
+ {
+   "climbId": 20,
+   "type": "tile",
+   "url": "img/topos/mournes/slieve-beg-crag-in-the-mournes-s.jpg",
+   "alt": "slieve beg crag in the mournes",
+   "atributionURL": "https://www.geograph.ie/profile/7057",
+   "attributionText": "img: Eric Jones"
+ },
+ {
+   "climbId": 20,
+   "type": "topo",
+   "url": "img/topos/mournes/topo-for-poetic-justice-climb-in-the-mournes.jpg",
+   "alt": "Poetic Justice on Slieve Beg in the mournes",
+   "atributionURL": "https://www.geograph.ie/profile/7057",
+   "attributionText": "original:  Eric Jones"
  }
 ]};
