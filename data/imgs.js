@@ -551,5 +551,37 @@ const climbImgs = {
    "alt": "Poetic Justice on Slieve Beg in the mournes",
    "atributionURL": "https://www.geograph.ie/profile/7057",
    "attributionText": "original:  Eric Jones"
+ },
+ {
+   "climbId": 20,
+   "type": "map",
+   "url": "img/maps/mourne-mountains.png",
+   "alt": "Slieve Beg in the Mourne Mountains",
+   "atributionURL": "http://google.com/maps",
+   "attributionText": "Google Map"
+ },
+ {
+   "climbId": 19,
+   "type": "crag",
+   "url": "img/topos/indefatigable/mount-indefatigable-crag.jpg",
+   "alt": "Mount Indefatigable in Canada",
+   "atributionURL": "https://www.mountainproject.com/photo/107188369/joy-and-the-shining-path-approach-and-scree-descent",
+   "attributionText": "img source"
+ },
+ {
+   "climbId": 19,
+   "type": "tile",
+   "url": "img/tiles/mount-indefatigable.jpg",
+   "alt": "Mount Indefatigable in Canada",
+   "atributionURL": "https://www.summitpost.org/mount-indefatigable/482859/c-154593",
+   "attributionText": "img: Dow Williams"
+ },
+ {
+   "climbId": 19,
+   "type": "topo",
+   "url": "img/topos/indefatigable/mount-indefatigable-topo.jpg",
+   "alt": "Mount Indefatigable topo for Joy route in Canada",
+   "atributionURL": "https://www.summitpost.org/mount-indefatigable/482859/c-154593",
+   "attributionText": "original: Dow Williams"
  }
 ]};

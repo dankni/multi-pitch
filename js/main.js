@@ -266,8 +266,7 @@ function showTile(theId){
   var guideBook = guideBooks.books.find(book => book.climbId === theId); // ToDo: update to filter then allow multiple to show
   var weather = weatherData.weatherLines.filter(w => w.climbId === theId);
   var rain = weather.find(r => r.type === 'rainyDays');
-  var tempH = weather.find(h => h.type === 'tempH');
-  var tempL = weather.find(l => l.type === 'tempL');
+
 
   // a check to see if the user has landed on a page from a direct link
   if(isCardTurned != true){
@@ -369,47 +368,9 @@ function showTile(theId){
     var approachInfo = '';
     var approachInfo = '';
   }  
-  var tempInfo = '';
-    /** TODO: Refactor into on graph generator function **/
-  try {
-    if(tempH.Jan != ""){
-      var janO = tempL.Jan/40*100; var janH = (tempH.Jan - tempL.Jan) /40*100;
-      var febO = tempL.Feb/40*100; var febH = (tempH.Feb - tempL.Feb) /40*100;
-      var marO = tempL.Mar/40*100; var marH = (tempH.Mar - tempL.Mar) /40*100;
-      var aprO = tempL.Apr/40*100; var aprH = (tempH.Apr - tempL.Apr) /40*100;
-      var mayO = tempL.May/40*100; var mayH = (tempH.May - tempL.May) /40*100;
-      var junO = tempL.Jun/40*100; var junH = (tempH.Jun - tempL.Jun) /40*100;
-      var julO = tempL.Jul/40*100; var julH = (tempH.Jul - tempL.Jul) /40*100;
-      var augO = tempL.Aug/40*100; var augH = (tempH.Aug - tempL.Aug) /40*100;
-      var sepO = tempL.Sep/40*100; var sepH = (tempH.Sep - tempL.Sep) /40*100;
-      var octO = tempL.Oct/40*100; var octH = (tempH.Oct - tempL.Oct) /40*100;
-      var novO = tempL.Nov/40*100; var novH = (tempH.Nov - tempL.Nov) /40*100;
-      var decO = tempL.Dec/40*100; var decH = (tempH.Dec - tempL.Dec) /40*100;
-	
-      tempInfo = `
-	  <p>
-	    Estimated average high and low temperature in degrees celsiusfor the given month:
-	  </p>
-	  <ul class="chart temp">
-	    <li>${tempH.Jan}<span style="height:${janH}%" title="Jan"></span><span style="height:${janO}%;background-color:rgba(0,0,0,0);">${tempL.Jan}</span></li>
-	    <li>${tempH.Feb}<span style="height:${febH}%" title="Feb"></span><span style="height:${febO}%;background-color:rgba(0,0,0,0);">${tempL.Feb}</span></li>
-	    <li>${tempH.Mar}<span style="height:${marH}%" title="Mar"></span><span style="height:${marO}%;background-color:rgba(0,0,0,0);">${tempL.Mar}</span></li>
-	    <li>${tempH.Apr}<span style="height:${aprH}%" title="Apr"></span><span style="height:${aprO}%;background-color:rgba(0,0,0,0);">${tempL.Apr}</span></li>
-	    <li>${tempH.May}<span style="height:${mayH}%" title="May"></span><span style="height:${mayO}%;background-color:rgba(0,0,0,0);">${tempL.May}</span></li>
-	    <li>${tempH.Jun}<span style="height:${junH}%" title="Jun"></span><span style="height:${junO}%;background-color:rgba(0,0,0,0);">${tempL.Jun}</span></li>
-	    <li>${tempH.Jul}<span style="height:${julH}%" title="Jul"></span><span style="height:${julO}%;background-color:rgba(0,0,0,0);">${tempL.Jul}</span></li>
-	    <li>${tempH.Aug}<span style="height:${augH}%" title="Aug"></span><span style="height:${augO}%;background-color:rgba(0,0,0,0);">${tempL.Aug}</span></li>
-	    <li>${tempH.Sep}<span style="height:${sepH}%" title="Sep"></span><span style="height:${sepO}%;background-color:rgba(0,0,0,0);">${tempL.Sep}</span></li>
-	    <li>${tempH.Oct}<span style="height:${octH}%" title="Oct"></span><span style="height:${octO}%;background-color:rgba(0,0,0,0);">${tempL.Oct}</span></li>
-	    <li>${tempH.Nov}<span style="height:${novH}%" title="Nov"></span><span style="height:${novO}%;background-color:rgba(0,0,0,0);">${tempL.Nov}</span></li>
-	    <li>${tempH.Dec}<span style="height:${decH}%" title="Dec"></span><span style="height:${decO}%;background-color:rgba(0,0,0,0);">${tempL.Dec}</span></li>
-	  </ul>`;
-    } else {
-      tempInfo = '';
-    }  
-  } catch {
-    tempInfo = '';
-  } 
+  
+  /** TODO: Refactor into on graph generator function **/
+  var tempInfo = insertGraph("temp",theId,"string");
   
   try {
     if(rain.Jan != ""){
