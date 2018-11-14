@@ -1,4 +1,4 @@
-function insertGraph(type, climbId, target){
+function insertGraph(type, climbId, target){ //ToDo ------ Rename getGraphCode
 
   try {
 	  

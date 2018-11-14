@@ -374,6 +374,7 @@ function showTile(theId){
   
   try {
     if(rain.Jan != ""){
+	  // make this a loop and array
       var janR = rain.Jan/20*100;
       var febR = rain.Feb/20*100;
       var marR = rain.Mar/20*100;

@@ -4,6 +4,16 @@
 h1,h3,h4,p,ul {
   margin-top: 0;
 }
+h1 {
+  font-size: 2.5rem;
+}
+h3 {
+  font-size: 1.75rem;
+  padding-top:2rem
+}
+h4 {
+  font-size: 1.4rem
+} 
 p,ul {
   margin-bottom: 1rem;
 }
@@ -50,8 +60,17 @@ a {
   text-decoration: none;
   background-color: transparent;
   -webkit-text-decoration-skip: objects;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out
 }
 a:hover {
+  -webkit-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+  text-decoration: none;
   color: #0056b3;
   text-decoration: underline;
 }
@@ -97,24 +116,12 @@ button::-moz-focus-inner {
 }
 /*****************/
 /** ROOT STYLES **/
-h1 {
-  font-size: 2.5rem;
-}
-h3 {
-  font-size: 1.75rem;
-  padding-top:2rem
-}
-h4 {
-  font-size: 1.4rem
-} 
 .img-fluid {
   max-width: 100%;
   height: auto;
 }
 .btn {
   font-weight: 400;
-}
-.btn {
   display: inline-block;
   text-align: center;
   vertical-align: middle;
@@ -138,7 +145,7 @@ h4 {
 }
 .navbar-brand {
   display: inline-block;
-  padding-top: .3125rem;
+  padding-top: .3125rem; /*ToDo: Prob need to fix this */
   padding-bottom: .3125rem;
   margin-right: 1rem;
   font-size: 1.25rem;
@@ -185,6 +192,7 @@ h4 {
   border-top-left-radius: calc(.25rem - 1px);
   border-top-right-radius: calc(.25rem - 1px);
 }
+/*ToDo - Refactor out badges and remove these */
 .badge {
   font-weight: 700;
   line-height: 1;
@@ -215,15 +223,15 @@ h4 {
 }
 @media (min-width: 800px) {
   .align-items-center {   
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
   }
   .view{
-  text-align:right;
+    text-align:right;
   }
 }
 .text-center {
@@ -232,6 +240,7 @@ h4 {
 .view, .view .mask, .waves-effect {
   overflow: hidden;
 }
+/*ToDo - Refactor out these */ 
 .purple {
   background-color: #9c27b0!important
 }
@@ -260,6 +269,7 @@ h4 {
 a,a:disabled:hover {
   color: #0275d8
 }
+/* ToDo - Refactor out these */
 .badge,.btn,.btn:disabled:active,.btn:disabled:focus,.btn:disabled:hover,.card,.navbar {
   -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12)
@@ -272,19 +282,6 @@ a,a:disabled:hover {
 }
 :disabled {
   pointer-events: none!important
-}
-a {
-  cursor: pointer;
-  text-decoration: none;
-  -webkit-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out
-}
-a:hover {
-  -webkit-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
-  text-decoration: none
 }
 .img-fluid {
   max-width: 100%;
@@ -980,7 +977,7 @@ hr {
 }
 /* :checked */
 .accordian-input:checked ~ .accordian-content {
-  max-height: 50em;
+  max-height: 200em;
 }
 /* Icon */
 .accordian-label::after {
