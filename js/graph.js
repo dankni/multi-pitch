@@ -1,24 +1,18 @@
-function insertGraph(type, climbId, target){ //ToDo ------ Rename getGraphCode
+function getGraph(type, climbId, target){
 
-  try {
-	  
+  try { 
 	var weather = weatherData.weatherLines.filter(w => w.climbId === climbId);
-    var tempH = weather.find(h => h.type === 'tempH');
-	delete tempH.climbId;
-    delete tempH.type; 
-  
+    var tempH = weather.find(h => h.type === 'tempH');  
     var tempL = weather.find(l => l.type === 'tempL');
-    delete tempL.climbId;
-    delete tempL.type;
 	
 	var highArray = [];
-	for(let i = 0; i < 12; i++){
+	for(let i = 2; i < 14; i++){
 	  highArray.push(parseInt(Object.values(tempH)[i]));
 	}
 	var maxTemprature = Math.max.apply(null,highArray);
 
 	var lowArray = [];
-	for(let i = 0; i < 12; i++){
+	for(let i = 2; i < 14; i++){
 	  lowArray.push(parseInt(Object.values(tempL)[i]));
 	}
 	var minTemprature = Math.min.apply(null,lowArray);

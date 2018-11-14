@@ -369,10 +369,8 @@ function showTile(theId){
     var approachInfo = '';
   }  
   
-  /** TODO: Refactor into on graph generator function **/
-  var tempInfo = insertGraph("temp",theId,"string");
-  
   try {
+	var temprature = getGraph("temp",theId,"string");
     if(rain.Jan != ""){
 	  // make this a loop and array
       var janR = rain.Jan/20*100;
@@ -418,7 +416,7 @@ function showTile(theId){
               <li>${rain.Dec}<span style="height:${decR}%" title="Dec"></span></li>
             </ul>
 			<br />
-			${tempInfo}
+			${temprature}
           </div>
         </div>
       </div>
