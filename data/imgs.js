@@ -403,7 +403,7 @@ const climbImgs = {
  {
    "climbId": 15,
    "type": "map",
-   "url": "img/maps/evils-tower.png",
+   "url": "img/maps/devils-tower.png",
    "alt": "The Devils Tower Location USA",
    "atributionURL": "http://google.com/maps",
    "attributionText": "Google Map"
