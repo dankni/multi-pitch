@@ -370,22 +370,9 @@ function showTile(theId){
   }  
   
   try {
-	var temprature = getGraph("temp",theId,"string");
-    if(rain.Jan != ""){
-	  // make this a loop and array
-      var janR = rain.Jan/20*100;
-      var febR = rain.Feb/20*100;
-      var marR = rain.Mar/20*100;
-      var aprR = rain.Apr/20*100;
-      var mayR = rain.May/20*100;
-      var junR = rain.Jun/20*100;
-      var julR = rain.Jul/20*100;
-      var augR = rain.Aug/20*100;
-      var sepR = rain.Sep/20*100;
-      var octR = rain.Oct/20*100;
-      var novR = rain.Nov/20*100;
-      var decR = rain.Dec/20*100;
-      var weatherInfo = `
+	var temprature = getGraph("temperature",theId);
+	var rain = getGraph("rain",theId);
+    var weatherInfo = `
     <hr />
     <div class="row accordian">
       <div class="col">
@@ -401,33 +388,21 @@ function showTile(theId){
 	        <p>
 			  Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
 			</p>
-            <ul class="chart">
-              <li>${rain.Jan}<span style="height:${janR}%" title="Jan"></span></li>
-              <li>${rain.Feb}<span style="height:${febR}%" title="Feb"></span></li>
-              <li>${rain.Mar}<span style="height:${marR}%" title="Mar"></span></li>
-              <li>${rain.Apr}<span style="height:${aprR}%" title="Apr"></span></li>
-              <li>${rain.May}<span style="height:${mayR}%" title="May"></span></li>
-              <li>${rain.Jun}<span style="height:${junR}%" title="Jun"></span></li>
-              <li>${rain.Jul}<span style="height:${julR}%" title="Jul"></span></li>
-              <li>${rain.Aug}<span style="height:${augR}%" title="Aug"></span></li>
-              <li>${rain.Sep}<span style="height:${sepR}%" title="Sep"></span></li>
-              <li>${rain.Oct}<span style="height:${octR}%" title="Oct"></span></li>
-              <li>${rain.Nov}<span style="height:${novR}%" title="Nov"></span></li>
-              <li>${rain.Dec}<span style="height:${decR}%" title="Dec"></span></li>
-            </ul>
+            ${rain}
 			<br />
+			<p>
+			  Estimated average high and low temperature in degrees Celsius for the given month below. 
+			  Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
+			  Plan accordingly! 
+		    </p>
 			${temprature}
           </div>
         </div>
       </div>
     </div>`;
-  } else {
-      var weatherInfo = '';
-	  console.log(1);
-    }  
   } catch {
     var weatherInfo = '';
-    console.log(2);
+    console.log("weather error for: " + climbId);
   }   
  
   var fullCard = `
