@@ -355,7 +355,7 @@
 			</div>
 			<div class="mc-field-group input-group">
 				<strong>Preferred Grading System </strong>
-				<ul><li><input type="radio" value="British Adjectival" name="MMERGE3" id="mce-MMERGE3-0"><label for="mce-MMERGE3-0">British Adjectival</label></li>
+				<ul><li onClick="updateGradeLabel('british')"><input type="radio" value="British Adjectival" name="MMERGE3" id="mce-MMERGE3-0"><label for="mce-MMERGE3-0">British Adjectival</label></li>
 			<li><input type="radio" value="UIAA" name="MMERGE3" id="mce-MMERGE3-1"><label for="mce-MMERGE3-1">UIAA</label></li>
 			<li><input type="radio" value="Yosemite Aecimal System" name="MMERGE3" id="mce-MMERGE3-2"><label for="mce-MMERGE3-2">Yosemite Aecimal System</label></li>
 			<li><input type="radio" value="Norwegian" name="MMERGE3" id="mce-MMERGE3-3"><label for="mce-MMERGE3-3">Norwegian</label></li>
@@ -384,13 +384,27 @@
 	  </section>
 	</div>
   </main>
+  <script>
+  // ToDo: make onChange event for name field MMERGE3
+    function updateGradeLabel(gradeSystem){
+	
+	  var easyLabel = document.getElementById('mce-group[1447]-1447-0');
+	  var mediumLabel = document.getElementById('mce-group[1447]-1447-1');
+	  var hardLabel = document.getElementById('mce-group[1447]-1447-2');
+	  
+	  if(gradeSystem == 'british'){
+	    easyLabel.label.textContent = "Up to VDiff";
+	  }
+	  
+	}
+  </script>
 <!--Footer-->
   <footer class="page-footer text-center font-small mt-4" >
     <div class="footer-copyright py-3">
       © 2018 Copyright: <a href="http://www.multi-pitch.com" > multi-pitch.com </a>
     </div>
   </footer>
-<!-- Google Tag Manager (noscript) -->
+  <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTPTWM6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </body>
 </html>

@@ -262,7 +262,7 @@ const climbImgs = {
     "url": "img/tiles/meadinha-in-portugal.jpg",
     "alt": "The Granite dome of Meadinha",
     "atributionURL": "http://chinelodemeterodedo.com/escalada-classica-no-parque-nacional-da-peneda-geres-meadinha/",
-    "attributionText": ""
+    "attributionText": "img source"
   },
   {
     "climbId": 10,
@@ -617,10 +617,34 @@ const climbImgs = {
     "attributionText": "img: thewisebackpacker.com"
   },
   {
-    "climbId": 19,
+    "climbId": 21,
     "type": "map",
     "url": "img/maps/lion-rock.png",
     "alt": "Location of Lion Rock in Hong Kong China",
+    "atributionURL": "http://google.com/maps",
+    "attributionText": "Google Map"
+  },
+  {
+    "climbId": 9,
+    "type": "topo",
+    "url": "img/topos/meadinha/meadina-topo-for-queles.jpg",
+    "alt": "Topo for Queles on Meadinha in Portugal",
+    "atributionURL": "https://www.allaboutportugal.pt/pt/arcos-de-valdevez/jardins/miradouro-do-penedo-da-meadinha",
+    "attributionText": "original img"
+  },
+  {
+    "climbId": 9,
+    "type": "crag",
+    "url": "img/topos/meadinha/meadina-crag-in-north-portugal.jpg",
+    "alt": "Meadinha Granite Dome in Portugal",
+    "atributionURL": "http://noroestetrad.blogspot.com/p/situacion-y-acceso-la-peneda.html",
+    "attributionText": "img source"
+  },
+  {
+    "climbId": 9,
+    "type": "map",
+    "url": "img/maps/meadinha-map-portugal.png",
+    "alt": "Location of Meadinha in North Portugal",
     "atributionURL": "http://google.com/maps",
     "attributionText": "Google Map"
   }
