@@ -8,9 +8,9 @@
   <title>The best multi-pitch rock climbs</title>
   
   <!-- Styles -->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
   <link href="css/bootstrap-grid.css" rel="stylesheet" />
   <link href="css/style.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />  
   
   <!-- JavaScripts -->
   <script src="data/climbs.js"></script>
@@ -48,7 +48,7 @@
   <meta property="og:image:type" content="image/jpg">
   
   <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TTPTWM6');</script>
+  <script defer>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TTPTWM6');</script>
   
 </head>
 <body id="bdy">
@@ -92,7 +92,7 @@
               <strong>
                 Muti-pitch.com is dedicated to cataloguing the best traditionally protected 
                 multi-pitch rock climbs that are at least 50m high. 
-                The initial focus of the site is on climbs graded from Difficult to Hard Very Severe. 
+                The initial focus of the site is on climbs graded from Difficult to Hard Very Severe & E1. 
               </strong>
             </p>
           </div>
@@ -201,18 +201,68 @@
 		  We won't ever send more than 2 emails a month and we won't share any of your details with 
 		  anyone else.
 	    </p>
-		<a class="btn btn-outline-white" href="/subscribe" role="button">SUBSCRIBE TO UPDATES</a>
+		<a class="btn btn-outline-white" href="" onClick="openSubscribe(); return false;" role="button">SUBSCRIBE TO UPDATES</a>
       </div>	  
     </div>
     </div>
     <div class="footer-copyright">
       <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">© 2019 Creative Commons</a> - <a href="/"> multi-pitch.com </a>
     </div>
+	<script>
+	  function openSubscribe(){
+		var request = new XMLHttpRequest();
+		request.open('GET', '/subscribe/index.html', true);
+		
+		request.onload = function() {
+		  if (this.status >= 200 && this.status < 400) {
+			var resp = this.response;	    
+			document.getElementById('overlay').innerHTML = resp;
+			document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);");
+			document.getElementById('close').setAttribute("style", "display:block;");
+			document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+		  } else {
+			console.log('failed to get subscribe');
+		  }
+		};
+		request.onerror = function() {
+		  console.log('There was a connection error of some sort');
+		};
+		request.send();
+	  }
+	    // ToDo: make onChange event for name field MMERGE3
+      function updateGradeLabel(gradeSystem){
+   	
+  	    var easyLabel = document.getElementById('easy-label');
+	    var mediumLabel = document.getElementById('med-label');
+	    var hardLabel = document.getElementById('hard-label');
+	  
+	    if(gradeSystem == 'british'){
+	      easyLabel.textContent = "Up to VDiff";
+	      mediumLabel.textContent = "Severe to VS ";
+	      hardLabel.textContent = "HVS or harder";
+	    }
+	    else if(gradeSystem == 'uiaa'){
+	      easyLabel.textContent = "Up to UIAA IV";
+	      mediumLabel.textContent = "UIAA IV to V ";
+	      hardLabel.textContent = "UIAA V+ harder";
+	    }
+	    else if(gradeSystem == 'yds'){
+	      easyLabel.textContent = "Up to 5.5";
+	      mediumLabel.textContent = "5.6 to 5.8 ";
+	      hardLabel.textContent = "5.9 or harder";
+	    }
+	    else if(gradeSystem == 'norwegian'){
+	      easyLabel.textContent = "Up to 3";
+	      mediumLabel.textContent = "4 to 5 ";
+	      hardLabel.textContent = "5+ or harder";
+	    }  
+	  }
+	</script>
   </footer>
   <a onClick="hideTile()" class="close" id="close"></a>
   <div class="overlay" id="overlay"></div>
   
-  <!-- Google Tag Manager (noscript) need to `defer` this -->
+  <!-- Google Tag Manager -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTPTWM6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </body>
 </html>
