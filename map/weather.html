@@ -147,8 +147,8 @@
         var baseMaps = { "OSM Standard": osmLayer };
         var overlayMaps = {
             "Precipitation": ownPrecipitationLayer,
-            "Temperature": ownTemperatureLayer,
-            "Wind": ownWindLayer
+            // "Temperature": ownTemperatureLayer,
+            // "Wind": ownWindLayer
         };
         var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
@@ -169,7 +169,7 @@
                     .addTo(map);
             });
         }
-        
+
         fetchWeatherAndAddMarkers(climbs);
 /*	
 		accessToken: 'pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw'

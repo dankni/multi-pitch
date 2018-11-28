@@ -102,7 +102,7 @@ const guideBooks = {
     "title": "Portugal, Rock climbs on the western tip of Europe",
     "type": "guidebook",
     "pg": 34,
-    "description": "A solid guidebook with clear topography that is well organised and covers bouldering, sport and trad. The book lacks detailed descriptions on the routes themselves, but this is probably a good thing for those with a string on-sight ethic. The book is not essential for climbing at Meadinha as the meadinah.com website has far more information but the book is a worthwhile purchase for someone traveling around Portugal, however the price tag feels a bit high all things considered.",
+    "description": "A solid guidebook with clear topography that is well organised and covers bouldering, sport and trad. The book lacks detailed descriptions on the routes themselves, but this is probably a good thing for those with a strong on-sight ethic. The book is not essential for climbing at Meadinha as the meadinah.com website has far more information but the book is a worthwhile purchase for someone traveling around Portugal, however the price tag feels a bit high all things considered.",
     "imgURL": "img/guidebooks/rock-climbs-in-portugal.jpg",
     "link": "",
     "rrp": 34.95,
@@ -251,5 +251,17 @@ const guideBooks = {
     "link": "https://hongkongclimbing.files.wordpress.com/2012/06/lionrock.pdf",
     "rrp": "FREE",
     "guidePrice": "FREE"
+  },
+  {
+    "climbId": 22,
+    "isbn": 9781873341954,
+    "title": "Costa Blanca",
+    "type": "guidebook",
+    "pg": 267,
+    "description": "A brilliant book covering a wide and varied set of crags in sunny Spain. This Rockfax guide covers the climbs around Calpe including Diedre UBSA and many others. A great book for the multi-pitch climber with a penchant for trad. The old edition can be picked up cheap if you are on a budget, but the updated guide covers more routes and areas. Peñón de Ifach is in both versions in detail.",
+    "imgURL": "img/guidebooks/costa-blanca.jpg",
+    "link": "",
+    "rrp": 29.95,
+    "guidePrice": 25
   }
 ]};

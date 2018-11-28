@@ -647,5 +647,29 @@ const climbImgs = {
     "alt": "Location of Meadinha in North Portugal",
     "atributionURL": "http://google.com/maps",
     "attributionText": "Google Map"
+  },
+  {
+    "climbId": 22,
+    "type": "crag",
+    "url": "img/topos/penon/penon-costa-blanca.jpg",
+    "alt": "Peñón de Ifach rising out of the costline of Costa Blanca offers great climbing",
+    "atributionURL": "https://commons.wikimedia.org/wiki/File:Pe%C3%B1%C3%B3n_de_Ifach,_Calpe,_Espa%C3%B1a,_2014-07-01,_DD_13.JPG",
+    "attributionText": "img source"
+  },
+  {
+    "climbId": 22,
+    "type": "tile",
+    "url": "img/tiles/penon-costa-blanca.jpg",
+    "alt": "Peñón de Ifach rising out of the costline of Costa Blanca offers great climbing",
+    "atributionURL": "https://commons.wikimedia.org/wiki/File:Pe%C3%B1%C3%B3n_de_Ifach,_Calpe,_Espa%C3%B1a,_2014-07-01,_DD_13.JPG",
+    "attributionText": "img source"
+  },
+  {
+    "climbId": 22,
+    "type": "topo",
+    "url": "img/topos/penon/penon-topo-for-diedre-UBSA.jpg",
+    "alt": "Diedro UBSA topo on the south face near Calpe",
+    "atributionURL": "https://verticalfever.co.uk/2013/10/24/costa-blanca-round-up/",
+    "attributionText": "original: vertical fever"
   }
 ]};
