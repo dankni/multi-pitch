@@ -370,36 +370,40 @@ function showTile(theId){
   }  
   
   try {
-	var temprature = getGraph("temperature",theId);
-	var rain = getGraph("rain",theId);
-    var weatherInfo = `
-    <hr />
-    <div class="row accordian">
-      <div class="col">
-        <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
-        <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
-        <div class="smaller accordian-content">
-          <div>
-            <p>
-		      NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
-	          This could be quite far away and at a darmatically different elevation. 
-			  This means it could be considerably colder or wetter on some mountain climbs.</em>
-	        </p>
-	        <p>
-			  Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
-			</p>
-            ${rain}
-			<br />
-			<p>
-			  Estimated average high and low temperature in degrees Celsius for the given month below. 
-			  Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
-			  Plan accordingly! 
-		    </p>
-			${temprature}
+    if (rain != null){
+      var temprature = getGraph("temperature",theId);
+	  var rain = getGraph("rain",theId);
+      var weatherInfo = `
+      <hr />
+      <div class="row accordian">
+        <div class="col">
+          <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
+          <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
+          <div class="smaller accordian-content">
+            <div>
+              <p>
+		        NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
+	            This could be quite far away and at a darmatically different elevation. 
+		  	    This means it could be considerably colder or wetter on some mountain climbs.</em>
+	          </p>
+	          <p>
+			    Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
+			  </p>
+              ${rain}
+			  <br />
+			  <p>
+			    Estimated average high and low temperature in degrees Celsius for the given month below. 
+			    Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
+			    Plan accordingly! 
+		      </p>
+			  ${temprature}
+            </div>
           </div>
         </div>
-      </div>
-    </div>`;
+      </div>`;
+	} else {
+	  var weatherInfo = '';
+	}
   } catch {
     var weatherInfo = '';
     console.log("weather error for: " + climbId);
