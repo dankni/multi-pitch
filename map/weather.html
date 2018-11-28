@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Multi-pitch Climbs around Europe</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+    <link href="../css/bootstrap-grid.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <script src="../data/climbs.js"></script>
+    <script src="../data/imgs.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin=""></script>
+
+    <!-- fix the below hack -->
+    <style>
+        html, body {
+    max-width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  .leaflet-popup-content{
+    margin:0 !important;
+	width:250px;
+	text-align:center;
+  }
+  .leaflet-popup-content-wrapper{
+    border-radius:0 !important;
+  }
+  .leaflet-popup-content-wrapper{
+    padding: 0 0 1px 0 !important;
+  }
+  .pop-up-title {
+    background-color: rgba(0,0,0,0.5);
+	margin-top: -29px;
+	position: absolute;
+	width: 100%;
+	left: 0;
+    color: #FFF;
+    padding: 6px;
+  }  
+  .pop-up-title a {
+      color: #FFF;
+  }
+  </style>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="../img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="../img/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+            </a>
+            <ul>
+                <li>
+                    <a href="/#filters">Find <span class="not-mobile">Your Climb</span></a>
+                </li>
+                <li>
+                    <a href="/map">Map <span class="not-mobile">View</span></a>
+                </li>
+                <li>
+                    <a href="/about">About <span class="not-mobile">&amp; Contact Us</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- No Main Body - Just a Map -->
+    <div id="map" style="width: 100%;overflow: none;height: 100%;display: block;min-height: 300px;margin-top:58px;"></div>
+    <!--Footer-->
+    <footer class="page-footer text-center font-small mt-4" style="margin-top:-40px">
+        <div class="footer-copyright">
+            © 2018 Copyright: <a href="/" target="_blank"> multi-pitch.com </a>
+        </div>
+    </footer>
+    <!-- SCRIPTS -->
+    <script>
+        var climbs = [];
+        var owmAppKey = "ff36c76ad099d751ff2351936208f19d";
+        
+        var ownPrecipitationTile = `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${owmAppKey}`;
+        var ownWindTile = `https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${owmAppKey}`;
+        var ownTemperatureTile = `https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${owmAppKey}`;
+
+        for (var i = 0; i < climbsData.climbs.length; i++) {
+            if (climbsData.climbs[i].status === 'publish') {
+                var lat = parseFloat(climbsData.climbs[i].geoLocation.split(',')[0]);
+                var lon = parseFloat(climbsData.climbs[i].geoLocation.split(',')[1]);
+                var ownWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${owmAppKey}`
+                var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsData.climbs[i].id);  //note find returns first vs fillter returns all.
+                var cragImg = cImgs.find(img => img.type === 'tile');
+                var content = '<a href="/?overview=' + climbsData.climbs[i].id + '"><img src="/' + cragImg.url + '" style="width:100%;" /><br />' +
+                    '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
+                    '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
+                    'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins' +
+                    '<br />Temperature: <strong>${placeholder-temp}&nbsp;°C</strong></p>';
+                climbs.push({
+                    content: content,
+                    lat: lat,
+                    lon: lon,
+                    ownWeatherUrl: ownWeatherUrl,
+                    iconWeather: "http://openweathermap.org/img/w/${placeholder-weather-icon}.png"
+                });
+
+            }
+        }
+        var baseLayerOptions = {
+            maxZoom: 18
+        }
+        var mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+        var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            Object.assign({
+                attribution: '&copy; ' + mapLink + ' Contributors'
+            }, baseLayerOptions));
+            
+        var ownPrecipitationLayer = L.tileLayer(ownPrecipitationTile, baseLayerOptions);
+        var ownTemperatureLayer = L.tileLayer(ownTemperatureTile, baseLayerOptions);
+        var ownWindLayer = L.tileLayer(ownWindTile, baseLayerOptions);
+
+        var map = L.map('map', { center: new L.LatLng(50.914835, -4.559586), zoom: 5, layers: [osmLayer, ownPrecipitationLayer] });
+        var baseMaps = { "OSM Standard": osmLayer };
+        var overlayMaps = {
+            "Precipitation": ownPrecipitationLayer,
+            // "Temperature": ownTemperatureLayer,
+            // "Wind": ownWindLayer
+        };
+        var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+        var fetchWeatherAndAddMarkers =(climbs) => {
+            climbs.forEach(async climb => {
+                const response = await fetch(climb.ownWeatherUrl);
+                const ownResponse = await response.json();
+                climb.content = climb.content.replace("${placeholder-temp}", ownResponse.main.temp)
+                climb.iconWeather = climb.iconWeather.replace("${placeholder-weather-icon}", ownResponse.weather[0].icon)
+
+                var myWeatherIcon = L.icon({
+                    iconUrl: climb.iconWeather,
+                    iconSize: [50, 50]
+                });
+                new L.marker([climb.lat, climb.lon], { icon: myWeatherIcon })
+                    .bindPopup(climb.content)
+                    .addTo(map);
+            });
+        }
+
+        fetchWeatherAndAddMarkers(climbs);
+/*	
+		accessToken: 'pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw'
+*/
+    </script>
+</body>
+
+</html>
