@@ -9,6 +9,7 @@ jobs:
       - run:
           name: Build files
           command: |
+            rm -rf website
             mkdir website
             cp index.html website
             cp manifest.json website
@@ -30,15 +31,13 @@ jobs:
           command: aws s3 sync website s3://com.multipitch/builds --delete
       - run:
           name: Output path
-          command: echo "https://s3.amazonaws.com/com.multipitch/builds/test.html"
+          command: echo "https://s3.amazonaws.com/com.multipitch/builds/index.html"
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
       - build:
-          requires:
-            - build
           filters:
             branches:
               only: master
