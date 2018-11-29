@@ -1,6 +1,7 @@
 # Notepad ++ Backups #
 ######################
 *.bak
+*.idea
 
 # Paint.net files #
 ###################

@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:2.7-jessie
+    working_directory: /tmp/multipitch
+    steps:
+      - run:
+          name: Build files
+          command: |
+            mkdir dist
+            cp index.html dist
+            cp -r about dist
+            cp -r cornakey-cliff dist
+            cp -r css dist
+            cp -r data dist
+            cp -r fonts dist
+            cp -r img dist
+            cp -r js dist
+            cp -r map dist
+            cp -r subscribe dist
+
+  deploy:
+    docker:
+      - image: circleci/python:2.7-jessie
+    working_directory: /tmp/multipitch
+    steps:
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+      - run:
+          name: Deploy to S3
+          command: aws s3 sync dist s3://com.multipitch/builds --delete
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
