@@ -11,6 +11,8 @@ jobs:
           command: |
             mkdir website
             cp index.html website
+            cp manifest.json website
+            cp favicon.ico website
             cp -r about website
             cp -r cornakey-cliff website
             cp -r css website
@@ -20,25 +22,21 @@ jobs:
             cp -r js website
             cp -r map website
             cp -r subscribe website
-
-  deploy:
-    docker:
-      - image: circleci/python:2.7-jessie
-    working_directory: /tmp/multipitch
-    steps:
       - run:
           name: Install awscli
           command: sudo pip install awscli
       - run:
           name: Deploy to S3
           command: aws s3 sync website s3://com.multipitch/builds --delete
+      - run:
+          name: Output path
+          command: echo "https://s3.amazonaws.com/com.multipitch/builds/test.html"
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build
-      - deploy:
+      - build:
           requires:
             - build
           filters:
