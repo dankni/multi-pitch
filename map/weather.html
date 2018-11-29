@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <link href="../css/bootstrap-grid.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
+	<link href="../css/owfont-regular.css" rel="stylesheet" />
     <script src="../data/climbs.js"></script>
     <script src="../data/imgs.js"></script>
 
@@ -119,13 +120,15 @@
                     '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
                     '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
                     'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins' +
-                    '<br />Temperature: <strong>${placeholder-temp}&nbsp;°C</strong></p>';
+                    '<br /><hr style="width: 60%;margin: 10px auto;"/> ' +
+					'<i class="owf owf-${placeholder-weather-id} owf-3x"></i>' + 
+					'<br />Conditions: <strong>${placeholder-conditions}</strong>' +
+					'<br/>Temperature: <strong>${placeholder-temp}&nbsp;°C</strong></p>';
                 climbs.push({
                     content: content,
                     lat: lat,
                     lon: lon,
                     ownWeatherUrl: ownWeatherUrl,
-                    iconWeather: "http://openweathermap.org/img/w/${placeholder-weather-icon}.png"
                 });
 
             }
@@ -158,13 +161,11 @@
                 const response = await fetch(climb.ownWeatherUrl);
                 const ownResponse = await response.json();
                 climb.content = climb.content.replace("${placeholder-temp}", ownResponse.main.temp)
-                climb.iconWeather = climb.iconWeather.replace("${placeholder-weather-icon}", ownResponse.weather[0].icon)
-
-                var myWeatherIcon = L.icon({
-                    iconUrl: climb.iconWeather,
-                    iconSize: [50, 50]
-                });
-                new L.marker([climb.lat, climb.lon], { icon: myWeatherIcon })
+                climb.content = climb.content.replace("${placeholder-weather-id}", ownResponse.weather[0].id)
+                climb.content = climb.content.replace("${placeholder-conditions}", ownResponse.weather[0].description)
+				console.log(ownResponse.weather[0]);
+   
+                new L.marker([climb.lat, climb.lon])
                     .bindPopup(climb.content)
                     .addTo(map);
             });
