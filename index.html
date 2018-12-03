@@ -1,268 +1,288 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <title>The best multi-pitch rock climbs</title>
-  
-  <!-- Styles -->
-  <link href="css/bootstrap-grid.css" rel="stylesheet" />
-  <link href="css/style.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />  
-  
-  <!-- JavaScripts -->
-  <script src="data/climbs.js"></script>
-  <script src="data/imgs.js"></script>
-  <script src="data/guidebooks.js"></script>
-  <script src="data/weather.js"></script>
-  <script src="js/graph.js"></script>
-  <script src="js/main.js"></script>
-  
-  <!-- Favicons -->
-  <link rel="apple-touch-icon" sizes="57x57" href="img/favicon/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="img/favicon/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="img/favicon/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="img/favicon/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="img/favicon/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="img/favicon/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192"  href="img/favicon/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="img/favicon/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
-    
-  <!-- Sharing Tags -->
-  <meta property="og:title" content="The best multi-pitch rock climbs" />
-  <meta property="og:description" content=" Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.multi-pitch.com/" />
-  <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg" />
-  <meta property="og:image:type" content="image/jpg">
-  
-  <!-- Google Tag Manager -->
-  <script defer>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TTPTWM6');</script>
-  
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>The best multi-pitch rock climbs</title>
+
+    <!-- Styles -->
+    <link href="css/bootstrap-grid.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet"/>
+
+    <!-- JavaScripts -->
+    <!--<script src="data/climbs.js"></script>-->
+    <!--<script src="data/imgs.js"></script>-->
+    <!--<script src="data/guidebooks.js"></script>-->
+    <!--<script src="data/weather.js"></script>-->
+    <script src="./js/load-data.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Sharing Tags -->
+    <meta property="og:title" content="The best multi-pitch rock climbs"/>
+    <meta property="og:description"
+          content=" Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://www.multi-pitch.com/"/>
+    <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg"/>
+    <meta property="og:image:type" content="image/jpg">
+
+    <!-- Google Tag Manager -->
+    <script defer>(function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+        var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-TTPTWM6');</script>
+
 </head>
 <body id="bdy">
 <!-- Navbar -->
- <a 
-  class="ca3-scroll-down-link ca3-scroll-down-arrow not-mobile" 
-  data-ca3_iconfont="ETmodules" data-ca3_icon="" 
-  onClick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});'></a>
-  <nav>
+<a
+        class="ca3-scroll-down-link ca3-scroll-down-arrow not-mobile"
+        data-ca3_iconfont="ETmodules" data-ca3_icon=""
+        onClick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});'></a>
+<nav>
     <div class="container">
-      <a class="navbar-brand" href="/">
-        <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
-      </a>
+        <a class="navbar-brand" href="/">
+            <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo"/>
+        </a>
         <ul>
-          <li>
-            <a href="/#filters" onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>Find <span class="not-mobile">Your Climb</span></a>
-          </li>
-          <li>
-            <a href="/map">Map <span class="not-mobile">View</span></a>
-          </li>       
-          <li>
-            <a href="/about">About <span class="not-mobile">&amp; Contact Us</span></a>
-          </li>
+            <li>
+                <a href="/#filters"
+                   onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>Find <span
+                        class="not-mobile">Your Climb</span></a>
+            </li>
+            <li>
+                <a href="/map">Map <span class="not-mobile">View</span></a>
+            </li>
+            <li>
+                <a href="/about">About <span class="not-mobile">&amp; Contact Us</span></a>
+            </li>
         </ul>
     </div>
-  </nav>
+</nav>
 
 <!-- Full Page Intro -->
-  <div class="view full-page-intro" style="background-image: url('img/heros/old-man-of-stoer-hero.jpg'); background-position:top left;background-repeat: no-repeat; background-size: cover;">
+<div class="view full-page-intro"
+     style="background-image: url('img/heros/old-man-of-stoer-hero.jpg'); background-position:top left;background-repeat: no-repeat; background-size: cover;">
     <div class="mask rgba-black-light d-flex align-items-center">
-      <div class="container">
-        <div class="row" >
-          <div class="col-md-3 white-text not-mobile">
-            <!--offsets text -->
-          </div>
-          <div class="col-md-9 mb-4 white-text hero">
-            <h1 class="display-4">Only the best multi&#8209;pitch&nbsp;climbs</h1>
-            <h3 class="display-6">Carefully curated & meticulously&nbsp;detailed</h3>
-            <hr class="hr-light">
-            <p class="mb-4 d-md-block">
-              <strong>
-                Muti-pitch.com is dedicated to cataloguing the best traditionally protected 
-                multi-pitch rock climbs that are at least 50m high. 
-                The initial focus of the site is on climbs graded from Difficult to Hard Very Severe & E1. 
-              </strong>
-            </p>
-          </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 white-text not-mobile">
+                    <!--offsets text -->
+                </div>
+                <div class="col-md-9 mb-4 white-text hero">
+                    <h1 class="display-4">Only the best multi&#8209;pitch&nbsp;climbs</h1>
+                    <h3 class="display-6">Carefully curated & meticulously&nbsp;detailed</h3>
+                    <hr class="hr-light">
+                    <p class="mb-4 d-md-block">
+                        <strong>
+                            Muti-pitch.com is dedicated to cataloguing the best traditionally protected
+                            multi-pitch rock climbs that are at least 50m high.
+                            The initial focus of the site is on climbs graded from Difficult to Hard Very Severe & E1.
+                        </strong>
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  
+</div>
+
 <!-- Main Content -->
-  <main id="main">
+<main id="main">
     <div class="container">
-      <section class="mt-5">
-        <div class="row">
-          <div class="col-md-12 mb-12">
-            <h3 class="h3">Find Your Climb</h3>
-            <p>
-              We are activly expnding and our selection of traditional multi-pitch rock 
-              climbs. The site is built on a <em>less but better</em> Philosophy.
-            </p>
-            <p>
-              These are the latest climbs we have cataloged and outlined in detail. There 
-              are 2 main methods for finding your perfect multi-pitch rock climb, 
-			  you can either browse the <a href="map/">map view</a> to find nearby crags
-			  or you can use the list view below with detailed filtering capabilities.
-            </p>
-            <form class="filters" id="filters">
-              <h4>Filter &amp; Sort Climbs</h4>
-              <div class="row">
-                <div class="col-md-4">
-                  <label>Grade </label>
-                  <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1" oninput="showVal(this.value, 'grade')"/><br />
-                  <p id="grade" class="current-values">
-                    <span id="grade1">Diff</span> to <span id="grade2">E1</span>
-                  </p>
+        <section class="mt-5">
+            <div class="row">
+                <div class="col-md-12 mb-12">
+                    <h3 class="h3">Find Your Climb</h3>
+                    <p>
+                        We are activly expnding and our selection of traditional multi-pitch rock
+                        climbs. The site is built on a <em>less but better</em> Philosophy.
+                    </p>
+                    <p>
+                        These are the latest climbs we have cataloged and outlined in detail. There
+                        are 2 main methods for finding your perfect multi-pitch rock climb,
+                        you can either browse the <a href="map/">map view</a> to find nearby crags
+                        or you can use the list view below with detailed filtering capabilities.
+                    </p>
+                    <form class="filters" id="filters">
+                        <h4>Filter &amp; Sort Climbs</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Grade </label>
+                                <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1"
+                                       oninput="showVal(this.value, 'grade')"/><br/>
+                                <p id="grade" class="current-values">
+                                    <span id="grade1">Diff</span> to <span id="grade2">E1</span>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Height </label>
+                                <input id="heightRange" type="range" multiple value="50,600" min="50" max="600" step="5"
+                                       oninput="showVal(this.value, 'height')"/><br/>
+                                <p id="height" class="current-values">
+                                    <span id="height1">50</span>m to <span id="height2">600</span>m
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Approch </label>
+                                <input id="approchRange" type="range" multiple value="0,200" min="0" max="200" step="10"
+                                       oninput="showVal(this.value, 'approch')"/><br/>
+                                <p id="pitches" class="current-values">
+                                    <span id="approch1">0</span> to <span id="approch2">200</span> mins
+                                </p>
+                            </div>
+                            <div class="col" style="text-align:center;">
+                                <p style="display:inline-block">Sort Climbs: </p>
+                                <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();">
+                                    <option value="length,ASC">Shortest Climbs First</option>
+                                    <option value="length,DESC">Longest Climbs First</option>
+                                    <option value="dataGrade,ASC">Easiest Climbs First</option>
+                                    <option value="dataGrade,DESC">Hardest Climbs First</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-md-4">
-                  <label>Height </label>
-                  <input id="heightRange" type="range" multiple value="50,600" min="50" max="600" step="5" oninput="showVal(this.value, 'height')" /><br />
-                  <p id="height" class="current-values">
-                    <span id="height1">50</span>m to <span id="height2">600</span>m
-                  </p>
+            </div>
+            <div class="row" id="cardHolder">
+                <div class="col-md-12 no-results" id="noResults" style="display:none">
+                    <p>
+                        <strong>No Climbs Found!</strong>
+                    </p>
+                    <p>
+                        <em>Adjust the filters to find great multipitch climbs to your linking!</em>
+                    </p>
                 </div>
-                <div class="col-md-4">
-                  <label>Approch </label> 
-                  <input  id="approchRange"type="range" multiple value="0,200" min="0" max="200" step="10" oninput="showVal(this.value, 'approch')"  /><br />
-                  <p id="pitches" class="current-values">
-                    <span id="approch1">0</span> to <span id="approch2">200</span> mins
-                  </p>
-                </div>
-                <div class="col" style="text-align:center;">
-                  <p style="display:inline-block">Sort Climbs: </p>
-                  <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();">
-                    <option value="length,ASC">Shortest Climbs First</option>
-                    <option value="length,DESC">Longest Climbs First</option>
-                    <option value="dataGrade,ASC">Easiest Climbs First</option>
-                    <option value="dataGrade,DESC">Hardest Climbs First</option>
-                  </select>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="row" id="cardHolder">
-          <div class="col-md-12 no-results" id="noResults" style="display:none">
-          <p>
-            <strong>No Climbs Found!</strong>
-          </p>     
-          <p>
-            <em>Adjust the filters to find great multipitch climbs to your linking!</em>
-          </p>
-        </div>
-      </section>    
+        </section>
     </div>
-  </main>
+</main>
 <!--Footer-->
-  <footer class="page-footer text-center font-small">
-   <!-- <div class="row">
-      <div class="col-12">
-        <a class="btn btn-outline-white" href="/about#contact" role="button">CONTACT</a>
-	    <a class="btn btn-outline-white" href="/subscribe" role="button">SUBSCRIBE TO UPDATES</a>
-      </div>
-    </div>-->
-	<div class="container">
-	<div class="row">
-	  <div class="col-md-4">
-	    <h4>Rock Climbing is Dangerous</h4>
-	    <p style="min-height:90px">
-		  Do not treat this site as instruction. Rock climbing is an activitiy with a danger of 
-		  personal injury or death. Participants should be aware of and accept these risks and be 
-		  responsible for their own actions. If in doubt, don't climb.
-	    </p>
-		<a class="btn btn-outline-white" href="https://www.thebmc.co.uk/risk-and-safety" target="blank" role="button">BMC STATEMENT</a>
-      </div>
-	  <div class="col-md-4">
-	    <h4>Contact Us</h4>
-	    <p style="min-height:90px">
-		  We would love to hear from you, please send us any comments, corrections, or suggestions.
-		  This site is intended as a free resource for the climbing comunitiy now and for the future.
-	    </p>
-		<a class="btn btn-outline-white" href="/about#contact" role="button">CONTACT</a>
-      </div>	
-	  <div class="col-md-4">
-	    <h4>Stay Up to date</h4>
-	    <p style="min-height:90px">
-		  If you want to stay up to date with the new climbs that are added please subscribe below.
-		  We won't ever send more than 2 emails a month and we won't share any of your details with 
-		  anyone else.
-	    </p>
-		<a class="btn btn-outline-white" href="" onClick="openSubscribe(); return false;" role="button">SUBSCRIBE TO UPDATES</a>
-      </div>	  
-    </div>
+<footer class="page-footer text-center font-small">
+    <!-- <div class="row">
+       <div class="col-12">
+         <a class="btn btn-outline-white" href="/about#contact" role="button">CONTACT</a>
+         <a class="btn btn-outline-white" href="/subscribe" role="button">SUBSCRIBE TO UPDATES</a>
+       </div>
+     </div>-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Rock Climbing is Dangerous</h4>
+                <p style="min-height:90px">
+                    Do not treat this site as instruction. Rock climbing is an activitiy with a danger of
+                    personal injury or death. Participants should be aware of and accept these risks and be
+                    responsible for their own actions. If in doubt, don't climb.
+                </p>
+                <a class="btn btn-outline-white" href="https://www.thebmc.co.uk/risk-and-safety" target="blank"
+                   role="button">BMC STATEMENT</a>
+            </div>
+            <div class="col-md-4">
+                <h4>Contact Us</h4>
+                <p style="min-height:90px">
+                    We would love to hear from you, please send us any comments, corrections, or suggestions.
+                    This site is intended as a free resource for the climbing comunitiy now and for the future.
+                </p>
+                <a class="btn btn-outline-white" href="/about#contact" role="button">CONTACT</a>
+            </div>
+            <div class="col-md-4">
+                <h4>Stay Up to date</h4>
+                <p style="min-height:90px">
+                    If you want to stay up to date with the new climbs that are added please subscribe below.
+                    We won't ever send more than 2 emails a month and we won't share any of your details with
+                    anyone else.
+                </p>
+                <a class="btn btn-outline-white" href="" onClick="openSubscribe(); return false;" role="button">SUBSCRIBE
+                    TO UPDATES</a>
+            </div>
+        </div>
     </div>
     <div class="footer-copyright">
-      <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">© 2019 Creative Commons</a> - <a href="/"> multi-pitch.com </a>
+        <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">© 2019 Creative Commons</a> - <a
+            href="/"> multi-pitch.com </a>
     </div>
-	<script>
-	  function openSubscribe(){
-		var request = new XMLHttpRequest();
-		request.open('GET', '/subscribe/index.html', true);
-		
-		request.onload = function() {
-		  if (this.status >= 200 && this.status < 400) {
-			var resp = this.response;	    
-			document.getElementById('overlay').innerHTML = resp;
-			document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);");
-			document.getElementById('close').setAttribute("style", "display:block;");
-			document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-		  } else {
-			console.log('failed to get subscribe');
-		  }
-		};
-		request.onerror = function() {
-		  console.log('There was a connection error of some sort');
-		};
-		request.send();
-	  }
-	    // ToDo: make onChange event for name field MMERGE3
-      function updateGradeLabel(gradeSystem){
-   	
-  	    var easyLabel = document.getElementById('easy-label');
-	    var mediumLabel = document.getElementById('med-label');
-	    var hardLabel = document.getElementById('hard-label');
-	  
-	    if(gradeSystem == 'british'){
-	      easyLabel.textContent = "Up to VDiff";
-	      mediumLabel.textContent = "Severe to VS ";
-	      hardLabel.textContent = "HVS or harder";
-	    }
-	    else if(gradeSystem == 'uiaa'){
-	      easyLabel.textContent = "Up to UIAA IV";
-	      mediumLabel.textContent = "UIAA IV to V ";
-	      hardLabel.textContent = "UIAA V+ harder";
-	    }
-	    else if(gradeSystem == 'yds'){
-	      easyLabel.textContent = "Up to 5.5";
-	      mediumLabel.textContent = "5.6 to 5.8 ";
-	      hardLabel.textContent = "5.9 or harder";
-	    }
-	    else if(gradeSystem == 'norwegian'){
-	      easyLabel.textContent = "Up to 3";
-	      mediumLabel.textContent = "4 to 5 ";
-	      hardLabel.textContent = "5+ or harder";
-	    }  
-	  }
-	</script>
-  </footer>
-  <a onClick="hideTile()" class="close" id="close"></a>
-  <div class="overlay" id="overlay"></div>
-  
-  <!-- Google Tag Manager -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTPTWM6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  </body>
+    <script>
+        function openSubscribe() {
+            var request = new XMLHttpRequest();
+            request.open('GET', '/subscribe/index.html', true);
+
+            request.onload = function () {
+                if (this.status >= 200 && this.status < 400) {
+                    var resp = this.response;
+                    document.getElementById('overlay').innerHTML = resp;
+                    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);");
+                    document.getElementById('close').setAttribute("style", "display:block;");
+                    document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+                } else {
+                    console.log('failed to get subscribe');
+                }
+            };
+            request.onerror = function () {
+                console.log('There was a connection error of some sort');
+            };
+            request.send();
+        }
+
+        // ToDo: make onChange event for name field MMERGE3
+        function updateGradeLabel(gradeSystem) {
+
+            var easyLabel = document.getElementById('easy-label');
+            var mediumLabel = document.getElementById('med-label');
+            var hardLabel = document.getElementById('hard-label');
+
+            if (gradeSystem == 'british') {
+                easyLabel.textContent = "Up to VDiff";
+                mediumLabel.textContent = "Severe to VS ";
+                hardLabel.textContent = "HVS or harder";
+            } else if (gradeSystem == 'uiaa') {
+                easyLabel.textContent = "Up to UIAA IV";
+                mediumLabel.textContent = "UIAA IV to V ";
+                hardLabel.textContent = "UIAA V+ harder";
+            } else if (gradeSystem == 'yds') {
+                easyLabel.textContent = "Up to 5.5";
+                mediumLabel.textContent = "5.6 to 5.8 ";
+                hardLabel.textContent = "5.9 or harder";
+            } else if (gradeSystem == 'norwegian') {
+                easyLabel.textContent = "Up to 3";
+                mediumLabel.textContent = "4 to 5 ";
+                hardLabel.textContent = "5+ or harder";
+            }
+        }
+    </script>
+</footer>
+<a onClick="hideTile()" class="close" id="close"></a>
+<div class="overlay" id="overlay"></div>
+
+<!-- Google Tag Manager -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTPTWM6" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe>
+</noscript>
+</body>
 </html>
