@@ -61,7 +61,7 @@ function getGraph(type, climbId){
 	}
 	tempInfo += `</ul>`;
      
-  } catch {
+  } catch(e) {
     tempInfo = '';
   }
   return tempInfo;
