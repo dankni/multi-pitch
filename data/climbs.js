@@ -18,7 +18,7 @@ const climbsData = {
     "approchTime": 50,
     "approchDifficulty": 3,
     "rock": "Torridonian Sandstone",
-    "intro": "Arguably one of the best sea stacks in the United Kingdom, The Old Man of Stoer (Stake), makes for an adventurous day out and an all round exceptional climb. The rock is Torridonian sandstone, meaning it was formed before any significant life on earth existed. The approach is either some wet rock hopping 100m north of the stack at the lowest tide or the more classic Tyrolean traverse which needs to be set up by swimming the 8 meter channel if there is not one left in place when you arrive. The route itself â€œOriginal Routeâ€ meanders the landward face. Larger cams and hexs are recommended. Be wary of nesting seagulls who first line of defence is usually to attack you with projectile vomit.",
+    "intro": "Arguably one of the best sea stacks in the United Kingdom, The Old Man of Stoer (Stake), makes for an adventurous day out and an all round exceptional climb. The rock is Torridonian sandstone, meaning it was formed before any significant life on earth existed. The approach is either some wet rock hopping 100m north of the stack at the lowest tide or the more classic Tyrolean traverse which needs to be set up by swimming the 8 meter channel if there is not one left in place when you arrive. The route itself, Original Route, meanders the landward face. Larger cams and hexs are recommended. Be wary of nesting seagulls who first line of defence is usually to attack you with projectile vomit.",
     "approach": "Park at the car park near the Stoer Light house (58.237948, -5.400902). Head 3Km northwards to the sea stack, going over the hill of Sidhean Mor. Take a steep scramble down and either boulder hop to the stack at the lowest of tides or set up a Tyrolean traverse if one is not in place already by swimming the 8 meter channel. Using a static rope for this will be easier than dynamic climbing ropes if you can be bothered to carry it.",
     "incline": "Vertical",
     "face": ""
@@ -505,5 +505,28 @@ const climbsData = {
     "approach": "Peñón is the obvious land mark you see from Calpe. It should also be well signposted. If you drive to the harbour you can park there and take a short walkaround the and scramble up to the start of this rout on the south face. From the summit there should be a path down through the mountain.",
     "incline": "Slab & Vertical",
     "face": "S"
+  },
+  {
+    "cliff": "Heiliger Geist",
+    "status": "publish",
+    "id": 23,
+    "country": "Greece",
+    "county": "Meteora",
+    "routeName": "Traumpfeiler",
+    "length": 250,
+    "pitches": 9,
+    "dataGrade": 6,
+    "tradGrade": "VS",
+    "techGrade": "5a",
+    "uiaaGrade": "V+",
+    "flag": "greece",
+    "geoLocation": "39.720133,21.627803",
+    "approchTime": 20,
+    "approchDifficulty": 1,
+    "rock": "Conglomerate",
+    "intro": "The Traumpfeiler route, or Pillar of Dreams in English, is one of the best routes in the area and is justifiably very popular. It sits on the Heiliger Geist cliff, or Holy Ghost in English. The route is a mixed sport trad with plenty of bolts but still worth of a standard rack of wires and cams. Expect to have to follow other parties if you don’t start very early. With a 60m rope and some extended quickdraws the route can be reduced to 5 pitches if you are so inclined. Clearly a classic of the area the route also offers stunning views and reasonably serious climbing.",
+    "approach": "Decent: Walk south along the top of the Heiliger Geist until you get to the southern end. Look for a single eyebolt to the left (east) that is in an obvious water runoff. Rappel down this water chute to the ground. Once on the ground head left (east) past a blue door that goes into a room in the rock and follow the obvious trail to town.",
+    "incline": "Slab & Vertical",
+    "face": "E"
   }
 ]};

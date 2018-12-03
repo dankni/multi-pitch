@@ -671,5 +671,37 @@ const climbImgs = {
     "alt": "Diedro UBSA topo on the south face near Calpe",
     "atributionURL": "https://verticalfever.co.uk/2013/10/24/costa-blanca-round-up/",
     "attributionText": "original: vertical fever"
+  },
+  {
+    "climbId": 22,
+    "type": "map",
+    "url": "img/maps/penon-near-calp.png",
+    "alt": "Costa Blanca climbing location",
+    "atributionURL": "http://google.com/maps",
+    "attributionText": "Google Map"
+  },
+  {
+    "climbId": 23,
+    "type": "crag",
+    "url": "img/topos/meteor/meteor-crag-pillar-of-dreams.jpg",
+    "alt": "Meteor crag in Greece - Holy Ghost Rock",
+    "atributionURL": "https://www.tripsite.com/bike/tours/meteora-undiscovered-greece/",
+    "attributionText": "img: tripsite"
+  },
+  {
+    "climbId": 23,
+    "type": "tile",
+    "url": "img/tiles/meteor-holy-ghost-cliff.jpg",
+    "alt": "Meteor crag in Greece - Holy Ghost Rock",
+    "atributionURL": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Meteore.jpg",
+    "attributionText": "image source"
+  },
+  {
+    "climbId": 23,
+    "type": "topo",
+    "url": "img/topos/meteor/holy-ghost-crag-pillar-of-dreams-topo.jpg",
+    "alt": "Holy-ghost-crag-pillar-of-dreams.jpg",
+    "atributionURL": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Meteore.jpg",
+    "attributionText": "original img"
   }
 ]};
