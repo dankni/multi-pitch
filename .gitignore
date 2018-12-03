@@ -1,6 +1,7 @@
 # Notepad ++ Backups #
 ######################
 *.bak
+*.idea
 
 # Paint.net files #
 ###################
@@ -43,3 +44,8 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# NODE stuff #
+##############
+
+node_modules
