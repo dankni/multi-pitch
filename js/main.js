@@ -273,7 +273,7 @@ function sortCards(sortBy, direction) {
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
 function showTile(theId) {
-    theId = theId.toString();
+    theId = theId;
     var climb = climbsData.climbs.find(c => c.id === theId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === theId);  //note find returns first vs fillter returns all.
     var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
