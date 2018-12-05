@@ -505,14 +505,11 @@ window.onpopstate = function (event) {
 };
 
 window.onload = function () {
-    loadData().then(_ => {
-        // Sorts and publishes the cards
-        sortCards('length', 'DESC');
-        if (isCardTurned === true) {
-            var overview = start.split('=');
-            var cardToLoad = overview[1];
-            showTile(cardToLoad);
-        }
-    });
-
+    // Sorts and publishes the cards
+    sortCards('length', 'DESC');
+    if (isCardTurned === true) {
+        var overview = start.split('=');
+        var cardToLoad = overview[1];
+        showTile(cardToLoad);
+    }
 };
