@@ -298,7 +298,7 @@ function showTile(theId) {
     // If there is a saved map image use it - otherwise generate the map from Google API
     try {
         var mapUrl = root + mapImg.url;
-    } catch {
+    } catch (e) {
         var mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
     }
 
@@ -313,7 +313,7 @@ function showTile(theId) {
           <a href="${topoImg.atributionURL}" target="blank">${topoImg.attributionText}</a>
         </p>
     </div>`;
-    } catch {
+    } catch (e) {
         var routeTopo = '';
     }
 
@@ -328,7 +328,7 @@ function showTile(theId) {
         <a href="${cragImg.atributionURL}" target="blank">${cragImg.attributionText}</a>
       </p>
     </div>`;
-    } catch {
+    } catch (e) {
         var cragImg = '';
     }
 
@@ -358,7 +358,7 @@ function showTile(theId) {
         } else {
             var guideBookModule = '';
         }
-    } catch {
+    } catch (e) {
         var guideBookModule = '';
     }
 
@@ -380,7 +380,7 @@ function showTile(theId) {
         } else {
             var approachInfo = '';
         }
-    } catch {
+    } catch (e) {
         var approachInfo = '';
         var approachInfo = '';
     }
@@ -420,7 +420,7 @@ function showTile(theId) {
         } else {
             var weatherInfo = '';
         }
-    } catch {
+    } catch (e) {
         var weatherInfo = '';
         console.log("weather error for: " + climbId);
     }
