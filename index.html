@@ -14,14 +14,19 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet"/>
 
     <!-- JavaScripts -->
-    <!--<script src="./js/load-data.js"></script> alternative solution uses Google Docs API-->
     <script src="data/climbs.js"></script>
     <script src="data/imgs.js"></script>
     <script src="data/guidebooks.js"></script>
     <script src="data/weather.js"></script>
-
     <script src="js/graph.js"></script>
     <script src="js/main.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123782847-1');
+    </script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="img/favicon/apple-icon-57x57.png">
