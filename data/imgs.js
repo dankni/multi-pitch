@@ -658,7 +658,7 @@ const climbImgs = { imgs:
        concatHelper: 23 },
      { climbId: 23,
        type: 'map',
-       url: 'img/maps/meteor-climbing',
+       url: 'img/maps/meteor-climbing.png',
        alt: 'Location of Meteor climbing in Greece',
        atributionURL: 'http://google.com/maps',
        attributionText: 'Google Map',
