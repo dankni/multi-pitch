@@ -7,23 +7,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build files
-          command: |
-            rm -rf website
-            mkdir website
-            cp index.html website
-            cp manifest.json website
-            cp favicon.ico website
-            cp -r about website
-            cp -r cornakey-cliff website
-            cp -r css website
-            cp -r data website
-            cp -r fonts website
-            cp -r img website
-            cp -r js website
-            cp -r map website
-            cp -r subscribe website
-      - run:
           name: Install awscli
           command: sudo pip install awscli
       - run:

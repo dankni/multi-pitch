@@ -1,4 +1,4 @@
-const weatherData = { weatherLines:
+const weatherData = { weatherLines: 
    [ { climbId: 2,
        type: 'rainyDays',
        Jan: 15,

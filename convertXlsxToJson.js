@@ -5,7 +5,7 @@ const readXlsxFile = require('read-excel-file/node');
 
 //This file can come from where ever.
 const EXCEL_PATH = './working-files/multi-pitch-data.xlsx';
-const OUTPUT_FOLDER = './data';
+const OUTPUT_FOLDER = './website/data';
 
 const CLIMBS = 1;
 const IMAGES = 2;
