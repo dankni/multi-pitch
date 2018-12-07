@@ -45,7 +45,7 @@ const climbsData = { climbs:
         'Park in the National Trust Carpark near Carn Galver ruined mine building. Follow the path out towards the sea for 5 miniutes then work your way towards the Bosigran Cliff face and down to the Bow Wall.',
        incline: 'Vertical',
        face: 'W' },
-     { cliff: "Clogwyn Du'r Arddu",
+     { cliff: 'Clogwyn Du\'r Arddu',
        status: 'publish',
        id: 3,
        country: 'Wales',
@@ -65,7 +65,7 @@ const climbsData = { climbs:
        intro:
         'A great crag and a great route, aptly named the great slab. There is only one technically demanding section up an often-damp corner. The route is long with a lot of variation possible.',
        approach:
-        "From Llanberis either take Britain's only Rack and Pinion Railway to the Halfway House, or make the walk from Llanberis. Walk up the road opposite the Royal Victoria Hotel, then take the path left which runs parallel with the Snowdon Mountain Railway. After the Halfway House a miner's path breaks off right to coast beneath the crag and above picturesque Llyn Du'r Arddu. Beware of rock fall. Calculate 2 hours for the walk-in.",
+        'From Llanberis either take Britain\'s only Rack and Pinion Railway to the Halfway House, or make the walk from Llanberis. Walk up the road opposite the Royal Victoria Hotel, then take the path left which runs parallel with the Snowdon Mountain Railway. After the Halfway House a miner\'s path breaks off right to coast beneath the crag and above picturesque Llyn Du\'r Arddu. Beware of rock fall. Calculate 2 hours for the walk-in.',
        incline: 'Slab',
        face: 'N' },
      { cliff: 'Vratsa',
@@ -176,7 +176,7 @@ const climbsData = { climbs:
        approchDifficulty: 3,
        rock: 'Granite',
        intro:
-        `The Devils slide was first climbed in the early 1960's. The face is believed to be the tallest granite slab in Europe, and it makes for an exceptional climb at an amenable grade. This popular route was climbed, or perhaps more accurately "walked", feet only by Jonny Dawes in 2017. Although Lundy (meaning Puffin Island in Norse) has climbing restrictions some of the year, the devils slide and a number of other areas are exempt. The slide doesn't have nesting birds, likely because it's so exposed, bare that in mind when you plan. To get to Lundy a ferry can be taken from Ilfracombe in Devon. Climb up the right hand side of the slab following the groove. For the last pitch take the obvious traverse left under the headwall.`,
+        'The Devils slide was first climbed in the early 1960\'s. The face is believed to be the tallest granite slab in Europe, and it makes for an exceptional climb at an amenable grade. This popular route was climbed, or perhaps more accurately "walked", feet only by Jonny Dawes in 2017. Although Lundy (meaning Puffin Island in Norse) has climbing restrictions some of the year, the devils slide and a number of other areas are exempt. The slide doesn\'t have nesting birds, likely because it\'s so exposed, bare that in mind when you plan. To get to Lundy a ferry can be taken from Ilfracombe in Devon. Climb up the right hand side of the slab following the groove. For the last pitch take the obvious traverse left under the headwall.',
        approach:
         'From the top of the cliff descend down the southern gully. One short absail is required to pass an outcrop.',
        incline: 'Slab',
@@ -224,7 +224,7 @@ const climbsData = { climbs:
        intro:
         'Wreakers slab is a fantastic adventure and one of the longest vertical multi-pitch climbs in the South of the UK.  With around 120m of cliff to scale, it makes for a great day out. The climbing is generally easy, but the rock is loose in places, especially on the first pitch, so make sure you the leader is experianced. Protection on the first pitch can also be a challenge, but it gets better the higher you go.',
        approach:
-        "Park in Morwenstow tea room car park lat/lon: 50.908732, -4.553767. Go into the morwenstow graveyard and pass out the bottom (north east) down a path past some private housing into a small wooded area. Go over the tiny stream and turn left out of the woods. Cross two fields and turn right at the cliff edge. Follow the coastal path until you see Cornakey Cliff. When above it, pass behind it to a sketchy and thorny scramble down the slope. Reach the loose rib and work your way down to the makeshift hut. Pass that to the (hopefully) in-situ rope. Descend to sea level when the tide is out and make your way around to the base of the climb. This may require some rock hopping or down climbing. Don't forget to enjoy the descent, it's part of the experience.",
+        'Park in Morwenstow tea room car park lat/lon: 50.908732, -4.553767. Go into the morwenstow graveyard and pass out the bottom (north east) down a path past some private housing into a small wooded area. Go over the tiny stream and turn left out of the woods. Cross two fields and turn right at the cliff edge. Follow the coastal path until you see Cornakey Cliff. When above it, pass behind it to a sketchy and thorny scramble down the slope. Reach the loose rib and work your way down to the makeshift hut. Pass that to the (hopefully) in-situ rope. Descend to sea level when the tide is out and make your way around to the base of the climb. This may require some rock hopping or down climbing. Don\'t forget to enjoy the descent, it\'s part of the experience.',
        incline: 'Slab',
        face: null },
      { cliff: 'Cir Mhor',
@@ -337,7 +337,7 @@ const climbsData = { climbs:
        approchDifficulty: 1,
        rock: 'Phonolite',
        intro:
-        "Durance Route on the Devils Tower in Wyoming is listed as one of the 50 classic climbs in North America. It's a 4-6 pitch route in which the harder sections are mainly off-width and hand-cracks with a few spots of chimney. Don't forget to register at the Visitor's Center before the climb or you risk a fine. This is a crowded route so get on super early or be ready to follow others and possibly do the abseil decent in the dark with headtorches.",
+        'Durance Route on the Devils Tower in Wyoming is listed as one of the 50 classic climbs in North America. It\'s a 4-6 pitch route in which the harder sections are mainly off-width and hand-cracks with a few spots of chimney. Don\'t forget to register at the Visitor\'s Center before the climb or you risk a fine. This is a crowded route so get on super early or be ready to follow others and possibly do the abseil decent in the dark with headtorches.',
        approach:
         'Approch: Follow Tower Trail to the right until the historic wooden ladder "viewing tubes". Follow the climbers trail up switch backs to the base of the Bowling Alley. Climb approach pitch. Traverse left on ledge system to base of Leaning Column. The meadows rappels can be done with a single 70 m rope with 15 feet of 4th class down climbing on the last rappel. The Bailey Direct rappels require two 60 m ropes.\r\n<br /> \r\nDecent: The meadows rappels can be done with a single 70 m rope with 15 feet of 4th class down climbing on the last rappel. The Bailey Direct rappels require two 60 m ropes.\r\n<br />\r\nNote: Thuderstorms are common in the summer months and are not easily seen coming from the Durrance area. Check the weather ahead of time!',
        incline: 'Vertical',
@@ -393,7 +393,7 @@ const climbsData = { climbs:
        id: 18,
        country: 'England',
        county: 'Cumbria',
-       routeName: "Keswick Brother's Climb",
+       routeName: 'Keswick Brother\'s Climb',
        length: 74,
        pitches: 3,
        dataGrade: 2,
@@ -431,7 +431,7 @@ const climbsData = { climbs:
        intro:
         'Joy follows the striking right facing dihedral corner up the Mt. Indefatigable slab offering around 300m of climbing. There is little to no fixed protection but plenty of opportunity for placements all the way. Belays can be made at various positions allowing pitches to be the full length of the rope. Carrying extra gear and bringing longer ropes could speed up the climb but it’s certainly not essential. The rock is generally very solid with excellent friction but like all large mountain slabs there will be some loose rock in places. \r\n\r\nThe new guidebook Canadian Rock: Select Climbs of the West, grades the route 5.8. but if needed it’s possible to avoid any challenging bits by traversing into the slab. This drops the grade a little. It’s often considered 5.6 on the YDS scale which is somewhere around Severe or Hard Severe.',
        approach:
-        "Hike across the dam and follow the main hikers trail that parallels he lake. Do not go up past the bear closure sign on the summit trail. The approach trail is pretty flat all the way to the scree slope when the route becomes very apparent. Don't follow any smaller offshoot trails that head downhill to the lakeshore, just follow the signs with hiker symbols on them. It's pretty straightforward. 25 minutes to scree slope from car. Head up the scree to the base of the route.",
+        'Hike across the dam and follow the main hikers trail that parallels he lake. Do not go up past the bear closure sign on the summit trail. The approach trail is pretty flat all the way to the scree slope when the route becomes very apparent. Don\'t follow any smaller offshoot trails that head downhill to the lakeshore, just follow the signs with hiker symbols on them. It\'s pretty straightforward. 25 minutes to scree slope from car. Head up the scree to the base of the route.',
        incline: 'Slab',
        face: null },
      { cliff: 'Slieve Beg',
@@ -452,7 +452,7 @@ const climbsData = { climbs:
        approchDifficulty: 1,
        rock: 'Granite',
        intro:
-        "Usually referred to as PJ, it is a classic `Mourne Expedition' and a must due to sustained interest, exposure and great belays. It can be done in 3 or 4 pitches epending on your tollerance for rope drag on the first pitch. Whilst listed as 90m here there is a 10m scramble in the middle.Start 3m left of the small gully on the right-hand end of the Main Face, which has a large buttress forming the lower half of the route. The first pitch take a crack line up the crest of this buttress (two picthes if you create a belay before the grass ledge).",
+        'Usually referred to as PJ, it is a classic `Mourne Expedition\' and a must due to sustained interest, exposure and great belays. It can be done in 3 or 4 pitches epending on your tollerance for rope drag on the first pitch. Whilst listed as 90m here there is a 10m scramble in the middle.Start 3m left of the small gully on the right-hand end of the Main Face, which has a large buttress forming the lower half of the route. The first pitch take a crack line up the crest of this buttress (two picthes if you create a belay before the grass ledge).',
        approach:
         'Follow the Glen river track from Donard Car park. From the Mourne wall walk south for 250m and Join the Brandy Pad to Slieve Beg.',
        incline: null,

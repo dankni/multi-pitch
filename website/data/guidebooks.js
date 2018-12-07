@@ -81,7 +81,7 @@ const guideBooks = { books:
        type: 'guidebook',
        pg: 104,
        description:
-        "Whilst this is a great book in general, it's section on Lundy is of little value. It has no topos and little infomatin on Lundy.",
+        'Whilst this is a great book in general, it\'s section on Lundy is of little value. It has no topos and little infomatin on Lundy.',
        imgURL: 'img/guidebooks/west-country-climbs.jpg',
        link: null,
        rrp: 24.99,
@@ -213,7 +213,7 @@ const guideBooks = { books:
        type: 'guidebook',
        pg: 129,
        description:
-        "This book is a very comprehensive guide to trad climbing in the Mourne Mountains. A worthwile book if you're there for a while, however the generic Rock Climbing in Ireland Book will cover you if you only plan a fleeting visit.",
+        'This book is a very comprehensive guide to trad climbing in the Mourne Mountains. A worthwile book if you\'re there for a while, however the generic Rock Climbing in Ireland Book will cover you if you only plan a fleeting visit.',
        imgURL: 'img/guidebooks/rock-climbs-in-the-mournes-mountains.jpg',
        link: null,
        rrp: 19.95,
@@ -224,7 +224,7 @@ const guideBooks = { books:
        type: 'PDF',
        pg: 4,
        description:
-        "This publicly availible guidebook is so clear and comprehensive that I almost didn't bother adding Lion Rock to this website because its covered in far better detail in this guide.",
+        'This publicly availible guidebook is so clear and comprehensive that I almost didn\'t bother adding Lion Rock to this website because its covered in far better detail in this guide.',
        imgURL: 'img/guidebooks/rock-climbs-in-hong-kong.jpg',
        link:
         'https://hongkongclimbing.files.wordpress.com/2012/06/lionrock.pdf',
@@ -240,7 +240,17 @@ const guideBooks = { books:
        imgURL: 'img/guidebooks/costa-blanca.jpg',
        link: null,
        rrp: 29.95,
-       guidePrice: 25 } ] }; 
+       guidePrice: 25 },
+     { climbId: 23,
+       isbn: null,
+       title: null,
+       type: null,
+       pg: null,
+       description: null,
+       imgURL: null,
+       link: null,
+       rrp: null,
+       guidePrice: null } ] }; 
 
     //So then I can use this in my mocha tests:
  

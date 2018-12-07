@@ -94,6 +94,16 @@
     </div>
 </nav>
 
+<!-- Browser Support Check -->
+<div class="ie-warn" id="ie-warn">
+This website requires a <a href="https://www.mozilla.org/en-GB/firefox/new/"target="blank">modern browser</a> to function correctly.
+</div>
+<script>		
+  if(navigator.userAgent.indexOf("Trident/") > -1){
+	document.getElementById('ie-warn').setAttribute('style', 'display:block;');
+  }
+</script>
+
 <!-- Full Page Intro -->
 <div class="view full-page-intro"
      style="background-image: url('img/heros/old-man-of-stoer-hero.jpg'); background-position:top left;background-repeat: no-repeat; background-size: cover;">
