@@ -1108,3 +1108,31 @@ hr {
     height: 0;
   }
 }
+
+/* LOADING */
+.loading {
+  margin: 25px;
+  padding: 25px;
+  display: block;
+  margin:0 auto;
+  min-height:100px;
+}
+.loading p{
+  color:#222;
+  text-align:center;
+}
+.loading img {
+  -webkit-animation: in-out-load 1.8s alternate infinite;
+  animation: in-out-load 1.8s alternate infinite;
+  display: block;
+  filter: invert(100%);
+  max-width:100px
+}
+@-webkit-keyframes in-out-load {
+  0% {opacity: 1;}
+  100% {opacity: 0;}
+}
+@keyframes in-out-load {
+  0% {opacity: 1;}
+  100% {opacity: 0;}
+}

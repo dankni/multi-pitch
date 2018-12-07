@@ -257,6 +257,7 @@ function publishCards(climbsArr) {
             cardHolder.innerHTML += card;
         }
     }
+    document.getElementById('loading').style.display = 'none';
 }
 
 /**
