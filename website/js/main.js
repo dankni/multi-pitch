@@ -430,7 +430,7 @@ function showTile(theId) {
     <div class="card-body" style="padding:0;">
       <div class="img-contaner">
         <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
-          <img class="big-card-map" src="${mapUrl}" alt="${climb.cliff} location"/>
+          <img class="big-card-map" src=".${mapUrl}" alt="${climb.cliff} location"/>
         </a>
         <span class="txt-ovr-img map-txt">Open in Google Maps</span>
       </div>
