@@ -237,7 +237,7 @@ function publishCards(climbsArr) {
 
             var card = `
     <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-      <img src=".${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+      <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
       <div class="card-body">
       <h4>
       <span class="flag ${climbsArr[i].flag}"></span>
@@ -305,8 +305,8 @@ function showTile(theId) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href="${root}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src="${root}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href=".${root}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src=".${root}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -342,7 +342,7 @@ function showTile(theId) {
         <label for="tab-one" class="accordian-label">Guidebooks</label>
         <div class="smaller accordian-content">
           <div>
-            <img style="max-width:120px;float:left;padding-right:1rem;" src=".${guideBook.imgURL}" alt="${guideBook.title}" /> 
+            <img style="max-width:120px;float:left;padding-right:1rem;" src="./${guideBook.imgURL}" alt="${guideBook.title}" /> 
             <p>
               <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
               ${guideBook.description}
