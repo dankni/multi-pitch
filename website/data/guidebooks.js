@@ -218,4 +218,16 @@ const guideBooks = { books:
        imgURL: 'img/guidebooks/costa-blanca.jpg',
        link: null,
        rrp: 29.95,
-       guidePrice: 25 } ] }
+       guidePrice: 25 } ] }; 
+
+    //So then I can use this in my mocha tests:
+ 
+        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
+ 
+            module.exports = {
+ 
+                guideBooks
+
+            };
+ 
+        }

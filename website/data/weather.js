@@ -838,4 +838,16 @@ const weatherData = { weatherLines:
        Sep: 11,
        Oct: 7,
        Nov: 3,
-       Dec: 1 } ] }
+       Dec: 1 } ] }; 
+
+    //So then I can use this in my mocha tests:
+ 
+        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
+ 
+            module.exports = {
+ 
+                weatherData
+
+            };
+ 
+        }

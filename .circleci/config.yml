@@ -2,13 +2,61 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:2.7-jessie
+      - image: circleci/node:6.10-browsers
     working_directory: /tmp/multipitch
     steps:
       - checkout
+      # Log the current branch
       - run:
-          name: Install awscli
-          command: sudo pip install awscli
+          name: Show current branch
+          command: echo ${CIRCLE_BRANCH}
+      # Restore local dependencies from cache
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      # Install project dependencies
+      - run:
+          name: Install local dependencies
+          command: npm install
+      # Build Data js from excel
+      - run:
+          name: Build for production
+          command: npm run generate-date
+      # Cache local dependencies if they don't exist
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      # Test the source code
+      - run:
+          name: Run Tests
+          command: npm run test
+      # Cache the build folders for the deploy job
+      - save_cache:
+          key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - website
+
+  deploy:
+    working_directory: /tmp/multipitch
+    docker:
+      - image: circleci/node:6.10-browsers
+    steps:
+      - checkout
+      # build folder that needs to be deployed
+      - restore_cache:
+          key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      # Install AWS cli
+      - run:
+          name: Install aws cli and python-pip
+          working_directory: /
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get install python-pip python-dev build-essential
+            # sudo pip install awsebcli --upgrade
+            sudo pip install awscli
+      # Deploy to the S3
       - run:
           name: Deploy to S3
           command: aws s3 sync website s3://com.multipitch/builds --delete
@@ -20,7 +68,11 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build:
+      - build
+      - deploy:
+          requires:
+            - build
           filters:
             branches:
-              only: master
+              only:
+                - master

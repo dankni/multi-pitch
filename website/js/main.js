@@ -110,7 +110,7 @@ var isCardTurned = start.includes('?overview');
 })();
 
 /**
- SHOW THE CURRENT VALUE OF THE SLIDERS  
+ SHOW THE CURRENT VALUE OF THE SLIDERS
  **/
 function showVal(values, field) {
 
@@ -236,7 +236,7 @@ function publishCards(climbsArr) {
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object
 
             var card = `
-    <div data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+    <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
       <img src="${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
       <div class="card-body">
       <h4>
@@ -273,7 +273,7 @@ function sortCards(sortBy, direction) {
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
 function showTile(theId) {
-	theId = parseInt(theId);
+    theId = parseInt(theId);
     var climb = climbsData.climbs.find(c => c.id === theId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === theId);  //note find returns first vs fillter returns all.
     var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
