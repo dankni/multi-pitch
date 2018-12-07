@@ -1,4 +1,4 @@
-const weatherData = { weatherLines: 
+const weatherData = { weatherLines:
    [ { climbId: 2,
        type: 'rainyDays',
        Jan: 15,
@@ -838,4 +838,16 @@ const weatherData = { weatherLines:
        Sep: 11,
        Oct: 7,
        Nov: 3,
-       Dec: 1 } ] }
+       Dec: 1 } ] }; 
+
+    //So then I can use this in my mocha tests:
+ 
+        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
+ 
+            module.exports = {
+ 
+                weatherData
+
+            };
+ 
+        }

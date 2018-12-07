@@ -59,7 +59,13 @@ async function createFileFromTranslation(translation, result, outputFolder) {
     objectResult[translation.objEntryPoint] = result;
     const stringifyResult = util.inspect(objectResult);
 
-    const fileContent = `const ${translation.constName} = ${stringifyResult}`;
+    const fileContent = `const ${translation.constName} = ${stringifyResult}; \n
+    //So then I can use this in my mocha tests:\n 
+        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){\n 
+            module.exports = {\n 
+                ${translation.constName}\n
+            };\n 
+        }`;
     const fileLocation = path.resolve(__dirname, outputFolder, translation.fileName);
     return new Promise((resolve, reject) => {
         fs.writeFile(fileLocation, fileContent, (err, data) => {

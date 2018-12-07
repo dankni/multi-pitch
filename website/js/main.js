@@ -110,7 +110,7 @@ var isCardTurned = start.includes('?overview');
 })();
 
 /**
- SHOW THE CURRENT VALUE OF THE SLIDERS  
+ SHOW THE CURRENT VALUE OF THE SLIDERS
  **/
 function showVal(values, field) {
 
@@ -236,8 +236,8 @@ function publishCards(climbsArr) {
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object
 
             var card = `
-    <div data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-      <img src="${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+    <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+      <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
       <div class="card-body">
       <h4>
       <span class="flag ${climbsArr[i].flag}"></span>
@@ -273,7 +273,7 @@ function sortCards(sortBy, direction) {
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
 function showTile(theId) {
-	theId = parseInt(theId);
+    theId = parseInt(theId);
     var climb = climbsData.climbs.find(c => c.id === theId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === theId);  //note find returns first vs fillter returns all.
     var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
@@ -305,8 +305,8 @@ function showTile(theId) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href="${root}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src="${root}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href=".${root}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src=".${root}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -321,7 +321,7 @@ function showTile(theId) {
         var cragImg = `
     <div class="img-contaner">
       <a href="${root}${cragImg.url}" target="blank" class="card-img-anch">
-     <img src="${root}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+     <img src=".${root}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -342,7 +342,7 @@ function showTile(theId) {
         <label for="tab-one" class="accordian-label">Guidebooks</label>
         <div class="smaller accordian-content">
           <div>
-            <img style="max-width:120px;float:left;padding-right:1rem;" src="${guideBook.imgURL}" alt="${guideBook.title}" /> 
+            <img style="max-width:120px;float:left;padding-right:1rem;" src="./${guideBook.imgURL}" alt="${guideBook.title}" /> 
             <p>
               <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
               ${guideBook.description}
@@ -430,7 +430,7 @@ function showTile(theId) {
     <div class="card-body" style="padding:0;">
       <div class="img-contaner">
         <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
-          <img class="big-card-map" src="${mapUrl}" alt="${climb.cliff} location"/>
+          <img class="big-card-map" src=".${mapUrl}" alt="${climb.cliff} location"/>
         </a>
         <span class="txt-ovr-img map-txt">Open in Google Maps</span>
       </div>
