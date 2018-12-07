@@ -51,6 +51,5 @@ node_modules
 
 # Project generated stuff #
 ###########################
-
-website/data
+./website/data/
 

@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:6.10-browsers
+      - image: circleci/node:chakracore-10.13-browsers-legacy
     working_directory: /tmp/multipitch
     steps:
       - checkout
@@ -41,7 +41,7 @@ jobs:
   deploy:
     working_directory: /tmp/multipitch
     docker:
-      - image: circleci/node:6.10-browsers
+      - image: circleci/node:chakracore-10.13-browsers-legacy
     steps:
       - checkout
       # build folder that needs to be deployed
