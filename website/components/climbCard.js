@@ -1,0 +1,207 @@
+function getGuidebook(guideBook) {
+    try {
+        if (guideBook.title != "") {
+            var guideBookModule = `
+    <hr />
+    <div class="row accordian">
+      <div class="col">
+        <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
+        <label for="tab-one" class="accordian-label">Guidebooks</label>
+        <div class="smaller accordian-content">
+          <div>
+            <img style="max-width:120px;float:left;padding-right:1rem;" src="./${guideBook.imgURL}" alt="${guideBook.title}" /> 
+            <p>
+              <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
+              ${guideBook.description}
+              <br />
+              <a href="${guideBook.link}" target="blank">Availible Here</a>
+              R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
+              <small>ISBN: ${guideBook.isbn} </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>`;
+        } else {
+            var guideBookModule = '';
+        }
+    } catch (e) {
+        var guideBookModule = '';
+    }
+    return guideBookModule;
+}
+
+function getApprochInfo(climb) {
+    try {
+        if (climb.approach != "") {
+            var approachInfo = `
+    <hr />
+    <div class="row accordian">
+        <div class="col">
+          <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
+          <label for="tab-two" class="accordian-label">Approach & Descent Infomation</label>
+          <div class="smaller accordian-content">
+            <div>
+              <p>${climb.approach}</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+        } else {
+            var approachInfo = '';
+        }
+    } catch (e) {
+        var approachInfo = '';
+    }
+    return approachInfo;
+}
+
+function getWeather(theId) {
+    try {
+        var temprature = getGraph("temperature", theId);
+        var rain = getGraph("rain", theId);
+        var weatherInfo = `
+      <hr />
+      <div class="row accordian">
+        <div class="col">
+          <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
+          <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
+          <div class="smaller accordian-content">
+            <div>
+              <p>
+		        NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
+	            This could be quite far away and at a darmatically different elevation. 
+		  	    This means it could be considerably colder or wetter on some mountain climbs.</em>
+	          </p>
+	          <p>
+			    Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
+			  </p>
+              ${rain}
+			  <br />
+			  <p>
+			    Estimated average high and low temperature in degrees Celsius for the given month below. 
+			    Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
+			    Plan accordingly! 
+		      </p>
+			  ${temprature}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    } catch (e) {
+        weatherInfo = '';
+        console.log("weather error for: " + theId);
+    }
+    return weatherInfo;
+}
+
+function getRouteTopo(topoImg) {
+    try {
+        var routeTopo = `
+      <div class="img-contaner">
+        <a href=".${root}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src=".${root}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+          <span class="txt-ovr-img">View Route Topo</span>
+        </a>
+        <p class="credit">
+          <a href="${topoImg.atributionURL}" target="blank">${topoImg.attributionText}</a>
+        </p>
+    </div>`;
+    } catch (e) {
+        var routeTopo = '';
+    }
+    return routeTopo;
+}
+
+function getCragImg(cragImg) {
+    try {
+        var cragImg = `
+    <div class="img-contaner">
+      <a href="${root}${cragImg.url}" target="blank" class="card-img-anch">
+     <img src=".${root}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+        <span class="txt-ovr-img">View Crag Photo</span>
+      </a>
+      <p class="credit">
+        <a href="${cragImg.atributionURL}" target="blank">${cragImg.attributionText}</a>
+      </p>
+    </div>`;
+    } catch (e) {
+        cragImg = '';
+    }
+
+    return cragImg;
+}
+
+function climbCard(climb, mapUrl, cragImg, topoImg, guideBook) {
+
+    var routeTopoModule = getRouteTopo(topoImg);
+
+    var cragImgModule = getCragImg(cragImg);
+
+    var approachInfoModule = getApprochInfo(climb);
+
+    var guideBookModule = getGuidebook(guideBook);
+
+    var weatherInfoModule = getWeather(climb.id);
+
+    var fullCard = `
+   <div class="card big-card">
+    <div class="card-body" style="padding:0;">
+      <div class="img-contaner">
+        <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
+          <img class="big-card-map" src=".${mapUrl}" alt="${climb.cliff} location"/>
+        </a>
+        <span class="txt-ovr-img map-txt">Open in Google Maps</span>
+      </div>
+      <div class="big-card-body">
+        <h4>
+          <span class="flag ${climb.flag}"></span>
+          ${climb.cliff} - ${climb.routeName}
+        </h4>
+        <p class="smaller">
+          ${climb.intro}
+        </p>
+        <div class="row">
+          <div class="col">
+            <div class="info-ring">
+              <span class="grade what">grade</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.tradGrade}&nbsp;${climb.techGrade}</span>
+            </div>        
+            <div class="info-ring">
+              <span class="grade what">length</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.length}m</span>
+            </div>      
+            <div class="info-ring">
+              <span class="grade what">pitches</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.pitches}</span>
+            </div>
+            <div class="info-ring">
+              <span class="grade what">approch</span>
+              <span class="info-divider"></span>
+              <span class="grade amount">${climb.approchTime}<small>min</small></span>
+            </div>
+          </div>
+        </div>
+        <hr />  
+        <div class="row">
+          <div class="col-sm">
+            <p>Crag Image</p>
+            ${cragImgModule}
+          </div>    
+          <div class="col-sm">
+            <p>The Route Topography</p>
+            ${routeTopoModule}
+         </div>
+        </div>
+        ${approachInfoModule}
+        ${guideBookModule}
+        ${weatherInfoModule}
+      </div>
+    </div>
+  </div>`;
+    return fullCard;
+}

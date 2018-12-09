@@ -157,7 +157,7 @@
 
 
         var fetchWeatherAndAddMarkers =(climbs) => {
-            climbs.forEach(async climb => {
+            climbs.forEach(async climb.js => {
                 const response = await fetch(climb.ownWeatherUrl);
                 const ownResponse = await response.json();
                 climb.content = climb.content.replace("${placeholder-temp}", ownResponse.main.temp)
