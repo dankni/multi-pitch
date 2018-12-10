@@ -48,6 +48,7 @@ Thumbs.db
 # NODE stuff #
 ##############
 node_modules
+img_compression
 
 # Project generated stuff #
 ###########################

@@ -421,7 +421,7 @@ footer.page-footer a {
 }
 @media (max-width:740px) {
   .full-page-intro {
-    height: 1000px
+    height: 1000px;
   }
   h1{
     font-size:1.6rem;
@@ -1121,6 +1121,7 @@ hr {
   }
 }
 
+/**************/
 /* LOADING */
 .loading {
   margin: 25px;
@@ -1138,7 +1139,7 @@ hr {
   animation: in-out-load 1.8s alternate infinite;
   display: block;
   filter: invert(100%);
-  max-width:100px
+  max-width:100px;
 }
 @-webkit-keyframes in-out-load {
   0% {opacity: 1;}
@@ -1147,4 +1148,86 @@ hr {
 @keyframes in-out-load {
   0% {opacity: 1;}
   100% {opacity: 0;}
+}
+
+/**************/
+/** HP HERO **/
+
+.full-page-intro{
+  background-position:top left;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/** Phones **/
+@media only screen and (min-width: 300px) {
+  .supportsJPEG{
+    background-image: url('../img/heros/old-man-of-stoer-hero-800.jpg');
+  }
+  .supportsWebP{
+    background-image: url('../img/heros/old-man-of-stoer-hero-800.webP');
+  }
+}
+/** Phones with good screens **/
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 300px),
+only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 300px),
+only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 300px),
+only screen and (        min-device-pixel-ratio: 2)      and (min-width: 300px),
+only screen and (                min-resolution: 192dpi) and (min-width: 300px),
+only screen and (                min-resolution: 2dppx)  and (min-width: 300px) {
+  .supportsJPEG{
+    background-image: url('../img/heros/old-man-of-stoer-hero-1800.jpg');
+  }
+  .supportsWebP{
+    background-image: url('../img/heros/old-man-of-stoer-hero-1800.webp');
+  }
+}
+/** big phones / tablets or laptop screen **/
+@media only screen and (min-width: 600px) {
+  .supportsJPEG{
+    background-image: url('../img/heros/old-man-of-stoer-hero-1800.jpg');
+  }
+  .supportsWebP{
+    background-image: url('../img/heros/old-man-of-stoer-hero-1800.webp');
+  }
+}
+/** big phones / tablets with good screen or retina laptops **/
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 900px),
+only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 900px),
+only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 900px),
+only screen and (        min-device-pixel-ratio: 2)      and (min-width: 900px),
+only screen and (                min-resolution: 192dpi) and (min-width: 900px),
+only screen and (                min-resolution: 2dppx)  and (min-width: 900px) {
+  .supportsJPEG{
+    background-image: url('../img/heros/old-man-of-stoer-hero-2400.jpg');
+  }
+  .supportsWebP{
+    background-image: url('../img/heros/old-man-of-stoer-hero-2400.webp');
+  }
+}
+/** big desktop **/
+@media only screen and (min-width: 1800px) {
+  .supportsJPEG{
+    background-image: url('../img/heros/old-man-of-stoer-hero-2400.jpg');
+  }
+  .supportsWebP{
+    background-image: url('../img/heros/old-man-of-stoer-hero-2400.webp');
+  }
+}
+/** large retina **/
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 1800px),
+only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 1800px),
+only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 1800px),
+only screen and (        min-device-pixel-ratio: 2)      and (min-width: 1800px),
+only screen and (                min-resolution: 192dpi) and (min-width: 1800px),
+only screen and (                min-resolution: 2dppx)  and (min-width: 1800px) {
+  .supportsJPEG{
+    background-image: url('../img/heros/old-man-of-stoer-hero-2400.jpg');
+  }
+  .supportsWebP{
+    background-image: url('../img/heros/old-man-of-stoer-hero-2400.webp');
+  }
 }

@@ -5,7 +5,24 @@ const root = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
+var webP = false;
 
+/**
+ CHECK IF BROWSER SUPPORTS WEBP IMAGES
+ **/
+async function supportsWebp() {
+  if (!self.createImageBitmap) return false;
+  const webpData = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
+  const blob = await fetch(webpData).then(r => r.blob());
+  return createImageBitmap(blob).then(() => true, () => false);
+}
+(async () => {
+    if(await supportsWebp()) {
+        webP = true;
+        document.getElementById('hero').classList.add('supportsWebP');
+        document.getElementById('hero').classList.remove('supportsJPEG');
+    }
+ })();
 
 /**
  THE SLIDER FUNCTION FOR FILTERS
@@ -234,10 +251,13 @@ function publishCards(climbsArr) {
         if (climbsArr[i].status === 'publish') {
             var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object
-
+            var webPUrl = tileImg.url.replace(".jpg", ".webp");
             var card = `
     <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-      <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+      <picture>
+        <source srcset="./${webPUrl}" type="image/webp">
+        <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+      </picture>
       <div class="card-body">
       <h4>
       <span class="flag ${climbsArr[i].flag}"></span>
