@@ -1,9 +1,9 @@
-function getGuidebook(guideBook) {
+function getGuidebook(guideBook, climb) {
     try {
         if (guideBook.title != "") {
             var guideBookModule = `
     <hr />
-    <div class="row accordian">
+    <div class="row accordian" onclick="ga('send', 'event', 'climb-detail', 'toggle-guidebook', '${climb.routeName} on ${climb.cliff}', '${climb.id}');">
       <div class="col">
         <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
         <label for="tab-one" class="accordian-label">Guidebooks</label>
@@ -36,7 +36,7 @@ function getApprochInfo(climb) {
         if (climb.approach != "") {
             var approachInfo = `
     <hr />
-    <div class="row accordian">
+    <div class="row accordian" onclick="ga('send', 'event', 'climb-detail', 'toggle-approach', '${climb.routeName} on ${climb.cliff}', '${climb.id}');">
         <div class="col">
           <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
           <label for="tab-two" class="accordian-label">Approach & Descent Infomation</label>
@@ -56,13 +56,13 @@ function getApprochInfo(climb) {
     return approachInfo;
 }
 
-function getWeather(theId) {
+function getWeather(theId, climb) {
     try {
         var temprature = getGraph("temperature", theId);
         var rain = getGraph("rain", theId);
         var weatherInfo = `
       <hr />
-      <div class="row accordian">
+      <div class="row accordian"  onclick="ga('send', 'event', 'climb-detail', 'toggle-weather', '${climb.routeName} on ${climb.cliff}', '${climb.id}');">
         <div class="col">
           <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
           <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
@@ -141,9 +141,9 @@ function climbCard(climb, mapUrl, cragImg, topoImg, guideBook) {
 
     var approachInfoModule = getApprochInfo(climb);
 
-    var guideBookModule = getGuidebook(guideBook);
+    var guideBookModule = getGuidebook(guideBook, climb);
 
-    var weatherInfoModule = getWeather(climb.id);
+    var weatherInfoModule = getWeather(climb.id, climb);
 
     var fullCard = `
    <div class="card big-card">
