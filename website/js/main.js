@@ -293,18 +293,18 @@ function sortCards(sortBy, direction) {
 /**
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
-function showTile(theId) {
-    theId = parseInt(theId);
-    var climb = climbsData.climbs.find(c => c.id === theId); // get the climb object by id
-    var cImgs = climbImgs.imgs.filter(img => img.climbId === theId);  //note find returns first vs fillter returns all.
+function showTile(climbId) {
+    climbId = parseInt(climbId);
+    var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
+    var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
     var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
     var cragImg = cImgs.find(img => img.type === 'crag');
     var topoImg = cImgs.find(img => img.type === 'topo');
-    var guideBook = guideBooks.books.find(book => book.climbId === theId); // ToDo: update to filter then allow multiple to show
+    var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
 
 
     // a check to see if the user has landed on a page from a direct link
-    if (isCardTurned != true) {
+    if (isCardTurned !== true) {
         var url = '?overview=' + `${climb.id}`.toLowerCase();
         url = url.replace(' ', '-');
         window.history.pushState(history_data, climb.cliff, url);
@@ -314,14 +314,8 @@ function showTile(theId) {
     document.getElementById('close').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
 
-    // If there is a saved map image use it - otherwise generate the map from Google API
-    try {
-        var mapUrl = root + mapImg.url;
-    } catch (e) {
-        var mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
-    }
 
-    var fullCard = climbCard(climb, mapUrl, cragImg, topoImg, guideBook);
+    var fullCard = climbCard(climb, mapImg, cragImg, topoImg, guideBook, getGraph);
 
     document.getElementById('overlay').innerHTML = fullCard;
     document.title = climb.cliff + " - " + climb.routeName;
