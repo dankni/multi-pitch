@@ -315,7 +315,7 @@ function showTile(climbId) {
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
 
 
-    var fullCard = climbCard(climb, mapImg, cragImg, topoImg, guideBook, getGraph);
+    var fullCard = climbCard(climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph);
 
     document.getElementById('overlay').innerHTML = fullCard;
     document.title = climb.cliff + " - " + climb.routeName;

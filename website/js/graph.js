@@ -1,4 +1,4 @@
-function getGraph(type, climbId){
+function getGraph(type, climbId, weatherData){
 
   try { 
 	var weather = weatherData.weatherLines.filter(w => w.climbId === climbId);
@@ -65,4 +65,15 @@ function getGraph(type, climbId){
     tempInfo = '';
   }
   return tempInfo;
+}
+//So then I can use this in nodejs and in the browser
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+
+    module.exports = {
+
+        getGraph
+
+    };
+
 }

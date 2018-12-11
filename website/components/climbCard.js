@@ -56,10 +56,10 @@ function getApprochInfo(climb) {
     return approachInfo;
 }
 
-function getWeather(theId, climb) {
+function getWeather(theId, climb, weatherData, getGraph) {
     try {
-        var temprature = getGraph("temperature", theId);
-        var rain = getGraph("rain", theId);
+        var temperature = getGraph("temperature", theId, weatherData);
+        var rain = getGraph("rain", theId, weatherData);
         var weatherInfo = `
       <hr />
       <div class="row accordian">
@@ -83,7 +83,7 @@ function getWeather(theId, climb) {
 			    Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
 			    Plan accordingly! 
 		      </p>
-			  ${temprature}
+			  ${temperature}
             </div>
           </div>
         </div>
@@ -153,7 +153,7 @@ function climbCard(climb, mapImg, cragImg, topoImg, guideBook, weatherData, getG
 
     var guideBookModule = getGuidebook(guideBook, climb);
 
-    var weatherInfoModule = getWeather(climb.id, weatherData, getGraphFunction);
+    var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
 
     var mapUrl = getMapUrl(mapImg, climb);
 
