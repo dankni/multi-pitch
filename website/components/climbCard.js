@@ -26,7 +26,7 @@ function getGuidebook(guideBook, climb) {
             var guideBookModule = '';
         }
     } catch (e) {
-        var guideBookModule = '';
+        guideBookModule = '';
     }
     return guideBookModule;
 }
@@ -51,7 +51,7 @@ function getApprochInfo(climb) {
             var approachInfo = '';
         }
     } catch (e) {
-        var approachInfo = '';
+        approachInfo = '';
     }
     return approachInfo;
 }
@@ -116,7 +116,7 @@ function getRouteTopo(topoImg) {
 
 function getCragImg(cragImg) {
     try {
-        var cragImg = `
+        var cragImgModule = `
     <div class="img-contaner">
       <a href="${root}${cragImg.url}" target="blank" class="card-img-anch">
      <img src=".${root}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
@@ -127,13 +127,23 @@ function getCragImg(cragImg) {
       </p>
     </div>`;
     } catch (e) {
-        cragImg = '';
+        cragImgModule = '';
     }
 
-    return cragImg;
+    return cragImgModule;
 }
 
-function climbCard(climb, mapUrl, cragImg, topoImg, guideBook) {
+function getMapUrl(mapImg, climb) {
+// If there is a saved map image use it - otherwise generate the map from Google API
+    try {
+        var mapUrl = root + mapImg.url;
+    } catch (e) {
+        mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
+    }
+    return mapUrl;
+}
+
+function climbCard(climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
 
     var routeTopoModule = getRouteTopo(topoImg);
 
@@ -143,7 +153,9 @@ function climbCard(climb, mapUrl, cragImg, topoImg, guideBook) {
 
     var guideBookModule = getGuidebook(guideBook, climb);
 
-    var weatherInfoModule = getWeather(climb.id, climb);
+    var weatherInfoModule = getWeather(climb.id, weatherData, getGraphFunction);
+
+    var mapUrl = getMapUrl(mapImg, climb);
 
     var fullCard = `
    <div class="card big-card">
@@ -204,4 +216,16 @@ function climbCard(climb, mapUrl, cragImg, topoImg, guideBook) {
     </div>
   </div>`;
     return fullCard;
+}
+
+//So then I can use this in nodejs and in the browser
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+
+    module.exports = {
+
+        climbCard
+
+    };
+
 }

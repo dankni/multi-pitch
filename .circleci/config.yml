@@ -58,7 +58,7 @@ jobs:
       # Deploy to the S3
       - run:
           name: Deploy to S3
-          command: aws s3 sync website s3://www.multi-pitch.com/public --delete
+          command: aws s3 sync website s3://www.multi-pitch.com --delete
       - run:
           name: Website url
           command: echo "www.multi-pitch.com"
