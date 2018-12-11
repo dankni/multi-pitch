@@ -1,7 +1,7 @@
 /**
  GLOBAL VARIABLES
  **/
-const root = "/"; // adjust per enviroment
+const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
@@ -325,7 +325,7 @@ function showTile(climbId) {
  CLOASE THE CLIMB OVERVIEW - IE CLOSE THE BACK OF THE CARD
  **/
 function hideTile() {
-    history.replaceState(start, 'The best multi-pitch climbs', root);
+    history.replaceState(start, 'The best multi-pitch climbs', rootProject);
     isCardTurned = false; // ensure future clicks don't think its first load again
     document.getElementById('close').setAttribute("style", "display:none;");
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");

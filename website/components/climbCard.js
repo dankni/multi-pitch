@@ -100,8 +100,8 @@ function getRouteTopo(topoImg) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href=".${root}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src=".${root}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href=".${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src=".${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -118,8 +118,8 @@ function getCragImg(cragImg) {
     try {
         var cragImgModule = `
     <div class="img-contaner">
-      <a href="${root}${cragImg.url}" target="blank" class="card-img-anch">
-     <img src=".${root}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+      <a href="${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
+     <img src=".${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -136,7 +136,7 @@ function getCragImg(cragImg) {
 function getMapUrl(mapImg, climb) {
 // If there is a saved map image use it - otherwise generate the map from Google API
     try {
-        var mapUrl = root + mapImg.url;
+        var mapUrl = rootProject + mapImg.url;
     } catch (e) {
         mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
     }
