@@ -3,10 +3,10 @@ function getGuidebook(guideBook, climb) {
         if (guideBook.title != "") {
             var guideBookModule = `
     <hr />
-    <div class="row accordian" onclick="ga('send', 'event', 'climb-detail', 'toggle-guidebook', '${climb.routeName} on ${climb.cliff}', ${climb.id});">
+    <div class="row accordian">
       <div class="col">
         <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
-        <label for="tab-one" class="accordian-label">Guidebooks</label>
+        <label for="tab-one" class="accordian-label" onclick="ga('send', 'event', 'climb-detail', 'toggle-guidebook', '${climb.routeName} on ${climb.cliff}', ${climb.id});">Guidebooks</label>
         <div class="smaller accordian-content">
           <div>
             <img style="max-width:120px;float:left;padding-right:1rem;" src="./${guideBook.imgURL}" alt="${guideBook.title}" /> 
@@ -36,10 +36,10 @@ function getApprochInfo(climb) {
         if (climb.approach != "") {
             var approachInfo = `
     <hr />
-    <div class="row accordian" onclick="ga('send', 'event', 'climb-detail', 'toggle-approach', '${climb.routeName} on ${climb.cliff}', ${climb.id});">
+    <div class="row accordian">
         <div class="col">
           <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
-          <label for="tab-two" class="accordian-label">Approach & Descent Infomation</label>
+          <label for="tab-two" class="accordian-label" onclick="ga('send', 'event', 'climb-detail', 'toggle-approach', '${climb.routeName} on ${climb.cliff}', ${climb.id});">Approach & Descent Infomation</label>
           <div class="smaller accordian-content">
             <div>
               <p>${climb.approach}</p>
@@ -62,10 +62,10 @@ function getWeather(theId, climb) {
         var rain = getGraph("rain", theId);
         var weatherInfo = `
       <hr />
-      <div class="row accordian"  onclick="ga('send', 'event', 'climb-detail', 'toggle-weather', '${climb.routeName} on ${climb.cliff}', ${climb.id});">
+      <div class="row accordian">
         <div class="col">
           <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
-          <label for="tab-three" class="accordian-label">Seasonal Weather Infomation</label>
+          <label for="tab-three" class="accordian-label" onclick="ga('send', 'event', 'climb-detail', 'toggle-weather', '${climb.routeName} on ${climb.cliff}', ${climb.id});">Seasonal Weather Infomation</label>
           <div class="smaller accordian-content">
             <div>
               <p>
