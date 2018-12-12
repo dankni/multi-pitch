@@ -37,7 +37,7 @@ function generate() {
 
         const folderName = "".concat(climbAndHtml.climb.cliff, '-', climbAndHtml.climb.routeName)
             .toLowerCase()
-            .replace(/ /g, "_");
+            .replace(/ /g, "-");
 
         const folderLocation = path.resolve(baseFolder, folderName);
         if (!fs.existsSync(folderLocation)) {
