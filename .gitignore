@@ -52,6 +52,6 @@ img_compression
 
 # Project generated stuff #
 ###########################
-website/data
+website/data/*
 website/climbs
 multi-pitch.iml
