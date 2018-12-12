@@ -40,7 +40,9 @@ function generate() {
             .replace(/ /g, "_");
 
         const folderLocation = path.resolve(baseFolder, folderName);
-        fs.mkdirSync(folderLocation);
+        if (!fs.existsSync(folderLocation)) {
+            fs.mkdirSync(folderLocation);
+        }
         const fileLocation = path.resolve(folderLocation, 'index.html');
         return new Promise((resolve, reject) => {
             fs.writeFile(fileLocation, climbAndHtml.html, (err, data) => {
