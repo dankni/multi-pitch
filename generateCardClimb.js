@@ -14,39 +14,45 @@ const getGraph = require('./website/js/graph').getGraph;
 const rootProject = "../";
 
 function generate() {
+    const baseFolder = path.resolve(__dirname, OUTPUT_FOLDER);
 
-  const climbsAndHtml = climbsData.climbs.map(climb => {
-    var climbId = climb.id;
-    var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-    var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
-    var cragImg = cImgs.find(img => img.type === 'crag');
-    var topoImg = cImgs.find(img => img.type === 'topo');
-    var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
-    return {
-      climb: climb,
-      html: climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph)
-    };
-  });
+    if (!fs.existsSync(baseFolder)) {
+        fs.mkdirSync(baseFolder);
+    }
 
-  const promises = climbsAndHtml.map(climbAndHtml => {
+    const climbsAndHtml = climbsData.climbs.map(climb => {
+        var climbId = climb.id;
+        var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
+        var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
+        var cragImg = cImgs.find(img => img.type === 'crag');
+        var topoImg = cImgs.find(img => img.type === 'topo');
+        var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
+        return {
+            climb: climb,
+            html: climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph)
+        };
+    });
 
-    const fileName = "".concat(climbAndHtml.climb.cliff, '-', climbAndHtml.climb.routeName, '.html')
-      .toLowerCase()
-      .replace(/ /g, "_");
-    const fileLocation = path.resolve(__dirname, OUTPUT_FOLDER, fileName);
+    const promises = climbsAndHtml.map(climbAndHtml => {
 
+        const folderName = "".concat(climbAndHtml.climb.cliff, '-', climbAndHtml.climb.routeName)
+            .toLowerCase()
+            .replace(/ /g, "_");
 
-    return new Promise((resolve, reject) => {
-      fs.writeFile(fileLocation, climbAndHtml.html, (err, data) => {
-        if (err) reject(err);
-        else resolve(data);
-      })
-    })
-  });
+        const folderLocation = path.resolve(baseFolder, folderName);
+        fs.mkdirSync(folderLocation);
+        const fileLocation = path.resolve(folderLocation, 'index.html');
+        return new Promise((resolve, reject) => {
+            fs.writeFile(fileLocation, climbAndHtml.html, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            })
+        })
+    });
 
-  Promise.all(promises)
-    .then(_ => console.log("All good man :)) file saved in here: " + OUTPUT_FOLDER))
-    .catch(err => console.error(`Some shit happen.... ${err}`));
+    Promise.all(promises)
+        .then(_ => console.log("All good man :)) file saved in here: " + OUTPUT_FOLDER))
+        .catch(err => console.error(`Some shit happen.... ${err}`));
 
 }
 
