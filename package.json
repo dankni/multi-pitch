@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha",
     "generate-date": "node convertXlsxToJson.js",
+    "generate-climbs": "node generateCardClimb.js",
     "start": "node server.js"
   },
   "repository": {

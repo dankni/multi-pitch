@@ -1,4 +1,4 @@
-function getGuidebook(guideBook, climb) {
+function getGuidebook(rootProject, guideBook, climb) {
     try {
         if (guideBook.title != "") {
             var guideBookModule = `
@@ -9,7 +9,7 @@ function getGuidebook(guideBook, climb) {
         <label for="tab-one" class="accordian-label" onclick="ga('send', 'event', 'climb-detail', 'toggle-guidebook', '${climb.routeName} on ${climb.cliff}', ${climb.id});">Guidebooks</label>
         <div class="smaller accordian-content">
           <div>
-            <img style="max-width:120px;float:left;padding-right:1rem;" src="./${guideBook.imgURL}" alt="${guideBook.title}" /> 
+            <img style="max-width:120px;float:left;padding-right:1rem;" src="./${rootProject}/${guideBook.imgURL}" alt="${guideBook.title}" /> 
             <p>
               <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
               ${guideBook.description}
@@ -31,7 +31,7 @@ function getGuidebook(guideBook, climb) {
     return guideBookModule;
 }
 
-function getApprochInfo(climb) {
+function getApprochInfo(rootProject, climb) {
     try {
         if (climb.approach != "") {
             var approachInfo = `
@@ -56,7 +56,7 @@ function getApprochInfo(climb) {
     return approachInfo;
 }
 
-function getWeather(theId, climb, weatherData, getGraph) {
+function getWeather(rootProject, theId, climb, weatherData, getGraph) {
     try {
         var temperature = getGraph("temperature", theId, weatherData);
         var rain = getGraph("rain", theId, weatherData);
@@ -96,12 +96,12 @@ function getWeather(theId, climb, weatherData, getGraph) {
     return weatherInfo;
 }
 
-function getRouteTopo(topoImg) {
+function getRouteTopo(rootProject, topoImg) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href=".${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src=".${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href="./${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src="./${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -114,12 +114,12 @@ function getRouteTopo(topoImg) {
     return routeTopo;
 }
 
-function getCragImg(cragImg) {
+function getCragImg(rootProject, cragImg) {
     try {
         var cragImgModule = `
     <div class="img-contaner">
-      <a href="${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
-     <img src=".${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+      <a href="./${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
+     <img src="./${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -133,36 +133,36 @@ function getCragImg(cragImg) {
     return cragImgModule;
 }
 
-function getMapUrl(mapImg, climb) {
+function getMapUrl(rootProject, mapImg, climb) {
 // If there is a saved map image use it - otherwise generate the map from Google API
     try {
-        var mapUrl = rootProject + mapImg.url;
+        var mapUrl = './' + rootProject + mapImg.url;
     } catch (e) {
         mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
     }
     return mapUrl;
 }
 
-function climbCard(climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
+function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
 
-    var routeTopoModule = getRouteTopo(topoImg);
+    var routeTopoModule = getRouteTopo(rootProject, topoImg);
 
-    var cragImgModule = getCragImg(cragImg);
+    var cragImgModule = getCragImg(rootProject, cragImg);
 
-    var approachInfoModule = getApprochInfo(climb);
+    var approachInfoModule = getApprochInfo(rootProject, climb);
 
-    var guideBookModule = getGuidebook(guideBook, climb);
+    var guideBookModule = getGuidebook(rootProject, guideBook, climb);
 
-    var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
+    var weatherInfoModule = getWeather(rootProject, climb.id, climb, weatherData, getGraphFunction);
 
-    var mapUrl = getMapUrl(mapImg, climb);
+    var mapUrl = getMapUrl(rootProject, mapImg, climb);
 
     var fullCard = `
    <div class="card big-card">
     <div class="card-body" style="padding:0;">
       <div class="img-contaner">
         <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
-          <img class="big-card-map" src=".${mapUrl}" alt="${climb.cliff} location"/>
+          <img class="big-card-map" src="${mapUrl}" alt="${climb.cliff} location"/>
         </a>
         <span class="txt-ovr-img map-txt">Open in Google Maps</span>
       </div>

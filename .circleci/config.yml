@@ -21,8 +21,11 @@ jobs:
           command: npm install
       # Build Data js from excel
       - run:
-          name: Build for production
+          name: Build excel data for production
           command: npm run generate-date
+      - run:
+          name: Build climbs html for production
+          command: npm run generate-climbs
       # Cache local dependencies if they don't exist
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
