@@ -66,7 +66,14 @@ async function createFileFromTranslation(translation, result, outputFolder) {
                 ${translation.constName}\n
             };\n 
         }`;
-    const fileLocation = path.resolve(__dirname, outputFolder, translation.fileName);
+
+    const folderLocation = path.resolve(__dirname, outputFolder);
+    const fileLocation = path.resolve(folderLocation, translation.fileName);
+
+    if (!fs.existsSync(folderLocation)) {
+        fs.mkdirSync(folderLocation);
+    }
+
     return new Promise((resolve, reject) => {
         fs.writeFile(fileLocation, fileContent, (err, data) => {
             if (err) reject(err);
