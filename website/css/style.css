@@ -1,6 +1,5 @@
 /**************/
 /** ELEMENTS **/
-
 h1,h3,h4,p,ul {
   margin-top: 0;
 }
@@ -688,7 +687,10 @@ nav ul li a:hover {
 }
 @media (max-width:480px) {
   .not-mobile{
-  display:none;
+     display:none;
+  }
+  nav {
+    padding:0;
   }
 }
 select {
@@ -1121,7 +1123,7 @@ hr {
   }
 }
 
-/**************/
+/***********/
 /* LOADING */
 .loading {
   margin: 25px;
