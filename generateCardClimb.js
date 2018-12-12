@@ -11,7 +11,7 @@ const guideBooks = require('./website/data/guidebooks').guideBooks;
 const weatherData = require('./website/data/weather').weatherData;
 const getGraph = require('./website/js/graph').getGraph;
 
-const rootProject = "../";
+const rootProject = "../../";
 
 function generate() {
     const baseFolder = path.resolve(__dirname, OUTPUT_FOLDER);
