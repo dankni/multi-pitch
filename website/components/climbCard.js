@@ -14,7 +14,7 @@ function getGuidebook(rootProject, guideBook, climb) {
               <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
               ${guideBook.description}
               <br />
-              <a href="${guideBook.link}" target="blank">Availible Here</a>
+              <a href="${guideBook.link}" onClick="gtag('event', 'guidebook-link', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${climb.id}});" target="blank">Availible Here</a>
               R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
               <small>ISBN: ${guideBook.isbn} </small>
             </p>
