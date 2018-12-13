@@ -63,7 +63,13 @@ jobs:
           name: Deploy to S3
           command: aws s3 sync website s3://www.multi-pitch.com --delete
       - run:
-          name: Website url
+          name: Add a file to know which version was deployed
+          command: echo "release number: ${CIRCLE_TAG}" >> release.txt
+      - run:
+          name: Deploy that file
+          command: aws s3 cp release.txt s3://www.multi-pitch.com
+      - run:
+          name: Print website url
           command: echo "www.multi-pitch.com"
 
 workflows:
