@@ -9,7 +9,7 @@ function getGuidebook(rootProject, guideBook, climb) {
         <label for="tab-one" class="accordian-label" onclick="gtag('event', 'toggle-guidebook', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${climb.id}});">Guidebooks</label>
         <div class="smaller accordian-content">
           <div>
-            <img style="max-width:120px;float:left;padding-right:1rem;" src="./${rootProject}/${guideBook.imgURL}" alt="${guideBook.title}" /> 
+            <img style="max-width:120px;float:left;padding-right:1rem;" src="${rootProject}${guideBook.imgURL}" alt="${guideBook.title}" /> 
             <p>
               <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
               ${guideBook.description}
@@ -100,8 +100,8 @@ function getRouteTopo(rootProject, topoImg) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href="./${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src="./${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href="${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src="${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -118,8 +118,8 @@ function getCragImg(rootProject, cragImg) {
     try {
         var cragImgModule = `
     <div class="img-contaner">
-      <a href="./${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
-     <img src="./${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+      <a href="${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
+     <img src="${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -136,7 +136,7 @@ function getCragImg(rootProject, cragImg) {
 function getMapUrl(rootProject, mapImg, climb) {
 // If there is a saved map image use it - otherwise generate the map from Google API
     try {
-        var mapUrl = './' + rootProject + mapImg.url;
+        var mapUrl = rootProject + mapImg.url;
     } catch (e) {
         mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
     }

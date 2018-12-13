@@ -1,7 +1,7 @@
 /**
  GLOBAL VARIABLES
  **/
-const rootProject = "/"; // adjust per enviroment
+const rootProject = "./"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
