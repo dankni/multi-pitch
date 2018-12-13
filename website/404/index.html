@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Page Not Found - 404 Error</title>
+
+    <!-- Styles -->
+    <link href="../css/bootstrap-grid.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123782847-1');
+    </script>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+</head>
+<body id="bdy">
+    <!-- Navbar -->
+    <nav>
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="../img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+            </a>
+            <ul>
+                <li>
+                    <a href="/#filters"
+                       onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>
+                        Find <span class="not-mobile">Your Climb</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/map/">Map <span class="not-mobile">View</span></a>
+                </li>
+                <li>
+                    <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Browser Support Check -->
+    <div class="ie-warn" id="ie-warn">
+        This website requires a <a href="https://www.mozilla.org/en-GB/firefox/new/" target="blank">modern browser</a> to function correctly.
+    </div>
+    <script>
+        if (navigator.userAgent.indexOf("Trident/") > -1) {
+            document.getElementById('ie-warn').setAttribute('style', 'display:block;');
+        }
+    </script>
+
+    <!-- Main Content -->
+    <main id="main" style="background:#cff2f6">
+        <div class="container" style="margin-top:50px">
+            <section class="mt-5">
+                <div class="row">
+                    <div class="col-md-12 mb-12">
+                        <h3 class="h3" style="margin-top:30px">Page Not Found - 404</h3>
+                        <p style="margin-top:40px"> 
+                            Sorry what you were looking for couldn't be found.
+                        </p>
+                        <small>
+                            <em>
+                                Just like that time you thought the route went left and
+                                you ended up doing an E3 finish....
+                            </em>
+                        </small>
+                        <div class="compass">
+                            <div class="compass-inner">
+                                <div class="north">N</div>
+                                <div class="east">E</div>
+                                <div class="west">W</div>
+                                <div class="south">S</div>
+                                <div class="main-arrow">
+                                    <div class="arrow-up"></div>
+                                    <div class="arrow-down"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!--Footer-->
+    <footer class="page-footer text-center font-small">
+        <div class="footer-copyright">
+            <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">&copy; 2019 Creative Commons</a> -
+            <a href="/"> multi-pitch.com </a>
+        </div>
+    </footer>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+    <style>
+        .row{
+            text-align:center;
+        }
+        .compass {
+            width: 400px;
+            height: 400px;
+            background-color: #F3F3F3;
+            border-radius: 100%;
+            background-image: -webkit-linear-gradient(top, #F7F7F7, #ECECEC);
+            position: relative;
+            margin: 80px auto;
+        }
+        .compass-inner {
+            width: 340px;
+            height: 340px;
+            background-color: #3D3D3D;
+            border-radius: 100%;
+            position: relative;
+            left: 27.5px;
+            top: 27.5px;
+            border: 3px solid #C5C5C5;
+        }
+        .main-arrow {
+            height: 100%;
+            width: 30px;
+            left: 155px;
+            position: relative;
+            padding-top: 5px;
+            box-sizing: border-box;
+            transform: rotate(20deg);
+            animation: spin 2.0s alternate infinite;
+            -ms-transform: rotate(20deg);
+            -o-transform: rotate(20deg);
+            -o-animation: spin 2.0s alternate infinite;
+            -moz-transform: rotate(20deg);
+            -moz-animation: spin 2.0s alternate infinite;
+            -webkit-transform: rotate(20deg);
+            -webkit-animation: spin 2.0s alternate infinite;
+        }
+        .arrow-up {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 165px solid #EF5052;
+            position: relative;
+        }
+        .arrow-down {
+            -webkit-transform: rotate(180deg); /* Safari and Chrome */
+            width: 0;
+            transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 165px solid #F3F3F3;
+            position: relative;
+        }
+        .north {
+            font-size: 36px;
+            color: #FFF;
+            position: absolute;
+            left: 155px;
+            top: 10px;
+        }
+        .east {
+            font-size: 36px;
+            color: #FFF;
+            position: absolute;
+            left: 290px;
+            top: 150px;
+        }
+        .west {
+            font-size: 36px;
+            color: #FFF;
+            position: absolute;
+            left: 20px;
+            top: 150px;
+        }
+        .south {
+            font-size: 36px;
+            color: #FFF;
+            position: absolute;
+            left: 155px;
+            top: 280px;
+        }
+        @keyframes spin {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1) rotate(80deg);
+            }
+            100% {
+                transform: scale(1) rotate(-180deg);
+            }
+        }
+        @-o-keyframes spin {
+            0% {
+                -webkit-transform: scale(1) rotate(0deg);
+            }
+            50% {
+                -webkit-transform: scale(1) rotate(80deg);
+            }
+            100% {
+                -webkit-transform: scale(1) rotate(-180deg);
+            }
+        }
+        @-moz-keyframes spin {
+            0% {
+                -webkit-transform: scale(1) rotate(0deg);
+            }
+            50% {
+                -webkit-transform: scale(1) rotate(80deg);
+            }
+            100% {
+                -webkit-transform: scale(1) rotate(-180deg);
+            }
+        }
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: scale(1) rotate(0deg);
+            }
+            50% {
+                -webkit-transform: scale(1) rotate(80deg);
+            }
+            100% {
+                -webkit-transform: scale(1) rotate(-180deg);
+            }
+        }
+        @media (max-width: 600px) {
+            .compass {
+                width: 200px;
+                height: 200px;
+                text-align: center;
+            }
+            .compass-inner {
+                width: 170px;
+                height: 170px;
+                left: 13px;
+                top: 13px;
+            }
+            .main-arrow {
+                width: 30px;
+                left: 78px;
+                width: 15px;
+                padding-top: 3px;
+            }
+            .arrow-up {
+                border-bottom: 82.5px solid #EF5052;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .arrow-down {
+                border-bottom: 82.5px solid #F3F3F3;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .north {
+                left: 78px;
+                top: 10px;
+                font-size: 16px;
+            }
+            .south {
+                font-size: 16px;
+                left: 78px;
+                top: 140px;
+            }
+            .east {
+                font-size: 16px;
+                top: 72.5px;
+                left: 145px;
+            }
+            .west {
+                font-size: 16px;
+                left: 10px;
+                top: 72.5px;
+            }
+        }
+        @media (max-width: 600px) {
+            .compass {
+                width: 200px;
+                height: 200px;
+                text-align: center;
+            }
+            .compass-inner {
+                width: 170px;
+                height: 170px;
+                left: 13px;
+                top: 13px;
+            }
+            .main-arrow {
+                width: 30px;
+                left: 78px;
+                width: 15px;
+                padding-top: 3px;
+            }
+            .arrow-up {
+                border-bottom: 82.5px solid #EF5052;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .arrow-down {
+                border-bottom: 82.5px solid #F3F3F3;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .north {
+                left: 78px;
+                top: 10px;
+                font-size: 16px;
+            }
+            .south {
+                font-size: 16px;
+                left: 78px;
+                top: 140px;
+            }
+            .east {
+                font-size: 16px;
+                top: 72.5px;
+                left: 145px;
+            }
+            .west {
+                font-size: 16px;
+                left: 10px;
+                top: 72.5px;
+            }
+        }
+        @media (max-width: 600px) {
+            .compass {
+                width: 200px;
+                height: 200px;
+                text-align: center;
+            }
+            .compass-inner {
+                width: 170px;
+                height: 170px;
+                left: 13px;
+                top: 13px;
+            }
+            .main-arrow {
+                width: 30px;
+                left: 78px;
+                width: 15px;
+                padding-top: 3px;
+            }
+            .arrow-up {
+                border-bottom: 82.5px solid #EF5052;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .arrow-down {
+                border-bottom: 82.5px solid #F3F3F3;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .north {
+                left: 78px;
+                top: 10px;
+                font-size: 16px;
+            }
+            .south {
+                font-size: 16px;
+                left: 78px;
+                top: 140px;
+            }
+            .east {
+                font-size: 16px;
+                top: 72.5px;
+                left: 145px;
+            }
+            .west {
+                font-size: 16px;
+                left: 10px;
+                top: 72.5px;
+            }
+        }
+        @media (max-width: 600px) {
+            .compass {
+                width: 200px;
+                height: 200px;
+                text-align: center;
+            }
+            .compass-inner {
+                width: 170px;
+                height: 170px;
+                left: 13px;
+                top: 13px;
+            }
+            .main-arrow {
+                width: 30px;
+                left: 78px;
+                width: 15px;
+                padding-top: 3px;
+            }
+            .arrow-up {
+                border-bottom: 82.5px solid #EF5052;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .arrow-down {
+                border-bottom: 82.5px solid #F3F3F3;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+            }
+            .north {
+                left: 78px;
+                top: 10px;
+                font-size: 16px;
+            }
+            .south {
+                font-size: 16px;
+                left: 78px;
+                top: 140px;
+            }
+            .east {
+                font-size: 16px;
+                top: 72.5px;
+                left: 145px;
+            }
+            .west {
+                font-size: 16px;
+                left: 10px;
+                top: 72.5px;
+            }
+        }
+    </style>
+</body>
+</html>
