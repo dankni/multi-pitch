@@ -63,17 +63,30 @@ jobs:
           name: Deploy to S3
           command: aws s3 sync website s3://www.multi-pitch.com --delete
       - run:
-          name: Website url
+          name: Add a file to know which version was deployed
+          command: |
+            echo "release number: ${CIRCLE_TAG}" >> release.txt
+      - run:
+          name: Deploy that file
+          command: aws s3 cp release.txt s3://www.multi-pitch.com
+      - run:
+          name: Print website url
           command: echo "www.multi-pitch.com"
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build
+      - build:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /^v.*/
+
       - deploy:
           requires:
             - build
           filters:
             tags:
               only: /^v.*/
+            branches:
+              ignore: /.*/
