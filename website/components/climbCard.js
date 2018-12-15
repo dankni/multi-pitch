@@ -56,9 +56,12 @@ function getApprochInfo(rootProject, climb) {
     return approachInfo;
 }
 
-function getWeather(rootProject, theId, climb, weatherData, getGraph) {
+function getWeather(theId, climb, weatherData, getGraph) {
     try {
         var temperature = getGraph("temperature", theId, weatherData);
+        if (temperature == '') {
+            return '';
+        }
         var rain = getGraph("rain", theId, weatherData);
         var weatherInfo = `
       <hr />
@@ -69,31 +72,32 @@ function getWeather(rootProject, theId, climb, weatherData, getGraph) {
           <div class="smaller accordian-content">
             <div>
               <p>
-		        NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
-	            This could be quite far away and at a darmatically different elevation. 
-		  	    This means it could be considerably colder or wetter on some mountain climbs.</em>
-	          </p>
-	          <p>
-			    Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
-			  </p>
+		            NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
+	              This could be quite far away and at a darmatically different elevation. 
+		  	        This means it could be considerably colder or wetter on some mountain climbs.</em>
+	            </p>
+	            <p>
+			          Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
+			        </p>
               ${rain}
-			  <br />
-			  <p>
-			    Estimated average high and low temperature in degrees Celsius for the given month below. 
-			    Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
-			    Plan accordingly! 
-		      </p>
-			  ${temperature}
+			        <br />
+			        <p>
+			          Estimated average high and low temperature in degrees Celsius for the given month below. 
+			          Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
+			          Plan accordingly! 
+		          </p>
+			        ${temperature}
             </div>
           </div>
         </div>
       </div>`;
-
+      return weatherInfo;
     } catch (e) {
         weatherInfo = '';
         console.log("weather error for: " + theId);
+        return weatherInfo;
     }
-    return weatherInfo;
+    
 }
 
 function getRouteTopo(rootProject, topoImg) {
@@ -153,7 +157,7 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
 
     var guideBookModule = getGuidebook(rootProject, guideBook, climb);
 
-    var weatherInfoModule = getWeather(rootProject, climb.id, climb, weatherData, getGraphFunction);
+    var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
 
     var mapUrl = getMapUrl(rootProject, mapImg, climb);
 

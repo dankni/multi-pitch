@@ -62,7 +62,7 @@ function getGraph(type, climbId, weatherData){
 	tempInfo += `</ul>`;
      
   } catch(e) {
-    tempInfo = '';
+      tempInfo = '';
   }
   return tempInfo;
 }

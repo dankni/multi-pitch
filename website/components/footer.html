@@ -38,6 +38,9 @@
         <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">© 2019 Creative Commons</a> -
         <a href="/"> multi-pitch.com </a>
     </div>
+    <a onClick="hideTile()" class="close" id="close"></a>
+    <div class="overlay" id="overlay"></div>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <script>
         function openSubscribe() {
             var request = new XMLHttpRequest();
@@ -85,8 +88,9 @@
                 hardLabel.textContent = "5+ or harder";
             }
         }
+        document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);");
+        document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+        document.title = climb.cliff + " - " + climb.routeName;
     </script>
 </footer>
-<a onClick="hideTile()" class="close" id="close"></a>
-<div class="overlay" id="overlay"></div>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+</body>

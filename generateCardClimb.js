@@ -10,6 +10,9 @@ const climbImgs = require('./website/data/imgs').climbImgs;
 const guideBooks = require('./website/data/guidebooks').guideBooks;
 const weatherData = require('./website/data/weather').weatherData;
 const getGraph = require('./website/js/graph').getGraph;
+const headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
+const navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
+const footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
 
 const rootProject = "../../";
 
@@ -29,7 +32,7 @@ function generate() {
         var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
         return {
             climb: climb,
-            html: climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph)
+            html: headHTML + navHTML + climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph) + footerHTML
         };
     });
 
