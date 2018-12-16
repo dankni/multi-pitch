@@ -547,13 +547,15 @@ footer.page-footer a {
   background-color:rgba(3,3,3,.03);
   padding:1rem;
 }
-.flag{
+.flag {
   width: 35px;
   background-size: 100%;
   background-repeat: no-repeat;
   display: inline-block;
-  height: 23px;
-  margin-bottom:-5px;
+  height: 41px;
+  margin-bottom: -5px;
+  float: left;
+  margin-right: 10px;
 }
 .crag-hero{
   width:100%;
@@ -902,6 +904,9 @@ hr {
   position:relative;
   padding:1rem 1rem 2rem 1rem;
 }
+.big-card-body .smaller{
+    padding-top:4px;
+}
 .big-card-map{
   width:100%;
   object-fit: cover;
@@ -1063,19 +1068,21 @@ hr {
 .france {
   background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNjAwIj4NCjxwYXRoIGZpbGw9IiNlZDI5MzkiIGQ9Im0wLDBoOTAwdjYwMGgtOTAweiIvPg0KPHBhdGggZmlsbD0iI2ZmZiIgZD0ibTAsMGg2MDB2NjAwaC02MDB6Ii8+DQo8cGF0aCBmaWxsPSIjMDAyMzk1IiBkPSJtMCwwaDMwMHY2MDBoLTMwMHoiLz4NCjwvc3ZnPg0K');
 }
-
+.switzerland {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMzIwIj4NCjxwYXRoIGZpbGw9IiNkNTJiMWUiIGQ9Im0wLDBoMzIwdjMyMGgtMzIweiIvPg0KPGcgZmlsbD0iI2ZmZiI+DQo8cGF0aCBkPSJtNjAsMTMwaDIwMHY2MGgtMjAweiIvPg0KPHBhdGggZD0ibTEzMCw2MGg2MHYyMDBoLTYweiIvPg0KPC9nPg0KPC9zdmc+DQo=');
+}
 /** CHARTS **/
 .chart {
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-  max-width: 500px;
-  height: 200px;
-  margin: -20px auto 0 auto;
-  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 2%, rgba(0, 0, 0, 0) 2%);
-  background-size: 100% 50px;
-  background-position: left top;
-  padding:0 0 2rem 0;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    max-width: 500px;
+    height: 200px;
+    margin: -20px auto 0 auto;
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 2%, rgba(0, 0, 0, 0) 2%);
+    background-size: 100% 50px;
+    background-position: left top;
+    padding: 0 0 2rem 0;
 }
 .chart li {
   position: relative;
