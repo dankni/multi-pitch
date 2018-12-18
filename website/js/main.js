@@ -254,24 +254,26 @@ function publishCards(climbsArr) {
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
             var card = `
     <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-      <picture>
-        <source srcset="./${webPUrl}" type="image/webp">
-        <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
-      </picture>
-      <div class="card-body">
-      <h4>
-      <span class="flag ${climbsArr[i].flag}"></span>
-      ${climbsArr[i].cliff}
-      </h4>
-      <p class="card-text">
-      <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-        <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
-      <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
-      <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
-      <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
-      </p>
-      </div>
-      <a class="open-tile" onclick="showTile(${climbsArr[i].id});">SHOW MORE INFO</a>
+        <a onclick="showTile(${climbsArr[i].id});">
+            <picture>
+                <source srcset="./${webPUrl}" type="image/webp">
+                <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+            </picture>
+        </a>
+        <div class="card-body">
+            <h4>
+            <span class="flag ${climbsArr[i].flag}"></span>
+                 ${climbsArr[i].cliff}
+            </h4>
+            <p class="card-text">
+                <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
+                <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
+                <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
+                <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
+                <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
+            </p>
+        </div>
+        <a class="open-tile" onclick="showTile(${climbsArr[i].id});">SHOW MORE INFO</a>
     </div>`;
 
             cardHolder.innerHTML += card;
