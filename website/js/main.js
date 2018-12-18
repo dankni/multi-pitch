@@ -1,7 +1,7 @@
 /**
  GLOBAL VARIABLES
  **/
-const rootProject = "./"; // adjust per enviroment
+const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
@@ -256,8 +256,8 @@ function publishCards(climbsArr) {
     <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
         <a onclick="showTile(${climbsArr[i].id});">
             <picture>
-                <source srcset="./${webPUrl}" type="image/webp">
-                <img src="./${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+                <source srcset="/${webPUrl}" type="image/webp">
+                <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
             </picture>
         </a>
         <div class="card-body">
@@ -307,8 +307,10 @@ function showTile(climbId) {
 
     // a check to see if the user has landed on a page from a direct link
     if (isCardTurned !== true) {
-        var url = '?overview=' + `${climb.id}`.toLowerCase();
-        url = url.replace(' ', '-');
+        var url = `climbs/${climb.routeName}-on-${climb.cliff}`;
+        url = url.replace(' ', '-'); //space
+        url = url.replace(' ', '-'); // something thats not exactly a space 
+        url = url.toLowerCase();
         window.history.pushState(history_data, climb.cliff, url);
     }
 
@@ -342,7 +344,9 @@ window.onpopstate = function (event) {
 
 window.onload = function () {
     // Sorts and publishes the cards
-    sortCards('length', 'DESC');
+    if (document.location.href.indexOf('/climbs/') === -1) {
+        sortCards('length', 'DESC');
+    }
     if (isCardTurned === true) {
         var overview = start.split('=');
         var cardToLoad = overview[1];

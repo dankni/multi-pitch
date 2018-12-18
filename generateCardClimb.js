@@ -4,7 +4,7 @@ const path = require('path');
 
 // given a climb id it will generate the html to display it
 const OUTPUT_FOLDER = './website/climbs';
-const climbCard = require('./website/components/climbCard').climbCard;
+const climbCard = require('./website/components/climbPageTemplate').climbCard;
 const climbsData = require('./website/data/climbs').climbsData;
 const climbImgs = require('./website/data/imgs').climbImgs;
 const guideBooks = require('./website/data/guidebooks').guideBooks;
