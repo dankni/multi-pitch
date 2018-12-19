@@ -55,4 +55,7 @@ img_compression
 ###########################
 website/data
 website/climbs
+
+website/dist
+
 multi-pitch.iml

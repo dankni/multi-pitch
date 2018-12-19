@@ -7,7 +7,10 @@
     "test": "mocha",
     "generate-date": "node convertXlsxToJson.js",
     "generate-climbs": "node generateCardClimb.js",
-    "start": "node server.js"
+    "generate": "npm run generate-date && npm run generate-climbs",
+    "start": "webpack-dev-server --mode development",
+    "build": "webpack --mode development",
+    "build-min": "webpack --mode production"
   },
   "repository": {
     "type": "git",
@@ -25,8 +28,17 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "css-loader": "^2.0.1",
+    "file-loader": "^2.0.0",
+    "mini-css-extract-plugin": "^0.5.0",
     "mocha": "^5.2.0",
     "nightmare": "^3.0.1",
-    "node-static": "^0.7.11"
+    "node-static": "^0.7.11",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "terser-webpack-plugin": "^1.1.0",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
   }
 }

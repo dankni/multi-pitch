@@ -1,4 +1,14 @@
 /**
+ * IMPORTS
+ */
+
+const climbsDataConst = require('./data/climbs').climbsData;
+const weatherData = require('./data/weather').weatherData;
+const guideBooks = require('./data/guideBooks').guideBooks;
+const climbImgsConst = require('./data/imgs').climbImgs;
+const getGraph = require('./js/graph').getGraph;
+const climbCard = require('./components/climbCard').climbCard;
+/**
  GLOBAL VARIABLES
  **/
 const rootProject = "./"; // adjust per enviroment
@@ -11,18 +21,19 @@ var webP = false;
  CHECK IF BROWSER SUPPORTS WEBP IMAGES
  **/
 async function supportsWebp() {
-  if (!self.createImageBitmap) return false;
-  const webpData = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
-  const blob = await fetch(webpData).then(r => r.blob());
-  return createImageBitmap(blob).then(() => true, () => false);
+    if (!self.createImageBitmap) return false;
+    const webpData = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
+    const blob = await fetch(webpData).then(r => r.blob());
+    return createImageBitmap(blob).then(() => true, () => false);
 }
+
 (async () => {
-    if(await supportsWebp()) {
+    if (await supportsWebp()) {
         webP = true;
         document.getElementById('hero').classList.add('supportsWebP');
         document.getElementById('hero').classList.remove('supportsJPEG');
     }
- })();
+})();
 
 /**
  THE SLIDER FUNCTION FOR FILTERS
@@ -118,7 +129,7 @@ async function supportsWebp() {
         [].slice.call(document.querySelectorAll("input[type=range][multiple]:not(.multirange)")).forEach(multirange);
     };
 
-    if (document.readyState == "loading") {
+    if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", multirange.init);
     } else {
         multirange.init();
@@ -134,7 +145,7 @@ function showVal(values, field) {
     var lowerValue = values.split(',')[0];
     var higherValue = values.split(',')[1];
 
-    if (field == 'grade') {
+    if (field === 'grade') {
         const gradeMappings = {1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1'};
         lowerValue = gradeMappings[parseInt(lowerValue)];
         higherValue = gradeMappings[parseInt(higherValue)];
@@ -249,7 +260,7 @@ helper.arr = {
 function publishCards(climbsArr) {
     for (let i = 0; i < climbsArr.length; i++) {
         if (climbsArr[i].status === 'publish') {
-            var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
+            var cImgs = climbImgsConst.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
             var card = `
@@ -286,7 +297,7 @@ function publishCards(climbsArr) {
 function sortCards(sortBy, direction) {
     var c = document.getElementsByClassName("card");
     while (c.length > 0) c[0].remove();
-    var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
+    var climbsSorted = helper.arr.multisort(climbsDataConst.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
     publishCards(climbsSorted);
 }
 
@@ -294,9 +305,10 @@ function sortCards(sortBy, direction) {
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
 function showTile(climbId) {
+
     climbId = parseInt(climbId);
-    var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
-    var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
+    var climb = climbsDataConst.climbs.find(c => c.id === climbId); // get the climb object by id
+    var cImgs = climbImgsConst.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
     var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
     var cragImg = cImgs.find(img => img.type === 'crag');
     var topoImg = cImgs.find(img => img.type === 'topo');
@@ -347,3 +359,9 @@ window.onload = function () {
         showTile(cardToLoad);
     }
 };
+
+
+window.showTile = showTile;
+window.hideTile = hideTile;
+window.climbImgs = climbImgsConst;
+window.climbsData = climbsDataConst;

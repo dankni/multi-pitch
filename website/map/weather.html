@@ -12,8 +12,9 @@
     <link href="../css/bootstrap-grid.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
 	<link href="../css/owfont-regular.css" rel="stylesheet" />
-    <script src="../data/climbs.js"></script>
-    <script src="../data/imgs.js"></script>
+    <!--<script src="../data/climbs.js"></script>-->
+    <!--<script src="../data/imgs.js"></script>-->
+    <script src="../js/main-weather.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
         crossorigin="" />
@@ -46,7 +47,7 @@
 	left: 0;
     color: #FFF;
     padding: 6px;
-  }  
+  }
   .pop-up-title a {
       color: #FFF;
   }
@@ -104,7 +105,7 @@
     <script>
         var climbs = [];
         var owmAppKey = "ff36c76ad099d751ff2351936208f19d"; //a74658b259ce0c69bcf21eeb158c3c98
-        
+
         var ownPrecipitationTile = `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${owmAppKey}`;
         var ownWindTile = `https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${owmAppKey}`;
         var ownTemperatureTile = `https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${owmAppKey}`;
@@ -121,7 +122,7 @@
                     '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
                     'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins' +
                     '<br /><hr style="width: 60%;margin: 10px auto;"/> ' +
-					'<i class="owf owf-${placeholder-weather-id} owf-3x"></i>' + 
+					'<i class="owf owf-${placeholder-weather-id} owf-3x"></i>' +
 					'<br />Conditions: <strong>${placeholder-conditions}</strong>' +
 					'<br/>Temperature: <strong>${placeholder-temp}&nbsp;°C</strong></p>';
                 climbs.push({
@@ -141,7 +142,7 @@
             Object.assign({
                 attribution: '&copy; ' + mapLink + ' Contributors'
             }, baseLayerOptions));
-            
+
         var ownPrecipitationLayer = L.tileLayer(ownPrecipitationTile, baseLayerOptions);
         var ownTemperatureLayer = L.tileLayer(ownTemperatureTile, baseLayerOptions);
         var ownWindLayer = L.tileLayer(ownWindTile, baseLayerOptions);
@@ -164,7 +165,7 @@
                 climb.content = climb.content.replace("${placeholder-weather-id}", ownResponse.weather[0].id)
                 climb.content = climb.content.replace("${placeholder-conditions}", ownResponse.weather[0].description)
 				console.log(ownResponse.weather[0]);
-   
+
                 new L.marker([climb.lat, climb.lon])
                     .bindPopup(climb.content)
                     .addTo(map);
@@ -172,7 +173,7 @@
         }
 
         fetchWeatherAndAddMarkers(climbs);
-/*	
+/*
 		accessToken: 'pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw'
 */
     </script>

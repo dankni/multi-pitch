@@ -9,17 +9,11 @@
     <title>The best multi-pitch rock climbs</title>
 
     <!-- Styles -->
-    <link href="css/bootstrap-grid.css" rel="stylesheet"/>
-    <link href="css/style.css" rel="stylesheet"/>
+    <link href="./dist/main.css" rel="stylesheet"/>
 
     <!-- JavaScripts -->
-    <script src="data/climbs.js"></script>
-    <script src="data/imgs.js"></script>
-    <script src="data/guidebooks.js"></script>
-    <script src="data/weather.js"></script>
-    <script src="components/climbCard.js"></script>
-    <script src="js/graph.js"></script>
-    <script src="js/main.js"></script>
+    <script src="./dist/main.js"></script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
     <script>
@@ -98,6 +92,19 @@
 
     <!-- Full Page Intro -->
     <div class="view full-page-intro supportsJPEG" id="hero">
+
+        <picture>
+            <source srcset="./img/heros/old-man-of-stoer-hero-1800.webp 800w,
+             ./img/heros/old-man-of-stoer-hero-1800.webp 1800w,
+             ./img/heros/old-man-of-stoer-hero-2400.webp 2400w" type="image/webp">
+
+            <img src="https://ik.imagekit.io/demo/img/responsive_images_srcset_sizes_assets/big/1.jpeg"
+                 srcset="./img/heros/old-man-of-stoer-hero-1800.jpg 800w,
+                 ./img/heros/old-man-of-stoer-hero-1800.jpg 1800w,
+                 ./img/heros/old-man-of-stoer-hero-2400.jpg 2400w"
+                 sizes="(min-width: 1024px) 1024px, 100vw">
+        </picture>
+
         <div class="mask rgba-black-light d-flex align-items-center">
             <div class="container">
                 <div class="row">
@@ -106,7 +113,7 @@
                     </div>
                     <div class="col-md-9 mb-4 white-text hero">
                         <h1 class="display-4">Only the best multi&#8209;pitch&nbsp;climbs</h1>
-                        <h3 class="display-6">Carefully curated & meticulously&nbsp;detailed</h3>
+                        <h3 class="display-6">Carefully curated & meticulously&nbsp;de ftailed</h3>
                         <hr class="hr-light">
                         <p class="mb-4 d-md-block">
                             <strong>
