@@ -118,7 +118,7 @@ async function supportsWebp() {
         [].slice.call(document.querySelectorAll("input[type=range][multiple]:not(.multirange)")).forEach(multirange);
     };
 
-    if (document.readyState == "loading") {
+    if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", multirange.init);
     } else {
         multirange.init();
@@ -134,7 +134,7 @@ function showVal(values, field) {
     var lowerValue = values.split(',')[0];
     var higherValue = values.split(',')[1];
 
-    if (field == 'grade') {
+    if (field === 'grade') {
         const gradeMappings = {1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1'};
         lowerValue = gradeMappings[parseInt(lowerValue)];
         higherValue = gradeMappings[parseInt(higherValue)];
@@ -191,7 +191,7 @@ function filterCards() {
 /**
  FUNCTION TO SORT MULTIDIMENSIONAL ARRAYS
  **/
-if (typeof helper == 'undefined') {
+if (typeof helper === 'undefined') {
     var helper = {};
 }
 
@@ -203,13 +203,13 @@ helper.arr = {
     // returns {array}
 
     multisort: function (arr, columns, order_by) {
-        if (typeof columns == 'undefined') {
+        if (typeof columns === 'undefined') {
             columns = [];
             for (x = 0; x < arr[0].length; x++) {
                 columns.push(x);
             }
         }
-        if (typeof order_by == 'undefined') {
+        if (typeof order_by === 'undefined') {
             order_by = [];
             for (x = 0; x < arr[0].length; x++) {
                 order_by.push('ASC');
@@ -217,7 +217,7 @@ helper.arr = {
         }
 
         function multisort_recursive(a, b, columns, order_by, index) {
-            var direction = order_by[index] == 'DESC' ? 1 : 0;
+            var direction = order_by[index] === 'DESC' ? 1 : 0;
 
             var is_numeric = !isNaN(a[columns[index]] - b[columns[index]]);
 
@@ -229,12 +229,12 @@ helper.arr = {
                     y = helper.string.to_ascii(b[columns[index]].toLowerCase(), -1);
             }
             if (x < y) {
-                return direction == 0 ? -1 : 1;
+                return direction === 0 ? -1 : 1;
             }
-            if (x == y) {
+            if (x === y) {
                 return columns.length - 1 > index ? multisort_recursive(a, b, columns, order_by, index + 1) : 0;
             }
-            return direction == 0 ? 1 : -1;
+            return direction === 0 ? 1 : -1;
         }
 
         return arr.sort(function (a, b) {
