@@ -4,7 +4,7 @@ function getGraph(type, climbId, weatherData){
 	var weather = weatherData.weatherLines.filter(w => w.climbId === climbId);
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	
-	if (type == "temperature") {
+	if (type === "temperature") {
 	  var high = weather.find(h => h.type === 'tempH');
 	  var chartClass = "temp";
     } else {
@@ -21,7 +21,7 @@ function getGraph(type, climbId, weatherData){
 	if (maxValue < 18) graphHeight -= 5; // makes the bars fill more of the height
 	
 	var lowArray = [];
-	if (type == "temperature") {
+	if (type === "temperature") {
 	  var tempL = weather.find(l => l.type === 'tempL');
 	  for(let i = 2; i < 14; i++){
 	    lowArray.push(parseInt(Object.values(tempL)[i]));
@@ -54,7 +54,7 @@ function getGraph(type, climbId, weatherData){
   	  <li>
 	    ${highArray[i]}
 	    <span style="height:${highTemp}%" title="${months[i]}"></span>`;
-      if (type == "temperature"){
+      if (type === "temperature"){
 	    tempInfo += `<span style="height:${lowTemp}%;background-color:rgba(0,0,0,0);">${lowArray[i]}</span>`;
 	  }
       tempInfo += `</li>`;
