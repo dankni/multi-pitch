@@ -91,13 +91,13 @@ function getWeather(theId, climb, weatherData, getGraph) {
           </div>
         </div>
       </div>`;
-      return weatherInfo;
+        return weatherInfo;
     } catch (e) {
         weatherInfo = '';
         console.log("weather error for: " + theId);
         return weatherInfo;
     }
-    
+
 }
 
 function getRouteTopo(rootProject, topoImg) {
