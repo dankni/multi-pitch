@@ -1,3 +1,17 @@
+// Register serviceWorker to use the cache
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/initServiceWorker.js').then(function (registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+}
+
+
 /**
  GLOBAL VARIABLES
  **/
@@ -11,18 +25,19 @@ var webP = false;
  CHECK IF BROWSER SUPPORTS WEBP IMAGES
  **/
 async function supportsWebp() {
-  if (!self.createImageBitmap) return false;
-  const webpData = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
-  const blob = await fetch(webpData).then(r => r.blob());
-  return createImageBitmap(blob).then(() => true, () => false);
+    if (!self.createImageBitmap) return false;
+    const webpData = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
+    const blob = await fetch(webpData).then(r => r.blob());
+    return createImageBitmap(blob).then(() => true, () => false);
 }
+
 (async () => {
-    if(await supportsWebp()) {
+    if (await supportsWebp()) {
         webP = true;
         document.getElementById('hero').classList.add('supportsWebP');
         document.getElementById('hero').classList.remove('supportsJPEG');
     }
- })();
+})();
 
 /**
  THE SLIDER FUNCTION FOR FILTERS
@@ -252,8 +267,30 @@ function publishCards(climbsArr) {
             var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
+            var guideBook = guideBooks.books.find(book => book.climbId === climbsArr[i].id);
+            var climbName = ""
+                .concat(climbsArr[i].routeName, '-on-', climbsArr[i].cliff)
+                .toLowerCase()
+                .replace(/ /g, "-")
+                .replace(/'/g, "-");
+
+            var urlsToSave = [
+                '/img/download/download_yes.svg',
+                '/img/download/download_no.svg',
+                guideBook.imgURL]
+                .concat(
+                    cImgs.filter(img => img.type === "tile").map(img => img.url),
+                    cImgs.filter(img => img.type === "map").map(img => img.url),
+                    cImgs.filter(img => img.type === "crag").map(img => img.url),
+                    cImgs.filter(img => img.type === "crag").map(img => img.url.replace(".jpg", "-s.jpg")),
+                    cImgs.filter(img => img.type === "topo").map(img => img.url),
+                    cImgs.filter(img => img.type === "topo").map(img => img.url.replace(".jpg", "-s.jpg"))
+                );
+
+            toggleOfflineImg(climbName);
+
             var card = `
-    <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+    <div data-climb-id="${climbName}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
         <a onclick="showTile(${climbsArr[i].id});">
             <picture>
                 <source srcset="./${webPUrl}" type="image/webp">
@@ -266,11 +303,19 @@ function publishCards(climbsArr) {
                  ${climbsArr[i].cliff}
             </h4>
             <p class="card-text">
+                <span class="what">Download:</span>
+                    <a>
+                        <img class="offline-img-no" src="./img/download/download_no.svg" onclick='saveClimbForOffline("${climbName}", ${JSON.stringify(urlsToSave)})'/>
+                        <img class="offline-img-yes" src="./img/download/download_yes.svg" onclick='deleteClimbFromCache("${climbName}")'/>    
+                    </a>
+                    
+                    <br />
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
                 <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
+               
             </p>
         </div>
         <a class="open-tile" onclick="showTile(${climbsArr[i].id});">SHOW MORE INFO</a>
@@ -279,6 +324,7 @@ function publishCards(climbsArr) {
             cardHolder.innerHTML += card;
         }
     }
+
     document.getElementById('loading').style.display = 'none';
 }
 

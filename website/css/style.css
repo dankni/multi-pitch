@@ -1,4 +1,11 @@
 /**************/
+/** DOWNLOAD IMG **/
+
+#offline-img-yes {
+  display: none;
+}
+
+/**************/
 /** ELEMENTS **/
 h1,h3,h4,p,ul {
   margin-top: 0;
