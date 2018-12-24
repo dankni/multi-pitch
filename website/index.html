@@ -43,7 +43,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="img/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
@@ -67,7 +67,7 @@
     <nav>
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="./img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+                <img src="/img/logo/mp-logo-white.png" alt="multi-pitch climbing" />
             </a>
             <ul>
                 <li>
@@ -97,14 +97,30 @@
     </script>
 
     <!-- Full Page Intro -->
-    <div class="view full-page-intro supportsJPEG" id="hero">
+    <div class="view full-page-intro" id="hero">
+        <picture style="display:block;width: 100vw;height: 100vh;object-fit: cover; object-position: 0 0;">
+            <source media="(max-width: 1080px)" type="image/webp"
+                    srcset="/img/heros/old-man-of-stoer-hero-1800.webp 1x, /img/heros/old-man-of-stoer-hero-2400.webp 2x" >
+            <source media="(min-width: 1080px)"  type="image/webp"
+                    srcset="/img/heros/old-man-of-stoer-hero-2400.webp">
+            
+            <source media="(max-width: 1080px)"  type="image/jpeg"
+                    srcset="/img/heros/old-man-of-stoer-hero-1800.jpg 1x, /img/heros/old-man-of-stoer-hero-2400.jpg 2x">
+            <source media="(min-width: 1080px)"  type="image/jpeg"
+                    srcset="/img/heros/old-man-of-stoer-hero-2400.jpg">
+           
+            <img src="/img/heros/old-man-of-stoer-hero-1800.jpg" 
+                 type="image/png" class="hero" 
+                 alt="The Old Man of Stoer multi-pitch climb" />
+        </picture>
+
         <div class="mask rgba-black-light d-flex align-items-center">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3 white-text not-mobile">
                         <!--offsets text -->
                     </div>
-                    <div class="col-md-9 mb-4 white-text hero">
+                    <div class="col-md-9 mb-4 white-text hero-text">
                         <h1 class="display-4">Only the best multi&#8209;pitch&nbsp;climbs</h1>
                         <h3 class="display-6">Carefully curated & meticulously&nbsp;detailed</h3>
                         <hr class="hr-light">

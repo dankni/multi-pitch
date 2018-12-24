@@ -29,7 +29,6 @@ body {
 h1,h3,h4 {
   margin-bottom: .5rem;
 }
-
 figure,footer,main,nav,section {
   display: block;
 }
@@ -144,11 +143,13 @@ button::-moz-focus-inner {
 }
 .navbar-brand {
   display: inline-block;
-  padding-top: .3125rem; /*ToDo: Prob need to fix this */
-  padding-bottom: .3125rem;
+  padding:5px;
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
   line-height: inherit;
+}
+.navbar-brand img {
+  width:30px;
 }
 .card {
   display: -webkit-box;
@@ -191,35 +192,6 @@ button::-moz-focus-inner {
   border-top-left-radius: calc(.25rem - 1px);
   border-top-right-radius: calc(.25rem - 1px);
 }
-/*ToDo - Refactor out badges and remove these */
-.badge {
-  font-weight: 700;
-  line-height: 1;
-}
-.badge {
-  display: inline-block;
-  padding: .25em .4em;
-  font-size: 75%;
-  text-align: center;
-  vertical-align: baseline;
-  border-radius: .25rem
-}
-.badge-pill {
-  padding-right: .6em;
-  padding-left: .6em;
-  border-radius: 10rem
-}
-.close:not(:disabled):not(.disabled) {
-  cursor: pointer
-}
-.d-none {
-  display: none!important
-}
-.d-flex {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-}
 @media (min-width: 800px) {
   .align-items-center {
     -webkit-box-pack: center;
@@ -239,45 +211,21 @@ button::-moz-focus-inner {
 .view, .view .mask, .waves-effect {
   overflow: hidden;
 }
-/*ToDo - Refactor out these */
-.purple {
-  background-color: #9c27b0!important
-}
-.blue {
-  background-color: #2196f3!important
-}
-.green {
-  background-color: #4caf50!important
-}
-.orange {
-  background-color: #ff9800!important
-}
 .rgba-black-light {
   background-color: rgba(0, 0, 0, .35)
 }
 .white-text {
   color: #fff!important
 }
-.card .card-body .card-text {
-  color: #4f4f4f;
-  margin-top:.8rem;
-  font-weight:600;
-  font-size:.9rem;
-  line-height: 1.5rem;
+.card .card-body .card-text, .card .map-card-body .card-text {
+    color: #4f4f4f;
+    margin-top: .8rem;
+    font-weight: 600;
+    font-size: .9rem;
+    line-height: 1.5rem;
 }
 a,a:disabled:hover {
   color: #0275d8
-}
-/* ToDo - Refactor out these */
-.badge,.btn,.btn:disabled:active,.btn:disabled:focus,.btn:disabled:hover,.card,.navbar {
-  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12)
-}
-.btn-indigo:focus,.btn-indigo:not([disabled]):not(.disabled):active,.btn-indigo:not([disabled]):not(.disabled):active:focus,
-.btn-outline-white:not([disabled]):not(.disabled):active,.btn-outline-white:not([disabled]):not(.disabled):active:focus,
-.btn:active,.btn:focus,.btn:hover,.btn:not([disabled]):not(.disabled):active,.z-depth-1-half {
-  -webkit-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15);
-  box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15)
 }
 :disabled {
   pointer-events: none!important
@@ -302,20 +250,6 @@ a,a:disabled:hover {
   width: 100%;
   height: 100%;
   background-attachment: fixed
-}
-.waves-effect {
-  position: relative;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  z-index: 1
-}
-a.waves-effect,
-a.waves-light {
-  display: inline-block
 }
 .btn {
   padding: .84rem 2.14rem;
@@ -374,9 +308,6 @@ a.waves-light {
 .btn-outline-white:not([disabled]):not(.disabled):active {
   background-color: transparent!important;
   border-color: #fff!important
-}
-.card {
-  border: 0
 }
 .card .card-body .card-title a,
 .card .card-body .card-title a:hover {
@@ -527,8 +458,15 @@ footer.page-footer a {
   padding:50px;
   background:#FFF;
 }
-.hero{
+.hero-text {
   text-shadow: 1px 1px 2px #000;
+}
+.hero{
+  display:block;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  object-position: 0 0;
 }
 .filters label {
   width: 30%;
@@ -910,7 +848,7 @@ hr {
 .big-card-map{
   width:100%;
   object-fit: cover;
-  min-height: 160px;
+  min-height: 200px;
 }
 .approach-1:before{
 	content: "easy";
@@ -1073,16 +1011,16 @@ hr {
 }
 /** CHARTS **/
 .chart {
-    display: table;
-    table-layout: fixed;
-    width: 100%;
-    max-width: 500px;
-    height: 200px;
-    margin: -20px auto 0 auto;
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 2%, rgba(0, 0, 0, 0) 2%);
-    background-size: 100% 50px;
-    background-position: left top;
-    padding: 0 0 2rem 0;
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  max-width: 500px;
+  height: 200px;
+  margin: -20px auto 0 auto;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 2%, rgba(0, 0, 0, 0) 2%);
+  background-size: 100% 50px;
+  background-position: left top;
+  padding: 0 0 2rem 0;
 }
 .chart li {
   position: relative;
@@ -1169,76 +1107,56 @@ hr {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-/** Phones **/
-@media only screen and (min-width: 300px) {
-  .supportsJPEG{
-    background-image: url('../img/heros/old-man-of-stoer-hero-800.jpg');
-  }
-  .supportsWebP{
-    background-image: url('../img/heros/old-man-of-stoer-hero-800.webp');
+.full-screen-container{
+  padding:0;
+  margin-top:45px;
+}
+.guidebook-img {
+  max-width: 120px;
+  float: left;
+  padding-right: 1rem;
+}
+.main {
+  margin-top: 40px;
+}
+@media (min-width:481px) {
+  .main{
+    margin-top: 55px;
   }
 }
-/** Phones with good screens **/
-@media
-only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 300px),
-only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 300px),
-only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 300px),
-only screen and (        min-device-pixel-ratio: 2)      and (min-width: 300px),
-only screen and (                min-resolution: 192dpi) and (min-width: 300px),
-only screen and (                min-resolution: 2dppx)  and (min-width: 300px) {
-  .supportsJPEG{
-    background-image: url('../img/heros/old-man-of-stoer-hero-1800.jpg');
-  }
-  .supportsWebP{
-    background-image: url('../img/heros/old-man-of-stoer-hero-1800.webp');
+@media (min-width:574px) {
+  .full-screen-container {
+    margin-top: 0;
   }
 }
-/** big phones / tablets or laptop screen **/
-@media only screen and (min-width: 600px) {
-  .supportsJPEG{
-    background-image: url('../img/heros/old-man-of-stoer-hero-1800.jpg');
-  }
-  .supportsWebP{
-    background-image: url('../img/heros/old-man-of-stoer-hero-1800.webp');
-  }
+.map-card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    position: relative;
+    background: #FFFFFF;
+    padding: 0;
 }
-/** big phones / tablets with good screen or retina laptops **/
-@media
-only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 900px),
-only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 900px),
-only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 900px),
-only screen and (        min-device-pixel-ratio: 2)      and (min-width: 900px),
-only screen and (                min-resolution: 192dpi) and (min-width: 900px),
-only screen and (                min-resolution: 2dppx)  and (min-width: 900px) {
-  .supportsJPEG{
-    background-image: url('../img/heros/old-man-of-stoer-hero-2400.jpg');
-  }
-  .supportsWebP{
-    background-image: url('../img/heros/old-man-of-stoer-hero-2400.webp');
-  }
+.map-card-body:after {
+	bottom: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
 }
-/** big desktop **/
-@media only screen and (min-width: 1800px) {
-  .supportsJPEG{
-    background-image: url('../img/heros/old-man-of-stoer-hero-2400.jpg');
-  }
-  .supportsWebP{
-    background-image: url('../img/heros/old-man-of-stoer-hero-2400.webp');
-  }
+.map-card-body:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-bottom-color: #FFF;
+	border-width: 40px;
+	margin-left: -40px;
 }
-/** large retina **/
-@media
-only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 1800px),
-only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 1800px),
-only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 1800px),
-only screen and (        min-device-pixel-ratio: 2)      and (min-width: 1800px),
-only screen and (                min-resolution: 192dpi) and (min-width: 1800px),
-only screen and (                min-resolution: 2dppx)  and (min-width: 1800px) {
-  .supportsJPEG{
-    background-image: url('../img/heros/old-man-of-stoer-hero-2400.jpg');
-  }
-  .supportsWebP{
-    background-image: url('../img/heros/old-man-of-stoer-hero-2400.webp');
-  }
+.map-card-body:before {
+	border-color: rgba(255, 225, 255, 0);
+	border-bottom-color: #FFF;
+	border-width: 40px;
+	margin-left: -40px;
 }

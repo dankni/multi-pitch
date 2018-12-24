@@ -137,17 +137,70 @@ function getCragImg(rootProject, cragImg) {
     return cragImgModule;
 }
 
-function getMapUrl(rootProject, mapImg, climb) {
-// If there is a saved map image use it - otherwise generate the map from Google API
-    try {
-        var mapUrl = rootProject + mapImg.url;
-    } catch (e) {
-        mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${climb.geoLocation}&zoom=13&size=800x180&maptype=terrain&scale=2&markers=icon:|${climb.geoLocation}&key=AIzaSyBbmuRJliCb7a1QIKV-PTKmcSsahj20lwM`;
+function getMap(mapUrl, latLonLocation, altText) {
+    if (mapUrl != null) {
+        var mapPicture = `
+        <picture class="big-card-map">    
+            <source
+               media="(max-width: 400px)"
+               srcset="/${mapUrl}400x200x1.png 1x, /${mapUrl}400x200x2.png 2x"
+               type="image/png" >
+             <source
+               media="(max-width: 1080px)"
+               srcset="/${mapUrl}1080x200x1.png 1x, /${mapUrl}1080x200x2.png 2x"
+               type="image/png" >
+             <source
+               media="(min-width: 1080px)"
+               srcset="/${mapUrl}1280x200x1.png 1x, /${mapUrl}1280x200x2.png 2x"
+               type="image/png" >
+             <img
+               src="/${mapUrl}1080x200x1.png"
+               type="image/png" class="big-card-map" 
+               alt="${altText}">
+        </picture>`;
+        return mapPicture;
+    } else {
+        var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
+        var lon = latLonLocation.split(',')[1];
+        var lat = latLonLocation.split(',')[0];
+        var mid = ',13.0,0,0/';
+        var defaultSize = '800x200@2x'; // note the pixel density 
+        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw&logo=false'
+
+        // add webP below eg three lots of: <source media = "(max-width: 400px)" srcset = "image-lg_1x.webp 1x, image-lg_2x.webp 2x" type = "image/webp" >
+
+        var mapPicture = `
+        <picture class="big-card-map">    
+            <source
+               media="(max-width: 400px)"
+               srcset="${urlStart}${lon},${lat}${mid}400x200${end} 1x, ${urlStart}${lon},${lat}${mid}400x200@2x${end} 2x"
+               type="image/jpeg" >
+             <source
+               media="(max-width: 1080px)"
+               srcset="${urlStart}${lon},${lat}${mid}1080x200${end} 1x, ${urlStart}${lon},${lat}${mid}1080x200@2x${end} 2x"
+               type="image/jpeg" >
+             <source
+               media="(min-width: 1080px)"
+               srcset="${urlStart}${lon},${lat}${mid}1280x200${end} 1x, ${urlStart}${lon},${lat}${mid}1280x200@2x${end} 2x"
+               type="image/jpeg" >
+             <img
+               src="${urlStart}${lon},${lat}${mid}1080x200${end}"
+               type="image/jpeg" class="big-card-map" 
+               alt="${altText}">
+        </picture>`;
+        console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
+        console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
+        console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
+        console.log("1080x200x2 = " + `${urlStart}${lon},${lat}${mid}1080x200@2x${end}`);
+        console.log("1280x200x1 = " + `${urlStart}${lon},${lat}${mid}1280x200${end}`);
+        console.log("1280x200x2 = " + `${urlStart}${lon},${lat}${mid}1280x200@2x${end}`);
+        return mapPicture;
     }
-    return mapUrl;
 }
 
-function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
+
+
+function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
 
     var routeTopoModule = getRouteTopo(rootProject, topoImg);
 
@@ -159,14 +212,14 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
 
     var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
 
-    var mapUrl = getMapUrl(rootProject, mapImg, climb);
+    var mapModule = getMap(mapUrl.url, climb.geoLocation, mapUrl.alt);
 
     var fullCard = `
    <div class="card big-card">
     <div class="card-body" style="padding:0;">
       <div class="img-contaner">
         <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
-          <img class="big-card-map" src="${mapUrl}" alt="${climb.cliff} location"/>
+          ${mapModule}
         </a>
         <span class="txt-ovr-img map-txt">Open in Google Maps</span>
       </div>

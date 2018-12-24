@@ -250,7 +250,7 @@ function publishCards(climbsArr) {
     for (let i = 0; i < climbsArr.length; i++) {
         if (climbsArr[i].status === 'publish') {
             var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
-            var tileImg = cImgs.find(img => img.type === 'tile'); // get the map img object
+            var tileImg = cImgs.find(img => img.type === 'tile'); // get the img object
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
             var card = `
     <div data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
@@ -299,17 +299,16 @@ function showTile(climbId) {
     climbId = parseInt(climbId);
     var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-    var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
     var cragImg = cImgs.find(img => img.type === 'crag');
     var topoImg = cImgs.find(img => img.type === 'topo');
+    var mapUrl = cImgs.find(img => img.type === 'map');
     var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
 
 
     // a check to see if the user has landed on a page from a direct link
     if (isCardTurned !== true) {
         var url = `climbs/${climb.routeName}-on-${climb.cliff}`;
-        url = url.replace(' ', '-'); //space
-        url = url.replace(' ', '-'); // something thats not exactly a space 
+        url = url.replace(/ /gi, '-'); //regex every space
         url = url.toLowerCase();
         window.history.pushState(history_data, climb.cliff, url);
     }
@@ -318,8 +317,7 @@ function showTile(climbId) {
     document.getElementById('close').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
 
-
-    var fullCard = climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph);
+    var fullCard = climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weatherData, getGraph);
 
     document.getElementById('overlay').innerHTML = fullCard;
     document.title = climb.cliff + " - " + climb.routeName;

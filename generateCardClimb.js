@@ -10,7 +10,6 @@ const climbImgs = require('./website/data/imgs').climbImgs;
 const guideBooks = require('./website/data/guidebooks').guideBooks;
 const weatherData = require('./website/data/weather').weatherData;
 const getGraph = require('./website/js/graph').getGraph;
-const headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
 const navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
 const footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
 
@@ -23,13 +22,18 @@ function generate() {
         fs.mkdirSync(baseFolder);
     }
 
-    const climbsAndHtml = climbsData.climbs.map(climb => {
+    var climbsAndHtml = climbsData.climbs.map(climb => {
         var climbId = climb.id;
         var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
         var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
         var cragImg = cImgs.find(img => img.type === 'crag');
         var topoImg = cImgs.find(img => img.type === 'topo');
         var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
+        var climbName = climb.routeName;
+
+        var headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
+        headHTML = headHTML.replace('<title></title>', '<title>' + climb.routeName + ' on ' + climb.cliff + ' | multi-pitch rock climbing</title>');
+
         return {
             climb: climb,
             html: headHTML + navHTML + climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph) + footerHTML
