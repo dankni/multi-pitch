@@ -57,7 +57,7 @@ async function readExcelAndTranformInJavascript(excelFile, sheet) {
 async function createFileFromTranslation(translation, result, outputFolder) {
     let objectResult = {};
     objectResult[translation.objEntryPoint] = result;
-    const stringifyResult = util.inspect(objectResult);
+    const stringifyResult = JSON.stringify(objectResult);
 
     const fileContent = `const ${translation.constName} = ${stringifyResult}; \n
     //So then I can use this in my mocha tests:\n 
