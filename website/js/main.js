@@ -275,6 +275,7 @@ function publishCards(climbsArr) {
                 .replace(/'/g, "-");
 
             var urlsToSave = [
+                '/climbs/' + climbName,
                 '/img/download/download_yes.svg',
                 '/img/download/download_no.svg',
                 guideBook.imgURL]
