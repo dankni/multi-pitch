@@ -21,19 +21,21 @@ function toggleOfflineImg(climbName) {
 function saveClimbForOffline(climbName, urlsToSave) {
 
     caches.open(CACHE_OFFLINE + climbName).then(function (cache) {
-        var promiseAll = urlsToSave.map(url =>
-            fetch(url)
-                .then(function () {
-                    return url;
-                })
-                .catch(err => console.error("Error while fetching url: ", url, "with error:", err)));
+        var promiseAll = urlsToSave
+            .filter(url => url)
+            .map(url =>
+                fetch(url)
+                    .then(function () {
+                        return url;
+                    })
+                    .catch(err => console.error("Error while fetching url: ", url, "with error:", err)));
 
         Promise.all(promiseAll)
             .then(function (urls) {
                 return cache.addAll(urls);
             })
-            .then(a => toggleOfflineImg(climbName))
             .catch(err => console.error("Error while fetching url: ", url, "with error:", err))
+            .finally(a => toggleOfflineImg(climbName))
 
     });
 }

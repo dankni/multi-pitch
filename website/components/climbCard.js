@@ -199,7 +199,6 @@ function getMap(mapUrl, latLonLocation, altText) {
 }
 
 
-
 function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
 
     var routeTopoModule = getRouteTopo(rootProject, topoImg);
