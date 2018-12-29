@@ -292,7 +292,7 @@ function publishCards(climbsArr) {
 
             var card = `
     <div data-climb-id="${climbName}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-        <a onclick="showTile(${climbsArr[i].id});">
+        <a href="/climbs/${climbName}/" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
                 <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
@@ -319,7 +319,7 @@ function publishCards(climbsArr) {
                
             </p>
         </div>
-        <a class="open-tile" onclick="showTile(${climbsArr[i].id});">SHOW MORE INFO</a>
+        <a class="open-tile" href="/climbs/${climbName}/" onclick="showTile(${climbsArr[i].id});return false;">SHOW MORE INFO</a>
     </div>`;
 
             cardHolder.innerHTML += card;
