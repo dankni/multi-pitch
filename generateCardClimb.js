@@ -44,6 +44,8 @@ function generate() {
 
         const folderName = "".concat(climbAndHtml.climb.routeName, '-on-', climbAndHtml.climb.cliff)
             .toLowerCase()
+            .replace(/'/g, "")
+            .replace(/\//g, "")
             .replace(/ /g, "-");
 
         const folderLocation = path.resolve(baseFolder, folderName);

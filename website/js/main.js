@@ -270,9 +270,9 @@ function publishCards(climbsArr) {
             var guideBook = guideBooks.books.find(book => book.climbId === climbsArr[i].id);
             var climbName = ""
                 .concat(climbsArr[i].routeName, '-on-', climbsArr[i].cliff)
-                .toLowerCase()
-                .replace(/ /g, "-")
-                .replace(/'/g, "-");
+                .replace(/'/g, "")
+                .replace(/\//g, "")
+                .replace(/ /g, "-");
 
             var urlsToSave = [
                 '/climbs/' + climbName,

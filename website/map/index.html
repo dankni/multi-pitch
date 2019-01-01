@@ -124,8 +124,9 @@
                 var climbName = ""
                     .concat(climbsData.climbs[i].routeName, '-on-', climbsData.climbs[i].cliff)
                     .toLowerCase()
-                    .replace(/ /g, "-")
-                    .replace(/'/g, "-");
+                    .replace(/'/g, "")
+                    .replace(/\//g, "")
+                    .replace(/ /g, "-");
                 var cragImg = cImgs.find(img => img.type === 'tile');
                 var content = '<a href="/climbs/' + climbName + '"><img src="../' + cragImg.url + '" style="width:100%;" /><br />' +
                     '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
