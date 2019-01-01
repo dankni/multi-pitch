@@ -1,0 +1,7 @@
+# /robots.txt file for http://www.multi-pitch.com
+
+User-agent: *
+
+sitemap: http://www.multi-pitch.com/sitemap.xml
+
+Disallow: /url-you-want-blocked-here/ 
