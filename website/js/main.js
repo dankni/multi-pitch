@@ -20,8 +20,11 @@ async function supportsWebp() {
 (async () => {
     if (await supportsWebp()) {
         webP = true;
-        document.getElementById('hero').classList.add('supportsWebP');
-        document.getElementById('hero').classList.remove('supportsJPEG');
+        const heroDom = document.getElementById('hero');
+        if (heroDom) {
+            heroDom.classList.add('supportsWebP');
+            heroDom.classList.remove('supportsJPEG');
+        }
     }
 })();
 
