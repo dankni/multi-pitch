@@ -94,6 +94,7 @@ describe('Load the website page', function () {
 
             nightmare
                 .goto(appUrl + "/map/weather.html")
+                .wait('3000')
                 .evaluate(function () {
                     return document.querySelectorAll(".leaflet-marker-icon").length;
                 })
@@ -113,6 +114,7 @@ describe('Load the website page', function () {
 
             nightmare
                 .goto(appUrl + "/map")
+                .wait('3000')
                 .evaluate(function () {
                     return document.querySelectorAll(".leaflet-marker-icon").length;
                 })
