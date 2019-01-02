@@ -13,7 +13,7 @@ after(async function () {
 });
 
 
-describe('Load a Page', function () {
+describe('Load the website page', function () {
     // Recommended: 5s locally, 10s to remote server, 30s from airplane ¯\_(ツ)_/¯
     this.timeout('5s');
     const appUrl = 'http://localhost:9000';
@@ -62,7 +62,8 @@ describe('Load a Page', function () {
                 })
                 .catch(done)
         });
-        it('should not log any errors - at the moment works only with js code', done => {
+
+        it('should not log any errors - on the main page', done => {
             const errors = [];
 
             nightmare
@@ -84,5 +85,44 @@ describe('Load a Page', function () {
                 })
                 .catch(done)
         });
+
+    });
+
+    describe("/ weather", () => {
+        it('Make sure that we display the right number of pins', done => {
+            var numberOfPublishCard = climbs.climbsData.climbs.filter(c => c.status === "publish").length;
+
+            nightmare
+                .goto(appUrl + "/map/weather.html")
+                .evaluate(function () {
+                    return document.querySelectorAll(".leaflet-marker-icon").length;
+                })
+                .end()
+                .then(function (displayedCards) {
+                    expect(numberOfPublishCard).to.equal(displayedCards);
+                    done()
+                })
+                .catch(done)
+        });
+
+    });
+
+    describe("/ map", () => {
+        it('Make sure that we display the right number of pins', done => {
+            var numberOfPublishCard = climbs.climbsData.climbs.filter(c => c.status === "publish").length;
+
+            nightmare
+                .goto(appUrl + "/map")
+                .evaluate(function () {
+                    return document.querySelectorAll(".leaflet-marker-icon").length;
+                })
+                .end()
+                .then(function (displayedCards) {
+                    expect(numberOfPublishCard).to.equal(displayedCards);
+                    done()
+                })
+                .catch(done)
+        });
+
     });
 });
