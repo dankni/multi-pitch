@@ -1,17 +1,3 @@
-// Register serviceWorker to use the cache
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/initServiceWorker.js').then(function (registration) {
-            // Registration was successful
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function (err) {
-            // registration failed :(
-            console.log('ServiceWorker registration failed: ', err);
-        });
-    });
-}
-
-
 /**
  GLOBAL VARIABLES
  **/
@@ -267,29 +253,11 @@ function publishCards(climbsArr) {
             var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the img object
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
-            var guideBook = guideBooks.books.find(book => book.climbId === climbsArr[i].id);
             var climbName = ""
                 .concat(climbsArr[i].routeName, '-on-', climbsArr[i].cliff)
                 .replace(/'/g, "")
                 .replace(/\//g, "")
                 .replace(/ /g, "-");
-
-            var urlsToSave = [
-                '/climbs/' + climbName,
-                '/img/download/download_yes.svg',
-                '/img/download/download_no.svg',
-                guideBook.imgURL]
-                .concat(
-                    cImgs.filter(img => img.type === "tile").map(img => img.url),
-                    cImgs.filter(img => img.type === "map").map(img => img.url),
-                    cImgs.filter(img => img.type === "crag").map(img => img.url),
-                    cImgs.filter(img => img.type === "crag").map(img => img.url.replace(".jpg", "-s.jpg")),
-                    cImgs.filter(img => img.type === "topo").map(img => img.url),
-                    cImgs.filter(img => img.type === "topo").map(img => img.url.replace(".jpg", "-s.jpg"))
-                );
-
-            toggleOfflineImg(climbName);
-
             var card = `
     <div data-climb-id="${climbName}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
         <a href="/climbs/${climbName}/" onclick="showTile(${climbsArr[i].id});return false;">
@@ -304,13 +272,6 @@ function publishCards(climbsArr) {
                  ${climbsArr[i].cliff}
             </h4>
             <p class="card-text">
-                <span class="what">Download:</span>
-                    <a>
-                        <img class="offline-img-no" src="./img/download/download_no.svg" onclick='saveClimbForOffline("${climbName}", ${JSON.stringify(urlsToSave)})'/>
-                        <img class="offline-img-yes" src="./img/download/download_yes.svg" onclick='deleteClimbFromCache("${climbName}")'/>    
-                    </a>
-                    
-                    <br />
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
                 <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
