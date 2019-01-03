@@ -6,7 +6,7 @@ function getGuidebook(rootProject, guideBook, climb) {
     <div class="row accordian">
       <div class="col">
         <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
-        <label for="tab-one" class="accordian-label" onclick="gtag('event', 'toggle-guidebook', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${climb.id}});">Guidebooks</label>
+        <label for="tab-one" class="accordian-label" onclick="gtag('event', 'toggle-guidebook', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Guidebooks</label>
         <div class="smaller accordian-content">
           <div>
             <img style="max-width:120px;float:left;padding-right:1rem;" src="${rootProject}${guideBook.imgURL}" alt="${guideBook.title}" /> 
@@ -14,7 +14,7 @@ function getGuidebook(rootProject, guideBook, climb) {
               <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
               ${guideBook.description}
               <br />
-              <a href="${guideBook.link}" onClick="gtag('event', 'guidebook-link', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${climb.id}});" target="blank">Availible Here</a>
+              <a href="${guideBook.link}" onClick="gtag('event', 'guidebook-link', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${guideBook.rrp}});" target="blank">Availible Here</a>
               R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
               <small>ISBN: ${guideBook.isbn} </small>
             </p>
@@ -39,7 +39,7 @@ function getApprochInfo(rootProject, climb) {
     <div class="row accordian">
         <div class="col">
           <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
-          <label for="tab-two" class="accordian-label" onclick="gtag('event', 'toggle-approach', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${climb.id}});">Approach & Descent Infomation</label>
+          <label for="tab-two" class="accordian-label" onclick="gtag('event', 'toggle-approach', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Approach & Descent Infomation</label>
           <div class="smaller accordian-content">
             <div>
               <p>${climb.approach}</p>
@@ -68,7 +68,7 @@ function getWeather(theId, climb, weatherData, getGraph) {
       <div class="row accordian">
         <div class="col">
           <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
-          <label for="tab-three" class="accordian-label" onclick="gtag('event', 'toggle-weather', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${climb.id}});">Seasonal Weather Infomation</label>
+          <label for="tab-three" class="accordian-label" onclick="gtag('event', 'toggle-weather', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Seasonal Weather Infomation</label>
           <div class="smaller accordian-content">
             <div>
               <p>
