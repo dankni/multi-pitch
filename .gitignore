@@ -56,3 +56,7 @@ img_compression
 website/data
 website/climbs
 multi-pitch.iml
+
+# Dans helpers #
+################
+working-files/runbook.docx

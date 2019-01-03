@@ -4,4 +4,4 @@ User-agent: *
 
 sitemap: http://www.multi-pitch.com/sitemap.xml
 
-Disallow: /url-you-want-blocked-here/ 
+Disallow: /subscribe/index.html

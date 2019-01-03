@@ -1,6 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // UN-REGISTER ALL SERVICE WORKERS
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+                registration.unregister()
+            }
+        })
+    </script>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,8 +17,8 @@
     <title>The best multi-pitch rock climbs</title>
 
     <!-- Styles -->
-    <link href="css/bootstrap-grid.css" rel="stylesheet"/>
-    <link href="css/style.css" rel="stylesheet"/>
+    <link href="css/bootstrap-grid.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
 
     <!-- JavaScripts -->
     <script src="data/climbs.js"></script>
@@ -49,12 +57,12 @@
     <meta name="theme-color" content="#ffffff">
 
     <!-- Sharing Tags -->
-    <meta property="og:title" content="The best multi-pitch rock climbs"/>
+    <meta property="og:title" content="The best multi-pitch rock climbs" />
     <meta property="og:description"
-          content=" Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m."/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://www.multi-pitch.com/"/>
-    <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg"/>
+          content=" Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.multi-pitch.com/" />
+    <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg" />
     <meta property="og:image:type" content="image/jpg">
 </head>
 <body id="bdy">
@@ -100,17 +108,17 @@
     <div class="view full-page-intro" id="hero">
         <picture style="display:block;width: 100vw;height: 100vh;object-fit: cover; object-position: 0 0;">
             <source media="(max-width: 1080px)" type="image/webp"
-                    srcset="/img/heros/old-man-of-stoer-hero-1800.webp 1x, /img/heros/old-man-of-stoer-hero-2400.webp 2x" >
-            <source media="(min-width: 1080px)"  type="image/webp"
+                    srcset="/img/heros/old-man-of-stoer-hero-1800.webp 1x, /img/heros/old-man-of-stoer-hero-2400.webp 2x">
+            <source media="(min-width: 1080px)" type="image/webp"
                     srcset="/img/heros/old-man-of-stoer-hero-2400.webp">
-            
-            <source media="(max-width: 1080px)"  type="image/jpeg"
+
+            <source media="(max-width: 1080px)" type="image/jpeg"
                     srcset="/img/heros/old-man-of-stoer-hero-1800.jpg 1x, /img/heros/old-man-of-stoer-hero-2400.jpg 2x">
-            <source media="(min-width: 1080px)"  type="image/jpeg"
+            <source media="(min-width: 1080px)" type="image/jpeg"
                     srcset="/img/heros/old-man-of-stoer-hero-2400.jpg">
-           
-            <img src="/img/heros/old-man-of-stoer-hero-1800.jpg" 
-                 type="image/png" class="hero" 
+
+            <img src="/img/heros/old-man-of-stoer-hero-1800.jpg"
+                 type="image/png" class="hero"
                  alt="The Old Man of Stoer multi-pitch climb" />
         </picture>
 
@@ -248,7 +256,7 @@
             </div>
         </div>
         <div class="footer-copyright">
-            <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">© 2019 Creative Commons</a> -
+            <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">� 2019 Creative Commons</a> -
             <a href="/"> multi-pitch.com </a>
         </div>
         <script>
