@@ -5,6 +5,7 @@ const readXlsxFile = require('read-excel-file/node');
 //This file can come from where ever.
 const EXCEL_PATH = './working-files/multi-pitch-data.xlsx';
 const OUTPUT_FOLDER = './website/data';
+const OUTPUT_FILE = 'data.js';
 
 const CLIMBS = 1;
 const IMAGES = 2;
@@ -16,22 +17,22 @@ const TO_DO_SCORE_CARD = 7;
 
 
 const translationsKeys = [{
-    fileName: "climbs.js",
+    fileName: OUTPUT_FILE,
     constName: "climbsData",
     objEntryPoint: "climbs",
     sheetNuber: CLIMBS
 }, {
-    fileName: "imgs.js",
+    fileName: OUTPUT_FILE,
     constName: "climbImgs",
     objEntryPoint: "imgs",
     sheetNuber: IMAGES
 }, {
-    fileName: "guidebooks.js",
+    fileName: OUTPUT_FILE,
     constName: "guideBooks",
     objEntryPoint: "books",
     sheetNuber: GUIDEBOOKS
 }, {
-    fileName: "weather.js",
+    fileName: OUTPUT_FILE,
     constName: "weatherData",
     objEntryPoint: "weatherLines",
     sheetNuber: WEATHER
@@ -58,12 +59,12 @@ async function createFileFromTranslation(translation, result, outputFolder) {
     objectResult[translation.objEntryPoint] = result;
     const stringifyResult = JSON.stringify(objectResult);
 
-    const fileContent = `const ${translation.constName} = ${stringifyResult}; \n
-    //So then I can use this in my mocha tests:\n 
-        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){\n 
-            module.exports = {\n 
-                ${translation.constName}\n
-            };\n 
+    const fileContent = `const ${translation.constName} = ${stringifyResult}; 
+    //So then I can use this in my mocha tests: 
+        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){ 
+            module.exports = {
+                ${translation.constName}
+            };
         }`;
 
     const folderLocation = path.resolve(__dirname, outputFolder);
@@ -74,7 +75,7 @@ async function createFileFromTranslation(translation, result, outputFolder) {
     }
 
     return new Promise((resolve, reject) => {
-        fs.writeFile(fileLocation, fileContent, (err, data) => {
+        fs.appendFile(fileLocation, fileContent, (err, data) => {
             if (err) reject(err);
             else resolve(data);
         })
@@ -82,10 +83,15 @@ async function createFileFromTranslation(translation, result, outputFolder) {
 
 }
 
+fs.unlink(OUTPUT_FOLDER + '/' + OUTPUT_FILE, (err) => {
+    if (err) throw err;
+    console.log('old' + OUTPUT_FILE + ' removed. ');
+});
+
 Promise.all(translationsKeys.map(translation =>
     readExcelAndTranformInJavascript(EXCEL_PATH, translation.sheetNuber)
         .then(excelResult => createFileFromTranslation(translation, excelResult, OUTPUT_FOLDER))))
-    .then(_ => console.log("All good man :)) file saved in here: " + OUTPUT_FOLDER))
+    .then(_ => console.log("All good man :-) file saved in here: " + OUTPUT_FOLDER))
     .catch(err => console.error(`Some shit happen.... ${err}`));
 
 
