@@ -1,6 +1,6 @@
 const Nightmare = require('nightmare');
 const expect = require('chai').expect;
-const climbs = require('../website/data/climbs.js');
+const climbs = require('../website/data/data.js');
 const app = require('../server');
 
 
