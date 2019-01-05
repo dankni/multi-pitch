@@ -1,5 +1,4 @@
 const fs = require('fs');
-const util = require('util');
 const path = require('path');
 const readXlsxFile = require('read-excel-file/node');
 
