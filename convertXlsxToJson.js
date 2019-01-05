@@ -59,13 +59,7 @@ async function createFileFromTranslation(translation, result, outputFolder) {
     objectResult[translation.objEntryPoint] = result;
     const stringifyResult = JSON.stringify(objectResult);
 
-    const fileContent = `const ${translation.constName} = ${stringifyResult}; 
-    //So then I can use this in my mocha tests: 
-        if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){ 
-            module.exports = {
-                ${translation.constName}
-            };
-        }`;
+    const fileContent = `const ${translation.constName} = ${stringifyResult}; \n`;
 
     const folderLocation = path.resolve(__dirname, outputFolder);
     const fileLocation = path.resolve(folderLocation, translation.fileName);
@@ -82,6 +76,21 @@ async function createFileFromTranslation(translation, result, outputFolder) {
     })
 
 }
+function appendTestAndBuildString() {
+    const stringForMochaTests = `
+    //So then I can use this in my mocha tests: 
+    if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+        module.exports = {
+            weatherData, climbImgs, climbsData, guideBooks
+        };
+    }`;
+    try {
+        fs.appendFileSync(OUTPUT_FOLDER + '/' + OUTPUT_FILE, stringForMochaTests);
+        console.log('Test and build data appended to file!');
+    } catch (err) {
+        console.error(`Some shit happen.... ${err}`);
+    }
+}
 
 // removed the old data file - local only, check prevents CI error
 var dataFileExists = fs.existsSync(OUTPUT_FOLDER + '/' + OUTPUT_FILE);
@@ -92,15 +101,13 @@ if (dataFileExists === true) {
     });
 }
 
+
 // creates or appends json to data file for each sheet
 Promise.all(translationsKeys.map(translation =>
     readExcelAndTranformInJavascript(EXCEL_PATH, translation.sheetNuber)
         .then(excelResult => createFileFromTranslation(translation, excelResult, OUTPUT_FOLDER))))
-    .then(_ => console.log("All good man :-) file saved in here: " + OUTPUT_FOLDER))
+        .then(_ => console.log("All good man :-) file saved in here: " + OUTPUT_FOLDER))
     .catch(err => console.error(`Some shit happen.... ${err}`));
 
-
-
-
-
-
+// sorry I cant work out how to append this after the promise is compleated.
+setTimeout(appendTestAndBuildString, 3000);
