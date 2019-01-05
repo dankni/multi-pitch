@@ -83,11 +83,16 @@ async function createFileFromTranslation(translation, result, outputFolder) {
 
 }
 
-fs.unlink(OUTPUT_FOLDER + '/' + OUTPUT_FILE, (err) => {
-    if (err) throw err;
-    console.log('old' + OUTPUT_FILE + ' removed. ');
-});
+// removed the old data file - local only, check prevents CI error
+var dataFileExists = fs.existsSync(OUTPUT_FOLDER + '/' + OUTPUT_FILE);
+if (dataFileExists === true) {
+    fs.unlink(OUTPUT_FOLDER + '/' + OUTPUT_FILE, (err) => {
+        if (err) throw err;
+        console.log('old' + OUTPUT_FILE + ' removed. ');
+    });
+}
 
+// creates or appends json to data file for each sheet
 Promise.all(translationsKeys.map(translation =>
     readExcelAndTranformInJavascript(EXCEL_PATH, translation.sheetNuber)
         .then(excelResult => createFileFromTranslation(translation, excelResult, OUTPUT_FOLDER))))
