@@ -30,10 +30,25 @@ function generate() {
         var cragImg = cImgs.find(img => img.type === 'crag');
         var topoImg = cImgs.find(img => img.type === 'topo');
         var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
-        var climbName = climb.routeName;
+        var folderName = "".concat(climb.routeName, '-on-', climb.cliff + '/')
+            .toLowerCase()
+            .replace(/'/g, "")
+            .replace(/\//g, "")
+            .replace(/ /g, "-");
 
         var headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
-        headHTML = headHTML.replace('<title></title>', '<title>' + climb.routeName + ' on ' + climb.cliff + ' | multi-pitch rock climbing</title>');
+        var regexTitle = /{{title}}/gi;
+        var regexUrl = /{{cannonical}}/gi;
+        var regexHero = /{{heroJpg}}/gi;
+        var regexDesc = /{{description}}/gi;
+
+        if (climb.status === 'publish') {
+            headHTML = headHTML.replace(regexTitle, climb.routeName + ' on ' + climb.cliff + ' | multi-pitch rock climbing');
+            headHTML = headHTML.replace(regexUrl, 'https://www.multi-pitch.com/climbs/' + folderName + '/');
+            headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com/' + cragImg.url);
+            headHTML = headHTML.replace(regexDesc, 'An overview of ' + climb.routeName + ', a ' + climb.length + 'm multi-pitch rock climb on ' + climb.cliff + ' in ' + climb.county + ', ' + climb.country + '. Includes detailed photo topo of the route and more info.');
+        }
+        
 
         return {
             climb: climb,
@@ -43,11 +58,12 @@ function generate() {
 
     const promises = climbsAndHtml.map(climbAndHtml => {
 
-        const folderName = "".concat(climbAndHtml.climb.routeName, '-on-', climbAndHtml.climb.cliff)
+        var folderName = "".concat(climbAndHtml.climb.routeName, '-on-', climbAndHtml.climb.cliff)
             .toLowerCase()
             .replace(/'/g, "")
             .replace(/\//g, "")
             .replace(/ /g, "-");
+        folderName = folderName + '/';
 
         const folderLocation = path.resolve(baseFolder, folderName);
         if (!fs.existsSync(folderLocation)) {

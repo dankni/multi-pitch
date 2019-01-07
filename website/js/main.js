@@ -1,3 +1,5 @@
+// START
+window.performance.mark('start-js-read');
 /**
  GLOBAL VARIABLES
  **/
@@ -352,9 +354,11 @@ window.onpopstate = function (event) {
 };
 
 window.onload = function () {
+    window.performance.mark('onload-event-happened');
     // Sorts and publishes the cards
     if (document.location.href.indexOf('/climbs/') === -1) {
         sortCards('length', 'DESC');
+        window.performance.mark('all-climbs-loaded');
     }
     if (isCardTurned === true) {
         var overview = start.split('=');
