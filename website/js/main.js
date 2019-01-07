@@ -320,9 +320,9 @@ function showTile(climbId) {
 
     // a check to see if the user has landed on a page from a direct link
     if (isCardTurned !== true) {
-        var url = `climbs/${climb.routeName}-on-${climb.cliff}`;
-        url = url.replace(/ /gi, '-'); //regex every space
-        url = url.toLowerCase();
+        var url = '/climbs/' + climb.routeName + '-on-' + climb.cliff + '/';
+            url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+
         window.history.pushState(history_data, climb.cliff, url);
     }
 
