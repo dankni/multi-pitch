@@ -143,6 +143,18 @@ function getMap(mapImg, latLonLocation) {
         <picture class="big-card-map">    
             <source
                media="(max-width: 400px)"
+               srcset="/${mapImg.url}400x200x1.webp 1x, /${mapImg.url}400x200x2.webp 2x"
+               type="image/webp" >
+             <source
+               media="(max-width: 1080px)"
+               srcset="/${mapImg.url}1080x200x1.webp 1x, /${mapImg.url}1080x200x2.webp 2x"
+               type="image/webp" >
+             <source
+               media="(min-width: 1080px)"
+               srcset="/${mapImg.url}1280x200x2.webp"
+               type="image/webp" >
+            <source
+               media="(max-width: 400px)"
                srcset="/${mapImg.url}400x200x1.png 1x, /${mapImg.url}400x200x2.png 2x"
                type="image/png" >
              <source
@@ -151,7 +163,7 @@ function getMap(mapImg, latLonLocation) {
                type="image/png" >
              <source
                media="(min-width: 1080px)"
-               srcset="/${mapImg.url}1280x200x1.png 1x, /${mapImg.url}1280x200x2.png 2x"
+               srcset="/${mapImg.url}1280x200x2.png"
                type="image/png" >
              <img
                src="/${mapImg.url}1080x200x1.png"
