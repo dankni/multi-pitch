@@ -258,14 +258,11 @@ function publishCards(climbsArr) {
             var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the img object
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
-            var climbName = ""
-                .concat(climbsArr[i].routeName, '-on-', climbsArr[i].cliff)
-                .replace(/'/g, "")
-                .replace(/\//g, "")
-                .replace(/ /g, "-");
+            var url = '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/';
+                url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
             var card = `
-    <div data-climb-id="${climbName}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
-        <a href="/climbs/${climbName}/" onclick="showTile(${climbsArr[i].id});return false;">
+    <div data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+        <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
                 <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
@@ -285,7 +282,7 @@ function publishCards(climbsArr) {
                
             </p>
         </div>
-        <a class="open-tile" href="/climbs/${climbName}/" onclick="showTile(${climbsArr[i].id});return false;">SHOW MORE INFO</a>
+        <a class="open-tile" href="${url}" onclick="showTile(${climbsArr[i].id});return false;">SHOW MORE INFO</a>
     </div>`;
 
             cardHolder.innerHTML += card;
