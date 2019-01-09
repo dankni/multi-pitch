@@ -249,24 +249,20 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
                         <div class="col-sm">
                             <div class="row">
                                 <div class="col">
-                                    <div>
-                                       <a href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}">
-                                            <img 
-                                            style="vertical-align: bottom; width: 30px; height: 30px;"
-                                            src="${rootProject}img/icons/whatsapp.png" alt="Send WhatsApp" /> 
-                                       </a>
-            
-                  
-                                       <a class="twitter-share-button"
-                                          href="https://twitter.com/intent/tweet?text=${climb.routeName} on ${climb.cliff} |">
+                                    <div style="text-decoration:none">
+                                        SHARE: 
+                                        <a href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}" target="blank">
+                                            <i class="icon-whatsapp" style="font-size:24px;color:#25d366;text-decoration:none"></i>
                                         </a>
-                  
-                                        <div style="display: inline"
-                                             class="fb-share-button"
-                                             data-href="https://multi-pitch.com/climbs/${climb.folderLocation}"
-                                             data-layout="button">
-                                        </div>
-                                       
+                                        <a href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com//climbs/${climb.folderLocation}" target="blank">
+                                            <i class="icon-twitter" style="font-size:24px;color:#1da1f3;"></i>
+                                        </a>
+                                        <a href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com//climbs/${climb.folderLocation}" target="blank">
+                                            <i class="icon-facebook" style="font-size:24px;color:#3b5998;"></i>
+                                        </a>
+                                        <a href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com//climbs/${climb.folderLocation}" target="blank">
+                                            <i class="icon-mail" style="font-size:24px;color:#111;"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
