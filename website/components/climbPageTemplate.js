@@ -254,13 +254,13 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
                                         <a href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}" target="blank">
                                             <i class="icon-whatsapp" style="font-size:24px;color:#25d366;text-decoration:none"></i>
                                         </a>
-                                        <a href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com//climbs/${climb.folderLocation}" target="blank">
+                                        <a href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${climb.folderLocation}" target="blank">
                                             <i class="icon-twitter" style="font-size:24px;color:#1da1f3;"></i>
                                         </a>
-                                        <a href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com//climbs/${climb.folderLocation}" target="blank">
+                                        <a href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${climb.folderLocation}" target="blank">
                                             <i class="icon-facebook" style="font-size:24px;color:#3b5998;"></i>
                                         </a>
-                                        <a href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com//climbs/${climb.folderLocation}" target="blank">
+                                        <a href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${climb.folderLocation}" target="blank">
                                             <i class="icon-mail" style="font-size:24px;color:#111;"></i>
                                         </a>
                                     </div>
