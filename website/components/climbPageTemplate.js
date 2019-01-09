@@ -248,32 +248,27 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
                         </div>    
                         <div class="col-sm">
                             <div class="row">
-                                <div class="col-sm">
-                                    
-                                   <a href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}">
-                                        <img 
-                                        style="vertical-align: bottom; width: 30px; height: 30px;"
-                                        src="${rootProject}img/icons/whatsapp.png" alt="Send WhatsApp" /> 
-                                   </a>
-        
-              
-                                 </div>
-                                 <div class="col-sm">
-                                    
-                                   <a class="twitter-share-button"
-                                      href="https://twitter.com/intent/tweet?text=${climb.routeName} on ${climb.cliff} |">
-                                    </a>
-              
-                                 </div>
-                                <div class="col-sm">
-                                    <div class="container">
-                                        <div class="fb-share-button"
+                                <div class="col">
+                                    <div>
+                                       <a href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}">
+                                            <img 
+                                            style="vertical-align: bottom; width: 30px; height: 30px;"
+                                            src="${rootProject}img/icons/whatsapp.png" alt="Send WhatsApp" /> 
+                                       </a>
+            
+                  
+                                       <a class="twitter-share-button"
+                                          href="https://twitter.com/intent/tweet?text=${climb.routeName} on ${climb.cliff} |">
+                                        </a>
+                  
+                                        <div style="display: inline"
+                                             class="fb-share-button"
                                              data-href="https://multi-pitch.com/climbs/${climb.folderLocation}"
                                              data-layout="button">
                                         </div>
+                                       
                                     </div>
-                               </div>
-                              
+                                </div>
                             </div>
                         </div>
                     
