@@ -87,44 +87,4 @@ describe('Load the website page', function () {
         });
 
     });
-
-    describe("/ weather", () => {
-        it('Make sure that we display the right number of pins', done => {
-            var numberOfPublishCard = climbs.climbsData.climbs.filter(c => c.status === "publish").length;
-
-            nightmare
-                .goto(appUrl + "/map/weather.html")
-                .wait(3000)
-                .evaluate(function () {
-                    return document.querySelectorAll(".leaflet-marker-icon").length;
-                })
-                .end()
-                .then(function (displayedCards) {
-                    expect(numberOfPublishCard).to.equal(displayedCards);
-                    done()
-                })
-                .catch(done)
-        });
-
-    });
-
-    describe("/ map", () => {
-        it('Make sure that we display the right number of pins', done => {
-            var numberOfPublishCard = climbs.climbsData.climbs.filter(c => c.status === "publish").length;
-
-            nightmare
-                .goto(appUrl + "/map")
-                .wait(3000)
-                .evaluate(function () {
-                    return document.querySelectorAll(".leaflet-marker-icon").length;
-                })
-                .end()
-                .then(function (displayedCards) {
-                    expect(numberOfPublishCard).to.equal(displayedCards);
-                    done()
-                })
-                .catch(done)
-        });
-
-    });
 });
