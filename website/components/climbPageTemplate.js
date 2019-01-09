@@ -91,13 +91,13 @@ function getWeather(theId, climb, weatherData, getGraph) {
           </div>
         </div>
       </div>`;
-      return weatherInfo;
+        return weatherInfo;
     } catch (e) {
         weatherInfo = '';
         console.log("weather error for: " + theId);
         return weatherInfo;
     }
-    
+
 }
 
 function getRouteTopo(rootProject, topoImg) {
@@ -136,6 +136,7 @@ function getCragImg(rootProject, cragImg) {
 
     return cragImgModule;
 }
+
 function getMap(mapImg, latLonLocation) {
     try {
         if (mapImg.url != null) {
@@ -201,7 +202,7 @@ function getMap(mapImg, latLonLocation) {
                type="image/jpeg" class="big-card-map" 
                alt="Climb Location">
         </picture>`;
-        
+
         console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
         console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
         console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
@@ -236,10 +237,29 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
         <div class="container full-screen-container">
             <div class="map-card-body">
                 <div class="big-card-body pull-onto-map">
-                    <h4>
-                        <span class="flag ${climb.flag}"></span>
-                         ${climb.cliff} - ${climb.routeName}
-                     </h4>
+                <div class="row">
+                        <div class="col-sm">
+                          <h4>
+                            <span class="flag ${climb.flag}"></span>
+                             ${climb.cliff} - ${climb.routeName}
+                         </h4>
+                            
+   
+                        </div>    
+                        <div class="col-sm">
+                            
+                            <div class="container">
+                                <div class="fb-share-button"
+                                     data-href="https://multi-pitch.com/climbs/${climb.folderLocation}"
+                                     data-layout="button">
+                                </div>
+                            </div>
+
+      
+                       </div>
+                      
+                    </div>
+                    
                      <p class="smaller">
                         ${climb.intro}
                     </p>

@@ -35,6 +35,7 @@ function generate() {
             .replace(/'/g, "")
             .replace(/\//g, "")
             .replace(/ /g, "-");
+        climb.folderLocation = folderName;
 
         var headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
         var regexTitle = /{{title}}/gi;
@@ -48,7 +49,7 @@ function generate() {
             headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com/' + cragImg.url);
             headHTML = headHTML.replace(regexDesc, 'An overview of ' + climb.routeName + ', a ' + climb.length + 'm multi-pitch rock climb on ' + climb.cliff + ' in ' + climb.county + ', ' + climb.country + '. Includes detailed photo topo of the route and more info.');
         }
-        
+
 
         return {
             climb: climb,
