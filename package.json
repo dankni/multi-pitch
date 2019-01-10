@@ -5,8 +5,10 @@
   "main": "convertXlsxToJson.js",
   "scripts": {
     "test": "mocha",
-    "generate-date": "node convertXlsxToJson.js",
+    "generate-data": "node convertXlsxToJson.js",
     "generate-climbs": "node generateCardClimb.js",
+    "generate-sitemap": "node generateSiteMap.js",
+    "generate-all": "npm run generate-data && npm run generate-climbs && npm run generate-sitemap",
     "start": "node server.js",
     "deploy-test": "aws s3 sync website s3://multi-pitch-test.co.uk --delete"
   },

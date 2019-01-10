@@ -19,13 +19,10 @@ jobs:
       - run:
           name: Install local dependencies
           command: npm install
-      # Build Data js from excel
+      # Generate all the data dependencies, that's it: js date, climbs folder and sitemap
       - run:
-          name: Build excel data for production
-          command: npm run generate-date
-      - run:
-          name: Build climbs html for production
-          command: npm run generate-climbs
+          name: Build all data, js date, climbs folder and sitemap
+          command: npm run generate-all
       # Cache local dependencies if they don't exist
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}

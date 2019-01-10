@@ -55,6 +55,7 @@ img_compression
 ###########################
 website/data
 website/climbs
+website/sitemap.xml
 multi-pitch.iml
 
 # Dans helpers #
