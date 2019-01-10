@@ -10,7 +10,7 @@ const climbsData = allData.climbsData;
 
 function generate() {
 
-    const urlsEntry = climbsData.climbs.map(climb => {
+    const urlsEntry = climbsData.climbs.filter(climb => climb.status === 'publish').map(climb => {
         const loc = "https://www.multi-pitch.com/climbs/"
             .concat(climb.routeName, '-on-', climb.cliff + '/')
             .toLowerCase()
