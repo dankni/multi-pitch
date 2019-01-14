@@ -259,7 +259,14 @@ function publishCards(climbsArr) {
             var tileImg = cImgs.find(img => img.type === 'tile'); // get the img object
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
             var url = '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/';
-                url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+            url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+
+            if (climbsArr[i].techGrade === null) {
+                var techGrade = "";
+            } else {
+                var techGrade = climbsArr[i].techGrade;
+            }
+
             var card = `
     <div data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
@@ -275,7 +282,7 @@ function publishCards(climbsArr) {
             </h4>
             <p class="card-text">
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-                <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${climbsArr[i].techGrade} <br />
+                <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${techGrade} <br />
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />

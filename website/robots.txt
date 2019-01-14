@@ -5,3 +5,8 @@ User-agent: *
 sitemap: http://www.multi-pitch.com/sitemap.xml
 
 Disallow: /subscribe/index.html
+Disallow: /subscribe/
+
+# WRONG URLS
+Disallow: /climbs/great-slab-on-clogwyn-du-r-arddu
+Disallow: /climbs/keswick-brother-s-climb-on-scafell

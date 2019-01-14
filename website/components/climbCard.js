@@ -213,6 +213,12 @@ function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weat
 
     var mapModule = getMap(mapUrl.url, climb.geoLocation, mapUrl.alt);
 
+    if (climb.techGrade === null) {
+        var techGrade = "";
+    } else {
+        var techGrade = climb.techGrade;
+    }
+
     var fullCard = `
    <div class="card big-card">
     <div class="card-body" style="padding:0;">
@@ -235,7 +241,7 @@ function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weat
             <div class="info-ring">
               <span class="grade what">grade</span>
               <span class="info-divider"></span>
-              <span class="grade amount">${climb.tradGrade}&nbsp;${climb.techGrade}</span>
+              <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
             </div>        
             <div class="info-ring">
               <span class="grade what">length</span>
