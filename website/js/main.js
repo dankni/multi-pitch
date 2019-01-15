@@ -5,7 +5,7 @@ window.performance.mark('start-js-read');
  **/
 const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
-var history_data = {"Start": start}; // push state
+var history_data = { "Start": start }; // push state
 var isCardTurned = start.includes('?overview');
 var webP = false;
 
@@ -141,7 +141,7 @@ function showVal(values, field) {
     var higherValue = values.split(',')[1];
 
     if (field === 'grade') {
-        const gradeMappings = {1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1'};
+        const gradeMappings = { 1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1' };
         lowerValue = gradeMappings[parseInt(lowerValue)];
         higherValue = gradeMappings[parseInt(higherValue)];
     }
@@ -325,7 +325,7 @@ function showTile(climbId) {
     // a check to see if the user has landed on a page from a direct link
     if (isCardTurned !== true) {
         var url = '/climbs/' + climb.routeName + '-on-' + climb.cliff + '/';
-            url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+        url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
 
         window.history.pushState(history_data, climb.cliff, url);
     }
