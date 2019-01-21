@@ -281,31 +281,27 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
                             <span class="grade amount">${climb.approchTime}<small>min</small></span>
                         </div>
                     </div>
-                    <div class="col-sm" style="text-decoration: none;text-align: right;padding: 1.5rem;font-size: 30px;">
+                    <div class="col-sm" style="text-decoration: none;text-align: right;padding: 1.5rem;font-size: 32px;">
                         <a
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}"
                             target="blank"
                             onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                            <i class="icon-whatsapp" style="color:#25d366;text-decoration:none"></i>
-                        </a>
+                            <i class="icon-whatsapp" style="color:#25d366;text-decoration:none"></i></a>
                         <a
                             href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${climb.folderLocation}" 
                             target="blank"
                             onClick="gtag('event', 'social-share', {'event_category':'twitter', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                            <i class="icon-twitter" style="color:#1da1f3;"></i>
-                        </a>
+                            <i class="icon-twitter" style="color:#1da1f3;"></i></a>
                         <a
                             href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${climb.folderLocation}" 
                             target="blank"
                                 onClick="gtag('event', 'social-share', {'event_category':'facebook', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                            <i class="icon-facebook" style="color:#3b5998;"></i>
-                        </a>
+                            <i class="icon-facebook" style="color:#3b5998;"></i></a>
                         <a
                             href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${climb.folderLocation}" 
                             target="blank"
                                 onClick="gtag('event', 'social-share', {'event_category':'email', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                            <i class="icon-mail" style="color:#111;"></i>
-                        </a>
+                            <i class="icon-mail" style="color:#111;"></i></a>
                     </div>
                 </div>
                 <hr />  
