@@ -1,37 +1,96 @@
-function getGuidebook(rootProject, guideBook, climb) {
+function getMap(mapUrl, latLonLocation, altText) {
+    if (mapUrl != null) {
+        var mapPicture = `
+        <div class="img-contaner">
+            <a href="https://www.google.co.uk/maps/place/${latLonLocation}" target="blank" class="card-img-anch">
+                <picture class="big-card-map">    
+                    <source
+                       media="(max-width: 400px)"
+                       srcset="/${mapUrl}400x200x1.png 1x, /${mapUrl}400x200x2.png 2x"
+                       type="image/png" >
+                     <source
+                       media="(max-width: 1080px)"
+                       srcset="/${mapUrl}1080x200x1.png 1x, /${mapUrl}1080x200x2.png 2x"
+                       type="image/png" >
+                     <source
+                       media="(min-width: 1080px)"
+                       srcset="/${mapUrl}1280x200x1.png 1x, /${mapUrl}1280x200x2.png 2x"
+                       type="image/png" >                    
+                    <source
+                       media="(max-width: 400px)"
+                       srcset="/${mapUrl}400x200x1.webp 1x, /${mapUrl}400x200x2.webp 2x"
+                       type="image/webp" >
+                     <source
+                       media="(max-width: 1080px)"
+                       srcset="/${mapUrl}1080x200x1.webp 1x, /${mapUrl}1080x200x2.webp 2x"
+                       type="image/webp" >
+                     <source
+                       media="(min-width: 1080px)"
+                       srcset="/${mapUrl}1280x200x1.webp 1x, /${mapUrl}1280x200x2.webp 2x"
+                       type="image/webp" >
+                     <img
+                       src="/${mapUrl}1080x200x1.png"
+                       type="image/png" class="big-card-map" 
+                       alt="${altText}">
+                </picture>
+            </a>
+            <span class="txt-ovr-img map-txt">Open in Google Maps</span>
+        </div>`;
+        return mapPicture;
+    } else {
+        var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
+        var lon = latLonLocation.split(',')[1];
+        var lat = latLonLocation.split(',')[0];
+        var mid = ',13.0,0,0/';
+        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw&logo=false'
+
+
+        /* PRINTS URL FOR SAVING NEW MAP IMAGES TO REMOVE DEPENDECY ON MAPBOX uncomment to add new climb */
+        console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
+        console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
+        console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
+        console.log("1080x200x2 = " + `${urlStart}${lon},${lat}${mid}1080x200@2x${end}`);
+        console.log("1280x200x1 = " + `${urlStart}${lon},${lat}${mid}1280x200${end}`);
+        console.log("1280x200x2 = " + `${urlStart}${lon},${lat}${mid}1280x200@2x${end}`);
+
+        return "see console to save images";
+    }
+}
+
+function getGuidebook(guideBooks, climb) {
     try {
-        if (guideBook.title != "") {
-            var guideBookModule = `
+        var guideBookModule = `
     <hr />
     <div class="row accordian">
       <div class="col">
         <input id="tab-one" type="checkbox" name="tabs" class="accordian-input">
         <label for="tab-one" class="accordian-label" onclick="gtag('event', 'toggle-guidebook', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Guidebooks</label>
-        <div class="smaller accordian-content">
-          <div>
-            <img style="max-width:120px;float:left;padding-right:1rem;" src="${rootProject}${guideBook.imgURL}" alt="${guideBook.title}" /> 
-            <p>
-              <strong>${guideBook.title}</strong> - pg. ${guideBook.pg} <br />
-              ${guideBook.description}
-              <br />
-              <a href="${guideBook.link}" onClick="gtag('event', 'guidebook-link', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${guideBook.rrp}});" target="blank">Availible Here</a>
-              R.R.P. <strong>£ ${guideBook.rrp}</strong><br />
-              <small>ISBN: ${guideBook.isbn} </small>
-            </p>
-          </div>
+        <div class="smaller accordian-content">`;
+        for (var i = 0; i < guideBooks.length; i++) {
+            guideBookModule += `
+                <div>
+                <img style="max-width:120px;float:left;padding-right:1rem;" src="/${guideBooks[i].imgURL}" alt="${guideBooks[i].title}" /> 
+                <p>
+                    <strong>${guideBooks[i].title}</strong> - pg. ${guideBooks[i].pg} <br />
+                    ${guideBooks[i].description}
+                    <br />
+                    <a href="${guideBooks[i].link}" onClick="gtag('event', 'guidebook-link', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${guideBooks[i].rrp}});" target="blank">Availible Here</a>
+                    R.R.P. <strong>£ ${guideBooks[i].rrp}</strong><br />
+                    <small>ISBN: ${guideBooks[i].isbn} </small>
+                </p>
+                </div>`;
+        }
+        guideBookModule += `
         </div>
       </div>
     </div>`;
-        } else {
-            var guideBookModule = '';
-        }
     } catch (e) {
         guideBookModule = '';
     }
     return guideBookModule;
 }
 
-function getApprochInfo(rootProject, climb) {
+function getApprochInfo(climb) {
     try {
         if (climb.approach != "") {
             var approachInfo = `
@@ -100,12 +159,12 @@ function getWeather(theId, climb, weatherData, getGraph) {
 
 }
 
-function getRouteTopo(rootProject, topoImg) {
+function getRouteTopo(topoImg) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href="${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src="${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href="/${topoImg.url}" target="blank" class="card-img-anch">
+        <img src="/${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -118,12 +177,12 @@ function getRouteTopo(rootProject, topoImg) {
     return routeTopo;
 }
 
-function getCragImg(rootProject, cragImg) {
+function getCragImg(cragImg) {
     try {
         var cragImgModule = `
     <div class="img-contaner">
-      <a href="${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
-     <img src="${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+      <a href="/${cragImg.url}" target="blank" class="card-img-anch">
+     <img src="/${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -137,77 +196,15 @@ function getCragImg(rootProject, cragImg) {
     return cragImgModule;
 }
 
-function getMap(mapUrl, latLonLocation, altText) {
-    if (mapUrl != null) {
-        var mapPicture = `
-        <picture class="big-card-map">    
-            <source
-               media="(max-width: 400px)"
-               srcset="/${mapUrl}400x200x1.png 1x, /${mapUrl}400x200x2.png 2x"
-               type="image/png" >
-             <source
-               media="(max-width: 1080px)"
-               srcset="/${mapUrl}1080x200x1.png 1x, /${mapUrl}1080x200x2.png 2x"
-               type="image/png" >
-             <source
-               media="(min-width: 1080px)"
-               srcset="/${mapUrl}1280x200x1.png 1x, /${mapUrl}1280x200x2.png 2x"
-               type="image/png" >
-             <img
-               src="/${mapUrl}1080x200x1.png"
-               type="image/png" class="big-card-map" 
-               alt="${altText}">
-        </picture>`;
-        return mapPicture;
-    } else {
-        var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
-        var lon = latLonLocation.split(',')[1];
-        var lat = latLonLocation.split(',')[0];
-        var mid = ',13.0,0,0/';
-        var defaultSize = '800x200@2x'; // note the pixel density 
-        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw&logo=false'
+function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBooks, weatherData, getGraphFunction) {
 
-        // add webP below eg three lots of: <source media = "(max-width: 400px)" srcset = "image-lg_1x.webp 1x, image-lg_2x.webp 2x" type = "image/webp" >
+    var routeTopoModule = getRouteTopo(topoImg);
 
-        var mapPicture = `
-        <picture class="big-card-map">    
-            <source
-               media="(max-width: 400px)"
-               srcset="${urlStart}${lon},${lat}${mid}400x200${end} 1x, ${urlStart}${lon},${lat}${mid}400x200@2x${end} 2x"
-               type="image/jpeg" >
-             <source
-               media="(max-width: 1080px)"
-               srcset="${urlStart}${lon},${lat}${mid}1080x200${end} 1x, ${urlStart}${lon},${lat}${mid}1080x200@2x${end} 2x"
-               type="image/jpeg" >
-             <source
-               media="(min-width: 1080px)"
-               srcset="${urlStart}${lon},${lat}${mid}1280x200${end} 1x, ${urlStart}${lon},${lat}${mid}1280x200@2x${end} 2x"
-               type="image/jpeg" >
-             <img
-               src="${urlStart}${lon},${lat}${mid}1080x200${end}"
-               type="image/jpeg" class="big-card-map" 
-               alt="${altText}">
-        </picture>`;
-        console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
-        console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
-        console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
-        console.log("1080x200x2 = " + `${urlStart}${lon},${lat}${mid}1080x200@2x${end}`);
-        console.log("1280x200x1 = " + `${urlStart}${lon},${lat}${mid}1280x200${end}`);
-        console.log("1280x200x2 = " + `${urlStart}${lon},${lat}${mid}1280x200@2x${end}`);
-        return mapPicture;
-    }
-}
+    var cragImgModule = getCragImg(cragImg);
 
+    var approachInfoModule = getApprochInfo(climb);
 
-function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weatherData, getGraphFunction) {
-
-    var routeTopoModule = getRouteTopo(rootProject, topoImg);
-
-    var cragImgModule = getCragImg(rootProject, cragImg);
-
-    var approachInfoModule = getApprochInfo(rootProject, climb);
-
-    var guideBookModule = getGuidebook(rootProject, guideBook, climb);
+    var guideBookModule = getGuidebook(guideBooks, climb);
 
     var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
 
@@ -222,12 +219,7 @@ function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weat
     var fullCard = `
    <div class="card big-card">
     <div class="card-body" style="padding:0;">
-      <div class="img-contaner">
-        <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
-          ${mapModule}
-        </a>
-        <span class="txt-ovr-img map-txt">Open in Google Maps</span>
-      </div>
+      ${mapModule}
       <div class="big-card-body">
         <h4>
           <span class="flag ${climb.flag}"></span>

@@ -319,7 +319,7 @@ function showTile(climbId) {
     var cragImg = cImgs.find(img => img.type === 'crag');
     var topoImg = cImgs.find(img => img.type === 'topo');
     var mapUrl = cImgs.find(img => img.type === 'map');
-    var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
+    var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);
 
 
     // a check to see if the user has landed on a page from a direct link
@@ -334,7 +334,7 @@ function showTile(climbId) {
     document.getElementById('close').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
 
-    var fullCard = climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBook, weatherData, getGraph);
+    var fullCard = climbCard(rootProject, climb, mapUrl, cragImg, topoImg, allGuideBooks, weatherData, getGraph);
 
     document.getElementById('overlay').innerHTML = fullCard;
     document.title = climb.cliff + " - " + climb.routeName;

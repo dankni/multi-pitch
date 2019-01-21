@@ -240,94 +240,88 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weat
                 ${mapModule}
             </a>
         </div> 
-        <div class="container full-screen-container">
+        <div class="container">
             <div class="map-card-body">
                 <div class="big-card-body pull-onto-map">
                 <div class="row">
-                        <div class="col-sm">
-                          <h4>
+                    <div class="col-sm">
+                        <h4>
                             <span class="flag ${climb.flag}"></span>
-                             ${climb.cliff} - ${climb.routeName}
-                         </h4>
-                            
-   
-                        </div>    
-                        <div class="col-sm">
-                            <div class="row">
-                                <div class="col">
-                                    <div style="text-decoration:none">
-                                        SHARE: 
-                                        <a
-                                            href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}"
-                                            target="blank"
-                                            onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                                            <i class="icon-whatsapp" style="font-size:24px;color:#25d366;text-decoration:none"></i>
-                                        </a>
-                                        <a
-                                            href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${climb.folderLocation}" 
-                                            target="blank"
-                                            onClick="gtag('event', 'social-share', {'event_category':'twitter', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                                            <i class="icon-twitter" style="font-size:24px;color:#1da1f3;"></i>
-                                        </a>
-                                        <a
-                                            href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${climb.folderLocation}" 
-                                            target="blank"
-                                             onClick="gtag('event', 'social-share', {'event_category':'facebook', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                                            <i class="icon-facebook" style="font-size:24px;color:#3b5998;"></i>
-                                        </a>
-                                        <a
-                                            href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${climb.folderLocation}" 
-                                            target="blank"
-                                             onClick="gtag('event', 'social-share', {'event_category':'email', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
-                                            <i class="icon-mail" style="font-size:24px;color:#111;"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                     <p class="smaller">
-                        ${climb.intro}
-                    </p>
-                    <div class="row">
-                        <div class="col">
-                            <div class="info-ring">
-                                <span class="grade what">grade</span>
-                                <span class="info-divider"></span>
-                                <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
-                            </div>        
-                            <div class="info-ring">
-                                <span class="grade what">length</span>
-                                <span class="info-divider"></span>
-                                <span class="grade amount">${climb.length}m</span>
-                            </div>      
-                            <div class="info-ring">
-                                <span class="grade what">pitches</span>
-                                <span class="info-divider"></span>
-                                <span class="grade amount">${climb.pitches}</span>
-                            </div>
-                            <div class="info-ring">
-                                <span class="grade what">approch</span>
-                                <span class="info-divider"></span>
-                                <span class="grade amount">${climb.approchTime}<small>min</small></span>
-                            </div>
-                        </div>
+                            ${climb.cliff} - ${climb.routeName}
+                        </h4>
                     </div>
-                    <hr />  
-                    <div class="row">
-                        <div class="col-sm">
-                            <p>Crag Image</p>
-                            ${cragImgModule}
-                        </div>    
-                        <div class="col-sm">
-                            <p>The Route Topography</p>
-                            ${routeTopoModule}
-                       </div>
-                    </div>
-                    ${approachInfoModule}
-                    ${guideBookModule}
-                    ${weatherInfoModule}
                 </div>
+                <div class="row">
+                    <div class="col">
+                            <p class="smaller">
+                            ${climb.intro}
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="info-ring">
+                            <span class="grade what">grade</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
+                        </div>        
+                        <div class="info-ring">
+                            <span class="grade what">length</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.length}m</span>
+                        </div>      
+                        <div class="info-ring">
+                            <span class="grade what">pitches</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.pitches}</span>
+                        </div>
+                        <div class="info-ring">
+                            <span class="grade what">approch</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.approchTime}<small>min</small></span>
+                        </div>
+                    </div>
+                    <div class="col-sm" style="text-decoration: none;text-align: right;padding: 1.5rem;font-size: 30px;">
+                        <a
+                            href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}"
+                            target="blank"
+                            onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-whatsapp" style="color:#25d366;text-decoration:none"></i>
+                        </a>
+                        <a
+                            href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            target="blank"
+                            onClick="gtag('event', 'social-share', {'event_category':'twitter', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-twitter" style="color:#1da1f3;"></i>
+                        </a>
+                        <a
+                            href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            target="blank"
+                                onClick="gtag('event', 'social-share', {'event_category':'facebook', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-facebook" style="color:#3b5998;"></i>
+                        </a>
+                        <a
+                            href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            target="blank"
+                                onClick="gtag('event', 'social-share', {'event_category':'email', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-mail" style="color:#111;"></i>
+                        </a>
+                    </div>
+                </div>
+                <hr />  
+                <div class="row">
+                    <div class="col-sm">
+                        <p>Crag Image</p>
+                        ${cragImgModule}
+                    </div>    
+                    <div class="col-sm">
+                        <p>The Route Topography</p>
+                        ${routeTopoModule}
+                    </div>
+                </div>
+                ${approachInfoModule}
+                ${guideBookModule}
+                ${weatherInfoModule}
             </div>
         </div>
     </main>`;
