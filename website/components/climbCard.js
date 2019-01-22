@@ -1,62 +1,3 @@
-function getMap(mapUrl, latLonLocation, altText) {
-    if (mapUrl != null) {
-        var mapPicture = `
-        <div class="img-contaner">
-            <a href="https://www.google.co.uk/maps/place/${latLonLocation}" target="blank" class="card-img-anch">
-                <picture class="big-card-map">    
-                    <source
-                       media="(max-width: 400px)"
-                       srcset="/${mapUrl}400x200x1.png 1x, /${mapUrl}400x200x2.png 2x"
-                       type="image/png" >
-                     <source
-                       media="(max-width: 1080px)"
-                       srcset="/${mapUrl}1080x200x1.png 1x, /${mapUrl}1080x200x2.png 2x"
-                       type="image/png" >
-                     <source
-                       media="(min-width: 1080px)"
-                       srcset="/${mapUrl}1280x200x1.png 1x, /${mapUrl}1280x200x2.png 2x"
-                       type="image/png" >                    
-                    <source
-                       media="(max-width: 400px)"
-                       srcset="/${mapUrl}400x200x1.webp 1x, /${mapUrl}400x200x2.webp 2x"
-                       type="image/webp" >
-                     <source
-                       media="(max-width: 1080px)"
-                       srcset="/${mapUrl}1080x200x1.webp 1x, /${mapUrl}1080x200x2.webp 2x"
-                       type="image/webp" >
-                     <source
-                       media="(min-width: 1080px)"
-                       srcset="/${mapUrl}1280x200x1.webp 1x, /${mapUrl}1280x200x2.webp 2x"
-                       type="image/webp" >
-                     <img
-                       src="/${mapUrl}1080x200x1.png"
-                       type="image/png" class="big-card-map" 
-                       alt="${altText}">
-                </picture>
-            </a>
-            <span class="txt-ovr-img map-txt">Open in Google Maps</span>
-        </div>`;
-        return mapPicture;
-    } else {
-        var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
-        var lon = latLonLocation.split(',')[1];
-        var lat = latLonLocation.split(',')[0];
-        var mid = ',13.0,0,0/';
-        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw&logo=false'
-
-
-        /* PRINTS URL FOR SAVING NEW MAP IMAGES TO REMOVE DEPENDECY ON MAPBOX uncomment to add new climb */
-        console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
-        console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
-        console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
-        console.log("1080x200x2 = " + `${urlStart}${lon},${lat}${mid}1080x200@2x${end}`);
-        console.log("1280x200x1 = " + `${urlStart}${lon},${lat}${mid}1280x200${end}`);
-        console.log("1280x200x2 = " + `${urlStart}${lon},${lat}${mid}1280x200@2x${end}`);
-
-        return "see console to save images";
-    }
-}
-
 function getGuidebook(guideBooks, climb) {
     try {
         var guideBookModule = `
@@ -92,12 +33,12 @@ function getGuidebook(guideBooks, climb) {
 
 function getApprochInfo(climb) {
     try {
-        if (climb.approach != "") {
+        if (climb.approach != '') {
             var approachInfo = `
     <hr />
     <div class="row accordian">
         <div class="col">
-          <input id="tab-two" type="checkbox" name="tabs" class="accordian-input">
+          <input id="tab-two" type="checkbox" name="tabs" class="accordian-input" >
           <label for="tab-two" class="accordian-label" onclick="gtag('event', 'toggle-approach', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Approach & Descent Infomation</label>
           <div class="smaller accordian-content">
             <div>
@@ -115,6 +56,32 @@ function getApprochInfo(climb) {
     return approachInfo;
 }
 
+
+function getPitchInfo(climb) {
+    try {
+        if (climb.pitchInfo !== null)  {
+            var pitchInfo = `
+    <hr />
+    <div class="row accordian">
+        <div class="col">
+          <input id="tab-four" type="checkbox" name="tabs" class="accordian-input" >
+          <label for="tab-four" class="accordian-label" onclick="gtag('event', 'toggle-pitches', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Pitch By Pitch Information</label>
+          <div class="smaller accordian-content">
+            <div>
+              <p>${climb.pitchInfo}</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+        } else {
+            var pitchInfo = '';
+        }
+    } catch (e) {
+        pitchInfo = '';
+    }
+    return pitchInfo;
+}
+
 function getWeather(theId, climb, weatherData, getGraph) {
     try {
         var temperature = getGraph("temperature", theId, weatherData);
@@ -126,7 +93,7 @@ function getWeather(theId, climb, weatherData, getGraph) {
       <hr />
       <div class="row accordian">
         <div class="col">
-          <input id="tab-three" type="checkbox" name="tabs" class="accordian-input">
+          <input id="tab-three" type="checkbox" name="tabs" class="accordian-input" >
           <label for="tab-three" class="accordian-label" onclick="gtag('event', 'toggle-weather', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Seasonal Weather Infomation</label>
           <div class="smaller accordian-content">
             <div>
@@ -159,12 +126,12 @@ function getWeather(theId, climb, weatherData, getGraph) {
 
 }
 
-function getRouteTopo(topoImg) {
+function getRouteTopo(rootProject, topoImg) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href="/${topoImg.url}" target="blank" class="card-img-anch">
-        <img src="/${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href="${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
+        <img src="${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -177,12 +144,12 @@ function getRouteTopo(topoImg) {
     return routeTopo;
 }
 
-function getCragImg(cragImg) {
+function getCragImg(rootProject, cragImg) {
     try {
         var cragImgModule = `
     <div class="img-contaner">
-      <a href="/${cragImg.url}" target="blank" class="card-img-anch">
-     <img src="/${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+      <a href="${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
+     <img src="${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -196,19 +163,97 @@ function getCragImg(cragImg) {
     return cragImgModule;
 }
 
-function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBooks, weatherData, getGraphFunction) {
+function getMap(mapImg, latLonLocation) {
+    try {
+        if (mapImg.url != null) {
+            var mapPicture = `
+        <picture class="big-card-map">    
+            <source
+               media="(max-width: 400px)"
+               srcset="/${mapImg.url}400x200x1.webp 1x, /${mapImg.url}400x200x2.webp 2x"
+               type="image/webp" >
+             <source
+               media="(max-width: 1080px)"
+               srcset="/${mapImg.url}1080x200x1.webp 1x, /${mapImg.url}1080x200x2.webp 2x"
+               type="image/webp" >
+             <source
+               media="(min-width: 1080px)"
+               srcset="/${mapImg.url}1280x200x2.webp"
+               type="image/webp" >
+            <source
+               media="(max-width: 400px)"
+               srcset="/${mapImg.url}400x200x1.png 1x, /${mapImg.url}400x200x2.png 2x"
+               type="image/png" >
+             <source
+               media="(max-width: 1080px)"
+               srcset="/${mapImg.url}1080x200x1.png 1x, /${mapImg.url}1080x200x2.png 2x"
+               type="image/png" >
+             <source
+               media="(min-width: 1080px)"
+               srcset="/${mapImg.url}1280x200x2.png"
+               type="image/png" >
+             <img
+               src="/${mapImg.url}1080x200x1.png"
+               type="image/png" class="big-card-map" 
+               alt="${mapImg.altText}">
+        </picture>`;
+            return mapPicture;
+        }
+    } catch (e) {
+        var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
+        var lon = latLonLocation.split(',')[1];
+        var lat = latLonLocation.split(',')[0];
+        var mid = ',13.0,0,0/';
+        var defaultSize = '800x200@2x'; // note the pixel density 
+        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw&logo=false'
 
-    var routeTopoModule = getRouteTopo(topoImg);
+        // add webP below eg three lots of: <source media = "(max-width: 400px)" srcset = "image-lg_1x.webp 1x, image-lg_2x.webp 2x" type = "image/webp" >
 
-    var cragImgModule = getCragImg(cragImg);
+        var mapPicture = `
+        <picture class="big-card-map">    
+            <source
+               media="(max-width: 400px)"
+               srcset="${urlStart}${lon},${lat}${mid}400x200${end} 1x, ${urlStart}${lon},${lat}${mid}400x200@2x${end} 2x"
+               type="image/jpeg" >
+             <source
+               media="(max-width: 1080px)"
+               srcset="${urlStart}${lon},${lat}${mid}1080x200${end} 1x, ${urlStart}${lon},${lat}${mid}1080x200@2x${end} 2x"
+               type="image/jpeg" >
+             <source
+               media="(min-width: 1080px)"
+               srcset="${urlStart}${lon},${lat}${mid}1280x200${end} 1x, ${urlStart}${lon},${lat}${mid}1280x200@2x${end} 2x"
+               type="image/jpeg" >
+             <img
+               src="${urlStart}${lon},${lat}${mid}1080x200${end}"
+               type="image/jpeg" class="big-card-map" 
+               alt="Climb Location">
+        </picture>`;
+
+        console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
+        console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
+        console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
+        console.log("1080x200x2 = " + `${urlStart}${lon},${lat}${mid}1080x200@2x${end}`);
+        console.log("1280x200x1 = " + `${urlStart}${lon},${lat}${mid}1280x200${end}`);
+        console.log("1280x200x2 = " + `${urlStart}${lon},${lat}${mid}1280x200@2x${end}`);
+        return mapPicture;
+    }
+}
+
+function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBooks, weatherData, getGraphFunction) {
+
+    var routeTopoModule = getRouteTopo(rootProject, topoImg);
+
+    var cragImgModule = getCragImg(rootProject, cragImg);
 
     var approachInfoModule = getApprochInfo(climb);
+
+    var pitchInfoModule = getPitchInfo(climb);
 
     var guideBookModule = getGuidebook(guideBooks, climb);
 
     var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
 
-    var mapModule = getMap(mapUrl.url, climb.geoLocation, mapUrl.alt);
+    var mapModule = getMap(mapImg, climb.geoLocation);
 
     if (climb.techGrade === null) {
         var techGrade = "";
@@ -217,58 +262,94 @@ function climbCard(rootProject, climb, mapUrl, cragImg, topoImg, guideBooks, wea
     }
 
     var fullCard = `
-   <div class="card big-card">
-    <div class="card-body" style="padding:0;">
-      ${mapModule}
-      <div class="big-card-body">
-        <h4>
-          <span class="flag ${climb.flag}"></span>
-          ${climb.cliff} - ${climb.routeName}
-        </h4>
-        <p class="smaller">
-          ${climb.intro}
-        </p>
-        <div class="row">
-          <div class="col">
-            <div class="info-ring">
-              <span class="grade what">grade</span>
-              <span class="info-divider"></span>
-              <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
-            </div>        
-            <div class="info-ring">
-              <span class="grade what">length</span>
-              <span class="info-divider"></span>
-              <span class="grade amount">${climb.length}m</span>
-            </div>      
-            <div class="info-ring">
-              <span class="grade what">pitches</span>
-              <span class="info-divider"></span>
-              <span class="grade amount">${climb.pitches}</span>
+    <main id="climbCardDetails" class="main">
+        <div style="width:100%;max-height:300px;">
+            <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
+                ${mapModule}
+            </a>
+        </div> 
+        <div class="container">
+            <div class="map-card-body">
+                <div class="big-card-body pull-onto-map">
+                <div class="row">
+                    <div class="col-sm">
+                        <h4>
+                            <span class="flag ${climb.flag}"></span>
+                            ${climb.cliff} - ${climb.routeName}
+                        </h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                            <p class="smaller">
+                            ${climb.intro}
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="info-ring">
+                            <span class="grade what">grade</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
+                        </div>        
+                        <div class="info-ring">
+                            <span class="grade what">length</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.length}m</span>
+                        </div>      
+                        <div class="info-ring">
+                            <span class="grade what">pitches</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.pitches}</span>
+                        </div>
+                        <div class="info-ring">
+                            <span class="grade what">approch</span>
+                            <span class="info-divider"></span>
+                            <span class="grade amount">${climb.approchTime}<small>min</small></span>
+                        </div>
+                    </div>
+                    <div class="col-sm social-share">
+                        <a
+                            href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}"
+                            target="blank"
+                            onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-whatsapp" style="color:#25d366;"></i></a>
+                        <a
+                            href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            target="blank"
+                            onClick="gtag('event', 'social-share', {'event_category':'twitter', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-twitter" style="color:#1da1f3;"></i></a>
+                        <a
+                            href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            target="blank"
+                                onClick="gtag('event', 'social-share', {'event_category':'facebook', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-facebook" style="color:#3b5998;"></i></a>
+                        <a
+                            href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            target="blank"
+                                onClick="gtag('event', 'social-share', {'event_category':'email', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            <i class="icon-mail" style="color:#111;"></i></a>
+                    </div>
+                </div>
+                <hr />  
+                <div class="row">
+                    <div class="col-sm">
+                        <p>Crag Image</p>
+                        ${cragImgModule}
+                    </div>    
+                    <div class="col-sm">
+                        <p>The Route Topography</p>
+                        ${routeTopoModule}
+                    </div>
+                </div>
+                ${approachInfoModule}
+                ${guideBookModule}
+                ${pitchInfoModule}
+                ${weatherInfoModule}
             </div>
-            <div class="info-ring">
-              <span class="grade what">approch</span>
-              <span class="info-divider"></span>
-              <span class="grade amount">${climb.approchTime}<small>min</small></span>
-            </div>
-          </div>
         </div>
-        <hr />  
-        <div class="row">
-          <div class="col-sm">
-            <p>Crag Image</p>
-            ${cragImgModule}
-          </div>    
-          <div class="col-sm">
-            <p>The Route Topography</p>
-            ${routeTopoModule}
-         </div>
-        </div>
-        ${approachInfoModule}
-        ${guideBookModule}
-        ${weatherInfoModule}
-      </div>
-    </div>
-  </div>`;
+    </main>`;
     return fullCard;
 }
 

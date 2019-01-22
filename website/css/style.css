@@ -736,6 +736,7 @@ blockquote:before {
   left:0;
   z-index:8;
   transition: background-color 1s;
+  overflow:scroll;
 }
 .lightbox-card{
   z-index: 10;
@@ -785,9 +786,22 @@ blockquote:before {
 .grade:first-of-type{
   padding-top: 10px;
 }
+.pitch-title {
+  padding: 1rem 0 0 0;
+  display: inline-block;
+}
+.social-share {
+  text-decoration: none;
+  text-align: right;
+  padding: 1.5rem;
+  font-size: 32px;
+}
 @media (max-width: 600px) {
   .grade:first-of-type{
     padding-top: 3px;
+  }
+  .social-share {
+    text-align: center;
   }
 }
 hr {

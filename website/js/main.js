@@ -7,28 +7,7 @@ const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = { "Start": start }; // push state
 var isCardTurned = start.includes('?overview');
-var webP = false;
 
-/**
- CHECK IF BROWSER SUPPORTS WEBP IMAGES
- **/
-async function supportsWebp() {
-    if (!self.createImageBitmap) return false;
-    const webpData = 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=';
-    const blob = await fetch(webpData).then(r => r.blob());
-    return createImageBitmap(blob).then(() => true, () => false);
-}
-
-(async () => {
-    if (await supportsWebp()) {
-        webP = true;
-        const heroDom = document.getElementById('hero');
-        if (heroDom) {
-            heroDom.classList.add('supportsWebP');
-            heroDom.classList.remove('supportsJPEG');
-        }
-    }
-})();
 
 /**
  THE SLIDER FUNCTION FOR FILTERS
@@ -337,6 +316,7 @@ function showTile(climbId) {
     var fullCard = climbCard(rootProject, climb, mapUrl, cragImg, topoImg, allGuideBooks, weatherData, getGraph);
 
     document.getElementById('overlay').innerHTML = fullCard;
+    document.getElementById('climbCardDetails').style = "max-width: 1080px;margin: 10px auto;Background: #fff;";
     document.title = climb.cliff + " - " + climb.routeName;
 }
 
