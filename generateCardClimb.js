@@ -29,7 +29,7 @@ function generate() {
         var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
         var cragImg = cImgs.find(img => img.type === 'crag');
         var topoImg = cImgs.find(img => img.type === 'topo');
-        var guideBook = guideBooks.books.find(book => book.climbId === climbId); // ToDo: update to filter then allow multiple to show
+        var guideBook = guideBooks.books.filter(book => book.climbId === climbId); 
         var folderName = "".concat(climb.routeName, '-on-', climb.cliff + '/')
             .toLowerCase()
             .replace(/'/g, "")
@@ -49,7 +49,6 @@ function generate() {
             headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com/' + cragImg.url);
             headHTML = headHTML.replace(regexDesc, 'An overview of ' + climb.routeName + ', a ' + climb.length + 'm multi-pitch rock climb on ' + climb.cliff + ' in ' + climb.county + ', ' + climb.country + '. Includes detailed photo topo of the route and more info.');
         }
-
 
         return {
             climb: climb,
