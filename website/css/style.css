@@ -158,6 +158,10 @@ button::-moz-focus-inner {
 }
 .navbar-brand img {
   width:30px;
+  transition:filter ease .5s;
+}
+.navbar-brand img:hover {
+    filter: brightness(50%);
 }
 .card {
   display: -webkit-box;

@@ -142,7 +142,6 @@ function filterCards() {
     var lowApproch = parseInt(document.getElementById('approchRange').value.split(',')[0]);
     var highApproch = parseInt(document.getElementById('approchRange').value.split(',')[1]);
 
-
     var cards = document.getElementsByClassName('card');
 
     for (let i = 0; i < cards.length; i++) {
