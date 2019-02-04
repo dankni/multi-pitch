@@ -52,7 +52,7 @@ function generate() {
 
         return {
             climb: climb,
-            html: headHTML + navHTML + climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBook, weatherData, getGraph) + footerHTML
+            html: headHTML + navHTML + climbCard(climb, cImgs, guideBook, weatherData, getGraph) + footerHTML
         };
     });
 

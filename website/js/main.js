@@ -294,9 +294,6 @@ function showTile(climbId) {
     climbId = parseInt(climbId);
     var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-    var cragImg = cImgs.find(img => img.type === 'crag');
-    var topoImg = cImgs.find(img => img.type === 'topo');
-    var mapUrl = cImgs.find(img => img.type === 'map');
     var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);
 
 
@@ -312,7 +309,7 @@ function showTile(climbId) {
     document.getElementById('close').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
 
-    var fullCard = climbCard(rootProject, climb, mapUrl, cragImg, topoImg, allGuideBooks, weatherData, getGraph);
+    var fullCard = climbCard(climb, cImgs, allGuideBooks, weatherData, getGraph);
 
     document.getElementById('overlay').innerHTML = fullCard;
     document.getElementById('climbCardDetails').style = "max-width: 1080px;margin: 10px auto;Background: #fff;";

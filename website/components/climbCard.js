@@ -56,7 +56,6 @@ function getApprochInfo(climb) {
     return approachInfo;
 }
 
-
 function getPitchInfo(climb) {
     try {
         if (climb.pitchInfo !== null)  {
@@ -126,12 +125,12 @@ function getWeather(theId, climb, weatherData, getGraph) {
 
 }
 
-function getRouteTopo(rootProject, topoImg) {
+function getRouteTopo(topoImg) {
     try {
         var routeTopo = `
       <div class="img-contaner">
-        <a href="${rootProject}${topoImg.url}" target="blank" class="card-img-anch">
-        <img src="${rootProject}${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
+        <a href="/${topoImg.url}" target="blank" class="card-img-anch">
+        <img src="/${topoImg.url.replace(".jpg", "-s.jpg")}" alt="${topoImg.alt}" class="crag-hero" >
           <span class="txt-ovr-img">View Route Topo</span>
         </a>
         <p class="credit">
@@ -144,12 +143,12 @@ function getRouteTopo(rootProject, topoImg) {
     return routeTopo;
 }
 
-function getCragImg(rootProject, cragImg) {
+function getCragImg(cragImg) {
     try {
         var cragImgModule = `
     <div class="img-contaner">
-      <a href="${rootProject}${cragImg.url}" target="blank" class="card-img-anch">
-     <img src="${rootProject}${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
+      <a href="/${cragImg.url}" target="blank" class="card-img-anch">
+     <img src="/${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
         <span class="txt-ovr-img">View Crag Photo</span>
       </a>
       <p class="credit">
@@ -161,6 +160,35 @@ function getCragImg(rootProject, cragImg) {
     }
 
     return cragImgModule;
+}
+
+function getZoomModule(zoomImg, climb) {
+    if (typeof zoomImg !== 'undefined') {
+        try {
+            var zoomImgModule = `
+        <div class="row">
+            <div class="col-sm-8">
+                <p>Detailed Crag Image With Deep Zoom</p>
+                <p class="smaller">
+                    The climb ${climb.routeName} has a zoomable image of ${climb.cliff} 
+                    taken by multi-pitch.com. It can be used for those who want to understand
+                    the crag in more detail.
+                </p>
+            </div>
+            <div class="col-sm-4">
+                <a class="open-tile" href="/crag-zoom?climb=${climb.id}" target="blank" 
+                    style="width:100%;margin-top:35px;">
+                    Open ${climb.cliff} super zoom
+                </a>
+            </div>
+        </div>`;
+        } catch (e) {
+            zoomImgModule = '';
+        }
+    } else {
+        zoomImgModule = '';
+    }
+    return zoomImgModule;
 }
 
 function getMap(mapImg, latLonLocation) {
@@ -239,11 +267,18 @@ function getMap(mapImg, latLonLocation) {
     }
 }
 
-function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBooks, weatherData, getGraphFunction) {
+function climbCard(climb, climbImgs, guideBooks, weatherData, getGraphFunction) {
 
-    var routeTopoModule = getRouteTopo(rootProject, topoImg);
+    var cragImg = climbImgs.find(img => img.type === 'crag');
+    var topoImg = climbImgs.find(img => img.type === 'topo');
+    var mapImg = climbImgs.find(img => img.type === 'map');
+    var zoomImg = climbImgs.find(img => img.type === 'super');
 
-    var cragImgModule = getCragImg(rootProject, cragImg);
+    var routeTopoModule = getRouteTopo(topoImg);
+
+    var cragImgModule = getCragImg(cragImg);
+
+    var zoomModule = getZoomModule(zoomImg, climb);
 
     var approachInfoModule = getApprochInfo(climb);
 
@@ -343,6 +378,7 @@ function climbCard(rootProject, climb, mapImg, cragImg, topoImg, guideBooks, wea
                         ${routeTopoModule}
                     </div>
                 </div>
+                ${zoomModule}
                 ${approachInfoModule}
                 ${guideBookModule}
                 ${pitchInfoModule}
