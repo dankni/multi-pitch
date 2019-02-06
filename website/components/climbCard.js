@@ -274,7 +274,7 @@ function getZoomModule(zoomImg, climb) {
                 </p>
             </div>
             <div class="col-sm-4">
-                <a class="open-tile" href="/crag-zoom?climb=${climb.id}" target="blank" 
+                <a class="open-tile" href="/crag-zoom/?climb=${climb.id}" target="blank" 
                     style="width:100%;margin-top:35px;">
                     Open ${climb.cliff} super zoom
                 </a>
