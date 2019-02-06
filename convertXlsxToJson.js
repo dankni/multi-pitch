@@ -86,7 +86,7 @@ function appendTestAndBuildString() {
     //So then I can use this in my mocha tests: 
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         module.exports = {
-            weatherData, climbImgs, climbsData, guideBooks
+            weatherData, climbImgs, climbsData, guideBooks, referances
         };
     }`;
     try {
