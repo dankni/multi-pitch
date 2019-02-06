@@ -8,13 +8,11 @@ const climbCard = require('./website/components/climbCard').climbCard;
 const allData = require('./website/data/data');
 const climbsData = allData.climbsData;
 const climbImgs = allData.climbImgs;
+const referances = allData.referances;
 const weatherData = allData.weatherData;
 const guideBooks = allData.guideBooks;
-const getGraph = require('./website/js/graph').getGraph;
 const navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
 const footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
-
-const rootProject = "../../";
 
 function generate() {
     const baseFolder = path.resolve(__dirname, OUTPUT_FOLDER);
@@ -26,10 +24,9 @@ function generate() {
     var climbsAndHtml = climbsData.climbs.map(climb => {
         var climbId = climb.id;
         var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-        var mapImg = cImgs.find(img => img.type === 'map'); // get the map img object
         var cragImg = cImgs.find(img => img.type === 'crag');
-        var topoImg = cImgs.find(img => img.type === 'topo');
         var guideBook = guideBooks.books.filter(book => book.climbId === climbId); 
+        var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId); 
         var folderName = "".concat(climb.routeName, '-on-', climb.cliff + '/')
             .toLowerCase()
             .replace(/'/g, "")
@@ -52,7 +49,7 @@ function generate() {
 
         return {
             climb: climb,
-            html: headHTML + navHTML + climbCard(climb, cImgs, guideBook, weatherData, getGraph) + footerHTML
+            html: headHTML + navHTML + climbCard(climb, cImgs, guideBook, weatherData, referanceLines) + footerHTML
         };
     });
 

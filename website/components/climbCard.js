@@ -81,7 +81,105 @@ function getPitchInfo(climb) {
     return pitchInfo;
 }
 
-function getWeather(theId, climb, weatherData, getGraph) {
+function getReferanceInfo(referanceLines, climb) {
+    try {
+        if (referanceLines.length >= 1) {
+            var refInfo = `
+        <hr />
+        <div class="row accordian">
+            <div class="col">
+                <input id="tab-five" type="checkbox" name="tabs" class="accordian-input" >
+                <label for="tab-five" class="accordian-label" onclick="gtag('event', 'toggle-referances', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':0});">Referances &amp; additional links</label>
+                <div class="smaller accordian-content">
+                    <div><p>The following links will take you to external websites related specifically to this climb.
+                       They contined relavant infomation at the time of publishing.<br />`;
+                    for (let i = 0; i < referanceLines.length; i++) {
+                        refInfo += `<a href="${referanceLines[i].url}" target="blank">${referanceLines[i].text} <i class="icon-link-ext"></i></a><br />`;
+                    }
+                    refInfo += `
+                    </p></div>
+                </div>
+            </div>
+        </div>`;
+        } else {
+            var refInfo = '';
+        }
+    } catch (e) {
+        refInfo = '';
+    }
+    return refInfo;
+}
+
+function getGraph(type, climbId, weatherData) {
+
+    try {
+        var weather = weatherData.weatherLines.filter(w => w.climbId === climbId);
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        if (type === "temperature") {
+            var high = weather.find(h => h.type === 'tempH');
+            var chartClass = "temp";
+        } else {
+            var high = weather.find(h => h.type === 'rainyDays');
+            var chartClass = "rain";
+        }
+
+        var highArray = [];
+        for (let i = 2; i < 14; i++) {
+            highArray.push(parseInt(Object.values(high)[i]));
+        }
+        var maxValue = Math.max.apply(null, highArray);
+        var graphHeight = 40;
+        if (maxValue < 18) graphHeight -= 5; // makes the bars fill more of the height
+
+        var lowArray = [];
+        if (type === "temperature") {
+            var tempL = weather.find(l => l.type === 'tempL');
+            for (let i = 2; i < 14; i++) {
+                lowArray.push(parseInt(Object.values(tempL)[i]));
+            }
+            var minTemprature = Math.min.apply(null, lowArray);
+        } else {
+            for (let i = 0; i < 12; i++) {
+                lowArray.push(0);
+            }
+        }
+
+        var tempInfo = `<ul class="chart ${chartClass}">`;
+
+        for (let i = 0; i < 12; i++) {
+            if (minTemprature < -8) {
+                // if its really cold adjust the graph a lot
+                var lowTemp = (lowArray[i] + 16) / graphHeight * 100;
+                var highTemp = ((highArray[i] + 16) - (lowArray[i] + 16)) / graphHeight * 100;
+            } else if (minTemprature < 0) {
+                // if its a bit cold adjust it a little
+                var lowTemp = (lowArray[i] + 8) / graphHeight * 100;
+                var highTemp = ((highArray[i] + 8) - (lowArray[i] + 8)) / graphHeight * 100;
+            } else {
+                // if all temps are above 0 no adjustment needed 
+                var lowTemp = (lowArray[i]) / graphHeight * 100;
+                var highTemp = (highArray[i] - lowArray[i]) / graphHeight * 100;
+            }
+
+            tempInfo += `
+  	  <li>
+	    ${highArray[i]}
+	    <span style="height:${highTemp}%" title="${months[i]}"></span>`;
+            if (type === "temperature") {
+                tempInfo += `<span style="height:${lowTemp}%;background-color:rgba(0,0,0,0);">${lowArray[i]}</span>`;
+            }
+            tempInfo += `</li>`;
+        }
+        tempInfo += `</ul>`;
+
+    } catch (e) {
+        tempInfo = '';
+    }
+    return tempInfo;
+}
+
+function getWeather(theId, climb, weatherData) {
     try {
         var temperature = getGraph("temperature", theId, weatherData);
         if (temperature == '') {
@@ -267,7 +365,7 @@ function getMap(mapImg, latLonLocation) {
     }
 }
 
-function climbCard(climb, climbImgs, guideBooks, weatherData, getGraphFunction) {
+function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
 
     var cragImg = climbImgs.find(img => img.type === 'crag');
     var topoImg = climbImgs.find(img => img.type === 'topo');
@@ -275,19 +373,13 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, getGraphFunction) 
     var zoomImg = climbImgs.find(img => img.type === 'super');
 
     var routeTopoModule = getRouteTopo(topoImg);
-
     var cragImgModule = getCragImg(cragImg);
-
     var zoomModule = getZoomModule(zoomImg, climb);
-
     var approachInfoModule = getApprochInfo(climb);
-
     var pitchInfoModule = getPitchInfo(climb);
-
+    var referanceModule = getReferanceInfo(referanceLines, climb);
     var guideBookModule = getGuidebook(guideBooks, climb);
-
-    var weatherInfoModule = getWeather(climb.id, climb, weatherData, getGraphFunction);
-
+    var weatherInfoModule = getWeather(climb.id, climb, weatherData);
     var mapModule = getMap(mapImg, climb.geoLocation);
 
     if (climb.techGrade === null) {
@@ -383,6 +475,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, getGraphFunction) 
                 ${guideBookModule}
                 ${pitchInfoModule}
                 ${weatherInfoModule}
+                ${referanceModule}
             </div>
         </div>
     </main>`;

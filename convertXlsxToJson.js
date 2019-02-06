@@ -33,6 +33,11 @@ const translationsKeys = [{
     sheetNuber: GUIDEBOOKS
 }, {
     fileName: OUTPUT_FILE,
+    constName: "referances",
+    objEntryPoint: "referanceLines",
+        sheetNuber: REFERANCES
+}, {
+    fileName: OUTPUT_FILE,
     constName: "weatherData",
     objEntryPoint: "weatherLines",
     sheetNuber: WEATHER
@@ -110,4 +115,4 @@ Promise.all(translationsKeys.map(translation =>
     .catch(err => console.error(`Some shit happen.... ${err}`));
 
 // sorry I cant work out how to append this after the promise is compleated.
-setTimeout(appendTestAndBuildString, 3000);
+setTimeout(appendTestAndBuildString, 3500);
