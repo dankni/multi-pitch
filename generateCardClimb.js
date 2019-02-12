@@ -6,7 +6,8 @@ const path = require('path');
 const OUTPUT_FOLDER = './website/climbs';
 const climbCard = require('./website/components/climbCard').climbCard;
 const allData = require('./website/data/data');
-const climbsData = allData.climbsData;
+var climbsData = allData.climbsData;
+climbsData = climbsData.climbs.filter(climb => climb.status === 'publish');
 const climbImgs = allData.climbImgs;
 const referances = allData.referances;
 const weatherData = allData.weatherData;
@@ -21,7 +22,8 @@ function generate() {
         fs.mkdirSync(baseFolder);
     }
 
-    var climbsAndHtml = climbsData.climbs.map(climb => {
+    var climbsAndHtml = climbsData.map(climb => {
+
         var climbId = climb.id;
         var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
         var cragImg = cImgs.find(img => img.type === 'crag');
