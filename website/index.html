@@ -299,12 +299,16 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <link href="/css/fontello.css" rel="stylesheet" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
-    <script>
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
+    <script defer>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'UA-123782847-1');
+        window.performance.mark('gta-end');
+    </script>
+    <script>
+        window.performance.mark('html-end');
     </script>
 </body>
 </html>
