@@ -17,6 +17,21 @@
         var climbTitle = 'Roca Gris > Esparraguera - HVS 5a | 190m';
         var logo = new Image();
         logo.src = '../website/img/logo/mp-logo-white.png';
+        // The Topo Points
+        var belays = new Array(
+            [323.0, 2354.3], [605.0, 1785.0], [833.0, 1398.0], [1093.0, 780.0], [1385, 550], [1520.0, 330.0]
+        );
+        var route = new Array(
+            [284.0, 2699.3], [267, 2534.5], [317, 2369.5], [350, 2214.5], [400, 2052.5], [497, 1907.5], [580, 1877.5], [612, 1782.5], [662, 1724.5], [717, 1669.5], [712, 1599.5],
+            [772, 1547.5], [812, 1404.5], [847, 1407.5], [902, 1377.5], [942, 1332.5], [962, 1249.5], [1015, 1089.5], [1025, 987.5], [1030, 907.5], [1052, 832.5],
+            [1085, 779.5], [1162, 804.5], [1195, 804.5], [1237, 734.5], [1260, 654.5], [1282, 589.5], [1377, 589.5], [1390, 532.5], [1425, 407.5], [1465, 404.5],
+            [1475, 354.5], [1502, 334.5], [1525, 332.5]
+        );
+
+        // x, y of absail followed by x, y of arrow end
+        var absail = new Array(
+            [2052.0, 531.7, 2040.0, 624.7], [1937.0, 1088.7, 1923.0, 1198.7], [1857.0, 1674.7, 1903.0, 1764.7]
+        );
     </script>
     <style>
         * {
@@ -25,20 +40,63 @@
         option {
             font-size: 55px;
         }
+        label {
+            margin-right:60px;
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas" width="2800" height="2800"></canvas>
 
-    <section style="float:left;width:100%;">
+    <section style="width:80%;margin:0 auto;">
         <h1>Build A Topo</h1>
+        <fieldset>
+            <label>
+                <input type="checkbox" value="infoBox" checked id="c1" />
+                Show Info Box
+            </label>
+            <label>
+                <input type="checkbox" value="routeLine" checked id="c2" />
+                Show Route
+            </label>
+            <label>
+                <input type="checkbox" value="belays" checked id="c3" />
+                Show Belay Points
+            </label>
+            <label>
+                <input type="checkbox" value="absail" checked id="c4" />
+                Show Approch / Decent Absails
+            </label>
+            <br />
+            <button onclick="draw()">Re-Draw Topo</button>
+        </fieldset>
+        <p>Use this tool to make consistent topo images for the site of for social media.</p>
         <h2>Step 1 - Select Climb</h2>
+        <p>Add the crag image into the scource code then select what climb it is for.</p>
         <fieldset id="selectHolder"></fieldset>
         <h2>Step 2 - Click the map to choose the route</h2>
+        <p>
+            Press the start button. click the image to along where the route would be. Remember you need to re-draw the canvas
+            to see the points you selected. See browser console for actual numbers selected.
+        </p>
+        <button onclick="capture('route')">Start</button>
         <h2>Step 3 - Click the map to choose the beleys</h2>
+        <p>
+            Press the start button. Click the image at the appropriate belay points.
+            Remember you need to re-draw the canvas to see the points you selected. See browser console for actual numbers selected.
+        </p>
+        <button onclick="capture('belay')">Start</button>
         <h2>Step 4 - Click the map to choose the absails</h2>
-        <pre id="console" style="overflow:scroll;"></pre>
+        <p>
+            For an absail you need to click the start of the absail anchor,
+            then click again in the direction the absail goes. if there are 3
+            absails that means 6 clicks. 
+        </p>
+        <button onclick="capture('absail')">Start</button>
+
     </section>
+    <br />
+    <br />
     <script>
         /** MAKE A DROP DOWN WITH A LIST OF ALL CLIMBS **/
         var selectHolder = document.getElementById("selectHolder");
@@ -66,47 +124,40 @@
         function changeEventHandler(event) {
             if (event.target.value) {
                 var climb = climbsArr.find(climb => climb.id == event.target.value); // get the single climb object
-                sideConsole.innerHTML += climb.cliff + " > " + climb.routeName + " | " + climb.tradGrade + " " + climb.techGrade + " - " + climb.length + "m <br />";
-                sideConsole.innerHTML += mapping[climb.flag] + " <br />";
+                console.log(climb.cliff + " > " + climb.routeName + " | " + climb.tradGrade + " " + climb.techGrade + " - " + climb.length + "m");
+                console.log(mapping[climb.flag]);
+                flag.src = 'flags/' + mapping[climb.flag];
+                climbTitle = climb.cliff + " > " + climb.routeName + " | " + climb.tradGrade + " " + climb.techGrade + " - " + climb.length + "m";
             }
 
         }
 
         function draw() {
+
+            let infoBox = document.getElementById('c1').checked; 
+            let routeLine = document.getElementById('c2').checked; 
+            let belayPoints = document.getElementById('c3').checked; 
+            let absailPoints = document.getElementById('c4').checked; 
+
             var ctx = document.getElementById('canvas').getContext('2d');
-            img.onload = function () {
-                /** DEFINE THE DRAWING VARIABLES */
-                const imgWidth = img.width;
-                const imgHeight = img.height;
-                const belaySize = 24;
-                const lineColor = "rgba(204,25,29,0.95)";
-                const belayColor = "rgb(236,142,140,0.9)";
-                const flagWidth = 100;
-                const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
-                const flagLeftMargin = 80;
-                const flagHeight = flagWidth * (flag.height / flag.width);
-                const arrowSize = 24;
+ 
+            /** DEFINE THE DRAWING VARIABLES */
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+            const belaySize = 24;
+            const lineColor = "rgba(204,25,29,0.95)";
+            const belayColor = "rgb(236,142,140,0.9)";
+            const flagWidth = 100;
+            const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
+            const flagLeftMargin = 80;
+            const flagHeight = flagWidth * (flag.height / flag.width);
+            const arrowSize = 24;
 
-                // The Topo Points
-                var belays = new Array(
-                    [323.0, 2354.3], [605.0, 1785.0], [833.0, 1398.0], [1093.0, 780.0], [1385, 550], [1520.0, 330.0]
-                );
-                var route = new Array(
-                    [284.0, 2699.3],[267, 2534.5],[317, 2369.5],[350, 2214.5],[400, 2052.5],[497, 1907.5],[580, 1877.5],[612, 1782.5],[662, 1724.5],[717, 1669.5],[712, 1599.5],
-                    [772, 1547.5],[812, 1404.5],[847, 1407.5],[902, 1377.5],[942, 1332.5],[962, 1249.5],[1015, 1089.5],[1025, 987.5],[1030, 907.5],[1052, 832.5],
-                    [1085, 779.5],[1162, 804.5],[1195, 804.5],[1237, 734.5],[1260, 654.5],[1282, 589.5],[1377, 589.5],[1390, 532.5],[1425, 407.5],[1465, 404.5],
-                    [1475, 354.5],[1502, 334.5],[1525, 332.5]
-                );
+            // Adds the main Crag image
+            ctx.drawImage(img, 0, 0);
+            ctx.save();
 
-                // x, y of absail followed by x, y of arrow end
-                var absail = new Array(
-                    [2052.0, 531.7, 2040.0, 624.7], [1937.0, 1088.7, 1923.0, 1198.7], [1857.0, 1674.7, 1903.0, 1764.7] 
-                );
-
-                // Adds the main Crag image
-                ctx.drawImage(img, 0, 0);
-                ctx.save();
-
+            if (infoBox === true) {
                 // Ads the box at the bottom
                 ctx.fillStyle = infoBoxColor;
                 ctx.rect(0, imgHeight - 100, imgWidth, 150); // ToDo: make sizes relative to image size eg 8% of height
@@ -115,7 +166,7 @@
                 ctx.save();
 
                 // Adds the flag & logo
-                ctx.drawImage(flag, flagLeftMargin, (imgHeight - 120 + (flagHeight / 2 )), flagWidth, flagHeight);
+                ctx.drawImage(flag, flagLeftMargin, (imgHeight - 120 + (flagHeight / 2)), flagWidth, flagHeight);
                 ctx.drawImage(logo, (imgWidth - 520), (imgHeight - 90), 75, 75);
 
                 // Add the text
@@ -125,8 +176,10 @@
                 ctx.fillText('multi-pitch.com', (imgWidth - 420), imgHeight - 35);
                 ctx.restore();
                 ctx.save();
+            }
 
-                // Add the Topo Line
+            // Add the Topo Line
+            if (routeLine === true) {
                 ctx.beginPath();
                 ctx.moveTo(route[0][0], route[0][1]);
                 for (var i = 1; i < route.length - 2; i++) {
@@ -142,8 +195,10 @@
                 ctx.lineCap = 'round';
                 ctx.stroke();
                 ctx.restore();
+            }
 
-                // Add the Belay Points
+            // Add the Belay Points
+            if (belayPoints === true) {
                 ctx.strokeStyle = lineColor;
                 ctx.lineWidth = 6;
                 ctx.fillStyle = belayColor;
@@ -154,8 +209,10 @@
                     ctx.stroke();
                     ctx.closePath();
                 }
+            }
 
-                // Add the abasail Points
+            // Add the abasail Points
+            if (absailPoints === true) {
                 for (let i = 0; i < absail.length; i++) {
                     ctx.beginPath();
                     ctx.moveTo(absail[i][0], absail[i][1]);
@@ -167,7 +224,6 @@
                     ctx.fill();
                     ctx.stroke();
                     ctx.closePath();
-
                     var from = new Object();
                     from.x = absail[i][0];
                     from.y = absail[i][1] + belaySize;
@@ -177,11 +233,9 @@
                     ctx.save();
                     drawArrowhead(ctx, from, to, arrowSize, lineColor);
                     ctx.restore();
-                }  
-            };
+                }
+            }
         }
-
-        draw();
 
         function drawArrowhead(context, from, to, radius, lineColor) {
             var x_center = to.x;
@@ -189,22 +243,18 @@
             var angle;
             var x;
             var y;
-
             context.beginPath();
             angle = Math.atan2(to.y - from.y, to.x - from.x)
             x = radius * Math.cos(angle) + x_center;
             y = radius * Math.sin(angle) + y_center;
-
             context.moveTo(x, y);
             angle += (1.0 / 3.0) * (2 * Math.PI)
             x = radius * Math.cos(angle) + x_center;
             y = radius * Math.sin(angle) + y_center;
-
             context.lineTo(x, y);
             angle += (1.0 / 3.0) * (2 * Math.PI)
             x = radius * Math.cos(angle) + x_center;
             y = radius * Math.sin(angle) + y_center;
-
             context.lineTo(x, y);
             context.closePath();
             context.fillStyle = lineColor;
@@ -212,16 +262,53 @@
         }
 
         const canvas = document.getElementById('canvas');
-        const sideConsole = document.getElementById('console');
-
         canvas.addEventListener('click', getCursorPosition, false);
+        var arrayToUpdate = '';
 
+        function capture(what) {
+            arrayToUpdate = what;
+            switch (what) {
+                case 'route':
+                    route = [];
+                    break;
+                case 'belay':
+                    belays = [];
+                    break;
+                case 'absail':
+                    absail = [];
+                    break;
+            }
+        }
+        var tempAbsail = [];
         function getCursorPosition(event) {
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;
             var y = event.clientY - rect.top;
-            var output = "[" + x.toFixed(1) + ", " + y.toFixed(1) + "],";
-            sideConsole.innerHTML += output;
+            let tempArray = [];
+            switch (arrayToUpdate) {
+                case 'route':
+                    tempArray.push(parseInt(x.toFixed(1)), parseInt(y.toFixed(1)));
+                    route.push(tempArray);
+                    break;
+                case 'belay':
+                    tempArray.push(parseInt(x.toFixed(1)), parseInt(y.toFixed(1)));
+                    belays.push(tempArray);
+                    break;
+                case 'absail':
+                    if (tempAbsail.length == 4) {
+                        tempAbsail = [];
+                    } else {
+                        absail.push(tempAbsail);
+                    }
+                    tempAbsail.push(parseInt(x.toFixed(1)), parseInt(y.toFixed(1)));
+                    break;
+                
+            }
+            console.log("[" + x.toFixed(1) + ", " + y.toFixed(1) + "] \n");
+        }
+
+        img.onload = function () {
+            draw();
         }
     </script>
 </body>
