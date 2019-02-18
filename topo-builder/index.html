@@ -11,33 +11,63 @@
     <script>
         /* block render for these */
         var img = new Image();
-        img.src = 'montserrat/crag.jpg';
         var flag = new Image();
-        flag.src = 'flags/es.png';
-        var climbTitle = 'Roca Gris > Esparraguera - HVS 5a | 190m';
         var logo = new Image();
         logo.src = '../website/img/logo/mp-logo-white.png';
-        // The Topo Points
-        var belays = new Array(
-            [323.0, 2354.3], [605.0, 1785.0], [833.0, 1398.0], [1093.0, 780.0], [1385, 550], [1520.0, 330.0]
-        );
-        var route = new Array(
-            [284.0, 2699.3], [267, 2534.5], [317, 2369.5], [350, 2214.5], [400, 2052.5], [497, 1907.5], [580, 1877.5], [612, 1782.5], [662, 1724.5], [717, 1669.5], [712, 1599.5],
-            [772, 1547.5], [812, 1404.5], [847, 1407.5], [902, 1377.5], [942, 1332.5], [962, 1249.5], [1015, 1089.5], [1025, 987.5], [1030, 907.5], [1052, 832.5],
-            [1085, 779.5], [1162, 804.5], [1195, 804.5], [1237, 734.5], [1260, 654.5], [1282, 589.5], [1377, 589.5], [1390, 532.5], [1425, 407.5], [1465, 404.5],
-            [1475, 354.5], [1502, 334.5], [1525, 332.5]
-        );
 
-        // x, y of absail followed by x, y of arrow end
-        var absail = new Array(
-            [2052.0, 531.7, 2040.0, 624.7], [1937.0, 1088.7, 1923.0, 1198.7], [1857.0, 1674.7, 1903.0, 1764.7]
+
+     //   img.src = 'montserrat/crag.jpg';
+        img.src = 'tenerife/la-catedral.jpg';
+        flag.src = 'flags/es.png';
+        var climbTitle = 'Cathedral Rock > Via Mendez & Guillermo | VS 4c - 115m';
+        var route = new Array(
+            [998, 2160], [927, 1853], [880, 1615], [812, 1540], [735, 1460], [905, 1372], [927, 1262], [1035, 1197], [1117, 810], [1107, 658], [1122, 552], [1097, 405], [1158, 365], [1147, 227]
         );
+        var belays = new Array(
+            [755, 1468], [1117, 799]
+        );
+        var absail = new Array(
+            [1150.0, 224.7, 1095.0, 338.7], [1120.0, 798.0, 1053.0, 837.0], [652.0, 1115.0, 625.0, 1273.0]
+        );
+       
+        function printOutput() {
+            var rawOutput = document.getElementById('rawOutput');
+            rawOutput.innerHTML += "flag.src = '" + flag.src + "';<br />";
+            rawOutput.innerHTML += "var climbTitle = '" + climbTitle + "';<br />";
+            rawOutput.innerHTML += "var route = new Array( <br />";
+            for (let i = 0; i < route.length; i++) {
+                rawOutput.innerHTML += "[" + route[i][0] + ", " + route[i][1] + "]";
+                if (i < route.length - 1) {
+                    rawOutput.innerHTML += ",";
+                } else {
+                    rawOutput.innerHTML += "<br />";
+                }
+            }
+            rawOutput.innerHTML += "); <br />"
+            rawOutput.innerHTML += "var belays = new Array( <br />";
+            for (let i = 0; i < belays.length; i++) {
+                rawOutput.innerHTML += "[" + belays[i][0] + ", " + belays[i][1] + "]";
+                if (i < belays.length - 1) {
+                    rawOutput.innerHTML += ",";
+                } else {
+                    rawOutput.innerHTML += "<br />";
+                }
+            }
+            rawOutput.innerHTML += "); <br />"
+            rawOutput.innerHTML += "var absail = new Array( <br />";
+            for (let i = 0; i < absail.length; i++) {
+                rawOutput.innerHTML += "[" + absail[i][0] + ", " + absail[i][2] + ", " + absail[i][3] + ", " + absail[i][1] + "]";
+                if (i < absail.length - 1) {
+                    rawOutput.innerHTML += ",";
+                } else {
+                    rawOutput.innerHTML += "<br />";
+                }
+            }
+            rawOutput.innerHTML += "); <br />"
+        }
     </script>
     <style>
-        * {
-            font-size: 55px;
-        }
-        option {
+        *, option {
             font-size: 55px;
         }
         label {
@@ -48,29 +78,42 @@
 <body>
     <canvas id="canvas" width="2800" height="2800"></canvas>
 
-    <section style="width:80%;margin:0 auto;">
+    <section style="width:100%;margin:0 auto; padding:100px;">
         <h1>Build A Topo</h1>
+        <p>Use this tool to make consistent topo images for the site or for social media.</p>
         <fieldset>
             <label>
-                <input type="checkbox" value="infoBox" checked id="c1" />
-                Show Info Box
+                <input type="checkbox" value="infoBox" checked id="c1" />Show Info Box
             </label>
             <label>
-                <input type="checkbox" value="routeLine" checked id="c2" />
-                Show Route
+                <input type="checkbox" value="routeLine" checked id="c2" />Show Route
             </label>
             <label>
-                <input type="checkbox" value="belays" checked id="c3" />
-                Show Belay Points
+                <input type="checkbox" value="belays" checked id="c3" />Show Belay Points
             </label>
             <label>
-                <input type="checkbox" value="absail" checked id="c4" />
-                Show Approch / Decent Absails
+                <input type="checkbox" value="absail" checked id="c4" />Show Approch / Decent Absails
             </label>
-            <br />
-            <button onclick="draw()">Re-Draw Topo</button>
         </fieldset>
-        <p>Use this tool to make consistent topo images for the site of for social media.</p>
+        <br />
+        <fieldset>
+            <label>
+                <input type="radio" value="max" checked name="scale" />Maximum size
+            </label>
+            <label>
+                <input type="radio" value="2880" name="scale" />Big 2880w
+            </label>
+            <label>
+                <input type="radio" value="1920" name="scale" />Medium  1920w
+            </label>
+            <label>
+                <input type="radio" value="900" name="scale" />Small 900w
+            </label>
+        </fieldset>
+        <br />
+        <button onclick="draw()">Re-Draw Topo</button>
+        <br />
+
         <h2>Step 1 - Select Climb</h2>
         <p>Add the crag image into the scource code then select what climb it is for.</p>
         <fieldset id="selectHolder"></fieldset>
@@ -90,9 +133,17 @@
         <p>
             For an absail you need to click the start of the absail anchor,
             then click again in the direction the absail goes. if there are 3
-            absails that means 6 clicks. 
+            absails that means 6 clicks.
         </p>
         <button onclick="capture('absail')">Start</button>
+        <br />
+        <hr />
+        <br />
+        <h2>Step 5 - get the output</h2>
+        <button onClick="printOutput()">Print Output</button>
+        <fieldset>
+            <pre id="rawOutput"></pre>
+        </fieldset>
 
     </section>
     <br />
@@ -116,6 +167,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('select[name="climbList"]').onchange = changeEventHandler;
         }, false);
+
         var mapping = {
             'england': 'gb.png', 'scotland': 'gb.png', 'wales': 'gb.png', 'ireland': 'ie.png', 'spain': 'es.png', 'portugal': 'pt.png',
             'italy': 'it.png', 'usa': 'us.png', 'norway': 'no.png', 'canada': 'ca.png', 'hongkong': 'cn.png', 'greece': 'gr.png',
@@ -131,49 +183,69 @@
             }
 
         }
-
+        const canvas = document.getElementById('canvas');
+        var scale;
         function draw() {
 
             let infoBox = document.getElementById('c1').checked; 
             let routeLine = document.getElementById('c2').checked; 
             let belayPoints = document.getElementById('c3').checked; 
             let absailPoints = document.getElementById('c4').checked; 
+            let maxWidth;
+
+            let scaleRadio = document.getElementsByName("scale");
+            for (let i = 0; i < scaleRadio.length; i++) {
+                if (scaleRadio[i].checked) {
+                    maxWidth = scaleRadio[i].value;
+                }
+            }
 
             var ctx = document.getElementById('canvas').getContext('2d');
  
             /** DEFINE THE DRAWING VARIABLES */
-            const imgWidth = img.width;
-            const imgHeight = img.height;
-            const belaySize = 24;
+            if (maxWidth !== 'max' && maxWidth < img.width) {
+                scale = maxWidth / img.width;
+            } else {
+                scale = 1;
+            }
+            const imgWidth = sThis(img.width);
+            const imgHeight = sThis(img.height);
+            canvas.width = imgWidth;
+            canvas.height = imgHeight;
+            const belaySize = sThis(24);
             const lineColor = "rgba(204,25,29,0.95)";
             const belayColor = "rgb(236,142,140,0.9)";
-            const flagWidth = 100;
+            const flagWidth = sThis(100);
             const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
-            const flagLeftMargin = 80;
+            const flagLeftMargin = sThis(80);
             const flagHeight = flagWidth * (flag.height / flag.width);
-            const arrowSize = 24;
+            const arrowSize = sThis(24);
+            const boxHeight = sThis(100);
+            const fontsize = sThis(55);
+            const lineWidth = sThis(6)
+
 
             // Adds the main Crag image
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
             ctx.save();
 
             if (infoBox === true) {
                 // Ads the box at the bottom
                 ctx.fillStyle = infoBoxColor;
-                ctx.rect(0, imgHeight - 100, imgWidth, 150); // ToDo: make sizes relative to image size eg 8% of height
+                ctx.rect(0, imgHeight - boxHeight, imgWidth, imgHeight); // ToDo: make sizes relative to image size eg 8% of height
                 ctx.fill();
                 ctx.restore();
                 ctx.save();
 
                 // Adds the flag & logo
-                ctx.drawImage(flag, flagLeftMargin, (imgHeight - 120 + (flagHeight / 2)), flagWidth, flagHeight);
-                ctx.drawImage(logo, (imgWidth - 520), (imgHeight - 90), 75, 75);
+                ctx.drawImage(flag, flagLeftMargin, (imgHeight - boxHeight + ((boxHeight - flagHeight) / 2)), flagWidth, flagHeight);
+                ctx.drawImage(logo, (imgWidth - sThis(520)), (imgHeight - sThis(90)), sThis(75), sThis(75));
 
                 // Add the text
-                ctx.font = "55px sans-serif";
+                ctx.font = fontsize + "px sans-serif";
                 ctx.fillStyle = "#ffffff";
-                ctx.fillText(climbTitle, flagLeftMargin * 2 + flagWidth, imgHeight - 35);
-                ctx.fillText('multi-pitch.com', (imgWidth - 420), imgHeight - 35);
+                ctx.fillText(climbTitle, flagLeftMargin * 2 + flagWidth, imgHeight - sThis(35));
+                ctx.fillText('multi-pitch.com', (imgWidth - sThis(420)), imgHeight - sThis(35));
                 ctx.restore();
                 ctx.save();
             }
@@ -181,17 +253,17 @@
             // Add the Topo Line
             if (routeLine === true) {
                 ctx.beginPath();
-                ctx.moveTo(route[0][0], route[0][1]);
+                ctx.moveTo(sThis(route[0][0]), sThis(route[0][1]));
                 for (var i = 1; i < route.length - 2; i++) {
-                    var c = (route[i][0] + route[i + 1][0]) / 2;
-                    var d = (route[i][1] + route[i + 1][1]) / 2;
+                    var c = sThis((route[i][0] + route[i + 1][0]) / 2);
+                    var d = sThis((route[i][1] + route[i + 1][1]) / 2);
 
-                    ctx.quadraticCurveTo(route[i][0], route[i][1], c, d); // this makes the lines smooth
+                    ctx.quadraticCurveTo(sThis(route[i][0]), sThis(route[i][1]), c, d); // this makes the lines smooth
                 }
-                ctx.quadraticCurveTo(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]); // For the last 2 points
+                ctx.quadraticCurveTo(sThis(route[i][0]), sThis(route[i][1]), sThis(route[i + 1][0]), sThis(route[i + 1][1])); // For the last 2 points
                 ctx.strokeStyle = lineColor;
                 ctx.setLineDash([32, 8, 5, 8]);
-                ctx.lineWidth = 6;
+                ctx.lineWidth = lineWidth;
                 ctx.lineCap = 'round';
                 ctx.stroke();
                 ctx.restore();
@@ -200,11 +272,11 @@
             // Add the Belay Points
             if (belayPoints === true) {
                 ctx.strokeStyle = lineColor;
-                ctx.lineWidth = 6;
+                ctx.lineWidth = lineWidth;
                 ctx.fillStyle = belayColor;
                 for (let i = 0; i < belays.length; i++) {
                     ctx.beginPath();
-                    ctx.arc(belays[i][0], belays[i][1], belaySize, 0, 2 * Math.PI, false);
+                    ctx.arc(sThis(belays[i][0]), sThis(belays[i][1]), belaySize, 0, 2 * Math.PI, false);
                     ctx.fill();
                     ctx.stroke();
                     ctx.closePath();
@@ -215,26 +287,30 @@
             if (absailPoints === true) {
                 for (let i = 0; i < absail.length; i++) {
                     ctx.beginPath();
-                    ctx.moveTo(absail[i][0], absail[i][1]);
-                    ctx.lineTo(absail[i][2], absail[i][3]);
+                    ctx.moveTo(sThis(absail[i][0]), sThis(absail[i][1]));
+                    ctx.lineTo(sThis(absail[i][2]), sThis(absail[i][3]));
                     ctx.stroke();
                     ctx.closePath();
                     ctx.beginPath();
-                    ctx.arc(absail[i][0], absail[i][1], belaySize, 0, 2 * Math.PI, false);
+                    ctx.arc(sThis(absail[i][0]), sThis(absail[i][1]), belaySize, 0, 2 * Math.PI, false);
                     ctx.fill();
                     ctx.stroke();
                     ctx.closePath();
                     var from = new Object();
-                    from.x = absail[i][0];
-                    from.y = absail[i][1] + belaySize;
+                    from.x = sThis(absail[i][0]);
+                    from.y = sThis(absail[i][1]) + belaySize;
                     var to = new Object();
-                    to.x = absail[i][2];
-                    to.y = absail[i][3];
+                    to.x = sThis(absail[i][2]);
+                    to.y = sThis(absail[i][3]);
                     ctx.save();
                     drawArrowhead(ctx, from, to, arrowSize, lineColor);
                     ctx.restore();
                 }
             }
+        }
+
+        function sThis(number) {
+            return number * scale;
         }
 
         function drawArrowhead(context, from, to, radius, lineColor) {
@@ -261,7 +337,7 @@
             context.fill();
         }
 
-        const canvas = document.getElementById('canvas');
+        
         canvas.addEventListener('click', getCursorPosition, false);
         var arrayToUpdate = '';
 
@@ -295,12 +371,12 @@
                     belays.push(tempArray);
                     break;
                 case 'absail':
-                    if (tempAbsail.length == 4) {
-                        tempAbsail = [];
-                    } else {
+                    tempAbsail.push(x.toFixed(1), y.toFixed(1));
+                    console.log("temp = " + tempAbsail);
+                    if (tempAbsail.length === 4) {
                         absail.push(tempAbsail);
+                        tempAbsail = [];
                     }
-                    tempAbsail.push(parseInt(x.toFixed(1)), parseInt(y.toFixed(1)));
                     break;
                 
             }

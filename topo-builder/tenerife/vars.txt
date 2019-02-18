@@ -1,0 +1,15 @@
+
+
+flag.src = 'file:///C:/Users/inver/Desktop/forAWS/multi-pitch/topo-builder/flags/es.png';
+var climbTitle = 'Cathedral Rock > Via Mendez & Guillermo | VS 4c - 115m';
+var route = new Array( 
+[998, 2160],[927, 1853],[880, 1615],[812, 1540],[735, 1460],[905, 1372],[927, 1262],[1035, 1197],[1117, 810],[1107, 658],[1122, 552],[1097, 405],[1158, 365],[1147, 227]
+); 
+var belays = new Array( 
+[755, 1468],[1117, 799]
+); 
+var absail = new Array( 
+[1150, 1095, 338.7, 224.7],[1120, 1053, 837, 798],[652, 625, 1273, 1115]
+); 
+
+
