@@ -15,8 +15,6 @@
         var logo = new Image();
         logo.src = '../website/img/logo/mp-logo-white.png';
 
-
-     //   img.src = 'montserrat/crag.jpg';
         img.src = 'tenerife/la-catedral.jpg';
         flag.src = 'flags/es.png';
         var climbTitle = 'Cathedral Rock > Via Mendez & Guillermo | VS 4c - 115m';
@@ -82,33 +80,17 @@
         <h1>Build A Topo</h1>
         <p>Use this tool to make consistent topo images for the site or for social media.</p>
         <fieldset>
-            <label>
-                <input type="checkbox" value="infoBox" checked id="c1" />Show Info Box
-            </label>
-            <label>
-                <input type="checkbox" value="routeLine" checked id="c2" />Show Route
-            </label>
-            <label>
-                <input type="checkbox" value="belays" checked id="c3" />Show Belay Points
-            </label>
-            <label>
-                <input type="checkbox" value="absail" checked id="c4" />Show Approch / Decent Absails
-            </label>
+            <label><input type="checkbox" value="infoBox" checked id="c1" />Show Info Box</label>
+            <label><input type="checkbox" value="routeLine" checked id="c2" />Show Route</label>
+            <label><input type="checkbox" value="belays" checked id="c3" />Show Belay Points</label>
+            <label><input type="checkbox" value="absail" checked id="c4" />Show Approch / Decent Absails</label>
         </fieldset>
         <br />
         <fieldset>
-            <label>
-                <input type="radio" value="max" checked name="scale" />Maximum size
-            </label>
-            <label>
-                <input type="radio" value="2880" name="scale" />Big 2880w
-            </label>
-            <label>
-                <input type="radio" value="1920" name="scale" />Medium  1920w
-            </label>
-            <label>
-                <input type="radio" value="900" name="scale" />Small 900w
-            </label>
+            <label><input type="radio" value="max" checked name="scale" />Maximum size</label>
+            <label><input type="radio" value="2880" name="scale" />Big 2880w</label>
+            <label><input type="radio" value="1920" name="scale" />Medium  1920w</label>
+            <label><input type="radio" value="900" name="scale" />Small 900w</label>
         </fieldset>
         <br />
         <button onclick="draw()">Re-Draw Topo</button>
@@ -163,11 +145,10 @@
             selectList.appendChild(option);
         }
 
-        /** DATA FOR THE BOTTOM BOX **/
+        /** BUILDER STEP 1 - GET CLIMB DETAILS **/
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('select[name="climbList"]').onchange = changeEventHandler;
         }, false);
-
         var mapping = {
             'england': 'gb.png', 'scotland': 'gb.png', 'wales': 'gb.png', 'ireland': 'ie.png', 'spain': 'es.png', 'portugal': 'pt.png',
             'italy': 'it.png', 'usa': 'us.png', 'norway': 'no.png', 'canada': 'ca.png', 'hongkong': 'cn.png', 'greece': 'gr.png',
@@ -176,78 +157,66 @@
         function changeEventHandler(event) {
             if (event.target.value) {
                 var climb = climbsArr.find(climb => climb.id == event.target.value); // get the single climb object
-                console.log(climb.cliff + " > " + climb.routeName + " | " + climb.tradGrade + " " + climb.techGrade + " - " + climb.length + "m");
-                console.log(mapping[climb.flag]);
                 flag.src = 'flags/' + mapping[climb.flag];
                 climbTitle = climb.cliff + " > " + climb.routeName + " | " + climb.tradGrade + " " + climb.techGrade + " - " + climb.length + "m";
             }
 
         }
+
+        /** GLOBAL VARIABLES / DATA **/
         const canvas = document.getElementById('canvas');
         var scale;
-        function draw() {
+        var maxWidth;
+        var arrayToUpdate;
+        var tempAbsail = [];
+        const lineColor = "rgba(204,25,29,0.95)";
+        const belayColor = "rgb(236,142,140,0.9)";
+        const decentBelay = "rgba(218,112,214,0.9)";
+        const decentLine = "rgb(153,50,204,0.95)";
+        const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
 
+        function draw() {
+            /** DEFINE THE DERIVED DRAWING VARIABLES */
             let infoBox = document.getElementById('c1').checked; 
             let routeLine = document.getElementById('c2').checked; 
             let belayPoints = document.getElementById('c3').checked; 
             let absailPoints = document.getElementById('c4').checked; 
-            let maxWidth;
-
+            var ctx = document.getElementById('canvas').getContext('2d');
             let scaleRadio = document.getElementsByName("scale");
             for (let i = 0; i < scaleRadio.length; i++) {
                 if (scaleRadio[i].checked) {
                     maxWidth = scaleRadio[i].value;
                 }
             }
-
-            var ctx = document.getElementById('canvas').getContext('2d');
- 
-            /** DEFINE THE DRAWING VARIABLES */
-            if (maxWidth !== 'max' && maxWidth < img.width) {
-                scale = maxWidth / img.width;
-            } else {
-                scale = 1;
-            }
+            maxWidth !== 'max' && maxWidth < img.width ? scale = maxWidth / img.width : scale = 1; 
             const imgWidth = sThis(img.width);
             const imgHeight = sThis(img.height);
-            canvas.width = imgWidth;
-            canvas.height = imgHeight;
             const belaySize = sThis(24);
-            const lineColor = "rgba(204,25,29,0.95)";
-            const belayColor = "rgb(236,142,140,0.9)";
             const flagWidth = sThis(100);
-            const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
             const flagLeftMargin = sThis(80);
             const flagHeight = flagWidth * (flag.height / flag.width);
             const arrowSize = sThis(24);
             const boxHeight = sThis(100);
             const fontsize = sThis(55);
-            const lineWidth = sThis(6)
+            const lineWidth = sThis(6);
+            canvas.width = imgWidth;
+            canvas.height = imgHeight;
 
 
             // Adds the main Crag image
             ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-            ctx.save();
 
+            // Ads the box at the bottom
             if (infoBox === true) {
-                // Ads the box at the bottom
                 ctx.fillStyle = infoBoxColor;
                 ctx.rect(0, imgHeight - boxHeight, imgWidth, imgHeight); // ToDo: make sizes relative to image size eg 8% of height
                 ctx.fill();
-                ctx.restore();
-                ctx.save();
-
-                // Adds the flag & logo
                 ctx.drawImage(flag, flagLeftMargin, (imgHeight - boxHeight + ((boxHeight - flagHeight) / 2)), flagWidth, flagHeight);
                 ctx.drawImage(logo, (imgWidth - sThis(520)), (imgHeight - sThis(90)), sThis(75), sThis(75));
-
-                // Add the text
                 ctx.font = fontsize + "px sans-serif";
                 ctx.fillStyle = "#ffffff";
                 ctx.fillText(climbTitle, flagLeftMargin * 2 + flagWidth, imgHeight - sThis(35));
                 ctx.fillText('multi-pitch.com', (imgWidth - sThis(420)), imgHeight - sThis(35));
-                ctx.restore();
-                ctx.save();
             }
 
             // Add the Topo Line
@@ -266,12 +235,12 @@
                 ctx.lineWidth = lineWidth;
                 ctx.lineCap = 'round';
                 ctx.stroke();
-                ctx.restore();
             }
 
             // Add the Belay Points
             if (belayPoints === true) {
                 ctx.strokeStyle = lineColor;
+                ctx.setLineDash([]);
                 ctx.lineWidth = lineWidth;
                 ctx.fillStyle = belayColor;
                 for (let i = 0; i < belays.length; i++) {
@@ -287,6 +256,8 @@
             if (absailPoints === true) {
                 for (let i = 0; i < absail.length; i++) {
                     ctx.beginPath();
+                    ctx.strokeStyle = decentLine;
+                    ctx.fillStyle = decentBelay;
                     ctx.moveTo(sThis(absail[i][0]), sThis(absail[i][1]));
                     ctx.lineTo(sThis(absail[i][2]), sThis(absail[i][3]));
                     ctx.stroke();
@@ -297,14 +268,12 @@
                     ctx.stroke();
                     ctx.closePath();
                     var from = new Object();
-                    from.x = sThis(absail[i][0]);
+                    from.x = sThis(absail[i][0]),
                     from.y = sThis(absail[i][1]) + belaySize;
                     var to = new Object();
                     to.x = sThis(absail[i][2]);
                     to.y = sThis(absail[i][3]);
-                    ctx.save();
-                    drawArrowhead(ctx, from, to, arrowSize, lineColor);
-                    ctx.restore();
+                    drawArrowhead(ctx, from, to, arrowSize, decentLine);
                 }
             }
         }
@@ -314,24 +283,22 @@
         }
 
         function drawArrowhead(context, from, to, radius, lineColor) {
-            var x_center = to.x;
-            var y_center = to.y;
-            var angle;
-            var x;
-            var y;
             context.beginPath();
-            angle = Math.atan2(to.y - from.y, to.x - from.x)
-            x = radius * Math.cos(angle) + x_center;
-            y = radius * Math.sin(angle) + y_center;
+            var angle = Math.atan2(to.y - from.y, to.x - from.x)
+            var x = radius * Math.cos(angle) + to.x;
+            var y = radius * Math.sin(angle) + to.y;
             context.moveTo(x, y);
+
             angle += (1.0 / 3.0) * (2 * Math.PI)
-            x = radius * Math.cos(angle) + x_center;
-            y = radius * Math.sin(angle) + y_center;
+            x = radius * Math.cos(angle) + to.x;
+            y = radius * Math.sin(angle) + to.y;
             context.lineTo(x, y);
+
             angle += (1.0 / 3.0) * (2 * Math.PI)
-            x = radius * Math.cos(angle) + x_center;
-            y = radius * Math.sin(angle) + y_center;
+            x = radius * Math.cos(angle) + to.x;
+            y = radius * Math.sin(angle) + to.y;
             context.lineTo(x, y);
+
             context.closePath();
             context.fillStyle = lineColor;
             context.fill();
@@ -339,8 +306,6 @@
 
         
         canvas.addEventListener('click', getCursorPosition, false);
-        var arrayToUpdate = '';
-
         function capture(what) {
             arrayToUpdate = what;
             switch (what) {
@@ -355,7 +320,7 @@
                     break;
             }
         }
-        var tempAbsail = [];
+
         function getCursorPosition(event) {
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;
@@ -372,7 +337,6 @@
                     break;
                 case 'absail':
                     tempAbsail.push(x.toFixed(1), y.toFixed(1));
-                    console.log("temp = " + tempAbsail);
                     if (tempAbsail.length === 4) {
                         absail.push(tempAbsail);
                         tempAbsail = [];
@@ -380,7 +344,7 @@
                     break;
                 
             }
-            console.log("[" + x.toFixed(1) + ", " + y.toFixed(1) + "] \n");
+        //    console.log("[" + x.toFixed(1) + ", " + y.toFixed(1) + "] \n");
         }
 
         img.onload = function () {
