@@ -40,18 +40,18 @@
                 {
                     "anchor":null,
                     "path":  [[1136.0, 245.0], [1125.0, 315.0]],
-                    "label": "45m",
-                    "labelPosition":[1036.0, 345.0]
+                    "label": "30m",
+                    "labelPosition":[1023.0, 272.9]
                 }, {
                     "anchor":null,
                     "path":  [[1097.0, 810.0], [1063.0, 870.0], [981.0, 874.0], [874.0, 893.0], [848.0, 988.0], [754.0, 975.0], [701.0, 1036.0]],
                     "label": "uiaa grade II",
-                    "labelPosition":[1036.0, 345.0]
+                    "labelPosition":[788.0, 825.4]
                 }, {
                     "anchor":[652.0, 1115.0],
                     "path":  [[650.0, 1145.0], [625.0, 1273.0]],
-                    "label": null,
-                    "labelPosition":[1036.0, 345.0]
+                    "label": "45m",
+                    "labelPosition":[597.0, 1387.7]
                 }
             ],
         };
@@ -298,6 +298,10 @@
                     if(topoData.decent[i].path !== null){
                         drawLine(ctx, topoData.decent[i].path, true, true, decentLine);
                     }
+                    if(topoData.decent[i].label !== null){
+                        annotate(ctx, topoData.decent[i].label, sThis(topoData.decent[i].labelPosition[0]), 
+                            sThis(topoData.decent[i].labelPosition[1]), decentLine);
+                    }
                 }
             }
         }
@@ -315,12 +319,12 @@
         }
 
         function annotate(context, msg, x, y, color){
-            context.font = (fontsize * 0.8) + "px sans-serif";
-            context.fillStyle = '#FFFFFF';
-            context.fillText(msg, x, y);
-            context.strokeStyle = color;
-            context.lineWidth = 1.5;
+            context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
+            context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            context.lineWidth = 10;
             context.strokeText(msg, x, y);
+            context.fillStyle = color;
+            context.fillText(msg, x, y);
         }
 
         function drawLine (context, arrayOfxy, dashed, arrowEnd, color){
