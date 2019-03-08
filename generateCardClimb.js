@@ -26,7 +26,7 @@ function generate() {
 
         var climbId = climb.id;
         var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-        var cragImg = cImgs.find(img => img.type === 'crag');
+        var cragImg = cImgs.find(img => img.type === 'tile');
         var guideBook = guideBooks.books.filter(book => book.climbId === climbId); 
         var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId); 
         var folderName = "".concat(climb.routeName, '-on-', climb.cliff + '/')
@@ -41,12 +41,14 @@ function generate() {
         var regexUrl = /{{cannonical}}/gi;
         var regexHero = /{{heroJpg}}/gi;
         var regexDesc = /{{description}}/gi;
+        var regexId = /{{id}}/gi;
 
         if (climb.status === 'publish') {
             headHTML = headHTML.replace(regexTitle, climb.routeName + ' on ' + climb.cliff + ' | multi-pitch rock climbing');
             headHTML = headHTML.replace(regexUrl, 'https://www.multi-pitch.com/climbs/' + folderName + '/');
             headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com/' + cragImg.url);
             headHTML = headHTML.replace(regexDesc, 'An overview of ' + climb.routeName + ', a ' + climb.length + 'm multi-pitch rock climb on ' + climb.cliff + ' in ' + climb.county + ', ' + climb.country + '. Includes detailed photo topo of the route and more info.');
+            headHTML = headHTML.replace(regexId, climbId);
         }
 
         return {

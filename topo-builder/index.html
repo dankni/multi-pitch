@@ -8,56 +8,62 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <!-- Scripts-->
     <script src="../website/data/data.js"></script>
-    <script>
-        /* block render for these */
-        var img = new Image();
-        var flag = new Image();
-        var logo = new Image();
-        logo.src = '../website/img/logo/mp-logo-white.png';        
+    <script>    
         var topoData = {
-            "image": "tenerife/la-catedral.jpg",
+            "image":"montserrat/crag.jpg",
             "flag":"flags/es.png",
-            "title":"Cathedral Rock > Via Mendez & Guillermo | VS 4c - 115m",
-            "route": [
-                [998, 2160], [927, 1853], [880, 1615], [812, 1540], [735, 1460], [905, 1372], [927, 1262], [1035, 1197], [1117, 810], [1107, 658], [1122, 552], [1097, 405], [1158, 365], [1147, 227]
+            "title":"Roca Gris > Esparraguera - VS 5a | 190m",
+            "belaySize":22,
+            "route":[
+                [284,2699.3],[267,2534.5],[317,2369.5],[350,2214.5],[400,2052.5],[497,1907.5],[580,1877.5],[612,1782.5],[662,1724.5],[717,1669.5],[712,1599.5],[772,1547.5],[812,1404.5],[847,1407.5],[902,1377.5],[942,1332.5],[962,1249.5],[1015,1089.5],[1025,987.5],[1030,907.5],[1052,832.5],[1085,779.5],[1162,804.5],[1195,804.5],[1237,734.5],[1260,654.5],[1282,589.5],[1377,589.5],[1390,532.5],[1425,407.5],[1465,404.5],[1475,354.5],[1502,334.5],[1525,332.5]
             ],
-            "pitches":[
-                {
-                    "labelPosition":[1032.0, 1805.0],
-                    "height": "35m", "grade":"IV+ uiaa",
-                    "belayPosition":[755, 1468]
-                }, {
-                    "labelPosition":[1113.0, 1175.0],
-                    "height": "45m", "grade":"IV+ uiaa",
-                    "belayPosition":[1117, 799]
-                }, {
-                    "labelPosition":[1187.0, 562.0],
-                    "height": "45m", "grade":"V+ uiaa",
-                    "belayPosition":[1149.0, 226.0]
-                }
-            ],
-            "decent":[
-                {
-                    "anchor":null,
-                    "path":  [[1136.0, 245.0], [1125.0, 315.0]],
-                    "label": "30m",
-                    "labelPosition":[1023.0, 272.9]
-                }, {
-                    "anchor":null,
-                    "path":  [[1097.0, 810.0], [1063.0, 870.0], [981.0, 874.0], [874.0, 893.0], [848.0, 988.0], [754.0, 975.0], [701.0, 1036.0]],
-                    "label": "uiaa grade II",
-                    "labelPosition":[788.0, 825.4]
-                }, {
-                    "anchor":[652.0, 1115.0],
-                    "path":  [[650.0, 1145.0], [625.0, 1273.0]],
-                    "label": "45m",
-                    "labelPosition":[597.0, 1387.7]
-                }
-            ],
-        };
-        img.src = topoData.image;
-        flag.src = topoData.flag;
+            "pitches":[{
+                "belayPosition":[323,2327],
+                "labelPosition":[357,2547],
+                "grade":"UIAA IV","height":"30m"
+            },{
+                "belayPosition":[583,1850],
+                "labelPosition":[480,2087],
+                "grade":"UIAA V","height":"40m"
+            },{
+                "belayPosition":[840,1403],
+                "labelPosition":[773,1627],
+                "grade":"UIAA V+","height":"25m"
+            },{
+                "belayPosition":[1090,780],
+                "labelPosition":[1060,1147],
+                "grade":"UIAA IV","height":"50m"
+            },{
+                "belayPosition":[1390,530],
+                "labelPosition":[1307,700],
+                "grade":"UIAA IV","height":"20m"
+            },{
+                "belayPosition":[1517,327],
+                "labelPosition":[1510,413],
+                "grade":"UIAA IV+","height":"30m"
+            }],
+            "decent":[{
+                "anchor":[null,null],
+                "labelPosition":[1810.0, 373.7],
+                "path":[[1607,327],[1640,343],[1660,390],[1697,393],[1750,393],[1810,433]],
+                "label":"80m"
+            },{
+                "anchor":[2043,540],
+                "labelPosition":[2140,610],
+                "path":[[2033.0, 563.7],[2007,640]],"label":"40m"
+            },{
+                "anchor":[1930.0, 1057.7],
+                "labelPosition":[1977,1157],
+                "path":[[1927,1087],[1910,1173]],
+                "label":"40m"
+            },{
+                "anchor":[1807,1610],
+                "labelPosition":[1867,1787],
+                "path":[[1817,1637],[1840,1710]],
+                "label":"60m"}
+            ]}
     </script>
+    <script src="../website/js/topo.js"></script>
     <style>
         *, option {
             font-size: 55px;
@@ -93,15 +99,16 @@
 </head>
 <body>
     <fieldset>
-        <label><input type="checkbox" value="infoBox" checked id="c1" />Show Info Box</label>
-        <label><input type="checkbox" value="routeLine" checked id="c2" />Show Route</label>
-        <label><input type="checkbox" value="belays" checked id="c3" />Show Belay Points</label>
-        <label><input type="checkbox" value="absail" checked id="c4" />Show Approch / Decent Absails</label>
+        <label><input type="checkbox" value="infoBox" checked id="c1" onclick="draw();" />Info Box</label>
+        <label><input type="checkbox" value="routeLine" checked id="c2" onclick="draw();" />Route</label>
+        <label><input type="checkbox" value="belays" checked id="c3" onclick="draw();" />Belay Points</label>
+        <label><input type="checkbox" value="absail" checked id="c4" onclick="draw();" />Approch / Decent</label>
+        <label><input type="checkbox" value="labels" checked id="c5" onclick="draw();" />Labels</label>
         <br />
         <label><input type="radio" value="max" checked name="scale" />Maximum size</label>
-        <label><input type="radio" value="2880" name="scale" />Big 2880w</label>
-        <label><input type="radio" value="1920" name="scale" />Medium  1920w</label>
-        <label><input type="radio" value="900" name="scale" />Small 900w</label>
+        <label><input type="radio" value="2160" name="scale" />Big 2160w</label>
+        <label><input type="radio" value="1600" name="scale" />Medium  1600w</label>
+        <label><input type="radio" value="840" name="scale" />Small 840w</label>
         <br />
         <button onclick="draw()" class="black">Re-Draw Topo</button>
     </fieldset>
@@ -147,19 +154,28 @@
             <button onclick="pushDecent();" class="safe">Add Decent</button> 
             <button onclick="topoData.decent = [];draw();" class="danger">Demove All Decent Info</button> 
         </fieldset>
+        <h2>Belay Size</h2>
+        <fieldset>
+            <label><input type="text" value="24" name="belaySize" id="belaySize" />Belay Size</label>
+            <button onclick="topoData.belaySize = parseInt(document.getElementById('belaySize').value);draw();" class="safe">Update Belay Size</button> 
+        </fieldset>
         <h2>Raw JSON</h2>
         <fieldset>
             <button class="black" onclick="document.getElementById('rawOutput').value = JSON.stringify(topoData);">Publish</button>
-            <textarea id="rawOutput"></textarea>
+            <textarea id="rawOutput" style="max-width:100%;min-height:300px;"></textarea>
         </fieldset>
 
     </section>
     <br />
     <br />
     <script>
+        var canvas = document.getElementById('canvas');
         /** MAKE A DROP DOWN WITH A LIST OF ALL CLIMBS **/
         var selectHolder = document.getElementById("selectHolder");
         var selectList = document.createElement("select");
+        if(topoData.belaySize){
+            document.getElementById('belaySize').value = topoData.belaySize;
+        }
         const climbsArr = climbsData.climbs;
         selectList.setAttribute("id", "climbList");
         selectList.setAttribute("name", "climbList");
@@ -190,192 +206,6 @@
             }
         }
 
-        /** GLOBAL VARIABLES / DATA **/
-        const canvas = document.getElementById('canvas');
-        const scaleRadio = document.getElementsByName("scale"); 
-        var scale, maxWidth, belaySize, lineWidth, arrowSize, fontsize;
-
-        function updateScale(){
-            for (let i = 0; i < scaleRadio.length; i++) {
-                if(scaleRadio[i].checked === true){
-                    maxWidth = scaleRadio[i].value;
-                }
-            }
-            maxWidth !== 'max' && maxWidth < img.width ? scale = maxWidth / img.width : scale = 1;
-            belaySize = sThis(24);
-            lineWidth = sThis(6);
-            arrowSize = sThis(20);
-            fontsize = sThis(55);
-        } 
-        updateScale();
-        var arrayToUpdate;
-        var tempAbsail = [];
-        const lineColor = "rgba(204,25,29,0.95)";
-        const belayColor = "rgb(236,142,140,0.9)";
-        const decentBelay = "rgba(84, 122, 183, 0.9)";
-        const decentLine = "rgb(1, 70, 181, 0.95)";
-        const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
-        
-
-        function draw() {
-            updateScale();
-            /** DEFINE THE DERIVED DRAWING VARIABLES */
-            let infoBox = document.getElementById('c1').checked; 
-            let routeLine = document.getElementById('c2').checked; 
-            let belayPoints = document.getElementById('c3').checked; 
-            let absailPoints = document.getElementById('c4').checked; 
-            var ctx = document.getElementById('canvas').getContext('2d');
-            const imgWidth = sThis(img.width);
-            const imgHeight = sThis(img.height);
-            const flagWidth = sThis(100);
-            const flagLeftMargin = sThis(80);
-            const flagHeight = flagWidth * (flag.height / flag.width);
-            const boxHeight = sThis(100);
-            
-            canvas.width = imgWidth;
-            canvas.height = imgHeight;
-
-
-            // Adds the main Crag image
-            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-
-            // Ads the box at the bottom
-            if (infoBox === true) {
-                ctx.fillStyle = infoBoxColor;
-                ctx.rect(0, imgHeight - boxHeight, imgWidth, imgHeight); // ToDo: make sizes relative to image size eg 8% of height
-                ctx.fill();
-                ctx.drawImage(flag, flagLeftMargin, (imgHeight - boxHeight + ((boxHeight - flagHeight) / 2)), flagWidth, flagHeight);
-                ctx.drawImage(logo, (imgWidth - sThis(520)), (imgHeight - sThis(90)), sThis(75), sThis(75));
-                ctx.font = fontsize + "px sans-serif";
-                ctx.fillStyle = "#ffffff";
-                ctx.fillText(topoData.title, flagLeftMargin * 2 + flagWidth, imgHeight - sThis(35));
-                ctx.fillText('multi-pitch.com', (imgWidth - sThis(420)), imgHeight - sThis(35));
-            }
-
-            // Add the Topo Line
-            if (routeLine === true) {
-                if (topoData.route.length > 1){
-                    drawLine(ctx, topoData.route, true, false, lineColor);
-                }
-            }
-
-            // Add the Belay Points
-            if (belayPoints === true) {
-                for (let i = 0; i < topoData.pitches.length; i++) {
-                    drawBelay(
-                        ctx,
-                        topoData.pitches[i].belayPosition[0], 
-                        topoData.pitches[i].belayPosition[1], 
-                        lineColor, belayColor);
-                    if (topoData.pitches[i].height !== null) {
-                        annotate(
-                            ctx,
-                            topoData.pitches[i].height,
-                            sThis(topoData.pitches[i].labelPosition[0]), 
-                            sThis(topoData.pitches[i].labelPosition[1]), 
-                            lineColor);
-                    }
-                    if (topoData.pitches[i].grade !== null) {
-                        annotate(
-                            ctx,
-                            topoData.pitches[i].grade,
-                            sThis(topoData.pitches[i].labelPosition[0]), 
-                            sThis(topoData.pitches[i].labelPosition[1] + (fontsize * 1.3)), 
-                            lineColor);
-                    }
-                }
-            }
-
-            // Add the abasail Points
-            if (absailPoints === true) {
-                for (let i = 0; i < topoData.decent.length; i++) {
-                    if(topoData.decent[i].anchor !== null){
-                        drawBelay(ctx, 
-                            topoData.decent[i].anchor[0], 
-                            topoData.decent[i].anchor[1], 
-                            decentLine, decentBelay);
-                    }
-                    if(topoData.decent[i].path !== null){
-                        drawLine(ctx, topoData.decent[i].path, true, true, decentLine);
-                    }
-                    if(topoData.decent[i].label !== null){
-                        annotate(ctx, topoData.decent[i].label, sThis(topoData.decent[i].labelPosition[0]), 
-                            sThis(topoData.decent[i].labelPosition[1]), decentLine);
-                    }
-                }
-            }
-        }
-
-        function drawBelay(context, x, y, line, fill){
-            context.strokeStyle = line;
-            context.setLineDash([]);
-            context.lineWidth = lineWidth;
-            context.fillStyle = fill;
-            context.beginPath();
-            context.arc(sThis(x), sThis(y), belaySize, 0, 2 * Math.PI, false);
-            context.fill();
-            context.stroke();
-            context.closePath();
-        }
-
-        function annotate(context, msg, x, y, color){
-            context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
-            context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-            context.lineWidth = 10;
-            context.strokeText(msg, x, y);
-            context.fillStyle = color;
-            context.fillText(msg, x, y);
-        }
-
-        function drawLine (context, arrayOfxy, dashed, arrowEnd, color){
-            context.beginPath();
-            context.moveTo(sThis(arrayOfxy[0][0]), sThis(arrayOfxy[0][1]));
-                for (var i = 0; i < arrayOfxy.length - 2; i++) {
-                    context.quadraticCurveTo(sThis(arrayOfxy[i][0]), 
-                            sThis(arrayOfxy[i][1]), 
-                            sThis((arrayOfxy[i][0] + arrayOfxy[i + 1][0]) / 2), 
-                            sThis((arrayOfxy[i][1] + arrayOfxy[i + 1][1]) / 2));
-                }
-                context.quadraticCurveTo(sThis(arrayOfxy[i][0]), 
-                            sThis(arrayOfxy[i][1]), 
-                            sThis(arrayOfxy[i + 1][0]), 
-                            sThis(arrayOfxy[i + 1][1])); // For the last 2 points
-                context.strokeStyle = color;
-                context.lineWidth = lineWidth;
-                context.lineCap = 'round';
-                dashed === true ? context.setLineDash([32, 8, 5, 8]) : context.setLineDash([]);
-                context.stroke();
-                if (arrowEnd === true) { 
-                    drawArrowhead(context, arrayOfxy[arrayOfxy.length - 2], arrayOfxy[arrayOfxy.length - 1], arrowSize, color);
-                }
-        }
-
-        function drawArrowhead(context, from, to, radius, color) {
-            context.beginPath();
-            var angle = Math.atan2(to[1] - from[1], to[0] - from[0])
-            var x = radius * Math.cos(angle) + to[0];
-            var y = radius * Math.sin(angle) + to[1];
-            context.moveTo(sThis(x), sThis(y));
-
-            angle += (1.0 / 3.0) * (2 * Math.PI)
-            x = radius * Math.cos(angle) + to[0];
-            y = radius * Math.sin(angle) + to[1];
-            context.lineTo(sThis(x), sThis(y));
-
-            angle += (1.0 / 3.0) * (2 * Math.PI)
-            x = radius * Math.cos(angle) + to[0];
-            y = radius * Math.sin(angle) + to[1];
-            context.lineTo(sThis(x), sThis(y));
-
-            context.closePath();
-            context.fillStyle = color;
-            context.fill();
-        }
-
-        function sThis(number) {
-            return number * scale;
-        }
-        
         canvas.addEventListener('click', getCursorPosition, false);
         var tempArray = [];
         var decentPath = [];
@@ -490,14 +320,6 @@
             this.labelPosition = labelPosition;
             this.path = route;
             this.label = label;
-        }
-
-
-
-
-
-        img.onload = function () {
-            draw();
         }
     </script>
 </body>
