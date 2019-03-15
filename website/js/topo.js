@@ -2,11 +2,7 @@
 var img = new Image();
 var flag = new Image();
 var logo = new Image();
-<<<<<<< HEAD
 logo.src = '../website/img/logo/mp-logo-white.png';        
-=======
-logo.src = 'https://www.multi-pitch.com/img/logo/mp-logo-white.png';        
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
 img.src = topoData.image;
 flag.src = topoData.flag;
 const scaleRadio = document.getElementsByName("scale"); 
@@ -15,15 +11,10 @@ const belayColor = "rgb(236,142,140,0.9)";
 const decentBelay = "rgba(84, 122, 183, 0.9)";
 const decentLine = "rgb(1, 70, 181, 0.95)";
 const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
-<<<<<<< HEAD
 var scale, maxWidth, belaySize, lineWidth, fontsize;
 var maxWidth = 'max';
 var dashSpace;    
 var arrowSize = 20;
-=======
-var scale, maxWidth, belaySize, lineWidth, arrowSize, fontsize;
-var maxWidth = 'max';
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
 
 function updateScale(){
     for (let i = 0; i < scaleRadio.length; i++) {
@@ -32,18 +23,11 @@ function updateScale(){
         }
     }
     maxWidth !== 'max' && maxWidth < img.width ? scale = maxWidth / img.width : scale = 1;
-<<<<<<< HEAD
     topoData.belaySize ? belaySize =  sThis(topoData.belaySize) : belaySize = sThis(24); 
     lineWidth = sThis(6);
 
     fontsize = sThis(55);
     dashSpace = [sThis(32), sThis(8), sThis(5), sThis(8)];
-=======
-    belaySize = sThis(24);
-    lineWidth = sThis(6);
-    arrowSize = sThis(20);
-    fontsize = sThis(55);
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
 } 
 
 updateScale();
@@ -92,22 +76,15 @@ function draw() {
         }
     }
 
-<<<<<<< HEAD
     
     for (let i = 0; i < topoData.pitches.length; i++) { 
         // Add the Belay Points
         if (belayPoints === true) {
-=======
-    // Add the Belay Points
-    if (belayPoints === true) {
-        for (let i = 0; i < topoData.pitches.length; i++) {
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
             drawBelay(
                 ctx,
                 topoData.pitches[i].belayPosition[0], 
                 topoData.pitches[i].belayPosition[1], 
                 lineColor, belayColor);
-<<<<<<< HEAD
         }
         // add the labels
         if (topoData.pitches[i].height !== null && pitchLabels === true) {
@@ -125,24 +102,6 @@ function draw() {
                 sThis(topoData.pitches[i].labelPosition[0]), 
                 sThis(topoData.pitches[i].labelPosition[1]) + (fontsize * 1.3), 
                 lineColor);
-=======
-            if (topoData.pitches[i].height !== null && pitchLabels === true) {
-                annotate(
-                    ctx,
-                    topoData.pitches[i].height,
-                    sThis(topoData.pitches[i].labelPosition[0]), 
-                    sThis(topoData.pitches[i].labelPosition[1]), 
-                    lineColor);
-            }
-            if (topoData.pitches[i].grade !== null && pitchLabels === true) {
-                annotate(
-                    ctx,
-                    topoData.pitches[i].grade,
-                    sThis(topoData.pitches[i].labelPosition[0]), 
-                    sThis(topoData.pitches[i].labelPosition[1] + (fontsize * 1.3)), 
-                    lineColor);
-            }
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
         }
     }
 
@@ -168,7 +127,6 @@ function draw() {
 
 /** A set of helper functions **/
 function drawBelay(context, x, y, line, fill){
-<<<<<<< HEAD
     if (x > 0 && y > 0){
         context.strokeStyle = line;
         context.setLineDash([]);
@@ -180,17 +138,6 @@ function drawBelay(context, x, y, line, fill){
         context.stroke();
         context.closePath();
     }
-=======
-    context.strokeStyle = line;
-    context.setLineDash([]);
-    context.lineWidth = lineWidth;
-    context.fillStyle = fill;
-    context.beginPath();
-    context.arc(sThis(x), sThis(y), belaySize, 0, 2 * Math.PI, false);
-    context.fill();
-    context.stroke();
-    context.closePath();
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
 }
 
 function annotate(context, msg, x, y, color){
@@ -218,11 +165,7 @@ function drawLine (context, arrayOfxy, dashed, arrowEnd, color){
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
         context.lineCap = 'round';
-<<<<<<< HEAD
         dashed === true ? context.setLineDash(dashSpace) : context.setLineDash([]);
-=======
-        dashed === true ? context.setLineDash([32, 8, 5, 8]) : context.setLineDash([]);
->>>>>>> 30cfa381ec84c126269e496e31f94cafd2819533
         context.stroke();
         if (arrowEnd === true) { 
             drawArrowhead(context, arrayOfxy[arrayOfxy.length - 2], arrayOfxy[arrayOfxy.length - 1], arrowSize, color);
