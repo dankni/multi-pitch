@@ -53,7 +53,7 @@ describe('Load the website page', function () {
                 .click('div[data-test="climbid-' + randomCard.id + '"] a.open-tile')
                 .wait('#climbCardDetails')
                 .evaluate(function () {
-                    return document.querySelector("#overlay .big-card-body h4").textContent.trim();
+                    return document.querySelector("#overlay .big-card-body h1").textContent.trim();
                 })
                 .end()
                 .then(function (cliffAndRouteName) {
