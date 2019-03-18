@@ -11,11 +11,16 @@ h1,h3,h4,p,ul {
   margin-top: 0;
 }
 h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.6rem;
+  font-weight:300;
 }
 h3 {
-  font-size: 1.75rem;
-  padding-top:2rem
+  font-size: 1.4rem;
+  padding-top:1.8rem
 }
 h4 {
   font-size: 1.4rem
@@ -504,7 +509,7 @@ footer.page-footer a {
   width: 35px;
   background-size: 100%;
   background-repeat: no-repeat;
-  display: inline-block;
+  display: block;
   height: 41px;
   margin-bottom: -5px;
   float: left;
@@ -712,10 +717,10 @@ select:-moz-focusring {
     padding-top:80px;
     -webkit-box-pack: none;
     -ms-flex-pack: none;
-    justify-content: none
+    justify-content: none;
     -webkit-box-align: none;
     -ms-flex-align: none;
-    align-items: none
+    align-items: none;
   }
   .view{
     height:600px;
@@ -1034,6 +1039,9 @@ hr {
 }
 .switzerland {
     background-image: url('/img/flags/ch.png');
+}
+.jordan {
+  background-image: url('/img/flags/jo.png');
 }
 /** CHARTS **/
 .chart {
