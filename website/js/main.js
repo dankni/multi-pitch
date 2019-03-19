@@ -311,28 +311,80 @@ function showTile(climbId) {
         window.history.pushState(history_data, climb.cliff, url);
     }
 
-    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);");
-    document.getElementById('close').setAttribute("style", "display:block;");
+    document.getElementById('overlay').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
 
     var fullCard = climbCard(climb, cImgs, allGuideBooks, weatherData, referanceLines);
 
     document.getElementById('overlay').innerHTML = fullCard;
-    document.getElementById('climbCardDetails').style = "max-width: 1080px;margin: 10px auto;Background: #fff;";
+    var navHeight = document.getElementsByTagName("nav")[0].height;
+    document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climb.cliff + " - " + climb.routeName;
     tryLoadTopo(climbId);
 }
-
 /**
- CLOSE THE CLIMB OVERVIEW - IE CLOSE THE BACK OF THE CARD
+ OPEN THE SUBSCRIBE OVERLAY 
+ **/
+function openSubscribe() {
+    var request = new XMLHttpRequest();
+    request.open('GET', '/subscribe/', true);
+
+    request.onload = function () {
+        if (this.status >= 200 && this.status < 400) {
+            var resp = this.response;
+            document.getElementById('overlay').innerHTML = resp;
+            document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
+            document.getElementById('close').setAttribute("style", "display:block;");
+            document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+        } else {
+            console.log('failed to get subscribe');
+        }
+    };
+    request.onerror = function () {
+        console.log('There was a connection error of some sort');
+    };
+    request.send();
+}
+/**
+ CHANGE GRADES
+ **/
+// ToDo: make onChange event for name field MMERGE3
+function updateGradeLabel(gradeSystem) {
+
+    var easyLabel = document.getElementById('easy-label');
+    var mediumLabel = document.getElementById('med-label');
+    var hardLabel = document.getElementById('hard-label');
+
+    if (gradeSystem == 'british') {
+        easyLabel.textContent = "Up to VDiff";
+        mediumLabel.textContent = "Severe to VS ";
+        hardLabel.textContent = "HVS or harder";
+    } else if (gradeSystem == 'uiaa') {
+        easyLabel.textContent = "Up to UIAA IV";
+        mediumLabel.textContent = "UIAA IV to V ";
+        hardLabel.textContent = "UIAA V+ harder";
+    } else if (gradeSystem == 'yds') {
+        easyLabel.textContent = "Up to 5.5";
+        mediumLabel.textContent = "5.6 to 5.8 ";
+        hardLabel.textContent = "5.9 or harder";
+    } else if (gradeSystem == 'norwegian') {
+        easyLabel.textContent = "Up to 3";
+        mediumLabel.textContent = "4 to 5 ";
+        hardLabel.textContent = "5+ or harder";
+    }
+}
+/**
+ CLOSE THE SUBSCRIBE OVERLAY OR GO BACK TO HOMEPAGE
  **/
 function hideTile() {
-    history.replaceState(start, 'The best multi-pitch climbs', rootProject);
-    isCardTurned = false; // ensure future clicks don't think its first load again
-    document.getElementById('close').setAttribute("style", "display:none;");
+    document.getElementById('close').setAttribute("style", "display:none;");// its the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
-    document.title = "The best multi-pitch rock climbs";
+    if(document.location.href.indexOf('/climbs/') > 0){
+        history.replaceState(start, 'The best multi-pitch climbs', rootProject);
+        document.title = "The best multi-pitch rock climbs";
+        isCardTurned = false; // ensure future clicks don't think its first load again
+    } 
 }
 
 /**

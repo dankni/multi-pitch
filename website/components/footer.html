@@ -42,54 +42,6 @@
     <div class="overlay" id="overlay"></div>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <link href="/css/fontello.css" rel="stylesheet" />
-    <script>
-        function openSubscribe() {
-            var request = new XMLHttpRequest();
-            request.open('GET', '/subscribe/', true);
-
-            request.onload = function () {
-                if (this.status >= 200 && this.status < 400) {
-                    var resp = this.response;
-                    document.getElementById('overlay').innerHTML = resp;
-                    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);");
-                    document.getElementById('close').setAttribute("style", "display:block;");
-                    document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-                } else {
-                    console.log('failed to get subscribe');
-                }
-            };
-            request.onerror = function () {
-                console.log('There was a connection error of some sort');
-            };
-            request.send();
-        }
-
-        // ToDo: make onChange event for name field MMERGE3
-        function updateGradeLabel(gradeSystem) {
-
-            var easyLabel = document.getElementById('easy-label');
-            var mediumLabel = document.getElementById('med-label');
-            var hardLabel = document.getElementById('hard-label');
-
-            if (gradeSystem == 'british') {
-                easyLabel.textContent = "Up to VDiff";
-                mediumLabel.textContent = "Severe to VS ";
-                hardLabel.textContent = "HVS or harder";
-            } else if (gradeSystem == 'uiaa') {
-                easyLabel.textContent = "Up to UIAA IV";
-                mediumLabel.textContent = "UIAA IV to V ";
-                hardLabel.textContent = "UIAA V+ harder";
-            } else if (gradeSystem == 'yds') {
-                easyLabel.textContent = "Up to 5.5";
-                mediumLabel.textContent = "5.6 to 5.8 ";
-                hardLabel.textContent = "5.9 or harder";
-            } else if (gradeSystem == 'norwegian') {
-                easyLabel.textContent = "Up to 3";
-                mediumLabel.textContent = "4 to 5 ";
-                hardLabel.textContent = "5+ or harder";
-            }
-        }
-    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
     <script defer>

@@ -5,13 +5,15 @@ function getGuidebook(guideBooks, climb) {
             var guideBookModule = `
         <hr />
         <section class="row">
-            <div class="col">
+            <div class="col-sm-12">
                 <h3>Guidebooks</h3>
-                <div>`;
+            </div>`;
                 for (var i = 0; i < guideBooks.length; i++) {
                     guideBookModule += `
-                        <div>
-                            <img style="max-width:120px;float:left;padding-right:1rem;" src="/${guideBooks[i].imgURL}" alt="${guideBooks[i].title}" /> 
+                        <div class="col-sm-2">
+                            <img src="/${guideBooks[i].imgURL}" alt="${guideBooks[i].title}" class="guidebook-img" /> 
+                        </div>
+                        <div class="col-sm-10">
                             <p>
                                 <strong>${guideBooks[i].title}</strong> - pg. ${guideBooks[i].pg} <br />
                                 ${guideBooks[i].description}
@@ -23,8 +25,7 @@ function getGuidebook(guideBooks, climb) {
                         </div>`;
                 }
                 guideBookModule += `
-                </div>
-            </div>
+
         </section>`;
         } catch (e) {
             guideBookModule = '';
@@ -216,11 +217,11 @@ function getRouteTopo(topoImg) {
             <small>
                 The below controls change the image so you can better see the rock if needed.
             </small><br />
-            <label><input type="checkbox" value="infoBox" checked id="c1" onclick="draw();toggleTopo();" />Info Box</label>
-            <label><input type="checkbox" value="routeLine" checked id="c2" onclick="draw();toggleTopo();" />Route</label>
-            <label><input type="checkbox" value="belays" checked id="c3" onclick="draw();toggleTopo();" />Belay Points</label>
-            <label><input type="checkbox" value="absail" checked id="c4" onclick="draw();toggleTopo();" />Approch / Decent</label>
-            <label><input type="checkbox" value="labels" checked id="c5" onclick="draw();toggleTopo();" />Labels</label>
+            <label for="c1"><input type="checkbox" value="infoBox" checked id="c1" name="c1" onclick="draw();toggleTopo();" />Info Box</label>
+            <label for="c2"><input type="checkbox" value="routeLine" checked id="c2" name="c2" onclick="draw();toggleTopo();" />Route</label>
+            <label for="c3"><input type="checkbox" value="belays" checked id="c3" name="c3" onclick="draw();toggleTopo();" />Belay&nbsp;Points</label>
+            <label for="c4"><input type="checkbox" value="absail" checked id="c4" name="c4" onclick="draw();toggleTopo();" />Approch&nbsp;/&nbsp;Decent</label>
+            <label for="c5"><input type="checkbox" value="labels" checked id="c5" name="c5" onclick="draw();toggleTopo();" />Labels</label>
         </aside>`;
     }
     routeTopo += `
@@ -270,24 +271,6 @@ function getRouteTopo(topoImg) {
             Image Credit: <a href="${topoImg.atributionURL}" target="blank">${topoImg.attributionText}</a>
         </p>`;
     return routeTopo;
-}
-
-function getCragImg(cragImg) {
-    try {
-        var cragImgModule = `
-    <div class="img-contaner">
-      <a href="/${cragImg.url}" target="blank" class="card-img-anch">
-        <img src="/${cragImg.url.replace(".jpg", "-s.jpg")}" alt="${cragImg.alt}" class="crag-hero" >
-      </a>
-      <p class="credit">
-        <a href="${cragImg.atributionURL}" target="blank">${cragImg.attributionText}</a>
-      </p>
-    </div>`;
-    } catch (e) {
-        cragImgModule = '';
-    }
-
-    return cragImgModule;
 }
 
 function getZoomModule(zoomImg, climb) {
@@ -394,13 +377,11 @@ function getMap(mapImg, latLonLocation) {
 
 function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
 
-    var cragImg = climbImgs.find(img => img.type === 'crag');
     var topoImg = climbImgs.find(img => img.type === 'topo');
     var mapImg = climbImgs.find(img => img.type === 'map');
     var zoomImg = climbImgs.find(img => img.type === 'super');
 
     var routeTopoModule = getRouteTopo(topoImg);
-    var cragImgModule = getCragImg(cragImg);
     var zoomModule = getZoomModule(zoomImg, climb);
     var approachInfoModule = getApprochInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
