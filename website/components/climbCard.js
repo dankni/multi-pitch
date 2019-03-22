@@ -83,8 +83,10 @@ function getReferanceInfo(referanceLines, climb) {
             <div class="col">
                 <h3>Referances &amp; additional links</h3>
                 <p>
-                    The following links will take you to external websites related specifically related to this climb.
-                    <em>Note: They contined relavant infomation at the time of publishing.</em><br />`;
+                    The following links will take you to external websites related specifically related to this climb.<br />
+                    <em>Note: They contined relavant infomation at the time of publishing.</em>
+                </p>
+                <p>`;
                     for (let i = 0; i < referanceLines.length; i++) {
                         refInfo += `<a href="${referanceLines[i].url}" target="blank">${referanceLines[i].text} <i class="icon-link-ext"></i></a><br />`;
                     }

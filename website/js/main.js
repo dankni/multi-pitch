@@ -376,15 +376,15 @@ function updateGradeLabel(gradeSystem) {
 /**
  CLOSE THE SUBSCRIBE OVERLAY OR GO BACK TO HOMEPAGE
  **/
-function hideTile() {
+function hideTile(resetTitle) {
     document.getElementById('close').setAttribute("style", "display:none;");// its the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
-    if(document.location.href.indexOf('/climbs/') > 0){
-        history.replaceState(start, 'The best multi-pitch climbs', rootProject);
+    history.replaceState(history_data, 'The best multi-pitch climbs', rootProject);
+    isCardTurned = false; // ensure future clicks don't think its first load again
+    if (resetTitle !== false) {
         document.title = "The best multi-pitch rock climbs";
-        isCardTurned = false; // ensure future clicks don't think its first load again
-    } 
+    }
 }
 
 /**
@@ -621,8 +621,7 @@ function sThis(number) {
     return number * scale;
 }
 
-
-// need to handel history.onPopstate ie. user presses back
+// need to handle history.onPopstate ie. user presses back
 window.onpopstate = function (event) {
     hideTile();
 };

@@ -51,6 +51,10 @@
         .pop-up-title a {
             color: #FFF;
         }
+        #map{
+            position:fixed;
+            margin-top:55px;
+        }
   </style>
 
     <!-- Favicons -->
@@ -94,7 +98,7 @@
         </div>
     </nav>
     <!-- No Main Body - Just a Map -->
-    <div id="map" style="width: 100%;overflow: none;height: 100%;display: block;min-height: 300px;margin-top:58px;"></div>
+    <div id="map" style="width: 100%;overflow: none;height: 100%;display: block;min-height: 300px;"></div>
     <!--Footer-->
     <footer class="page-footer text-center font-small mt-4" style="margin-top:-40px">
         <div class="footer-copyright">
@@ -151,8 +155,8 @@
         var baseMaps = { "OSM Standard": osmLayer };
         var overlayMaps = {
             "Precipitation": ownPrecipitationLayer,
-            // "Temperature": ownTemperatureLayer,
-            // "Wind": ownWindLayer
+           //  "Temperature": ownTemperatureLayer,
+           //  "Wind": ownWindLayer
         };
         var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
@@ -164,7 +168,7 @@
                 climb.content = climb.content.replace("${placeholder-temp}", ownResponse.main.temp)
                 climb.content = climb.content.replace("${placeholder-weather-id}", ownResponse.weather[0].id)
                 climb.content = climb.content.replace("${placeholder-conditions}", ownResponse.weather[0].description)
-				console.log(ownResponse.weather[0]);
+			//	console.log(ownResponse.weather[0]);
    
                 new L.marker([climb.lat, climb.lon])
                     .bindPopup(climb.content)

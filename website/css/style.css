@@ -828,9 +828,6 @@ input[type="checkbox"] {
   vertical-align:middle;
 }
 @media (max-width: 600px) {
-  .grade:first-of-type{
-    padding-top: 3px;
-  }
   .info-ring-holder{
     text-align:center;
   }
