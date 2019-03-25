@@ -143,7 +143,7 @@ function drawBelay(context, x, y, line, fill){
 function annotate(context, msg, x, y, color){
     context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
     context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-    context.lineWidth = 10;
+    context.lineWidth = sThis(10);
     context.strokeText(msg, x, y);
     context.fillStyle = color;
     context.fillText(msg, x, y);
