@@ -8,10 +8,16 @@ var start = document.URL;
 var history_data = { "Start": start }; // push state
 var isCardTurned = start.includes('?overview');
 var dataSavingMode = false;
+var geoLocationSupport = false;
+var userLat = null;
+var userLon = null;
 if ("connection" in navigator) {
     if (navigator.connection.saveData === true) {
         dataSavingMode = navigator.connection.saveData;
     }
+}
+if ("geolocation" in navigator) {
+    geoLocationSupport = true;
 }
 
 
@@ -154,7 +160,7 @@ function filterCards() {
 
         var dataGrade = cards[i].getAttribute('data-grade');
         var dataHeight = cards[i].getAttribute('data-height');
-        var dataApproch = cards[i].getAttribute('data-approch');
+        var dataApproch = cards[i].getAttribute('data-approch');  
 
         if (
             parseInt(dataGrade) >= lowGrade
@@ -193,6 +199,7 @@ helper.arr = {
     // returns {array}
 
     multisort: function (arr, columns, order_by) {
+        
         if (typeof columns === 'undefined') {
             columns = [];
             for (x = 0; x < arr[0].length; x++) {
@@ -252,7 +259,7 @@ function publishCards(climbsArr) {
             }
 
             var card = `
-    <div data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+    <div data-distance="" data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
@@ -287,10 +294,51 @@ function publishCards(climbsArr) {
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
 function sortCards(sortBy, direction) {
-    var c = document.getElementsByClassName("card");
-    while (c.length > 0) c[0].remove();
-    var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
-    publishCards(climbsSorted);
+    if(sortBy === 'distance' && userLat === null){
+        document.getElementById('loading').style.display = "block";
+        navigator.geolocation.getCurrentPosition(loactionLoaded, locationFailed);
+    } else {
+        var c = document.getElementsByClassName("card");
+        while (c.length > 0) c[0].remove();
+        var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
+        publishCards(climbsSorted);
+    }
+}
+/**
+ FUNCTION TO ADD DISTANCE FROM USER TO CLIMB TO ALL CLIMBS THEN SORT ASC
+ **/
+function loactionLoaded(position){
+    userLat = position.coords.latitude;
+    userLon = position.coords.longitude;
+    for (let i = 0; i < climbsData.climbs.length; i++) {
+        if(climbsData.climbs[i].status === "publish"){ // ensures unpublished climbs are not processed
+            let climb = climbsData.climbs[i]; 
+            let distance = calcDistanceBetweenPoints(climb.geoLocation.split(',')[0], climb.geoLocation.split(',')[1], userLat, userLon);
+            climbsData.climbs[i].distance = distance;
+        } else {
+            climbsData.climbs[i].distance = 100000; // ensures all climbs have a distance column
+        }
+    }
+    document.getElementById('loading').style.display = "none";
+    sortCards('distance','ASC');
+
+}
+function locationFailed(){
+    console.log("failed to get location");
+}
+/**
+ FUNCTION TO GET KM BETWEEN TWO POINTS USING LAT LON
+ **/
+function calcDistanceBetweenPoints(lat1,lon1,lat2,lon2) {
+    var R = 6371; // km (change this constant to get miles)
+    var dLat = (lat2-lat1) * Math.PI / 180;
+    var dLon = (lon2-lon1) * Math.PI / 180; 
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c;
+    return Math.round(d); // km
 }
 
 /**
@@ -638,4 +686,7 @@ window.onload = function () {
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
+    if(geoLocationSupport === true){
+        document.getElementById('distance').style.display = "block";
+    }     
 };

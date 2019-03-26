@@ -1046,6 +1046,7 @@ hr {
   display: block;
   margin:0 auto;
   min-height:100px;
+  width:100%;
 }
 .loading p{
   color:#222;
@@ -1057,6 +1058,7 @@ hr {
   display: block;
   filter: invert(100%);
   max-width:100px;
+  margin: 0 auto;
 }
 @-webkit-keyframes in-out-load {
   0% {opacity: 1;}
