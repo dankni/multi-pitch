@@ -15,6 +15,7 @@ var scale, maxWidth, belaySize, lineWidth, fontsize;
 var maxWidth = 'max';
 var dashSpace;    
 var arrowSize = 20;
+var belayScaler = 1;
 
 function updateScale(){
     for (let i = 0; i < scaleRadio.length; i++) {
@@ -23,11 +24,12 @@ function updateScale(){
         }
     }
     maxWidth !== 'max' && maxWidth < img.width ? scale = maxWidth / img.width : scale = 1;
-    topoData.belaySize ? belaySize =  sThis(topoData.belaySize) : belaySize = sThis(24); 
-    lineWidth = sThis(6);
-
-    fontsize = sThis(55);
-    dashSpace = [sThis(32), sThis(8), sThis(5), sThis(8)];
+    topoData.belaySize ? belaySize =  sThis(topoData.belaySize) : belaySize = sThis(24);
+    belayScaler = belaySize / 24;
+    lineWidth = sThis(6) * belayScaler;
+    arrowSize = 20 * belayScaler;
+    fontsize = sThis(55) * belayScaler;
+    dashSpace = [sThis(32) * belayScaler, sThis(8) * belayScaler, sThis(5) * belayScaler, sThis(8) * belayScaler];
 } 
 
 updateScale();
@@ -63,7 +65,7 @@ function draw() {
         ctx.fill();
         ctx.drawImage(flag, flagLeftMargin, (imgHeight - boxHeight + ((boxHeight - flagHeight) / 2)), flagWidth, flagHeight);
         ctx.drawImage(logo, (imgWidth - sThis(520)), (imgHeight - sThis(90)), sThis(75), sThis(75));
-        ctx.font = fontsize + "px sans-serif";
+        ctx.font = sThis(55) + "px sans-serif";
         ctx.fillStyle = "#ffffff";
         ctx.fillText(topoData.title, flagLeftMargin * 2 + flagWidth, imgHeight - sThis(35));
         ctx.fillText('multi-pitch.com', (imgWidth - sThis(420)), imgHeight - sThis(35));
@@ -143,7 +145,7 @@ function drawBelay(context, x, y, line, fill){
 function annotate(context, msg, x, y, color){
     context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
     context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-    context.lineWidth = sThis(10);
+    context.lineWidth = sThis(10) * belayScaler;
     context.strokeText(msg, x, y);
     context.fillStyle = color;
     context.fillText(msg, x, y);

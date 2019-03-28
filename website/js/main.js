@@ -259,7 +259,7 @@ function publishCards(climbsArr) {
             }
 
             var card = `
-    <div data-distance="" data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+    <div data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
@@ -277,7 +277,6 @@ function publishCards(climbsArr) {
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
-               
             </p>
         </div>
         <a class="open-tile" href="${url}" onclick="showTile(${climbsArr[i].id});return false;">SHOW MORE INFO</a>
@@ -286,7 +285,6 @@ function publishCards(climbsArr) {
             cardHolder.innerHTML += card;
         }
     }
-
     document.getElementById('loading').style.display = 'none';
 }
 
@@ -296,6 +294,7 @@ function publishCards(climbsArr) {
 function sortCards(sortBy, direction) {
     if(sortBy === 'distance' && userLat === null){
         document.getElementById('loading').style.display = "block";
+        document.getElementById('loadingMsg').innerHTML = "Requesting Geo-Location...";
         navigator.geolocation.getCurrentPosition(loactionLoaded, locationFailed);
     } else {
         var c = document.getElementsByClassName("card");
@@ -438,7 +437,8 @@ function hideTile(resetTitle) {
 /**
  LOAD TOPO DATA JS OBJECT IF AVAILIBLE
  **/
-function tryLoadTopo(climbId){
+function tryLoadTopo(climbId, enviroment = ''){
+    enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
     if(dataSavingMode === false){ 
         let cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);
         let topoImg = cImgs.find(img => img.type === 'topo');
@@ -448,7 +448,7 @@ function tryLoadTopo(climbId){
             script.onload = function(){
                 initTopo();
             }
-            script.src = "/data/topos/" + climbId + ".js";
+            script.src = enviroment + "/data/topos/" + climbId + ".js";
             ref.parentNode.insertBefore(script, ref);
         }
     }
@@ -469,6 +469,7 @@ const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
 var maxWidth = 'max';
 var arrowSize = 20;
 var dashSpace = [32, 8, 5, 8];
+var belayScale = 1; // used to scale the line and labels inline with belay size
 
 function initTopo () {
     img = new Image();
@@ -495,10 +496,12 @@ function updateScale(){
     topoHolder.offsetWidth ? scaleVsHolder = topoHolder.offsetWidth / img.width : scaleVsHolder = 1;
     scaleVsVh > scaleVsHolder ? scale = scaleVsHolder : scale = scaleVsVh;
     
-    topoData.belaySize ? belaySize =  sThis(topoData.belaySize) : belaySize = sThis(24); 
-    lineWidth = sThis(6);
-    fontsize = sThis(55);
-    dashSpace = [sThis(32), sThis(8), sThis(5), sThis(8)];
+    topoData.belaySize ? belaySize =  sThis(topoData.belaySize) : belaySize = sThis(24);
+    belayScale = belaySize / sThis(24);
+    lineWidth = sThis(6) * belayScale;
+    fontsize = sThis(55) * belayScale;
+    dashSpace = [sThis(32) * belayScale, sThis(8) * belayScale, sThis(5) * belayScale, sThis(8) * belayScale];
+    arrowSize = 20 * belayScale;
 } 
 
 // Draws the topo on the canvas based on the current data
@@ -535,7 +538,7 @@ function draw() {
         ctx.fill();
         ctx.drawImage(flag, flagLeftMargin, (imgHeight - boxHeight + ((boxHeight - flagHeight) / 2)), flagWidth, flagHeight);
         ctx.drawImage(logo, (imgWidth - sThis(520)), (imgHeight - sThis(90)), sThis(75), sThis(75));
-        ctx.font = fontsize + "px sans-serif";
+        ctx.font = sThis(55) + "px sans-serif";
         ctx.fillStyle = "#ffffff";
         ctx.fillText(topoData.title, flagLeftMargin * 2 + flagWidth, imgHeight - sThis(35));
         ctx.fillText('multi-pitch.com', (imgWidth - sThis(420)), imgHeight - sThis(35));
@@ -677,7 +680,9 @@ window.onpopstate = function (event) {
 window.onload = function () {
     window.performance.mark('onload-event-happened');
     // Sorts and publishes the cards
-    if (document.location.href.indexOf('/climbs/') === -1) {
+    var hp = false;
+    document.getElementById('cardHolder') ? hp = true : hp = false;
+    if (document.location.href.indexOf('/climbs/') === -1 && hp === true) {
         sortCards('length', 'DESC');
         window.performance.mark('all-climbs-loaded');
     } 
@@ -686,7 +691,7 @@ window.onload = function () {
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
-    if(geoLocationSupport === true){
+    if(geoLocationSupport === true && hp === true){
         document.getElementById('distance').style.display = "block";
     }     
 };

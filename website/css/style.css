@@ -505,6 +505,10 @@ footer.page-footer a {
   background-color:rgba(3,3,3,.03);
   padding:1rem;
 }
+.sort-list{
+  margin:20px auto 0 auto;
+  text-align:center;
+}
 .flag {
   width: 35px;
   background-size: 100%;
@@ -659,46 +663,33 @@ nav ul li a:hover {
   }
 }
 select {
-  /* styling */
   background-color: transparent;
   border: none;
   display: inline-block;
   font: inherit;
-  line-height: 1em;
+  line-height: 1.2em;
   padding: 0 3em 0.2em .2em;
-  /* reset */
-  margin: 0;
+  margin: 0;  /* reset */
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
-   font-size:1em;
-   border-bottom:1px solid rgba(0,0,0,0.1);
-}
-select {
+  font-size:1.2em;
+  border-bottom:1px solid rgba(0,0,0,0.1);
   background-image:
   linear-gradient(45deg, transparent 50%, gray 50%),
   linear-gradient(135deg, gray 50%, transparent 50%);
-  background-position:
-  calc(100% - 20px) calc(10px),
-  calc(100% - 15px) calc(10px);
-  background-size:
-  5px 5px,
-  5px 5px;
+  background-position: calc(100% - 20px) 10px, calc(100% - 15px) 10px;
+  background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
 }
-
 select:focus {
   background-image:
   linear-gradient(45deg, grey 50%, transparent 50%),
   linear-gradient(135deg, transparent 50%, grey 50%);
-  background-position:
-  calc(100% - 15px) 1em,
-  calc(100% - 20px) 1em;
-  background-size:
-  5px 5px,
-  5px 5px;
+  background-position: calc(100% - 15px) 10px, calc(100% - 20px) 10px;
+  background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
   outline: 0;
 }

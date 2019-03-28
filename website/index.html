@@ -173,11 +173,11 @@
                                         <span id="approch1">0</span> to <span id="approch2">200</span> mins
                                     </p>
                                 </div>
-                                <div class="col" style="text-align:center;">
+                                <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
                                     <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();">
-                                        <option value="length,ASC">Shortest Climbs First</option>
                                         <option value="length,DESC">Longest Climbs First</option>
+                                        <option value="length,ASC">Shortest Climbs First</option>
                                         <option value="dataGrade,ASC">Easiest Climbs First</option>
                                         <option value="dataGrade,DESC">Hardest Climbs First</option>
                                         <option id="distance" style="display: none;" value="distance,ASC">Closest Climbs First</option>
@@ -191,7 +191,7 @@
                 <div class="row" id="cardHolder">
                     <div class="loading" id="loading">
                         <img src="https://www.multi-pitch.com/img/logo/mp-logo-white.png" alt="Loading">
-                        <p>Loading</p>
+                        <p id="loadingMsg">Loading</p>
                     </div>
                     <div class="col-md-12 no-results" id="noResults" style="display:none">
                         <p>
