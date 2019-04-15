@@ -63,6 +63,24 @@ describe('Load the website page', function () {
                 .catch(done)
         });
 
+        it('Make sure the share buttons have the correct URL', done => {
+            var randomCard = climbs.climbsData.climbs[1];
+
+            nightmare.goto(appUrl)
+                .click('div[data-test="climbid-' + randomCard.id + '"] a.open-tile')
+                .wait('#climbCardDetails')
+                .evaluate(function () {
+                    return document.querySelector("#whatsappShare").href.split('/climbs/')[1].endsWith(window.location.href.split('/climbs/')[1]);
+                })
+                .end()
+                .then(function (shareLink) {
+                    expect(shareLink).to.equal(true);
+                    done()
+                })
+                .catch(done)
+
+        });
+
         it('should not log any errors - on the main page', done => {
             const errors = [];
 

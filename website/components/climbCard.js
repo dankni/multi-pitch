@@ -454,7 +454,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                         </div>
                     </div>
                     <div class="col-sm social-share">
-                        <a
+                        <a  id="whatsappShare"
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
                             onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
