@@ -392,6 +392,13 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
     var weatherInfoModule = getWeather(climb.id, weatherData);
     var mapModule = getMap(mapImg, climb.geoLocation);
 
+    var folderName = "".concat(climb.routeName, '-on-', climb.cliff)
+            .toLowerCase()
+            .replace(/'/g, "")
+            .replace(/\//g, "")
+            .replace(/ /g, "-");
+        folderName = folderName + '/';
+
     if (climb.techGrade === null) {
         var techGrade = "";
     } else {
@@ -448,22 +455,22 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                     </div>
                     <div class="col-sm social-share">
                         <a
-                            href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${climb.folderLocation}"
+                            href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
                             onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
                             <i class="icon-whatsapp"></i></a>
                         <a
-                            href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
                             onClick="gtag('event', 'social-share', {'event_category':'twitter', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
                             <i class="icon-twitter"></i></a>
                         <a
-                            href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
                                 onClick="gtag('event', 'social-share', {'event_category':'facebook', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
                             <i class="icon-facebook"></i></a>
                         <a
-                            href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${climb.folderLocation}" 
+                            href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
                                 onClick="gtag('event', 'social-share', {'event_category':'email', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
                             <i class="icon-mail"></i></a>
