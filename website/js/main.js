@@ -5,7 +5,7 @@ window.performance.mark('start-js-read');
  **/
 const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
-var history_data = { "Start": start }; // push state
+var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
 var dataSavingMode = false;
 var geoLocationSupport = false;
@@ -132,7 +132,7 @@ function showVal(values, field) {
     var higherValue = values.split(',')[1];
 
     if (field === 'grade') {
-        const gradeMappings = { 1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1' };
+        const gradeMappings = {1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1'};
         lowerValue = gradeMappings[parseInt(lowerValue)];
         higherValue = gradeMappings[parseInt(higherValue)];
     }
@@ -160,7 +160,7 @@ function filterCards() {
 
         var dataGrade = cards[i].getAttribute('data-grade');
         var dataHeight = cards[i].getAttribute('data-height');
-        var dataApproch = cards[i].getAttribute('data-approch');  
+        var dataApproch = cards[i].getAttribute('data-approch');
 
         if (
             parseInt(dataGrade) >= lowGrade
@@ -199,7 +199,7 @@ helper.arr = {
     // returns {array}
 
     multisort: function (arr, columns, order_by) {
-        
+
         if (typeof columns === 'undefined') {
             columns = [];
             for (x = 0; x < arr[0].length; x++) {
@@ -292,7 +292,7 @@ function publishCards(climbsArr) {
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
 function sortCards(sortBy, direction) {
-    if(sortBy === 'distance' && userLat === null){
+    if (sortBy === 'distance' && userLat === null) {
         document.getElementById('loading').style.display = "block";
         document.getElementById('loadingMsg').innerHTML = "Requesting Geo-Location...";
         navigator.geolocation.getCurrentPosition(loactionLoaded, locationFailed);
@@ -303,15 +303,16 @@ function sortCards(sortBy, direction) {
         publishCards(climbsSorted);
     }
 }
+
 /**
  FUNCTION TO ADD DISTANCE FROM USER TO CLIMB TO ALL CLIMBS THEN SORT ASC
  **/
-function loactionLoaded(position){
+function loactionLoaded(position) {
     userLat = position.coords.latitude;
     userLon = position.coords.longitude;
     for (let i = 0; i < climbsData.climbs.length; i++) {
-        if(climbsData.climbs[i].status === "publish"){ // ensures unpublished climbs are not processed
-            let climb = climbsData.climbs[i]; 
+        if (climbsData.climbs[i].status === "publish") { // ensures unpublished climbs are not processed
+            let climb = climbsData.climbs[i];
             let distance = calcDistanceBetweenPoints(climb.geoLocation.split(',')[0], climb.geoLocation.split(',')[1], userLat, userLon);
             climbsData.climbs[i].distance = distance;
         } else {
@@ -319,23 +320,25 @@ function loactionLoaded(position){
         }
     }
     document.getElementById('loading').style.display = "none";
-    sortCards('distance','ASC');
+    sortCards('distance', 'ASC');
 
 }
-function locationFailed(){
+
+function locationFailed() {
     console.log("failed to get location");
 }
+
 /**
  FUNCTION TO GET KM BETWEEN TWO POINTS USING LAT LON
  **/
-function calcDistanceBetweenPoints(lat1,lon1,lat2,lon2) {
+function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
     var R = 6371; // km (change this constant to get miles)
-    var dLat = (lat2-lat1) * Math.PI / 180;
-    var dLon = (lon2-lon1) * Math.PI / 180; 
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2); 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
     return Math.round(d); // km
 }
@@ -347,7 +350,7 @@ function showTile(climbId) {
     climbId = parseInt(climbId);
     var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-    var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId); 
+    var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId);
     var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);
 
     // a check to see if the user has landed on a page from a direct link
@@ -369,8 +372,9 @@ function showTile(climbId) {
     document.title = climb.cliff + " - " + climb.routeName;
     tryLoadTopo(climbId);
 }
+
 /**
- OPEN THE SUBSCRIBE OVERLAY 
+ OPEN THE SUBSCRIBE OVERLAY
  **/
 function openSubscribe() {
     var request = new XMLHttpRequest();
@@ -392,6 +396,7 @@ function openSubscribe() {
     };
     request.send();
 }
+
 /**
  CHANGE GRADES
  **/
@@ -420,6 +425,7 @@ function updateGradeLabel(gradeSystem) {
         hardLabel.textContent = "5+ or harder";
     }
 }
+
 /**
  CLOSE THE SUBSCRIBE OVERLAY OR GO BACK TO HOMEPAGE
  **/
@@ -437,15 +443,15 @@ function hideTile(resetTitle) {
 /**
  LOAD TOPO DATA JS OBJECT IF AVAILIBLE
  **/
-function tryLoadTopo(climbId, enviroment = ''){
+function tryLoadTopo(climbId, enviroment = '') {
     enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
-    if(dataSavingMode === false){ 
+    if (dataSavingMode === false) {
         let cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);
         let topoImg = cImgs.find(img => img.type === 'topo');
-        if(topoImg.dataFile > 1){
+        if (topoImg.dataFile > 1) {
             let ref = document.getElementsByTagName('script')[0];
-            var script = document.createElement( 'script' ); 
-            script.onload = function(){
+            var script = document.createElement('script');
+            script.onload = function () {
                 initTopo();
             }
             script.src = enviroment + "/data/topos/" + climbId + ".js";
@@ -455,12 +461,12 @@ function tryLoadTopo(climbId, enviroment = ''){
 }
 
 /**
-ALL THE TOPO DRAWING FUNCTIONS
+ ALL THE TOPO DRAWING FUNCTIONS
  **/
 // Global Variables for topo drawing
 const pd = window.devicePixelRatio;
 var scale, lineWidth, fontsize, canvas, img, flag, logo;
-var  belaySize = 24;
+var belaySize = 24;
 const lineColor = "rgba(204,25,29,0.95)";
 const belayColor = "rgb(236,142,140,0.9)";
 const decentBelay = "rgba(84, 122, 183, 0.9)";
@@ -471,7 +477,7 @@ var arrowSize = 20;
 var dashSpace = [32, 8, 5, 8];
 var belayScale = 1; // used to scale the line and labels inline with belay size
 
-function initTopo () {
+function initTopo() {
     img = new Image();
     img.onload = function () {
         draw();
@@ -479,42 +485,43 @@ function initTopo () {
     canvas = document.getElementById("canvas");
     flag = new Image();
     logo = new Image();
-    logo.src = '/img/logo/mp-logo-white.png';        
+    logo.src = '/img/logo/mp-logo-white.png';
     img.src = topoData.image;
     flag.src = topoData.flag;
 }
-function toggleTopo(){
+
+function toggleTopo() {
     document.getElementById("staticTopo").style.display = "none";
     document.getElementById("canvas").style.display = "block";
 }
 
-function updateScale(){
+function updateScale() {
     let vh90 = window.innerHeight * 0.9;
     let topoHolder = document.getElementById("topoHolder");
     let scaleVsVh, scaleVsHolder;
     vh90 < img.height ? scaleVsVh = vh90 / img.height : scaleVsVh = 1;
     topoHolder.offsetWidth ? scaleVsHolder = topoHolder.offsetWidth / img.width : scaleVsHolder = 1;
     scaleVsVh > scaleVsHolder ? scale = scaleVsHolder : scale = scaleVsVh;
-    
-    topoData.belaySize ? belaySize =  sThis(topoData.belaySize) : belaySize = sThis(24);
+
+    topoData.belaySize ? belaySize = sThis(topoData.belaySize) : belaySize = sThis(24);
     belayScale = belaySize / sThis(24);
     lineWidth = sThis(6) * belayScale;
     fontsize = sThis(55) * belayScale;
     dashSpace = [sThis(32) * belayScale, sThis(8) * belayScale, sThis(5) * belayScale, sThis(8) * belayScale];
     arrowSize = 20 * belayScale;
-} 
+}
 
 // Draws the topo on the canvas based on the current data
 function draw() {
     updateScale();
     /** DEFINE THE DERIVED DRAWING VARIABLES */
-    let infoBox = document.getElementById('c1').checked; 
-    let routeLine = document.getElementById('c2').checked; 
-    let belayPoints = document.getElementById('c3').checked; 
-    let absailPoints = document.getElementById('c4').checked; 
-    let pitchLabels = document.getElementById('c5').checked; 
+    let infoBox = document.getElementById('c1').checked;
+    let routeLine = document.getElementById('c2').checked;
+    let belayPoints = document.getElementById('c3').checked;
+    let absailPoints = document.getElementById('c4').checked;
+    let pitchLabels = document.getElementById('c5').checked;
     var ctx = document.getElementById('canvas').getContext('2d');
-    
+
     const imgWidth = sThis(img.width);
     const imgHeight = sThis(img.height);
     const flagWidth = sThis(100);
@@ -546,18 +553,18 @@ function draw() {
 
     // Add the Topo Line
     if (routeLine === true) {
-        if (topoData.route.length > 1){
+        if (topoData.route.length > 1) {
             drawLine(ctx, topoData.route, true, false, lineColor);
         }
     }
 
-    for (let i = 0; i < topoData.pitches.length; i++) { 
+    for (let i = 0; i < topoData.pitches.length; i++) {
         // Add the Belay Points
         if (belayPoints === true) {
             drawBelay(
                 ctx,
-                topoData.pitches[i].belayPosition[0], 
-                topoData.pitches[i].belayPosition[1], 
+                topoData.pitches[i].belayPosition[0],
+                topoData.pitches[i].belayPosition[1],
                 lineColor, belayColor);
         }
         // add the labels
@@ -565,16 +572,16 @@ function draw() {
             annotate(
                 ctx,
                 topoData.pitches[i].height,
-                sThis(topoData.pitches[i].labelPosition[0]), 
-                sThis(topoData.pitches[i].labelPosition[1]), 
+                sThis(topoData.pitches[i].labelPosition[0]),
+                sThis(topoData.pitches[i].labelPosition[1]),
                 lineColor);
         }
         if (topoData.pitches[i].grade !== null && pitchLabels === true) {
             annotate(
                 ctx,
                 topoData.pitches[i].grade,
-                sThis(topoData.pitches[i].labelPosition[0]), 
-                sThis(topoData.pitches[i].labelPosition[1]) + (fontsize * 1.3), 
+                sThis(topoData.pitches[i].labelPosition[0]),
+                sThis(topoData.pitches[i].labelPosition[1]) + (fontsize * 1.3),
                 lineColor);
         }
     }
@@ -582,17 +589,17 @@ function draw() {
     // Add the abasail Points
     if (absailPoints === true) {
         for (let i = 0; i < topoData.decent.length; i++) {
-            if(topoData.decent[i].anchor !== null){
-                drawBelay(ctx, 
-                    topoData.decent[i].anchor[0], 
-                    topoData.decent[i].anchor[1], 
+            if (topoData.decent[i].anchor !== null) {
+                drawBelay(ctx,
+                    topoData.decent[i].anchor[0],
+                    topoData.decent[i].anchor[1],
                     decentLine, decentBelay);
             }
-            if(topoData.decent[i].path !== null){
+            if (topoData.decent[i].path !== null) {
                 drawLine(ctx, topoData.decent[i].path, true, true, decentLine);
             }
-            if(topoData.decent[i].label !== null && pitchLabels === true){
-                annotate(ctx, topoData.decent[i].label, sThis(topoData.decent[i].labelPosition[0]), 
+            if (topoData.decent[i].label !== null && pitchLabels === true) {
+                annotate(ctx, topoData.decent[i].label, sThis(topoData.decent[i].labelPosition[0]),
                     sThis(topoData.decent[i].labelPosition[1]), decentLine);
             }
         }
@@ -600,8 +607,8 @@ function draw() {
 }
 
 // A set of helper functions 
-function drawBelay(context, x, y, line, fill){
-    if (x > 0 && y > 0){
+function drawBelay(context, x, y, line, fill) {
+    if (x > 0 && y > 0) {
         context.strokeStyle = line;
         context.setLineDash([]);
         context.lineWidth = lineWidth;
@@ -614,7 +621,7 @@ function drawBelay(context, x, y, line, fill){
     }
 }
 
-function annotate(context, msg, x, y, color){
+function annotate(context, msg, x, y, color) {
     context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
     context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     context.lineWidth = sThis(10);
@@ -623,27 +630,27 @@ function annotate(context, msg, x, y, color){
     context.fillText(msg, x, y);
 }
 
-function drawLine (context, arrayOfxy, dashed, arrowEnd, color){
+function drawLine(context, arrayOfxy, dashed, arrowEnd, color) {
     context.beginPath();
     context.moveTo(sThis(arrayOfxy[0][0]), sThis(arrayOfxy[0][1]));
-        for (var i = 0; i < arrayOfxy.length - 2; i++) {
-            context.quadraticCurveTo(sThis(arrayOfxy[i][0]), 
-                    sThis(arrayOfxy[i][1]), 
-                    sThis((arrayOfxy[i][0] + arrayOfxy[i + 1][0]) / 2), 
-                    sThis((arrayOfxy[i][1] + arrayOfxy[i + 1][1]) / 2));
-        }
-        context.quadraticCurveTo(sThis(arrayOfxy[i][0]), 
-                    sThis(arrayOfxy[i][1]), 
-                    sThis(arrayOfxy[i + 1][0]), 
-                    sThis(arrayOfxy[i + 1][1])); // For the last 2 points
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.lineCap = 'round';
-        dashed === true ? context.setLineDash(dashSpace) : context.setLineDash([]);
-        context.stroke();
-        if (arrowEnd === true) { 
-            drawArrowhead(context, arrayOfxy[arrayOfxy.length - 2], arrayOfxy[arrayOfxy.length - 1], arrowSize, color);
-        }
+    for (var i = 0; i < arrayOfxy.length - 2; i++) {
+        context.quadraticCurveTo(sThis(arrayOfxy[i][0]),
+            sThis(arrayOfxy[i][1]),
+            sThis((arrayOfxy[i][0] + arrayOfxy[i + 1][0]) / 2),
+            sThis((arrayOfxy[i][1] + arrayOfxy[i + 1][1]) / 2));
+    }
+    context.quadraticCurveTo(sThis(arrayOfxy[i][0]),
+        sThis(arrayOfxy[i][1]),
+        sThis(arrayOfxy[i + 1][0]),
+        sThis(arrayOfxy[i + 1][1])); // For the last 2 points
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.lineCap = 'round';
+    dashed === true ? context.setLineDash(dashSpace) : context.setLineDash([]);
+    context.stroke();
+    if (arrowEnd === true) {
+        drawArrowhead(context, arrayOfxy[arrayOfxy.length - 2], arrayOfxy[arrayOfxy.length - 1], arrowSize, color);
+    }
 }
 
 function drawArrowhead(context, from, to, radius, color) {
@@ -678,6 +685,7 @@ window.onpopstate = function (event) {
 };
 
 window.onload = function () {
+    checkIfUserIsRegistered()
     window.performance.mark('onload-event-happened');
     // Sorts and publishes the cards
     var hp = false;
@@ -685,13 +693,13 @@ window.onload = function () {
     if (document.location.href.indexOf('/climbs/') === -1 && hp === true) {
         sortCards('length', 'DESC');
         window.performance.mark('all-climbs-loaded');
-    } 
+    }
     if (isCardTurned === true) {
         var overview = start.split('=');
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
-    if(geoLocationSupport === true && hp === true){
+    if (geoLocationSupport === true && hp === true) {
         document.getElementById('distance').style.display = "block";
-    }     
+    }
 };
