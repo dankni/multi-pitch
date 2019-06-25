@@ -295,7 +295,7 @@ function sortCards(sortBy, direction) {
     if (sortBy === 'distance' && userLat === null) {
         document.getElementById('loading').style.display = "block";
         document.getElementById('loadingMsg').innerHTML = "Requesting Geo-Location...";
-        navigator.geolocation.getCurrentPosition(loactionLoaded, locationFailed);
+        navigator.geolocation.getCurrentPosition(locationLoaded, locationFailed);
     } else {
         var c = document.getElementsByClassName("card");
         while (c.length > 0) c[0].remove();
@@ -307,7 +307,7 @@ function sortCards(sortBy, direction) {
 /**
  FUNCTION TO ADD DISTANCE FROM USER TO CLIMB TO ALL CLIMBS THEN SORT ASC
  **/
-function loactionLoaded(position) {
+function locationLoaded(position) {
     userLat = position.coords.latitude;
     userLon = position.coords.longitude;
     for (let i = 0; i < climbsData.climbs.length; i++) {

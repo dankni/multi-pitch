@@ -66,7 +66,8 @@ function calculateCarDistance(climbingCarGraph) {
                 return acc;
             }, {
                 goodResults: [],
-                badResults: []
+                badResults: [],
+                lastUpdated: new Date()
             })
 
         })

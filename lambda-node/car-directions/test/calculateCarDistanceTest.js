@@ -118,12 +118,14 @@ describe('should call the google api in the right way', function () {
     it("Google ok response ", async function () {
         mockAxios.get = () => Promise.resolve(mockResponseGoogleOK);
         const fixture = await calculateCarDistance(climbingCarGraphRequest);
-        expect(fixture).to.eql(climbingCarGraphExpected);
+        expect(fixture.goodResults).to.eql(climbingCarGraphExpected.goodResults);
+        expect(fixture.badResults).to.eql(climbingCarGraphExpected.badResults);
     });
     it("Google Zero Responses it happens when they can not find the distance ", async function () {
         mockAxios.get = () => Promise.resolve(mockResponseGoogleZeroResults);
         const fixture = await calculateCarDistance(climbingCarGraphRequest);
-        expect(fixture).to.eql(climbingCarGraphBadExpected);
+        expect(fixture.goodResults).to.eql(climbingCarGraphBadExpected.goodResults);
+        expect(fixture.badResults).to.eql(climbingCarGraphBadExpected.badResults);
     });
     it("Google respond good and bad ", async function () {
         let firstRequest = true;
@@ -138,6 +140,7 @@ describe('should call the google api in the right way', function () {
         };
 
         const fixture = await calculateCarDistance([climbingCarGraphRequest[0], climbingCarGraphRequest[0]]);
-        expect(fixture).to.eql(climbingCarGraphGoodAndBadExpected);
+        expect(fixture.goodResults).to.eql(climbingCarGraphGoodAndBadExpected.goodResults);
+        expect(fixture.badResults).to.eql(climbingCarGraphGoodAndBadExpected.badResults);
     });
 });

@@ -37,7 +37,8 @@ function getWeather(climbsData) {
                 return acc;
             }, {
                 goodResults: [],
-                badResults: []
+                badResults: [],
+                lastUpdated: new Date()
             })
 
         })

@@ -95,12 +95,14 @@ describe('should call the openWeather api in the right way', function () {
     it("OpenWeather ok response ", async function () {
         mockAxios.get = () => Promise.resolve(OpenWeatherOK);
         const fixture = await getWeather(getWeatherRequest);
-        expect(fixture).to.eql(getWeatherExpected);
+        expect(fixture.goodResults).to.eql(getWeatherExpected.goodResults);
+        expect(fixture.badResults).to.eql(getWeatherExpected.badResults);
     });
     it("OpenWeather Zero Responses it happens when they can not find the distance ", async function () {
         mockAxios.get = () => Promise.resolve(OpenWeatherZeroResults);
         const fixture = await getWeather(getWeatherRequest);
-        expect(fixture).to.eql(getWeatherBadExpected);
+        expect(fixture.goodResults).to.eql(getWeatherBadExpected.goodResults);
+        expect(fixture.badResults).to.eql(getWeatherBadExpected.badResults);
     });
     it("OpenWeather respond good and bad ", async function () {
         let firstRequest = true;
@@ -115,6 +117,7 @@ describe('should call the openWeather api in the right way', function () {
         };
 
         const fixture = await getWeather([getWeatherRequest[0], getWeatherRequest[0]]);
-        expect(fixture).to.eql(getWeatherGoodAndBadExpected);
+        expect(fixture.goodResults).to.eql(getWeatherGoodAndBadExpected.goodResults);
+        expect(fixture.badResults).to.eql(getWeatherGoodAndBadExpected.badResults);
     });
 });
