@@ -1,0 +1,27 @@
+{
+  "name": "some-lambda",
+  "version": "1.0.0",
+  "description": "a description",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "deploy": "deploy.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dankni/multi-pitch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dankni/multi-pitch/issues"
+  },
+  "homepage": "https://github.com/dankni/multi-pitch#readme",
+  "dependencies": {
+    "axios": "^0.16.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}

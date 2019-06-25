@@ -49,6 +49,7 @@ Thumbs.db
 # NODE stuff #
 ##############
 node_modules
+*/**/node_modules
 img_compression
 
 # Project generated stuff #
@@ -60,3 +61,7 @@ multi-pitch.iml
 # Dans helpers #
 ################
 working-files/runbook.docx
+
+# Keys / secrets #
+##################
+*/**/*.secret
