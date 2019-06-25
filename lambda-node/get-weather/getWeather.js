@@ -21,6 +21,8 @@ function getWeather(climbsData) {
                     acc.goodResults.push({
                         climbId: current.id,
                         description: openWeatherResponse.weather[0].description,
+                        weatherId: openWeatherResponse.weather[0].id,
+                        weatherMain: openWeatherResponse.weather[0].main,
                         temperature: openWeatherResponse.main.temp,
                         pressure: openWeatherResponse.main.pressure,
                         humidity: openWeatherResponse.main.humidity,

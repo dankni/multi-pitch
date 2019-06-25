@@ -64,6 +64,8 @@ const getWeatherExpected = {
                 {
                     "climbId": 17,
                     "description": "mist",
+                    "weatherMain": "Mist",
+                    "weatherId": 701,
                     "temperature": 18.79,
                     "pressure": 1016,
                     "humidity": 88,
