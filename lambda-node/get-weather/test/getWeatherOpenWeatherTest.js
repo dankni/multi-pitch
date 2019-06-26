@@ -1,7 +1,7 @@
 const mockAxios = require("axios");
 
 const expect = require('chai').expect;
-const getWeather = require("../getWeather");
+const getWeather = require("../getWeatherOpenWeather.js");
 const axios = require('axios');
 const OpenWeatherRespose = require('./openWeatherResponse.json');
 

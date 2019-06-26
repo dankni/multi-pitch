@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const openWeatherMapKey = process.env.OPEN_WEATHER_MAP;
 
-function getWeather(climbsData) {
+function getWeatherOpenWeather(climbsData) {
     let promised = climbsData.map(climb => {
 
         let lat = climb.geoLocation.split(',')[0];
@@ -53,4 +53,4 @@ function getWeather(climbsData) {
 
 }
 
-module.exports = getWeather;
+module.exports = getWeatherOpenWeather;
