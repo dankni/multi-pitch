@@ -231,7 +231,7 @@ function getRouteTopo(topoImg) {
             <a href="/${topoImg.url}" target="blank" class="card-img-anch">
                 <picture class="big-card-map" id="staticTopo">`;
                 // dealing mostly with pixel density below
-                if(topoImg.dataFile === 5){ // the max is over 2160 so worth declaring for SEO 
+                if(topoImg.dataFile === 5){ // the max is over 2160 so worth declaring for SEO
                     routeTopo += `<source media="(min-width: 4000)" type="image/webp"
                         srcset="/${topoImg.url}.webp 1x, /${topoImg.url}.webp 2x, /${topoImg.url}.webp 3x">`;
                 }
@@ -266,7 +266,7 @@ function getRouteTopo(topoImg) {
                 if(topoImg.dataFile > 1){
                     routeTopo += `<canvas id="canvas" width="0" height="0" style="margin:auto;display:none;"></canvas>`;
                 }
-                routeTopo += 
+                routeTopo +=
             `</a>
         </div>
         <p class="credit">
