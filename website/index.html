@@ -19,13 +19,9 @@
     <link href="css/style.css" rel="stylesheet" />
 
     <!-- JavaScripts -->
-    <script src="data/data.js"></script>
+    <script async src="data/data.js"></script>
     <script async src="components/climbCard.js"></script>
-    <script src="js/auth-stuff.js"></script>
-    <script src="js/load-weather.js"></script>
-    <script src="js/main.js"></script>
-
-    <script src="icons/darkskyIcons.js"></script>
+    <script async src="js/main.js"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
@@ -254,9 +250,12 @@
     <div class="overlay" id="overlay"></div>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <link href="/css/fontello.css" rel="stylesheet" />
+    <script defer async src="js/auth-stuff.js"></script>
+    <script defer async src="js/load-weather.js"></script>
+    <script  defer async src="icons/darkskyIcons.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
-    <script defer>
+    <script defer async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
+    <script defer async>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
