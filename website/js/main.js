@@ -703,7 +703,7 @@ function loadWeather() {
                 iconWeather.classList.add(weatherData.currently.icon);
                 iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
                 tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
-            } catch {
+            } catch (e) {
                 console.log("Can't add weather for climbing id ", climb.id);
             }
         });
