@@ -277,8 +277,8 @@ function publishCards(climbsArr) {
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
-                <span id="feature-toggle-weather" style="display: none">
-                    <span class="what">Weather:</span>   
+                <span id="feature-toggle-weather" >
+                    <span class="what">Weather now:</span>   
                         <img id="loading-weather-${climbsArr[i].id}" src="/img/favicon/favicon-32x32.png" alt="Loading weather">
                         <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
                         <span style="position:absolute; top:337px;">
@@ -301,6 +301,13 @@ function publishCards(climbsArr) {
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
 function sortCards(sortBy, direction) {
+    if (sortBy === 'weatherScore') {
+        climbsData.climbs = climbsData.climbs.map(climb => {
+            let climbWeather = darkSkyWeatherData.find(weatherData => weatherData.climbId === climb.id);
+            return Object.assign({}, climb, {weatherScore: climbWeather ? climbWeather.weatherScore : Number.MIN_VALUE})
+        })
+
+    }
     if (sortBy === 'distance' && userLat === null) {
         document.getElementById('loading').style.display = "block";
         document.getElementById('loadingMsg').innerHTML = "Requesting Geo-Location...";
@@ -311,6 +318,8 @@ function sortCards(sortBy, direction) {
         var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
         publishCards(climbsSorted);
     }
+
+    loadWeather();
 }
 
 /**
@@ -692,7 +701,7 @@ function loadWeather() {
     console.log("Add Weather to the card");
     if (window.darkSkyWeatherData) {
         climbsData.climbs.map(climb => {
-            const darkSkyIconWaiting= `loading-weather-${climb.id}`;
+            const darkSkyIconWaiting = `loading-weather-${climb.id}`;
             const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
             if (weatherData) {
                 const canvasIconId = `dark-sky-icon-climb-id-${climb.id}`;
@@ -701,13 +710,13 @@ function loadWeather() {
                 skycons.play();
                 const iconWeatherWaiting = document.getElementById(darkSkyIconWaiting);
                 if (iconWeatherWaiting) {
-                    iconWeatherWaiting.style.display= 'none';
+                    iconWeatherWaiting.style.display = 'none';
                 }
             } else {
                 console.log("No weather found for climbing id ", climb.id);
                 const iconWeatherWaiting = document.getElementById(darkSkyIconWaiting);
                 if (iconWeatherWaiting) {
-                    iconWeatherWaiting.style.display= 'yes';
+                    iconWeatherWaiting.style.display = 'yes';
                 }
             }
         });
