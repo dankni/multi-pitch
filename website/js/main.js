@@ -278,14 +278,10 @@ function publishCards(climbsArr) {
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
                 <span id="feature-toggle-weather" >
-                    <span class="what">Weather now:</span>   
-                        <img id="loading-weather-${climbsArr[i].id}" src="/img/favicon/favicon-32x32.png" alt="Loading weather">
-                        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-                        <span style="position:absolute; top:337px;">
-                            <canvas id="dark-sky-icon-climb-id-${climbsArr[i].id}" width="25" height="25"></canvas>
-                        </span><br />
+                    <span class="what">Weather:</span>   
+                    <span id="weather-${climbsArr[i].id}" class="weather"></span>
+                    <span id="temp-${climbsArr[i].id}"></span>
                 </span>
-                    
             </p>
         </div>
         <a class="open-tile" href="${url}" onclick="showTile(${climbsArr[i].id});return false;">SHOW MORE INFO</a>
@@ -698,30 +694,20 @@ function sThis(number) {
 }
 
 function loadWeather() {
-    console.log("Add Weather to the card");
     if (window.darkSkyWeatherData) {
         climbsData.climbs.map(climb => {
-            const darkSkyIconWaiting = `loading-weather-${climb.id}`;
-            const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
-            if (weatherData) {
-                const canvasIconId = `dark-sky-icon-climb-id-${climb.id}`;
-                var skycons = new Skycons({"color": "black", "resizeClear": true});
-                skycons.add(canvasIconId, weatherData.currently.icon);
-                skycons.play();
-                const iconWeatherWaiting = document.getElementById(darkSkyIconWaiting);
-                if (iconWeatherWaiting) {
-                    iconWeatherWaiting.style.display = 'none';
-                }
-            } else {
-                console.log("No weather found for climbing id ", climb.id);
-                const iconWeatherWaiting = document.getElementById(darkSkyIconWaiting);
-                if (iconWeatherWaiting) {
-                    iconWeatherWaiting.style.display = 'yes';
-                }
+            try {
+                const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
+                const iconWeather = document.getElementById(`weather-${climb.id}`);
+                const tempValues = document.getElementById(`temp-${climb.id}`);
+                iconWeather.classList.add(weatherData.currently.icon);
+                iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
+                tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
+            } catch {
+                console.log("Can't add weather for climbing id ", climb.id);
             }
         });
     }
-
     const fourHoursInMilliseconds = 4000 * 60 * 60;
     setTimeout(() => loadWeather(), fourHoursInMilliseconds)
 }
@@ -749,6 +735,4 @@ window.onload = function () {
     if (geoLocationSupport === true && hp === true) {
         document.getElementById('distance').style.display = "block";
     }
-
-    setTimeout(() => loadWeather(), 1000);
 };

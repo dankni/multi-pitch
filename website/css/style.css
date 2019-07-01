@@ -194,6 +194,7 @@ button::-moz-focus-inner {
   display:inline-block;
   width:6rem;
   font-weight:300;
+  vertical-align: top;
 }
 .card-body {
   -webkit-box-flex: 1;
@@ -1121,4 +1122,42 @@ hr {
 	border-bottom-color: #FFF;
 	border-width: 40px;
 	margin-left: -40px;
+}
+
+/** WEATHER **/
+.weather{
+  background-size: 36px;
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+  margin-top: -8px;
+  margin-left: -8px;
+  vertical-align: text-bottom;
+}
+.rain{
+  background-image: url(/img/icons/weather/rain.svg);
+}
+.clear-day{
+  background-image: url(/img/icons/weather/clear-day.svg);
+}
+.partly-cloudy-day{
+  background-image: url(/img/icons/weather/partly-cloudy-day.svg);
+}
+.fog{
+  background-image: url(/img/icons/weather/fog.svg);
+}
+.clear-night{
+  background-image: url(/img/icons/weather/clear-night.svg);
+}
+.partly-cloudy-night{
+  background-image: url(/img/icons/weather/partly-cloudy-night.svg); 
+}
+.sleet{
+  background-image: url(/img/icons/weather/sleet.svg); 
+}
+.snow{
+  background-image: url(/img/icons/weather/snow.svg); 
+}
+.wind{
+  background-image: url(/img/icons/weather/wind.svg); 
 }
