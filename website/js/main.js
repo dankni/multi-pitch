@@ -709,9 +709,13 @@ function loadWeather() {
                 console.log("Can't add weather for climbing id ", climb.id);
             }
         });
+        const fourHoursInMilliseconds = 4000 * 60 * 60;
+        setTimeout(() => loadWeather(), fourHoursInMilliseconds)
+
+    } else {
+        //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
+        setTimeout(() => loadWeather(), 1000)
     }
-    const fourHoursInMilliseconds = 4000 * 60 * 60;
-    setTimeout(() => loadWeather(), fourHoursInMilliseconds)
 }
 
 // need to handle history.onPopstate ie. user presses back
