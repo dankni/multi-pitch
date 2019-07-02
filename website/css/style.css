@@ -1125,6 +1125,13 @@ hr {
 }
 
 /** WEATHER **/
+.toggle-weather-off{
+  display:block;
+  height:24px;
+}
+.toggle-weather-off span{
+  display:none;
+}
 .weather{
   background-size: 36px;
   display: inline-block;

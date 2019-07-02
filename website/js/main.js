@@ -277,7 +277,7 @@ function publishCards(climbsArr) {
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
-                <span id="feature-toggle-weather" >
+                <span id="toggle-weather-${climbsArr[i].id}" class="toggle-weather-off">
                     <span class="what">Weather:</span>   
                     <span id="weather-${climbsArr[i].id}" class="weather"></span>
                     <span id="temp-${climbsArr[i].id}"></span>
@@ -699,10 +699,12 @@ function loadWeather() {
             try {
                 const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
                 const iconWeather = document.getElementById(`weather-${climb.id}`);
+                const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
                 const tempValues = document.getElementById(`temp-${climb.id}`);
                 iconWeather.classList.add(weatherData.currently.icon);
                 iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
                 tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
+                toggleWeather.classList.remove("toggle-weather-off");
             } catch (e) {
                 console.log("Can't add weather for climbing id ", climb.id);
             }
