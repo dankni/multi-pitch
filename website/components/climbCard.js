@@ -114,7 +114,7 @@ function getGraph(type, climbId, weatherData) {
             var chartClass = "temp";
         } else {
             var high = weather.find(h => h.type === 'rainyDays');
-            var chartClass = "rain";
+            var chartClass = "seasonal-rain";
         }
 
         var highArray = [];
