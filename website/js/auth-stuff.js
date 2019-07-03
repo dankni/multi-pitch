@@ -200,7 +200,8 @@ function checkIfUserIsRegistered() {
             .finally(_ => removeHash())
 
     } else {
-        console.log("You are not a registered user! to register go here: https://auth.multi-pitch.com/login?response_type=token&redirect_uri=https://www.multi-pitch.com&client_id=2ovgs6dl71ucnkr2f1n2bp829i")
+        console.log("Not a registered user! Register here: https://auth.multi-pitch.com/login?response_type=token&redirect_uri=https://www.multi-pitch.com&client_id=2ovgs6dl71ucnkr2f1n2bp829i")
     }
 
 }
+checkIfUserIsRegistered();

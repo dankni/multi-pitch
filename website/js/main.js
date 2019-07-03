@@ -314,8 +314,6 @@ function sortCards(sortBy, direction) {
         var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
         publishCards(climbsSorted);
     }
-
-    loadWeather();
 }
 
 /**
@@ -692,6 +690,26 @@ function drawArrowhead(context, from, to, radius, color) {
 function sThis(number) {
     return number * scale;
 }
+function loadNonEssential(type, url, essential){
+    const tag =  document.createElement(type);
+    tag.src = url;
+    if(essential == false){
+        tag.async = true;
+        tag.defer = true;
+    }
+    if(type == "link"){
+        tag.rel = "stylesheet";
+    }
+    document.getElementsByTagName("footer")[0].appendChild(tag);
+}
+function LoadAnalytics(){
+    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1", true);
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-123782847-1');
+    window.performance.mark('gta-end');
+}
 
 function loadWeather() {
     if (window.darkSkyWeatherData) {
@@ -724,21 +742,25 @@ window.onpopstate = function (event) {
 };
 
 window.onload = function () {
-    checkIfUserIsRegistered();
     window.performance.mark('onload-event-happened');
-    // Sorts and publishes the cards
+        // Sorts and publishes the cards
     var hp = false;
     document.getElementById('cardHolder') ? hp = true : hp = false;
     if (document.location.href.indexOf('/climbs/') === -1 && hp === true) {
         sortCards('length', 'DESC');
         window.performance.mark('all-climbs-loaded');
     }
+    if (geoLocationSupport === true && hp === true) {
+        document.getElementById('distance').style.display = "block";
+    }
     if (isCardTurned === true) {
         var overview = start.split('=');
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
-    if (geoLocationSupport === true && hp === true) {
-        document.getElementById('distance').style.display = "block";
-    }
+    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300", false);
+    loadNonEssential("link", "/css/fontello.css", false); 
+    loadNonEssential("script", "js/load-weather.js", true); 
+    loadNonEssential("script", "js/auth-stuff.js", true); 
+    LoadAnalytics();
 };

@@ -374,15 +374,18 @@ footer.page-footer a {
   .full-page-intro {
     height: 1000px;
   }
+  .not-tablet{
+    display:none;
+  }
   h1{
     font-size:1.6rem;
-	padding-top:1rem;
+    padding-top:1rem;
   }
   h3{
-	font-size:1.3rem;
+  font-size:1.3rem;
   }
   p{
-   font-size:.9rem;
+    font-size:.9rem;
   }
 }
 .page-footer {
@@ -545,7 +548,6 @@ footer.page-footer a {
   background-size: contain;
   background-repeat: no-repeat;
 }
-
 .ca3-scroll-down-link {
   cursor:pointer;
   height: 30px;
@@ -565,7 +567,11 @@ footer.page-footer a {
   -moz-animation:  ca3_fade_move_down 2s ease-in-out infinite;
   animation:     ca3_fade_move_down 2s ease-in-out infinite;
 }
-
+@media (max-width:740px) {
+  .ca3-scroll-down-link, .ca3-scroll-down-arrow {
+    display:none;
+  }
+}
 
 /*animated scroll arrow animation*/
 @-webkit-keyframes ca3_fade_move_down {

@@ -132,3 +132,4 @@ const fourHoursInMilliseconds = 4000 * 60 * 60;
 
 getWeatherAddScoreAndSaveInWindow();
 setInterval(getWeatherAddScoreAndSaveInWindow, fourHoursInMilliseconds);
+loadWeather();

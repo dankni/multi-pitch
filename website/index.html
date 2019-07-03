@@ -4,6 +4,15 @@
     <script>
         // START
         window.performance.mark('start');
+        if (window.performance) {
+            let performance = window.performance;
+            let performanceEntries = performance.getEntriesByType('paint');
+            performanceEntries.forEach( (performanceEntry, i, entries) => {
+                console.log("The time to " + performanceEntry.name + " was " + performanceEntry.startTime + " milliseconds.");
+            });
+        } else {
+            console.log("perf timing not suported");
+        }
     </script>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -54,7 +63,7 @@
 </head>
 <body id="bdy">
 
-    <a class="ca3-scroll-down-link ca3-scroll-down-arrow not-mobile"
+    <a class="ca3-scroll-down-link ca3-scroll-down-arrow not-mobile not-tablet"
        data-ca3_iconfont="ETmodules" data-ca3_icon=""
        onClick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>
     </a>
@@ -250,28 +259,6 @@
     </footer>
     <a onClick="hideTile(false)" class="close" id="close"></a>
     <div class="overlay" id="overlay"></div>
-
-    <script defer async src="js/auth-stuff.js"></script>
-    <script defer async src="js/load-weather.js"></script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script defer async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
-    <script defer async>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'UA-123782847-1');
-        window.performance.mark('gta-end');
-    </script>    
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
-    <link href="/css/fontello.css" rel="stylesheet" />
-    <script defer async>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'UA-123782847-1');
-        window.performance.mark('gta-end');
-    </script>    
     <script>
         window.performance.mark('html-end');
     </script>
