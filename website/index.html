@@ -4,15 +4,6 @@
     <script>
         // START
         window.performance.mark('start');
-        if (window.performance) {
-            let performance = window.performance;
-            let performanceEntries = performance.getEntriesByType('paint');
-            performanceEntries.forEach( (performanceEntry, i, entries) => {
-                console.log("The time to " + performanceEntry.name + " was " + performanceEntry.startTime + " milliseconds.");
-            });
-        } else {
-            console.log("perf timing not suported");
-        }
     </script>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">

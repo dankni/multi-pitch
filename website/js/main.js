@@ -690,20 +690,22 @@ function drawArrowhead(context, from, to, radius, color) {
 function sThis(number) {
     return number * scale;
 }
-function loadNonEssential(type, url, essential){
+function loadNonEssential(type, url){
     const tag =  document.createElement(type);
-    tag.src = url;
-    if(essential == false){
+    
+    if(type == "script"){
+        tag.src = url
         tag.async = true;
         tag.defer = true;
     }
     if(type == "link"){
         tag.rel = "stylesheet";
+        tag.href = url;
     }
     document.getElementsByTagName("footer")[0].appendChild(tag);
 }
 function LoadAnalytics(){
-    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1", true);
+    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1");
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
@@ -758,9 +760,9 @@ window.onload = function () {
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
-    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300", false);
-    loadNonEssential("link", "/css/fontello.css", false); 
-    loadNonEssential("script", "js/load-weather.js", true); 
-    loadNonEssential("script", "js/auth-stuff.js", true); 
+    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300");
+    loadNonEssential("link", "/css/fontello.css"); 
+    loadNonEssential("script", "js/load-weather.js"); 
+    loadNonEssential("script", "js/auth-stuff.js"); 
     LoadAnalytics();
 };
