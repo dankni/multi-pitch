@@ -302,7 +302,6 @@ function sortCards(sortBy, direction) {
             let climbWeather = darkSkyWeatherData.find(weatherData => weatherData.climbId === climb.id);
             return Object.assign({}, climb, {weatherScore: climbWeather ? climbWeather.weatherScore : Number.MIN_VALUE})
         })
-
     }
     if (sortBy === 'distance' && userLat === null) {
         document.getElementById('loading').style.display = "block";
@@ -314,6 +313,7 @@ function sortCards(sortBy, direction) {
         var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
         publishCards(climbsSorted);
     }
+    loadWeather();
 }
 
 /**
