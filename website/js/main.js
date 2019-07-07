@@ -760,7 +760,7 @@ window.onload = function () {
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
-    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300");
+    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,500&display=swap");
     loadNonEssential("link", "/css/fontello.css"); 
     loadNonEssential("script", "js/load-weather.js"); 
     loadNonEssential("script", "js/auth-stuff.js"); 

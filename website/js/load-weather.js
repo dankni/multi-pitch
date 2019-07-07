@@ -119,7 +119,7 @@ const weatherScoreFun = function (weatherData) {
         const howWetWasInThePastScore = howWetWasFun(data);
         const howWetIsInTheFuture = howWetIsInTheFutureFun(data);
 
-        const weatherScore = (currentlyScore - (howWetWasInThePastScore + howWetIsInTheFuture));
+        const weatherScore = (currentlyScore - (howWetWasInThePastScore + (howWetIsInTheFuture/2)));
         acc.push(Object.assign({}, data, {weatherScore}));
 
         return acc;

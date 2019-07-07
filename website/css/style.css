@@ -34,7 +34,7 @@ body {
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
   font-display: swap;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.5;
   color: #212529;
   background-color: #fff
@@ -49,7 +49,7 @@ button,hr {
   overflow: visible;
 }
 html {
-  font-family: sans-serif;
+  font-family: sans-serif
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -64,10 +64,10 @@ strong {
 }
 small {
   font-size: 80%;
-  font-weight: 400;
+  font-weight: 300;
 }
 a {
-  color: #007bff;
+  color: #0055B8;
   text-decoration: none;
   background-color: transparent;
   -webkit-text-decoration-skip: objects;
@@ -82,7 +82,7 @@ a:hover {
   -o-transition: all .2s ease-in-out;
   transition: all .2s ease-in-out;
   text-decoration: none;
-  color: #0056b3;
+  color: #002657;
   text-decoration: underline;
 }
 h1,h3,h4 {
@@ -227,7 +227,7 @@ button::-moz-focus-inner {
   }
 }
 .text-center {
-  text-align: center!important
+  text-align: center!important;
 }
 .view, .view .mask, .waves-effect {
   overflow: hidden;
@@ -236,7 +236,7 @@ button::-moz-focus-inner {
   background-color: rgba(0, 0, 0, .35)
 }
 .white-text {
-  color: #fff!important
+  color: #FFFFFF;
 }
 .card .card-body .card-text, .card .map-card-body .card-text {
     color: #4f4f4f;
@@ -245,9 +245,7 @@ button::-moz-focus-inner {
     font-size: .9rem;
     line-height: 1.5rem;
 }
-a,a:disabled:hover {
-  color: #0275d8
-}
+
 :disabled {
   pointer-events: none!important
 }
@@ -299,20 +297,6 @@ a,a:disabled:hover {
   padding-top: .7rem;
   padding-bottom: .7rem
 }
-.btn-indigo {
-  background-color: #3f51b5!important;
-  color: #fff!important
-}
-.btn-indigo:hover {
-  background-color: #4d5ec1
-}
-.btn-indigo:active,
-.btn-indigo:focus {
-  background-color: #252f69
-}
-.btn-indigo:not([disabled]):not(.disabled):active {
-  background-color: #252f69!important
-}
 .btn-outline-white {
   border: 2px solid #fff!important;
   background-color: rgba(255,255,255,0.1);
@@ -335,19 +319,6 @@ a,a:disabled:hover {
   -webkit-transition: .2s ease-in-out;
   -o-transition: .2s ease-in-out;
   transition: .2s ease-in-out
-}
-.badge {
-  color: #fff!important
-}
-.badge {
-  -webkit-border-radius: .125rem;
-  border-radius: .125rem
-}
-.badge-pill {
-  -webkit-border-radius: 10rem;
-  border-radius: 10rem;
-  padding-right: .6em;
-  padding-left: .6em
 }
 footer.page-footer {
   bottom: 0;
@@ -391,61 +362,50 @@ footer.page-footer a {
 .page-footer {
   background-color: #1C2331
 }
-@media only screen and (max-width:768px) {
-}  html,  body,  .view {
-    height: 100%;
-  }
-  @media (max-width: 740px) {
-    html,    body,    .view {
+@media (max-width: 740px) {
+  html, body, .view {
     height: 1000px;
-    }
   }
-  @media (min-width: 800px) and (max-width: 850px) {
-    html,    body,    .view {
+}
+@media (min-width: 800px) and (max-width: 850px) {
+  html, body, .view {
     height: 650px;
-    }
   }
-  .tile-holder{
-  position: relative;
-    width: 50%;
-  }
-  .tile{
+}
+.tile-holder{
+position: relative;
+  width: 50%;
+}
+.tile{
   display: block;
-    width: 100%;
-    height: auto;
-  }
-  .tile-hover{
+  width: 100%;
+  height: auto;
+}
+.tile-hover{
   position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    opacity: 0;
-    transition: .5s ease;
-    background-color: rgba(0,0,0,0.65);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: rgba(0,0,0,0.65);
   margin: 0 15px;
-  }
-  .tile-holder:hover .tile-hover {
+}
+.tile-holder:hover .tile-hover {
   opacity: 1;
-  }
-  .tile-hover p{
+}
+.tile-hover p{
   color: white;
-    font-size: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    text-align: center;
-  }
-  .climb-badges{
-  line-height:1.5em;
-  }
-  .badge-pill{
-  min-width:50px;
-  margin:0 30px 0 10px;
-  }
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
 
 /************************/
 /** LISTING PAGE CARDS **/
@@ -757,10 +717,11 @@ blockquote:before {
 }
 .open-tile {
   text-align: center;
-  color: #007bff;
+  color: #0055B8;
+  background:#FFFFFF;
   text-decoration: none;
   background-color: transparent;
-  font-weight: 300;
+  font-weight: 500;
   width: 14Rem;
   border: 1px solid #ccc;
   padding: 2px 15px;
