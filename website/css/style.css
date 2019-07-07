@@ -241,7 +241,7 @@ button::-moz-focus-inner {
 .card .card-body .card-text, .card .map-card-body .card-text {
     color: #4f4f4f;
     margin-top: .8rem;
-    font-weight: 300;
+    font-weight: 400;
     font-size: .9rem;
     line-height: 1.5rem;
 }
@@ -721,8 +721,8 @@ blockquote:before {
   background:#FFFFFF;
   text-decoration: none;
   background-color: transparent;
-  font-weight: 500;
-  width: 14Rem;
+  font-weight: 400;
+  width: 14rem;
   border: 1px solid #ccc;
   padding: 2px 15px;
   margin: 0 auto 1rem;
