@@ -1118,6 +1118,9 @@ hr {
 .partly-cloudy-day{
   background-image: url(/img/icons/weather/partly-cloudy-day.svg);
 }
+.cloudy{
+  background-image: url(/img/icons/weather/cloudy.svg);
+}
 .fog{
   background-image: url(/img/icons/weather/fog.svg);
 }
