@@ -29,14 +29,14 @@ function getWeatherAddScoreAndSaveInWindow() {
             console.log("Successfully download weather data from:", getWeatherUrl);
             window.darkSkyWeatherData = jsonData
         })
-        .catch(err => console.error("Failed download weather data from:", err))
+        .catch(err => console.warn("Failed download weather:", err))
 }
 
 const weatherType = {
     "partly-cloudy-day": 0.20, // 20, 0.2
-    "clear-day": 0.15,  //  15 0.15
-    "clear-night": 0.15, // 15
-    "cloudy": 0.15,      // 15
+    "clear-day": 0.18,  //  15 0.15
+    "clear-night": 0.17, // 15
+    "cloudy": 0.10,      // 15
     "partly-cloudy-night": 0.15, // 15
     "wind": 0.08, // 8
     "fog": 0.07,// 7

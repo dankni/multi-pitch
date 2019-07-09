@@ -20,7 +20,6 @@ if ("geolocation" in navigator) {
     geoLocationSupport = true;
 }
 
-
 /**
  THE SLIDER FUNCTION FOR FILTERS
  **/
@@ -714,7 +713,7 @@ function LoadAnalytics(){
 }
 
 function loadWeather() {
-    if (window.darkSkyWeatherData) {
+    if (window.darkSkyWeatherData && document.getElementById('cardHolder')) {
         climbsData.climbs.map(climb => {
             try {
                 const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
@@ -745,8 +744,8 @@ window.onpopstate = function (event) {
 
 window.onload = function () {
     window.performance.mark('onload-event-happened');
-        // Sorts and publishes the cards
     var hp = false;
+    // Check it's the homepage
     document.getElementById('cardHolder') ? hp = true : hp = false;
     if (document.location.href.indexOf('/climbs/') === -1 && hp === true) {
         sortCards('length', 'DESC');
@@ -760,9 +759,9 @@ window.onload = function () {
         var cardToLoad = overview[1];
         showTile(cardToLoad);
     }
-    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,500&display=swap");
+    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css"); 
-    loadNonEssential("script", "js/load-weather.js"); 
-    loadNonEssential("script", "js/auth-stuff.js"); 
+    loadNonEssential("script", "/js/load-weather.js"); 
+//    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();
 };

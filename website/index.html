@@ -4,10 +4,10 @@
     <script>
         window.performance.mark('start');
     </script>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <link rel="canonical" href="https://www.multi-pitch.com/" />
     
     <link rel="preconnect" href="https://s3-eu-west-1.amazonaws.com/" />
@@ -29,23 +29,23 @@
     <script async src="js/main.js"></script>
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
 
     <!-- Sharing Tags -->
     <meta property="og:title" content="The best multi-pitch rock climbs" />
@@ -54,7 +54,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.multi-pitch.com/" />
     <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg" />
-    <meta property="og:image:type" content="image/jpg">
+    <meta property="og:image:type" content="image/jpg" />
 </head>
 <body id="bdy">
 
@@ -154,7 +154,7 @@
                             <h4>Filter &amp; Sort Climbs</h4>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>Grade </label>
+                                    <label for="gradeRange">Grade </label>
                                     <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1"
                                            oninput="showVal(this.value, 'grade')" /><br />
                                     <p id="grade" class="current-values">
@@ -162,7 +162,7 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Height </label>
+                                    <label for="heightRange">Height </label>
                                     <input id="heightRange" type="range" multiple value="50,600" min="50" max="600" step="5"
                                            oninput="showVal(this.value, 'height')" /><br />
                                     <p id="height" class="current-values">
@@ -170,7 +170,7 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Approch </label>
+                                    <label for="approchRange">Approch </label>
                                     <input id="approchRange" type="range" multiple value="0,200" min="0" max="200" step="10"
                                            oninput="showVal(this.value, 'approch')" /><br />
                                     <p id="pitches" class="current-values">

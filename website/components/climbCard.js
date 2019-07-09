@@ -106,6 +106,9 @@ function getReferanceInfo(referanceLines, climb) {
 function getGraph(type, climbId, weatherData) {
 
     try {
+        var date = new Date;
+        var curentMonth = date.getMonth();
+        var bold = "";
         var weather = weatherData.weatherLines.filter(w => w.climbId === climbId);
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -141,6 +144,7 @@ function getGraph(type, climbId, weatherData) {
         var tempInfo = `<ul class="chart ${chartClass}">`;
 
         for (let i = 0; i < 12; i++) {
+            i === curentMonth ? bold = "font-weight:900;" : bold = "";
             if (minTemprature < -8) {
                 // if its really cold adjust the graph a lot
                 var lowTemp = (lowArray[i] + 16) / graphHeight * 100;
@@ -158,7 +162,7 @@ function getGraph(type, climbId, weatherData) {
             tempInfo += `
   	  <li>
 	    ${highArray[i]}
-	    <span style="height:${highTemp}%" title="${months[i]}"></span>`;
+	    <span style="height:${highTemp}%;${bold}"  title="${months[i]}"></span>`;
             if (type === "temperature") {
                 tempInfo += `<span style="height:${lowTemp}%;background-color:rgba(0,0,0,0);">${lowArray[i]}</span>`;
             }

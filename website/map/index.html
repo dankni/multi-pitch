@@ -1,21 +1,25 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
 
     <title>Multi-pitch Climbs around Europe</title>
+    <meta name="description" content="Global view of Multi-pitch Rock climbs in Europe & the rest of the world. Mainly trad climbing." />
+
     <link href="../css/bootstrap-grid.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
-    <link href="../css/owfont-regular.css" rel="stylesheet" />
-    <script src="../data/data.js"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+<!-- remove for SVG--    <link href="../css/owfont-regular.css" rel="stylesheet" /> -->
+    <script async src="../data/data.js"></script>
+    <script async src="../js/main.js"></script>
+
+    <link rel="stylesheet" async href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+    <script async src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
             integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
             crossorigin=""></script>
 
@@ -58,23 +62,23 @@
     </style>
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="57x57" href="../img/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="../img/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="../img/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="../img/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="../img/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="../img/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="../img/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="../img/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="../img/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="../img/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png">
-    <link rel="manifest" href="../manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="../img/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" sizes="57x57" href="../img/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="../img/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="../img/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="../img/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="../img/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="../img/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="../img/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="../img/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../img/favicon/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="../img/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="../manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="../img/favicon/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
 </head>
 <body>
     <!-- Navbar -->
@@ -144,18 +148,6 @@
                 .bindPopup(climbs[i][0])
                 .addTo(map);
         }
-
-        /*
-                accessToken: 'pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw'
-        */
-    </script>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
-    <script defer>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'UA-123782847-1');
     </script>
 </body>
 </html>
