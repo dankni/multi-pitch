@@ -154,9 +154,10 @@
                             <h4>Filter &amp; Sort Climbs</h4>
                             <div class="row">
                                 <div class="col-md-4">
+                                    <span id="lastUpdate" style="display:none;"></span>
                                     <label for="gradeRange">Grade </label>
                                     <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1"
-                                           oninput="showVal(this.value, 'grade')" /><br />
+                                           oninput="showVal(this.value, 'grade');trackFilter('grade');" /><br />
                                     <p id="grade" class="current-values">
                                         <span id="grade1">Diff</span> to <span id="grade2">E1</span>
                                     </p>
@@ -179,14 +180,14 @@
                                 </div>
                                 <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
-                                    <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();">
+                                    <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
+                                            ga('send', 'event', 'sort-and-filter', 'sort', 'sort', this.value);">
                                         <option value="length,DESC">Longest Climbs First</option>
                                         <option value="length,ASC">Shortest Climbs First</option>
                                         <option value="dataGrade,ASC">Easiest Climbs First</option>
                                         <option value="dataGrade,DESC">Hardest Climbs First</option>
                                         <option id="distance" style="display: none;" value="distance,ASC">Closest Climbs First</option>
                                         <option id="goodWeather" value="weatherScore,DESC">Good Weather</option>
-                                    </select>
                                     </select>
                                 </div>
                             </div>

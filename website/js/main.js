@@ -183,6 +183,24 @@ function filterCards() {
     }
 }
 
+function trackFilter(filterType){
+    var lastUpdate = document.getElementById("lastUpdate");
+    lastUpdate.innerHTML = new Date().getTime();
+    setTimeout(function(){
+        if (parseInt(lastUpdate.innerHTML) + 1999 < new Date().getTime()){
+            let grade = parseInt(document.getElementById('gradeRange').value);
+            let height = parseInt(document.getElementById('heightRange').value);
+            let approch = parseInt(document.getElementById('approchRange').value);
+
+            ga(
+                'send', 'event', 
+                'sort-and-filter', 'filter', filterType, 
+                "g-" + grade + ",h-" + height + ",a-" + approch
+            );
+        }
+    }, 2000);
+}
+
 /**
  FUNCTION TO SORT MULTIDIMENSIONAL ARRAYS
  **/
@@ -691,7 +709,6 @@ function sThis(number) {
 }
 function loadNonEssential(type, url){
     const tag =  document.createElement(type);
-    
     if(type == "script"){
         tag.src = url
         tag.async = true;
@@ -704,12 +721,16 @@ function loadNonEssential(type, url){
     document.getElementsByTagName("footer")[0].appendChild(tag);
 }
 function LoadAnalytics(){
+    window.performance.mark('gta-start');
     loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1");
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'UA-123782847-1');
-    window.performance.mark('gta-end');
+    setTimeout(function(){
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-123782847-1');
+        window.performance.mark('gta-end');
+    }, 1000);
+
 }
 
 function loadWeather() {
@@ -730,7 +751,6 @@ function loadWeather() {
         });
         const fourHoursInMilliseconds = 4000 * 60 * 60;
         setTimeout(() => loadWeather(), fourHoursInMilliseconds)
-
     } else {
         //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
         setTimeout(() => loadWeather(), 1000)
