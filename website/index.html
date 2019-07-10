@@ -165,7 +165,7 @@
                                 <div class="col-md-4">
                                     <label for="heightRange">Height </label>
                                     <input id="heightRange" type="range" multiple value="50,600" min="50" max="600" step="5"
-                                           oninput="showVal(this.value, 'height')" /><br />
+                                           oninput="showVal(this.value, 'height');trackFilter('height');" /><br />
                                     <p id="height" class="current-values">
                                         <span id="height1">50</span>m to <span id="height2">600</span>m
                                     </p>
@@ -173,15 +173,15 @@
                                 <div class="col-md-4">
                                     <label for="approchRange">Approch </label>
                                     <input id="approchRange" type="range" multiple value="0,200" min="0" max="200" step="10"
-                                           oninput="showVal(this.value, 'approch')" /><br />
-                                    <p id="pitches" class="current-values">
+                                           oninput="showVal(this.value, 'approch');trackFilter('approch');" /><br />
+                                    <p id="approch" class="current-values">
                                         <span id="approch1">0</span> to <span id="approch2">200</span> mins
                                     </p>
                                 </div>
                                 <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
                                     <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
-                                            ga('send', 'event', 'sort-and-filter', 'sort', 'sort', this.value);">
+                                            ga(gtagId+'.send', 'event', 'sort-and-filter', 'sort', this.value, 0);">
                                         <option value="length,DESC">Longest Climbs First</option>
                                         <option value="length,ASC">Shortest Climbs First</option>
                                         <option value="dataGrade,ASC">Easiest Climbs First</option>

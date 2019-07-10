@@ -68,7 +68,7 @@ jobs:
           command: aws s3 cp release.txt s3://www.multi-pitch.com
       - run:
           name: Invalidate CloudFront
-          command: aws cloudfront create-invalidation --distribution-id E1WJUCQRX8PD1F --path "/*" "/*.*"
+          command: aws cloudfront create-invalidation --distribution-id E1WJUCQRX8PD1F --path "/*"
       - run:
           name: Set Image Cache MaxAge
           command: aws s3 cp s3://www.multi-pitch.com/ s3://www.multi-pitch.com/ --exclude "*" --include "*.jpg" --include "*.webp"  --include "*.png" --recursive --metadata-directive REPLACE --cache-control max-age=2629746

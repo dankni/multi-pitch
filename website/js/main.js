@@ -3,6 +3,7 @@ window.performance.mark('start-js-read');
 /**
  GLOBAL VARIABLES
  **/
+const gtagId = 'gtag_UA_123782847_1'; // needed per event for some reason
 const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
@@ -188,15 +189,11 @@ function trackFilter(filterType){
     lastUpdate.innerHTML = new Date().getTime();
     setTimeout(function(){
         if (parseInt(lastUpdate.innerHTML) + 1999 < new Date().getTime()){
-            let grade = parseInt(document.getElementById('gradeRange').value);
-            let height = parseInt(document.getElementById('heightRange').value);
-            let approch = parseInt(document.getElementById('approchRange').value);
-
-            ga(
-                'send', 'event', 
-                'sort-and-filter', 'filter', filterType, 
-                "g-" + grade + ",h-" + height + ",a-" + approch
-            );
+            let grade = document.getElementById('grade').innerText;
+            let height = document.getElementById('height').innerText;
+            let approch = document.getElementById('approch').innerText;
+            let label = "G = " + grade + " | H = " + height + " | A = " + approch;
+            ga(gtagId + '.send', 'event', 'sort-and-filter', filterType + '-filter', label, 0);
         }
     }, 2000);
 }
@@ -727,7 +724,7 @@ function LoadAnalytics(){
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'UA-123782847-1');
+        gtag('config', 'UA-123782847-1'); // variable also declared in the global variable scope at the top
         window.performance.mark('gta-end');
     }, 1000);
 
