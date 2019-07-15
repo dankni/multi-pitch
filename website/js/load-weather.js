@@ -47,6 +47,7 @@ const weatherType = {
 
 const temperatureScoreFn = function (tempMax, tempMin) {
     const temp = (tempMax - tempMin) / 2;
+    // Make this a case statement
     if (temp < 0) {
         return 0.01;
     }

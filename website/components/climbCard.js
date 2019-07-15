@@ -1,3 +1,7 @@
+if(typeof gtagId === 'undefined'){
+  var gtagId = 'gtag_UA_123782847_1'; // needed per event for some reason
+} 
+
 function getGuidebook(guideBooks, climb) {
     guideBookModule = '';
     if(Array.isArray(guideBooks) && guideBooks.length){
@@ -18,7 +22,7 @@ function getGuidebook(guideBooks, climb) {
                                 <strong>${guideBooks[i].title}</strong> - pg. ${guideBooks[i].pg} <br />
                                 ${guideBooks[i].description}
                                 <br />
-                                <a href="${guideBooks[i].link}" onClick="gtag('event', 'guidebook-link', {'event_category':'climb-detail', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value':${guideBooks[i].rrp}});" target="blank">Availible Here</a>
+                                <a href="${guideBooks[i].link}" onClick="ga('${gtagId}.send', 'event', 'external-link', 'guidebook', 'ID = ${climb.id} | B = ${guideBooks[i].title}', '${guideBooks[i].rrp}');" target="blank">Availible Here</a>
                                 R.R.P. <strong>£ ${guideBooks[i].rrp}</strong><br />
                                 <small>ISBN: ${guideBooks[i].isbn} </small>
                             </p>
@@ -176,34 +180,65 @@ function getGraph(type, climbId, weatherData) {
     return tempInfo;
 }
 
-function getWeather(theId, weatherData) {
+function getWeather(theId, weatherData, climb) {
     try {
         var temperature = getGraph("temperature", theId, weatherData);
         if (temperature == '') {
             return '';
         }
         var rain = getGraph("rain", theId, weatherData);
+        if (climb.seepage >= 1) {
+            var seepage = `The climb ${climb.routeName} on ${climb.cliff} suffers from seepage 
+            and will need time to dry out after rain. Rock climbing after heavy rainfall could 
+            be a slimy unpleasnt experiance.`;
+        }
         var weatherInfo = `
       <hr />
-      <section class="row">
-        <div class="col">
-          <h3>Seasonal Weather Infomation</h3>
-            <p>
-                NOTE: <em>The weather data is based off the closest weather station we could find to the crag. 
-                This could be quite far away and at a darmatically different elevation. 
-                This means it could be considerably colder or wetter on some mountain climbs.</em>
-            </p>
-            <p>
-                Below shows the estimated average number of rainy days in the month that had more than 1mm rainfall:
-            </p>
-            ${rain}
-            <br />
-            <p>
-                Estimated average high and low temperature in degrees Celsius for the given month below. 
-                Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
-                Plan accordingly! 
-            </p>
-            ${temperature}
+      <section class="row" id="weather">
+        <div class="col-12">
+          <h3>Weather & Local Conditions</h3>
+          <p>${seepage}</p>
+          <aside style="margin-bottom:2.5rem;">
+            <small>
+            Please Note: <em>The weather data is based off the closest weather station we could find to the crag. 
+            This could be quite far away and at a darmatically different elevation. 
+            This means it could be considerably colder or wetter on some mountain climbs.</em>
+            </small>
+          </aside>
+          
+        </div>
+        <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
+          <h4>Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
+          <p class="min-height">
+            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>,
+            with temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c. 
+            Below is the estimated daily amount of rain.
+          </p>
+          <ul class="chart">
+            <li id="offsetMinus3"><span style="height:0%;" title="-3 days"></span></li>
+            <li id="offsetMinus2"><span style="height:0%;" title="-2 days"></span></li>
+            <li id="offsetMinus1"><span style="height:0%;" title="Yesterday"></span></li>
+            <li id="currently"><span style="height:0%;font-weight:900;" title="Today"></span></li>
+            <li id="offsetPlus1"><span style="height:0%;" title="Tomorrow"></span></li>
+            <li id="offsetPlus2"><span style="height:0%;" title="+2 days"></span></li>
+            <li id="offsetPlus3"><span style="height:0%;" title="+3 days"></span></li>
+          </ul>
+          <p class="credit" style="margin-top:15px;">Weather by Dark Sky API</p>
+        </div>
+        <div class="col-12" id="seasonalWeather">
+          <h4>Seasonal Weather Infomation</h4>
+          <p class="min-height">
+            Below shows the estimated average number of rainy days in the month that had more than 
+            1mm rainfall or snow:
+          </p>
+          ${rain}
+          <br />
+          <p>
+            Estimated average high and low temperature in degrees Celsius for the given month below. 
+            Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
+            Plan accordingly! 
+          </p>
+          ${temperature}
         </div>
       </section>`;
         return weatherInfo;
@@ -277,35 +312,6 @@ function getRouteTopo(topoImg) {
             Image Credit: <a href="${topoImg.atributionURL}" target="blank">${topoImg.attributionText}</a>
         </p>`;
     return routeTopo;
-}
-
-function getZoomModule(zoomImg, climb) {
-    if (typeof zoomImg !== 'undefined') {
-        try {
-            var zoomImgModule = `
-        <div class="row">
-            <div class="col-sm-8">
-                <p>Detailed Crag Image With Deep Zoom</p>
-                <p class="smaller">
-                    The climb ${climb.routeName} has a zoomable image of ${climb.cliff} 
-                    taken by multi-pitch.com. It can be used for those who want to understand
-                    the crag in more detail.
-                </p>
-            </div>
-            <div class="col-sm-4">
-                <a class="open-tile" href="/crag-zoom/?climb=${climb.id}" target="blank" 
-                    style="width:100%;margin-top:35px;">
-                    Open ${climb.cliff} super zoom
-                </a>
-            </div>
-        </div>`;
-        } catch (e) {
-            zoomImgModule = '';
-        }
-    } else {
-        zoomImgModule = '';
-    }
-    return zoomImgModule;
 }
 
 function getMap(mapImg, latLonLocation) {
@@ -385,15 +391,12 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
 
     var topoImg = climbImgs.find(img => img.type === 'topo');
     var mapImg = climbImgs.find(img => img.type === 'map');
-    var zoomImg = climbImgs.find(img => img.type === 'super');
-
     var routeTopoModule = getRouteTopo(topoImg);
-    var zoomModule = getZoomModule(zoomImg, climb);
     var approachInfoModule = getApprochInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
     var referanceModule = getReferanceInfo(referanceLines, climb);
     var guideBookModule = getGuidebook(guideBooks, climb);
-    var weatherInfoModule = getWeather(climb.id, weatherData);
+    var weatherInfoModule = getWeather(climb.id, weatherData, climb);
     var mapModule = getMap(mapImg, climb.geoLocation);
 
     var folderName = "".concat(climb.routeName, '-on-', climb.cliff)
@@ -461,22 +464,22 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                         <a  id="whatsappShare"
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
-                            onClick="gtag('event', 'social-share', {'event_category':'whatsapp', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            onClick="ga('${gtagId}.send', 'event', 'social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-whatsapp"></i></a>
                         <a
                             href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
-                            onClick="gtag('event', 'social-share', {'event_category':'twitter', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                            onClick="ga('${gtagId}.send', 'event', 'social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-twitter"></i></a>
                         <a
                             href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
-                                onClick="gtag('event', 'social-share', {'event_category':'facebook', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                                onClick="ga('${gtagId}.send', 'event', 'social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-facebook"></i></a>
                         <a
                             href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
-                                onClick="gtag('event', 'social-share', {'event_category':'email', 'event_label':'${climb.routeName} on ${climb.cliff}', 'value': 0});">
+                                onClick="ga('${gtagId}.send', 'event', 'social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-mail"></i></a>
                     </div>
                 </div>
@@ -497,7 +500,6 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                         </aside>
                     </div>
                 </section>
-            <!--    ${zoomModule} -->
                 ${approachInfoModule}
                 ${pitchInfoModule}
                 ${guideBookModule}

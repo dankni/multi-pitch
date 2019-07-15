@@ -3,7 +3,9 @@ window.performance.mark('start-js-read');
 /**
  GLOBAL VARIABLES
  **/
-const gtagId = 'gtag_UA_123782847_1'; // needed per event for some reason
+if(typeof gtagId === 'undefined'){
+    var gtagId = 'gtag_UA_123782847_1'; // needed per event for some reason
+} 
 const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
@@ -185,7 +187,7 @@ function filterCards() {
 }
 
 function trackFilter(filterType){
-    var lastUpdate = document.getElementById("lastUpdate");
+    let lastUpdate = document.getElementById("lastUpdate");
     lastUpdate.innerHTML = new Date().getTime();
     setTimeout(function(){
         if (parseInt(lastUpdate.innerHTML) + 1999 < new Date().getTime()){
@@ -397,6 +399,7 @@ function showTile(climbId) {
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climb.cliff + " - " + climb.routeName;
     tryLoadTopo(climbId);
+    loadCurrentWeatherModule(climbId);
 }
 
 /**
@@ -717,6 +720,10 @@ function loadNonEssential(type, url){
     }
     document.getElementsByTagName("footer")[0].appendChild(tag);
 }
+
+/**
+ LOADS THE ANALYTICS AFTER THE PAGE LOADS
+ **/
 function LoadAnalytics(){
     window.performance.mark('gta-start');
     loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1");
@@ -729,30 +736,77 @@ function LoadAnalytics(){
     }, 1000);
 
 }
-
+/**
+ LOADS THE WEATHER
+ **/
 function loadWeather() {
+    const fourHoursInMilliseconds = 4000 * 60 * 60;
     if (window.darkSkyWeatherData && document.getElementById('cardHolder')) {
         climbsData.climbs.map(climb => {
             try {
-                const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
-                const iconWeather = document.getElementById(`weather-${climb.id}`);
-                const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
-                const tempValues = document.getElementById(`temp-${climb.id}`);
-                iconWeather.classList.add(weatherData.currently.icon);
-                iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
-                tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
-                toggleWeather.classList.remove("toggle-weather-off");
+                if(climb.status === "publish"){
+                    const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
+                    const iconWeather = document.getElementById(`weather-${climb.id}`);
+                    const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
+                    const tempValues = document.getElementById(`temp-${climb.id}`);
+                    iconWeather.classList.add(weatherData.currently.icon);
+                    iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
+                    tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
+                    toggleWeather.classList.remove("toggle-weather-off");
+                }
             } catch (e) {
                 console.log("Can't add weather for climbing id ", climb.id);
             }
         });
-        const fourHoursInMilliseconds = 4000 * 60 * 60;
+        setTimeout(() => loadWeather(), fourHoursInMilliseconds)
+    } else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
+        try {
+          loadCurrentWeatherModule();
+        } catch (e) {
+          console.log("can't get weather for this climb");
+        }
         setTimeout(() => loadWeather(), fourHoursInMilliseconds)
     } else {
         //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
         setTimeout(() => loadWeather(), 1000)
     }
+    
 }
+/**
+ LOADS FULL WEATHER ON BACK OF CARD
+ **/
+function loadCurrentWeatherModule(id){
+    if(id) {
+        var climbid = id;
+    } else {
+        var climbid = parseInt(document.getElementById('climbIdMeta').content);
+    }
+    try{
+        const dsWeather = window.darkSkyWeatherData.find(data => data.climbId === climbid);
+        document.getElementById("currentWeather").style.display = "block";
+        document.getElementById("seasonalWeather").classList.add("col-lg-6");
+        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3"];
+        document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
+        document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
+        document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
+        document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
+        document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
+
+        for(let i = 0; i < currentWeather.length; i++){
+          let listItem = document.getElementById(currentWeather[i]);
+          let rain = dsWeather[currentWeather[i]].precipIntensity;
+          let height = rain > 3 ? 100 : rain * 33.3;
+          let label = document.createTextNode(rain.toFixed(1) + "mm");
+          listItem.firstElementChild.style.height = height + "%";
+        //  listItem.firstElementChild.style.background = `rgba(34, 167, 240, ${dsWeather[currentWeather[i]].precipProbability})`;
+          listItem.prepend(label);
+        }
+
+    } catch (e) {
+       console.log("Can't add weather for climbing id ", climb.id);
+    }
+}
+
 
 // need to handle history.onPopstate ie. user presses back
 window.onpopstate = function (event) {
@@ -764,7 +818,7 @@ window.onload = function () {
     var hp = false;
     // Check it's the homepage
     document.getElementById('cardHolder') ? hp = true : hp = false;
-    if (document.location.href.indexOf('/climbs/') === -1 && hp === true) {
+    if (document.location.href.includes('/climbs/') === false && hp === true) {
         sortCards('length', 'DESC');
         window.performance.mark('all-climbs-loaded');
     }

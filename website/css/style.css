@@ -967,6 +967,14 @@ hr {
 .temp span {
   background: rgba(255, 212, 58, 0.8);
 }
+.min-height {
+  min-height: 75px;
+}
+@media (max-width:991px){
+  .min-height{
+    min-height: 40px;
+  }
+}
 .ie-warn {
   display:none;
   height:40px;
@@ -1108,6 +1116,12 @@ hr {
   margin-top: -8px;
   margin-left: -8px;
   vertical-align: text-bottom;
+}
+.wLarge{
+  background-size: 44px;
+  height: 38px;
+  width: 38px;
+  margin: -12px 0 0 0;
 }
 .rain{
   background-image: url(/img/icons/weather/rain.svg);
