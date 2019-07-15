@@ -188,16 +188,18 @@ function getWeather(theId, weatherData, climb) {
         }
         var rain = getGraph("rain", theId, weatherData);
         if (climb.seepage >= 1) {
-            var seepage = `The climb ${climb.routeName} on ${climb.cliff} suffers from seepage 
+            var seepage = `<p>The climb ${climb.routeName} on ${climb.cliff} suffers from seepage 
             and will need time to dry out after rain. Rock climbing after heavy rainfall could 
-            be a slimy unpleasnt experiance.`;
+            be a slimy unpleasnt experiance.</p>`;
+        } else {
+            var seepage = "";
         }
         var weatherInfo = `
       <hr />
       <section class="row" id="weather">
         <div class="col-12">
           <h3>Weather & Local Conditions</h3>
-          <p>${seepage}</p>
+          ${seepage}
           <aside style="margin-bottom:2.5rem;">
             <small>
             Please Note: <em>The weather data is based off the closest weather station we could find to the crag. 
