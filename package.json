@@ -24,12 +24,12 @@
   "homepage": "https://github.com/dankni/multi-pitch#readme",
   "dependencies": {
     "cwebp": "^2.0.3",
-    "read-excel-file": "^2.0.6"
+    "read-excel-file": "^2.0.10"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
-    "nightmare": "^3.0.1",
+    "nightmare": "^3.0.2",
     "node-static": "^0.7.11",
     "webp-converter": "^2.2.2"
   }

@@ -53,7 +53,7 @@ describe('Load the website page', function () {
                 .click('div[data-test="climbid-' + randomCard.id + '"] a.open-tile')
                 .wait('#climbCardDetails')
                 .evaluate(function () {
-                    return document.querySelector("#overlay .big-card-body h1").textContent.trim();
+                    return document.querySelector("#climbCardDetails .big-card-body h1").textContent.trim();
                 })
                 .end()
                 .then(function (cliffAndRouteName) {
@@ -61,7 +61,7 @@ describe('Load the website page', function () {
                     done()
                 })
                 .catch(done)
-        });
+});
 
         it('Make sure the share buttons have the correct URL', done => {
             var randomCard = climbs.climbsData.climbs[1];
