@@ -44,8 +44,9 @@ const translationsKeys = [{
 }];
 
 
-async function readExcelAndTranformInJavascript(excelFile, sheet) {
-    var allRows = await readXlsxFile(fs.createReadStream(excelFile), sheet);
+async function readExcelAndTranformInJavascript(excelFile, sheetNo) {
+    var sheetOb = { sheet : sheetNo }
+    var allRows = await readXlsxFile(fs.createReadStream(excelFile), sheetOb);
     var headers = allRows.shift();
 
     return allRows.map(row => {
