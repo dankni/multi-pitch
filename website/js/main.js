@@ -707,6 +707,9 @@ function drawArrowhead(context, from, to, radius, color) {
 function sThis(number) {
     return number * scale;
 }
+/**
+ ADDS SCRIPTS & CSS TO THE PAGE FOOTER
+ **/
 function loadNonEssential(type, url){
     const tag =  document.createElement(type);
     if(type == "script"){
@@ -740,71 +743,71 @@ function LoadAnalytics(){
  LOADS THE WEATHER
  **/
 function loadWeather() {
-    const fourHoursInMilliseconds = 4000 * 60 * 60;
-    if (window.darkSkyWeatherData && document.getElementById('cardHolder')) {
-        climbsData.climbs.map(climb => {
-            try {
-                if(climb.status === "publish"){
-                    const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
-                    const iconWeather = document.getElementById(`weather-${climb.id}`);
-                    const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
-                    const tempValues = document.getElementById(`temp-${climb.id}`);
-                    iconWeather.classList.add(weatherData.currently.icon);
-                    iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
-                    tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
-                    toggleWeather.classList.remove("toggle-weather-off");
-                }
-            } catch (e) {
-                console.log("Can't add weather for climbing id ", climb.id);
-            }
-        });
-        setTimeout(() => loadWeather(), fourHoursInMilliseconds)
-    } else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
-        try {
-          loadCurrentWeatherModule();
-        } catch (e) {
-          console.log("can't get weather for this climb");
-        }
-        setTimeout(() => loadWeather(), fourHoursInMilliseconds)
-    } else {
-        //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
-        setTimeout(() => loadWeather(), 1000)
+  const fourHoursInMilliseconds = 4000 * 60 * 60;
+  if (window.darkSkyWeatherData && document.getElementById('cardHolder')) {
+    climbsData.climbs.map(climb => {
+    try {
+      if(climb.status === "publish"){
+        const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
+        const iconWeather = document.getElementById(`weather-${climb.id}`);
+        const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
+        const tempValues = document.getElementById(`temp-${climb.id}`);
+        iconWeather.classList.add(weatherData.currently.icon);
+        iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
+        tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
+        toggleWeather.classList.remove("toggle-weather-off");
+      }
+    } catch (e) {
+      console.log("Can't add weather for climbing id ", climb.id);
     }
-    
+  });
+  setTimeout(() => loadWeather(), fourHoursInMilliseconds)
+} else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
+  try {
+    loadCurrentWeatherModule();
+  } catch (e) {
+    console.log("can't get weather for this climb");
+  }
+    setTimeout(() => loadWeather(), fourHoursInMilliseconds)
+  } else {
+    //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
+    setTimeout(() => loadWeather(), 1000)
+  }
 }
 /**
  LOADS FULL WEATHER ON BACK OF CARD
  **/
 function loadCurrentWeatherModule(id){
-    if(id) {
-        var climbid = id;
-    } else {
-        var climbid = parseInt(document.getElementById('climbIdMeta').content);
-    }
-    try{
-        const dsWeather = window.darkSkyWeatherData.find(data => data.climbId === climbid);
-        document.getElementById("currentWeather").style.display = "block";
-        document.getElementById("seasonalWeather").classList.add("col-lg-6");
-        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3"];
-        document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
-        document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
-        document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
-        document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
-        document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
+  if(id) {
+    var climbid = id;
+  } else {
+    var climbid = parseInt(document.getElementById('climbIdMeta').content);
+  }
+  try{
+    const dsWeather = window.darkSkyWeatherData.find(data => data.climbId === climbid);
+    if(dsWeather != null){
+      document.getElementById("currentWeather").style.display = "block";
+      document.getElementById("seasonalWeather").classList.add("col-lg-6");
+      const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3"];
+      document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
+      document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
+      document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
+      document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
+      document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
 
-        for(let i = 0; i < currentWeather.length; i++){
-          let listItem = document.getElementById(currentWeather[i]);
-          let rain = dsWeather[currentWeather[i]].precipIntensity;
-          let height = rain > 3 ? 100 : rain * 33.3;
-          let label = document.createTextNode(rain.toFixed(1) + "mm");
-          listItem.firstElementChild.style.height = height + "%";
-        //  listItem.firstElementChild.style.background = `rgba(34, 167, 240, ${dsWeather[currentWeather[i]].precipProbability})`;
-          listItem.prepend(label);
-        }
-
-    } catch (e) {
-       console.log("Can't add weather for climbing id ", climb.id);
+      for(let i = 0; i < currentWeather.length; i++){
+        let listItem = document.getElementById(currentWeather[i]);
+        let rain = dsWeather[currentWeather[i]].precipIntensity;
+        let height = rain > 3 ? 100 : rain * 33.3;
+        let label = document.createTextNode(rain.toFixed(1) + "mm");
+        listItem.firstElementChild.style.height = height + "%";
+        // listItem.firstElementChild.style.background = `rgba(34, 167, 240, ${dsWeather[currentWeather[i]].precipProbability})`;
+        listItem.prepend(label);
+      }
     }
+  } catch (e) {
+    console.log("Can't add weather for climbing id ", climb.id);
+  }
 }
 
 
