@@ -745,7 +745,8 @@ function LoadAnalytics(){
 function loadWeather() {
   const fourHoursInMilliseconds = 4000 * 60 * 60;
   if (window.darkSkyWeatherData && document.getElementById('cardHolder')) {
-    climbsData.climbs.map(climb => {
+    console.log(window.darkSkyWeatherData);
+    climbsData.climbs.map(climb => {   
     try {
       if(climb.status === "publish"){
         const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
@@ -758,7 +759,7 @@ function loadWeather() {
         toggleWeather.classList.remove("toggle-weather-off");
       }
     } catch (e) {
-      console.log("Can't add weather for climbing id ", climb.id);
+      console.log("Can't add weather for climbing id " + climb.id);
     }
   });
   setTimeout(() => loadWeather(), fourHoursInMilliseconds)

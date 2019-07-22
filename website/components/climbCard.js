@@ -87,7 +87,7 @@ function getReferanceInfo(referanceLines, climb) {
             <div class="col">
                 <h3>Referances &amp; additional links</h3>
                 <p>
-                    The following links will take you to external websites related specifically related to this climb.<br />
+                    The following links will take you to external websites related specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
                     <em>Note: They contined relavant infomation at the time of publishing.</em>
                 </p>
                 <p>`;
@@ -219,9 +219,9 @@ function getWeather(theId, weatherData, climb) {
           <ul class="chart">
             <li id="offsetMinus3"><span style="height:0%;" title="-3 days"></span></li>
             <li id="offsetMinus2"><span style="height:0%;" title="-2 days"></span></li>
-            <li id="offsetMinus1"><span style="height:0%;" title="Yesterday"></span></li>
+            <li id="offsetMinus1"><span style="height:0%;" title="Yest"></span></li>
             <li id="currently"><span style="height:0%;font-weight:900;" title="Today"></span></li>
-            <li id="offsetPlus1"><span style="height:0%;" title="Tomorrow"></span></li>
+            <li id="offsetPlus1"><span style="height:0%;" title="Tomor"></span></li>
             <li id="offsetPlus2"><span style="height:0%;" title="+2 days"></span></li>
             <li id="offsetPlus3"><span style="height:0%;" title="+3 days"></span></li>
           </ul>
@@ -348,7 +348,7 @@ function getMap(mapImg, latLonLocation) {
              <img
                src="/${mapImg.url}1080x200x1.png"
                type="image/png" class="big-card-map" 
-               alt="${mapImg.altText}">
+               alt="${mapImg.alt}">
         </picture>`;
             return mapPicture;
         }
