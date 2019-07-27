@@ -483,6 +483,12 @@ position: relative;
   float: left;
   margin-right: 10px;
 }
+.switzerland{
+  width:30px;
+}
+.canada{
+  width:38px;
+}
 .big-flag{
   width: 40px;
   margin-top:5px;
