@@ -252,7 +252,7 @@ function getWeather(theId, weatherData, climb) {
 
 }
 
-function getRouteTopo(topoImg) {
+function getRouteTopo(topoImg, climb) {
     var routeTopo = '';
     if(topoImg.dataFile > 1){
         routeTopo += `
@@ -260,16 +260,16 @@ function getRouteTopo(topoImg) {
             <small>
                 The below controls change the image so you can better see the rock if needed.
             </small><br />
-            <label for="c1"><input type="checkbox" value="infoBox" checked id="c1" name="c1" onclick="draw();toggleTopo();" />Info Box</label>
-            <label for="c2"><input type="checkbox" value="routeLine" checked id="c2" name="c2" onclick="draw();toggleTopo();" />Route</label>
-            <label for="c3"><input type="checkbox" value="belays" checked id="c3" name="c3" onclick="draw();toggleTopo();" />Belay&nbsp;Points</label>
-            <label for="c4"><input type="checkbox" value="absail" checked id="c4" name="c4" onclick="draw();toggleTopo();" />Approch&nbsp;/&nbsp;Decent</label>
-            <label for="c5"><input type="checkbox" value="labels" checked id="c5" name="c5" onclick="draw();toggleTopo();" />Labels</label>
+            <label for="c1"><input type="checkbox" value="infoBox" checked id="c1" name="c1" onclick="draw();toggleTopo();ga('${gtagId}.send', 'event', 'topo', 'infoBox', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" />Info Box</label>
+            <label for="c2"><input type="checkbox" value="routeLine" checked id="c2" name="c2" onclick="draw();toggleTopo();ga('${gtagId}.send', 'event', 'topo', 'routeLine', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" />Route</label>
+            <label for="c3"><input type="checkbox" value="belays" checked id="c3" name="c3" onclick="draw();toggleTopo();ga('${gtagId}.send', 'event', 'topo', 'belays', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" />Belay&nbsp;Points</label>
+            <label for="c4"><input type="checkbox" value="absail" checked id="c4" name="c4" onclick="draw();toggleTopo();ga('${gtagId}.send', 'event', 'topo', 'approachDecent', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" />Approch&nbsp;/&nbsp;Decent</label>
+            <label for="c5"><input type="checkbox" value="labels" checked id="c5" name="c5" onclick="draw();toggleTopo();ga('${gtagId}.send', 'event', 'topo', 'labels', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" />Labels</label>
         </aside>`;
     }
     routeTopo += `
         <div class="img-contaner" id="topoHolder">
-            <a href="/${topoImg.url}" target="blank" class="card-img-anch">
+            <a href="/${topoImg.url}" target="blank" class="card-img-anch" onClick="ga('${gtagId}.send', 'event', 'topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
                 <picture class="big-card-map" id="staticTopo">`;
                 // dealing mostly with pixel density below
                 if(topoImg.dataFile === 5){ // the max is over 2160 so worth declaring for SEO
@@ -393,7 +393,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
 
     var topoImg = climbImgs.find(img => img.type === 'topo');
     var mapImg = climbImgs.find(img => img.type === 'map');
-    var routeTopoModule = getRouteTopo(topoImg);
+    var routeTopoModule = getRouteTopo(topoImg, climb);
     var approachInfoModule = getApprochInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
     var referanceModule = getReferanceInfo(referanceLines, climb);
