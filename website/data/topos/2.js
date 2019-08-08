@@ -1,21 +1,21 @@
-var topoData = {
+var topoData =  {
     "image":"/img/topos/bosigran/crag.jpg",
-    "flag":"/img/flags/gb.png",
-    "title":"Bosigran > Doorpost | HS 4b - 67m",
-    "belaySize":16,
-    "route":[[1548,767],[1550,742],[1520,702],[1553,660],[1578,605],[1603,585],[1635,542],[1658,492],[1660,462],[1653,327],[1640,270],[1615,160],[1610,82],[1595,65]],
-    "pitches":[{
-        "belayPosition":[1660,490],"labelPosition":[1653,642],
-        "grade":"4a","height":"27m"
-    },{
-        "belayPosition":[1648,322],"labelPosition":[1710,370],
-        "grade":"4b","height":"15m"
-    },{
-        "belayPosition":[1595,60],"labelPosition":[1670,160],
-        "grade":"4a","height":"25m"
-    }],
-    "decent":[{
-        "anchor":[null,null],"labelPosition":[null,null],
-        "path":[[2188,670],[1978,680],[1890,740],[1845,740]],"label":""
-    }]
+    "flag":"/img/flags/en.png","title":"Bosigran > Doorpost | HS 4b - 67m",
+    "belaySize":24,
+    "route":[[2103,2415],[2110,2333],[2092,2222],[2108,2157],[2118,2057],[2142,2030],
+    [2162,2023],[2215,1937],[2247,1905],[2263,1833],[2285,1812],[2310,1772],[2320,1730],
+    [2305,1690],[2285,1658],[2265,1658],[2265,1600],[2272,1482],[2272,1447],[2308,1435],
+    [2308,1382],[2320,1308],[2378,1255],[2335,1288],[2293,1278],[2295,1175],[2297,1094],
+    [2290,1009],[2265,937],[2247,877],[2267,767],[2263,704],[2260,627],[2288,596],[2342,551]
+    ],
+    "pitches":[
+        {"belayPosition":[2315,1719],"labelPosition":[2268,1960],"grade":"4a","height":"27m"},
+        {"belayPosition":[2365,1264],"labelPosition":[2353,1464],"grade":"4b","height":"15m"},
+        {"belayPosition":[2318,576],"labelPosition":[2353,904],"grade":"4a","height":"25m"}
+    ],
+    "decent":[
+        {"anchor":[null,null],"labelPosition":[null,null],
+        "path":[[3592,2090],[3440,2170],[3323,2210],[3180,2252],[3083,2223],[2967,2253]],
+        "label":""}
+    ]
 };
