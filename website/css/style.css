@@ -626,12 +626,19 @@ nav ul li a {
 nav ul li a:hover {
   color: rgba(255, 255, 255, .75);
 }
+#map{
+  position:fixed;
+  margin-top:55px;
+}
 @media (max-width:480px) {
   .not-mobile{
      display:none;
   }
   nav {
     padding:0;
+  }
+  #map{
+    margin-top: 40px;
   }
 }
 select {

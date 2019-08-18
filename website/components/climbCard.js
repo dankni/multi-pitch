@@ -417,7 +417,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
     var fullCard = `
     <article id="climbCardDetails" class="main">
         <div style="width:100%;max-height:300px;">
-            <a href="https://www.google.co.uk/maps/place/${climb.geoLocation}" target="blank" class="card-img-anch">
+            <a href="/map/?loc=${climb.geoLocation}" class="card-img-anch">
                 ${mapModule}
             </a>
         </div> 
