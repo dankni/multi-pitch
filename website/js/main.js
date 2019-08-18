@@ -744,7 +744,7 @@ function LoadAnalytics(){
  **/
 function loadWeather() {
   const fourHoursInMilliseconds = 4000 * 60 * 60;
-  if (window.darkSkyWeatherData && document.getElementById('cardHolder')) {
+  if (window.darkSkyWeatherData && (document.getElementById('cardHolder') || document.getElementById('map'))) {
     console.log(window.darkSkyWeatherData);
     climbsData.climbs.map(climb => {   
     try {

@@ -1,27 +1,28 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <title>Multi-pitch Climbs around Europe</title>
-    <meta name="description" content="Global view of Multi-pitch Rock climbs in Europe & the rest of the world. Mainly trad climbing." />
 
     <link href="../css/bootstrap-grid.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
-
-<!-- remove for SVG--    <link href="../css/owfont-regular.css" rel="stylesheet" /> -->
+	<link href="../css/owfont-regular.css" rel="stylesheet" />
     <script src="../data/data.js"></script>
-    <script async src="../js/main.js"></script>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-          crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-            integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-            crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+    <script> 
+        var mapWeatherData;
+        const request = async () => {
+            const response = await fetch('https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-weather.json');
+            mapWeatherData = await response.json();
+            fetchWeatherAndAddMarkers(climbs);
+        }
+        request();
+    </script>
 
     <!-- fix the below hack -->
     <style>
@@ -30,19 +31,19 @@
             height: 100%;
             overflow-x: hidden;
         }
-        .leaflet-popup-content {
-            margin: 0 !important;
-            width: 250px;
-            text-align: center;
+        .leaflet-popup-content{
+            margin:0 !important;
+	          width:250px;
+	          text-align:center;
         }
-        .leaflet-popup-content-wrapper {
-            border-radius: 0 !important;
+        .leaflet-popup-content-wrapper{
+            border-radius:0 !important;
         }
-        .leaflet-popup-content-wrapper {
+        .leaflet-popup-content-wrapper{
             padding: 0 0 1px 0 !important;
         }
         .pop-up-title {
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0,0,0,0.5);
             margin-top: -29px;
             position: absolute;
             width: 100%;
@@ -51,7 +52,7 @@
             padding: 6px;
             height: 29px;
             line-height: 1.5;
-        }
+        }  
         .pop-up-title a {
             color: #FFF;
         }
@@ -59,27 +60,28 @@
             position:fixed;
             margin-top:55px;
         }
-    </style>
+  </style>
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="57x57" href="../img/favicon/apple-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="../img/favicon/apple-icon-60x60.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="../img/favicon/apple-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="../img/favicon/apple-icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="../img/favicon/apple-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="../img/favicon/apple-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="../img/favicon/apple-icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="../img/favicon/apple-icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon/apple-icon-180x180.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="../img/favicon/android-icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="../img/favicon/favicon-96x96.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png" />
-    <link rel="manifest" href="../manifest.json" />
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" content="../img/favicon/ms-icon-144x144.png" />
-    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" sizes="57x57" href="../img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="../img/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 </head>
+
 <body>
     <!-- Navbar -->
     <nav>
@@ -111,42 +113,53 @@
     <!-- SCRIPTS -->
     <script>
         var climbs = [];
-
         for (var i = 0; i < climbsData.climbs.length; i++) {
             if (climbsData.climbs[i].status === 'publish') {
-
                 var lat = parseFloat(climbsData.climbs[i].geoLocation.split(',')[0]);
                 var lon = parseFloat(climbsData.climbs[i].geoLocation.split(',')[1]);
+                var climbId = climbsData.climbs[i].id;
                 var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsData.climbs[i].id);  //note find returns first vs fillter returns all.
-                var climbName = ""
-                    .concat(climbsData.climbs[i].routeName, '-on-', climbsData.climbs[i].cliff)
-                    .toLowerCase()
-                    .replace(/'/g, "")
-                    .replace(/\//g, "")
-                    .replace(/ /g, "-");
                 var cragImg = cImgs.find(img => img.type === 'tile');
-                var content = '<a href="/climbs/' + climbName + '"><img src="../' + cragImg.url + '" style="width:100%;" /><br />' +
+                var content = '<a href="/?overview=' + climbsData.climbs[i].id + '"><img src="/' + cragImg.url + '" style="width:100%;" /><br />' +
                     '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
                     '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
-                    'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins</p>';
-                climbs.push([content, lat, lon]);
+                    'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins' +
+                    '<br /><hr style="width: 60%;margin: 10px auto;"/> ' +
+					'<span class="weather ${placeholder-icon}"></span>' +
+					'<br />Conditions: <strong>${placeholder-conditions}</strong>' +
+					'<br/>Temperature: <strong>${placeholder-temp}</strong></p>';
+                climbs.push({
+                    content: content,
+                    lat: lat,
+                    lon: lon,
+                    climbId,climbId,
+                });
 
             }
         }
+        var baseLayerOptions = {
+            maxZoom: 18
+        }
+        var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            Object.assign({
+                attribution: '&copy; ' + '<a href="http://openstreetmap.org">OpenStreetMap</a>' + ' Contributors'
+            }, baseLayerOptions));
 
-        var map = L.map('map').setView([50.914835, -4.559586], 5);
-        mapLink =
-            '<a href="https://openstreetmap.org">OpenStreetMap</a>';
-        L.tileLayer(
-            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; ' + mapLink + ' Contributors',
-                maxZoom: 18,
-            }).addTo(map);
+        var map = L.map('map', { center: new L.LatLng(50.914835, -4.559586), zoom: 5, layers: [osmLayer] });
+        var baseMaps = { "OSM Standard": osmLayer };
 
-        for (var i = 0; i < climbs.length; i++) {
-            marker = new L.marker([climbs[i][1], climbs[i][2]])
-                .bindPopup(climbs[i][0])
-                .addTo(map);
+        var fetchWeatherAndAddMarkers =(climbs) => {
+            climbs.forEach(climb => {
+                var climbWeather = mapWeatherData.find(data => data.climbId === climb.climbId);
+                climb.content = climb.content.replace("${placeholder-conditions}", climbWeather.currently.icon);
+                climb.content = climb.content.replace("${placeholder-icon}", climbWeather.currently.icon);
+                var temp = Math.round(climbWeather.currently.temperatureMin) + '-' + Math.round(climbWeather.currently.temperatureHigh) + "&#176; C";
+                climb.content = climb.content.replace("${placeholder-temp}", temp);
+
+                new L.marker([climb.lat, climb.lon])
+                    .bindPopup(climb.content)
+                    .addTo(map);
+            });
         }
     </script>
 </body>
