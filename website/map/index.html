@@ -4,13 +4,19 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />    
+    <link rel="canonical" href="https://www.multi-pitch.com/map/" />
 
-    <title>Multi-pitch Climbs around Europe</title>
+    <link rel="preconnect" href="https://s3-eu-west-1.amazonaws.com/" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://unpkg.com/" />
+
+    <title>Multi-pitch Climbs around Europe | Map view</title>
 
     <link href="../css/bootstrap-grid.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
-	<link href="../css/owfont-regular.css" rel="stylesheet" />
     <script src="../data/data.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
@@ -35,38 +41,11 @@
         }
         request();
     </script>
-
-    <!-- fix the below hack -->
     <style>
         html, body {
             max-width: 100%;
             height: 100%;
             overflow-x: hidden;
-        }
-        .leaflet-popup-content{
-            margin:0 !important;
-	          width:250px;
-	          text-align:center;
-        }
-        .leaflet-popup-content-wrapper{
-            border-radius:0 !important;
-        }
-        .leaflet-popup-content-wrapper{
-            padding: 0 0 1px 0 !important;
-        }
-        .pop-up-title {
-            background-color: rgba(0,0,0,0.5);
-            margin-top: -29px;
-            position: absolute;
-            width: 100%;
-            left: 0;
-            color: #FFF;
-            padding: 6px;
-            height: 29px;
-            line-height: 1.5;
-        }  
-        .pop-up-title a {
-            color: #FFF;
         }
         footer.page-footer{
             bottom: 0;
@@ -82,7 +61,7 @@
             margin: 0;
             padding: 0;
         }
-  </style>
+    </style>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="../img/favicon/apple-icon-57x57.png" />
@@ -102,8 +81,16 @@
     <meta name="msapplication-TileColor" content="#ffffff" />
     <meta name="msapplication-TileImage" content="../img/favicon/ms-icon-144x144.png" />
     <meta name="theme-color" content="#ffffff" />
+    
+    <!-- Sharing Tags -->
+    <meta property="og:title" content="Map of the best multi-pitch rock climbs" />
+    <meta property="og:description"
+          content="Map of the best trad multi-pitch rock climbs in Europe & baround the world." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.multi-pitch.com/map/" />
+    <meta property="og:image" content="http://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg" />
+    <meta property="og:image:type" content="image/jpg" />
 </head>
-
 <body>
     <!-- Navbar -->
     <nav>

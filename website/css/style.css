@@ -630,6 +630,31 @@ nav ul li a:hover {
   position:fixed;
   margin-top:55px;
 }
+.leaflet-popup-content{
+  margin:0 !important;
+  width:250px;
+  text-align:center;
+}
+.leaflet-popup-content-wrapper{
+  border-radius:0 !important;
+}
+.leaflet-popup-content-wrapper{
+  padding: 0 0 1px 0 !important;
+}
+.pop-up-title {
+  background-color: rgba(0,0,0,0.5);
+  margin-top: -29px;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  color: #FFF;
+  padding: 6px;
+  height: 29px;
+  line-height: 1.5;
+}  
+.pop-up-title a {
+  color: #FFF;
+}
 @media (max-width:480px) {
   .not-mobile{
      display:none;
@@ -748,6 +773,16 @@ blockquote:before {
   height: 76px;
   margin:.4rem;
   font-size:0.9rem;
+  vertical-align: top;
+}
+.single-attribute{
+  display: table-cell;
+  vertical-align: middle;
+  height: inherit;
+  padding: 0;
+  font-size: 0.7rem;
+  text-align: center;
+  width: inherit;
 }
 .info-divider{
   width: 74px;
@@ -775,9 +810,8 @@ blockquote:before {
 .social-share {
   text-decoration: none;
   text-align: right;
-  padding: 1.5rem;
+  padding: 1.2rem 0.5rem;
   font-size: 32px;
-  
 }
 .social-share a{
   color:#222222;
@@ -798,7 +832,7 @@ blockquote:before {
 input[type="checkbox"] {
   vertical-align:middle;
 }
-@media (max-width: 600px) {
+@media (max-width: 960px) {
   .info-ring-holder{
     text-align:center;
   }

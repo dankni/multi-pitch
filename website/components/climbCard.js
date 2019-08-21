@@ -47,6 +47,14 @@ function getApprochInfo(climb) {
         <div class="col">
             <h3>Approach & Descent Infomation</h3>
             <p>${climb.approach}</p>
+            <p style="text-align:center"> 
+                <a href="/map/?loc=${climb.geoLocation}">
+                    See ${climb.cliff} on the climb map
+                </a> | 
+                <a href="https://www.google.com/maps/place/${climb.geoLocation}" target="blank">
+                    Open climb location in Google Maps<i class="icon-link-ext"></i>
+                </a>
+            </p>
         </div>
     </section>`;
         } else {
@@ -413,7 +421,20 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
     } else {
         var techGrade = climb.techGrade;
     }
-
+    if (climb.tidal === 1){
+        var tidal = `<div class="info-ring">
+        <span class="single-attribute">Tidal<br/> Access</span>
+        </div>`
+    } else {
+        var tidal = '';
+    } 
+    if (climb.absail === 1){
+        var abReq = `<div class="info-ring">
+        <span class="single-attribute">Abseil<br/> Required</span>
+        </div>`
+    } else {
+        var abReq = '';
+    }
     var fullCard = `
     <article id="climbCardDetails" class="main">
         <div style="width:100%;max-height:300px;">
@@ -440,29 +461,34 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                     </div>
                 </section>
                 <div class="row">
-                    <div class="col-sm info-ring-holder">
+                    <div class="col-md-12 col-lg-9 info-ring-holder">
                         <div class="info-ring">
-                            <span class="grade what">grade</span>
+                            <span class="grade what">Grade</span>
                             <span class="info-divider"></span>
                             <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
                         </div>        
                         <div class="info-ring">
-                            <span class="grade what">length</span>
+                            <span class="grade what">Length</span>
                             <span class="info-divider"></span>
                             <span class="grade amount">${climb.length}m</span>
                         </div>      
                         <div class="info-ring">
-                            <span class="grade what">pitches</span>
+                            <span class="grade what">Pitches</span>
                             <span class="info-divider"></span>
                             <span class="grade amount">${climb.pitches}</span>
                         </div>
                         <div class="info-ring">
-                            <span class="grade what">approch</span>
+                            <span class="grade what">Approch</span>
                             <span class="info-divider"></span>
                             <span class="grade amount">${climb.approchTime}<small>min</small></span>
                         </div>
+                        <div class="info-ring">
+                            <span class="single-attribute">${climb.rock}</span>
+                        </div>
+                        ${tidal}
+                        ${abReq}
                     </div>
-                    <div class="col-sm social-share">
+                    <div class="col-lg-3 col-md-12 social-share">
                         <a  id="whatsappShare"
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
