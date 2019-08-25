@@ -486,7 +486,7 @@ position: relative;
   float: left;
   margin-right: 10px;
 }
-.switzerland{
+.switzerland, .belgium{
   width:30px;
 }
 .canada{
@@ -981,6 +981,9 @@ hr {
 }
 .jordan {
   background-image: url('/img/flags/jo.png');
+}
+.belgium {
+  background-image: url('/img/flags/be.png');
 }
 /** CHARTS **/
 .chart {

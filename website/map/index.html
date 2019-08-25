@@ -15,14 +15,18 @@
 
     <title>Multi-pitch Climbs around Europe | Map view</title>
 
+    <!-- Styles -->
     <link href="../css/bootstrap-grid.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
-    <script src="../data/data.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+
+    <!-- Scripts-->
+    <script src="../data/data.js"></script>
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
     <script> 
         var loc = [];
         var zoom = 5;
+        // if the page comes from a climb show it zoomed in, else default
         try {
             let urlString = new URLSearchParams(window.location.search).get('loc');
             loc.lat = urlString.split(',')[0];
@@ -33,6 +37,7 @@
             loc.lon = -4.559586;
         }
 
+        // Only build the map once the weather has be loaded
         var mapWeatherData;
         const request = async () => {
             const response = await fetch('https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-weather.json');
@@ -42,25 +47,10 @@
         request();
     </script>
     <style>
-        html, body {
-            max-width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-        footer.page-footer{
-            bottom: 0;
-            color: #fff;
-            padding: 0;
-            position: fixed;
-            height: 22px;
-            width: 100%;
-            left: 0;
-            margin: 0;
-        }
-        footer.page-footer .footer-copyright{
-            margin: 0;
-            padding: 0;
-        }
+        /* Style Overides for map only */
+        html, body { max-width: 100%; height: 100%; overflow-x: hidden; }
+        footer.page-footer{ padding: 0; position: fixed; height: 25px; width: 100%; left: 0; margin: 0; }
+        footer.page-footer .footer-copyright{ margin: 0; padding: 0; }
     </style>
 
     <!-- Favicons -->
@@ -116,7 +106,11 @@
     <!--Footer-->
     <footer class="page-footer text-center font-small mt-4">
         <div class="footer-copyright">
-            © 2018 Copyright: <a href="/" target="_blank"> multi-pitch.com </a>
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">
+                &copy; 2019 <abbr title="Creative Commons">CC</abbr>
+            </a> -
+            <a href="/"> multi-pitch.com </a> | 
+            <a href="https://www.mapbox.com/" target="blank"><span class="not-mobile">Map by </span>Mapbox</a>
         </div>
     </footer>
     <!-- SCRIPTS -->
@@ -139,8 +133,8 @@
                     '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
                     '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
                     'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins' +
-                    '<br /><hr style="width: 60%;margin: 10px auto;"/> ' +
-					'<span class="weather ${placeholder-icon}"></span>' +
+                    '</p><hr style="width: 60%;margin: 10px auto;"/> ' +
+					'<p style="${display}"><span class="weather ${placeholder-icon}"></span>' +
 					'<br />Conditions: <strong>${placeholder-conditions}</strong>' +
 					'<br/>Temperature: <strong>${placeholder-temp}</strong></p>';
                 climbs.push({
@@ -165,11 +159,16 @@
 
         var fetchWeatherAndAddMarkers =(climbs) => {
             climbs.forEach(climb => {
-                var climbWeather = mapWeatherData.find(data => data.climbId === climb.climbId);
-                climb.content = climb.content.replace("${placeholder-conditions}", climbWeather.currently.icon);
-                climb.content = climb.content.replace("${placeholder-icon}", climbWeather.currently.icon);
-                var temp = Math.round(climbWeather.currently.temperatureMin) + '-' + Math.round(climbWeather.currently.temperatureHigh) + "&#176; C";
-                climb.content = climb.content.replace("${placeholder-temp}", temp);
+                try {
+                    var climbWeather = mapWeatherData.find(data => data.climbId === climb.climbId);
+                    climb.content = climb.content.replace("${placeholder-conditions}", climbWeather.currently.icon);
+                    climb.content = climb.content.replace("${placeholder-icon}", climbWeather.currently.icon);
+                    var temp = Math.round(climbWeather.currently.temperatureMin) + '-' + Math.round(climbWeather.currently.temperatureHigh) + "&#176; C";
+                    climb.content = climb.content.replace("${placeholder-temp}", temp);
+                    climb.content = climb.content.replace("${display}", "");
+                } catch (e) {
+                    climb.content = climb.content.replace("${display}", "display:none");
+                }
 
                 new L.marker([climb.lat, climb.lon])
                     .bindPopup(climb.content)
