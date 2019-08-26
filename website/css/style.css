@@ -985,6 +985,9 @@ hr {
 .belgium {
   background-image: url('/img/flags/be.png');
 }
+.bulgaria {
+  background-image: url('/img/flags/bg.png');
+}
 /** CHARTS **/
 .chart {
   display: table;
