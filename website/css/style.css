@@ -832,6 +832,17 @@ blockquote:before {
 input[type="checkbox"] {
   vertical-align:middle;
 }
+.filter-toggle{
+  margin:10px 10px 0 10px;
+  text-align: center;
+  color: #0055B8;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.filters .advancedLabel{
+  width:80%;
+  display: inline-block;
+}
 @media (max-width: 960px) {
   .info-ring-holder{
     text-align:center;

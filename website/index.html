@@ -171,13 +171,43 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="approchRange">Approch </label>
-                                    <input id="approchRange" type="range" multiple value="0,200" min="0" max="200" step="10"
-                                           oninput="showVal(this.value, 'approch');trackFilter('approch');" /><br />
-                                    <p id="approch" class="current-values">
-                                        <span id="approch1">0</span> to <span id="approch2">200</span> mins
+                                    <label for="approachRange">Approach </label>
+                                    <input id="approachRange" type="range" multiple value="0,200" min="0" max="200" step="10"
+                                           oninput="showVal(this.value, 'approach');trackFilter('approach');" /><br />
+                                    <p id="approach" class="current-values">
+                                        <span id="approach1">0</span> to <span id="approach2">200</span> mins
                                     </p>
                                 </div>
+                                <div class="col-12">
+                                    <h5 class="filter-toggle" onclick="toggleFilters()">Advanced Filters</h5>
+                                </div>
+                            </div>
+                            <div id="advancedFilters" class="row" style="display: none;">
+                                <div class="col-12">
+                                    <p>Include rock climbs that have the following attributes:</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="checkbox" id="absail" onchange="filterCards()" checked />
+                                    <label class="advancedLabel" for="absail">Absail Required</label><br />
+
+                                    <input type="checkbox" id="traverse" onchange="filterCards()" checked />
+                                    <label class="advancedLabel" for="traverse">Traverse Required</label><br />
+
+                                    <input type="checkbox" id="tidal" onchange="filterCards()" checked />
+                                    <label class="advancedLabel" for="tidal">Tidal</label><br />
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="checkbox" id="loose" onchange="filterCards()" checked />
+                                    <label class="advancedLabel" for="loose">Loose Rock</label><br />
+
+                                    <input type="checkbox" id="polished" onchange="filterCards()" checked />
+                                    <label class="advancedLabel" for="polished">Polished Rock</label><br />
+
+                                    <input type="checkbox" id="seepage" onchange="filterCards()" checked />
+                                    <label class="advancedLabel" for="seepage">Suffers Seepage</label><br />
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
                                     <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
@@ -204,7 +234,10 @@
                             <strong>No Climbs Found!</strong>
                         </p>
                         <p>
-                            <em>Adjust the filters to find great multipitch climbs to your linking!</em>
+                            <em><a href="#filters">Adjust the filters</a> to find great multipitch climbs to your linking!</em>
+                        </p>
+                        <p>
+                            <a class="open-tile" href="#filters" onclick="clearFilters()" >Clear All Filters</a>
                         </p>
                     </div>
                 </div>

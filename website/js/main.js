@@ -148,29 +148,38 @@ function showVal(values, field) {
  **/
 function filterCards() {
 
-    var resultCount = 0;
-    var lowGrade = parseInt(document.getElementById('gradeRange').value.split(',')[0]);
-    var highGrade = parseInt(document.getElementById('gradeRange').value.split(',')[1]);
-    var lowHeight = parseInt(document.getElementById('heightRange').value.split(',')[0]);
-    var highHeight = parseInt(document.getElementById('heightRange').value.split(',')[1]);
-    var lowApproch = parseInt(document.getElementById('approchRange').value.split(',')[0]);
-    var highApproch = parseInt(document.getElementById('approchRange').value.split(',')[1]);
-
+    let resultCount = 0;
+    // refator this
+    let lowGrade = parseInt(document.getElementById('gradeRange').value.split(',')[0]);
+    let highGrade = parseInt(document.getElementById('gradeRange').value.split(',')[1]);
+    let lowHeight = parseInt(document.getElementById('heightRange').value.split(',')[0]);
+    let highHeight = parseInt(document.getElementById('heightRange').value.split(',')[1]);
+    let lowApproach = parseInt(document.getElementById('approachRange').value.split(',')[0]);
+    let highApproach = parseInt(document.getElementById('approachRange').value.split(',')[1]);
     var cards = document.getElementsByClassName('card');
 
     for (let i = 0; i < cards.length; i++) {
 
-        var dataGrade = cards[i].getAttribute('data-grade');
-        var dataHeight = cards[i].getAttribute('data-height');
-        var dataApproch = cards[i].getAttribute('data-approch');
+        let dataGrade = cards[i].getAttribute('data-grade');
+        let dataHeight = cards[i].getAttribute('data-height');
+        let dataApproach = cards[i].getAttribute('data-approach');
+        let clash = 0;
+
+        document.getElementById('absail').checked === false && cards[i].getAttribute('data-absail') === '1' ? clash += 1 : clash += 0;
+        document.getElementById('tidal').checked === false && cards[i].getAttribute('data-tidal') === '1' ? clash += 1 : clash += 0;
+        document.getElementById('loose').checked === false && cards[i].getAttribute('data-loose') === '1' ? clash += 1 : clash += 0;
+        document.getElementById('seepage').checked === false && cards[i].getAttribute('data-seepage') === '1' ? clash += 1 : clash += 0;
+        document.getElementById('traverse').checked === false && cards[i].getAttribute('data-traverse') === '1' ? clash += 1 : clash += 0;
+        document.getElementById('polished').checked === false && cards[i].getAttribute('data-polished') === '1' ? clash += 1 : clash += 0;
 
         if (
             parseInt(dataGrade) >= lowGrade
             && parseInt(dataGrade) <= highGrade
             && parseInt(dataHeight) >= lowHeight
             && parseInt(dataHeight) <= highHeight
-            && parseInt(dataApproch) >= lowApproch
-            && parseInt(dataApproch) <= highApproch
+            && parseInt(dataApproach) >= lowApproach
+            && parseInt(dataApproach) <= highApproach
+            && clash < 1
         ) {
             cards[i].style.display = "block";
             resultCount += 1;
@@ -186,6 +195,19 @@ function filterCards() {
     }
 }
 
+function toggleFilters(){
+    let advancedFilters = document.getElementById('advancedFilters');
+    advancedFilters.style.display === 'flex' ? advancedFilters.style.display = 'none' : advancedFilters.style.display = 'flex';
+}
+
+function saveFilter() {
+    localStorage.setItem('filter', 
+        document.getElementById('gradeRange').value + '|' +
+        document.getElementById('heightRange').value + '|' + 
+        document.getElementById('approachRange').value
+    );
+}
+
 function trackFilter(filterType){
     let lastUpdate = document.getElementById("lastUpdate");
     lastUpdate.innerHTML = new Date().getTime();
@@ -193,9 +215,14 @@ function trackFilter(filterType){
         if (parseInt(lastUpdate.innerHTML) + 1999 < new Date().getTime()){
             let grade = document.getElementById('grade').innerText;
             let height = document.getElementById('height').innerText;
-            let approch = document.getElementById('approch').innerText;
-            let label = "G = " + grade + " | H = " + height + " | A = " + approch;
-            ga(gtagId + '.send', 'event', 'sort-and-filter', filterType + '-filter', label, 0);
+            let approach = document.getElementById('approach').innerText;
+            let label = "G = " + grade + " | H = " + height + " | A = " + approach;
+            saveFilter();
+            try{
+                ga(gtagId + '.send', 'event', 'sort-and-filter', filterType + '-filter', label, 0);
+            } catch (e) {
+                // ga not availible
+            }
         }
     }, 2000);
 }
@@ -275,7 +302,18 @@ function publishCards(climbsArr) {
             }
 
             var card = `
-    <div data-climb-id="${climbsArr[i].id}" data-test="climbid-${climbsArr[i].id}" data-grade="${climbsArr[i].dataGrade}" data-height="${climbsArr[i].length}" id="${climbsArr[i].id}" data-approch="${climbsArr[i].approchTime}" class="card">
+    <div data-climb-id="${climbsArr[i].id}" 
+         data-grade="${climbsArr[i].dataGrade}" 
+         data-height="${climbsArr[i].length}"
+         data-approach="${climbsArr[i].approachTime}"
+         data-absail="${climbsArr[i].absail}"
+         data-traverse="${climbsArr[i].traverse}"
+         data-loose="${climbsArr[i].loose}"
+         data-tidal="${climbsArr[i].tidal}"
+         data-seepage="${climbsArr[i].seepage}"
+         data-polished="${climbsArr[i].polished}"
+         id="${climbsArr[i].id}" 
+         class="card">
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
@@ -292,7 +330,7 @@ function publishCards(climbsArr) {
                 <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${techGrade} <br />
                 <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
-                <span class="what">Approach:</span> ${climbsArr[i].approchTime}min - <span class="approach-${climbsArr[i].approchDifficulty}"></span> <br />
+                <span class="what">Approach:</span> ${climbsArr[i].approachTime}min - <span class="approach-${climbsArr[i].approachDifficulty}"></span> <br />
                 <span id="toggle-weather-${climbsArr[i].id}" class="toggle-weather-off">
                     <span class="what">Weather:</span>   
                     <span id="weather-${climbsArr[i].id}" class="weather"></span>
@@ -328,6 +366,7 @@ function sortCards(sortBy, direction) {
         while (c.length > 0) c[0].remove();
         var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
         publishCards(climbsSorted);
+        filterCards(); // ensures filters are kept
     }
     loadWeather();
 }
@@ -745,7 +784,7 @@ function LoadAnalytics(){
 function loadWeather() {
   const fourHoursInMilliseconds = 4000 * 60 * 60;
   if (window.darkSkyWeatherData && (document.getElementById('cardHolder') || document.getElementById('map'))) {
-    console.log(window.darkSkyWeatherData);
+  //  console.log(window.darkSkyWeatherData);
     climbsData.climbs.map(climb => {   
     try {
       if(climb.status === "publish"){
@@ -811,6 +850,42 @@ function loadCurrentWeatherModule(id){
   }
 }
 
+/**
+ * EXECUTE THE FILTER FUCTION BASED ON LOCAL STORAGE
+ **/
+function execFilter(){
+    let filterValues = localStorage.getItem('filter').split('|');
+    document.getElementById('gradeRange').value = filterValues[0];
+    showVal(filterValues[0], 'grade');
+    document.getElementById('heightRange').value = filterValues[1];
+    showVal(filterValues[1], 'height');
+    document.getElementById('approachRange').value = filterValues[2];
+    showVal(filterValues[2], 'approach');
+}
+function clearFilters(){
+    // reset the advanced filters
+    let checkboxes = ['tidal','loose','absail','polished','traverse','seepage'];
+    for(let i = 0; i < checkboxes.length; i++){
+        document.getElementById(checkboxes[i]).checked = true;
+    }
+
+    localStorage.removeItem('filter');
+    // refactor this
+    let gradeRange = document.getElementById('gradeRange');
+    let gValueString = gradeRange.min + ',' + gradeRange.max;
+    gradeRange.value = gValueString
+    showVal(gValueString, 'grade');
+    let heightRange = document.getElementById('heightRange');
+    let hValueString = heightRange.min + ',' + heightRange.max;
+    heightRange.value = hValueString
+    showVal(hValueString, 'height');
+    let approachRange = document.getElementById('approachRange');
+    let aValueString = approachRange.min + ',' + approachRange.max;
+    approachRange.value = aValueString
+    showVal(aValueString, 'approach');
+
+    filterCards();
+}
 
 // need to handle history.onPopstate ie. user presses back
 window.onpopstate = function (event) {
@@ -824,6 +899,9 @@ window.onload = function () {
     document.getElementById('cardHolder') ? hp = true : hp = false;
     if (document.location.href.includes('/climbs/') === false && hp === true) {
         sortCards('length', 'DESC');
+        if(localStorage.getItem('filter')){
+            execFilter();
+        }
         window.performance.mark('all-climbs-loaded');
     }
     if (geoLocationSupport === true && hp === true) {
