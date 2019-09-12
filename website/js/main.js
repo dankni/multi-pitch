@@ -303,6 +303,7 @@ function publishCards(climbsArr) {
 
             var card = `
     <div data-climb-id="${climbsArr[i].id}" 
+         div[data-test="climbid-${climbsArr[i].id}"]
          data-grade="${climbsArr[i].dataGrade}" 
          data-height="${climbsArr[i].length}"
          data-approach="${climbsArr[i].approachTime}"
