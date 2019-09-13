@@ -149,7 +149,7 @@ function showVal(values, field) {
 function filterCards() {
 
     let resultCount = 0;
-    // refator this
+    
     let lowGrade = parseInt(document.getElementById('gradeRange').value.split(',')[0]);
     let highGrade = parseInt(document.getElementById('gradeRange').value.split(',')[1]);
     let lowHeight = parseInt(document.getElementById('heightRange').value.split(',')[0]);
@@ -163,14 +163,17 @@ function filterCards() {
         let dataGrade = cards[i].getAttribute('data-grade');
         let dataHeight = cards[i].getAttribute('data-height');
         let dataApproach = cards[i].getAttribute('data-approach');
-        let clash = 0;
 
-        document.getElementById('absail').checked === false && cards[i].getAttribute('data-absail') === '1' ? clash += 1 : clash += 0;
-        document.getElementById('tidal').checked === false && cards[i].getAttribute('data-tidal') === '1' ? clash += 1 : clash += 0;
-        document.getElementById('loose').checked === false && cards[i].getAttribute('data-loose') === '1' ? clash += 1 : clash += 0;
-        document.getElementById('seepage').checked === false && cards[i].getAttribute('data-seepage') === '1' ? clash += 1 : clash += 0;
-        document.getElementById('traverse').checked === false && cards[i].getAttribute('data-traverse') === '1' ? clash += 1 : clash += 0;
-        document.getElementById('polished').checked === false && cards[i].getAttribute('data-polished') === '1' ? clash += 1 : clash += 0;
+        let clash = 0;
+        let advancedLabels = document.getElementsByClassName('advancedLabel');
+        for(let j = 0; j < advancedLabels.length; j++){
+          let title = advancedLabels[j].getAttribute('for');
+          if(document.getElementById(title).checked === false && cards[i].getAttribute('data-' + title) === '1'){
+              clash += 1; break;
+          } else {
+            clash += 0;
+          }
+        }
 
         if (
             parseInt(dataGrade) >= lowGrade
@@ -206,6 +209,14 @@ function saveFilter() {
         document.getElementById('heightRange').value + '|' + 
         document.getElementById('approachRange').value
     );
+    let adFilterString = "";
+    let advancedLabels = document.getElementsByClassName('advancedLabel');
+    for(let j = 0; j < advancedLabels.length; j++){
+      let title = advancedLabels[j].getAttribute('for');
+      adFilterString += title + ":" + document.getElementById(title).checked;
+      if(j != (advancedLabels.length - 1)) { adFilterString += "|"; }
+    }
+    localStorage.setItem('advancedFilter', adFilterString);
 }
 
 function trackFilter(filterType){
@@ -842,7 +853,6 @@ function loadCurrentWeatherModule(id){
         let height = rain > 3 ? 100 : rain * 33.3;
         let label = document.createTextNode(rain.toFixed(1) + "mm");
         listItem.firstElementChild.style.height = height + "%";
-        // listItem.firstElementChild.style.background = `rgba(34, 167, 240, ${dsWeather[currentWeather[i]].precipProbability})`;
         listItem.prepend(label);
       }
     }
@@ -855,6 +865,10 @@ function loadCurrentWeatherModule(id){
  * EXECUTE THE FILTER FUCTION BASED ON LOCAL STORAGE
  **/
 function execFilter(){
+    let advancedFilters = localStorage.getItem('advancedFilter').split('|');
+    for(let i = 0; i < advancedFilters.length; i++){
+        document.getElementById(advancedFilters[i].split(":")[0]).checked = JSON.parse(advancedFilters[i].split(":")[1]);
+    }
     let filterValues = localStorage.getItem('filter').split('|');
     document.getElementById('gradeRange').value = filterValues[0];
     showVal(filterValues[0], 'grade');
@@ -863,28 +877,25 @@ function execFilter(){
     document.getElementById('approachRange').value = filterValues[2];
     showVal(filterValues[2], 'approach');
 }
-function clearFilters(){
+function clearFilters(){    
+    localStorage.removeItem('filter');
     // reset the advanced filters
     let checkboxes = ['tidal','loose','absail','polished','traverse','seepage'];
     for(let i = 0; i < checkboxes.length; i++){
         document.getElementById(checkboxes[i]).checked = true;
     }
-
-    localStorage.removeItem('filter');
-    // refactor this
-    let gradeRange = document.getElementById('gradeRange');
-    let gValueString = gradeRange.min + ',' + gradeRange.max;
-    gradeRange.value = gValueString
-    showVal(gValueString, 'grade');
-    let heightRange = document.getElementById('heightRange');
-    let hValueString = heightRange.min + ',' + heightRange.max;
-    heightRange.value = hValueString
-    showVal(hValueString, 'height');
-    let approachRange = document.getElementById('approachRange');
-    let aValueString = approachRange.min + ',' + approachRange.max;
-    approachRange.value = aValueString
-    showVal(aValueString, 'approach');
-
+    // reset the normal filters
+    let options = { "filters": 
+                    [{"el":"gradeRange", "name":"grade"},
+                    {"el":"heightRange", "name":"height"},
+                    {"el":"approachRange", "name":"approach"}]
+                };
+    for(let i = 0; i < options.filters.length; i++){
+        let range = document.getElementById(options.filters[i].el);
+        let valueString = range.min + ',' + range.max;
+        range.value = valueString
+        showVal(valueString, options.filters[i].name);
+    }
     filterCards();
 }
 

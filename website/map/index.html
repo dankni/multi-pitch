@@ -36,7 +36,6 @@
             loc.lat = 50.914835;
             loc.lon = -4.559586;
         }
-
         // Only build the map once the weather has be loaded
         var mapWeatherData;
         const request = async () => {
@@ -46,6 +45,7 @@
         }
         request();
     </script>
+    <script src="../js/leaflet-color-markers.js"></script>
     <style>
         /* Style Overides for map only */
         html, body { max-width: 100%; height: 100%; overflow-x: hidden; }
@@ -118,6 +118,12 @@
         var climbs = [];
         for (var i = 0; i < climbsData.climbs.length; i++) {
             if (climbsData.climbs[i].status === 'publish') {
+                var iconColor = yellowIcon;
+                if(parseInt(climbsData.climbs[i].dataGrade) <= 3 ){
+                    iconColor = greenIcon;
+                } else if (parseInt(climbsData.climbs[i].dataGrade) >= 6){
+                    iconColor = redIcon;
+                } 
                 var lat = parseFloat(climbsData.climbs[i].geoLocation.split(',')[0]);
                 var lon = parseFloat(climbsData.climbs[i].geoLocation.split(',')[1]);
                 var climbId = climbsData.climbs[i].id;
@@ -132,7 +138,7 @@
                 var content = '<a href="/climbs/' + climbName + '"><img src="/' + cragImg.url + '" style="width:100%;" /><br />' +
                     '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
                     '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
-                    'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approch: <strong>' + climbsData.climbs[i].approchTime + '</strong>mins' +
+                    'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approach: <strong>' + climbsData.climbs[i].approachTime + '</strong>mins' +
                     '</p><hr style="width: 60%;margin: 10px auto;"/> ' +
 					'<p style="${display}"><span class="weather ${placeholder-icon}"></span>' +
 					'<br />Conditions: <strong>${placeholder-conditions}</strong>' +
@@ -142,6 +148,7 @@
                     lat: lat,
                     lon: lon,
                     climbId,climbId,
+                    icon: iconColor
                 });
 
             }
@@ -156,8 +163,8 @@
 
         var map = L.map('map', { center: new L.LatLng(loc.lat,loc.lon), zoom: zoom, layers: [osmLayer] });
         var baseMaps = { "OSM Standard": osmLayer };
-
-        var fetchWeatherAndAddMarkers =(climbs) => {
+       
+        var fetchWeatherAndAddMarkers = (climbs) => {
             climbs.forEach(climb => {
                 try {
                     var climbWeather = mapWeatherData.find(data => data.climbId === climb.climbId);
@@ -169,12 +176,12 @@
                 } catch (e) {
                     climb.content = climb.content.replace("${display}", "display:none");
                 }
-
-                new L.marker([climb.lat, climb.lon])
+                
+                L.marker([climb.lat, climb.lon], {icon: climb.icon})
                     .bindPopup(climb.content)
                     .addTo(map);
             });
         }
     </script>
-</body>
+  </body>
 </html>

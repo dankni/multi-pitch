@@ -182,28 +182,28 @@
                                     <h5 class="filter-toggle" onclick="toggleFilters()">Advanced Filters</h5>
                                 </div>
                             </div>
-                            <div id="advancedFilters" class="row" style="display: none;">
+                            <div id="advancedFilters" class="row advanced-filters" style="display: none;">
                                 <div class="col-12">
                                     <p>Include rock climbs that have the following attributes:</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="checkbox" id="absail" onchange="filterCards()" checked />
+                                    <input type="checkbox" id="absail" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="absail">Absail Required</label><br />
 
-                                    <input type="checkbox" id="traverse" onchange="filterCards()" checked />
+                                    <input type="checkbox" id="traverse" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="traverse">Traverse Required</label><br />
 
-                                    <input type="checkbox" id="tidal" onchange="filterCards()" checked />
+                                    <input type="checkbox" id="tidal" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="tidal">Tidal</label><br />
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="checkbox" id="loose" onchange="filterCards()" checked />
+                                    <input type="checkbox" id="loose" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="loose">Loose Rock</label><br />
 
-                                    <input type="checkbox" id="polished" onchange="filterCards()" checked />
+                                    <input type="checkbox" id="polished" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="polished">Polished Rock</label><br />
 
-                                    <input type="checkbox" id="seepage" onchange="filterCards()" checked />
+                                    <input type="checkbox" id="seepage" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="seepage">Suffers Seepage</label><br />
                                 </div>
                             </div>

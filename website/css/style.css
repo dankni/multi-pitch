@@ -19,7 +19,7 @@ h2 {
   font-weight:300;
 }
 h3 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   padding-top:0.8rem
 }
 h4 {
@@ -724,6 +724,7 @@ select:-moz-focusring {
 }
 blockquote{
   margin-top:-1rem;
+  margin-bottom: 1.6rem;
 }
 blockquote:before {
   content: '\201C';
@@ -838,6 +839,9 @@ input[type="checkbox"] {
   color: #0055B8;
   font-size: 0.8rem;
   cursor: pointer;
+}
+.advanced-filters{
+  padding-top:0 !important;
 }
 .filters .advancedLabel{
   width:80%;
