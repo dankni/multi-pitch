@@ -121,7 +121,10 @@
                 var iconColor = yellowIcon;
                 if(parseInt(climbsData.climbs[i].dataGrade) <= 3 ){
                     iconColor = greenIcon;
-                } else if (parseInt(climbsData.climbs[i].dataGrade) >= 6){
+                } else if (parseInt(climbsData.climbs[i].dataGrade) === 5){
+                    iconColor = orangeIcon;
+                }
+                else if (parseInt(climbsData.climbs[i].dataGrade) >= 6){
                     iconColor = redIcon;
                 } 
                 var lat = parseFloat(climbsData.climbs[i].geoLocation.split(',')[0]);

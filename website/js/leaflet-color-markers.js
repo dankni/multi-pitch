@@ -22,6 +22,14 @@ var yellowIcon = new L.Icon({
 	popupAnchor: [1, -34],
 	shadowSize: [41, 41]
 });
+var orangeIcon = new L.Icon({
+	iconUrl: '../img/icons/map/marker-icon-2x-orange.png',
+	shadowUrl: '../img/icons/map/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
 /*
 var blueIcon = new L.Icon({
 	iconUrl: '../img/icons/map/marker-icon-2x-blue.png',
@@ -31,14 +39,7 @@ var blueIcon = new L.Icon({
 	popupAnchor: [1, -34],
 	shadowSize: [41, 41]
 });
-var orangeIcon = new L.Icon({
-	iconUrl: '../img/icons/map/marker-icon-2x-orange.png',
-	shadowUrl: '../img/icons/map/marker-shadow.png',
-	iconSize: [25, 41],
-	iconAnchor: [12, 41],
-	popupAnchor: [1, -34],
-	shadowSize: [41, 41]
-});
+
 var violetIcon = new L.Icon({
 	iconUrl: '../img/icons/map/marker-icon-2x-violet.png',
 	shadowUrl: '../img/icons/map/marker-shadow.png',
