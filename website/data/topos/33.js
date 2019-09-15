@@ -1,0 +1,37 @@
+var topoData = {
+    "image":"img/topos/fermeda/crag.jpg",
+    "flag":"img/flags/it.png",
+    "title":"Grande Fermeda > Via Normale | VDiff / UIAA IV- | 720m",
+    "belaySize":14,
+    "route":[[2750,1800],[2649,1718],[2585,1594],[2562,1546],[2522,1503],[2446,1516],[2353,1534],
+    [2264,1494],[2174,1424],[2087,1366],[1985,1249],[1865,1190],[1761,1048],[1703,997],
+    [1652,958],[1585,903],[1570,892],[1548,846],[1576,720],[1588,654],[1615,631],[1615,619],[1562,582],
+    [1522,572],[1466,549],[1423,529],[1406,495],[1337,487],[1295,478],[1257,484],[1267,449],[1311,397],
+    [1329,330],[1371,319],[1448,282],[1491,264],[1517,232],[1558,191],[1588,156],[1583.0, 141.5],
+    [1582.0, 129.5],[1552.0, 123.5],[1515.0, 133.5]],
+    "pitches":[
+        {"belayPosition":[2248,1484],"labelPosition":[2441,1690],"grade":"UIAA III-","height":"~50m"},
+        {"belayPosition":[1865,1190],"labelPosition":[1927.0, 1351.9],"grade":"UIAA III-","height":"~50m"},
+        {"belayPosition":[1652,964],"labelPosition":[1605.8, 1075.9],"grade":"UIAA III-","height":"~50m"},
+        {"belayPosition":[1554,856],"labelPosition":[1450.0, 920.2],"grade":"UIAA III-","height":"~50m"},
+        {"belayPosition":[1564,790],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1579,725],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1590,662],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1616,619],"labelPosition":[1662,710],"grade":"~100m UIAA III","height":"Pitches 5-8"},
+        {"belayPosition":[1556,580],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1499,559],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1415,515],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1350,490],"labelPosition":[1550,476],"grade":"~170m UIAA II","height":"pitches 9-13"},
+        {"belayPosition":[1259,476],"labelPosition":[null,null],"grade":"","height":""},
+        {"belayPosition":[1274,438],"labelPosition":[1101,486],"grade":"UIAA III","height":"~30m"},
+        {"belayPosition":[1326,346],"labelPosition":[1347,377],"grade":"UIAA IV-","height":"~30m"},
+        {"belayPosition":[1445,281],"labelPosition":[1515,289],"grade":"","height":"~20m UIAA III"},
+        {"belayPosition":[1582,136],"labelPosition":[1600,220],"grade":"","height":"~50m UIAA II"},
+        {"belayPosition":[1540,206],"labelPosition":[1612,168],"grade":"","height":"~30m UIAA II"},
+        {"belayPosition":[1508,131],"labelPosition":[1567,94],"grade":"","height":"~40m UIAA III"}
+    ],
+    "decent":[
+        {"anchor":[null,null],"labelPosition":[null,null],"path":[[1325,363],[1330,403]],"label":""},
+        {"anchor":[null,null],"labelPosition":[null,null],"path":[[1588.0, 733.5],[1598.0, 749.5],[1593.0, 764.5]],"label":""},
+        {"anchor":[null,null],"labelPosition":[null,null],"path":[[1668.0, 966.5],[1702.0, 978.5],[1728.0, 1011.5] ],"label":""}]
+}
