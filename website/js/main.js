@@ -10,7 +10,7 @@ const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
-var dataSavingMode = false;
+var dataSavingMode = false; // toDo: use this to scale down map and topo images
 var geoLocationSupport = false;
 var userLat = null;
 var userLon = null;
@@ -449,7 +449,7 @@ function showTile(climbId) {
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climb.cliff + " - " + climb.routeName;
-    tryLoadTopo(climbId);
+    //tryLoadTopo(climbId);
     loadCurrentWeatherModule(climbId);
 }
 
@@ -519,24 +519,41 @@ function hideTile(resetTitle) {
         document.title = "The best multi-pitch rock climbs";
     }
 }
-
+function isScriptLoaded(url) {
+    var scripts = document.getElementsByTagName('script');
+    for (var i = scripts.length; i--;) {
+        if (scripts[i].src == url) return true;
+    }
+    return false;
+}
+function topoInteraction(climbId, name, cliff){
+    if(isScriptLoaded('/data/topos/' + climbId + '.js' === false)){
+        tryLoadTopo(climbId);
+        toggleTopo();
+    } else {
+        draw();
+    }
+    try{
+        ga(gtagId + '.send', 'event', 'topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
+    } catch (e){
+        // failed to track
+    }
+}
 /**
  LOAD TOPO DATA JS OBJECT IF AVAILIBLE
  **/
 function tryLoadTopo(climbId, enviroment = '') {
     enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
-    if (dataSavingMode === false) {
-        let cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);
-        let topoImg = cImgs.find(img => img.type === 'topo');
-        if (topoImg.dataFile > 1) {
-            let ref = document.getElementsByTagName('script')[0];
-            var script = document.createElement('script');
-            script.onload = function () {
-                initTopo();
-            }
-            script.src = enviroment + "/data/topos/" + climbId + ".js";
-            ref.parentNode.insertBefore(script, ref);
+    let cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);
+    let topoImg = cImgs.find(img => img.type === 'topo');
+    if (topoImg.dataFile > 1) {
+        let ref = document.getElementsByTagName('script')[0];
+        var script = document.createElement('script');
+        script.onload = function () {
+            initTopo();
         }
+        script.src = enviroment + "/data/topos/" + climbId + ".js";
+        ref.parentNode.insertBefore(script, ref);
     }
 }
 
@@ -558,13 +575,13 @@ var dashSpace = [32, 8, 5, 8];
 var belayScale = 1; // used to scale the line and labels inline with belay size
 
 function initTopo() {
-    img = new Image();
+    img = new Image(); 
+    flag = new Image();
+    logo = new Image();
     img.onload = function () {
         draw();
     }
     canvas = document.getElementById("canvas");
-    flag = new Image();
-    logo = new Image();
     logo.src = '/img/logo/mp-logo-white.png';
     img.src = topoData.image;
     flag.src = topoData.flag;
@@ -902,6 +919,7 @@ function clearFilters(){
 // need to handle history.onPopstate ie. user presses back
 window.onpopstate = function (event) {
     hideTile();
+  //  console.log(event.state);
 };
 
 window.onload = function () {
