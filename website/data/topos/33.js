@@ -1,6 +1,6 @@
 var topoData = {
-    "image":"img/topos/fermeda/crag.jpg",
-    "flag":"img/flags/it.png",
+    "image":"/img/topos/fermeda/crag.jpg",
+    "flag":"/img/flags/it.png",
     "title":"Grande Fermeda > Via Normale | VDiff / UIAA IV- | 720m",
     "belaySize":14,
     "route":[[2750,1800],[2649,1718],[2585,1594],[2562,1546],[2522,1503],[2446,1516],[2353,1534],

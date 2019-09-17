@@ -279,34 +279,35 @@ function getRouteTopo(topoImg, climb) {
         <div class="img-contaner" id="topoHolder">
             <a href="/${topoImg.url}" target="blank" class="card-img-anch" onClick="ga('${gtagId}.send', 'event', 'topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
                 <picture class="big-card-map" id="staticTopo">`;
+                let url = topoImg.url.replace('.jpg','');
                 // dealing mostly with pixel density below
                 if(topoImg.dataFile === 5){ // the max is over 2160 so worth declaring for SEO
                     routeTopo += `<source media="(min-width: 4000)" type="image/webp"
-                        srcset="/${topoImg.url}.webp 1x, /${topoImg.url}.webp 2x, /${topoImg.url}.webp 3x">`;
+                        srcset="/${url}.webp 1x, /${url}.webp 2x, /${url}.webp 3x">`;
                 }
                 if(topoImg.dataFile >= 3){
                     let big2pdW, med2pdW, big3pdW, big2pdJ, med2pdJ, big3pdJ;
-                    topoImg.dataFile === 5 ? big2pdW = `, /${topoImg.url}-large.webp x2` : big2pd = '';
-                    topoImg.dataFile >= 4 ? med2pdW = `, /${topoImg.url}-medium.webp x2` : med2pd = '';
-                    topoImg.dataFile === 5 ? big3pdW = `, /${topoImg.url}-large.webp x3` : big3pd = '';
-                    topoImg.dataFile === 5 ? big2pdJ = `, /${topoImg.url}-large.jpg x2` : big2pd = '';
-                    topoImg.dataFile >= 4 ? med2pdJ = `, /${topoImg.url}-medium.jpg x2` : med2pd = '';
-                    topoImg.dataFile === 5 ? big3pdJ = `, /${topoImg.url}-large.jpg x3` : big3pd = '';
+                    topoImg.dataFile === 5 ? big2pdW = `, /${url}-large.webp x2` : big2pd = '';
+                    topoImg.dataFile >= 4 ? med2pdW =  `, /${url}-medium.webp x2` : med2pd = '';
+                    topoImg.dataFile === 5 ? big3pdW = `, /${url}-large.webp x3` : big3pd = '';
+                    topoImg.dataFile === 5 ? big2pdJ = `, /${url}-large.jpg x2` : big2pd = '';
+                    topoImg.dataFile >= 4 ? med2pdJ =  `, /${url}-medium.jpg x2` : med2pd = '';
+                    topoImg.dataFile === 5 ? big3pdJ = `, /${url}-large.jpg x3` : big3pd = '';
 
                     routeTopo += `
-                    <source media="(min-width: 1080)" type="image/webp"
-                        srcset="/${topoImg.url}-small.webp 1x ${big2pdW}">
-                    <source media="(min-width: 768)" type="image/webp"
-                        srcset="/${topoImg.url}-small.webp 1x ${med2pdW} ${big3pdW}">
-                    <source media="(max-width: 767)" type="image/webp"
-                        srcset="/${topoImg.url}-small.webp 1x  ${med2pdW}">
+                    <source media="(min-width: 1080px)" type="image/webp"
+                        srcset="/${url}-small.webp 1x${big2pdW}">
+                    <source media="(max-width: 1080px)" type="image/webp"
+                        srcset="/${url}-small.webp 1x${med2pdW}${big3pdW}">
+                    <source media="(max-width: 767px)" type="image/webp"
+                        srcset="/${url}-small.webp 1x ${med2pdW}">
                         
-                    <source media="(min-width: 1080)" type="image/jpg"
-                        srcset="/${topoImg.url}-small.jpg 1x ${big2pdJ}">
-                    <source media="(min-width: 768)" type="image/jpg"
-                        srcset="/${topoImg.url}-small.jpg 1x ${med2pdJ} ${big3pdJ}">
-                    <source media="(max-width: 767)" type="image/jpg"
-                        srcset="/${topoImg.url}-small.jpg 1x  ${med2pdJ}">`;
+                    <source media="(min-width: 1080px)" type="image/jpg"
+                        srcset="/${url}-small.jpg 1x${big2pdJ}">
+                    <source media="(max-width: 1080px)" type="image/jpg"
+                        srcset="/${url}-small.jpg 1x${med2pdJ}${big3pdJ}">
+                    <source media="(max-width: 767px)" type="image/jpg"
+                        srcset="/${url}-small.jpg 1x${med2pdJ}">`;
                 }
 
                 routeTopo += `
