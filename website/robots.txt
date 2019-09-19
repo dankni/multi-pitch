@@ -6,6 +6,7 @@ sitemap: http://www.multi-pitch.com/sitemap.xml
 
 Disallow: /subscribe/index.html
 Disallow: /subscribe/
+Disallow: /map/?loc*
 
 # WRONG URLS
 Disallow: /climbs/great-slab-on-clogwyn-du-r-arddu

@@ -1102,7 +1102,13 @@ hr {
   0% {opacity: 1;}
   100% {opacity: 0;}
 }
-
+#topoHolder{
+  min-height: 180px;
+  min-width: 180px;
+  background-image: url('/img/logo/loading.gif');
+  background-repeat: no-repeat;
+  background-position: center; 
+}
 /**************/
 /** HP HERO **/
 
