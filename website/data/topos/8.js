@@ -15,3 +15,11 @@ var topoData = {
         {"anchor":[null,null],"labelPosition":[2402,763],"path":[[2415,699],[2335,719],[2358,796]],"label":"Scramble or abseil down"}
     ]
 }
+/*
+"pitches":[
+    {"belayPosition":[2587,2599],"labelPosition":[null,null],"grade":"","height":""},
+    {"belayPosition":[2452,1383],"labelPosition":[null,null],"grade":"","height":""},
+    {"belayPosition":[2217,698],"labelPosition":[null,null],"grade":"","height":""},
+    {"belayPosition":[1725,189],"labelPosition":[null,null],"grade":"","height":""}
+],
+*/
