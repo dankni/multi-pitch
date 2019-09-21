@@ -281,11 +281,15 @@ function getRouteTopo(topoImg, climb) {
                 <picture class="big-card-map" id="staticTopo">`;
                 let url = topoImg.url.replace('.jpg','');
                 // dealing mostly with pixel density below
-                if(topoImg.dataFile === 5){ // the max is over 2160 so worth declaring for SEO
-                    routeTopo += `<source media="(min-width: 2160px)" type="image/webp"
+                if(topoImg.dataFile === 5 && dataSavingMode !== true){
+                    // the max is over 2160 so worth declaring for SEO
+                    routeTopo += `<source media="(min-width: 2200px)" type="image/webp"
                         srcset="/${url}.webp 1x, /${url}.webp 2x, /${url}.webp 3x">`;
                 }
-                if(topoImg.dataFile >= 3){
+                if(typeof dataSavingMode === undefined){ // for node static file generation
+                    var dataSavingMode = false; 
+                }
+                if(topoImg.dataFile >= 3 && dataSavingMode !== true){
                     let big2pdW, med2pdW, big3pdW, big2pdJ, med2pdJ, big3pdJ;
                     topoImg.dataFile === 5 ? big2pdW = `, /${url}-large.webp x2` : big2pd = '';
                     topoImg.dataFile >= 4 ? med2pdW =  `, /${url}-medium.webp x2` : med2pd = '';

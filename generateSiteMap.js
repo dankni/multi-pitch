@@ -16,15 +16,18 @@ function generate() {
             .toLowerCase()
             .replace(/'/g, "")
             .replace(/ /g, "-");
-        const lastmod = (new Date()).toISOString().split('T')[0];
-
-
+        var lastmod
+        if(climb.lastUpdate !== ''){
+            lastmod = climb.lastUpdate;
+        } else {
+            lastmod = '04/09/2019';
+        }
         return `
-            <url>
-                <loc>${loc}</loc>
-                <lastmod>${lastmod}</lastmod>
-                <priority>0.80</priority>
-            </url>`
+        <url>
+            <loc>${loc}</loc>
+            <lastmod>${lastmod}</lastmod>
+            <priority>0.80</priority>
+        </url>`
     });
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset
@@ -32,7 +35,22 @@ function generate() {
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-        ${urlsEntry.join('')}
+        <url>
+            <loc>https://www.multi-pitch.com/</loc>
+            <lastmod>` + (new Date()).toISOString().split('T')[0] + `</lastmod>
+            <priority>1.0</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com/about/</loc>
+            <lastmod>16/09/2019</lastmod>
+            <priority>0.6</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com/map/</loc>
+            <lastmod>` + (new Date()).toISOString().split('T')[0] + `</lastmod>
+            <priority>0.6</priority>
+        </url>
+     ${urlsEntry.join('')}
     </urlset>`;
 
 
