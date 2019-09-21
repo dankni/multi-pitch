@@ -112,24 +112,20 @@ describe('Load the website page', function () {
         });
 
         it('Make the dynamic topo images load', done => {
-            // Note this is nore really a true test as it only checks the canvas is toggled.
-            // However the next test should pick up any errors so is acctually the real test of this feature
-
             nightmare.goto(appUrl)
             .click('div[data-test="climbid-16"] a.open-tile')
             .wait('#climbCardDetails')
             .click('#c3')
             .wait(500)
             .evaluate(function () {
-                return document.querySelector("#canvas").style.display;
+                return document.querySelector("#canvas").dataset.success;
             })
             .end()
-            .then(function (canvasStyle) {
-                expect(canvasStyle).to.equal('block');
+            .then(function (dataSuccess) {
+                expect(dataSuccess).to.equal('true');
                 done()
             })
             .catch(done)
-
         });
 
         it('should not log any errors - on the main page', done => {

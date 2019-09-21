@@ -10,12 +10,14 @@ const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
 var isCardTurned = start.includes('?overview');
-var dataSavingMode = false; // toDo: use this to scale down map and topo images
+var dataSavingMode = false;
 var geoLocationSupport = false;
 var userLat = null;
 var userLon = null;
 if ("connection" in navigator) {
     if (navigator.connection.saveData === true) {
+        // if the device supports data saving this takes the value (true or false)
+        // climbCard.js then doesn't loads high pixel density images (ie. larger files)
         dataSavingMode = navigator.connection.saveData;
     }
 }
@@ -701,6 +703,7 @@ function draw() {
             }
         }
     }
+    document.getElementById('canvas').dataset.success = 'true'; // for automated testing
 }
 
 // A set of helper functions 
