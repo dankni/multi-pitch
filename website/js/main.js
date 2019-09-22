@@ -342,7 +342,7 @@ function publishCards(climbsArr) {
             <p class="card-text">
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
                 <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${techGrade} <br />
-                <span class="what">Location:</span> <a href="https://www.google.co.uk/maps/place/${climbsArr[i].geoLocation}" target="blank">${climbsArr[i].county}</a> <br />
+                <span class="what">Location:</span> <a href="/map/?loc=${climbsArr[i].geoLocation}">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approachTime}min - <span class="approach-${climbsArr[i].approachDifficulty}"></span> <br />
                 <span id="toggle-weather-${climbsArr[i].id}" class="toggle-weather-off">
@@ -451,6 +451,7 @@ function showTile(climbId) {
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climb.cliff + " - " + climb.routeName;
+    document.getElementById('articleTitle').focus(); // Set focus on the climb card article for accessibility 
     //tryLoadTopo(climbId);
     loadCurrentWeatherModule(climbId);
 }
@@ -512,7 +513,7 @@ function updateGradeLabel(gradeSystem) {
  CLOSE THE SUBSCRIBE OVERLAY OR GO BACK TO HOMEPAGE
  **/
 function hideTile(resetTitle) {
-    document.getElementById('close').setAttribute("style", "display:none;");// its the subscribe overlay
+    document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
     history.replaceState(history_data, 'The best multi-pitch climbs', rootProject);
@@ -877,7 +878,7 @@ function loadCurrentWeatherModule(id){
       }
     }
   } catch (e) {
-    console.log("Can't add weather for climbing id ", climb.id);
+    console.log("Can't add weather for climbing id ", id);
   }
 }
 

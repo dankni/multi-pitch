@@ -10,7 +10,7 @@ function getGuidebook(guideBooks, climb) {
         <hr />
         <section class="row">
             <div class="col-sm-12">
-                <h3>Guidebooks</h3>
+                <h3 tabindex="0">Guidebooks</h3>
             </div>`;
                 for (var i = 0; i < guideBooks.length; i++) {
                     guideBookModule += `
@@ -45,7 +45,7 @@ function getApproachInfo(climb) {
     <hr />
     <section class="row">
         <div class="col">
-            <h3>Approach & Descent Infomation</h3>
+            <h3 tabindex="0">Approach & Descent Infomation</h3>
             <p>${climb.approach}</p>
             <p style="text-align:center"> 
                 <a href="/map/?loc=${climb.geoLocation}">
@@ -73,7 +73,7 @@ function getPitchInfo(climb) {
     <hr />
     <section class="row">
         <div class="col">
-           <h3>Pitch By Pitch Information</h3>
+           <h3 tabindex="0">Pitch By Pitch Information</h3>
            <p>${climb.pitchInfo}</p>
         </div>
       </section>`;
@@ -93,7 +93,7 @@ function getReferanceInfo(referanceLines, climb) {
         <hr />
         <section class="row">
             <div class="col">
-                <h3>Referances &amp; additional links</h3>
+                <h3 tabindex="0" id="refs">Referances &amp; additional links</h3>
                 <p>
                     The following links will take you to external websites related specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
                     <em>Note: They contined relavant infomation at the time of publishing.</em>
@@ -206,7 +206,7 @@ function getWeather(theId, weatherData, climb) {
       <hr />
       <section class="row" id="weather">
         <div class="col-12">
-          <h3>Weather & Local Conditions</h3>
+          <h3  tabindex="0">Weather & Local Conditions</h3>
           ${seepage}
           <aside style="margin-bottom:2.5rem;">
             <small>
@@ -218,7 +218,7 @@ function getWeather(theId, weatherData, climb) {
           
         </div>
         <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
-          <h4>Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
+          <h4  tabindex="0">Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
           <p class="min-height">
             The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>,
             with temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c. 
@@ -236,7 +236,7 @@ function getWeather(theId, weatherData, climb) {
           <p class="credit" style="margin-top:15px;">Weather by Dark Sky API</p>
         </div>
         <div class="col-12" id="seasonalWeather">
-          <h4>Seasonal Weather Infomation</h4>
+          <h4 tabindex="0">Seasonal Weather Infomation</h4>
           <p class="min-height">
             Below shows the estimated average number of rainy days in the month that had more than 
             1mm rainfall or snow:
@@ -452,7 +452,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                 <div class="big-card-body pull-onto-map">
                 <div class="row">
                     <div class="col-sm">
-                        <h1>
+                        <h1 id="articleTitle" tabindex="0">
                             <span class="flag big-flag ${climb.flag}"></span>
                             ${climb.cliff} - ${climb.routeName}
                         </h1>
@@ -519,7 +519,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                 <hr />  
                 <section class="row">
                     <div class="col">
-                        <h2>The Route Topography</h2>
+                        <h2 tabindex="0">The Route Topography</h2>
                         <p>
                             This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}. Clicking the image will load it full screen.
                         </p>

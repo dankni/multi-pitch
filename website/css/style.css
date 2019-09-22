@@ -13,7 +13,6 @@ h1,h3,h4,p,ul {
 h1 {
   font-size: 2rem;
 }
-
 h2 {
   font-size: 1.6rem;
   font-weight:300;
@@ -503,6 +502,9 @@ position: relative;
   margin:0 auto;
   display: block;
 }
+a:focus .crag-hero{
+  filter:grayscale(0.6);
+}
 .no-results{
   min-height:300px;
   text-align:center;
@@ -760,10 +762,14 @@ blockquote:before {
   background-color: transparent;
   font-weight: 400;
   width: 14rem;
-  border: 1px solid #ccc;
+  border: 1px solid #CCC;
   padding: 2px 15px;
   margin: 0 auto 1rem;
   display: block;
+}
+.open-tile:focus {
+  border: 1px solid #777;
+  background: #CCC;
 }
 .info-ring{
   display: inline-block;
