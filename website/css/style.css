@@ -767,7 +767,7 @@ blockquote:before {
   margin: 0 auto 1rem;
   display: block;
 }
-.open-tile:focus {
+.open-tile:focus, [role="button"][aria-pressed="true"] {
   border: 1px solid #777;
   background: #CCC;
 }

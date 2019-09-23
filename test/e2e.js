@@ -64,7 +64,7 @@ describe('Load the website page', function () {
         it('Make sure the correct cards are removed when an advanced filter is un-checked', done => {
     
             nightmare.goto(appUrl)
-            .click('#absail')
+            .click('#abseil')
             .evaluate(function () {
                 return document.getElementById("12").style.display;
             })

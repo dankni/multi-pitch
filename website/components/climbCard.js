@@ -271,7 +271,7 @@ function getRouteTopo(topoImg, climb) {
             <label for="c1"><input type="checkbox" value="infoBox" checked id="c1" name="c1" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Info Box</label>
             <label for="c2"><input type="checkbox" value="routeLine" checked id="c2" name="c2" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Route</label>
             <label for="c3"><input type="checkbox" value="belays" checked id="c3" name="c3" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Belay&nbsp;Points</label>
-            <label for="c4"><input type="checkbox" value="absail" checked id="c4" name="c4" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Approach&nbsp;/&nbsp;Decent</label>
+            <label for="c4"><input type="checkbox" value="abseil" checked id="c4" name="c4" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Approach&nbsp;/&nbsp;Decent</label>
             <label for="c5"><input type="checkbox" value="labels" checked id="c5" name="c5" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Labels</label>
         </aside>`;
     }
@@ -433,7 +433,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
     } else {
         var tidal = '';
     } 
-    if (climb.absail === 1){
+    if (climb.abseil === 1){
         var abReq = `<div class="info-ring">
         <span class="single-attribute">Abseil<br/> Required</span>
         </div>`

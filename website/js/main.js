@@ -203,6 +203,7 @@ function filterCards() {
 function toggleFilters(){
     let advancedFilters = document.getElementById('advancedFilters');
     advancedFilters.style.display === 'flex' ? advancedFilters.style.display = 'none' : advancedFilters.style.display = 'flex';
+    document.getElementById('abseil').focus(); // keyboard acessibility 
 }
 
 function saveFilter() {
@@ -320,7 +321,7 @@ function publishCards(climbsArr) {
          data-grade="${climbsArr[i].dataGrade}" 
          data-height="${climbsArr[i].length}"
          data-approach="${climbsArr[i].approachTime}"
-         data-absail="${climbsArr[i].absail}"
+         data-abseil="${climbsArr[i].abseil}"
          data-traverse="${climbsArr[i].traverse}"
          data-loose="${climbsArr[i].loose}"
          data-tidal="${climbsArr[i].tidal}"
@@ -618,7 +619,7 @@ function draw() {
     let infoBox = document.getElementById('c1').checked;
     let routeLine = document.getElementById('c2').checked;
     let belayPoints = document.getElementById('c3').checked;
-    let absailPoints = document.getElementById('c4').checked;
+    let abseilPoints = document.getElementById('c4').checked;
     let pitchLabels = document.getElementById('c5').checked;
     var ctx = document.getElementById('canvas').getContext('2d');
 
@@ -687,7 +688,7 @@ function draw() {
     }
 
     // Add the abasail Points
-    if (absailPoints === true) {
+    if (abseilPoints === true) {
         for (let i = 0; i < topoData.decent.length; i++) {
             if (topoData.decent[i].anchor !== null) {
                 drawBelay(ctx,
@@ -901,7 +902,7 @@ function execFilter(){
 function clearFilters(){    
     localStorage.removeItem('filter');
     // reset the advanced filters
-    let checkboxes = ['tidal','loose','absail','polished','traverse','seepage'];
+    let checkboxes = ['tidal','loose','abseil','polished','traverse','seepage'];
     for(let i = 0; i < checkboxes.length; i++){
         document.getElementById(checkboxes[i]).checked = true;
     }

@@ -179,7 +179,10 @@
                                     </p>
                                 </div>
                                 <div class="col-12">
-                                    <h5 class="filter-toggle" onclick="toggleFilters()">Advanced Filters</h5>
+                                    <h5 class="filter-toggle" onclick="toggleFilters()" tabindex="0" 
+                                        role="button" aria-expanded="false" aria-pressed="false" onKeyDown="toggleFilters()">
+                                        Advanced Climbing Filters
+                                    </h5>
                                 </div>
                             </div>
                             <div id="advancedFilters" class="row advanced-filters" style="display: none;">
@@ -187,8 +190,8 @@
                                     <p>Include rock climbs that have the following attributes:</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="checkbox" id="absail" onchange="saveFilter();filterCards()" checked />
-                                    <label class="advancedLabel" for="absail">Absail Required</label><br />
+                                    <input type="checkbox" id="abseil" onchange="saveFilter();filterCards()" checked />
+                                    <label class="advancedLabel" for="abseil">Abseil Required</label><br />
 
                                     <input type="checkbox" id="traverse" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="traverse">Traverse Required</label><br />
