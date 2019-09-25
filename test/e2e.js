@@ -76,6 +76,21 @@ describe('Load the website page', function () {
             .catch(done)
         });
 
+        it('Make sure cards are favourited when clicked', done => {
+            nightmare.goto(appUrl)
+            .click('div[data-test="climbid-25"] .climb-status')
+            .click('div[data-test="climbid-25"] .climb-status')
+            .evaluate(function () {
+                return document.getElementById("25Status").dataset.status;
+            })
+            .end()
+            .then(function (status) {
+                expect(status).to.equal('done');
+                done()
+            })
+            .catch(done)
+        });
+
         it('Make sure that we can click a card and see a overlay', done => {
             var randomCard = climbs.climbsData.climbs[6];
 

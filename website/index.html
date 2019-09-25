@@ -21,12 +21,12 @@
 
     <!-- Styles -->
     <link href="css/bootstrap-grid.css" rel="stylesheet" />
-    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/style.css?Sept=25" rel="stylesheet" />
 
     <!-- JavaScripts -->
     <script async src="data/data.js"></script>
     <script async src="components/climbCard.js"></script>
-    <script async src="js/main.js"></script>
+    <script async src="js/main.js?Sept=25"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
@@ -155,7 +155,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <span id="lastUpdate" style="display:none;"></span>
-                                    <label for="gradeRange">Grade </label>
+                                    <label for="gradeRange">Grade </label><br class="break" />
                                     <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1"
                                            oninput="showVal(this.value, 'grade');trackFilter('grade');" /><br />
                                     <p id="grade" class="current-values">
@@ -163,7 +163,7 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="heightRange">Height </label>
+                                    <label for="heightRange">Height </label><br class="break" />
                                     <input id="heightRange" type="range" multiple value="50,720" min="50" max="720" step="10"
                                            oninput="showVal(this.value, 'height');trackFilter('height');" /><br />
                                     <p id="height" class="current-values">
@@ -171,7 +171,7 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="approachRange">Approach </label>
+                                    <label for="approachRange">Approach </label><br class="break" />
                                     <input id="approachRange" type="range" multiple value="0,200" min="0" max="200" step="10"
                                            oninput="showVal(this.value, 'approach');trackFilter('approach');" /><br />
                                     <p id="approach" class="current-values">
@@ -189,7 +189,7 @@
                                 <div class="col-12">
                                     <p>Include rock climbs that have the following attributes:</p>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="checkbox" id="abseil" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="abseil">Abseil Required</label><br />
 
@@ -199,7 +199,7 @@
                                     <input type="checkbox" id="tidal" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="tidal">Tidal</label><br />
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="checkbox" id="loose" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="loose">Loose Rock</label><br />
 
@@ -209,12 +209,23 @@
                                     <input type="checkbox" id="seepage" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="seepage">Suffers Seepage</label><br />
                                 </div>
+                                <div class="col-md-4">
+                                    <input type="checkbox" id="unsaved" onchange="saveFilter();filterCards()" checked />
+                                    <label class="advancedLabel" for="unsaved"><i class="icon-heart-empty"></i> Un-saved climbs</label><br />
+
+                                    <input type="checkbox" id="saved" onchange="saveFilter();filterCards()" checked />
+                                    <label class="advancedLabel" for="saved"><i class="icon-heart"></i> Saved Climbs</label><br />
+
+                                    <input type="checkbox" id="done" onchange="saveFilter();filterCards()" checked />
+                                    <label class="advancedLabel" for="done"><i class="icon-ok"></i> Compleated <span class="not-tablet">Climbs</span></label><br />
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
                                     <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
                                             ga(gtagId+'.send', 'event', 'sort-and-filter', 'sort', this.value, 0);">
+                                            <!-- toDo: break GA tracking into a function with a try catch -->
                                         <option value="length,DESC">Longest Climbs First</option>
                                         <option value="length,ASC">Shortest Climbs First</option>
                                         <option value="dataGrade,ASC">Easiest Climbs First</option>
@@ -258,8 +269,8 @@
                         personal injury or death. Participants should be aware of and accept these risks and be
                         responsible for their own actions. If in doubt, don't climb.
                     </p>
-                    <a class="btn btn-outline-white" href="https://www.thebmc.co.uk/risk-and-safety" target="blank"
-                       role="button">BMC STATEMENT</a>
+                    <a class="btn btn-outline-white" href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
+                        BMC STATEMENT</a>
                 </div>
                 <div class="col-md-4">
                     <h4>Contact Us</h4>
@@ -267,7 +278,7 @@
                         We would love to hear from you, please send us any comments, corrections, or suggestions.
                         This site is intended as a free resource for the climbing comunitiy now and for the future.
                     </p>
-                    <a class="btn btn-outline-white" href="/about/#contact" role="button">CONTACT</a>
+                    <a class="btn btn-outline-white" href="/about/#contact">CONTACT</a>
                 </div>
                 <div class="col-md-4">
                     <h4>Stay Up to date</h4>
@@ -276,8 +287,8 @@
                         We won't ever send more than 2 emails a month and we won't share any of your details with
                         anyone else.
                     </p>
-                    <a class="btn btn-outline-white" href="" role="button"
-                       onClick="openSubscribe();gtag('event', 'open-subscribe', {'event_category':'subscribe', 'event_label':'Open subscribe - homepage footer'});return false;">
+                    <a class="btn btn-outline-white" href="/subscribe/" rel="no-follow"
+                       onClick="openSubscribe();return false;" onkeydown="openSubscribe();return false;">
                         SUBSCRIBE TO UPDATES
                     </a>
                 </div>
@@ -288,7 +299,7 @@
             <a href="/"> multi-pitch.com </a>
         </div>
     </footer>
-    <a onClick="hideTile(false)" class="close" id="close"></a>
+    <a onClick="hideTile(false)" onKeyDown="hideTile(false)"class="close" id="close"></a>
     <div class="overlay" id="overlay"></div>
     <script>
         window.performance.mark('html-end');

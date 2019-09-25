@@ -202,24 +202,28 @@ function filterCards() {
 
 function toggleFilters(){
     let advancedFilters = document.getElementById('advancedFilters');
-    advancedFilters.style.display === 'flex' ? advancedFilters.style.display = 'none' : advancedFilters.style.display = 'flex';
-    document.getElementById('abseil').focus(); // keyboard acessibility 
+    if(advancedFilters.style.display === 'flex'){
+        advancedFilters.style.display = 'none';
+        localStorage.setItem('showFilters', false);
+    } else {
+        advancedFilters.style.display = 'flex';
+        document.getElementById('abseil').focus(); // keyboard acessibility 
+        localStorage.setItem('showFilters', true);
+    }
 }
 
 function saveFilter() {
-    localStorage.setItem('filter', 
-        document.getElementById('gradeRange').value + '|' +
-        document.getElementById('heightRange').value + '|' + 
-        document.getElementById('approachRange').value
-    );
-    let adFilterString = "";
+    let filter = {};
+    filter.gradeRange = document.getElementById('gradeRange').value;
+    filter.heightRange = document.getElementById('heightRange').value;
+    filter.approachRange = document.getElementById('approachRange').value
     let advancedLabels = document.getElementsByClassName('advancedLabel');
     for(let j = 0; j < advancedLabels.length; j++){
-      let title = advancedLabels[j].getAttribute('for');
-      adFilterString += title + ":" + document.getElementById(title).checked;
-      if(j != (advancedLabels.length - 1)) { adFilterString += "|"; }
+        let title = advancedLabels[j].getAttribute('for');
+        let value = document.getElementById(title).checked;
+        filter[title] = value; 
     }
-    localStorage.setItem('advancedFilter', adFilterString);
+    localStorage.setItem('filters', JSON.stringify(filter));
 }
 
 function trackFilter(filterType){
@@ -308,6 +312,33 @@ function publishCards(climbsArr) {
             var webPUrl = tileImg.url.replace(".jpg", ".webp");
             var url = '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/';
             url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+            let status = "";
+            let icon = "heart-empty";
+            let saved = 0;
+            let unsaved = 1;
+            let done = 0
+            if(localStorage.getItem('wishlist')){
+                try{
+                    let wishlist = JSON.parse(localStorage.getItem('wishlist'));
+                    status = wishlist[climbsArr[i].id];
+                    if(status === "done"){ 
+                        icon = "ok"; 
+                        done = 1;
+                        saved = 0;
+                        unsaved = 0; 
+                    }
+                    else if (status === "wished") { 
+                        icon = "heart"; 
+                        saved = 1;
+                        unsaved = 0;
+                        done =0;
+                    }
+                } catch (e) {
+                    // useful catch for currupt JSON
+                    localStorage.removeItem('wishlist');
+                    console.log("Problem with wishlist in local storage. Whole wishlist removed" + e);
+                }
+            }
 
             if (climbsArr[i].techGrade === null) {
                 var techGrade = "";
@@ -327,8 +358,14 @@ function publishCards(climbsArr) {
          data-tidal="${climbsArr[i].tidal}"
          data-seepage="${climbsArr[i].seepage}"
          data-polished="${climbsArr[i].polished}"
+         data-saved="${saved}"
+         data-unsaved="${unsaved}"
+         data-done="${done}"
          id="${climbsArr[i].id}" 
          class="card">
+         <div class="climb-status" id="${climbsArr[i].id}Status" data-climbId="${climbsArr[i].id}" data-status="${status}" onclick="cycleStatus(${climbsArr[i].id})">
+             <i class="icon-${icon}"></i>
+         </div>
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
@@ -360,6 +397,35 @@ function publishCards(climbsArr) {
         }
     }
     document.getElementById('loading').style.display = 'none';
+}
+
+/**
+CHANGES THE USERS STATUS OF THE CLIMB CARD BETWEEN NONE, WISHED & DONE
+**/
+function cycleStatus(id){
+    let statusFlag = document.getElementById(id + 'Status');
+    let curentState = statusFlag.dataset.status;
+    let wishlist = {};
+    switch(curentState) {
+        case (""):
+            statusFlag.dataset.status = "wished";
+            statusFlag.innerHTML = "<i class='icon-heart'></i>";
+            break;
+        case ("wished"):
+            statusFlag.dataset.status = "done";
+            statusFlag.innerHTML = "<i class='icon-ok'></i>";
+            break;
+        default:
+            statusFlag.dataset.status = "";
+            statusFlag.innerHTML = "<i class='icon-heart-empty'></i>";
+            break;
+    }
+    let climbSti = document.getElementsByClassName('climb-status');
+    for(let i = 0; i < climbSti.length; i++){
+     //   console.log(climbSti[i].dataset.climbid + " = " + climbSti[i].dataset.status);
+        wishlist[climbSti[i].dataset.climbid] = climbSti[i].dataset.status;
+    }
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
 }
 
 /**
@@ -471,6 +537,7 @@ function openSubscribe() {
             document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
             document.getElementById('close').setAttribute("style", "display:block;");
             document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+            document.getElementById('subscribe').focus(); // accessibility
         } else {
             console.log('failed to get subscribe');
         }
@@ -479,6 +546,11 @@ function openSubscribe() {
         console.log('There was a connection error of some sort');
     };
     request.send();
+    try{
+        gtag('event', 'open-subscribe', {'event_category':'subscribe', 'event_label':'Open subscribe - homepage footer'});
+    } catch (e) {
+        // can't track GA event (offline or GA blocked etc)
+    }
 }
 
 /**
@@ -887,24 +959,24 @@ function loadCurrentWeatherModule(id){
  * EXECUTE THE FILTER FUCTION BASED ON LOCAL STORAGE
  **/
 function execFilter(){
-    let advancedFilters = localStorage.getItem('advancedFilter').split('|');
-    for(let i = 0; i < advancedFilters.length; i++){
-        document.getElementById(advancedFilters[i].split(":")[0]).checked = JSON.parse(advancedFilters[i].split(":")[1]);
+    let filters = JSON.parse(localStorage.getItem('filters'));
+    let advancedLabels = document.getElementsByClassName('advancedLabel');
+    for(let i = 0; i < advancedLabels.length; i++){
+        document.getElementById(advancedLabels[i].getAttribute('for')).checked = filters[advancedLabels[i].getAttribute('for')];
     }
-    let filterValues = localStorage.getItem('filter').split('|');
-    document.getElementById('gradeRange').value = filterValues[0];
-    showVal(filterValues[0], 'grade');
-    document.getElementById('heightRange').value = filterValues[1];
-    showVal(filterValues[1], 'height');
-    document.getElementById('approachRange').value = filterValues[2];
-    showVal(filterValues[2], 'approach');
+    document.getElementById('gradeRange').value = filters.gradeRange;
+    showVal(filters.gradeRange, 'grade');
+    document.getElementById('heightRange').value = filters.heightRange;
+    showVal(filters.heightRange, 'height');
+    document.getElementById('approachRange').value = filters.approachRange;
+    showVal(filters.approachRange, 'approach');
 }
 function clearFilters(){    
-    localStorage.removeItem('filter');
+    localStorage.removeItem('filters');
     // reset the advanced filters
-    let checkboxes = ['tidal','loose','abseil','polished','traverse','seepage'];
-    for(let i = 0; i < checkboxes.length; i++){
-        document.getElementById(checkboxes[i]).checked = true;
+    let labels = document.getElementsByClassName('advancedLabel');
+    for(let i = 0; i < labels.length; i++){
+        document.getElementById(labels[i].getAttribute('for')).checked = true;
     }
     // reset the normal filters
     let options = { "filters": 
@@ -934,7 +1006,7 @@ window.onload = function () {
     document.getElementById('cardHolder') ? hp = true : hp = false;
     if (document.location.href.includes('/climbs/') === false && hp === true) {
         sortCards('length', 'DESC');
-        if(localStorage.getItem('filter')){
+        if(localStorage.getItem('filters')){
             execFilter();
         }
         window.performance.mark('all-climbs-loaded');
@@ -946,6 +1018,11 @@ window.onload = function () {
         var overview = start.split('=');
         var cardToLoad = overview[1];
         showTile(cardToLoad);
+    }
+    if(localStorage.getItem('showFilters') && hp === true){
+        if(localStorage.getItem('showFilters') === 'true'){
+            document.getElementById('advancedFilters').style.display = 'flex';
+        }
     }
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css"); 
