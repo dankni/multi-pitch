@@ -3,9 +3,6 @@ window.performance.mark('start-js-read');
 /**
  GLOBAL VARIABLES
  **/
-if(typeof gtagId === 'undefined'){
-    var gtagId = 'gtag_UA_123782847_1'; // needed per event for some reason
-} 
 const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
@@ -23,6 +20,17 @@ if ("connection" in navigator) {
 }
 if ("geolocation" in navigator) {
     geoLocationSupport = true;
+}
+/**
+GA TRACKING HELPER
+**/
+function trackGA(category, action, label, value = 0){
+    try{
+        ga('gtag_UA_123782847_1' + '.send', 'event', category, action, label, value);
+    }
+    catch (e) {
+        // console.log("failed to track event" + e);
+    }
 }
 
 /**
@@ -236,11 +244,7 @@ function trackFilter(filterType){
             let approach = document.getElementById('approach').innerText;
             let label = "G = " + grade + " | H = " + height + " | A = " + approach;
             saveFilter();
-            try{
-                ga(gtagId + '.send', 'event', 'sort-and-filter', filterType + '-filter', label, 0);
-            } catch (e) {
-                // ga not availible
-            }
+            trackGA('sort-and-filter', filterType + '-filter', label, 0);
         }
     }, 2000);
 }
@@ -425,6 +429,7 @@ function cycleStatus(id){
      //   console.log(climbSti[i].dataset.climbid + " = " + climbSti[i].dataset.status);
         wishlist[climbSti[i].dataset.climbid] = climbSti[i].dataset.status;
     }
+    trackGA('wishlist', statusFlag.dataset.status, id + ' = ' + statusFlag.dataset.status);
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
 }
 
@@ -546,11 +551,7 @@ function openSubscribe() {
         console.log('There was a connection error of some sort');
     };
     request.send();
-    try{
-        gtag('event', 'open-subscribe', {'event_category':'subscribe', 'event_label':'Open subscribe - homepage footer'});
-    } catch (e) {
-        // can't track GA event (offline or GA blocked etc)
-    }
+    trackGA('subscribe', 'Open', 'subscribe from homepage footer');
 }
 
 /**
@@ -609,11 +610,7 @@ function topoInteraction(climbId, name, cliff){
     } else {
         draw();
     }
-    try{
-        ga(gtagId + '.send', 'event', 'topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
-    } catch (e){
-        // failed to track
-    }
+    trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
 }
 /**
  LOAD TOPO DATA JS OBJECT IF AVAILIBLE

@@ -1,7 +1,3 @@
-if(typeof gtagId === 'undefined'){
-  var gtagId = 'gtag_UA_123782847_1'; // needed per event for some reason
-} 
-
 function getGuidebook(guideBooks, climb) {
     guideBookModule = '';
     if(Array.isArray(guideBooks) && guideBooks.length){
@@ -22,7 +18,7 @@ function getGuidebook(guideBooks, climb) {
                                 <strong>${guideBooks[i].title}</strong> - pg. ${guideBooks[i].pg} <br />
                                 ${guideBooks[i].description}
                                 <br />
-                                <a href="${guideBooks[i].link}" onClick="ga('${gtagId}.send', 'event', 'external-link', 'guidebook', 'ID = ${climb.id} | B = ${guideBooks[i].title}', '${guideBooks[i].rrp}');" target="blank">Availible Here</a>
+                                <a href="${guideBooks[i].link}" onClick="trackGA('external-link', 'guidebook', 'ID = ${climb.id} | B = ${guideBooks[i].title}', '${guideBooks[i].rrp}');" target="blank">Availible Here</a>
                                 R.R.P. <strong>£ ${guideBooks[i].rrp}</strong><br />
                                 <small>ISBN: ${guideBooks[i].isbn} </small>
                             </p>
@@ -277,7 +273,7 @@ function getRouteTopo(topoImg, climb) {
     }
     routeTopo += `
         <div class="img-contaner" id="topoHolder">
-            <a href="/${topoImg.url}" target="blank" class="card-img-anch" onClick="ga('${gtagId}.send', 'event', 'topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
+            <a href="/${topoImg.url}" target="blank" class="card-img-anch" onClick="trackGA('topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
                 <picture class="big-card-map" id="staticTopo">`;
                 let url = topoImg.url.replace('.jpg','');
                 // dealing mostly with pixel density below
@@ -497,22 +493,22 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                         <a  id="whatsappShare"
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
-                            onClick="ga('${gtagId}.send', 'event', 'social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                            onClick="trackGA('social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-whatsapp"></i></a>
                         <a
                             href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
-                            onClick="ga('${gtagId}.send', 'event', 'social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                            onClick="trackGA('social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-twitter"></i></a>
                         <a
                             href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
-                                onClick="ga('${gtagId}.send', 'event', 'social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                                onClick="trackGA('social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-facebook"></i></a>
                         <a
                             href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
-                                onClick="ga('${gtagId}.send', 'event', 'social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                                onClick="trackGA('social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-mail"></i></a>
                     </div>
                 </div>

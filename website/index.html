@@ -224,7 +224,7 @@
                                 <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
                                     <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
-                                            ga(gtagId+'.send', 'event', 'sort-and-filter', 'sort', this.value, 0);">
+                                            trackGA('sort-and-filter', 'sort', this.value, 0);">
                                             <!-- toDo: break GA tracking into a function with a try catch -->
                                         <option value="length,DESC">Longest Climbs First</option>
                                         <option value="length,ASC">Shortest Climbs First</option>
