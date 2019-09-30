@@ -517,7 +517,9 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                     <div class="col">
                         <h2 tabindex="0">The Route Topography</h2>
                         <p>
-                            This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}. Clicking the image will load it full screen.
+                            This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}.
+                            It represents ${climb.length}m of ${climb.rock} rock climbing, usually over ${climb.pitches} pitches, of a max grade of ${climb.tradGrade}&nbsp;${techGrade}.
+                            Clicking the image will load the <a href="/${topoImg.url}" target="blank">full screen high resolution ${climb.routeName} climb topo</a>.
                         </p>
                         ${routeTopoModule}
                         <aside>
