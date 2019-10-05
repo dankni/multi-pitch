@@ -15,7 +15,7 @@ When the site reaches 100 climbs it will be of comparable size to dedicated guid
 * Avoid I or We, instead use “the climber”
 * Avoid complex mountain terminology, or at least qualify it. Eg, avoid “Follow the col until you see the dihedral before the arete on the left” Instead use “Follow the Gully between the rocks until you see the corner before the exposed edge on the left”.
 * Informal language is fine
-* Interesting facts are important including geology, first or notable accents and history
+* Interesting facts are important including geology, first or notable ascent and history
 * Referance links should be start with a relevant prefix for usability. Options include
 `Video`, `Travel`, `Article`, `Info`, `Tides` for example: [`Video: Chris Bonington Climbs the Old man of Hoy`](https://www.youtube.com/watch?v=_aIrZnJkIqs)
 
@@ -26,8 +26,9 @@ When the site reaches 100 climbs it will be of comparable size to dedicated guid
 * Technically tile images should be 600px x 300px (for retina devices) and around 100Kb in size as a .jpg
 * Crag / Topo images should be functional and very detailed.
 *There need to be between 2 and 5 images images created for dynamic topos, these should work as follows:
+
 | number | What’s in the image | Size | Naming |
-|-------:|:-------------------:|:----:|:------:|
+|-------|------------------|----|-----|
 |1| The raw image of the crag | As big as possible to a max of 5,000px wide. | Ideally crag.jpg |
 |2|	As above but with topo drawn on | As above | Something SEO friendly eg. `<<Climb-name>>-route-on-<<cliff-name>>-multi-pitch.jpg` |
 |3|	Same as img 2 |	Width of exactly 2160px	| Identical to 2 but with `-large` appended just before `.jpg`.|
@@ -38,4 +39,3 @@ Depending on the number possible based on the original image size, the value in 
 
 ### WebP Conversion 
 WebP conversion uses [this node package](https://www.npmjs.com/package/webp-converter-cli). It can be run using the command `webpc -r` from command line in the relavant folder where ` -r` makes it recursively convert all sub folder images. 
-
