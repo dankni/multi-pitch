@@ -17,10 +17,10 @@ function generate() {
             .replace(/'/g, "")
             .replace(/ /g, "-");
         var lastmod
-        if(climb.lastUpdate !== ''){
-            lastmod = climb.lastUpdate;
+        if(climb.lastUpdate !== null){
+            lastmod = climb.lastUpdate.substring(0,10);;
         } else {
-            lastmod = '04/09/2019';
+            lastmod = '2019-09-04';
         }
         return `
         <url>
@@ -29,6 +29,8 @@ function generate() {
             <priority>0.80</priority>
         </url>`
     });
+    let date = (new Date()).toISOString();
+    date = date.substring(0,10);
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -37,17 +39,17 @@ function generate() {
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
         <url>
             <loc>https://www.multi-pitch.com/</loc>
-            <lastmod>` + (new Date()).toISOString().split('T')[0] + `</lastmod>
+            <lastmod>` + date + `</lastmod>
             <priority>1.0</priority>
         </url>
         <url>
             <loc>https://www.multi-pitch.com/about/</loc>
-            <lastmod>16/09/2019</lastmod>
+            <lastmod>2019-10-05/lastmod>
             <priority>0.6</priority>
         </url>
         <url>
             <loc>https://www.multi-pitch.com/map/</loc>
-            <lastmod>` + (new Date()).toISOString().split('T')[0] + `</lastmod>
+            <lastmod>` + date + `</lastmod>
             <priority>0.6</priority>
         </url>
      ${urlsEntry.join('')}

@@ -864,13 +864,17 @@ blockquote:before {
 }
 .social-share {
   text-decoration: none;
-  text-align: right;
-  padding: 1.2rem 0.5rem;
+  text-align: center;
+  padding: 0.5rem;
   font-size: 32px;
 }
 .social-share a{
   color:#222222;
   transition: color 1s ease;
+}
+.share-tip{
+  font-size: 12px;
+  margin:0;
 }
 .topo-controls{
   text-align: center;

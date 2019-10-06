@@ -456,7 +456,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                 </div>
                 <section class="row">
                     <div class="col">
-                        <p class="smaller">
+                        <p>
                             ${climb.intro}
                         </p>
                     </div>
@@ -490,6 +490,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                         ${abReq}
                     </div>
                     <div class="col-lg-3 col-md-12 social-share">
+                        <p class="share-tip">Share this page:</p>
                         <a  id="whatsappShare"
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
