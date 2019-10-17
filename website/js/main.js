@@ -53,6 +53,7 @@ function trackGA(category, action, label, value = 0){
         var min = +(input.min || 0);
         var max = +(input.max || 100);
         var ghost = input.cloneNode();
+        ghost.id = ''; // stops 2 elements with the same id issue
 
         input.classList.add("multirange", "original");
         ghost.classList.add("multirange", "ghost");

@@ -38,8 +38,4 @@ When the site reaches 100 climbs it will be of comparable size to dedicated guid
 Depending on the number possible based on the original image size, the value in the datafile needs to be between 2 and 5. So for example if the original image is only 800px wide the value in the spreadsheet for datafile is 2. If the original is over 2160 then all 5 images can be created and the data value is 5. This is to enable the best media queries. The media queries are quite complicated and take into account device width and pixel density of the device screen in order to provide a decent image for the user without wasting bandwidth. WebP format is also used if the device supports it to make the images smaller without reduced quality. 
 
 ### WebP Conversion 
-<<<<<<< HEAD
 WebP conversion uses [this node package](https://www.npmjs.com/package/webp-converter-cli). It can be run using the command `webpc -r` from command line in the relavant folder where ` -r` makes it recursively convert all sub folder images. 
-=======
-WebP conversion uses [this node package](https://www.npmjs.com/package/webp-converter-cli). It can be run using the command `webpc -r` from command line in the relavant folder where ` -r` makes it recursively convert all sub folder images. 
->>>>>>> b1c9e59d5a715cf12ae278f86b3fd731b310a7d8
