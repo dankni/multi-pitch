@@ -8,31 +8,45 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
     <!-- Scripts-->
     <script src="../website/data/data.js"></script>
-    <script>    
-        var topoData = {
-            "image":"../website/img/topos/wye-valley/wintours-leap-crag.jpg",
-            "flag":"../website/img/flags/en.png",
-            "title":"Wintours Leap > Right Hand Route | HS 4b - 87m",
-            "belaySize":18,
-            "route":[[1801,2008.4],[1825,1941.4],[1807,1818.4],[1788,1744.4],[1814,1640.4],[1832,1599.4],[1809,1520.4],[1847,1407.4],[1867,1326.4],[1866,1224.4],[1863,1127.4],[1854,1056.4],[1815,1048.4],[1806,1029.4],[1757,958.4],[1702,866.4],[1673,803.4],[1683,739.4],[1668,712.4],[1668,643.4],[1657,550.4],[1636,478.4],[1584,423.4],[1584,363.4],[1584,324.4]],
-            "pitches":[
-                {"belayPosition":[1791,1765],"labelPosition":[1649,1849],"grade":"3c","height":"18m"},
-                {"belayPosition":[1856,1348],"labelPosition":[1687,1520],"grade":"4b","height":"21m"},
-                {"belayPosition":[1794,1012],"labelPosition":[1766,1174],"grade":"4b","height":"17m"},
-                {"belayPosition":[1581,331],"labelPosition":[1570,664],"grade":"4a","height":"30m"}
-            ],
-            "decent":[
-                {"anchor":[null,null],"labelPosition":[1491.0, 462.4],"path":[[1578.0, 347.4],[1567.0, 400.4],[1577.0, 436.4]],"label":"30m"},
-                {"anchor":[null,null],"labelPosition":[null,null],"path":[[1656,1015],[1548,1021]],"label":""},
-                {"anchor":[1208,1026],"labelPosition":[1249,1169],"path":[[1211.0, 1041.1],[1224.0, 1085.1],[1226.0, 1132.1] ],"label":"~45m"},
-                {"anchor":[1333,1896],"labelPosition":[1357,1956],"path":[[1334.5, 1914.6],[1342.5, 1973.6]],"label":"~20m"}
-            ]
-        }
+    <script>  
+    var topoData = {
+        "image":"../website/img/topos/indefatigable/crag.jpg",
+        "flag":"../website/img/flags/ca.png",
+        "title":"Mount Indefatigable > Joy | S 4a (5.7 / 5.8 YSD) - 300m",
+        "belaySize":26,
+        "route":[
+            [2515,3127],[2543,3126],[2581,3092],[2676,3013],[2736,2977],[2735,2964],[2830,2874],
+            [2958,2778],[3041,2715],[3143,2636],[3209,2581],[3208,2567],[3325,2475],[3444,2389],
+            [3620,2249],[3667,2172],[3776,2042],[3904,1915],[4105,1691],[4181,1561],[4221,1485],
+            [4277,1416],[4356,1323]
+        ],
+        "pitches":[
+            {"belayPosition":[2839,2868],"labelPosition":[null,null],"grade":"","height":""},
+            {"belayPosition":[3183,2599],"labelPosition":[3024,2728],"grade":"5.4","height":""},
+            {"belayPosition":[3416,2407],"labelPosition":[3321,2488],"grade":"5.4","height":""},
+            {"belayPosition":[3583,2275],"labelPosition":[3513,2335],"grade":"5.6/7","height":""},
+            {"belayPosition":[3716,2109],"labelPosition":[3666,2172],"grade":"5.4","height":""},
+            {"belayPosition":[3836,1979],"labelPosition":[3795,2015],"grade":"5.7/8","height":""},
+            {"belayPosition":[3965,1847],"labelPosition":[3917,1898],"grade":"5.4","height":""},
+            {"belayPosition":[4125,1653],"labelPosition":[4043,1750],"grade":"5.4","height":""},
+            {"belayPosition":[4235,1472],"labelPosition":[4206,1510],"grade":"5.6/7","height":""},
+            {"belayPosition":[4360,1318],"labelPosition":[4332,1350],"grade":"5.6/7","height":""}
+        ],
+        "decent":[
+            {"anchor":[null,null],"labelPosition":[null,null],"path":[[4372,1232],[4335,1162],[4330,1088]],"label":""},
+            {"anchor":[null,null],"labelPosition":[4102,830],"path":[[4310,910],[4258,883],[4207,883]],"label":"Summit & Descent"},
+            {"anchor":[null,null],"labelPosition":[4580.0, 1150],"path":[[4446,1008],[4476,1076],[4560,1116],[4566,1185],[4631,1201]],"label":"Non Summit Descent"},
+            {"anchor":[null,null],"labelPosition": [5628.0, 1510.7],"path":[[5618,1558],[5840,1613],[5856,1745],[5906,1826]],"label":""}
+        ]
+    }
     </script>
     <script src="../website/js/topo.js"></script>
     <style>
+        html{
+            padding-top:150px;
+        }
         *, option {
-            font-size: 55px;
+            font-size: 35px;
         }
         label {
             margin-right:60px;
@@ -61,41 +75,93 @@
         input{
             font-size:0.8rem;
         }
+        nav{
+            top:0;
+            left:0;
+            height:120px;
+            margin-bottom:20px;
+            min-width:100%;
+            background:#111;
+            color:#FFF;
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: -ms-autohiding-scrollbar;
+            padding:0; 
+        }
+        nav span {
+            color:#FFF;
+            height:120px;
+            padding:20px 60px;
+            font-size:40px;
+            border-right:2px solid #666;
+            cursor: pointer;
+            display: inline-block;
+        }
+        nav span:hover{
+            background: #333;
+        }
+        fieldset{
+            display:none;
+            background:#FFF;
+            width: 100%;
+            position:fixed;
+            border: 2px 0 0 0 solid #111;
+            padding:40px;
+            bottom:0;
+            left:0;
+        }
     </style>
+    <script>
+        function toggle(id){
+            let el = document.getElementById(id);
+            if(el.style.display === 'none'){
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
-    <fieldset>
-        <label><input type="checkbox" value="infoBox" checked id="c1" onclick="draw();" />Info Box</label>
-        <label><input type="checkbox" value="routeLine" checked id="c2" onclick="draw();" />Route</label>
-        <label><input type="checkbox" value="belays" checked id="c3" onclick="draw();" />Belay Points</label>
-        <label><input type="checkbox" value="absail" checked id="c4" onclick="draw();" />Approch / Decent</label>
-        <label><input type="checkbox" value="labels" checked id="c5" onclick="draw();" />Labels</label>
-        <br />
-        <label><input type="radio" value="max" checked name="scale" />Maximum size</label>
-        <label><input type="radio" value="2160" name="scale" />Big 2160w</label>
-        <label><input type="radio" value="1600" name="scale" />Medium  1600w</label>
-        <label><input type="radio" value="840" name="scale" />Small 840w</label>
-        <br />
-        <button onclick="draw()" class="black">Re-Draw Topo</button>
-    </fieldset>
+   <nav>
+        <span onClick="toggle('toggle');">Toggle Elements</span>
+        <span onclick="toggle('selectHolder');">Choose Route</span>
+        <span onclick="toggle('route');">Add Route</span>
+        <span onclick="toggle('pitchOutput');">Add Pitch</span>
+        <span onclick="toggle('descent');">Add Descent</span>
+        <span onclick="toggle('belay');">Belay Size</span>
+        <span onclick="toggle('json');">Get JSON</span>
+    </nav>
     <canvas id="canvas" width="2800" height="2800"></canvas>
-
     <section style="float:right;margin:30px;">
         <h1>Build A Topo</h1>
         <p>Use this tool to make consistent topo images for the site or for social media.</p>
         <h2>Select Climb</h2>
         <p>Add the crag image into the scource code then select what climb it is for.</p>
-        <fieldset id="selectHolder"></fieldset>
-        <h2>Route</h2>
-        <fieldset>
+
+        <fieldset id="toggle" style="display:none;">
+            <label><input type="checkbox" value="infoBox" checked id="c1" onclick="draw();" />Info Box</label>
+            <label><input type="checkbox" value="routeLine" checked id="c2" onclick="draw();" />Route</label>
+            <label><input type="checkbox" value="belays" checked id="c3" onclick="draw();" />Belay Points</label>
+            <label><input type="checkbox" value="absail" checked id="c4" onclick="draw();" />Approch / Decent</label>
+            <label><input type="checkbox" value="labels" checked id="c5" onclick="draw();" />Labels</label>
+            <br />
+            <button onclick="draw()" class="black">Re-Draw Topo</button>
+        </fieldset>
+
+        <fieldset id="selectHolder" style="display:none;">
+            <h2 style="display:inline-block;">Choose Route:</h2>
+        </fieldset>
+        
+        <fieldset id="route" style="display:none;">
             <label><input type="radio" value="rt" checked name="what" />Route </label>
             <input type="text"  value="" id="routeOutput" class="long"/><br />
             <button onclick="draw();" class="safe">Update Route</button>
             <button onclick="topoData.route = [];document.getElementById('routeOutput').value = '';draw();" class="danger">Remove Route</button>
-            
         </fieldset>
-        <h2>Pitches</h2>
-        <fieldset id="pitchOutput">
+
+        <fieldset id="pitchOutput" style="display:none;">
             <label><input type="radio" value="lp" name="what" />Label Position</label>
             <input type="text"  value="" id="labelPositionX" class="short" /><input type="text" class="short" value="" id="labelPositionY"/><br />
             <label><input type="radio" value="bp" name="what" />Belay Position</label>
@@ -107,8 +173,8 @@
             <button onclick="pushPitch();" class="safe">Add Pitch</button> 
             <button onclick="topoData.pitches = [];draw();" class="danger">Remove All Pitches</button> 
         </fieldset>
-        <h2>Approch & Decent</h2>
-        <fieldset>
+
+        <fieldset id="descent" style="display:none;">
             <label><input type="radio" value="dlp" name="what" />Label Position</label>
             <input type="text"  value="" id="dLabelPositionX" class="short" /><input type="text"  class="short" value="" id="dLabelPositionY"/><br />
             <label><input type="radio" value="dbp" name="what" />Belay Position</label>
@@ -120,13 +186,13 @@
             <button onclick="pushDecent();" class="safe">Add Decent</button> 
             <button onclick="topoData.decent = [];draw();" class="danger">Demove All Decent Info</button> 
         </fieldset>
-        <h2>Belay Size</h2>
-        <fieldset>
+
+        <fieldset id="belay" style="display:none;">
             <label><input type="text" value="24" name="belaySize" id="belaySize" />Belay Size</label>
             <button onclick="topoData.belaySize = parseInt(document.getElementById('belaySize').value);draw();" class="safe">Update Belay Size</button> 
         </fieldset>
-        <h2>Raw JSON</h2>
-        <fieldset>
+
+        <fieldset  id="json" style="display:none;">
             <button class="black" onclick="document.getElementById('rawOutput').value = JSON.stringify(topoData);">Publish</button>
             <textarea id="rawOutput" style="max-width:100%;min-height:300px;"></textarea>
         </fieldset>
@@ -160,7 +226,7 @@
         var mapping = {
             'england': 'en.png', 'scotland': 'sco.png', 'wales': 'wa.png', 'ireland': 'ie.png', 'spain': 'es.png', 'portugal': 'pt.png',
             'italy': 'it.png', 'usa': 'us.png', 'norway': 'no.png', 'canada': 'ca.png', 'hongkong': 'cn.png', 'greece': 'gr.png',
-            'france': 'fr.png', 'switzerland': 'ch.png'
+            'france': 'fr.png', 'switzerland': 'ch.png', 'belgium' : 'be.png'
         }; // base 64 images from the css as vectors on canvas don't play nice :(
         function changeEventHandler(event) {
             if (event.target.value) {
