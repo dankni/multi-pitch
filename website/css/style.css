@@ -185,10 +185,9 @@ button::-moz-focus-inner {
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, .125);
   border-radius: 0  0 .25rem .25rem;
-  width: 19rem;
+  width: 20rem;
   margin:1rem auto;
   line-height:1.6rem;
-  max-width: 300px;
 }
 .climb-status{
   position: absolute;
@@ -228,7 +227,8 @@ button::-moz-focus-inner {
   border-bottom-color: rgba(0,0,0,0);
 }
 .card a picture {
-  height: 150px; /* keeps the page for too much jumping on load */
+  height: 10rem; /* keeps the page for too much jumping on load */
+  width: 20rem;
   display: block;
   background: #b4b4b4;
   text-align: center;
@@ -241,13 +241,23 @@ button::-moz-focus-inner {
   font-size: 8px;
   animation: backfader 1.8s alternate infinite;
 }
+@media (max-width: 340px) {
+  /* for small phones zommed in */
+  .card a picture {
+    height: 9rem;
+    width: 18rem;
+  }
+  .card{
+    width: 18rem;
+  }
+}
 @keyframes backfader {
   0% {background-color: #666 }
   100% { background-color: #f3f1f1 }
 }
 .what{
   display:inline-block;
-  width:6rem;
+  width:5.5rem;
   font-weight:300;
   vertical-align: top;
 }

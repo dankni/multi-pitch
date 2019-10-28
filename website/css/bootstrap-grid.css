@@ -27,9 +27,15 @@ html {
   margin-left: auto;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 540px) {
   .container {
-    max-width: 540px;
+    max-width: 520px;
+  }
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 620px;
   }
 }
 
@@ -38,10 +44,21 @@ html {
     max-width: 720px;
   }
 }
-
-@media (min-width: 992px) {
+@media (min-width: 820px) {
   .container {
-    max-width: 960px;
+    max-width: 780px;
+  }
+}
+
+@media (min-width: 900px) {
+  .container {
+    max-width: 860px;
+  }
+}
+
+@media (min-width: 1079px) {
+  .container {
+    max-width: 1020px;
   }
 }
 
