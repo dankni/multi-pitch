@@ -21,21 +21,23 @@ function toMultipitchWeatherData(darkSkyData) {
 
 function getWeather(climbsData) {
     let pastAndCurrentFuture = climbsData.map(climb => {
-        const geoLocation = climb.geoLocation;
-        const darkSkyPastPromises = [1, 2, 3, 4].map(value => {
-            let d = new Date();
-            d.setDate(d.getDate() - value);
-            const tsInSeconds = (d.getTime() / 1000).toFixed(0);
-            const darkSkyPastUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${climb.geoLocation},${tsInSeconds}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
-            console.log("going to call", darkSkyPastUrl);
-            return axios.get(darkSkyPastUrl);
-        });
+        if(climb.status !== 'draft'){
+            const geoLocation = climb.geoLocation;
+            const darkSkyPastPromises = [1, 2, 3, 4].map(value => {
+                let d = new Date();
+                d.setDate(d.getDate() - value);
+                const tsInSeconds = (d.getTime() / 1000).toFixed(0);
+                const darkSkyPastUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${climb.geoLocation},${tsInSeconds}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
+                console.log("going to call", darkSkyPastUrl);
+                return axios.get(darkSkyPastUrl);
+            });
 
-        const darkSkyCurrentlyAndFutureUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${geoLocation}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
-        console.log("going to call", darkSkyCurrentlyAndFutureUrl);
-        const darkSkyCurrentlyAndFuturePromise = axios.get(darkSkyCurrentlyAndFutureUrl);
+            const darkSkyCurrentlyAndFutureUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${geoLocation}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
+            console.log("going to call", darkSkyCurrentlyAndFutureUrl);
+            const darkSkyCurrentlyAndFuturePromise = axios.get(darkSkyCurrentlyAndFutureUrl);
 
-        return [darkSkyPastPromises, darkSkyCurrentlyAndFuturePromise]
+            return [darkSkyPastPromises, darkSkyCurrentlyAndFuturePromise]
+        }
     });
 
     const p = pastAndCurrentFuture.map((tuple, index) => {
