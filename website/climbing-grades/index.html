@@ -1,0 +1,63 @@
+<div class="big-card" style="color:#111;background: #FFF;">
+    <div class="card-body" >
+        <div class="big-card-body" style="margin-top:0;">
+            <h2 id="modalStart" tabindex="0">
+                Change Grading System:
+            </h2>
+            <script id="newScript">
+                if(localStorage.getItem('gradePreferance')){
+                    document.querySelector(`input[type=radio][value=${localStorage.getItem('gradePreferance')}]`).checked = true;
+                }
+            </script>
+            <style>
+                .gradeLabel {
+                    padding:.5rem;
+                    width:30%;
+                    background-color: #f7f7f7;
+                    border: 1px solid #ccc;
+                    display: inline-flex;
+                    margin: 1%;
+                    min-width: 180px;
+                    transition: background-color .5s ease;
+                }
+                .gradeLabel:hover{
+                    background-color: #ccc;
+                }
+            </style>
+            <label class="gradeLabel">
+                <input type="radio" name="gradeChanger" value="BAS" onChange="updateGradePref()" />
+                British Adjectival
+            </label class="gradeLabel">
+            <label class="gradeLabel">
+                <input type="radio" name="gradeChanger" value="UIAA" onChange="updateGradePref()" />
+                <abbr title="Union Internationale des Associations d'Alpinisme">UIAA</abbr>
+            </label class="gradeLabel">
+            <label class="gradeLabel">
+               <input type="radio" name="gradeChanger" value="YDS" onChange="updateGradePref()" />
+               <abbr title="Yosemite Decimal System">YDS</abbr> 
+            </label class="gradeLabel">
+            <label class="gradeLabel">
+                <input type="radio" name="gradeChanger" value="FS" onChange="updateGradePref()" />
+                French Sport
+            </label class="gradeLabel">
+            <label class="gradeLabel">
+                <input type="radio" name="gradeChanger" value="N" onChange="updateGradePref()" />
+                Norwegian
+            </label class="gradeLabel">
+            <label class="gradeLabel">
+                <input type="radio" name="gradeChanger" value="ALP" onChange="updateGradePref()" />
+                Alpine Grades
+            </label class="gradeLabel">
+            <hr />
+            <br />
+            <h3>Climbing grades and conversion options</h3>
+            <p>
+                Climbing grades in threory follow quite logical rules. However in practice they are incredibly 
+                subjetcive and inconsistent, even within a single climbing grade system. When we try and convert grades
+                between different systems the problem is greater.
+            </p>
+            <a href="/" onclick="hideTile(false);return false" onkeydown="hideTile(false);return false;">Close Subscribe overlay</a>
+        </div>
+    </div>
+</div>
+      

@@ -21,6 +21,14 @@ if ("connection" in navigator) {
 if ("geolocation" in navigator) {
     geoLocationSupport = true;
 }
+const gradeMappings = {
+    'BAS': {1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1','title':'British Adjectival System'},
+    'UIAA':{1: 'II', 2: 'III', 3: 'IV', 4: 'IV+', 5: 'V', 6: 'VI', 7: 'VI+', 'title':'Union Internationale des Associations d\'Alpinisme'},
+    'YDS':{1: '5.3', 2: '5.4', 3: '5.6', 4: '5.7', 5: '5.8', 6: '5.9', 7: '5:10a','title':'Yosemite Decimal System'},
+    'FS':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5+', 6: '6a', 7: '6a+', 'title': 'French Sport'},
+    'N':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5', 6: '5+', 7: '6', 'title': 'Norwegian'},
+    'ALP':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5', 6: '5+', 7: '6', 'title': 'French Alpine Grades'}
+};
 /**
 GA TRACKING HELPER
 **/
@@ -143,15 +151,35 @@ function showVal(values, field) {
 
     var lowerValue = values.split(',')[0];
     var higherValue = values.split(',')[1];
+    if(localStorage.getItem('gradePreferance')){
+       var gradePreferance = localStorage.getItem('gradePreferance');
+       document.getElementById('gradeSys').title = gradeMappings[gradePreferance].title;
+       document.getElementById('gradeSys').textContent = gradePreferance;
+    } else {
+        var gradePreferance = 'BAS';
+    }
 
     if (field === 'grade') {
-        const gradeMappings = {1: 'Diff', 2: 'VDiff', 3: 'Sev', 4: 'HS', 5: 'VS', 6: 'HVS', 7: 'E1'};
-        lowerValue = gradeMappings[parseInt(lowerValue)];
-        higherValue = gradeMappings[parseInt(higherValue)];
+        lowerValue = gradeMappings[gradePreferance][parseInt(lowerValue)];
+        higherValue = gradeMappings[gradePreferance][parseInt(higherValue)];
     }
     document.getElementById(field + "1").innerHTML = lowerValue;
     document.getElementById(field + "2").innerHTML = higherValue;
     filterCards();
+}
+
+/**
+ UPDATE THE USERS GRADE PREFERANCE
+ **/
+function updateGradePref() {
+    const radios = document.querySelectorAll('input[type=radio][name=gradeChanger]');
+    for (let i=0; i < radios.length; i++) {
+        if (radios[i].checked) { 
+            localStorage.setItem('gradePreferance', radios[i].value); 
+            showVal(document.getElementById('gradeRange').value, 'grade');
+            break;
+        }
+    }
 }
 
 /**
@@ -345,12 +373,6 @@ function publishCards(climbsArr) {
                 }
             }
 
-            if (climbsArr[i].techGrade === null) {
-                var techGrade = "";
-            } else {
-                var techGrade = climbsArr[i].techGrade;
-            }
-
             var card = `
     <div data-climb-id="${climbsArr[i].id}" 
          data-test="climbid-${climbsArr[i].id}"
@@ -384,7 +406,10 @@ function publishCards(climbsArr) {
             </h4>
             <p class="card-text">
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-                <span class="what">Grade:</span> ${climbsArr[i].tradGrade} ${techGrade} <br />
+                <span class="what">Grade:</span> ${climbsArr[i].originalGrade} 
+                <small>
+                    (<abbr title="${gradeMappings[climbsArr[i].gradeSys].title}">${climbsArr[i].gradeSys}</abbr>)
+                </small> <br />
                 <span class="what">Location:</span> <a href="/map/?loc=${climbsArr[i].geoLocation}">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
                 <span class="what">Approach:</span> ${climbsArr[i].approachTime}min - <span class="approach-${climbsArr[i].approachDifficulty}"></span> <br />
@@ -532,9 +557,9 @@ function showTile(climbId) {
 /**
  OPEN THE SUBSCRIBE OVERLAY
  **/
-function openSubscribe() {
+function openModal(url, trackingLabel) {
     var request = new XMLHttpRequest();
-    request.open('GET', '/subscribe/', true);
+    request.open('GET', url, true);
 
     request.onload = function () {
         if (this.status >= 200 && this.status < 400) {
@@ -543,16 +568,20 @@ function openSubscribe() {
             document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
             document.getElementById('close').setAttribute("style", "display:block;");
             document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-            document.getElementById('subscribe').focus(); // accessibility
+            document.getElementById('modalStart').focus(); // accessibility
+            if(document.getElementById('newScript')){
+                eval(document.getElementById('newScript').textContent); // bit of a hack to run any scripts that are in the new html
+            }
         } else {
-            console.log('failed to get subscribe');
+            console.log('failed to get modal');
         }
     };
     request.onerror = function () {
         console.log('There was a connection error of some sort');
     };
     request.send();
-    trackGA('subscribe', 'Open', 'subscribe from homepage footer');
+    const name = url.replace('/','');
+    trackGA(name, 'Open', trackingLabel);
 }
 
 /**
@@ -591,9 +620,9 @@ function hideTile(resetTitle) {
     document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
-    history.replaceState(history_data, 'The best multi-pitch climbs', rootProject);
     isCardTurned = false; // ensure future clicks don't think its first load again
     if (resetTitle !== false) {
+        history.replaceState(history_data, 'The best multi-pitch climbs', rootProject);
         document.title = "The best multi-pitch rock climbs";
     }
 }

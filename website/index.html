@@ -150,16 +150,31 @@
                             you can either browse the <a href="map/">map view</a> to find nearby crags
                             or you can use the list view below with detailed filtering capabilities.
                         </p>
+                        <p>
+                            All climbs are graded using their original grading system. For ease of 
+                            filltering they have been mapped to a single system. You can
+                            <a href="/climbing-grades/" rel="no-follow" onClick="openModal('/climbing-grades/');return false;" onkeydown="openSubscribe();return false;">convert climbing grades</a>
+                            to a different system. This can help review climbs in a familiar system.
+                            This is however, by its nature, <em>very</em> subjective. Different climbing 
+                            grade systems use very different criteria for assessing the difficulty and 
+                            safety of a given rock climb, these criteria cannot be translated accurately 
+                            so don't rely on the stated grade. 
+                        </p>
                         <form class="filters" id="filters">
                             <h4>Filter &amp; Sort Climbs</h4>
                             <div class="row">
                                 <div class="col-md-4">
                                     <span id="lastUpdate" style="display:none;"></span>
-                                    <label for="gradeRange">Grade </label><br class="break" />
+                                    <label for="gradeRange">
+                                        Grade
+                                    </label><br class="break" />
                                     <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1"
                                            oninput="showVal(this.value, 'grade');trackFilter('grade');" /><br />
                                     <p id="grade" class="current-values">
-                                        <span id="grade1">Diff</span> to <span id="grade2">E1</span>
+                                        <strong>
+                                            <abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-grades/');return false;" onkeydown="openSubscribe();return false;">BAS</abbr>:
+                                        </strong>
+                                        <span id="grade1">Diff</span> to <span id="grade2">E1</span>    
                                     </p>
                                 </div>
                                 <div class="col-md-4">
@@ -288,7 +303,7 @@
                         anyone else.
                     </p>
                     <a class="btn btn-outline-white" href="/subscribe/" rel="no-follow"
-                       onClick="openSubscribe();return false;" onkeydown="openSubscribe();return false;">
+                       onClick="openModal('/subscribe/', 'subscribe from homepage footer');return false;" onkeydown="openModal('/subscribe/', 'subscribe from homepage footer');return false;">
                         SUBSCRIBE TO UPDATES
                     </a>
                 </div>
