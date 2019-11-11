@@ -8,7 +8,6 @@ function toMultipitchWeatherData(darkSkyData) {
         "icon": darkSkyData.icon,
         "precipIntensity": darkSkyData.precipIntensity,
         "precipProbability": darkSkyData.precipProbability,
-        "description": darkSkyData.description,
         "temperatureHigh": darkSkyData.temperatureHigh,
         "temperatureMin": darkSkyData.temperatureMin,
         "pressure": darkSkyData.pressure,
@@ -19,9 +18,19 @@ function toMultipitchWeatherData(darkSkyData) {
 }
 
 
+function isValidGeo(geoLocation) {
+    const [lat, lon] = geoLocation.split(",");
+    return lat && lon && lat.length != 0 && lon.length != 0
+}
+
 function getWeather(climbsData) {
-    let pastAndCurrentFuture = climbsData.map(climb => {
-        if(climb.status !== 'draft'){
+    let pastAndCurrentFuture = climbsData
+        .filter(climb =>
+            climb.status !== 'draft'
+            &&
+            isValidGeo(climb.geoLocation)
+        )
+        .map(climb => {
             const geoLocation = climb.geoLocation;
             const darkSkyPastPromises = [1, 2, 3, 4].map(value => {
                 let d = new Date();
@@ -37,8 +46,7 @@ function getWeather(climbsData) {
             const darkSkyCurrentlyAndFuturePromise = axios.get(darkSkyCurrentlyAndFutureUrl);
 
             return [darkSkyPastPromises, darkSkyCurrentlyAndFuturePromise]
-        }
-    });
+        });
 
     const p = pastAndCurrentFuture.map((tuple, index) => {
         const climb = climbsData[index];
