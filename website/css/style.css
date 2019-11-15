@@ -91,6 +91,9 @@ h1,h3,h4 {
   line-height: 1.2;
   color: inherit;
 }
+abbr{
+  cursor: default;
+}
 hr {
   margin-bottom: 1rem; 
   margin-top: 1.5rem;
@@ -828,8 +831,8 @@ blockquote:before {
   top:0;
   left:0;
   z-index:8;
-  transition: background-color 1s;
-  overflow:scroll;
+  transition: background-color 1s ease;
+  overflow-y:auto;
 }
 .open-tile {
   text-align: center;
@@ -988,13 +991,13 @@ hr {
 }
 .big-card{
   overflow: auto;
-  max-height: 100%;
+  max-height: 92%;
   z-index: 12;
   top: 0;
-  max-width: 800px;
-  margin: 10px auto;
+  max-width: 1080px;
+  margin: 30px auto;
   display: block;
-  width: 100%;
+  width: 92%;
 }
 .big-card-body{
   background-color:#FFF;
@@ -1009,6 +1012,9 @@ hr {
   width:100%;
   object-fit: cover;
   min-height: 200px;
+}
+.current-values abbr, .gradeLabel{
+  cursor: pointer;
 }
 .approach-1:before{
 	content: "easy";

@@ -27,7 +27,7 @@ const gradeMappings = {
     'YDS':{1: '5.3', 2: '5.4', 3: '5.6', 4: '5.7', 5: '5.8', 6: '5.9', 7: '5:10a','title':'Yosemite Decimal System'},
     'FS':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5+', 6: '6a', 7: '6a+', 'title': 'French Sport'},
     'N':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5', 6: '5+', 7: '6', 'title': 'Norwegian'},
-    'ALP':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5', 6: '5+', 7: '6', 'title': 'French Alpine Grades'}
+    'ALP':{1: 'PD-', 2: 'PD', 3: 'PD+', 4: 'AD-', 5: 'AD', 6: 'D', 7: 'TD', 'title': 'French Alpine Grades'}
 };
 /**
 GA TRACKING HELPER
@@ -173,10 +173,18 @@ function showVal(values, field) {
  **/
 function updateGradePref() {
     const radios = document.querySelectorAll('input[type=radio][name=gradeChanger]');
+    const descriptions = document.getElementsByClassName('gradeDes');
+    for (let j=0; j < descriptions.length; j++) {
+        descriptions[j].style.display = 'none';
+    }
+
     for (let i=0; i < radios.length; i++) {
         if (radios[i].checked) { 
             localStorage.setItem('gradePreferance', radios[i].value); 
             showVal(document.getElementById('gradeRange').value, 'grade');
+            if(document.getElementById(radios[i].value)){
+                document.getElementById(radios[i].value).style.display = 'block';
+            }
             break;
         }
     }
