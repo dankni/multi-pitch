@@ -1,0 +1,34 @@
+[
+  {
+    "cliff": "Old man of Hoy",
+    "status": "draft",
+    "id": 34,
+    "country": "Scotland",
+    "county": "",
+    "routeName": "",
+    "length": "",
+    "pitches": "",
+    "dataGrade": "",
+    "tradGrade": "",
+    "techGrade": "",
+    "uiaaGrade": "",
+    "flag": "",
+    "geoLocation": ""
+  },
+  {
+    "cliff": "Old Man of Stoer",
+    "status": "publish",
+    "id": 1,
+    "country": "Scotland",
+    "county": "Sutherland",
+    "routeName": "Original Route",
+    "length": 67,
+    "pitches": 5,
+    "dataGrade": 5,
+    "tradGrade": "VS",
+    "techGrade": "5a",
+    "uiaaGrade": "",
+    "flag": "scotland",
+    "geoLocation": ""
+  }
+]
