@@ -151,17 +151,17 @@ function showVal(values, field) {
 
     var lowerValue = values.split(',')[0];
     var higherValue = values.split(',')[1];
-    if(localStorage.getItem('gradePreferance')){
-       var gradePreferance = localStorage.getItem('gradePreferance');
-       document.getElementById('gradeSys').title = gradeMappings[gradePreferance].title;
-       document.getElementById('gradeSys').textContent = gradePreferance;
+    if(localStorage.getItem('gradePreference')){
+       var gradePreference = localStorage.getItem('gradePreference');
+       document.getElementById('gradeSys').title = gradeMappings[gradePreference].title;
+       document.getElementById('gradeSys').textContent = gradePreference;
     } else {
-        var gradePreferance = 'BAS';
+        var gradePreference = 'BAS';
     }
 
     if (field === 'grade') {
-        lowerValue = gradeMappings[gradePreferance][parseInt(lowerValue)];
-        higherValue = gradeMappings[gradePreferance][parseInt(higherValue)];
+        lowerValue = gradeMappings[gradePreference][parseInt(lowerValue)];
+        higherValue = gradeMappings[gradePreference][parseInt(higherValue)];
     }
     document.getElementById(field + "1").innerHTML = lowerValue;
     document.getElementById(field + "2").innerHTML = higherValue;
@@ -180,13 +180,27 @@ function updateGradePref() {
 
     for (let i=0; i < radios.length; i++) {
         if (radios[i].checked) { 
-            localStorage.setItem('gradePreferance', radios[i].value); 
+            localStorage.setItem('gradePreference', radios[i].value); 
             showVal(document.getElementById('gradeRange').value, 'grade');
             if(document.getElementById(radios[i].value)){
                 document.getElementById(radios[i].value).style.display = 'block';
             }
+            trackGA('gradeConversion', "changed grade", radios[i].value);
             break;
         }
+    }
+}
+
+/**
+ SET IF THE USER WANTS TO SHOW CONVERTED OR ORIGINAL GRADES
+ **/
+function toggleUseConverted(){
+    if(document.getElementById('useConverted').checked === true){
+        trackGA('gradeConversion', "toogle use converted", 'on');
+        localStorage.setItem('useConverted', true);
+    } else {
+        localStorage.removeItem('useConverted');
+        trackGA('gradeConversion', "toogle use converted", 'off');
     }
 }
 
@@ -343,6 +357,26 @@ helper.arr = {
 };
 
 /**
+ GET GRADE TO SHOW BASED ON ClimbID & PREFFERED GRADE
+ **/
+function gradeToShow(climb, sys){
+    let answer = {'converted' : '', 'grade': 'tbc'};
+    if ((climb.gradeSys === sys) || (localStorage.getItem('useConverted') != 'true')) {                              // The grade pref matches original grade
+        answer.grade = '' + climb.originalGrade;
+        return answer;
+    }
+    if (sys === 'BAS') {                                        // British grade pref, use manual conversions
+        answer.grade = climb.tradGrade + ' ' + climb.techGrade;
+        answer.converted = 'Converted ';
+        return answer;
+    } else {                                                    // Use dataGrade number to convert
+        answer.grade = '' + gradeMappings[sys][climb.dataGrade];
+        answer.converted = 'Converted ';
+        return answer;
+    } 
+}
+
+/**
  PUBLISH THE FRONT OF THE CARDS
  **/
 function publishCards(climbsArr) {
@@ -380,6 +414,14 @@ function publishCards(climbsArr) {
                     console.log("Problem with wishlist in local storage. Whole wishlist removed" + e);
                 }
             }
+        
+            let sys = 'BAS';
+            if(localStorage.getItem('gradePreference')){
+                sys = localStorage.getItem('gradePreference');
+            }
+            const answer = gradeToShow(climbsArr[i], sys);
+            const grade = answer.grade;
+            const conv = answer.converted;
 
             var card = `
     <div data-climb-id="${climbsArr[i].id}" 
@@ -414,9 +456,9 @@ function publishCards(climbsArr) {
             </h4>
             <p class="card-text">
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-                <span class="what">Grade:</span> ${climbsArr[i].originalGrade} 
+                <span class="what">${conv}Grade:</span> ${grade} 
                 <small>
-                    (<abbr title="${gradeMappings[climbsArr[i].gradeSys].title}">${climbsArr[i].gradeSys}</abbr>)
+                    (<abbr title="${gradeMappings[sys].title}">${sys}</abbr>)
                 </small> <br />
                 <span class="what">Location:</span> <a href="/map/?loc=${climbsArr[i].geoLocation}">${climbsArr[i].county}</a> <br />
                 <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
@@ -460,7 +502,6 @@ function cycleStatus(id){
     }
     let climbSti = document.getElementsByClassName('climb-status');
     for(let i = 0; i < climbSti.length; i++){
-     //   console.log(climbSti[i].dataset.climbid + " = " + climbSti[i].dataset.status);
         wishlist[climbSti[i].dataset.climbid] = climbSti[i].dataset.status;
     }
     trackGA('wishlist', statusFlag.dataset.status, id + ' = ' + statusFlag.dataset.status);

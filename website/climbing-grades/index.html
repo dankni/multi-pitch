@@ -5,13 +5,17 @@
                 Change Grading System:
             </h2>
             <script id="newScript">
-                if(localStorage.getItem('gradePreferance')){
-                    document.querySelector(`input[type=radio][value=${localStorage.getItem('gradePreferance')}]`).checked = true;
+                trackGA('gradeConversion', "open overlay", 'open');
+                if(localStorage.getItem('gradePreference')){
+                    document.querySelector(`input[type=radio][value=${localStorage.getItem('gradePreference')}]`).checked = true;
                     try{
-                        document.getElementById(localStorage.getItem('gradePreferance')).style.display = 'block';
+                        document.getElementById(localStorage.getItem('gradePreference')).style.display = 'block';
                     } catch (e) {
-                        console.log('no description for grade', localStorage.getItem('gradePreferance'));
+                        console.log('no description for grade', localStorage.getItem('gradePreference'));
                     }
+                }
+                if(localStorage.getItem('useConverted')){
+                    document.getElementById('useConverted').checked = true;
                 }
             </script>
             <style>
@@ -63,6 +67,10 @@
                     so <em>don't rely on the converted grade</em>. 
                 </small>
             </p>
+            <label>
+                <input type="checkbox" name="useConverted" id="useConverted" value="true" onChange="toggleUseConverted()" />
+                Use Converted Grades
+            </label>
             <hr />
             <br />
             <section id="BAS" class="gradeDes" style="display: none;">
