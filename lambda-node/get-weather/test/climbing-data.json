@@ -1,0 +1,18 @@
+[
+  {
+    "cliff": "Old Man of Stoer",
+    "status": "publish",
+    "id": 1,
+    "country": "Scotland",
+    "county": "Sutherland",
+    "routeName": "Original Route",
+    "length": 67,
+    "pitches": 5,
+    "dataGrade": 5,
+    "tradGrade": "VS",
+    "techGrade": "5a",
+    "uiaaGrade": "",
+    "flag": "scotland",
+    "geoLocation": "58.26094,-5.38266"
+  }
+]
