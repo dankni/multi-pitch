@@ -129,6 +129,53 @@ button::-moz-focus-inner {
 }
 /*****************/
 /** ROOT STYLES **/
+/* title-tip down */
+a[title]:hover, abbr[title]:hover, img[title]:hover {
+  position: relative;
+}
+a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 99;
+  content: attr(title);
+  line-height: 18px;
+  padding:3px 6px;
+  font-size: 12px !important;
+  margin-top: 0.5em;
+  width: 200px;   
+  overflow: hidden;
+  word-wrap: break-word;
+  font-size: inherit;
+  color: #FFF;
+  text-align: center;
+  background-color:rgba(0, 0, 0, 0.85);
+  box-sizing: border-box;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+}
+a[title]:hover:after, abbr[title]:hover:after, img[title]:hover:after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 99;
+  content: '';
+  margin-left: 0;
+  width: 0;
+  height: 0;
+}
+/* tool tip title up */
+a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+.a[title]:hover:after, abbr[title]:hover:after, img[title]:hover:after {
+  top: auto;
+  bottom: 100%;
+  border: 10px dashed transparent;
+  border-top: 10px solid #222;
+}
 .title{
   font-size:2rem;
 }

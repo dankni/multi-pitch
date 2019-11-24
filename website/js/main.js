@@ -189,6 +189,38 @@ function updateGradePref() {
             break;
         }
     }
+    updateListingGrades();
+}
+
+/**
+ UPDATE THE LISTED GRADES TO MATCH GRADE PREFERANCE
+ **/
+function updateListingGrades(){
+    let cards = document.getElementsByClassName('card');
+    for(let i = 0; i < cards.length; i++){
+        const climb = climbsData.climbs.find(climb => climb.id === parseInt(cards[i].id));
+        let answer = gradeToShow(climb, localStorage.getItem('gradePreference'));
+        let card = document.getElementById(climb.id);
+        // Could Prob clean this up in a refactor: 
+        if(localStorage.getItem('useConverted')){
+            if(answer.converted == 'Converted '){
+                card.querySelector('.card-body .gradeTxt').innerHTML = answer.grade;
+                card.querySelector('.card-body .convTxt').innerHTML = "Converted Grade:";
+                card.querySelector('.card-body abbr').innerHTML = localStorage.getItem('gradePreference');
+                card.querySelector('.card-body abbr').title = gradeMappings[localStorage.getItem('gradePreference')].title;
+            } else {
+                card.querySelector('.card-body .gradeTxt').innerHTML = answer.grade;
+                card.querySelector('.card-body .convTxt').innerHTML = "Grade:";
+                card.querySelector('.card-body abbr').innerHTML = climb.gradeSys;
+                card.querySelector('.card-body abbr').title = gradeMappings[climb.gradeSys].title;
+            }
+        } else {
+            card.querySelector('.card-body .gradeTxt').innerHTML = climb.originalGrade;
+            card.querySelector('.card-body .convTxt').innerHTML = "Grade:";
+            card.querySelector('.card-body abbr').innerHTML = climb.gradeSys;
+            card.querySelector('.card-body abbr').title = gradeMappings[climb.gradeSys].title;
+        }
+    }
 }
 
 /**
@@ -198,9 +230,11 @@ function toggleUseConverted(){
     if(document.getElementById('useConverted').checked === true){
         trackGA('gradeConversion', "toogle use converted", 'on');
         localStorage.setItem('useConverted', true);
+        updateListingGrades();
     } else {
         localStorage.removeItem('useConverted');
         trackGA('gradeConversion', "toogle use converted", 'off');
+        updateListingGrades();
     }
 }
 
@@ -360,9 +394,10 @@ helper.arr = {
  GET GRADE TO SHOW BASED ON ClimbID & PREFFERED GRADE
  **/
 function gradeToShow(climb, sys){
-    let answer = {'converted' : '', 'grade': 'tbc'};
+    let answer = {'converted' : '', 'grade': 'tbc', 'sys' : sys};
     if ((climb.gradeSys === sys) || (localStorage.getItem('useConverted') != 'true')) {                              // The grade pref matches original grade
         answer.grade = '' + climb.originalGrade;
+        answer.sys = climb.gradeSys;
         return answer;
     }
     if (sys === 'BAS') {                                        // British grade pref, use manual conversions
@@ -420,6 +455,7 @@ function publishCards(climbsArr) {
                 sys = localStorage.getItem('gradePreference');
             }
             const answer = gradeToShow(climbsArr[i], sys);
+            sys = answer.sys;
             const grade = answer.grade;
             const conv = answer.converted;
 
@@ -456,7 +492,7 @@ function publishCards(climbsArr) {
             </h4>
             <p class="card-text">
                 <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-                <span class="what">${conv}Grade:</span> ${grade} 
+                <span class="what convTxt">${conv}Grade:</span> <span class="gradeTxt">${grade}</span>
                 <small>
                     (<abbr title="${gradeMappings[sys].title}">${sys}</abbr>)
                 </small> <br />
