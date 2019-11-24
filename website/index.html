@@ -194,7 +194,7 @@
                                 <div class="col-12">
                                     <h5 class="filter-toggle" onclick="toggleFilters()" tabindex="0" 
                                         role="button" aria-expanded="false" aria-pressed="false" onKeyDown="toggleFilters()">
-                                        Advanced Climbing Filters
+                                        <i class="icon-sliders"></i> Advanced Climbing Filters
                                     </h5>
                                 </div>
                             </div>
@@ -231,6 +231,11 @@
 
                                     <input type="checkbox" id="done" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="done"><i class="icon-ok"></i> Compleated <span class="not-tablet">Climbs</span></label><br />
+                                </div>
+                                <div class="col-12">
+                                    <small style="text-align:right;display:block;">
+                                        <a onclick="clearFilters()"><i class="icon-cancel"></i> Reset all filters</a>
+                                    </small>
                                 </div>
                             </div>
                             <div class="row">

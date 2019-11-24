@@ -1084,7 +1084,11 @@ function execFilter(){
     showVal(filters.approachRange, 'approach');
 }
 function clearFilters(){    
-    localStorage.removeItem('filters');
+    try {
+        localStorage.removeItem('filters');
+    } catch (e){
+        // no filters
+    }
     // reset the advanced filters
     let labels = document.getElementsByClassName('advancedLabel');
     for(let i = 0; i < labels.length; i++){
