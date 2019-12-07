@@ -32,6 +32,11 @@
                 .gradeLabel:hover{
                     background-color: #ccc;
                 }
+                @media (max-width: 500px) {
+                    .gradeLabel {
+                        width:95%;
+                    }
+                }
             </style>
             <label class="gradeLabel">
                 <input type="radio" name="gradeChanger" value="BAS" onChange="updateGradePref()" tabindex="0" />

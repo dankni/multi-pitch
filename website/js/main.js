@@ -291,6 +291,7 @@ function filterCards() {
     } else {
         document.getElementById('noResults').style.display = 'none';
     }
+    updateTotalCount();
 }
 
 function toggleFilters(){
@@ -1066,6 +1067,21 @@ function loadCurrentWeatherModule(id){
     console.log("Can't add weather for climbing id ", id);
   }
 }
+/**
+ UPDATE TOTAL COUNTS
+ **/
+function updateTotalCount(){
+    const cards = document.getElementsByClassName('card')
+    const total = cards.length;
+    let showing = 0;
+    for(let i = 0; i < total; i++){
+        if(cards[i].style.display != 'none'){
+            showing += 1;
+        }
+    }
+    document.getElementById('total').innerHTML = total;
+    document.getElementById('showing').innerHTML = showing;
+}
 
 /**
  * EXECUTE THE FILTER FUCTION BASED ON LOCAL STORAGE
@@ -1082,6 +1098,7 @@ function execFilter(){
     showVal(filters.heightRange, 'height');
     document.getElementById('approachRange').value = filters.approachRange;
     showVal(filters.approachRange, 'approach');
+    updateTotalCount();
 }
 function clearFilters(){    
     try {
@@ -1121,7 +1138,7 @@ window.onload = function () {
     // Check it's the homepage
     document.getElementById('cardHolder') ? hp = true : hp = false;
     if (document.location.href.includes('/climbs/') === false && hp === true) {
-        sortCards('length', 'DESC');
+        sortCards('updateTimestamp', 'DESC');
         if(localStorage.getItem('filters')){
             execFilter();
         }

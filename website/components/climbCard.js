@@ -491,22 +491,22 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                     </div>
                     <div class="col-lg-3 col-md-12 social-share">
                         <p class="share-tip">Share this page:</p>
-                        <a  id="whatsappShare"
+                        <a  id="whatsappShare" title="Share this page to Whatsapp"
                             href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
                             target="blank"
                             onClick="trackGA('social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-whatsapp"></i></a>
-                        <a
+                        <a  title="Tweet this page"
                             href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
                             onClick="trackGA('social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-twitter"></i></a>
-                        <a
+                        <a  title="Share this page to Facebook"
                             href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
                                 onClick="trackGA('social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
                             <i class="icon-facebook"></i></a>
-                        <a
+                        <a  title="Share this page via Email"
                             href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
                             target="blank"
                                 onClick="trackGA('social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
