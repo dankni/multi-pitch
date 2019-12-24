@@ -937,6 +937,33 @@ blockquote:before {
 .grade:first-of-type{
   padding-top: 10px;
 }
+.compass {
+  background-image: url('/img/icons/compass.png');
+  background-size: 64px;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  font-weight: 800;
+}
+.compass .single-attribute{
+  background-image: radial-gradient(circle at center, #FFFFFF 0, rgba(255,255,255,0) 30%);
+
+}
+.NE{ transform:rotate(45deg);  }
+.NE .single-attribute {transform: rotate(-45deg);}
+.E{  transform:rotate(90deg);  }
+.E .single-attribute {transform: rotate(-90deg);}
+.SE{ transform:rotate(135deg); }
+.SE .single-attribute {transform: rotate(-135deg);}
+.S{  transform:rotate(180deg); }
+.S .single-attribute {transform: rotate(-180deg);}
+.SW{ transform:rotate(225deg); }
+.SW .single-attribute {transform: rotate(-225deg);}
+.W{  transform:rotate(270deg); }
+.W .single-attribute {transform: rotate(-270deg);}
+.NW{ transform:rotate(315deg); }
+.NW .single-attribute {transform: rotate(-315deg);}
+
 .pitch-title {
   padding: 1rem 0 0 0;
   display: inline-block;

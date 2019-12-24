@@ -422,19 +422,23 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
     } else {
         var techGrade = climb.techGrade;
     }
+
+    var tidal = '', abReq = '', face = '';
+    const mapping = {'N' : 'North Facing', 'NE' : 'North East Facing', 'E' : 'East Facing', 'SE' : 'South East Facing', 'S' : 'South Facing', 'SW' : 'South West Facing', 'W' : 'West Facing', 'NW' : ' North West Facing'}
     if (climb.tidal === 1){
-        var tidal = `<div class="info-ring">
-        <span class="single-attribute">Tidal<br/> Access</span>
+        tidal = `<div class="info-ring">
+            <span class="single-attribute">Tidal<br/> Access</span>
         </div>`
-    } else {
-        var tidal = '';
-    } 
+    }
     if (climb.abseil === 1){
-        var abReq = `<div class="info-ring">
-        <span class="single-attribute">Abseil<br/> Required</span>
+        abReq = `<div class="info-ring">
+            <span class="single-attribute">Abseil<br/> Required</span>
         </div>`
-    } else {
-        var abReq = '';
+    }
+    if (climb.face != null){
+        face = `<div class="info-ring compass ${climb.face}">
+            <span class="single-attribute"  title="${mapping[climb.face]}">${climb.face}</span>
+        </div>`
     }
     var fullCard = `
     <article id="climbCardDetails" class="main">
@@ -487,6 +491,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                             <span class="single-attribute">${climb.rock}</span>
                         </div>
                         ${tidal}
+                        ${face}
                         ${abReq}
                     </div>
                     <div class="col-lg-3 col-md-12 social-share">
