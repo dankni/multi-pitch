@@ -946,7 +946,7 @@ blockquote:before {
   font-weight: 800;
 }
 .compass .single-attribute{
-  background-image: radial-gradient(circle at center, #FFFFFF 0, rgba(255,255,255,0) 30%);
+  background-image: radial-gradient(circle at center, #FFFFFF 0, rgba(255,255,255,1) 12%, rgba(255,255,255,0) 25%);
 
 }
 .NE{ transform:rotate(45deg);  }
