@@ -549,6 +549,9 @@ function cycleStatus(id){
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
 function sortCards(sortBy, direction) {
+    if(sortBy !== 'distance') { // avoid the geo-location call being the default
+        localStorage.setItem('sortOrder', sortBy + ',' + direction);
+    }
     if (sortBy === 'weatherScore') {
         climbsData.climbs = climbsData.climbs.map(climb => {
             let climbWeather = darkSkyWeatherData.find(weatherData => weatherData.climbId === climb.id);
@@ -566,7 +569,6 @@ function sortCards(sortBy, direction) {
         publishCards(climbsSorted);
         filterCards(); // ensures filters are kept
     }
-    loadWeather();
 }
 
 /**
@@ -1138,10 +1140,24 @@ window.onload = function () {
     // Check it's the homepage
     document.getElementById('cardHolder') ? hp = true : hp = false;
     if (document.location.href.includes('/climbs/') === false && hp === true) {
-        sortCards('updateTimestamp', 'DESC');
+        if(localStorage.getItem('sortOrder')){
+            const options = document.querySelectorAll('#sortOrder option');
+            options.forEach(option => {
+                if(option.value === localStorage.getItem('sortOrder')){
+                    option.setAttribute('selected', true);
+                }
+            });
+            var sort = localStorage.getItem('sortOrder').split(',')[0];
+            var direction = localStorage.getItem('sortOrder').split(',')[1];
+        } else {
+            var sort = 'updateTimestamp';
+            var direction = 'DESC';
+        }
+        sortCards(sort, direction);
         if(localStorage.getItem('filters')){
             execFilter();
         }
+        loadWeather();
         window.performance.mark('all-climbs-loaded');
     }
     if (geoLocationSupport === true && hp === true) {

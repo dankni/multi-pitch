@@ -296,15 +296,15 @@ function getRouteTopo(topoImg, climb) {
 
                     routeTopo += `
                     <source media="(min-width: 1080px)" type="image/webp"
-                        srcset="/${url}-small.webp 1x${big2pdW}">
-                    <source media="(max-width: 1080px)" type="image/webp"
+                        srcset="/${url}-medium.webp 1x${big2pdW}">
+                    <source media="(max-width: 1079px)" type="image/webp"
                         srcset="/${url}-small.webp 1x${med2pdW}${big3pdW}">
                     <source media="(max-width: 767px)" type="image/webp"
                         srcset="/${url}-small.webp 1x ${med2pdW}">
                         
                     <source media="(min-width: 1080px)" type="image/jpg"
-                        srcset="/${url}-small.jpg 1x${big2pdJ}">
-                    <source media="(max-width: 1080px)" type="image/jpg"
+                        srcset="/${url}-medium.jpg 1x${big2pdJ}">
+                    <source media="(max-width: 1079px)" type="image/jpg"
                         srcset="/${url}-small.jpg 1x${med2pdJ}${big3pdJ}">
                     <source media="(max-width: 767px)" type="image/jpg"
                         srcset="/${url}-small.jpg 1x${med2pdJ}">`;
@@ -487,11 +487,11 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                             <span class="info-divider"></span>
                             <span class="grade amount">${climb.approachTime}<small>min</small></span>
                         </div>
+                        ${face}
                         <div class="info-ring">
                             <span class="single-attribute">${climb.rock}</span>
                         </div>
                         ${tidal}
-                        ${face}
                         ${abReq}
                     </div>
                     <div class="col-lg-3 col-md-12 social-share">

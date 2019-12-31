@@ -242,7 +242,7 @@
                             <div class="row">
                                 <div class="col sort-list">
                                     <p style="display:inline-block">Sort Climbs: </p>
-                                    <select onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
+                                    <select id="sortOrder" onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
                                             trackGA('sort-and-filter', 'sort', this.value, 0);">
                                         <option value="updateTimestamp,DESC">Recently Added / Updated</option>
                                         <option value="length,DESC">Longest Climbs First</option>
