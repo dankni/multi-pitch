@@ -549,7 +549,7 @@ function cycleStatus(id){
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
 function sortCards(sortBy, direction) {
-    if(sortBy !== 'distance') { // avoid the geo-location call being the default
+    if(sortBy !== 'distance' && sortBy !== 'weatherScore') { // avoid the geo-location call or weather being the default
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
     }
     if (sortBy === 'weatherScore') {
@@ -569,6 +569,7 @@ function sortCards(sortBy, direction) {
         publishCards(climbsSorted);
         filterCards(); // ensures filters are kept
     }
+    loadWeather();
 }
 
 /**
@@ -1019,16 +1020,16 @@ function loadWeather() {
         toggleWeather.classList.remove("toggle-weather-off");
       }
     } catch (e) {
-      console.log("Can't add weather for climbing id " + climb.id);
+      console.log("No weather found -> " + climb.id);
     }
   });
   setTimeout(() => loadWeather(), fourHoursInMilliseconds)
 } else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
   try {
-    loadCurrentWeatherModule();
-  } catch (e) {
-    console.log("can't get weather for this climb");
-  }
+        loadCurrentWeatherModule();
+    } catch (e) {
+        console.log("can't get weather for this climb");
+    }
     setTimeout(() => loadWeather(), fourHoursInMilliseconds)
   } else {
     //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
@@ -1066,7 +1067,7 @@ function loadCurrentWeatherModule(id){
       }
     }
   } catch (e) {
-    console.log("Can't add weather for climbing id ", id);
+    console.log("No weather found -> " + climb.id);
   }
 }
 /**
