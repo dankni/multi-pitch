@@ -483,7 +483,7 @@ function publishCards(climbsArr) {
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
-                <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero">
+                <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero" loading="lazy" />
             </picture>
         </a>
         <div class="card-body">

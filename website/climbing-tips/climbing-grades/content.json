@@ -1,0 +1,96 @@
+{
+    "heading" : "Climbing Grades & Conversion between grades",
+    "navLink" : "Climbing Grades",
+    "intro" : "Climbing grades in theory follow quite logical rules. However in practice they are incredibly subjective and inconsistent, even within a single climbing grade system. Different climbing grade systems use very different criteria, which cannot be translated accurately, so don't rely on the converted grade.",
+    "description" : "Understand climbing grades. Climbing grades in theory follow quite logical rules, in practice they are inconsistent, even within a single climbing grade system.",
+    "lastUpdated" : "31/03/2020",
+    "url" : "/climbing-tips/climbing-grades/",
+    "heroImg" : "",
+    "search" : false,
+    "articles" : [
+        {
+            "publish" : true,
+            "title" : "British Adjectival System",
+            "paragraph" : "The British Adjectival System is usually seen as two different grades. An adjectival grade, for example <abbr title=\"Very Severe\">VS</abbr>, and a technical grade for example 4b. The adjectival grade is an all-encompassing view of the difficulty of the climb. This looks at how hard the moves are, how good the protection is, how strenuous the overall route is, how loose the rock is etc. The technical grade simply looks at the hardest move on the route and grades it using the British system, which is, unfortunately different to the French sport system used in almost all British climbing walls, making it easy to get confused! For example an English 6a is much, much harder than a French sport 6a, often shown as f6a. <br /><strong>Example</strong>: <a href=\"/climbs/wreakers-slab-on-cornakey-cliff/\">Wreakers slab on Cornakey Cliff</a> is graded VS 4b. This is an unusually high adjectival grade for such a low technical grade. On the route the climber will notice a few key factors which lead to the VS grade. Firstly, it has a lot of loose rock. In addition, protection is not straightforward or easy to find early on. It’s also tidal, meaning escape down could be closed for a long time if ascent is not possible. The route has a lot of exposure. Finally, it’s over 100m long, meaning some endurance is required. In contrast, <a href=\"/climbs/doorpost-on-bosigran/\">Doorpost at Bosigran</a>, Cornwall, is also 4b in technical grade, but has an overall adjectival grade of Hard Severe which is a grade Lower. Doorpost probably has a harder crux on pitch 2, but protection is good throughout the route and the rock is solid, so overall it has a lower adjectival grade.",
+            "img" : {
+                "url" : "/img/other/grades/weakers-slab-in-north-cornwall.jpg",
+                "alt": "VS climbing in North Cornwall"
+            },
+            "link" : {
+                "href" : "/climbs/wreakers-slab-on-cornakey-cliff/",
+                "text" : "Wreakers Slab on Cornakey Cliff graded VS 4b",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "UIAA Scale",
+            "paragraph" : "The International Union of Alpine Associations is grading system reasonably common in mainland Europe. It’s represented by Roman numerals from I through to VII and is now open ended to X (ten) and beyond. One key advantage of this system is its <a href=\"https://www.theuiaa.org/mountaineering/uiaa-grades-for-rock-climbing/\" target=\"blank\">clear descriptions</a> from grades I to VII. Essentially the system grades the hardest move in the route. However, the system takes no real account of either protection available or other factors that may impact a climber’s performance like exposure or altitude. As such the Alpine system or Scale of Global Assessment and French <em>sport</em> systems are both offshoots/additions of the UIAA scale, which itself is developed from the Welzenbach Scale.<br /><strong>Example</strong>: The climb <a href=\"/climbs/esparraguera-on-roca-gris/\">Esparraguera on Roca Gris</a> is graded V+. This speaks to the hardest move, which is pulling up on a jugon the 3rd pitch. However the climb is also graded f5c, which is a slightly high conversion. The reason being the French sport system looks at the difficulty of each pitch (or length of rope) not just the hardest move, but also not the whole route like the alpine system. The UIAA scale and sport grade say nothing about the complexity of the route in terms of exposure, loose rock, route finding and run-out sections. Being comfortable climbing a UIAA V+ or f5c for 30m would be poor training for this beautifully complex route.",
+            "img" : {
+                "url" : "/img/other/grades/roca-gris-in-montserrat-spain.jpg",
+                "alt": "Grade V+ climb in Montserrat Spain"
+            },
+            "link" : {
+                "href" : "/climbs/esparraguera-on-roca-gris/",
+                "text" : "The climb Esparraguera on Grey Rock graded UIAA V+",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Yosemite Decimal System",
+            "paragraph" : "The Yosemite Decimal System has a lot of complexity to it, most of which isn’t used day to day. Firstly, the initial number before the decimal indicates the type of terrain where 4 is roped scrambling and 5 is climbing. 1 would presumably be walking to the shop. Aid climbs originally started with a 6 but most people don’t use that anymore. All multi-pitch free climbing will start with a five. 5.4 is easer than 5.9. Once the scale hits 5.10 then letters a, b, c and d can be added. Ie 5.10a. The system grades the hardest move, although on modern routes the grades factor in how sustained they are as well. <br /> <strong>Example</strong>: The climb <a href=\"/climbs/joy-on-mount-indefatigable/\">Joy on Mount Indefatigable</a> is graded around 5.7. The grade band between 5.5 and 5.9 is pretty tight, in addition, because the Yosemite Decimal system looks at the hardest move, you can easily add 2 grades to the climb by taking a tiny variation on one pitch. The route joy is between 5.6 and 5.8 on the YDS scale.",
+            "img" : {
+                "url" : "/img/other/grades/joy-climb-in-canada.jpg",
+                "alt": "Joy, A classic climb in Canada"
+            },
+            "link" : {
+                "href" : "/climbs/joy-on-mount-indefatigable/",
+                "text" : "The climb Joy gradded between 5.7 & 5.9 on the Yosemite Decimal System",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "French Sport Grades",
+            "paragraph" : "French numerical grades were originally an offshoot of the UIAA system. In theorythey aim to grade the difficulty of a pitch. However whole routes are given the grade of the hardest pitch. The scale currently runs from 1 to 9c. Grades from 3 onwards can be sub divided into a, b & c for example 5c is harder than 5b. Grades from 6a onwards can additionally have a plus (and occasionally a minus) added where a 6a+ is harder than a 6a but easier than a 6b. This is the most common system used for grading sport routes and is used in most lead climbing gyms in Europe. The major downside to the system is that it doesn’t take into account protection or rock quality, or even the overall difficulty of multi-pitch rock climbs.<br /><strong>Example</strong>: <a href=\"/climbs/visite-obligatoire-on-aiguille-dibona/\">Visite Obligatoire on the mountain Aiguille Dibona</a> is graded 6a+. It has some tough pitches,but being able to climb 6a+ in the gym is not going to be enough to get you up all 350m of this route. In fact climbers who can often manage 6c or 7a have failed to ascend this route. Therefore the alpine adjectival grade of <em>trés difficile</em> is much more representitive. I.e. it’s a solid E1 in British grades. The route Direkte Plattenwand on Brüggler in Switzerland is largely bolted and so a sport grade here is more useful.",
+            "img" : {
+                "url" : "/img/other/grades/bruggler-offers-great-climbing-in-switzerland.jpg",
+                "alt": "Brüggler in Switzerland uses French grades."
+            },
+            "link" : {
+                "href" : "/climbs/direkte-plattenwand-on-brüggler/",
+                "text" : "Climbing the center of Brüggler is graded 5a ",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Norwegian Grades",
+            "paragraph" : "The Norwegian Grading system started out as the UIAA system but as climbing progressed up to and then past the original ceiling of the sixth grade, the Norwegian system diverged. It switched to using Arabic numbers ie. 6 rather than Roman Numerals ie VI. The main difference is, grades tend to be slightly harder at around the fifth grade and beyond.<br /><strong>Example</strong>: The <a href=\"/climbs/sydpillaren-on-stetind/\">South Pillar climb on Stetind </a> is graded around 6-. This makes the route somewhere between HVS and E1. Given the length and seriousness of the route E1 is possibly the more appropriate conversion to British grades, but it is a full VI on the UIAA scale.",
+            "img" : {
+                "url" : "/img/other/grades/stetind-climb-in-norway.jpg",
+                "alt": "Stetind is Norways national mountain"
+            },
+            "link" : {
+                "href" : "/climbs/climbs/sydpillaren-on-stetind/",
+                "text" : "Graded 6- on the Norwegian scale, The South pillar climb on Stetind is breathtaking",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Alpine Scale",
+            "paragraph" : "The Scale of Global Assessment, usually called the Alpine Scale, gives an overall adjectival grade to climbing routes much like the British system. This fills the gap in the UIAA and sport grading systems where the grade says little about the seriousness of the route. The system uses French terms and runs from F for facile (easy in English) to ED for extrêmement difficile (extremely difficult) ED is open ended with numbers to ED4.<br /><strong>Example</strong>: <a href=\"/climbs/visite-obligatoire-on-aiguille-dibona/\">Visite Obligatoire on the mountain Aiguille Dibona</a> is graded TD. TD is described as Very hard. Routes at this grades are serious undertakings with high level of objective danger... Rock climbing at UIAA grade V and VI with possible aid, very long sections of hard climbing. The alpine adjectival grade of <em>trés difficile</em> is a solid E1 in British grades.",
+            "img" : {
+                "url" : "/img/other/grades/aiguille-debona.jpg",
+                "alt": "Aiguille Dibona, named after the Italian Mountaineer"
+            },
+            "link" : {
+                "href" : "/climbs/visite-obligatoire-on-aiguille-dibona/",
+                "text" : "The Obligatory Visit on Aiguille Dibona is graded trés difficile",
+                "pushable" : false
+            }
+        }
+    ]
+}    

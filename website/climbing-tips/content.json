@@ -1,0 +1,69 @@
+{
+    "heading" : "The Climbing Compendium",
+    "navLink" : "Climbing Gear",
+    "intro" : "The climbing compendium provides detailed but brief information and tips on rock climbing. This includes equipment, skills, knots and useful explanations of climbing terminology.",
+    "description" : "Detailed but brief information & tips on rock climbing. Including equipment, skills, knots & explanations of climbing terminology.",
+    "heroImg" : "/img/other/trad-climbing-rack.jpg",
+    "url" : "/climbing-tips/",
+    "lastUpdated" : "08/04/2020",
+    "search" : false,
+    "articles" : [
+        {
+            "publish" : true,
+            "title" : "Climbing Gear",
+            "paragraph" :  "Understanding and selecting the optimum equipment is a key part to success in traditional multi-pitch climbing. Understanding the different types of climbing gear available, and their respective strengths and weaknesses can make a huge difference to both the safety and chance of success on a route. Too much gear can add multiple kilograms, making even the easiest of routes a real challenge. Alternatively, a lack of gear can considerably compromise the safety of the climbers. The worst combination is too much of the wrong type of gear meaning the climber is overloaded and also exposed and under protected. For example, taking too many big cams on a delicate slab.",
+            "img" : {
+                "url" : "/img/other/trad-climbing-rack.jpg",
+                "alt" : "Part of a trad climbing rack"
+            },
+            "link" : {
+                "href" : "/climbing-tips/climbing-gear/",
+                "text" : "Climbing Gear Overview",
+                "pushable" : true
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Rock Types",
+            "paragraph" :  "There are three main ways rock is categorised. Ignious, sedimentary and metamorphic. These refer to the process that led to the current state of the rock. Different types of rock can require quite different approaches to protection and climbing. Understanding these differences can help climbers find the most enjoyable climbs as well as choose the most appropriate protection. Understanding the creation of rock formations also offers explanations for some of the incredible structures and patterns that result from it. For example the Quartz banding in the igneous Rhyolite at Cwm Idwal in Wales, as seen in the picture.",
+            "img" : {
+                "url" : "/img/other/cwm-idwal-rock-types.jpg",
+                "alt" : "Cwm Idwal in Wales showing Quartz banding in the Rhyolite"
+            },
+            "link" : {
+                "href" : "/climbing-tips/rock-types/",
+                "text" : "Rock Types & Climbing",
+                "pushable" : true
+            }
+        },
+        {
+            "publish" : false,
+            "title" : "Mountain Terminology",
+            "paragraph" :  "Mountain terminology can sound like a foreign language to the new climber. Some reasonably common mountain terminology has quite literally, been taken from different languages, for example crag. The content here hopes to explain most mountain terminology from the common terms like summit to the niche terms like cairn or mesa. A number of British guidebooks published in the late 20th century seem to go out if their way to make descriptions as complex as possible. This glossary will help the climber understand some of the terminology used when finding the route on the mountain, as well as terms used to describe the route once climbing. For example: Climb the crest of the rib to a ledge. Go diagonally right to a platform on the rib with a belay at the top of the corner. Scramble diagonally right to a small buttress.",
+            "img" : {
+                "url" : "/img/other/mountain-terminology.jpg",
+                "alt" : "Scarfel crag has complex mountain terrain"
+            },
+            "link" : {
+                "href" : "/climbing-tips/mountain-terminology/",
+                "text" : "Mountain Terminology Explained",
+                "pushable" : true
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Climbing Grades",
+            "paragraph" :  "Climbing grades in theory, follow quite logical rules. However, in practice they are incredibly subjective and inconsistent, even within a single climbing grade system. Different climbing grade systems use very different criteria. Understanding the differences in the systems can be essential to understanding how the challenges of a climb may or may not match the strengths and weaknesses of the climber. For example, the British system, which is used in Morocco for the above Very Difficult climb, factors in how easy or hard it is to protect a route, as well as the difficulty of the moves. Understanding the development of different systems helps explain why British Very Difficult climbs are quite easy. History also explains why a European UIAA grade IV (i.e. 4) is much the same as a Norwegian grade 4.",
+            "img" : {
+                "url" : "/img/other/climbing-in-the-anti-atlas-at-an-easy-grade.jpg",
+                "alt" : "Easy graded climbing in the anti-atlas with big exposure"
+            },
+            "link" : {
+                "href" : "/climbing-tips/climbing-grades/",
+                "text" : "Understanding Rock Climbing Grades",
+                "pushable" : true
+            }
+        }
+    ]
+}
+

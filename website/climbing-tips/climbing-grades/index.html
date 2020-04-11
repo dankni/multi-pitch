@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.performance.mark('start');
+    </script>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link rel="canonical" href="https://www.multi-pitch.com//climbing-tips/" />
+    
+    <link rel="preconnect" href="https://s3-eu-west-1.amazonaws.com/" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preload" href="/css/fontello.css" as="style" />
+
+    <title>The Climbing Compendium</title>
+    <meta name="description" content="Detailed but brief information & tips on rock climbing. Including equipment, skills, knots & explanations of climbing terminology." />
+    <meta name="climbId" id="climbIdMeta" content="{{id}}" />
+
+    <!-- Styles -->
+    <link href="/css/bootstrap-grid.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+
+    <!--scripts -->
+<script src="/components/article.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        makeLinksPushable();
+    }); 
+    window.addEventListener('popstate', function(event) {
+        let url = document.location + 'content.json';
+        getContent(url, false);
+    });
+</script>
+    <script src="/js/main.js"></script>
+    <script src="/data/data.js"></script>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Sharing Tags -->
+    <meta property="og:title" content="The Climbing Compendium" />
+    <meta property="og:description"
+          content="Detailed but brief information & tips on rock climbing. Including equipment, skills, knots & explanations of climbing terminology." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.multi-pitch.com//climbing-tips/" />
+    <meta property="og:image" content="{{heroJpg}}" />
+    <meta property="og:image:type" content="image/jpg" />
+
+</head>
+<body id="bdy">
+<!-- Navbar -->
+<nav>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+        </a>
+        <ul>
+            <li>
+                <a href="/">Find <span class="not-mobile">Your Climb</span></a>
+            </li>
+            <li>
+                <a href="/map/">Map <span class="not-mobile">View</span></a>
+            </li>
+            <li>
+                <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+    <main id="main" style="margin-top:80px">
+        <div class="container">
+        
+<section>
+    <div class="row">
+    <div class="col col-md-12">
+        <h1>Climbing Grades & Conversion between grades</h1>
+    </div>
+    </div>        
+    <div class="row">
+        <div class="col">
+            <p id="intro">Climbing grades in theory follow quite logical rules. However in practice they are incredibly subjective and inconsistent, even within a single climbing grade system. Different climbing grade systems use very different criteria, which cannot be translated accurately, so don't rely on the converted grade.</p>
+        </div>
+    </div>
+    <form id="search" style="display:none;">
+    <input type="text" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
+    </form>
+    
+    <div id="breadcrumb">
+        <a href="/">Home</a> /
+        <a href="/climbing-tips/" class="pushable">Compendium</a> 
+        <span id="dividerTwo" style="display: inline;">/</span>
+        <a href="/climbing-tips/climbing-grades/" class="pushable" id="thirdLvl" style="display: inline;">Climbing grades</a>
+    </div>
+</section>
+<hr>
+        <section id="content">
+            <article class="row">
+            <h2 class="col-12">British Adjectival System</h2>
+            <figure class="col-12 col-md-3 compend-fig">
+                <img src="/img/other/grades/weakers-slab-in-north-cornwall-s.jpg" alt="VS climbing in North Cornwall" class="cat-img" onclick="openLightBox('/img/other/grades/weakers-slab-in-north-cornwall.jpg', 'VS climbing in North Cornwall')" />
+                <figcaption>VS climbing in North Cornwall</figcaption>
+            </figure>
+            <p class="col-12 col-md-9">
+                The British Adjectival System is usually seen as two different grades. An adjectival grade, for example <abbr title="Very Severe">VS</abbr>, and a technical grade for example 4b. The adjectival grade is an all-encompassing view of the difficulty of the climb. This looks at how hard the moves are, how good the protection is, how strenuous the overall route is, how loose the rock is etc. The technical grade simply looks at the hardest move on the route and grades it using the British system, which is, unfortunately different to the French sport system used in almost all British climbing walls, making it easy to get confused! For example an English 6a is much, much harder than a French sport 6a, often shown as f6a. <br /><strong>Example</strong>: <a href="/climbs/wreakers-slab-on-cornakey-cliff/">Wreakers slab on Cornakey Cliff</a> is graded VS 4b. This is an unusually high adjectival grade for such a low technical grade. On the route the climber will notice a few key factors which lead to the VS grade. Firstly, it has a lot of loose rock. In addition, protection is not straightforward or easy to find early on. It’s also tidal, meaning escape down could be closed for a long time if ascent is not possible. The route has a lot of exposure. Finally, it’s over 100m long, meaning some endurance is required. In contrast, <a href="/climbs/doorpost-on-bosigran/">Doorpost at Bosigran</a>, Cornwall, is also 4b in technical grade, but has an overall adjectival grade of Hard Severe which is a grade Lower. Doorpost probably has a harder crux on pitch 2, but protection is good throughout the route and the rock is solid, so overall it has a lower adjectival grade. <br /> <a class="seperated-link " href="/climbs/wreakers-slab-on-cornakey-cliff/">Wreakers Slab on Cornakey Cliff graded VS 4b &#8250;</a>
+            </p>
+        </article><article class="row">
+            <h2 class="col-12">UIAA Scale</h2>
+            <figure class="col-12 col-md-3 compend-fig">
+                <img src="/img/other/grades/roca-gris-in-montserrat-spain-s.jpg" alt="Grade V+ climb in Montserrat Spain" class="cat-img" onclick="openLightBox('/img/other/grades/roca-gris-in-montserrat-spain.jpg', 'Grade V+ climb in Montserrat Spain')" />
+                <figcaption>Grade V+ climb in Montserrat Spain</figcaption>
+            </figure>
+            <p class="col-12 col-md-9">
+                The International Union of Alpine Associations is grading system reasonably common in mainland Europe. It’s represented by Roman numerals from I through to VII and is now open ended to X (ten) and beyond. One key advantage of this system is its <a href="https://www.theuiaa.org/mountaineering/uiaa-grades-for-rock-climbing/" target="blank">clear descriptions</a> from grades I to VII. Essentially the system grades the hardest move in the route. However, the system takes no real account of either protection available or other factors that may impact a climber’s performance like exposure or altitude. As such the Alpine system or Scale of Global Assessment and French <em>sport</em> systems are both offshoots/additions of the UIAA scale, which itself is developed from the Welzenbach Scale.<br /><strong>Example</strong>: The climb <a href="/climbs/esparraguera-on-roca-gris/">Esparraguera on Roca Gris</a> is graded V+. This speaks to the hardest move, which is pulling up on a jugon the 3rd pitch. However the climb is also graded f5c, which is a slightly high conversion. The reason being the French sport system looks at the difficulty of each pitch (or length of rope) not just the hardest move, but also not the whole route like the alpine system. The UIAA scale and sport grade say nothing about the complexity of the route in terms of exposure, loose rock, route finding and run-out sections. Being comfortable climbing a UIAA V+ or f5c for 30m would be poor training for this beautifully complex route. <br /> <a class="seperated-link " href="/climbs/esparraguera-on-roca-gris/">The climb Esparraguera on Grey Rock graded UIAA V+ &#8250;</a>
+            </p>
+        </article><article class="row">
+            <h2 class="col-12">Yosemite Decimal System</h2>
+            <figure class="col-12 col-md-3 compend-fig">
+                <img src="/img/other/grades/joy-climb-in-canada-s.jpg" alt="Joy, A classic climb in Canada" class="cat-img" onclick="openLightBox('/img/other/grades/joy-climb-in-canada.jpg', 'Joy, A classic climb in Canada')" />
+                <figcaption>Joy, A classic climb in Canada</figcaption>
+            </figure>
+            <p class="col-12 col-md-9">
+                The Yosemite Decimal System has a lot of complexity to it, most of which isn’t used day to day. Firstly, the initial number before the decimal indicates the type of terrain where 4 is roped scrambling and 5 is climbing. 1 would presumably be walking to the shop. Aid climbs originally started with a 6 but most people don’t use that anymore. All multi-pitch free climbing will start with a five. 5.4 is easer than 5.9. Once the scale hits 5.10 then letters a, b, c and d can be added. Ie 5.10a. The system grades the hardest move, although on modern routes the grades factor in how sustained they are as well. <br /> <strong>Example</strong>: The climb <a href="/climbs/joy-on-mount-indefatigable/">Joy on Mount Indefatigable</a> is graded around 5.7. The grade band between 5.5 and 5.9 is pretty tight, in addition, because the Yosemite Decimal system looks at the hardest move, you can easily add 2 grades to the climb by taking a tiny variation on one pitch. The route joy is between 5.6 and 5.8 on the YDS scale. <br /> <a class="seperated-link " href="/climbs/joy-on-mount-indefatigable/">The climb Joy gradded between 5.7 & 5.9 on the Yosemite Decimal System &#8250;</a>
+            </p>
+        </article><article class="row">
+            <h2 class="col-12">French Sport Grades</h2>
+            <figure class="col-12 col-md-3 compend-fig">
+                <img src="/img/other/grades/bruggler-offers-great-climbing-in-switzerland-s.jpg" alt="Brüggler in Switzerland uses French grades." class="cat-img" onclick="openLightBox('/img/other/grades/bruggler-offers-great-climbing-in-switzerland.jpg', 'Brüggler in Switzerland uses French grades.')" />
+                <figcaption>Brüggler in Switzerland uses French grades.</figcaption>
+            </figure>
+            <p class="col-12 col-md-9">
+                French numerical grades were originally an offshoot of the UIAA system. In theorythey aim to grade the difficulty of a pitch. However whole routes are given the grade of the hardest pitch. The scale currently runs from 1 to 9c. Grades from 3 onwards can be sub divided into a, b & c for example 5c is harder than 5b. Grades from 6a onwards can additionally have a plus (and occasionally a minus) added where a 6a+ is harder than a 6a but easier than a 6b. This is the most common system used for grading sport routes and is used in most lead climbing gyms in Europe. The major downside to the system is that it doesn’t take into account protection or rock quality, or even the overall difficulty of multi-pitch rock climbs.<br /><strong>Example</strong>: <a href="/climbs/visite-obligatoire-on-aiguille-dibona/">Visite Obligatoire on the mountain Aiguille Dibona</a> is graded 6a+. It has some tough pitches,but being able to climb 6a+ in the gym is not going to be enough to get you up all 350m of this route. In fact climbers who can often manage 6c or 7a have failed to ascend this route. Therefore the alpine adjectival grade of <em>trés difficile</em> is much more representitive. I.e. it’s a solid E1 in British grades. The route Direkte Plattenwand on Brüggler in Switzerland is largely bolted and so a sport grade here is more useful. <br /> <a class="seperated-link " href="/climbs/direkte-plattenwand-on-brüggler/">Climbing the center of Brüggler is graded 5a  &#8250;</a>
+            </p>
+        </article><article class="row">
+            <h2 class="col-12">Norwegian Grades</h2>
+            <figure class="col-12 col-md-3 compend-fig">
+                <img src="/img/other/grades/stetind-climb-in-norway-s.jpg" alt="Stetind is Norways national mountain" class="cat-img" onclick="openLightBox('/img/other/grades/stetind-climb-in-norway.jpg', 'Stetind is Norways national mountain')" />
+                <figcaption>Stetind is Norways national mountain</figcaption>
+            </figure>
+            <p class="col-12 col-md-9">
+                The Norwegian Grading system started out as the UIAA system but as climbing progressed up to and then past the original ceiling of the sixth grade, the Norwegian system diverged. It switched to using Arabic numbers ie. 6 rather than Roman Numerals ie VI. The main difference is, grades tend to be slightly harder at around the fifth grade and beyond.<br /><strong>Example</strong>: The <a href="/climbs/sydpillaren-on-stetind/">South Pillar climb on Stetind </a> is graded around 6-. This makes the route somewhere between HVS and E1. Given the length and seriousness of the route E1 is possibly the more appropriate conversion to British grades, but it is a full VI on the UIAA scale. <br /> <a class="seperated-link " href="/climbs/climbs/sydpillaren-on-stetind/">Graded 6- on the Norwegian scale, The South pillar climb on Stetind is breathtaking &#8250;</a>
+            </p>
+        </article><article class="row">
+            <h2 class="col-12">Alpine Scale</h2>
+            <figure class="col-12 col-md-3 compend-fig">
+                <img src="/img/other/grades/aiguille-debona-s.jpg" alt="Aiguille Dibona, named after the Italian Mountaineer" class="cat-img" onclick="openLightBox('/img/other/grades/aiguille-debona.jpg', 'Aiguille Dibona, named after the Italian Mountaineer')" />
+                <figcaption>Aiguille Dibona, named after the Italian Mountaineer</figcaption>
+            </figure>
+            <p class="col-12 col-md-9">
+                The Scale of Global Assessment, usually called the Alpine Scale, gives an overall adjectival grade to climbing routes much like the British system. This fills the gap in the UIAA and sport grading systems where the grade says little about the seriousness of the route. The system uses French terms and runs from F for facile (easy in English) to ED for extrêmement difficile (extremely difficult) ED is open ended with numbers to ED4.<br /><strong>Example</strong>: <a href="/climbs/visite-obligatoire-on-aiguille-dibona/">Visite Obligatoire on the mountain Aiguille Dibona</a> is graded TD. TD is described as Very hard. Routes at this grades are serious undertakings with high level of objective danger... Rock climbing at UIAA grade V and VI with possible aid, very long sections of hard climbing. The alpine adjectival grade of <em>trés difficile</em> is a solid E1 in British grades. <br /> <a class="seperated-link " href="/climbs/visite-obligatoire-on-aiguille-dibona/">The Obligatory Visit on Aiguille Dibona is graded trés difficile &#8250;</a>
+            </p>
+        </article>
+        </section>
+        </div>
+    </main><!--Footer-->
+<footer class="page-footer text-center font-small">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Rock Climbing is Dangerous</h4>
+                <p style="min-height:90px">
+                    Do not treat this site as instruction. Rock climbing is an activitiy with a danger of
+                    personal injury or death. Participants should be aware of and accept these risks and be
+                    responsible for their own actions. If in doubt, don't climb.
+                </p>
+                <a class="btn btn-outline-white" href="https://www.thebmc.co.uk/risk-and-safety" target="blank"
+                   role="button">BMC STATEMENT</a>
+            </div>
+            <div class="col-md-4">
+                <h4>Contact Us</h4>
+                <p style="min-height:90px">
+                    We would love to hear from you, please send us any comments, corrections, or suggestions.
+                    This site is intended as a free resource for the climbing comunitiy now and for the future.
+                </p>
+                <a class="btn btn-outline-white" href="/about/#contact" role="button">CONTACT</a>
+            </div>
+            <div class="col-md-4">
+                <h4>Stay Up to date</h4>
+                <p style="min-height:90px">
+                    If you want to stay up to date with the new climbs that are added please subscribe below.
+                    We won't ever send more than 2 emails a month and we won't share any of your details with
+                    anyone else.
+                </p>
+                <a class="btn btn-outline-white" href="" role="button"
+                   onClick="openSubscribe();gtag('event', 'open-subscribe', {'event_category':'subscribe', 'event_label':'Open subscribe - homepage footer'});return false;">
+                    SUBSCRIBE TO UPDATES
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2019 Creative Commons</a> -
+        <a href="/"> multi-pitch.com </a>
+    </div>
+    <a onClick="hideTile(false)" class="close" id="close"></a>
+    <div class="overlay" id="overlay"></div>
+    <script>
+        window.performance.mark('html-end');
+    </script>
+</footer>
+</body>

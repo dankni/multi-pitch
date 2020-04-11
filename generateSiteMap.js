@@ -44,7 +44,7 @@ function generate() {
         </url>
         <url>
             <loc>https://www.multi-pitch.com/about/</loc>
-            <lastmod>2019-10-05</lastmod>
+            <lastmod>2020-04-04</lastmod>
             <priority>0.6</priority>
         </url>
         <url>

@@ -17,7 +17,7 @@
         <Redirect>
             <Protocol>https</Protocol>
             <HostName>www.multi-pitch.com</HostName>
-            <ReplaceKeyWith>climbs/donkey-serenades-on-lower-eagle-crag</ReplaceKeyWith>
+            <ReplaceKeyWith>climbs/donkey-serenades-on-lower-eagle-crag/</ReplaceKeyWith>
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>
@@ -28,7 +28,7 @@
         <Redirect>
             <Protocol>https</Protocol>
             <HostName>www.multi-pitch.com</HostName>
-            <ReplaceKeyWith>climbs/pinnacle-slab-on-amzkhssan-wall</ReplaceKeyWith>
+            <ReplaceKeyWith>climbs/pinnacle-slab-on-amzkhssan-wall/</ReplaceKeyWith>
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>
@@ -39,7 +39,7 @@
         <Redirect>
             <Protocol>https</Protocol>
             <HostName>www.multi-pitch.com</HostName>
-            <ReplaceKeyWith>climbs/high-sierra-on-high-sierra-dome</ReplaceKeyWith>
+            <ReplaceKeyWith>climbs/high-sierra-on-high-sierra-dome/</ReplaceKeyWith>
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>

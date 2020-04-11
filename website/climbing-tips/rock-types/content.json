@@ -1,0 +1,54 @@
+{
+    "heading" : "Rock Types in the context of trad climbing",
+    "navLink" : "Rock Types",
+    "intro" : "There are three main categories of rock. Igneous, sedimentary and metamorphic. These refer to the process that led to the current state of the rock. Different types of rock require quite different approaches to protection and climbing. Understanding these differences can help climbers find the most enjoyable climbs as well as choose the most appropriate protection.",
+    "description" : "Rock forms in 3 main ways, these impact the trype and quality of protection needed for climbing.",
+    "heroImg" : "",
+    "url" : "/climbing-tips/rock-types/",
+    "lastUpdated" : "08/04/2020",
+    "search" : false,
+    "articles" : [
+        {
+            "publish" : true,
+            "title" : "Igneous Rock",
+            "paragraph" :  "As an example, Granite is an igneous rock formed from cooled volcanic magma. If it cools underground, it's intrusive igneous rock. The slower it cools the larger the crystalline structure in the rock, making the rock coarse. The granite domes in Tafraout are a good example of this. High Sierra Dome has large, coarse but often brittle granite crystals. The Mourne Mountains in Northern Ireland are also coarse granite.  Lava that cools quickly above ground is classed as an extrusive igneous rock and is typically smoother and finer grained. Both Basalt and Rhyolite, like in Snowdonia Wales are examples of extrusive igneous rock. <br /> Cam’s and nuts make for good protection on granite. Granite often has extensive crack systems which can make it helpful to have multiple cams of the same / similar size.",
+            "img" : {
+                "url" : "/img/other/rock/climbing-the-granite-in-tafraout.jpg",
+                "alt" : "Climbing the sweeping granite crack in Tafraout"
+            },
+            "link" : {
+                "href" : "/climbs/high-sierra-on-high-sierra-dome/",
+                "text" : "The climb High Sierra on Morocco's Granite",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Sedimentary rock",
+            "paragraph" :  "Limestone and sandstone are both examples of common sedimentary rocks. These are formed by massive amounts of pressure, typically on the seabed. These layers of rock are then forced to the surface through tectonic volcanic activity or glaciation. As an example, the old man of stoer is Toridian sandstone meaning it was formed at a point before any meaningful life existed on earth and then forced to the surface and eroded by forces of nature like glaciers and the tides of the ocean. Limestone as seen at Avon and the Wye valley is also formed on seabeds and pushed to the surface, carved by glacial movement in ice ages then later quarried by man. Other sedimentary formations include shale, which is basically mudstone and is present at places like cornakey cliff. The soft nature of shale can make it hard to protect meaning technically easy climbing can end up with a VS grade.<br /> Sandstone sea stacks like the Old Man of Stoer and the Old Man of Hoy can take larger pieces of protection. Cams and Nuts, particularly offset cams and offset nuts work well in limestone due to its irregular formation. Conglomerate rock like in Montserrat and Meteora can be hard to protect and often has bolts, but tricams make a helpful addition to a normal rack for the small pockets that can be found in the rock. ",
+            "img" : {
+                "url" : "/img/other/rock/climbing-the-blocky-limestone-at-wye-valley.jpg",
+                "alt" : "Climbing the blocky limestone at Wye Valley"
+            },
+            "link" : {
+                "href" : "/climbs/right-hand-route-on-wintours-leap/",
+                "text" : "Wintours Leap offers long Limestone climbs",
+                "pushable" : false
+            }
+        },
+        {
+            "publish" : true,
+            "title" : "Metamorphic rock",
+            "paragraph" :  "Metamorphic rock is rock that has changed form by exposure to heat and pressure. For example, when sandstone goes through metamorphosis, it becomes quartzite, as in the case of the rock in the Jebel el Kest in Morocco. Alternatively, shale under heat and pressure becomes slate. When climbing at places like cornakey cliff in Cornwall, you will find a mixture of sandstone, shale and parts that have slate like properties, where there has been some exposure to heat and pressure in places. <br /> A standard rack of nuts and cams is a good place to start when climbing on quartzite. Small cams and slings seemed to be of particular use in the Jebel el Kest in Morocco.",
+            "img" : {
+                "url" : "/img/other/rock/climbing-in-the-anti-atlas-at-an-easy-grade.jpg",
+                "alt" : "Quartzite rock comes from sandstone"
+            },
+            "link" : {
+                "href" : "/climbs/pinnacle-slab-on-amzkhssan-wall/",
+                "text" : "Quartzite on the Amzkhssan wall, easy climbs but tricky to protect",
+                "pushable" : false
+            }
+        }
+    ]
+}

@@ -898,6 +898,26 @@ blockquote:before {
   border: 1px solid #777;
   background: #CCC;
 }
+.inline-button{
+  width:35%;
+  display: inline-block; 
+  margin: 2rem;
+  padding: 1rem;
+}
+@media (max-width: 800px){
+  .inline-button{
+    width:80%;
+    display: block;
+    margin:1rem auto;
+  }
+}
+@media (max-width: 500px){
+  .inline-button{
+    width:95%;
+    display: block;
+    margin:1rem auto;
+  }
+}
 .info-ring{
   display: inline-block;
   border: 1px solid #111;
@@ -1110,6 +1130,36 @@ hr {
 }
 .img-contaner:hover .txt-ovr-img{
   opacity:1;
+}
+/*******************/
+/** ARTICLE PAGES **/
+.cat-img{
+  width:250px;
+  float:left;
+  margin:0 10px 10px 0;
+  background-color: #CCCCCC;
+  cursor: pointer;
+}
+.compend-fig{
+  max-height:260px;
+}
+.compend-fig figcaption{
+  display: block;
+  font-size: 0.8rem;
+  text-align: center;
+  margin: 0 auto;
+  position: absolute;
+  z-index: 2;
+  background-image: linear-gradient(180deg, rgba(0,0,0,0.0),rgba(0,0,0,0.5), rgba(0,0,0,0.55));
+  color: #FFF;
+  width: 250px;
+  padding: 50px 5px 5px 5px;
+  bottom: 10px;
+  height: auto;
+}
+.seperated-link{
+  margin-top: 20px;
+  display: inline-block;
 }
 /***********/
 /** FLAGS **/

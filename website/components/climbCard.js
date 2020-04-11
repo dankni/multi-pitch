@@ -44,11 +44,11 @@ function getApproachInfo(climb) {
             <h3 tabindex="0">Approach & Descent Infomation</h3>
             <p>${climb.approach}</p>
             <p style="text-align:center"> 
-                <a href="/map/?loc=${climb.geoLocation}">
+                <a href="/map/?loc=${climb.geoLocation}" class="open-tile inline-button">
                     See ${climb.cliff} on the climb map
-                </a> | 
-                <a href="https://www.google.com/maps/place/${climb.geoLocation}" target="blank">
-                    Open climb location in Google Maps<i class="icon-link-ext"></i>
+                </a>
+                <a href="https://www.google.com/maps/place/${climb.geoLocation}" target="blank" class="open-tile inline-button">
+                    Open climb location in Google Maps<i class=" icon-link-ext"></i>
                 </a>
             </p>
         </div>
@@ -549,13 +549,8 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
 }
 
 //So then I can use this in nodejs and in the browser
-
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-
     module.exports = {
-
         climbCard
-
     };
-
 }

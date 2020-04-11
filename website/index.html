@@ -153,7 +153,11 @@
                         <p>
                             All climbs are graded using their original grading system. For ease of 
                             filltering they have been mapped to a single system. You can
-                            <a href="/climbing-grades/" rel="no-follow" onClick="openModal('/climbing-grades/');return false;" onkeydown="openSubscribe();return false;">convert climbing grades</a>
+                            <a href="/climbing-tips/climbing-grades/" rel="no-follow" 
+                            onClick="openModal('/climbing-tips/climbing-grades/content.html');return false;" 
+                            onkeydown="if(keyCode === 13) {openModal('/climbing-tips/climbing-grades/content.html');return false;}">
+                                convert climbing grades
+                            </a>
                             to a different system. This is however, by its nature, <em>very</em> subjective.
                             Different climbing grade systems use very different criteria, which
                             cannot be translated accurately, so don't rely on the converted grade. 
@@ -171,7 +175,7 @@
                                     <p id="grade" class="current-values">
                                         <span id="grade1">Diff</span> to <span id="grade2">E1</span>
                                         <small>
-                                            (<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-grades/');return false;" onkeydown="openSubscribe();return false;">BAS</abbr>)
+                                            (<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-tips/climbing-grades/content.html');return false;" onkeydown="openSubscribe();return false;">BAS</abbr>)
                                         </small>    
                                     </p>
                                 </div>
