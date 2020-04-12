@@ -1157,11 +1157,6 @@ hr {
   padding: 50px 5px 5px 5px;
   bottom: 10px;
 }
-@media (min-width:1200px) {
- /* .compend-fig figcaption{
-    bottom: 5px;  no idea why why i have to add this */
-  }
-}
 .seperated-link{
   margin-top: 20px;
   display: inline-block;
