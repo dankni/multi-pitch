@@ -99,11 +99,13 @@ function generateArticlesHTML(content, sorted){
         let article = 
         `<article class="row">
             <h2 class="col-12">${h2}</h2>
-            <figure class="col-12 col-md-3 compend-fig">
-                <img src="${url}" alt="${alt}" class="cat-img" onclick="openLightBox('${content.articles[i].img.url}', '${alt}')" />
-                <figcaption>${alt}</figcaption>
-            </figure>
-            <p class="col-12 col-md-9">
+            <div class="col-12 col-md-4 col-sm-5 col-lg-3">
+                <figure class="compend-fig">
+                    <img src="${url}" alt="${alt}" class="cat-img" onclick="openLightBox('${content.articles[i].img.url}', '${alt}')" />
+                    <figcaption>${alt}</figcaption>
+                </figure>
+            </div>
+            <p class="col-12 col-md-8 col-sm-7 col-lg-9">
                 ${p} ${a}
             </p>
         </article>`;
