@@ -23,6 +23,17 @@
     </RoutingRule>
     <RoutingRule>
         <Condition>
+            <KeyPrefixEquals>climbing-grades/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>climbing-tips/climbing-grades/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
             <KeyPrefixEquals>climbs/amzkhssan-wall-on-pinnacle-slab/</KeyPrefixEquals>
         </Condition>
         <Redirect>

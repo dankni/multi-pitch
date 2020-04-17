@@ -44,24 +44,27 @@
 </head>
 <body>
 <!-- Navbar -->
-  <nav>
-    <div class="container">
-      <a class="navbar-brand" href="/">
-        <img src="../img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
-      </a>
-        <ul>
-          <li>
-            <a href="/#filters">Find <span class="not-mobile">Your Climb</span></a>
-          </li>
-          <li>
-            <a href="/map/">Map <span class="not-mobile">View</span></a>
-          </li>       
-          <li>
-            <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
-          </li>
-        </ul>
-    </div>
-  </nav>
+	<nav>
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+			</a>
+			<ul>
+				<li>
+					<a href="/">Find <span class="not-mobile">Your Climb</span></a>
+				</li>
+				<li>
+					<a href="/map/">Map <span class="not-mobile">View</span></a>
+				</li>
+				<li>
+					<a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
+				</li>
+				<li>
+					<a href="/climbing-tips/" class="last-nav"><span class="not-mobile">Climbing </span>Compendium</span></a>
+				</li>
+			</ul>
+		</div>
+	</nav>
 <!-- Main Content -->
   <main id="main" style="margin-top:80px">
     <div class="container">
@@ -289,7 +292,6 @@
 	  </section>		  
 	</div>
   </main>
-<!--Footer-->
     <style>
 		.insta-holder{
 			width:260px;
@@ -300,35 +302,63 @@
 			width:80px;height:80px;
 			border-radius:40px;margin:10px;
 		}
-        footer{
-            background-color:none;
-        }
-        footer .col {
-            background: #F2F2F2;
-            padding:20px;
-            border-right:1px solid #CCCCCC;
-            color:#111;
-        }
-        footer .col a {
-            color: #111;
-        }
-        .footer-copyright{
-            color:#FFFFFF;
-        }
     </style>
-    <footer class="text-center font-small mt-4">
-            <div class="footer-copyright py-3 page-footer ">
-                <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2019 Creative Commons</a> | <a href="http://www.multi-pitch.com"> multi-pitch.com </a>
-            </div>
-    </footer>
-      <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
-        <!-- Scripts -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-            gtag('config', 'UA-123782847-1');
-        </script>
+<!--Footer-->
+	<footer class="page-footer text-center">
+		<section class="footer-image">
+			<div class="footer-image-filter">
+				<div class="container">
+					<div class="row">
+						<div class="col-12 col-md-4">
+							<h4 for="mce-EMAIL">Subscribe to Email Updates</h4>
+						</div>
+						<div class="col-12 col-md-8">
+							<form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
+							method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="blank">
+								<input type="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
+								<input  type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>    
+		<section class="grey">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<img src="/img/other/danger/climb-danger.gif" class="danger-gif" />
+						<h4>Rock Climbing is Dangerous</h4>
+						<p style="min-height:90px">
+							<strong>Do not treat this site as instruction.</strong> Rock climbing is an activitiy with a
+							danger of personal injury or death. Participants should be aware of and accept these risks and be
+							responsible for their own actions. If in doubt, don't climb.
+							<a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
+								<abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext"></i>
+							</a>
+						</p>
+					</div>
+				
+				</div>
+			</div>
+		</section>
+		<section class="footer-copyright">
+			<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2019 Creative Commons</a> -
+			<a href="/"> multi-pitch.com </a> - 
+			<a href="/about/#contact">Contact</a>
+		</section>
+	</footer>    
+	<a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
+	<div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile(false)"></div>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+	<!-- Scripts -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123782847-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-123782847-1');
+		window.performance.mark('html-end');
+	</script>
   </body>
 </html>

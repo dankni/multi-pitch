@@ -6,7 +6,6 @@ window.performance.mark('start-js-read');
 const rootProject = "/"; // adjust per enviroment
 var start = document.URL;
 var history_data = {"Start": start}; // push state
-var isCardTurned = start.includes('?overview');
 var dataSavingMode = false;
 var geoLocationSupport = false;
 var userLat = null;
@@ -480,7 +479,7 @@ function publishCards(climbsArr) {
          <div class="climb-status" id="${climbsArr[i].id}Status" data-climbId="${climbsArr[i].id}" data-status="${status}" onclick="cycleStatus(${climbsArr[i].id})">
              <i class="icon-${icon}"></i>
          </div>
-        <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;">
+        <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;" id="${climbsArr[i].id}Focus">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
                 <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero" loading="lazy" />
@@ -615,25 +614,18 @@ function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
 function showTile(climbId) {
+    localStorage.setItem('focusId', climbId + 'Focus');
     climbId = parseInt(climbId);
     var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
     var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId);
-    var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);
-
-    // a check to see if the user has landed on a page from a direct link
-    if (isCardTurned !== true) {
-        var url = '/climbs/' + climb.routeName + '-on-' + climb.cliff + '/';
-        url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
-
-        window.history.pushState(history_data, climb.cliff, url);
-    }
-
+    var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);   
+    var url = '/climbs/' + climb.routeName + '-on-' + climb.cliff + '/';
+    url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+    window.history.pushState(history_data, climb.cliff, url);
     document.getElementById('overlay').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-
     var fullCard = climbCard(climb, cImgs, allGuideBooks, weatherData, referanceLines);
-
     document.getElementById('overlay').innerHTML = fullCard;
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
@@ -646,7 +638,8 @@ function showTile(climbId) {
 /**
  OPEN THE SUBSCRIBE OVERLAY
  **/
-function openModal(url, trackingLabel) {
+function openModal(url, id) {
+    localStorage.setItem('focusId', id)
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
 
@@ -670,7 +663,7 @@ function openModal(url, trackingLabel) {
     };
     request.send();
     const name = url.replace('/','');
-    trackGA(name, 'Open', trackingLabel);
+    trackGA(name, 'Open', id);
 }
 
 /**
@@ -709,10 +702,15 @@ function hideTile(resetTitle) {
     document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
-    isCardTurned = false; // ensure future clicks don't think its first load again
     if (resetTitle !== false) {
         history.replaceState(history_data, 'The best multi-pitch climbs', rootProject);
         document.title = "The best multi-pitch rock climbs";
+    }
+    if(localStorage.getItem('focusId')){
+        if(document.getElementById(localStorage.getItem('focusId'))){
+            document.getElementById(localStorage.getItem('focusId')).focus();
+            localStorage.removeItem('focusId');
+        }
     }
 }
 function isScriptLoaded(url) {
@@ -1132,7 +1130,6 @@ function clearFilters(){
 // need to handle history.onPopstate ie. user presses back
 window.onpopstate = function (event) {
     hideTile();
-  //  console.log(event.state);
 };
 
 window.onload = function () {
@@ -1163,11 +1160,6 @@ window.onload = function () {
     }
     if (geoLocationSupport === true && hp === true) {
         document.getElementById('distance').style.display = "block";
-    }
-    if (isCardTurned === true) {
-        var overview = start.split('=');
-        var cardToLoad = overview[1];
-        showTile(cardToLoad);
     }
     if(localStorage.getItem('showFilters') && hp === true){
         if(localStorage.getItem('showFilters') === 'true'){

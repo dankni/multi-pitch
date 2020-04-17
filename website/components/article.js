@@ -83,14 +83,12 @@ function generateArticlesHTML(content, sorted){
         if(content.articles[i].publish === true){
         let h2 = content.articles[i].title;
         let p = content.articles[i].paragraph;
-        let url = '';
-        let alt = '';
         let a = '';
-        if(content.articles[i].img){
-            let img = content.articles[i].img.url;
-            url = img.substring(0, img.length - 4) + '-s.jpg';
-            alt = content.articles[i].img.alt;
-        }
+        let img = content.articles[i].img.url;
+        let url = img.substring(0, img.length - 4) + '-s.jpg';
+        let alt = content.articles[i].img.alt;
+        let webPUrl = img.substring(0, img.length - 4) + '-s.webp';
+
         if(content.articles[i].link){
             let pushable = '';
             if(content.articles[i].link.pushable === true) { pushable = 'pushable'; }
@@ -100,8 +98,13 @@ function generateArticlesHTML(content, sorted){
         `<article class="row">
             <h2 class="col-12">${h2}</h2>
             <div class="col-12 col-md-4 col-sm-5 col-lg-3">
-                <figure class="compend-fig">
-                    <img src="${url}" alt="${alt}" class="cat-img" onclick="openLightBox('${content.articles[i].img.url}', '${alt}')" />
+                <figure class="compend-fig" tabindex="0" onkeydown="return event.code != 'Enter' || openLightBox('${content.articles[i].img.url}', '${alt}')"
+                    onclick="openLightBox('${content.articles[i].img.url}', '${alt}')">
+                    <picture>    
+                        <source srcset="${webPUrl}" type="image/webp" >
+                        <source srcset="${url}" type="image/jpg" >
+                        <img src="${url}" alt="${alt}" class="cat-img" loading="lazy"/>
+                    </picture>
                     <figcaption>${alt}</figcaption>
                 </figure>
             </div>
@@ -138,7 +141,7 @@ function updateBreadcrumb(url){
 }
 
 function openLightBox(img, alt) {
-    document.getElementById('overlay').innerHTML = `<img src="${img}" alt="${alt}" id="modalStart" style="display:block;margin:10px auto;max-height:90vh;max-width:90vw"/>`;
+    document.getElementById('overlay').innerHTML = `<img src="${img}" alt="${alt}" id="modalStart" style="display:block;margin:10px auto;max-height:90vh;max-width:90vw" onKeyDown="return event.code != 'Escape' || hideTile(false)" tabindex="0" />`;
     document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
     document.getElementById('close').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");

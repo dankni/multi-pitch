@@ -440,21 +440,77 @@ footer.page-footer, footer a{
   color: #fff;
   padding:2rem 0 0 0;
 }
+footer .grey{
+  color: #000;
+  background: #d9dadc;
+  padding: 2rem 0 0 0;
+  font-size: 1rem;
+}
+
 footer .container .row{
   font-size:0.8em;
   text-align:left;
 }
 footer.page-footer .footer-copyright {
   overflow: hidden;
-  background-color: rgba(0, 0, 0, .2);
+  background-color: #1C2331;
   font-size: .9rem;
   color: rgba(255, 255, 255, .6);
   bottom: 0;
-  margin-top:1rem;
   padding:.5rem 0;
 }
 footer.page-footer a {
   color: #fff
+}
+footer .grey a {
+  color: #0055B8;
+}
+footer .grey a i {
+  font-size:0.7rem;
+}
+.subscribe-button {
+  display:inline-block;
+  padding:0.7rem 1.4rem;
+  margin:0 0.3rem 0.3rem 0;
+  border-radius:0.15em;
+  border: none;
+  box-sizing: border-box;
+  text-decoration:none;
+  font-family:'Roboto',sans-serif;
+  text-transform:uppercase;
+  font-weight:400;
+  color:#FFFFFF;
+  background-color:#3369ff;
+  box-shadow:inset 0 -0.6em 0 -0.35em rgba(0,0,0,0.17);
+  text-align:center;
+  position:relative;
+}
+.subscribe-input{
+  display:inline-block;
+  padding:0.7rem 1.4rem;
+  margin:0 0.3rem 0.3rem 0;
+  width:60%
+}
+.footer-image{
+  color: black;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url('/img/other/subscribe/subscribe-back-1920.jpg'); /* could native lazy load if it's not css */
+}
+.footer-image-filter {
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(0.125turn, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+  display: block;
+  Height: 240px;
+  padding-top: 100px;
+  color: #FFF;
+}
+.danger-gif {
+  float:left; 
+  margin-right:1rem;
+  height:100px;
+  width:100px;
 }
 @media (max-width:740px) {
   .full-page-intro {
@@ -473,9 +529,6 @@ footer.page-footer a {
   p{
     font-size:.9rem;
   }
-}
-.page-footer {
-  background-color: #1C2331
 }
 @media (max-width: 740px) {
   html, body, .view {
@@ -757,6 +810,9 @@ nav ul, nav ul li, nav ul li a{
 }
 nav ul li a {
   margin-right:1rem;
+}
+.last-nav {
+  margin-right: 0;
 }
 nav ul li a:hover {
   color: rgba(255, 255, 255, .75);

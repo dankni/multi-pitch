@@ -80,6 +80,9 @@
                 <li>
                     <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
                 </li>
+                <li>
+                    <a href="/climbing-tips/" class="last-nav"><span class="not-mobile">Climbing </span>Compendium</span></a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -153,9 +156,9 @@
                         <p>
                             All climbs are graded using their original grading system. For ease of 
                             filltering they have been mapped to a single system. You can
-                            <a href="/climbing-tips/climbing-grades/" rel="no-follow" 
-                            onClick="openModal('/climbing-tips/climbing-grades/content.html');return false;" 
-                            onkeydown="if(keyCode === 13) {openModal('/climbing-tips/climbing-grades/content.html');return false;}">
+                            <a href="/climbing-tips/climbing-grades/" rel="no-follow" id="climbingGradeModal"
+                                onClick="openModal('/climbing-tips/climbing-grades/content.html', this.id);return false;"
+                                onKeyDown="return event.code != 'Enter' || openModal('/climbing-tips/climbing-grades/content.html',  this.id);"> 
                                 convert climbing grades
                             </a>
                             to a different system. This is however, by its nature, <em>very</em> subjective.
@@ -175,7 +178,7 @@
                                     <p id="grade" class="current-values">
                                         <span id="grade1">Diff</span> to <span id="grade2">E1</span>
                                         <small>
-                                            (<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-tips/climbing-grades/content.html');return false;" onkeydown="openSubscribe();return false;">BAS</abbr>)
+                                            (<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-tips/climbing-grades/content.html', this.id)">BAS</abbr>)
                                         </small>    
                                     </p>
                                 </div>
@@ -196,8 +199,10 @@
                                     </p>
                                 </div>
                                 <div class="col-12">
-                                    <h5 class="filter-toggle" onclick="toggleFilters()" tabindex="0" 
-                                        role="button" aria-expanded="false" aria-pressed="false" onKeyDown="toggleFilters()">
+                                    <h5 class="filter-toggle" 
+                                        onclick="toggleFilters()" 
+                                        onkeydown="return event.code != 'Enter' || toggleFilters()" tabindex="0" 
+                                        role="button" aria-expanded="false" aria-pressed="false">
                                         <i class="icon-sliders"></i> Advanced Climbing Filters
                                     </h5>
                                 </div>
@@ -281,49 +286,53 @@
             </section>
         </div>
     </main>
-    <!--Footer-->
-    <footer class="page-footer text-center font-small">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h4>Rock Climbing is Dangerous</h4>
-                    <p style="min-height:90px">
-                        Do not treat this site as instruction. Rock climbing is an activitiy with a danger of
-                        personal injury or death. Participants should be aware of and accept these risks and be
-                        responsible for their own actions. If in doubt, don't climb.
-                    </p>
-                    <a class="btn btn-outline-white" href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
-                        BMC STATEMENT</a>
-                </div>
-                <div class="col-md-4">
-                    <h4>Contact Us</h4>
-                    <p style="min-height:90px">
-                        We would love to hear from you, please send us any comments, corrections, or suggestions.
-                        This site is intended as a free resource for the climbing comunitiy now and for the future.
-                    </p>
-                    <a class="btn btn-outline-white" href="/about/#contact">CONTACT</a>
-                </div>
-                <div class="col-md-4">
-                    <h4>Stay Up to date</h4>
-                    <p style="min-height:90px">
-                        If you want to stay up to date with the new climbs that are added please subscribe below.
-                        We won't ever send more than 2 emails a month and we won't share any of your details with
-                        anyone else.
-                    </p>
-                    <a class="btn btn-outline-white" href="/subscribe/" rel="no-follow"
-                       onClick="openModal('/subscribe/', 'subscribe from homepage footer');return false;" onkeydown="openModal('/subscribe/', 'subscribe from homepage footer');return false;">
-                        SUBSCRIBE TO UPDATES
-                    </a>
+    <!-- Footer -->
+    <footer class="page-footer text-center">
+        <section class="footer-image">
+            <div class="footer-image-filter">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <h4 for="mce-EMAIL">Subscribe to Email Updates</h4>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
+                             method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="blank">
+                                <input type="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
+                                <input  type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="footer-copyright">
+        </section>    
+        <section class="grey">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <img src="/img/other/danger/climb-danger.gif" class="danger-gif" />
+                        <h4>Rock Climbing is Dangerous</h4>
+                        <p style="min-height:90px">
+                            <strong>Do not treat this site as instruction.</strong> Rock climbing is an activitiy with a
+                            danger of personal injury or death. Participants should be aware of and accept these risks and be
+                            responsible for their own actions. If in doubt, don't climb.
+                            <a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
+                                <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext"></i>
+                            </a>
+                        </p>
+                    </div>
+                
+                </div>
+            </div>
+        </section>
+        <section class="footer-copyright">
             <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2019 Creative Commons</a> -
-            <a href="/"> multi-pitch.com </a>
-        </div>
+            <a href="/"> multi-pitch.com </a> - 
+            <a href="/about/#contact">Contact</a>
+        </section>
     </footer>
-    <a onClick="hideTile(false)" onKeyDown="hideTile(false)"class="close" id="close"></a>
-    <div class="overlay" id="overlay"></div>
+     <a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
+    <div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile(false)"></div>
     <script>
         window.performance.mark('html-end');
     </script>
