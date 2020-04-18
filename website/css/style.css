@@ -412,23 +412,6 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   padding-top: .7rem;
   padding-bottom: .7rem
 }
-.btn-outline-white {
-  border: 2px solid #fff!important;
-  background-color: rgba(255,255,255,0.1);
-  color: #fff!important;
-  margin:0 auto;
-  display:block;
-  margin-bottom:18px;
-}
-.btn-outline-white:active,.btn-outline-white:active:focus,.btn-outline-white:focus,.btn-outline-white:hover {
-  border-color: #fff!important;
-  background-color: transparent!important;
-  color: #fff!important
-}
-.btn-outline-white:not([disabled]):not(.disabled):active {
-  background-color: transparent!important;
-  border-color: #fff!important
-}
 .card .card-body .card-title a,
 .card .card-body .card-title a:hover {
   -webkit-transition: .2s ease-in-out;
@@ -485,6 +468,13 @@ footer .grey a i {
   text-align:center;
   position:relative;
 }
+.subscribe-button:hover {
+  filter:brightness(95%);
+}
+.subscribe-button:active {
+  box-shadow:inset 0 -0.1em 0 0 rgba(0,0,0,0.17);
+  filter:brightness(80%);
+}
 .subscribe-input{
   display:inline-block;
   padding:0.7rem 1.4rem;
@@ -495,7 +485,17 @@ footer .grey a i {
   color: black;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url('/img/other/subscribe/subscribe-back-1920.jpg'); /* could native lazy load if it's not css */
+  background-image: url('/img/other/subscribe/subscribe-back-1080.jpg'); /* could native lazy load if it's not css */
+}
+@media (min-width:1081px){
+  .footer-image{
+    background-image: url('/img/other/subscribe/subscribe-back-1600.jpg');
+  }
+}
+@media (min-width:1601px){
+  .footer-image{
+    background-image: url('/img/other/subscribe/subscribe-back-1920.jpg');
+  }
 }
 .footer-image-filter {
   width: 100%;

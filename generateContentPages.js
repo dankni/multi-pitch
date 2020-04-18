@@ -12,10 +12,6 @@ const newScript = `<!--scripts -->
     window.addEventListener('DOMContentLoaded', (event) => {
         makeLinksPushable();
     }); 
-    window.addEventListener('popstate', function(event) {
-        let url = document.location + 'content.json';
-        getContent(url, false);
-    });
 </script>`;
 
 let headHTML = fs.readFileSync('./website/components/head.html', 'utf8');

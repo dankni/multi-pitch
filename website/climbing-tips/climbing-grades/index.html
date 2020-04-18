@@ -31,10 +31,6 @@
     window.addEventListener('DOMContentLoaded', (event) => {
         makeLinksPushable();
     }); 
-    window.addEventListener('popstate', function(event) {
-        let url = document.location + 'content.json';
-        getContent(url, false);
-    });
 </script>
     <script src="/js/main.js"></script>
     <script src="/data/data.js"></script>

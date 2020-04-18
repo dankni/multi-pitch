@@ -3,9 +3,8 @@ window.performance.mark('start-js-read');
 /**
  GLOBAL VARIABLES
  **/
-const rootProject = "/"; // adjust per enviroment
-var start = document.URL;
-var history_data = {"Start": start}; // push state
+const rootProject = '/'; // adjust per enviroment
+var historyData = {"page": window.location.pathname}; // push state
 var dataSavingMode = false;
 var geoLocationSupport = false;
 var userLat = null;
@@ -613,8 +612,9 @@ function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
 /**
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
-function showTile(climbId) {
+function showTile(climbId, popped = false) {
     localStorage.setItem('focusId', climbId + 'Focus');
+    localStorage.setItem('lastClimb', climbId);
     climbId = parseInt(climbId);
     var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
     var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
@@ -622,7 +622,9 @@ function showTile(climbId) {
     var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);   
     var url = '/climbs/' + climb.routeName + '-on-' + climb.cliff + '/';
     url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
-    window.history.pushState(history_data, climb.cliff, url);
+    if(popped === false) {
+        window.history.pushState({"page": url}, climb.cliff, url);
+    }
     document.getElementById('overlay').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
     var fullCard = climbCard(climb, cImgs, allGuideBooks, weatherData, referanceLines);
@@ -636,7 +638,7 @@ function showTile(climbId) {
 }
 
 /**
- OPEN THE SUBSCRIBE OVERLAY
+ OPEN AN OVERLAY
  **/
 function openModal(url, id) {
     localStorage.setItem('focusId', id)
@@ -667,45 +669,12 @@ function openModal(url, id) {
 }
 
 /**
- CHANGE GRADES
+ CLOSE THE OVERLAY OR GO BACK TO HOMEPAGE
  **/
-// ToDo: make onChange event for name field MMERGE3
-function updateGradeLabel(gradeSystem) {
-
-    var easyLabel = document.getElementById('easy-label');
-    var mediumLabel = document.getElementById('med-label');
-    var hardLabel = document.getElementById('hard-label');
-
-    if (gradeSystem == 'british') {
-        easyLabel.textContent = "Up to VDiff";
-        mediumLabel.textContent = "Severe to VS ";
-        hardLabel.textContent = "HVS or harder";
-    } else if (gradeSystem == 'uiaa') {
-        easyLabel.textContent = "Up to UIAA IV";
-        mediumLabel.textContent = "UIAA IV to V ";
-        hardLabel.textContent = "UIAA V+ harder";
-    } else if (gradeSystem == 'yds') {
-        easyLabel.textContent = "Up to 5.5";
-        mediumLabel.textContent = "5.6 to 5.8 ";
-        hardLabel.textContent = "5.9 or harder";
-    } else if (gradeSystem == 'norwegian') {
-        easyLabel.textContent = "Up to 3";
-        mediumLabel.textContent = "4 to 5 ";
-        hardLabel.textContent = "5+ or harder";
-    }
-}
-
-/**
- CLOSE THE SUBSCRIBE OVERLAY OR GO BACK TO HOMEPAGE
- **/
-function hideTile(resetTitle) {
+function hideTile() {
     document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
-    if (resetTitle !== false) {
-        history.replaceState(history_data, 'The best multi-pitch climbs', rootProject);
-        document.title = "The best multi-pitch rock climbs";
-    }
     if(localStorage.getItem('focusId')){
         if(document.getElementById(localStorage.getItem('focusId'))){
             document.getElementById(localStorage.getItem('focusId')).focus();
@@ -1127,9 +1096,30 @@ function clearFilters(){
     filterCards();
 }
 
-// need to handle history.onPopstate ie. user presses back
-window.onpopstate = function (event) {
-    hideTile();
+/**
+ STATE MACHINE
+ **/
+// need to handle history.onPopstate ie. user presses back OR forwards which makes it tricky!
+window.onpopstate = function (event) {  
+    let pageToLoad = document.location.pathname;
+    if(pageToLoad === '/' && document.getElementById('overlay').style.display === 'block'){ 
+        // the climb Card overlay is being used
+        hideTile();
+        document.title = "The best multi-pitch rock climbs";
+    } else if(pageToLoad.includes('/climbs/')){
+        // only really happens if the user presses forwards
+        if(localStorage.getItem('lastClimb')){
+            showTile(localStorage.getItem('lastClimb'), true);
+        } else {
+            // forwards won't work
+        }
+    } else if(pageToLoad.includes('/climbing-tips/')){
+        // else it's a content page
+        let url = document.location + 'content.json';
+        getContent(url, false);
+    } else {
+        history.back();
+    }
 };
 
 window.onload = function () {
@@ -1167,8 +1157,10 @@ window.onload = function () {
         }
     }
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
-    loadNonEssential("link", "/css/fontello.css"); 
-    loadNonEssential("script", "/js/load-weather.js"); 
+    loadNonEssential("link", "/css/fontello.css");
+    if (document.location.href.includes('/climbs/') === true || hp === true) {
+        loadNonEssential("script", "/js/load-weather.js"); 
+    }
 //    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();
 };

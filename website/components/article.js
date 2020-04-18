@@ -3,6 +3,7 @@ function makeLinksPushable () {
     for(let i = 0; i < pushableLinks.length; i++){
         pushableLinks[i].addEventListener('click', function(event){ // ToDo: needs accessibility support
             getContent(pushableLinks[i].href + 'content.json', false);
+            history.pushState({"page" : pushableLinks[i].href}, pushableLinks[i].innerHTML, pushableLinks[i].href);
         });
         pushableLinks[i].classList.remove('pushable');
     }
@@ -13,9 +14,11 @@ function getContent(url, sorted){
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.onload = function() {
-        if (this.status >= 200 && this.status < 400) {    
+        if (this.status >= 200 && this.status < 400) {   
             let content = JSON.parse(this.response);
             loadContent(url, content, sorted)
+        } else {
+            console.log("Error getting content");
         }
     }
     request.onerror = function() { console.log('Error ' + this.status);   };
@@ -23,7 +26,6 @@ function getContent(url, sorted){
 }
   
 function loadContent(url, content, sorted){
-    history.pushState(null, content.navLink, url.replace('content.json', ''));
     document.getElementById('main').innerHTML = ''; // clear body content
     updateMeta();
     let breadcrumb = updateBreadcrumb(content.url);
@@ -42,7 +44,7 @@ function loadContent(url, content, sorted){
 }
   
 function updateMeta(content){
-
+ // ToDo
 }
 
 function generateIntroHTML(content, breadcrumb){
@@ -148,11 +150,11 @@ function openLightBox(img, alt) {
     document.getElementById('modalStart').focus(); // accessibility
 }
 
-function hideTile() {
+/*function hideTile() {
     document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
-}
+}*/
   
 //So then I can use this in nodejs and in the browser
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
