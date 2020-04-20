@@ -143,6 +143,7 @@ function drawBelay(context, x, y, line, fill){
 }
 
 function annotate(context, msg, x, y, color){
+    context.setLineDash([]); // ensure text is a solid line not dashed 
     context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
     context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     context.lineWidth = sThis(10) * belayScaler;
