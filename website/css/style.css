@@ -54,6 +54,7 @@ html {
   -ms-text-size-adjust: 100%;
   -ms-overflow-style: scrollbar;
   -webkit-tap-highlight-color: transparent;
+  font-display: swap;
 }
 figure {
   margin: 0 0 1rem;

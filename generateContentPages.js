@@ -41,7 +41,6 @@ pages.forEach(function(page) {
     headHTML = headHTML.replace(regexDesc, content.description);
     headHTML = headHTML.replace(regexTitle, content.heading);
     headHTML = headHTML.replace(regexScripts, newScript);
-    htmlHead = headHTML.replace('<script src="/data/data.js"></script>' ,'');
 
     let data = headHTML + navHTML + contentHTML + footerHTML;
     fs.writeFile(indexLoc, data, {encoding:'utf8',flag:'w'}, function (err) {

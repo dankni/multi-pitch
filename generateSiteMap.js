@@ -45,12 +45,32 @@ function generate() {
         <url>
             <loc>https://www.multi-pitch.com/about/</loc>
             <lastmod>2020-04-04</lastmod>
-            <priority>0.6</priority>
+            <priority>0.8</priority>
         </url>
         <url>
             <loc>https://www.multi-pitch.com/map/</loc>
             <lastmod>` + date + `</lastmod>
             <priority>0.6</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com/climbing-tips/</loc>
+            <lastmod>2020-04-08</lastmod>
+            <priority>0.7</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com/climbing-tips/climbing-grades/</loc>
+            <lastmod>2020-03-31</lastmod>
+            <priority>0.7</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com/climbing-tips/rock-types/</loc>
+            <lastmod>2020-04-08</lastmod>
+            <priority>0.7</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com/climbing-tips/climbing-gear/</loc>
+            <lastmod>2020-04-15</lastmod>
+            <priority>0.7</priority>
         </url>
      ${urlsEntry.join('')}
     </urlset>`;
