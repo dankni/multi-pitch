@@ -27,6 +27,15 @@ const gradeMappings = {
     'N':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5', 6: '5+', 7: '6', 'title': 'Norwegian'},
     'ALP':{1: 'PD-', 2: 'PD', 3: 'PD+', 4: 'AD-', 5: 'AD', 6: 'D', 7: 'TD', 'title': 'French Alpine Grades'}
 };
+
+var webPsupport = (function() {
+    var webP = new Image();
+    webP.onload = WebP.onerror = function () {
+      callback(webP.height == 2);
+    };
+    webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+});
+
 /**
 GA TRACKING HELPER
 **/
@@ -1156,6 +1165,9 @@ window.onload = function () {
             document.getElementById('advancedFilters').style.display = 'flex';
         }
     }
+    
+    // if the browser supports webP add a class to the body to allow css to use webp version
+    webPsupport ? document.querySelector('body').classList.add('webp') : document.querySelector('body').classList.add('no-webp'); 
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css");
     if (document.location.href.includes('/climbs/') === true || hp === true) {
