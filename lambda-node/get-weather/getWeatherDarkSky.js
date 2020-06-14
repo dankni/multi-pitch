@@ -21,7 +21,7 @@ function toMultipitchWeatherData(darkSkyData) {
 	"windSpeed": darkSkyData.windSpeed,
 	"uvIndex": darkSkyData.uvIndex,
 	"sunriseTime": darkSkyData.sunriseTime,
-	"sunsetTime": darkSkyData.sunsetTime,
+	"sunsetTime": darkSkyData.sunsetTime
     };
 }
 
