@@ -2,6 +2,7 @@ const axios = require('axios');
 
 const darkSkyKey = process.env.DARK_SKY_KEY;
 
+
 function toMultipitchWeatherData(darkSkyData) {
     return {
         "time": darkSkyData.time,
@@ -14,9 +15,15 @@ function toMultipitchWeatherData(darkSkyData) {
         "humidity": darkSkyData.humidity,
         "windSpeed": darkSkyData.windSpeed,
         "cloudCover": darkSkyData.cloudCover,
+	"uvIndex": darkSkyData.uvIndex,
+	"windGust": darkSkyData.windGust,
+	"windBearing": darkSkyData.windBearing,
+	"windSpeed": darkSkyData.windSpeed,
+	"uvIndex": darkSkyData.uvIndex,
+	"sunriseTime": darkSkyData.sunriseTime,
+	"sunsetTime": darkSkyData.sunsetTime
     };
 }
-
 
 function isValidGeo(geoLocation) {
     const [lat, lon] = geoLocation.split(",");
