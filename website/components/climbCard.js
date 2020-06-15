@@ -1,6 +1,6 @@
-function getGuidebook(guideBooks, climb) {
+function getGuidebook(climb) {
     guideBookModule = '';
-    if(Array.isArray(guideBooks) && guideBooks.length){
+    if(climb.guideBooks.length >= 1){
         try {
             var guideBookModule = `
         <hr />
@@ -8,19 +8,19 @@ function getGuidebook(guideBooks, climb) {
             <div class="col-sm-12">
                 <h3 tabindex="0">Guidebooks</h3>
             </div>`;
-                for (var i = 0; i < guideBooks.length; i++) {
+                for (let i = 0; i < climb.guideBooks.length; i++) {
                     guideBookModule += `
                         <div class="col-sm-2">
-                            <img src="/${guideBooks[i].imgURL}" alt="${guideBooks[i].title}" class="guidebook-img" /> 
+                            <img src="/${climb.guideBooks[i].imgURL}" alt="${climb.guideBooks[i].title}" class="guidebook-img" /> 
                         </div>
                         <div class="col-sm-10">
                             <p>
-                                <strong>${guideBooks[i].title}</strong> - pg. ${guideBooks[i].pg} <br />
-                                ${guideBooks[i].description}
+                                <strong>${climb.guideBooks[i].title}</strong> - pg. ${climb.guideBooks[i].pg} <br />
+                                ${climb.guideBooks[i].description}
                                 <br />
-                                <a href="${guideBooks[i].link}" onClick="trackGA('external-link', 'guidebook', 'ID = ${climb.id} | B = ${guideBooks[i].title}', '${guideBooks[i].rrp}');" target="blank">Availible Here</a>
-                                R.R.P. <strong>£ ${guideBooks[i].rrp}</strong><br />
-                                <small>ISBN: ${guideBooks[i].isbn} </small>
+                                <a href="${climb.guideBooks[i].link}" onClick="trackGA('external-link', 'guidebook', 'ID = ${climb.id} | B = ${climb.guideBooks[i].title}', '${climb.guideBooks[i].rrp}');" target="blank">Availible Here</a>
+                                R.R.P. <strong>£ ${climb.guideBooks[i].rrp}</strong><br />
+                                <small>ISBN: ${climb.guideBooks[i].isbn} </small>
                             </p>
                         </div>`;
                 }
@@ -29,6 +29,7 @@ function getGuidebook(guideBooks, climb) {
         </section>`;
         } catch (e) {
             guideBookModule = '';
+            console.log("problem with guidebook module for " + climb.id)
         }
     }
     return guideBookModule;
@@ -82,21 +83,21 @@ function getPitchInfo(climb) {
     return pitchInfo;
 }
 
-function getReferanceInfo(referanceLines, climb) {
+function getReferanceInfo(climb) {
     try {
-        if (referanceLines.length >= 1) {
+        if (climb.referances.length >= 1) {
             var refInfo = `
         <hr />
         <section class="row">
             <div class="col">
                 <h3 tabindex="0" id="refs">Referances &amp; additional links</h3>
                 <p>
-                    The following links will take you to external websites related specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
+                    The following links will take you to external websites specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
                     <em>Note: They contined relavant infomation at the time of publishing.</em>
                 </p>
                 <p>`;
-                    for (let i = 0; i < referanceLines.length; i++) {
-                        refInfo += `<a href="${referanceLines[i].url}" target="blank">${referanceLines[i].text} <i class="icon-link-ext"></i></a><br />`;
+                    for (let i = 0; i < climb.referances.length; i++) {
+                        refInfo += `<a href="${climb.referances[i].url}" target="blank">${climb.referances[i].text} <i class="icon-link-ext"></i></a><br />`;
                     }
                     refInfo += `
                 </p>
@@ -111,25 +112,24 @@ function getReferanceInfo(referanceLines, climb) {
     return refInfo;
 }
 
-function getGraph(type, climbId, weatherData) {
+function getGraph(type, climb) {
 
     try {
         var date = new Date;
         var curentMonth = date.getMonth();
         var bold = "";
-        var weather = weatherData.weatherLines.filter(w => w.climbId === climbId);
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
         if (type === "temperature") {
-            var high = weather.find(h => h.type === 'tempH');
+            var high = climb.weatherData.find(h => h.type === 'tempH');
             var chartClass = "temp";
         } else {
-            var high = weather.find(h => h.type === 'rainyDays');
+            var high = climb.weatherData.find(h => h.type === 'rainyDays');
             var chartClass = "seasonal-rain";
         }
 
         var highArray = [];
-        for (let i = 2; i < 14; i++) {
+        for (let i = 1; i < 13; i++) {
             highArray.push(parseInt(Object.values(high)[i]));
         }
         var maxValue = Math.max.apply(null, highArray);
@@ -138,8 +138,8 @@ function getGraph(type, climbId, weatherData) {
 
         var lowArray = [];
         if (type === "temperature") {
-            var tempL = weather.find(l => l.type === 'tempL');
-            for (let i = 2; i < 14; i++) {
+            var tempL = climb.weatherData.find(l => l.type === 'tempL');
+            for (let i = 1; i < 13; i++) {
                 lowArray.push(parseInt(Object.values(tempL)[i]));
             }
             var minTemprature = Math.min.apply(null, lowArray);
@@ -169,10 +169,10 @@ function getGraph(type, climbId, weatherData) {
 
             tempInfo += `
   	  <li>
-	    ${highArray[i]}
+	    ${parseInt(highArray[i])}
 	    <span style="height:${highTemp}%;${bold}"  title="${months[i]}"></span>`;
             if (type === "temperature") {
-                tempInfo += `<span style="height:${lowTemp}%;background-color:rgba(0,0,0,0);">${lowArray[i]}</span>`;
+                tempInfo += `<span style="height:${lowTemp}%;background-color:rgba(0,0,0,0);">${parseInt(lowArray[i])}</span>`;
             }
             tempInfo += `</li>`;
         }
@@ -184,13 +184,13 @@ function getGraph(type, climbId, weatherData) {
     return tempInfo;
 }
 
-function getWeather(theId, weatherData, climb) {
+function getWeather(climb) {
     try {
-        var temperature = getGraph("temperature", theId, weatherData);
+        var temperature = getGraph("temperature", climb);
         if (temperature == '') {
             return '';
         }
-        var rain = getGraph("rain", theId, weatherData);
+        var rain = getGraph("rain", climb);
         if (climb.seepage >= 1) {
             var seepage = `<p>The climb ${climb.routeName} on ${climb.cliff} suffers from seepage 
             and will need time to dry out after rain. Rock climbing after heavy rainfall could 
@@ -216,9 +216,18 @@ function getWeather(theId, weatherData, climb) {
         <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
           <h4  tabindex="0">Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
           <p class="min-height">
-            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>,
-            with temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c. 
-            Below is the estimated daily amount of rain.
+            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>.<br /><br />
+            <span class="weather tempr"></span> Temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c.<br />
+            <span id="sunMovement">
+                <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between 
+                <strong id="sunrise"></strong> & <strong id="sunset"></strong>.
+            </span>
+            <br />
+            <span class="weather wind"></span> <strong id="wind_speed"></strong><abbr title="Miles Per Hour">mph</abbr> wind gusts, 
+            bearing <span id="bearing">🡅</span>.<br />
+            <span class="weather clear-day"></span> <abbr title="Ultraviolet">UV</abbr> Index of <strong id="uv_index"></strong> 
+            and cloud cover of <strong id="cloud_cover"></strong>%.<br />
+            <strong id="precip_pos"></strong>% chance of rain today with an intensity of <strong id="precip_intense"></strong>mm per hour.
           </p>
           <ul class="chart">
             <li id="offsetMinus3"><span style="height:0%;" title="-3 days"></span></li>
@@ -250,15 +259,15 @@ function getWeather(theId, weatherData, climb) {
         return weatherInfo;
     } catch (e) {
         weatherInfo = '';
-        console.log("weather error for: " + theId);
+        console.log("card weather error for: " + climb.id);
         return weatherInfo;
     }
 
 }
 
-function getRouteTopo(topoImg, climb) {
+function getRouteTopo(climb) {
     var routeTopo = '';
-    if(topoImg.dataFile > 1){
+    if(climb.topo.dataFile > 1){
         routeTopo += `
         <aside class="topo-controls">
             <small>
@@ -273,11 +282,11 @@ function getRouteTopo(topoImg, climb) {
     }
     routeTopo += `
         <div class="img-contaner" id="topoHolder">
-            <a href="/${topoImg.url}" target="blank" class="card-img-anch" onClick="trackGA('topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
+            <a href="/${climb.topo.url}" target="blank" class="card-img-anch" onClick="trackGA('topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
                 <picture class="big-card-map" id="staticTopo">`;
-                let url = topoImg.url.replace('.jpg','');
+                let url = climb.topo.url.replace('.jpg','');
                 // dealing mostly with pixel density below
-                if(topoImg.dataFile === 5 && dataSavingMode !== true){
+                if(climb.topo.dataFile === 5 && dataSavingMode !== true){
                     // the max is over 2160 so worth declaring for SEO
                     routeTopo += `<source media="(min-width: 2200px)" type="image/webp"
                         srcset="/${url}.webp 1x, /${url}.webp 2x, /${url}.webp 3x">`;
@@ -285,14 +294,14 @@ function getRouteTopo(topoImg, climb) {
                 if(typeof dataSavingMode === undefined){ // for node static file generation
                     var dataSavingMode = false; 
                 }
-                if(topoImg.dataFile >= 3 && dataSavingMode !== true){
+                if(climb.topo.dataFile >= 3 && dataSavingMode !== true){
                     let big2pdW, med2pdW, big3pdW, big2pdJ, med2pdJ, big3pdJ;
-                    topoImg.dataFile === 5 ? big2pdW = `, /${url}-large.webp x2` : big2pd = '';
-                    topoImg.dataFile >= 4 ? med2pdW =  `, /${url}-medium.webp x2` : med2pd = '';
-                    topoImg.dataFile === 5 ? big3pdW = `, /${url}-large.webp x3` : big3pd = '';
-                    topoImg.dataFile === 5 ? big2pdJ = `, /${url}-large.jpg x2` : big2pd = '';
-                    topoImg.dataFile >= 4 ? med2pdJ =  `, /${url}-medium.jpg x2` : med2pd = '';
-                    topoImg.dataFile === 5 ? big3pdJ = `, /${url}-large.jpg x3` : big3pd = '';
+                    climb.topo.dataFile === 5 ? big2pdW = `, /${url}-large.webp x2` : big2pd = '';
+                    climb.topo.dataFile >= 4 ? med2pdW =  `, /${url}-medium.webp x2` : med2pd = '';
+                    climb.topo.dataFile === 5 ? big3pdW = `, /${url}-large.webp x3` : big3pd = '';
+                    climb.topo.dataFile === 5 ? big2pdJ = `, /${url}-large.jpg x2` : big2pd = '';
+                    climb.topo.dataFile >= 4 ? med2pdJ =  `, /${url}-medium.jpg x2` : med2pd = '';
+                    climb.topo.dataFile === 5 ? big3pdJ = `, /${url}-large.jpg x3` : big3pd = '';
 
                     routeTopo += `
                     <source media="(min-width: 1080px)" type="image/webp"
@@ -311,60 +320,60 @@ function getRouteTopo(topoImg, climb) {
                 }
 
                 routeTopo += `
-                    <img src="/${topoImg.url}" alt="${topoImg.alt}" class="crag-hero" >
+                    <img src="/${climb.topo.url}" alt="${climb.topo.alt}" class="crag-hero" >
                 </picture>`;
-                if(topoImg.dataFile > 1){
+                if(climb.topo.dataFile > 1){
                     routeTopo += `<canvas id="canvas" width="0" height="0" style="margin:auto;display:none;"></canvas>`;
                 }
                 routeTopo +=
             `</a>
         </div>
         <p class="credit">
-            Image Credit: <a href="${topoImg.atributionURL}" target="blank">${topoImg.attributionText}</a>
+            Image Credit: <a href="${climb.topo.atributionURL}" target="blank">${climb.topo.attributionText}</a>
         </p>`;
     return routeTopo;
 }
 
-function getMap(mapImg, latLonLocation) {
+function getMap(climb) {
     try {
-        if (mapImg.url) {
+        if (climb.mapImg.url) {
             var mapPicture = `
         <picture class="big-card-map">    
             <source
                media="(max-width: 400px)"
-               srcset="/${mapImg.url}400x200x1.webp 1x, /${mapImg.url}400x200x2.webp 2x"
+               srcset="/${climb.mapImg.url}400x200x1.webp 1x, /${climb.mapImg.url}400x200x2.webp 2x"
                type="image/webp" >
              <source
                media="(max-width: 1080px)"
-               srcset="/${mapImg.url}1080x200x1.webp 1x, /${mapImg.url}1080x200x2.webp 2x"
+               srcset="/${climb.mapImg.url}1080x200x1.webp 1x, /${climb.mapImg.url}1080x200x2.webp 2x"
                type="image/webp" >
              <source
                media="(min-width: 1080px)"
-               srcset="/${mapImg.url}1280x200x2.webp"
+               srcset="/${climb.mapImg.url}1280x200x2.webp"
                type="image/webp" >
             <source
                media="(max-width: 400px)"
-               srcset="/${mapImg.url}400x200x1.png 1x, /${mapImg.url}400x200x2.png 2x"
+               srcset="/${climb.mapImg.url}400x200x1.png 1x, /${climb.mapImg.url}400x200x2.png 2x"
                type="image/png" >
              <source
                media="(max-width: 1080px)"
-               srcset="/${mapImg.url}1080x200x1.png 1x, /${mapImg.url}1080x200x2.png 2x"
+               srcset="/${climb.mapImg.url}1080x200x1.png 1x, /${climb.mapImg.url}1080x200x2.png 2x"
                type="image/png" >
              <source
                media="(min-width: 1080px)"
-               srcset="/${mapImg.url}1280x200x2.png"
+               srcset="/${climb.mapImg.url}1280x200x2.png"
                type="image/png" >
              <img
-               src="/${mapImg.url}1080x200x1.png"
+               src="/${climb.mapImg.url}1080x200x1.png"
                type="image/png" class="big-card-map" 
-               alt="${mapImg.alt}">
+               alt="${climb.mapImg.alt}">
         </picture>`;
             return mapPicture;
         }
     } catch (e) {
         var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
-        var lon = latLonLocation.split(',')[1];
-        var lat = latLonLocation.split(',')[0];
+        var lon = climb.geoLocation.split(',')[1];
+        var lat = climb.geoLocation.split(',')[0];
         var mid = ',13.0,0,0/';
         var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNqbW9sdm9xYzEyaTMzcXBrazFlN2kyNm4ifQ.GOyRqbgk3G9N9CbM7FXwOw&logo=false'
         // note the pixel density of a 800 x 200 img = 800x200@2x
@@ -398,19 +407,16 @@ function getMap(mapImg, latLonLocation) {
     }
 }
 
-function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
-
-    var topoImg = climbImgs.find(img => img.type === 'topo');
-    var mapImg = climbImgs.find(img => img.type === 'map');
-    var routeTopoModule = getRouteTopo(topoImg, climb);
+function climbCard(climb) {
+    /* LOTS TO REFACTOR HERE */
+    var routeTopoModule = getRouteTopo(climb);
     var approachInfoModule = getApproachInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
-    var referanceModule = getReferanceInfo(referanceLines, climb);
-    var guideBookModule = getGuidebook(guideBooks, climb);
-    var weatherInfoModule = getWeather(climb.id, weatherData, climb);
-    var mapModule = getMap(mapImg, climb.geoLocation);
-
-    var folderName = "".concat(climb.routeName, '-on-', climb.cliff)
+    var referanceModule = getReferanceInfo(climb);
+    var guideBookModule = getGuidebook(climb);
+    var weatherInfoModule = getWeather(climb);
+    var mapModule = getMap(climb);
+    var folderName = "".concat(climb.routeName.trim(), '-on-', climb.cliff.trim())
             .toLowerCase()
             .replace(/'/g, "")
             .replace(/\//g, "")
@@ -453,7 +459,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                 <div class="row">
                     <div class="col-sm">
                         <h1 id="articleTitle" tabindex="0">
-                            <span class="flag big-flag ${climb.flag}"></span>
+                            <span class="flag big-flag ${climb.country.toLowerCase()}"></span>
                             ${climb.cliff} - ${climb.routeName}
                         </h1>
                     </div>
@@ -525,7 +531,7 @@ function climbCard(climb, climbImgs, guideBooks, weatherData, referanceLines) {
                         <p>
                             This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}.
                             It represents ${climb.length}m of ${climb.rock} rock climbing, usually over ${climb.pitches} pitches, of a max grade of ${climb.tradGrade}&nbsp;${techGrade}.
-                            Clicking the image will load the <a href="/${topoImg.url}" target="blank">full screen high resolution ${climb.routeName} climb topo</a>.
+                            Clicking the image will load the <a href="/${climb.topo.url}" target="blank">full screen high resolution ${climb.routeName} climb topo</a>.
                         </p>
                         ${routeTopoModule}
                         <aside>

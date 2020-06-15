@@ -4,9 +4,7 @@ const path = require('path');
 const OUTPUT_FOLDER = './website';
 const FILE_NAME = 'sitemap.xml';
 
-const allData = require('./website/data/data');
-const climbsData = allData.climbsData;
-
+const climbsData = require('./website/data/data.json');
 
 function generate() {
 
@@ -71,8 +69,7 @@ function generate() {
             <loc>https://www.multi-pitch.com/climbing-tips/climbing-gear/</loc>
             <lastmod>2020-04-15</lastmod>
             <priority>0.7</priority>
-        </url>
-     ${urlsEntry.join('')}
+        </url>${urlsEntry.join('')}
     </urlset>`;
 
 

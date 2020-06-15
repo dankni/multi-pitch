@@ -20,12 +20,11 @@
     <meta name="description" content="Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m.." />
 
     <!-- Styles -->
-    <link href="css/style.css?Apr=2020" rel="stylesheet" />
+    <link href="css/style.css?Jun=2020" rel="stylesheet" />
 
     <!-- JavaScripts -->
-    <script async src="data/data.js"></script>
     <script async src="components/climbCard.js"></script>
-    <script async src="js/main.js?Jan=2020"></script>
+    <script async src="js/main.js?Jun=2020"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
@@ -80,7 +79,7 @@
                     <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
                 </li>
                 <li>
-                    <a href="/climbing-tips/" class="last-nav"><span class="not-mobile">Climbing </span>Compendium</span></a>
+                    <a href="/climbing-tips/" class="last-nav"><span class="not-mobile">Climbing </span>Compendium</a>
                 </li>
             </ul>
         </div>
@@ -252,7 +251,7 @@
                                     <p style="display:inline-block">Sort Climbs: </p>
                                     <select id="sortOrder" onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
                                             trackGA('sort-and-filter', 'sort', this.value, 0);">
-                                        <option value="updateTimestamp,DESC">Recently Added / Updated</option>
+                                        <option value="lastUpdate,DESC">Recently Added / Updated</option>
                                         <option value="length,DESC">Longest Climbs First</option>
                                         <option value="length,ASC">Shortest Climbs First</option>
                                         <option value="dataGrade,ASC">Easiest Climbs First</option>

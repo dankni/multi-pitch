@@ -2095,3 +2095,12 @@ hr {
 .wind{
   background-image: url(/img/icons/weather/wind.svg); 
 }
+.sunrise{
+  background-image: url(/img/icons/weather/Sun-Low.svg); 
+}
+.tempr{
+  background-image: url(/img/icons/weather/Thermometer-25.svg); 
+}
+.moon {
+  background-image: url(/img/icons/weather/Moon-Waning-Crescent.svg);
+}

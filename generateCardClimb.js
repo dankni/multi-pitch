@@ -5,13 +5,9 @@ const path = require('path');
 // given a climb id it will generate the html to display it
 const OUTPUT_FOLDER = './website/climbs';
 const climbCard = require('./website/components/climbCard').climbCard;
-const allData = require('./website/data/data');
-var climbsData = allData.climbsData;
+const allData = require('./website/data/data.json');
+var climbsData = allData;
 climbsData = climbsData.climbs.filter(climb => climb.status === 'publish');
-const climbImgs = allData.climbImgs;
-const referances = allData.referances;
-const weatherData = allData.weatherData;
-const guideBooks = allData.guideBooks;
 const navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
 const footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
 
@@ -25,10 +21,7 @@ function generate() {
     var climbsAndHtml = climbsData.map(climb => {
 
         var climbId = climb.id;
-        var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-        var cragImg = cImgs.find(img => img.type === 'tile');
-        var guideBook = guideBooks.books.filter(book => book.climbId === climbId); 
-        var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId); 
+        let thisClimb = require('./website/data/climbs/' + climbId + '.json').climbData;
         var folderName = "".concat(climb.routeName, '-on-', climb.cliff + '/')
             .toLowerCase()
             .replace(/'/g, "")
@@ -46,14 +39,14 @@ function generate() {
         if (climb.status === 'publish') {
             headHTML = headHTML.replace(regexTitle, climb.routeName + ' on ' + climb.cliff + ' | multi-pitch rock climbing');
             headHTML = headHTML.replace(regexUrl, 'https://www.multi-pitch.com/climbs/' + folderName + '/');
-            headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com/' + cragImg.url);
+            headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com/' + climb.tileImage.url);
             headHTML = headHTML.replace(regexDesc, 'An overview of ' + climb.routeName + ', a ' + climb.length + 'm multi-pitch rock climb on ' + climb.cliff + ' in ' + climb.county + ', ' + climb.country + '. Includes detailed photo topo of the route and more info.');
             headHTML = headHTML.replace(regexId, climbId);
         }
 
         return {
             climb: climb,
-            html: headHTML + navHTML + climbCard(climb, cImgs, guideBook, weatherData, referanceLines) + footerHTML
+            html: headHTML + navHTML + climbCard(thisClimb) + footerHTML
         };
     });
 

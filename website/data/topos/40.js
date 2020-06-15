@@ -1,6 +1,6 @@
 var topoData = {
-    "image":"../website/img/topos/gower/crag.jpg",
-    "flag":"../website/img/flags/wa.png",
+    "image":"/img/topos/gower/crag.jpg",
+    "flag":"/img/flags/wa.png",
     "title":"Great Tor > East Ridge | S 3c - 71m",
     "belaySize":24,
     "route":[

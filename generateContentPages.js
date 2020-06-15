@@ -5,6 +5,7 @@ const pages = ['/climbing-tips/', '/climbing-tips/climbing-grades/', '/climbing-
 const regexUrl = /{{cannonical}}/gi;
 const regexDesc = /{{description}}/gi;
 const regexTitle = /{{title}}/gi;
+const regexHero = /{{heroJpg}}/gi;
 const regexScripts = /<!-- Scripts -->/gi;
 const newScript = `<!--scripts -->
 <script src="/components/article.js"></script>
@@ -41,6 +42,7 @@ pages.forEach(function(page) {
     headHTML = headHTML.replace(regexDesc, content.description);
     headHTML = headHTML.replace(regexTitle, content.heading);
     headHTML = headHTML.replace(regexScripts, newScript);
+    headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com' + content.heroImg);
 
     let data = headHTML + navHTML + contentHTML + footerHTML;
     fs.writeFile(indexLoc, data, {encoding:'utf8',flag:'w'}, function (err) {

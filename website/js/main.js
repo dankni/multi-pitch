@@ -4,6 +4,7 @@ window.performance.mark('start-js-read');
  GLOBAL VARIABLES
  **/
 const rootProject = '/'; // adjust per enviroment
+var climbsData;
 var historyData = {"page": window.location.pathname}; // push state
 var dataSavingMode = false;
 var geoLocationSupport = false;
@@ -35,6 +36,39 @@ var webPsupport = (function() {
     };
     webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
 });
+
+/**
+ * SET THE climbsData VARIABLE BUT USE localStorage FIRST
+ **/
+
+const getOnlineClimbsData = async (set) => {
+    const response = await fetch('/data/data.json');
+    if(set === true){
+        climbsData = await response.json();
+        window.performance.mark('data.json-from-server');
+        localStorage.setItem('climbsData', JSON.stringify(climbsData));
+        // if the DOM is not ready add an event listener to launch init, otherwise just launch it. 
+        document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init()) : init();
+    } else {
+        serverClimbsData = await response.json();
+        if(serverClimbsData.lastUpdate > climbsData.lastUpdate){
+            climbsData = serverClimbsData;
+            localStorage.setItem('climbsData', JSON.stringify(climbsData));
+            document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init()) : init();
+        }
+    }
+}
+if(localStorage.getItem('climbsData')){
+    climbsData = JSON.parse(localStorage.getItem('climbsData'));
+    window.addEventListener('load', (event) => {
+        init();
+        getOnlineClimbsData(false);
+    });
+} else {
+    getOnlineClimbsData(true);
+}
+    
+
 
 /**
 GA TRACKING HELPER
@@ -205,7 +239,7 @@ function updateGradePref() {
 function updateListingGrades(){
     let cards = document.getElementsByClassName('card');
     for(let i = 0; i < cards.length; i++){
-        const climb = climbsData.climbs.find(climb => climb.id === parseInt(cards[i].id));
+        let climb = climbsData.climbs.find(climb => climb.id === parseInt(cards[i].id));
         let answer = gradeToShow(climb, localStorage.getItem('gradePreference'));
         let card = document.getElementById(climb.id);
         // Could Prob clean this up in a refactor: 
@@ -358,6 +392,11 @@ helper.arr = {
 
     multisort: function (arr, columns, order_by) {
 
+        if(columns[0] === 'lastUpdate'){
+            for(let i = 0; i < arr.length; i++){
+                arr[i].lastUpdate = Date.parse(arr[i].lastUpdate); // this is converting climbsData to timestamp
+            }
+        }
         if (typeof columns === 'undefined') {
             columns = [];
             for (x = 0; x < arr[0].length; x++) {
@@ -375,7 +414,6 @@ helper.arr = {
             var direction = order_by[index] === 'DESC' ? 1 : 0;
 
             var is_numeric = !isNaN(a[columns[index]] - b[columns[index]]);
-
             var x = is_numeric ? a[columns[index]] : a[columns[index]].toLowerCase();
             var y = is_numeric ? b[columns[index]] : b[columns[index]].toLowerCase();
 
@@ -425,16 +463,15 @@ function gradeToShow(climb, sys){
 function publishCards(climbsArr) {
     for (let i = 0; i < climbsArr.length; i++) {
         if (climbsArr[i].status === 'publish') {
-            var cImgs = climbImgs.imgs.filter(img => img.climbId === climbsArr[i].id); // get all the imgs for the climb
-            var tileImg = cImgs.find(img => img.type === 'tile'); // get the img object
-            var webPUrl = tileImg.url.replace(".jpg", ".webp");
-            var url = '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/';
+            let webPUrl =  climbsArr[i].tileImage.url.replace(".jpg", ".webp");
+            let url = '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/';
             url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
             let status = "";
             let icon = "heart-empty";
             let saved = 0;
             let unsaved = 1;
             let done = 0
+            let flag = climbsArr[i].country.toLowerCase().replace(' ', '');
             if(localStorage.getItem('wishlist')){
                 try{
                     let wishlist = JSON.parse(localStorage.getItem('wishlist'));
@@ -490,12 +527,12 @@ function publishCards(climbsArr) {
         <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;" id="${climbsArr[i].id}Focus">
             <picture>
                 <source srcset="/${webPUrl}" type="image/webp">
-                <img src="/${tileImg.url}" alt="${tileImg.alt}" class="crag-hero" loading="lazy" />
+                <img src="/${climbsArr[i].tileImage.url}" alt="${climbsArr[i].tileImage.alt}" class="crag-hero" loading="lazy" />
             </picture>
         </a>
         <div class="card-body">
             <h4>
-            <span class="flag ${climbsArr[i].flag}"></span>
+            <span class="flag ${flag}"></span>
                  ${climbsArr[i].cliff}
             </h4>
             <p class="card-text">
@@ -622,28 +659,50 @@ function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
 function showTile(climbId, popped = false) {
-    localStorage.setItem('focusId', climbId + 'Focus');
-    localStorage.setItem('lastClimb', climbId);
+    // ToDo: clean this up - its a bit messy because the lastUpdate could be a timestamp or JS date string
     climbId = parseInt(climbId);
-    var climb = climbsData.climbs.find(c => c.id === climbId); // get the climb object by id
-    var cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);  //note find returns first vs filter returns all.
-    var referanceLines = referances.referanceLines.filter(referanceLines => referanceLines.climbId === climbId);
-    var allGuideBooks = guideBooks.books.filter(book => book.climbId === climbId);   
-    var url = '/climbs/' + climb.routeName + '-on-' + climb.cliff + '/';
+    let climb = localStorage.getItem('climb' + climbId) ? JSON.parse(localStorage.getItem('climb' + climbId)) : null;
+    let localClimbFileDate = localStorage.getItem('climb' + climbId) ? Date.parse(climb.climbData.lastUpdate) : null; 
+    localClimbFileDate = typeof localClimbFileDate == 'string' ? Date.parse(localClimbFileDate) : localClimbFileDate;
+    let summaryFileClimbTime = climbsData.climbs.find(climb => climb.id === climbId).lastUpdate;
+    summaryFileClimbTime = typeof summaryFileClimbTime == 'string' ? Date.parse(summaryFileClimbTime) : summaryFileClimbTime;
+
+    if(climb !== null && localClimbFileDate >= summaryFileClimbTime){
+        deliverChange(climb, popped);
+    } else {
+        let request = new XMLHttpRequest();
+        request.open('GET', '/data/climbs/' + climbId + '.json', true);
+        request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+                localStorage.setItem('climb' + climbId, this.response);
+                climb = JSON.parse(this.response);
+                deliverChange(climb, popped);
+            } else { console.log("couldn't load climbsData - likley server error / file not found"); }
+        };
+        request.onerror = function() { console.log("couldn't load climbsData - likley connection error"); };
+        request.send();
+    }
+}
+function deliverChange(climb, popped){
+    let climbData = climb.climbData;
+    localStorage.setItem('focusId', climbData.id + 'Focus');
+    localStorage.setItem('lastClimb', climbData.id );
+    
+     
+    var url = '/climbs/' + climbData.routeName.trim() + '-on-' + climbData.cliff.trim() + '/';
     url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
     if(popped === false) {
-        window.history.pushState({"page": url}, climb.cliff, url);
+        window.history.pushState({"page": url}, climbData.cliff, url);
     }
     document.getElementById('overlay').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-    var fullCard = climbCard(climb, cImgs, allGuideBooks, weatherData, referanceLines);
+    var fullCard = climbCard(climbData);
     document.getElementById('overlay').innerHTML = fullCard;
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
-    document.title = climb.cliff + " - " + climb.routeName;
+    document.title = climbData.cliff + " - " + climbData.routeName;
     document.getElementById('articleTitle').focus(); // Set focus on the climb card article for accessibility 
-    //tryLoadTopo(climbId);
-    loadCurrentWeatherModule(climbId);
+    loadCurrentWeatherModule(climbData.id);
 }
 
 /**
@@ -693,13 +752,16 @@ function hideTile() {
 }
 function isScriptLoaded(url) {
     var scripts = document.getElementsByTagName('script');
-    for (var i = scripts.length; i--;) {
-        if (scripts[i].src == url) return true;
+    for (let i = 0; i < scripts.length; i++) {
+        if (scripts[i].src.split("/").pop() == url.split("/").pop()) {
+            return true;
+        }
     }
     return false;
 }
 function topoInteraction(climbId, name, cliff){
-    if(isScriptLoaded('/data/topos/' + climbId + '.js' === false)){
+    let scriptSrc = '/data/topos/' + climbId + '.js'
+    if(isScriptLoaded(scriptSrc) === false){
         tryLoadTopo(climbId);
         toggleTopo();
     } else {
@@ -708,21 +770,17 @@ function topoInteraction(climbId, name, cliff){
     trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
 }
 /**
- LOAD TOPO DATA JS OBJECT IF AVAILIBLE
+ LOAD TOPO DATA JS OBJECT
  **/
 function tryLoadTopo(climbId, enviroment = '') {
     enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
-    let cImgs = climbImgs.imgs.filter(img => img.climbId === climbId);
-    let topoImg = cImgs.find(img => img.type === 'topo');
-    if (topoImg.dataFile > 1) {
-        let ref = document.getElementsByTagName('script')[0];
-        var script = document.createElement('script');
-        script.onload = function () {
-            initTopo();
-        }
-        script.src = enviroment + "/data/topos/" + climbId + ".js";
-        ref.parentNode.insertBefore(script, ref);
+    let ref = document.getElementsByTagName('script')[0];
+    var script = document.createElement('script');
+    script.onload = function () {
+        initTopo();
     }
+    script.src = enviroment + "/data/topos/" + climbId + ".js";
+    ref.parentNode.insertBefore(script, ref);
 }
 
 /**
@@ -1024,26 +1082,43 @@ function loadCurrentWeatherModule(id){
   try{
     const dsWeather = window.darkSkyWeatherData.find(data => data.climbId === climbid);
     if(dsWeather != null){
-      document.getElementById("currentWeather").style.display = "block";
-      document.getElementById("seasonalWeather").classList.add("col-lg-6");
-      const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3"];
-      document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
-      document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
-      document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
-      document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
-      document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
-
-      for(let i = 0; i < currentWeather.length; i++){
-        let listItem = document.getElementById(currentWeather[i]);
-        let rain = dsWeather[currentWeather[i]].precipIntensity;
-        let height = rain > 3 ? 100 : rain * 33.3;
-        let label = document.createTextNode(rain.toFixed(1) + "mm");
-        listItem.firstElementChild.style.height = height + "%";
-        listItem.prepend(label);
-      }
+        document.getElementById("currentWeather").style.display = "block";
+        document.getElementById("seasonalWeather").classList.add("col-lg-6");
+        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3"];
+        document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
+        document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
+        document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
+        document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
+        document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
+        if(dsWeather.currently.sunriseTime){
+            document.getElementById("sunrise").innerText = new Date(dsWeather.currently.sunriseTime  * 1000).toTimeString().substring(0,5);
+            document.getElementById("sunset").innerText = new Date(dsWeather.currently.sunsetTime  * 1000).toTimeString().substring(0,5);
+            document.getElementById('light_hours').innerText = (((dsWeather.currently.sunsetTime - dsWeather.currently.sunriseTime)/60)/60).toFixed(1);
+        } else {
+            // The sun doesn't always rise and set everyday in all locations (eg North Norway)
+            if(dsWeather.currently.uvIndex >= 1) {
+                document.getElementById('sunMovement').innerHTML = '<span class="weather clear-day"></span> 24h Sun! No sunset here today.';
+            } else {
+                document.getElementById('sunMovement').innerHTML = '<span class="weather moon"></span> 24h Darkness! No sunrise here today.';
+            }
+        }
+        document.getElementById('precip_pos').innerText = Math.round(dsWeather.currently.precipProbability * 100);
+        document.getElementById('precip_intense').innerText = dsWeather.currently.precipIntensity.toFixed(1);
+        document.getElementById('wind_speed').innerText = dsWeather.currently.windGust.toFixed(1);
+        document.getElementById('uv_index').innerText = dsWeather.currently.uvIndex;
+        document.getElementById('cloud_cover').innerText = Math.round(dsWeather.currently.cloudCover * 100);
+        document.getElementById('bearing').style  = 'transform: rotate(' + dsWeather.currently.windBearing + 'deg);display:inline-block;';
+        for(let i = 0; i < currentWeather.length; i++){
+            let listItem = document.getElementById(currentWeather[i]);
+            let rain = dsWeather[currentWeather[i]].precipIntensity;
+            let height = rain > 3 ? 100 : rain * 33.3;
+            let label = document.createTextNode(rain.toFixed(1) + "mm");
+            listItem.firstElementChild.style.height = height + "%";
+            listItem.prepend(label);
+        }
     }
   } catch (e) {
-    console.log("No weather found -> " + climb.id);
+    console.log("Weather Data Error " + climbid);
   }
 }
 /**
@@ -1131,11 +1206,10 @@ window.onpopstate = function (event) {
     }
 };
 
-window.onload = function () {
+function init () {
     window.performance.mark('onload-event-happened');
-    var hp = false;
     // Check it's the homepage
-    document.getElementById('cardHolder') ? hp = true : hp = false;
+    var hp = document.getElementById('cardHolder') ? true : false;
     if (document.location.href.includes('/climbs/') === false && hp === true) {
         if(localStorage.getItem('sortOrder')){
             const options = document.querySelectorAll('#sortOrder option');
@@ -1146,8 +1220,9 @@ window.onload = function () {
             });
             var sort = localStorage.getItem('sortOrder').split(',')[0];
             var direction = localStorage.getItem('sortOrder').split(',')[1];
+            sort = sort === 'updateTimestamp' ? 'lastUpdate' : sort; // Important: for backwards compatibility with previous locally saved sortOrder
         } else {
-            var sort = 'updateTimestamp';
+            var sort = 'lastUpdate';
             var direction = 'DESC';
         }
         sortCards(sort, direction);
@@ -1165,7 +1240,9 @@ window.onload = function () {
             document.getElementById('advancedFilters').style.display = 'flex';
         }
     }
-    
+}
+window.addEventListener('load', (event) => {
+    var hp = document.getElementById('cardHolder') ? true : false;
     // if the browser supports webP add a class to the body to allow css to use webp version
     webPsupport ? document.querySelector('body').classList.add('webp') : document.querySelector('body').classList.add('no-webp'); 
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
@@ -1175,4 +1252,4 @@ window.onload = function () {
     }
 //    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();
-};
+});
