@@ -30,7 +30,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^7.2.0",
-    "mocha": "^7.2.0",
+    "mocha": "^8.0.1",
     "nightmare": "^3.0.2",
     "webp-converter": "^2.2.3"
   }
