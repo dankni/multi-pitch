@@ -1,6 +1,7 @@
 function getGuidebook(climb) {
     guideBookModule = '';
     if(climb.guideBooks.length >= 1){
+        let twoColsImgClass = climb.guideBooks.length >= 2 ? ['col-xl-2','col-xl-4'] : ['',''];
         try {
             var guideBookModule = `
         <hr />
@@ -10,10 +11,10 @@ function getGuidebook(climb) {
             </div>`;
                 for (let i = 0; i < climb.guideBooks.length; i++) {
                     guideBookModule += `
-                        <div class="col-sm-2">
+                        <div class="col-sm-2 ${twoColsImgClass[0]}">
                             <img src="/${climb.guideBooks[i].imgURL}" alt="${climb.guideBooks[i].title}" class="guidebook-img" /> 
                         </div>
-                        <div class="col-sm-10">
+                        <div class="col-sm-10 ${twoColsImgClass[1]}">
                             <p>
                                 <strong>${climb.guideBooks[i].title}</strong> - pg. ${climb.guideBooks[i].pg} <br />
                                 ${climb.guideBooks[i].description}
@@ -211,7 +212,6 @@ function getWeather(climb) {
             This means it could be considerably colder or wetter on some mountain climbs.</em>
             </small>
           </aside>
-          
         </div>
         <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
           <h4  tabindex="0">Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
@@ -224,12 +224,17 @@ function getWeather(climb) {
             </span>
             <br />
             <span class="weather wind"></span> <strong id="wind_speed"></strong><abbr title="Miles Per Hour">mph</abbr> wind gusts, 
-            bearing <span id="bearing">🡅</span>.<br />
+            bearing &nbsp; <span id="bearing">&#8611;</span>.<br />
             <span class="weather clear-day"></span> <abbr title="Ultraviolet">UV</abbr> Index of <strong id="uv_index"></strong> 
             and cloud cover of <strong id="cloud_cover"></strong>%.<br />
             <strong id="precip_pos"></strong>% chance of rain today with an intensity of <strong id="precip_intense"></strong>mm per hour.
           </p>
-          <ul class="chart">
+          <p>
+            Graph shows maximum hourly precipitation (rain, snow or sleet) for any given day.
+          </p>
+          <strong id="backChev" class="weatherChev inactiveChev" onClick="weatherBars('back')">&#171;</strong>
+          <strong id="forwardChev" class="weatherChev" onClick="weatherBars('forward')">&#187;</strong>
+          <ul id="currentRain" class="chart" style="max-width:84%;" data-state="3">
             <li id="offsetMinus3"><span style="height:0%;" title="-3 days"></span></li>
             <li id="offsetMinus2"><span style="height:0%;" title="-2 days"></span></li>
             <li id="offsetMinus1"><span style="height:0%;" title="Yest"></span></li>
@@ -237,7 +242,11 @@ function getWeather(climb) {
             <li id="offsetPlus1"><span style="height:0%;" title="Tomor"></span></li>
             <li id="offsetPlus2"><span style="height:0%;" title="+2 days"></span></li>
             <li id="offsetPlus3"><span style="height:0%;" title="+3 days"></span></li>
+            <li id="offsetPlus4" style="display:none;"><span style="height:0%;" title="+4 days"></span></li>
+            <li id="offsetPlus5" style="display:none;"><span style="height:0%;" title="+5 days"></span></li>
           </ul>
+          
+          
           <p class="credit" style="margin-top:15px;">Weather by Dark Sky API</p>
         </div>
         <div class="col-12" id="seasonalWeather">
@@ -329,7 +338,7 @@ function getRouteTopo(climb) {
             `</a>
         </div>
         <p class="credit">
-            Image Credit: <a href="${climb.topo.atributionURL}" target="blank">${climb.topo.attributionText}</a>
+            Original Image: <a href="${climb.topo.atributionURL}" target="blank">${climb.topo.attributionText}</a>
         </p>`;
     return routeTopo;
 }

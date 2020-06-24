@@ -1084,7 +1084,7 @@ function loadCurrentWeatherModule(id){
     if(dsWeather != null){
         document.getElementById("currentWeather").style.display = "block";
         document.getElementById("seasonalWeather").classList.add("col-lg-6");
-        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3"];
+        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3", "offsetPlus4", "offsetPlus5"];
         document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
         document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
         document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
@@ -1120,6 +1120,39 @@ function loadCurrentWeatherModule(id){
   } catch (e) {
     console.log("Weather Data Error " + climbid);
   }
+}
+
+function weatherBars(direction) {
+    let state = document.getElementById('currentRain').dataset.state;
+    switch (state + ' ' + direction){
+        case ('3 forward'):
+            document.getElementById('offsetPlus4').setAttribute('style', '');
+            document.getElementById('offsetMinus3').setAttribute('style', 'display:none;');
+            document.getElementById('currentRain').dataset.state = '4';
+            document.getElementById('backChev').classList.remove('inactiveChev');
+            break;
+        case ('4 forward'):
+            document.getElementById('offsetPlus5').setAttribute('style', '');
+            document.getElementById('offsetMinus2').setAttribute('style', 'display:none;');
+            document.getElementById('currentRain').dataset.state = '5';
+            document.getElementById('forwardChev').classList.add('inactiveChev');
+            break;
+        case ('5 back'):
+            document.getElementById('offsetMinus2').setAttribute('style', '');
+            document.getElementById('offsetPlus5').setAttribute('style', 'display:none;');
+            document.getElementById('currentRain').dataset.state = '4';
+            document.getElementById('forwardChev').classList.remove('inactiveChev');
+            break;
+        case ('4 back'):
+            document.getElementById('offsetMinus1').setAttribute('style', '');
+            document.getElementById('offsetPlus4').setAttribute('style', 'display:none;');
+            document.getElementById('currentRain').dataset.state = '3';
+            document.getElementById('backChev').classList.add('inactiveChev');
+            break;
+        default:
+            break;
+
+    }
 }
 /**
  UPDATE TOTAL COUNTS
@@ -1178,6 +1211,7 @@ function clearFilters(){
         showVal(valueString, options.filters[i].name);
     }
     filterCards();
+    return false;
 }
 
 /**

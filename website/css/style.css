@@ -1462,7 +1462,7 @@ blockquote:before {
   transition: background-color 1s ease;
   overflow-y:auto;
 }
-.open-tile {
+.open-tile, .primary-link {
   text-align: center;
   color: #0055B8;
   background:#FFFFFF;
@@ -1475,7 +1475,7 @@ blockquote:before {
   margin: 0 auto 1rem;
   display: block;
 }
-.open-tile:focus, [role="button"][aria-pressed="true"] {
+.open-tile:focus, [role="button"][aria-pressed="true"], .primary-link:focus{
   border: 1px solid #777;
   background: #CCC;
 }
@@ -2049,6 +2049,22 @@ hr {
 }
 .toggle-weather-off span{
   display:none;
+}
+.weatherChev{
+  margin-top:85px;
+  font-size:35px;
+  color:#000;
+  cursor: pointer;
+}
+.inactiveChev {
+  color:#999;
+  cursor: default;
+}
+#backChev{
+  float:left;
+}
+#forwardChev{
+  float:right;
 }
 .weather{
   background-size: 36px;
