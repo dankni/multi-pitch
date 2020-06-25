@@ -52,7 +52,7 @@ function generate() {
 
     const promises = climbsAndHtml.map(climbAndHtml => {
 
-        var folderName = "".concat(climbAndHtml.climb.routeName, '-on-', climbAndHtml.climb.cliff)
+        var folderName = "".concat(climbAndHtml.climb.routeName.trim(), '-on-', climbAndHtml.climb.cliff.trim())
             .toLowerCase()
             .replace(/'/g, "")
             .replace(/\//g, "")
