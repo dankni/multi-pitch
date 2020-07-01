@@ -15,7 +15,7 @@ after(async function () {
 
 describe('Load the website page', function () {
     // Recommended: 5s locally, 10s to remote server, 30s from airplane ¯\_(ツ)_/¯
-    this.timeout('12s');
+    this.timeout('15s');
     const appUrl = 'http://localhost:9000';
     let nightmare = null;
     beforeEach(() => {
@@ -138,7 +138,7 @@ describe('Load the website page', function () {
             .click('div[data-climb-id="16"] a.open-tile')
             .wait('#climbCardDetails')
             .click('#c3')
-            .wait(500)
+            .wait('#canvas[data-success="true"]')
             .evaluate(function () {
                 return document.querySelector("#canvas").dataset.success;
             })
