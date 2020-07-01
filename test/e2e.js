@@ -35,6 +35,7 @@ describe('Load the website page', function () {
             var numberOfPublishCard = climbs.climbsData.climbs.filter(c => c.status === "publish").length;
 
             nightmare.goto(appUrl)
+            .wait('#cardHolder .card')
             .evaluate(function () {
                 return document.querySelectorAll("#cardHolder .card").length;
             })
@@ -49,6 +50,7 @@ describe('Load the website page', function () {
         it('Make sure advanced filters open on click', done => {
     
             nightmare.goto(appUrl)
+            .wait('#cardHolder .card')
             .click('.filter-toggle')
             .evaluate(function () {
                 return document.getElementById("advancedFilters").style.display;
@@ -64,6 +66,7 @@ describe('Load the website page', function () {
         it('Make sure the correct cards are removed when an advanced filter is un-checked', done => {
     
             nightmare.goto(appUrl)
+            .wait('#cardHolder .card')
             .click('#abseil')
             .evaluate(function () {
                 return document.getElementById("12").style.display;
@@ -78,8 +81,9 @@ describe('Load the website page', function () {
 
         it('Make sure cards are favourited when clicked', done => {
             nightmare.goto(appUrl)
-            .click('div[data-test="climbid-25"] .climb-status')
-            .click('div[data-test="climbid-25"] .climb-status')
+            .wait('#cardHolder .card')
+            .click('div[data-climb-id="25"] .climb-status')
+            .click('div[data-climb-id="25"] .climb-status')
             .evaluate(function () {
                 return document.getElementById("25Status").dataset.status;
             })
@@ -95,7 +99,8 @@ describe('Load the website page', function () {
             var randomCard = climbs.climbsData.climbs[6];
 
             nightmare.goto(appUrl)
-            .click('div[data-test="climbid-' + randomCard.id + '"] a.open-tile')
+            .wait('#cardHolder .card')
+            .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
             .evaluate(function () {
                 return document.querySelector("#climbCardDetails .big-card-body h1").textContent.trim();
@@ -112,7 +117,8 @@ describe('Load the website page', function () {
             var randomCard = climbs.climbsData.climbs[1];
 
             nightmare.goto(appUrl)
-            .click('div[data-test="climbid-' + randomCard.id + '"] a.open-tile')
+            .wait('#cardHolder .card')
+            .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
             .evaluate(function () {
                 return document.querySelector("#whatsappShare").href.split('/climbs/')[1].endsWith(window.location.href.split('/climbs/')[1]);
@@ -128,7 +134,8 @@ describe('Load the website page', function () {
 
         it('Make the dynamic topo images load', done => {
             nightmare.goto(appUrl)
-            .click('div[data-test="climbid-16"] a.open-tile')
+            .wait('#cardHolder .card')
+            .click('div[data-climb-id="16"] a.open-tile')
             .wait('#climbCardDetails')
             .click('#c3')
             .wait(500)
