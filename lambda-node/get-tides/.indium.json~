@@ -1,0 +1,8 @@
+{
+  "configurations": [
+    {
+      "name": "Web project",
+      "type": "chrome"
+    }
+  ]
+}

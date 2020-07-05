@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "name": "Lambda",
+	"type": "node",
+	"program":"node",
+	"args":"./index",
+	"inspect-brk":true
+    }
+  ]
+}

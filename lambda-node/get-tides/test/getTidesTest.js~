@@ -1,0 +1,11 @@
+const mockAxios = require("axios");
+
+const tidesJson = require('./get_tides.json');
+const climbData = require('./climbing-data.json');
+
+const getTides = require("../getTides.js");
+
+
+getTides(climbData)
+
+

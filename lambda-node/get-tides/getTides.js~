@@ -1,0 +1,65 @@
+const axios = require('axios');
+const querystring = require('querystring');
+
+const tidesHoodKey  = process.env.TIDES_HOOD_KEY;
+
+function isValidGeo(geoLocation) {
+    const [lat, lon] = geoLocation.split(",");
+    return lat && lon && lat.length != 0 && lon.length != 0
+}
+
+const tideApiUrl = "https://tides.p.rapidapi.com/tides"
+
+function callTideApi(climb){
+    const [lat, lon] = climb.geoLocation.split(",");
+    console.log(lat,lon)
+    queryParam = querystring.stringify({
+	"interval": "60",
+	"duration": "1440",
+	"latitude": lat,
+	"longitude": lon
+    });
+    console.log(queryParam)
+    headers = {
+	"x-rapidapi-host": "tides.p.rapidapi.com",
+	"x-rapidapi-key": tidesHoodKey,
+	"useQueryString": true
+    };
+
+    return axios.get(tideApiUrl +"?"+queryParam, {headers})
+	.then(resp => resp.data)
+        .then(tideApiResponse => mapTideApiToMultipitchClimb(tideApiResponse, climb))
+        .catch(err => {
+	    return {
+                "error_message": err.message
+	    }
+	})
+    
+}
+
+function mapTideApiToMultipitchClimb(tideApiResponse, climb){
+    return {
+	climbId: climb.id,
+	extremes: tideApiResponse.extremes,
+	heights: tideApiResponse.heights
+    }
+}
+
+function delay(t, v) {
+   return new Promise(function(resolve) { 
+       setTimeout(resolve.bind(null, v), t)
+   });
+}
+
+function getTide(climb){
+    return callTideApi(climb)
+}
+
+function getTides(climbsData){
+    tidalClimb = climbsData.filter(c => c.tidal == 1);
+    firstClimb = tidalClimb[0]
+    return axios.all([firstClimb].map(callTideApi))
+}
+
+
+module.exports = getTides;
