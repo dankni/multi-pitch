@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <!-- Styles -->
+    <link href="../website/css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+    <!-- Scripts-->
+    <script src="../website/data/data.js"></script>
+    <script>  
+    var topoData = {
+        "image":"../website/img/topos/chair/crag.jpg",
+        "flag":"../website/img/flags/en.png",
+        "title":"Chair Ladder > Pegasus | HS 4b - 70m",
+        "belaySize":20,
+    "route":[
+        [1325,1570],[1340,1542],[1340,1503],[1373,1444],[1380,1405],[1386,1338],[1409,1312],[1418,1264],[1442,1215],
+        [1443,1168],[1424,1090],[1473,1026],[1503,984],[1497,932],[1494,887],[1533,812],[1578,787],[1647,750],[1709,744],
+        [1682,721],[1640,679],[1584,661],[1581,601],[1613,570],[1635,540],[1653,487]
+    ],
+    "pitches":[
+        {"belayPosition":[1434,1093],"labelPosition":[1437,1360],"grade":"4b","height":"32m"},
+        {"belayPosition":[1710,745],"labelPosition":[1600,862],"grade":"4a","height":"20m"},
+        {"belayPosition":[1658,487],"labelPosition":[1656,562],"grade":"4b","height":"18m"}
+    ],
+    "decent":[
+        {"anchor":[null,null],"labelPosition":[null,null],"path":[[674,606],[701,685],[599,741]],"label":""},
+        {"anchor":[null,null],"labelPosition":[null,null],"path":[[561,1118],[599,1160],[506,1202],[543,1250]],"label":""},
+        {"anchor":[null,null],"labelPosition":[null,null],"path":[[731,1397],[804,1448],[867,1433],[920,1472],[936,1533],[1008,1554]],"label":""}
+    ]
+};
+    </script>
+    <script src="../website/js/topo.js"></script>
+    <style>
+        html{
+            padding-top:150px;
+        }
+        *, option {
+            font-size: 35px;
+        }
+        label {
+            margin-right:60px;
+        }
+        button{
+           color:#FFFFFF;
+            border:0;
+            padding:.4rem 1.5rem;
+            font-size: 40px; 
+        }
+        .safe{
+            background-color: #4CAF50;
+        }
+        .danger{
+            background-color: #f44336;
+        }
+        .black {
+            background-color: #111111;
+        }
+        .short{
+            width:6rem;
+        }
+        .long{
+            width:100%;
+        }
+        input{
+            font-size:0.8rem;
+        }
+        nav{
+            top:0;
+            left:0;
+            height:120px;
+            margin-bottom:20px;
+            min-width:100%;
+            background:#111;
+            color:#FFF;
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: -ms-autohiding-scrollbar;
+            padding:0; 
+        }
+        nav span {
+            color:#FFF;
+            height:120px;
+            padding:20px 60px;
+            font-size:40px;
+            border-right:2px solid #666;
+            cursor: pointer;
+            display: inline-block;
+        }
+        nav span:hover{
+            background: #333;
+        }
+        fieldset{
+            display:none;
+            background:#FFF;
+            width: 100%;
+            position:fixed;
+            border: 2px 0 0 0 solid #111;
+            padding:40px;
+            bottom:0;
+            left:0;
+        }
+    </style>
+    <script>
+        function toggle(id){
+            let el = document.getElementById(id);
+            if(el.style.display === 'none'){
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+   <nav>
+        <span onClick="toggle('toggle');">Toggle Elements</span>
+        <span onclick="toggle('selectHolder');">Choose Route</span>
+        <span onclick="toggle('route');">Add Route</span>
+        <span onclick="toggle('pitchOutput');">Add Pitch</span>
+        <span onclick="toggle('descent');">Add Descent</span>
+        <span onclick="toggle('belay');">Belay Size</span>
+        <span onclick="toggle('json');">Get JSON</span>
+    </nav>
+    <canvas id="canvas" width="2800" height="2800"></canvas>
+    <section style="float:right;margin:30px;">
+        <h1>Build A Topo</h1>
+        <p>Use this tool to make consistent topo images for the site or for social media.</p>
+        <h2>Select Climb</h2>
+        <p>Add the crag image into the scource code then select what climb it is for.</p>
+
+        <fieldset id="toggle" style="display:none;">
+            <label><input type="checkbox" value="infoBox" checked id="c1" onclick="draw();" />Info Box</label>
+            <label><input type="checkbox" value="routeLine" checked id="c2" onclick="draw();" />Route</label>
+            <label><input type="checkbox" value="belays" checked id="c3" onclick="draw();" />Belay Points</label>
+            <label><input type="checkbox" value="absail" checked id="c4" onclick="draw();" />Approch / Decent</label>
+            <label><input type="checkbox" value="labels" checked id="c5" onclick="draw();" />Labels</label>
+            <br />
+            <button onclick="draw()" class="black">Re-Draw Topo</button>
+        </fieldset>
+
+        <fieldset id="selectHolder" style="display:none;">
+            <h2 style="display:inline-block;">Choose Route:</h2>
+        </fieldset>
+        
+        <fieldset id="route" style="display:none;">
+            <label><input type="radio" value="rt" checked name="what" />Route </label>
+            <input type="text"  value="" id="routeOutput" class="long"/><br />
+            <button onclick="draw();" class="safe">Update Route</button>
+            <button onclick="topoData.route = [];document.getElementById('routeOutput').value = '';draw();" class="danger">Remove Route</button>
+        </fieldset>
+
+        <fieldset id="pitchOutput" style="display:none;">
+            <label><input type="radio" value="lp" name="what" />Label Position</label>
+            <input type="text"  value="" id="labelPositionX" class="short" /><input type="text" class="short" value="" id="labelPositionY"/><br />
+            <label><input type="radio" value="bp" name="what" />Belay Position</label>
+            <input type="text"  value="" id="belayPositionX" class="short" /><input type="text"  class="short" value="" id="belayPositionY"/><br />
+            <label><input type="radio" value="" name="what" />Height</label>
+            <input type="text"  value="" id="height"/><br />
+            <label><input type="radio" value="" name="what" />Grade</label>
+            <input type="text"  value="" id="grade"/><br />
+            <button onclick="pushPitch();" class="safe">Add Pitch</button> 
+            <button onclick="topoData.pitches = [];draw();" class="danger">Remove All Pitches</button> 
+        </fieldset>
+
+        <fieldset id="descent" style="display:none;">
+            <label><input type="radio" value="dlp" name="what" />Label Position</label>
+            <input type="text"  value="" id="dLabelPositionX" class="short" /><input type="text"  class="short" value="" id="dLabelPositionY"/><br />
+            <label><input type="radio" value="dbp" name="what" />Belay Position</label>
+            <input type="text"  value="" id="dBelayPositionX" class="short" /><input type="text"  class="short" value="" id="dBelayPositionY"/><br />
+            <label><input type="radio" value="dr" name="what" />Path</label>
+            <input type="text"  value="" id="decentRoute" class="long"/><br />
+            <label><input type="radio" value="" name="what" />Label</label>
+            <input type="text"  value="" id="label"/><br />
+            <button onclick="pushDecent();" class="safe">Add Decent</button> 
+            <button onclick="topoData.decent = [];draw();" class="danger">Demove All Decent Info</button> 
+        </fieldset>
+
+        <fieldset id="belay" style="display:none;">
+            <label><input type="text" value="24" name="belaySize" id="belaySize" />Belay Size</label>
+            <button onclick="topoData.belaySize = parseInt(document.getElementById('belaySize').value);draw();" class="safe">Update Belay Size</button> 
+        </fieldset>
+
+        <fieldset  id="json" style="display:none;">
+            <button class="black" onclick="document.getElementById('rawOutput').value = JSON.stringify(topoData);">Publish</button>
+            <textarea id="rawOutput" style="max-width:100%;min-height:300px;"></textarea>
+        </fieldset>
+
+    </section>
+    <br />
+    <br />
+    <script>
+        var canvas = document.getElementById('canvas');
+        /** MAKE A DROP DOWN WITH A LIST OF ALL CLIMBS **/
+        var selectHolder = document.getElementById("selectHolder");
+        var selectList = document.createElement("select");
+        if(topoData.belaySize){
+            document.getElementById('belaySize').value = topoData.belaySize;
+        }
+        const climbsArr = climbsData.climbs;
+        selectList.setAttribute("id", "climbList");
+        selectList.setAttribute("name", "climbList");
+        selectHolder.appendChild(selectList);
+        for (let i = 0; i < climbsArr.length; i++) {
+            var option = document.createElement("option");
+            option.setAttribute("value", climbsArr[i].id);
+            option.text = climbsArr[i].cliff;
+            selectList.appendChild(option);
+        }
+
+        /** BUILDER STEP 1 - GET CLIMB DETAILS **/
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('select[name="climbList"]').onchange = changeEventHandler;
+        }, false);
+        var mapping = {
+            'england': 'en.png', 'scotland': 'sco.png', 'wales': 'wa.png', 'ireland': 'ie.png', 'spain': 'es.png', 'portugal': 'pt.png',
+            'italy': 'it.png', 'usa': 'us.png', 'norway': 'no.png', 'canada': 'ca.png', 'hongkong': 'cn.png', 'greece': 'gr.png',
+            'france': 'fr.png', 'switzerland': 'ch.png', 'belgium' : 'be.png'
+        }; // base 64 images from the css as vectors on canvas don't play nice :(
+        function changeEventHandler(event) {
+            if (event.target.value) {
+                var climb = climbsArr.find(climb => climb.id == event.target.value); // get the single climb object
+                topoData.flag = '../website/img/flags/' + mapping[climb.flag];
+                flag.src = topoData.flag;
+                console.log('../website/img/flags/' + flag.src);
+                topoData.title = climb.cliff + " > " + climb.routeName + " | " + climb.tradGrade + " " + climb.techGrade + " - " + climb.length + "m";
+                draw();
+            }
+        }
+
+        canvas.addEventListener('click', getCursorPosition, false);
+        var tempArray = [];
+        var decentPath = [];
+        const labelPositionX = document.getElementById('labelPositionX');
+        const labelPositionY = document.getElementById('labelPositionY');
+        const belayPositionX = document.getElementById('belayPositionX');
+        const belayPositionY = document.getElementById('belayPositionY');
+        const dLabelPositionX = document.getElementById('dLabelPositionX');
+        const dLabelPositionY = document.getElementById('dLabelPositionY');
+        const dBelayPositionX = document.getElementById('dBelayPositionX');
+        const dBelayPositionY = document.getElementById('dBelayPositionY');
+        const decentRoute = document.getElementById('decentRoute');
+        const pitchGrade = document.getElementById('grade');
+        const pitchHeight = document.getElementById('height');
+        const label = document.getElementById('label');
+
+        function getCursorPosition(event) {
+            var rect = canvas.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+            var y = event.clientY - rect.top;
+            var what = getRadioValue();
+            switch(what){
+                case'rt':
+                    document.getElementById('routeOutput').value += 
+                    "[" + x.toFixed(1) + ", " + y.toFixed(1) + "] ";
+                    tempArray.push(parseInt(x.toFixed(1)), parseInt(y.toFixed(1)));
+                    topoData.route.push(tempArray);
+                    tempArray = [];
+                    break;
+                case'lp':
+                    labelPositionX.value = x.toFixed(1);
+                    labelPositionY.value = y.toFixed(1);
+                    break;
+                case'bp':
+                    belayPositionX.value = x.toFixed(1);
+                    belayPositionY.value = y.toFixed(1);
+                    break;
+                case'dlp':
+                    dLabelPositionX.value = x.toFixed(1);
+                    dLabelPositionY.value = y.toFixed(1);
+                    break;
+                case'dbp':
+                    dBelayPositionX.value = x.toFixed(1);
+                    dBelayPositionY.value = y.toFixed(1);
+                    break;
+                case'dr':
+                    let decentTempArray = [];
+                    document.getElementById('decentRoute').value += 
+                    "[" + x.toFixed(1) + ", " + y.toFixed(1) + "] ";
+                    decentTempArray.push(parseInt(x.toFixed(1)), parseInt(y.toFixed(1)));
+                    decentPath.push(decentTempArray);
+                    break;
+            }
+        }
+
+        function pushPitch(){
+            let tempPitch;
+            let tempLabelPosition = [];
+            let tempBelayPosition = [];
+            tempLabelPosition.push(parseInt(labelPositionX.value), parseInt(labelPositionY.value));
+            tempBelayPosition.push(parseInt(belayPositionX.value), parseInt(belayPositionY.value));
+            tempPitch = new Pitch(tempBelayPosition, tempLabelPosition, pitchGrade.value, pitchHeight.value);
+            topoData.pitches.push(tempPitch);
+            labelPositionX.value = '';
+            labelPositionY.value = '';
+            belayPositionX.value = '';
+            belayPositionY.value = '';
+            pitchGrade.value = '';
+            pitchHeight.value = '';
+            draw();
+        }
+
+        function pushDecent(){
+            let tempDecent;
+            let tempLabelPosition = [];
+            let tempBelayPosition = [];
+            tempLabelPosition.push(parseInt(dLabelPositionX.value), parseInt(dLabelPositionY.value));
+            tempBelayPosition.push(parseInt(dBelayPositionX.value), parseInt(dBelayPositionY.value));
+            tempDecent = new Decent(tempBelayPosition, tempLabelPosition, decentPath, label.value);
+            topoData.decent.push(tempDecent);
+            dLabelPositionX.value = '';
+            dLabelPositionY.value = '';
+            dBelayPositionX.value = '';
+            dBelayPositionY.value = '';
+            label.value = '';
+            decentRoute.value = '';
+            decentPath = [];
+            draw();
+        }
+        
+        const radios = document.getElementsByName("what");
+
+        function getRadioValue (){
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    return radios[i].value;              
+                }
+            }
+        }
+
+
+        /** CONSTRUCTION OF JSON **/
+        function Pitch (belayPosition,labelPosition, grade, height){
+            this.belayPosition = belayPosition;
+            this.labelPosition = labelPosition;
+            this.grade = grade;
+            this.height = height;
+        }
+
+        function Decent (belayPosition, labelPosition, route, label){
+            this.anchor = belayPosition;
+            this.labelPosition = labelPosition;
+            this.path = route;
+            this.label = label;
+        }
+    </script>
+</body>
+</html>
