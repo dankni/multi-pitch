@@ -40,7 +40,6 @@ var webPsupport = (function() {
 /**
  * SET THE climbsData VARIABLE BUT USE localStorage FIRST
  **/
-
 const getOnlineClimbsData = async (set) => {
     const response = await fetch('/data/data.json');
     if(set === true){
@@ -703,6 +702,9 @@ function deliverChange(climb, popped){
     document.title = climbData.cliff + " - " + climbData.routeName;
     document.getElementById('articleTitle').focus(); // Set focus on the climb card article for accessibility 
     loadCurrentWeatherModule(climbData.id);
+    if(climbData.tidal >= 1){
+        loadTides(climbData.id);
+    }
 }
 
 /**
@@ -1006,17 +1008,19 @@ function sThis(number) {
  ADDS SCRIPTS & CSS TO THE PAGE FOOTER
  **/
 function loadNonEssential(type, url){
-    const tag =  document.createElement(type);
-    if(type == "script"){
+    if(type == "script" && isScriptLoaded(url) === false){
+        const tag =  document.createElement(type);
         tag.src = url
         tag.async = true;
         tag.defer = true;
+        document.getElementsByTagName("footer")[0].appendChild(tag);
     }
     if(type == "link"){
+        const tag =  document.createElement(type);
         tag.rel = "stylesheet";
         tag.href = url;
+        document.getElementsByTagName("footer")[0].appendChild(tag);
     }
-    document.getElementsByTagName("footer")[0].appendChild(tag);
 }
 
 /**
@@ -1070,6 +1074,52 @@ function loadWeather() {
     setTimeout(() => loadWeather(), 1000)
   }
 }
+/**
+ * LOAD TIDE INFO
+ **/
+const loadTides = async (id) => {
+    let tideUrl = 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-tides.json';
+    let response = await fetch(tideUrl,{
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        redirect: "follow", // manual, *follow, error
+    });
+    tideData = await response.json();
+    let thisTideData = tideData.find(tide => tide.climbId === parseInt(id));
+    let cleanArray = [];
+    let max = 0;
+    let min = 0;
+    for(let i = 0; i < thisTideData.heights.length; i++){
+        cleanArray.push(thisTideData.heights[i]);
+        max = (thisTideData.heights[i].height > max) ? thisTideData.heights[i].height : max;
+        min = (thisTideData.heights[i].height < min) ? thisTideData.heights[i].height : min;
+    }
+    let base = (min < 0) ? Math.abs(min) : min;
+    let diff = max - min;
+    let multiplier = 70 / diff;
+    console.log("min - max - diff - multiplier - base " + min + " / " + max + " / " + diff + " / " + multiplier + " / " + base);
+
+    cleanArray.sort(function(a, b){
+        return a.timestamp - b.timestamp;
+    });
+    
+    let html = ' <p class="chart-title">Hourly Tide Heights</p><ul class="chart" style="margin-bottom:2em;max-width:100%;width:100%">';
+    for(let i = 0; i < cleanArray.length; i++){
+        let height = (base * multiplier) + (cleanArray[i].height * multiplier) + 15; // makes the smallest bar 15% and largest 85%
+        let color = (new Date().getHours() === new Date(cleanArray[i].timestamp * 1000).getHours()) ? 'background-color:rgba(53, 135, 216, 0.87);font-weight:600;' : '';
+        html += `
+                <li>
+                   <span class="tide" style="height:${height.toFixed(1)}%;writing-mode: vertical-rl;text-orientation: mixed;${color}" title="${new Date(cleanArray[i].timestamp * 1000).getHours()}:00">
+                        ${cleanArray[i].height.toFixed(1)}m
+                    </span>
+                </li>`;
+    }
+    html += '</ul><style>.chart .tide::before{padding: 1em 2em;}</style>';
+    document.getElementById('tideHolder').innerHTML = html;
+}
+
 /**
  LOADS FULL WEATHER ON BACK OF CARD
  **/
@@ -1282,7 +1332,10 @@ window.addEventListener('load', (event) => {
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css");
     if (document.location.href.includes('/climbs/') === true || hp === true) {
-        loadNonEssential("script", "/js/load-weather.js"); 
+        loadNonEssential("script", "/js/load-weather.js");
+        if(document.getElementById('tideHolder')){
+            loadTides(parseInt(document.getElementById('climbIdMeta').content));
+        }
     }
 //    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();

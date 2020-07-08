@@ -31,9 +31,10 @@ When the site reaches 100 climbs it will be of comparable size to dedicated guid
 |-------|------------------|----|-----|
 |1| The raw image of the crag | As big as possible to a max of 4,000px wide. | Ideally crag.jpg |
 |2|	As above but with topo drawn on | As above | Something SEO friendly eg. `<<Climb-name>>-route-on-<<cliff-name>>-multi-pitch.jpg` |
-|3|	Same as img 2 |	Width of exactly 2160px	| Identical to 2 but with `-large` appended just before `.jpg`.|
+|3|	Same as img 2 |	Width of exactly 1080px	| Identical to 2 but with `-small` appended just before `.jpg`.|
 |4|	Same as img 2 |	Width of exactly 1600px	| Identical to 2 but with `-medium` appended just before `.jpg`.|
-|5|	Same as img 2 |	Width of exactly 1080px	| Identical to 2 but with `-small` appended just before `.jpg`.|
+|5|	Same as img 2 |	Width of exactly 2160px	| Identical to 2 but with `-large` appended just before `.jpg`.|
+
 
 Depending on the number possible based on the original image size, the value in the datafile needs to be between 2 and 5. So for example if the original image is only 800px wide the value in the spreadsheet for datafile is 2. If the original is over 2160 then all 5 images can be created and the data value is 5. This is to enable the best media queries. The media queries are quite complicated and take into account device width and pixel density of the device screen in order to provide a decent image for the user without wasting bandwidth. WebP format is also used if the device supports it to make the images smaller without reduced quality. 
 

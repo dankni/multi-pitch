@@ -199,6 +199,7 @@ function getWeather(climb) {
         } else {
             var seepage = "";
         }
+        let tideInfoBox = (climb.tidal >= 1) ? '<div id="tideHolder"></div>' : '' ;
         var weatherInfo = `
       <hr />
       <section class="row" id="weather">
@@ -229,8 +230,9 @@ function getWeather(climb) {
             and cloud cover of <strong id="cloud_cover"></strong>%.<br />
             <strong id="precip_pos"></strong>% chance of rain today with an intensity of <strong id="precip_intense"></strong>mm per hour.
           </p>
-          <p>
-            Graph shows maximum hourly precipitation (rain, snow or sleet) for any given day.
+          ${tideInfoBox}
+          <p class="chart-title">
+            Max Hourly Precipitation Per Day
           </p>
           <strong id="backChev" class="weatherChev inactiveChev" onClick="weatherBars('back')">&#171;</strong>
           <strong id="forwardChev" class="weatherChev" onClick="weatherBars('forward')">&#187;</strong>
@@ -251,18 +253,20 @@ function getWeather(climb) {
         </div>
         <div class="col-12" id="seasonalWeather">
           <h4 tabindex="0">Seasonal Weather Infomation</h4>
+          <p>Note that some weather stations are close or even on the mountain, others are in nearby towns. 
+          Plan accordingly!</p>
+          <p class="chart-title">Estimated Rainy Days Per Month</p>
+          ${rain}
           <p class="min-height">
-            Below shows the estimated average number of rainy days in the month that had more than 
+            The graph shows the estimated average number of rainy days in the month that had more than 
             1mm rainfall or snow:
           </p>
-          ${rain}
           <br />
-          <p>
-            Estimated average high and low temperature in degrees Celsius for the given month below. 
-            Again note that some weather stations are close or even on the mountain, others are in nearby towns. 
-            Plan accordingly! 
-          </p>
+          <p class="chart-title">Estimated Temperature Per Month</p>
           ${temperature}
+          <p>
+            Estimated average high and low temperature in degrees Celsius for the given month. 
+          </p>
         </div>
       </section>`;
         return weatherInfo;

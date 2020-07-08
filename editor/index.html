@@ -138,6 +138,14 @@
                                 let publish = '';
                                 let ariaChecked = 'false';
                                 let localClimb = getClimbJson(climbsData.climbs[i].id);
+                                let topoState = 0;
+                                try{
+                                    if( localClimb.climbData.topo.dataFile) {
+                                        topoState = localClimb.climbData.topo.dataFile >= 1 ? localClimb.climbData.topo.dataFile : 0;
+                                    }
+                                } catch (e) {
+                                    console.log("error = " + e);
+                                }
                                 if(climbsData.climbs[i].status === 'publish'){
                                     publish = 'checked';
                                     ariaChecked = 'true';
@@ -158,11 +166,14 @@
                                 <td class="mdc-data-table__cell" onClick="populateQuickEdit(${climbsData.climbs[i].id})" style="cursor:pointer">
                                     <span class="material-icons">edit</span>
                                 </td>
-                                <td class="mdc-data-table__cell" style="cursor:pointer">
-                                    <span class="material-icons">insert_photo</span>
+                                <td class="mdc-data-table__cell" style="cursor:pointer">   
+                                    <span id="topo${climbsData.climbs[i].id}">${topoState}</span>
+                                    <a href="/editor/topo-edit/?id=${climbsData.climbs[i].id}">
+                                      <span class="material-icons">insert_photo</span>
+                                    </a>
                                 </td>
                                 <td class="mdc-data-table__cell" style="cursor:pointer" onClick="showLocalJson(${climbsData.climbs[i].id})">
-                                    <span class="material-icons" id="${climbsData.climbs[i].id}Color">update</span>
+                                    <span class="material-icons" id="${climbsData.climbs[i].id}Color">text_snippet</span>
                                 </td>
                                 `;
                                 let row = document.createElement("tr");
@@ -213,7 +224,7 @@
                                         } else {
                                             flag = false;
                                         }
-                                        flag === true ? document.getElementById(id+'Color').style.color = 'green' : document.getElementById(id+'Color').style.color = 'red';
+                                        flag === true ? document.getElementById(id +'Color').style.display = 'none' : document.getElementById(id +'Color').style.display = 'block';
                                     } else { console.log("couldn't load climbsData - likley server error / file not found"); }
                                 };
                                 request.onerror = function() { console.log("couldn't load climbsData " + id); };
@@ -373,7 +384,7 @@
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Climb</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Edit</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Topo</th>
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Up to date?</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Needs Update</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody" class="mdc-data-table__content">

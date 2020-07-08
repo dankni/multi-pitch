@@ -1893,6 +1893,10 @@ hr {
   background: rgba(209, 236, 250, 0.75);
   animation: draw 1s ease-in-out;
 }
+.chart-title{
+  font-weight: 500;
+  text-align: center;
+}
 .temp span {
   background: rgba(255, 212, 58, 0.8);
 }
