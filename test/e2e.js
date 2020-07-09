@@ -15,7 +15,7 @@ after(async function () {
 
 describe('Load the website page', function () {
     // Recommended: 5s locally, 10s to remote server, 30s from airplane ¯\_(ツ)_/¯
-    this.timeout('15s');
+    this.timeout('20s');
     const appUrl = 'http://localhost:9000';
     let nightmare = null;
     beforeEach(() => {
