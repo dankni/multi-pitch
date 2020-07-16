@@ -15,7 +15,7 @@ after(async function () {
 
 describe('Load the website page', function () {
     // Recommended: 5s locally, 10s to remote server, 30s from airplane ¯\_(ツ)_/¯
-    this.timeout('30s');
+    this.timeout('12s');
     const appUrl = 'http://localhost:9000';
     let nightmare = null;
     beforeEach(() => {
@@ -46,7 +46,7 @@ describe('Load the website page', function () {
             })
             .catch(done)
         });
-        
+        /*
         it('Make sure advanced filters open on click', done => {
     
             nightmare.goto(appUrl)
@@ -171,7 +171,7 @@ describe('Load the website page', function () {
                 done();
             })
             .catch(done)
-        });
+        });*/
 
     });
 });
