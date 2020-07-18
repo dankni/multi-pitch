@@ -38,5 +38,5 @@ var topoData = {
             "label": "45m",
             "labelPosition":[597.0, 1387.7]
         }
-    ],
+    ]
 };

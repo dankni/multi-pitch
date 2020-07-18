@@ -5,6 +5,7 @@ window.performance.mark('start-js-read');
  **/
 const rootProject = '/'; // adjust per enviroment
 var climbsData;
+var topoData = null;
 var historyData = {"page": window.location.pathname}; // push state
 var dataSavingMode = false;
 var geoLocationSupport = false;
@@ -762,12 +763,19 @@ function isScriptLoaded(url) {
     return false;
 }
 function topoInteraction(climbId, name, cliff){
-    let scriptSrc = '/data/topos/' + climbId + '.js'
-    if(isScriptLoaded(scriptSrc) === false){
-        tryLoadTopo(climbId);
+    if(topoData === null){
+        // landing direct and no local data
         toggleTopo();
+        tryLoadTopo(climbId); 
     } else {
-        draw();
+        // local data but not loaded
+        toggleTopo();
+        if(document.getElementById("staticTopo").style.display !== "none"){
+            initTopo(climbId);
+        } else {
+            // loaded
+            draw();
+        }
     }
     trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
 }
@@ -776,13 +784,22 @@ function topoInteraction(climbId, name, cliff){
  **/
 function tryLoadTopo(climbId, enviroment = '') {
     enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
-    let ref = document.getElementsByTagName('script')[0];
-    var script = document.createElement('script');
-    script.onload = function () {
-        initTopo();
+    topoData = (localStorage.getItem('climb' + climbId)) ? JSON.parse(localStorage.getItem('climb' + climbId)).topoData : null ;
+    if (topoData === null) {
+        // page was direct load so add data to local storage;
+        const getData = async (climbId) => {
+            const response = await fetch('/data/climbs/' + climbId + '.json');
+            let climbData = await response.json();
+            localStorage.setItem('climb' + climbId, JSON.stringify(climbData));
+            topoData = climbData.topoData;
+            initTopo(climbId);
+        }
+        getData(climbId).catch((e) => {
+            console.log(`Error loading Topo. ${e}`)
+        });
+    } else {
+        initTopo(climbId);
     }
-    script.src = enviroment + "/data/topos/" + climbId + ".js";
-    ref.parentNode.insertBefore(script, ref);
 }
 
 /**
@@ -803,16 +820,17 @@ var dashSpace = [32, 8, 5, 8];
 var belayScale = 1; // used to scale the line and labels inline with belay size
 
 function initTopo() {
+
     img = new Image(); 
     flag = new Image();
     logo = new Image();
-    img.onload = function () {
-        draw();
-    }
     canvas = document.getElementById("canvas");
     logo.src = '/img/logo/mp-logo-white.png';
     img.src = topoData.image;
     flag.src = topoData.flag;
+    img.onload = function () {
+        draw();
+    }
 }
 
 function toggleTopo() {
@@ -1099,8 +1117,7 @@ const loadTides = async (id) => {
     let base = (min < 0) ? Math.abs(min) : min;
     let diff = max - min;
     let multiplier = 70 / diff;
-    console.log("min - max - diff - multiplier - base " + min + " / " + max + " / " + diff + " / " + multiplier + " / " + base);
-
+  
     cleanArray.sort(function(a, b){
         return a.timestamp - b.timestamp;
     });
@@ -1334,7 +1351,9 @@ window.addEventListener('load', (event) => {
     if (document.location.href.includes('/climbs/') === true || hp === true) {
         loadNonEssential("script", "/js/load-weather.js");
         if(document.getElementById('tideHolder')){
-            loadTides(parseInt(document.getElementById('climbIdMeta').content));
+            loadTides(parseInt(document.getElementById('climbIdMeta').content)).catch((e) => {
+                console.log("Can't load tide data. " + e)
+            })
         }
     }
 //    loadNonEssential("script", "/js/auth-stuff.js"); 

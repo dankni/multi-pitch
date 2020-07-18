@@ -1,6 +1,6 @@
 const Nightmare = require('nightmare');
 const expect = require('chai').expect;
-const climbs = require('../website/data/data.js');
+const climbsData = require('../website/data/data.json');
 const app = require('../server');
 
 
@@ -32,7 +32,7 @@ describe('Load the website page', function () {
 
     describe('/ hompage', () => {
         it('Make sure that we display the right number of cards', done => {
-            var numberOfPublishCard = climbs.climbsData.climbs.filter(c => c.status === "publish").length;
+            var numberOfPublishCard = climbsData.climbs.filter(c => c.status === "publish").length;
 
             nightmare.goto(appUrl)
             .wait('#cardHolder .card')
@@ -46,7 +46,6 @@ describe('Load the website page', function () {
             })
             .catch(done)
         });
-        /*
         it('Make sure advanced filters open on click', done => {
     
             nightmare.goto(appUrl)
@@ -96,7 +95,7 @@ describe('Load the website page', function () {
         });
 
         it('Make sure that we can click a card and see a overlay', done => {
-            var randomCard = climbs.climbsData.climbs[6];
+            var randomCard = climbsData.climbs[6];
 
             nightmare.goto(appUrl)
             .wait('#cardHolder .card')
@@ -114,7 +113,7 @@ describe('Load the website page', function () {
         });
 
         it('Make sure the share buttons have the correct URL', done => {
-            var randomCard = climbs.climbsData.climbs[1];
+            var randomCard = climbsData.climbs[1];
 
             nightmare.goto(appUrl)
             .wait('#cardHolder .card')
@@ -171,7 +170,7 @@ describe('Load the website page', function () {
                 done();
             })
             .catch(done)
-        });*/
+        });
 
     });
 });

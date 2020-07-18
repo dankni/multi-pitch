@@ -301,29 +301,27 @@ function getRouteTopo(climb) {
                 // dealing mostly with pixel density below
                 if(climb.topo.dataFile === 5 && dataSavingMode !== true){
                     // the max is over 2160 so worth declaring for SEO
-                    routeTopo += `<source media="(min-width: 2200px)" type="image/webp"
-                        srcset="/${url}.webp 1x, /${url}.webp 2x, /${url}.webp 3x">`;
+                    routeTopo += `<source media="(min-width: 2600px)" type="image/webp" srcset="/${url}.webp">`;
                 }
                 if(typeof dataSavingMode === undefined){ // for node static file generation
                     var dataSavingMode = false; 
                 }
                 if(climb.topo.dataFile >= 3 && dataSavingMode !== true){
-                    let big2pdW, med2pdW, big3pdW, big2pdJ, med2pdJ, big3pdJ;
-                    climb.topo.dataFile === 5 ? big2pdW = `, /${url}-large.webp x2` : big2pd = '';
-                    climb.topo.dataFile >= 4 ? med2pdW =  `, /${url}-medium.webp x2` : med2pd = '';
-                    climb.topo.dataFile === 5 ? big3pdW = `, /${url}-large.webp x3` : big3pd = '';
-                    climb.topo.dataFile === 5 ? big2pdJ = `, /${url}-large.jpg x2` : big2pd = '';
-                    climb.topo.dataFile >= 4 ? med2pdJ =  `, /${url}-medium.jpg x2` : med2pd = '';
-                    climb.topo.dataFile === 5 ? big3pdJ = `, /${url}-large.jpg x3` : big3pd = '';
+                    let val = climb.topo.dataFile
+                    let big2pdW  = (val === 5) ? `, /${url}-large.webp 2x` : ``;
+                    let med2pdW = (val >= 4) ? `, /${url}-medium.webp 2x` : ``;
+                    let big3pdW = (val === 5) ? `, /${url}-large.webp 3x` : ``;
+                    let big2pdJ = (val === 5) ? `, /${url}-large.jpg 2x` : ``;
+                    let med2pdJ = (val >= 4) ? `, /${url}-medium.jpg 2x` : ``;
+                    let big3pdJ = (val === 5) ? `, /${url}-large.jpg 3x` : ``;
 
                     routeTopo += `
-                    <source media="(min-width: 1080px)" type="image/webp"
+                    <source media="(min-width: 1080px)" type="image/webp" 
                         srcset="/${url}-medium.webp 1x${big2pdW}">
                     <source media="(max-width: 1079px)" type="image/webp"
                         srcset="/${url}-small.webp 1x${med2pdW}${big3pdW}">
                     <source media="(max-width: 767px)" type="image/webp"
-                        srcset="/${url}-small.webp 1x ${med2pdW}">
-                        
+                        srcset="/${url}-small.webp 1x${med2pdW}">
                     <source media="(min-width: 1080px)" type="image/jpg"
                         srcset="/${url}-medium.jpg 1x${big2pdJ}">
                     <source media="(max-width: 1079px)" type="image/jpg"
