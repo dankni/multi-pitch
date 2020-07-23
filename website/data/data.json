@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2020-07-21T12:50:10.339Z",
+  "lastUpdate": "2020-07-21T12:52:20.339Z",
   "climbs": [
     {
       "cliff": "Great Tor",
@@ -1401,9 +1401,6 @@
         "approachTime": 70,
         "approachDifficulty": 1,
         "rock": "Granite",
-        "intro": "Slieve Lamagan offers a great range of multi-pitch climbs that are typically lower difficulty. Route finding is not that easy once on the slab. Fortunately, there are many options for variation on or around the same grade that getting lost isn’t a disaster. The Route FM takes a reasonably direct line up the slabs and exits the steeper n shaped headwall on the east side (right). The granite is mostly immaculate and solid, although run out in places, especially off route. It will dry quickly thanks to its exposure to sun and wind. Variations take a slightly harder exit out of the final steep headwall. The crux of the route is one hard move on the first steep section around two thirds of the way up.",
-        "approach": "<strong>Approach</strong>: Park in the Carrick Little car park. Take the path into the Mourne Mountains. On approach the Annalong woods will be on the right and Slieve Lamagan will be clearly visible, more or less directly ahead. Keep following the path over a run off stream then a more significant stream / river. Take the right fork  after the river and follow the path until it weaves around close to the slabs. This will be the second right after the Annalong woods end. Once close to the slabs, leave the path and head directly up the heathery slopes to the start of the continuous granite slabs of Slieve Lamagan. <br /><strong>Descent</strong>: The decent should not be underestimated. It’s long and the ground is steep. <a href=\"https://amzn.to/3jtfR83\" target=\"blank\">A Mourne Mountain Map</a> will help show the mountain contours and the least steep path off which is round to the West. After climbing FM, scrambling up north-west then contouring around to the west should bring the party to a steep path that leads down towards the dam. This may take the best part of an hour. There is a chance the path is overgrown. There is also an optional additional 100+m VDiff climb called Upper FM. This sits 60m north east of the finish of FM and will bring the party closer to the summit. After this the party can contour west until the steep decent path is reached.",
-        "pitchInfo": null,
         "incline": "Slab",
         "face": "SE",
         "abseil": null,
@@ -1414,7 +1411,7 @@
         "loose": null,
         "seepage": null,
         "grassLegdes": null,
-        "lastUpdate": "2020-07-21T12:46:10.339Z",
+        "lastUpdate": "2020-07-21T12:49:10.339Z",
         "tileImage": {
           "url": "img/tiles/slieve-lamagan-mountain.jpg",
           "alt": "Slieve Lamagan",
