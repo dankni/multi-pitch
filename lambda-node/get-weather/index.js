@@ -2,8 +2,8 @@ const getWeather = require('./getWeatherDarkSky.js');
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3();
 
-const BUCKET = "multi-pitch.data";
-const KEY_CLIMBING_DATA = "climbing-data.json";
+const BUCKET = "www.multi-pitch.com";
+const KEY_CLIMBING_DATA = "data/data.json";
 const KEY_CLIMBING_DATA_EXTENDED_DIRECTION = "climbing-data-extended-weather.json";
 
 exports.handler = (event, context, callback) =>
