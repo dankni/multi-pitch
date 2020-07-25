@@ -129,7 +129,6 @@ describe('Load the website page', function () {
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
    	    .click('body span.scroll-down-link')
-	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
             .evaluate(function () {
