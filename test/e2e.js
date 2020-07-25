@@ -14,19 +14,22 @@ after(async function () {
 
 
 describe('Load the website page', function () {
-    // Recommended: 5s locally, 10s to remote server, 30s from airplane ¯\_(ツ)_/¯
     this.timeout('12s');
     const appUrl = 'http://localhost:9000';
     let nightmare = null;
     beforeEach(() => {
         nightmare = new Nightmare({
-            openDevTools: {
-                mode: 'detach'
-            },
+	    //            openDevTools: {
+           //     mode: 'detach'
+       //     },
             show: false,
-            webPreferences: {
-                partition: 'nopersist'
-            }
+	    waitTimeout: 5000,
+	    gotoTimeout: 5000,
+	    loadTimeout: 5000,
+	    loadTimeout: 5000
+      //      webPreferences: {
+     //           partition: 'nopersist'
+     //       }
         });
     });
 
@@ -44,7 +47,10 @@ describe('Load the website page', function () {
                 expect(numberOfPublishCard).to.equal(displayedCards);
                 done()
             })
-            .catch(done)
+		.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
         });
         it('Make sure advanced filters open on click', done => {
     
@@ -59,9 +65,11 @@ describe('Load the website page', function () {
                 expect(filterState).to.equal('flex');
                 done()
             })
-            .catch(done)
+		.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
         });
-
         it('Make sure the correct cards are removed when an advanced filter is un-checked', done => {
     
             nightmare.goto(appUrl)
@@ -75,12 +83,16 @@ describe('Load the website page', function () {
                 expect(rocaGrisDisplay).to.equal('none');
                 done()
             })
-            .catch(done)
+            		.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
+
         });
 
         it('Make sure cards are favourited when clicked', done => {
             nightmare.goto(appUrl)
-            .wait('#cardHolder .card')
+	    .wait('#cardHolder .card')
             .click('div[data-climb-id="25"] .climb-status')
             .click('div[data-climb-id="25"] .climb-status')
             .evaluate(function () {
@@ -91,10 +103,13 @@ describe('Load the website page', function () {
                 expect(status).to.equal('done');
                 done()
             })
-            .catch(done)
+		.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
         });
 
-        it('Make sure that we can click a card and see a overlay', done => {
+        it('Make that we can click a card and see a overlay', done => {
             var randomCard = climbsData.climbs[6];
 
             nightmare.goto(appUrl)
@@ -109,7 +124,10 @@ describe('Load the website page', function () {
                 expect(cliffAndRouteName.trim()).to.equal(randomCard.cliff + ' - ' + randomCard.routeName);
                 done()
             })
-            .catch(done)
+        	.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})    
         });
 
         it('Make sure the share buttons have the correct URL', done => {
@@ -127,7 +145,10 @@ describe('Load the website page', function () {
                 expect(shareLink).to.equal(true);
                 done()
             })
-            .catch(done)
+            	.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
 
         });
 
@@ -146,7 +167,10 @@ describe('Load the website page', function () {
                 expect(dataSuccess).to.equal('true');
                 done()
             })
-            .catch(done)
+            	.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
         });
 
         it('should not log any errors - on the main page', done => {
@@ -169,7 +193,10 @@ describe('Load the website page', function () {
                 expect(errors).to.have.lengthOf(0);
                 done();
             })
-            .catch(done)
+            	.catch( e => {
+		    console.error('Capturing this error:', e)
+		    done(e)
+		})
         });
 
     });
