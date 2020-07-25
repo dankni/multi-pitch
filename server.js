@@ -16,7 +16,7 @@ function start() {
             }).resume();
         });
         server.listen(9000);
-        setTimeout(resolve, 1000);
+        setTimeout(resolve);
     });
 }
 

@@ -32,7 +32,12 @@ jobs:
       - run:
           name: Run Tests
           command: npm run test
-      # Cache the build folders for the deploy job
+
+      - store_artifacts:
+          path: /tmp/multipitch/test/screenshots
+          destination: artifact-file
+
+       # Cache the build folders for the deploy job
       - save_cache:
           key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
