@@ -24,6 +24,7 @@ describe('Load the website page', function () {
        //     },
             show: false,
 	    frame: false,
+	    fullscreen: true,
 	    waitTimeout: 12000,
 	    gotoTimeout: 5000,
 	    loadTimeout: 5000,
@@ -90,10 +91,10 @@ describe('Load the website page', function () {
                 expect(rocaGrisDisplay).to.equal('none');
                 done()
             })
-            		.catch( e => {
-		    console.error('Capturing this error:', e)
+	    .catch( e => {
+		   console.error('Capturing this error:', e)
 		    done(e)
-		})
+	     })
 
         });
 
