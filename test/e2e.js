@@ -24,10 +24,6 @@ describe('Load the website page', function () {
        //     },
             show: false,
 	    frame: false,
-            maxHeight:16384,
-            maxWidth:16384,        
-            width: 1200,
-            height: 1024, 
 	    waitTimeout: 12000,
 	    gotoTimeout: 5000,
 	    loadTimeout: 5000,
@@ -133,6 +129,7 @@ describe('Load the website page', function () {
 	    .screenshot('./test/screenshots/4-2.png')	
 	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
+
             .evaluate(function () {
                 return document.querySelector("#climbCardDetails .big-card-body h1").textContent.trim();
             })
