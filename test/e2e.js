@@ -147,8 +147,8 @@ describe('Load the website page', function () {
 
         it('Make sure the share buttons have the correct URL', done => {
             var randomCard = climbsData.climbs[1];
-
             nightmare.goto(appUrl)
+	    .screenshot('./test/screenshots/5.png')	
 	    .wait('body span.scroll-down-link')
    	    .click('body span.scroll-down-link')
 	    .wait('#cardHolder .card')
