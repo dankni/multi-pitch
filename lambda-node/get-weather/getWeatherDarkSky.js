@@ -2,26 +2,26 @@ const axios = require('axios');
 
 const darkSkyKey = process.env.DARK_SKY_KEY;
 
-
 function toMultipitchWeatherData(darkSkyData) {
     return {
         "time": darkSkyData.time,
         "icon": darkSkyData.icon,
         "precipIntensity": darkSkyData.precipIntensity,
         "precipProbability": darkSkyData.precipProbability,
+        "description": darkSkyData.description,
         "temperatureHigh": darkSkyData.temperatureHigh,
         "temperatureMin": darkSkyData.temperatureMin,
         "pressure": darkSkyData.pressure,
         "humidity": darkSkyData.humidity,
         "windSpeed": darkSkyData.windSpeed,
         "cloudCover": darkSkyData.cloudCover,
-	"uvIndex": darkSkyData.uvIndex,
-	"windGust": darkSkyData.windGust,
-	"windBearing": darkSkyData.windBearing,
-	"windSpeed": darkSkyData.windSpeed,
-	"uvIndex": darkSkyData.uvIndex,
-	"sunriseTime": darkSkyData.sunriseTime,
-	"sunsetTime": darkSkyData.sunsetTime
+    	"uvIndex": darkSkyData.uvIndex,
+    	"windGust": darkSkyData.windGust,
+    	"windBearing": darkSkyData.windBearing,
+    	"windSpeed": darkSkyData.windSpeed,
+    	"uvIndex": darkSkyData.uvIndex,
+    	"sunriseTime": darkSkyData.sunriseTime,
+    	"sunsetTime": darkSkyData.sunsetTime
     };
 }
 
@@ -31,29 +31,28 @@ function isValidGeo(geoLocation) {
 }
 
 function getWeather(climbsData) {
-    let pastAndCurrentFuture = climbsData
+    let pastAndCurrentFuture = climbsData.climbs
         .filter(climb =>
             climb.status !== 'draft'
             &&
             isValidGeo(climb.geoLocation)
-        )
-        .map(climb => {
-            const geoLocation = climb.geoLocation;
-            const darkSkyPastPromises = [1, 2, 3, 4].map(value => {
-                let d = new Date();
-                d.setDate(d.getDate() - value);
-                const tsInSeconds = (d.getTime() / 1000).toFixed(0);
-                const darkSkyPastUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${climb.geoLocation},${tsInSeconds}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
-                console.log("going to call", darkSkyPastUrl);
-                return axios.get(darkSkyPastUrl);
-            });
-
-            const darkSkyCurrentlyAndFutureUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${geoLocation}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
-            console.log("going to call", darkSkyCurrentlyAndFutureUrl);
-            const darkSkyCurrentlyAndFuturePromise = axios.get(darkSkyCurrentlyAndFutureUrl);
-
-            return [darkSkyPastPromises, darkSkyCurrentlyAndFuturePromise]
+        ).map(climb => {
+        const geoLocation = climb.geoLocation;
+        const darkSkyPastPromises = [1, 2, 3, 4].map(value => {
+            let d = new Date();
+            d.setDate(d.getDate() - value);
+            const tsInSeconds = (d.getTime() / 1000).toFixed(0);
+            const darkSkyPastUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${climb.geoLocation},${tsInSeconds}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
+            console.log("going to call", darkSkyPastUrl);
+            return axios.get(darkSkyPastUrl);
         });
+
+        const darkSkyCurrentlyAndFutureUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${geoLocation}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
+        console.log("going to call", darkSkyCurrentlyAndFutureUrl);
+        const darkSkyCurrentlyAndFuturePromise = axios.get(darkSkyCurrentlyAndFutureUrl);
+
+        return [darkSkyPastPromises, darkSkyCurrentlyAndFuturePromise]
+    });
 
     const p = pastAndCurrentFuture.map((tuple, index) => {
         const climb = climbsData[index];
