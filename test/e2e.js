@@ -44,6 +44,8 @@ describe('Load the website page', function () {
 
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .evaluate(function () {
                 return document.querySelectorAll("#cardHolder .card").length;
             })
@@ -61,6 +63,8 @@ describe('Load the website page', function () {
     
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .click('.filter-toggle')
             .evaluate(function () {
                 return document.getElementById("advancedFilters").style.display;
@@ -79,6 +83,8 @@ describe('Load the website page', function () {
     
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .click('#abseil')
             .evaluate(function () {
                 return document.getElementById("12").style.display;
@@ -98,6 +104,8 @@ describe('Load the website page', function () {
         it('Make sure cards are favourited when clicked', done => {
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .click('div[data-climb-id="25"] .climb-status')
             .click('div[data-climb-id="25"] .climb-status')
             .evaluate(function () {
@@ -120,6 +128,8 @@ describe('Load the website page', function () {
 
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
             .evaluate(function () {
@@ -141,6 +151,8 @@ describe('Load the website page', function () {
 
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
             .evaluate(function () {
@@ -161,6 +173,8 @@ describe('Load the website page', function () {
         it('Make the dynamic topo images load', done => {
             nightmare.goto(appUrl)
 	    .wait('body span.scroll-down-link')
+   	    .click('body span.scroll-down-link')
+	    .wait('#cardHolder .card')
             .click('div[data-climb-id="16"] a.open-tile')
             .wait('#climbCardDetails')
             .click('#c3')
