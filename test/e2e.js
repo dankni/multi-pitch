@@ -101,8 +101,9 @@ describe('Load the website page', function () {
 
         it('Make sure cards are favourited when clicked', done => {
             nightmare.goto(appUrl)
-	    .screenshot('./test/screenshots/4.png')
-	    .wait('#cardHolder .cards')
+   		.screenshot('./test/screenshots/4.png')
+	    .wait('body span.scroll-down-link')
+	 //   .wait('#cardHolder .cards')
             .click('div[data-climb-id="25"] .climb-status')
             .click('div[data-climb-id="25"] .climb-status')
             .evaluate(function () {
