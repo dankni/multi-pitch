@@ -27,9 +27,13 @@
             }
         },
         {
-            "publish" : false,
+            "publish" : true,
             "title" : "Harness",
-            "paragraph" : "Whilst there are specific harnesses designed for trad climbing, the main factors are comfort, weight, number and size of gear loops and the buckle system. Most new harness have a self-locking buckle meaning they are less likely to come loose. For trad, the climber will want at least 4 decent sized gear loops to help carry protection and quickdraws. 5 is a good number especially for multi-pitch, where spare or emergency pieces can be helpful. Some harnesses have 7 loops. This can actually be less helpful because it's awkward to find the gear needed when there are so many overlapping loops. Lighter is generally better but it can be a mistake to sacrifice on comfort, for trad multi-pitch. This is because the climber will need to have their harness on for hours, often with many kilos of gear on it. Therefore, padding is helpful."
+            "paragraph" : "Whilst there are specific harnesses designed for trad climbing, the main factors are comfort, weight, number and size of gear loops and the buckle system. Most new harness have a self-locking buckle meaning they are less likely to come loose. For trad, the climber will want at least 4 decent sized gear loops to help carry protection and quickdraws. 5 is a good number especially for multi-pitch, where spare or emergency pieces can be helpful. Some harnesses have 7 loops. This can actually be less helpful because it's awkward to find the gear needed when there are so many overlapping loops. Lighter is generally better but it can be a mistake to sacrifice on comfort, for trad multi-pitch. This is because the climber will need to have their harness on for hours, often with many kilos of gear on it. Therefore, padding is helpful.",
+            "img" : {
+                "url" : "/img/other/gear/rock-climbing-harness.jpg",
+                "alt": "A Rock Climbing Harness with 5 gear loops and enough padding."
+            }
         },
         {
             "publish" : true,
@@ -131,9 +135,13 @@
             }
         },
         {
-            "publish" : false,
+            "publish" : true,
             "title" : "Ball-nuts",
-            "paragraph" : "Sometimes called sliders, ball nuts are a single nut with a sliding surface on one side, meaning the nut essentially, expands slightly and therefore holds better. The one key strength is, the protection is partially active and so can hold better than a normal nut but, but can have a much smaller profile than a cam. It's a niche middle ground piece of gear, more commonly used for aid climbing, however it can provide some extra options on a trad rack, especially on very hard routes with ultra thin cracks."
+            "paragraph" : "Sometimes called sliders, ball nuts are a single nut with a sliding surface on one side, meaning the nut essentially, expands slightly and therefore holds better. The one key strength is, the protection is partially active and so can hold better than a normal nut but, but can have a much smaller profile than a cam. It's a niche middle ground piece of gear, more commonly used for aid climbing, however it can provide some extra options on a trad rack, especially on very hard routes with ultra thin cracks.",
+            "img" : {
+                "url" : "/img/other/gear/climbing-ball-nut.jpg",
+                "alt": "A ball nut for climbing"
+            }
         },
         {
             "publish" : true,
