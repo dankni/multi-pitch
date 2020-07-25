@@ -103,7 +103,7 @@ describe('Load the website page', function () {
    	    .click('body span.scroll-down-link')
 	    .wait('#cardHolder .card')
             .click('div[data-climb-id="25"] .climb-status')
-            .click('div[data-climb-id="25"] .climb-status')
+   	    .click('div[data-climb-id="25"] .climb-status')
             .evaluate(function () {
                 return document.getElementById("25Status").dataset.status;
             })
@@ -123,13 +123,11 @@ describe('Load the website page', function () {
             var randomCard = climbsData.climbs[6];
 
             nightmare.goto(appUrl)
-	    .screenshot('./test/screenshots/4.png')	
 	    .wait('body span.scroll-down-link')
    	    .click('body span.scroll-down-link')
-	    .screenshot('./test/screenshots/4-2.png')	
 	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
-
+	    .wait("#climbCardDetails .big-card-body h1")
             .evaluate(function () {
                 return document.querySelector("#climbCardDetails .big-card-body h1").textContent.trim();
             })
@@ -147,10 +145,8 @@ describe('Load the website page', function () {
         it('Make sure the share buttons have the correct URL', done => {
             var randomCard = climbsData.climbs[1];
             nightmare.goto(appUrl)
-	    .screenshot('./test/screenshots/5.png')	
 	    .wait('body span.scroll-down-link')
    	    .click('body span.scroll-down-link')
-	    .screenshot('./test/screenshots/5-2.png')	
 	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
