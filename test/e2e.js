@@ -28,7 +28,7 @@ describe('Load the website page', function () {
             maxWidth:16384,        
             width: 1200,
             height: 1024, 
-	    waitTimeout: 5000,
+	    waitTimeout: 12000,
 	    gotoTimeout: 5000,
 	    loadTimeout: 5000,
 	    loadTimeout: 5000
