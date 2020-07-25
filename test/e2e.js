@@ -127,10 +127,12 @@ describe('Load the website page', function () {
             var randomCard = climbsData.climbs[6];
 
             nightmare.goto(appUrl)
+	    .screenshot('./test/screenshots/4.png')	
 	    .wait('body span.scroll-down-link')
    	    .click('body span.scroll-down-link')
+	    .screenshot('./test/screenshots/4-2.png')	
+	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
-            .wait('#climbCardDetails')
             .evaluate(function () {
                 return document.querySelector("#climbCardDetails .big-card-body h1").textContent.trim();
             })
@@ -151,6 +153,7 @@ describe('Load the website page', function () {
 	    .screenshot('./test/screenshots/5.png')	
 	    .wait('body span.scroll-down-link')
    	    .click('body span.scroll-down-link')
+	    .screenshot('./test/screenshots/5-2.png')	
 	    .wait('#cardHolder .card')
             .click('div[data-climb-id="' + randomCard.id + '"] a.open-tile')
             .wait('#climbCardDetails')
