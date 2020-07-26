@@ -24,7 +24,6 @@ describe('Load the website page', function () {
        //     },
             show: false,
 	    frame: false,
-	    fullscreen: true,
 	    waitTimeout: 12000,
 	    gotoTimeout: 5000,
 	    loadTimeout: 5000,
@@ -76,6 +75,8 @@ describe('Load the website page', function () {
 		    done(e)
 		})
         });
+    })
+    describe('/ something else', () => {
         it('Make sure the correct cards are removed when an advanced filter is un-checked', done => {
     
             nightmare.goto(appUrl)
@@ -119,7 +120,8 @@ describe('Load the website page', function () {
 		    done(e)
 		})
         });
-
+    });
+    describe('/ something else else...', () => {
         it('Make that we can click a card and see a overlay', done => {
             var randomCard = climbsData.climbs[6];
 
