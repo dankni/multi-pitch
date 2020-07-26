@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:lts-browsers
+      - image: circleci/node:lts-browsers-legacy
     working_directory: /tmp/multipitch
     steps:
       - checkout
