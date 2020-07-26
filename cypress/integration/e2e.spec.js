@@ -31,5 +31,12 @@ describe('Load the website page', function () {
 	cy.get('div[data-climb-id="25"] .climb-status').click().click()
 	cy.get('#25Status').should('have.attr', 'data-status', 'done')
     });
+    
+    it('Make that we can click a card and see a overlay', () => {
+	const card = climbsData.climbs[6];
+   	cy.visit(appUrl)
+	cy.get('div[data-climb-id="' + card.id + '"] a.open-tile').click()
+	cy.get('#climbCardDetails .big-card-body h1').contains(card.cliff + ' - ' + card.routeName)
+    });
 
 });
