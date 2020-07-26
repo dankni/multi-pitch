@@ -39,4 +39,12 @@ describe('Load the website page', function () {
 	cy.get('#climbCardDetails .big-card-body h1').contains(card.cliff + ' - ' + card.routeName)
     });
 
+    
+    it('Make the dynamic topo images load', () => {
+	const card = climbsData.climbs[6];
+   	cy.visit(appUrl)
+	cy.get('div[data-climb-id="16"] a.open-tile').click()
+	cy.get('label[for="c3"]').click({force: true})
+	cy.get('#canvas[data-success="true"]')
+    });
 });

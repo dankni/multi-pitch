@@ -8,7 +8,7 @@
     "generate-sitemap": "node generateSiteMap.js",
     "generate-all": "npm run generate-climbs && npm run generate-sitemap",
     "start": "node server.js",
-    "cy:run": "cypress run --browser chrome --headless",
+    "cy:run": "cypress run --headless",
     "test": "start-server-and-test start http://localhost:9000 cy:run",
     "deploy-test": "aws s3 sync website s3://multi-pitch-test.co.uk --delete"
   },
