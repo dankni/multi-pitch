@@ -14,7 +14,7 @@ after(async function () {
 
 
 describe('Load the website page', function () {
-    this.timeout('12s');
+    this.timeout('20s');
     const appUrl = 'http://localhost:9000';
     let nightmare = null;
     beforeEach(() => {
@@ -24,10 +24,10 @@ describe('Load the website page', function () {
        //     },
             show: false,
 	    frame: false,
-	    waitTimeout: 12000,
-	    gotoTimeout: 5000,
-	    loadTimeout: 5000,
-	    loadTimeout: 5000
+	    waitTimeout: 20000,
+	    gotoTimeout: 12000,
+	    loadTimeout: 12000,
+	    loadTimeout: 12000
       //      webPreferences: {
      //           partition: 'nopersist'
      //       }
