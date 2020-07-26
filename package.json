@@ -4,11 +4,12 @@
   "description": "A site dedicated to multi-pitch rock climbing",
   "main": "convertXlsxToJson.js",
   "scripts": {
-    "test": "mocha",
     "generate-climbs": "node generateCardClimb.js",
     "generate-sitemap": "node generateSiteMap.js",
     "generate-all": "npm run generate-climbs && npm run generate-sitemap",
     "start": "node server.js",
+    "cy:run": "cypress run --browser chrome --headless",
+    "test": "start-server-and-test start http://localhost:9000 cy:run",
     "deploy-test": "aws s3 sync website s3://multi-pitch-test.co.uk --delete"
   },
   "repository": {
@@ -32,6 +33,7 @@
     "eslint": "^7.2.0",
     "mocha": "^8.0.1",
     "nightmare": "^3.0.2",
+    "start-server-and-test": "^1.11.2",
     "webp-converter": "^2.2.3"
   }
 }
