@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cypress/browsers:chrome67
+      - image: circleci/node:lts-browsers-legacy
     working_directory: /tmp/multipitch
     steps:
       - checkout
