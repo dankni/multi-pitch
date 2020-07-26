@@ -27,14 +27,14 @@ jobs:
       - save_cache:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
           paths:
-            - node_modules
-            - .cache/Cypress
+            - "node_modules"
+            - "~/.cache/Cypress"
       # Test the source code
       - run:
           name: Run Tests
           command: npm run test
       - store_artifacts:
-          path: /tmp/multipitch/test/screenshots
+          path: /tmp/multipitch/cypress/videos
           destination: artifact-file
       - save_cache:
           key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
