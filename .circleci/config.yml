@@ -28,7 +28,9 @@ jobs:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - "node_modules"
-            - "/root/.cache/Cypress"
+            - "~/.cache/Cypress"
+            - ".cache/Cypress"
+            - "/root/.cache"
 	    - "cypress/*"
       # Test the source code
       - run:
