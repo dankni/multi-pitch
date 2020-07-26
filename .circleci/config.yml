@@ -31,7 +31,7 @@ jobs:
             - "~/.cache/Cypress"
             - ".cache/Cypress"
             - "/root/.cache"
-	    - "cypress/*"
+            - "cypress/*"
       # Test the source code
       - run:
           name: Run Tests
