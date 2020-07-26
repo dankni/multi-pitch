@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cypress/base:8
+      - image: cypress/browsers:chrome67
     working_directory: /tmp/multipitch
     steps:
       - checkout
@@ -43,7 +43,7 @@ jobs:
   deploy:
     working_directory: /tmp/multipitch
     docker:
-      - image: circleci/node:14.5.0-browsers
+      - image: circleci/node:lts-browsers-legacy
     steps:
       - checkout
       # build folder that needs to be deployed
