@@ -28,6 +28,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
+	    - .cache/Cypress
       # Test the source code
       - run:
           name: Run Tests
