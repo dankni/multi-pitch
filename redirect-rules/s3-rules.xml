@@ -54,4 +54,15 @@
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbs/esparraguera--on-roca-gris/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>climbs/esparraguera-on-roca-gris/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
   </RoutingRules>

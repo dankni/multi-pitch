@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    
+
+    <title>Editor</title>
+    <meta name="description" content="Editor" />
+    <link href="../css/style.css?Apr=2020" rel="stylesheet" />
+    <script src="js/common.js"></script>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <style>
+        .mdl-data-table td, .mdl-data-table th{
+            padding: 12px 10px !important;
+            text-align: left;
+        }
+        .mdl-textfield{
+            width:48%;
+        }
+        .mdc-text-field--outlined{
+            margin:10px;
+        }
+    </style>
+    
+</head>
+<body id="bdy">
+    <!-- Navbar -->
+    <nav>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main" style="margin-top: 60px;">
+        <div class="container">
+            <section class="row">
+                <div class="col-6" id="col-intro">
+                    <h1>MP Editor</h1>
+                    <p>Add intro text here</p>
+                </div>
+                <div class="col-6">
+                    <canvas id="gradeBar"></canvas>
+                    <script>
+
+                        /**
+                         * GET THE JSON CONTENT - either from data.json or local storage
+                         **/
+                        function getContent(url) {
+                            if (localStorage.getItem('climbsData')){
+                                climbsData = JSON.parse(localStorage.getItem('climbsData'));
+                                jsonLoaded();
+                            } else {
+                                var request = new XMLHttpRequest();
+                                request.open('GET', url, true);
+                                request.onload = function() {
+                                    if (this.status >= 200 && this.status < 400) { 
+                                        localStorage.setItem('climbsData', this.response);
+                                        climbsData = JSON.parse(localStorage.getItem('climbsData'));
+                                        jsonLoaded();
+                                    } else {
+                                        console.log("Error getting content");
+                                    }
+                                }
+                                request.onerror = function() { console.log('Error ' + this.status);   };
+                                request.send();
+                            }
+                        }
+
+                        /**
+                         * CONT CLIMBS FOR GRADE AND STATUS - assumes climbData is global
+                         **/
+                        function countClimbs(dataGrade, status){
+                            let byGrade = climbsData.climbs.filter(climb => climb.dataGrade === dataGrade);
+                            if(byGrade.length >= 1){
+                                let byStatus = byGrade.filter(climb => climb.status === status);
+                                return byStatus.length;
+                            } else {
+                                return 0;
+                            }
+                        }
+
+                        /**
+                         * PUBLISH GRAPH
+                         **/
+                        function publishGraph(){
+                            let publishedClimbCount = [];
+                            let draftClimbCount = [];
+
+                            for(let i = 1; i <= 7; i++){
+                                publishedClimbCount.push(countClimbs(i, 'publish'));
+                                draftClimbCount.push(countClimbs(i, 'draft'));
+                            }
+                            var ctx = document.getElementById('gradeBar').getContext('2d');
+                            var myDoughnutChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: { 
+                                    labels: ['D', 'VD', 'S', 'HS', 'VS', 'HVS', 'E1'],
+                                    datasets: [{
+                                        label: 'Published Climbs',
+                                        data: publishedClimbCount,
+                                        backgroundColor: '#4caf50'
+                                    },
+                                    {
+                                        label: 'Draft Climbs',
+                                        data: draftClimbCount,
+                                        backgroundColor: '#f44235'
+                                    }],
+                                    
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true
+                                            },
+                                            stacked: true
+                                        }],
+                                        xAxes: [{
+                                            stacked: true,
+                                            gridLines: {
+                                                drawOnChartArea: false
+                                            }
+                                        }]
+                                    }
+                                }
+                            });
+                        }
+
+                        /**
+                         * PUBLISH TABLE
+                         **/
+                        function outputTable(){
+                            for(let i = 0; i < climbsData.climbs.length; i++){
+                                let publish = '';
+                                let ariaChecked = 'false';
+                                let localClimb = getClimbJson(climbsData.climbs[i].id);
+                                let topoState = 0;
+                                try{
+                                    if( localClimb.climbData.topo.dataFile) {
+                                        topoState = localClimb.climbData.topo.dataFile >= 1 ? localClimb.climbData.topo.dataFile : 0;
+                                    }
+                                } catch (e) {
+                                    console.log("error = " + e);
+                                }
+                                if(climbsData.climbs[i].status === 'publish'){
+                                    publish = 'checked';
+                                    ariaChecked = 'true';
+                                }
+                                let html = `
+                                <td class="mdc-data-table__cell">
+                                    <div class="mdc-switch" data-mdc-auto-init="MDCSwitch">
+                                        <div class="mdc-switch__track"></div>
+                                        <div class="mdc-switch__thumb-underlay">
+                                            <div class="mdc-switch__thumb"></div>
+                                            <input type="checkbox" class="mdc-switch__native-control" role="switch" ${publish} aria-checked="${ariaChecked}" id="switch-${climbsData.climbs[i].id}">
+                                        </div>
+                                    </div>
+                                    <label for="switch-${climbsData.climbs[i].id}"></label>
+                                </td>
+                                <td class="mdc-data-table__cell">${climbsData.climbs[i].cliff}</td>
+                                <td class="mdc-data-table__cell">${climbsData.climbs[i].routeName}</td>
+                                <td class="mdc-data-table__cell" onClick="populateQuickEdit(${climbsData.climbs[i].id})" style="cursor:pointer">
+                                    <span class="material-icons">edit</span>
+                                </td>
+                                <td class="mdc-data-table__cell" style="cursor:pointer">   
+                                    <span id="topo${climbsData.climbs[i].id}">${topoState}</span>
+                                    <a href="/editor/topo-edit/?id=${climbsData.climbs[i].id}">
+                                      <span class="material-icons">insert_photo</span>
+                                    </a>
+                                </td>
+                                <td class="mdc-data-table__cell" style="cursor:pointer" onClick="showLocalJson(${climbsData.climbs[i].id})">
+                                    <span class="material-icons" id="${climbsData.climbs[i].id}Color">text_snippet</span>
+                                </td>
+                                `;
+                                let row = document.createElement("tr");
+                                row.className = 'mdc-data-table__row';
+                                row.innerHTML = html;
+                                document.getElementById('tbody').appendChild(row);
+                                isThereADiff(climbsData.climbs[i].id);
+                            }
+                            mdc.autoInit();
+                        }
+
+                        function getClimbJson(id){
+                            id = parseInt(id);
+                            let climb = localStorage.getItem('climb' + id) ? JSON.parse(localStorage.getItem('climb' + id)) : null;
+                            if(climb !== null){
+                                return climb;
+                            } else {
+                                let request = new XMLHttpRequest();
+                                request.open('GET', '../data/climbs/' + id + '.json', true);
+                                request.onload = function() {
+                                    if (this.status >= 200 && this.status < 400) {
+                                        localStorage.setItem('climb' + id, this.response);
+                                        climb = JSON.parse(this.response);
+                                        return climb;
+                                    } else { console.log("couldn't load climbsData - likley server error / file not found"); }
+                                };
+                                request.onerror = function() { console.log("couldn't load climbsData " + id); };
+                                request.send();
+                            }
+                        }
+                        function isThereADiff(id){
+                            let request = new XMLHttpRequest();
+                                request.open('GET', '../data/climbs/' + id + '.json', true);
+                                request.onload = function() {
+                                    if (this.status >= 200 && this.status < 400) {
+                                        let local = localStorage.getItem('climb' + id);
+                                        let server = this.response;
+                                        let flag = true;
+                                        if(Object.keys(local).length == Object.keys(server).length){
+                                            for(key in local) { 
+                                                if(local[key] == server[key]) {
+                                                    continue;
+                                                } else {
+                                                    flag = false;
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            flag = false;
+                                        }
+                                        flag === true ? document.getElementById(id +'Color').style.display = 'none' : document.getElementById(id +'Color').style.display = 'block';
+                                    } else { console.log("couldn't load climbsData - likley server error / file not found"); }
+                                };
+                                request.onerror = function() { console.log("couldn't load climbsData " + id); };
+                                request.send();
+                        }
+                        
+                        /**
+                         * POPULATE QUICK EDIT
+                         **/
+                        function populateQuickEdit(climbId){
+                            document.getElementById('overlayContent').innerHTML = `
+                            <form id="quickEditForm" style="display: none;">
+                                <h2>Quick Edit <span id="id"></span></h2>
+                                <div id="inputs">
+                                </div>            
+                                <button class="mdc-button mdc-button--raised"   id="update" onClick="updateData();return(false);" style="border:0;margin:20px 10px;">
+                                    <span class="mdc-button__ripple"></span> Update
+                                </button> <span style="color:#666">Last Updated: <span id="lastUpdate"></span></span>
+                            </form>`;
+                            document.getElementById('id').innerHTML = climbId;
+                            document.getElementById('inputs').innerHTML = '';
+                            const chosenClimb = climbsData.climbs.find(climb => climb.id === climbId);
+                            const dataStructure = {
+                                "elements": [
+                                    {
+                                        "name" : "abseil",
+                                        "type" : "boolean",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "attributes",
+                                        "derivedValue" : false
+                                    },
+                                    {
+                                        "name" : "seepage",
+                                        "type" : "boolean",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "attributes",
+                                        "derivedValue" : false   
+                                    },
+                                    {
+                                        "name" : "tidal",
+                                        "type" : "boolean",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "attributes",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "loose",
+                                        "type" : "boolean",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "attributes",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "polished",
+                                        "type" : "boolean",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "attributes",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "traverse",
+                                        "type" : "boolean",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "attributes",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "cliff",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "routeName",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "status",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "country",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "location",
+                                        "derivedValue" : false 
+                                    }
+                                ],
+                                "sections" : {
+                                    "mainFileData" : ["summary", "grades", "location", "attributes"],
+                                    "detailedData" : ["approach","pitches", "guidebooks", "weather", "referances"]
+                                },
+                            }
+                            const text = ['','','county','tradGrade','techGrade','gradeSys','originalGrade','flag','geoLocation','face'];
+                            const tileImg = ['url','alt','atributionURL','attributionText'];
+                            const numbers = ['length','pitches','dataGrade','approachTime','approachDifficulty','updateTimestamp'];
+                            document.getElementById('lastUpdate').innerText = chosenClimb.lastUpdate;
+                            for (var key in chosenClimb) {
+                                if(text.includes(key) || numbers.includes(key)){
+                                    let type = '';
+                                    text.includes(key) ? type = 'text' : type = 'number';
+                                    let hr = ''
+                                    if(key === 'face'){ hr = '<hr />' }
+                                    let input = `
+                                    <div class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+                                        <input class="mdc-text-field__input" id="${key}" value="${chosenClimb[key]}" type="${type}">
+                                        <div class="mdc-notched-outline">
+                                        <div class="mdc-notched-outline__leading"></div>
+                                        <div class="mdc-notched-outline__notch">
+                                            <label for="text-field-${key}" class="mdc-floating-label">${key}</label>
+                                        </div>
+                                        <div class="mdc-notched-outline__trailing"></div>
+                                        </div>
+                                    </div>${hr}`
+                                    document.getElementById('inputs').innerHTML += input;
+                                } 
+                                if(toggles.includes(key)){
+                                    let hr = ''
+                                    if(key === 'seepage'){ hr = '<hr />' }
+                                    let checked = ''
+                                    chosenClimb[key] === 1 ? checked = 'checked' : checked = '';
+                                    let toggle = `
+                                        <div class="mdc-checkbox" data-mdc-auto-init="MDCCheckbox">
+                                            <input type="checkbox" class="mdc-checkbox__native-control" id="${key}" ${checked}/>
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                                </svg>
+                                            </div>
+                                            <div class="mdc-checkbox__ripple"></div>
+                                        </div>
+                                        <label for="${key}">${key}</label> ${hr}`;
+                                    document.getElementById('inputs').innerHTML += toggle;
+                                }                           
+                            }
+                            for(let i = 0; i < tileImg.length; i++){
+                                let tileImageOb = chosenClimb.tileImage;
+                                let input = `
+                                    <div class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField" style="width:45%">
+                                        <input class="mdc-text-field__input" id="tileImage.${tileImg[i]}" value="${tileImageOb[tileImg[i]]}" type="text">
+                                        <div class="mdc-notched-outline">
+                                        <div class="mdc-notched-outline__leading"></div>
+                                        <div class="mdc-notched-outline__notch">
+                                            <label for="text-field-tileImage.${tileImg[i]}" class="mdc-floating-label">tileImage.${tileImg[i]}</label>
+                                        </div>
+                                        <div class="mdc-notched-outline__trailing"></div>
+                                        </div>
+                                    </div>`;
+                                document.getElementById('inputs').innerHTML += input;
+                            }
+                            document.getElementById('quickEditForm').style.display = 'block';
+                            mdc.autoInit();
+                            openModal();
+                        }
+
+                        /**
+                         * SHOW CLIMB DETAILS FROM LOCAL 
+                         **/
+                         function showLocalJson(climbId){
+                            let overlay = document.getElementById('overlayContent');
+                            overlay.innerHTML = `<h2>Update File ${climbId}.json</h2>`;
+                            let climb = localStorage.getItem('climb' + climbId);
+                            let textarea = document.createElement('textarea');
+                            textarea.style = "height:600px;width:100%";
+                            textarea.innerText = climb;
+                            overlay.appendChild(textarea);
+                            openModal();
+                         }
+
+                        /**
+                         * FORM FUNCTIONS
+                         **/
+                        function updateData(){
+                            const climbId = parseInt(document.getElementById('id').innerHTML);
+                            let chosenClimb = climbsData.climbs.find(climb => climb.id === climbId);
+                            let localClimbDetails = getClimbJson(climbId);
+                            let inputs = document.querySelectorAll('#quickEditForm input');
+                            for(let i = 0; i < inputs.length; i++){
+                                let inputId = inputs[i].id;
+                                let value = inputs[i].value;
+                                if(inputId.split('.')[0] === 'tileImage'){
+                                    chosenClimb.tileImage[inputId.split('.')[1]] = value;
+                                //    localClimbDetails.climbData.tileImage[inputId.split('.')[1]] = value;
+                                } else {
+                                    if(inputs[i].type === "checkbox"){
+                                        inputs[i].checked === true ? value = 1 : value = null;
+                                    }
+                                    if(inputs[i].type === "number"){ value = parseInt(value);} 
+                                    chosenClimb[inputId] = value;
+                                    localClimbDetails.climbData[inputId] = value;
+                                }
+                            }
+                            let now = new Date();
+                            chosenClimb.lastUpdate = now;
+                            climbsData.lastUpdate = now;
+                            localClimbDetails.climbData.lastUpdate = now;
+                            localStorage.setItem('climbsData', JSON.stringify(climbsData));
+                            localStorage.setItem('climb' + climbId, JSON.stringify(localClimbDetails));
+                            document.getElementById('lastUpdate').innerText =  JSON.stringify(now);
+                        }
+                        
+                        /**
+                         * INITALISE
+                         **/
+                        let climbsData;
+                        window.addEventListener('DOMContentLoaded', (event) => {
+                            getContent("../data/data.json");
+                        });
+                        function jsonLoaded(){
+                            publishGraph();
+                            outputTable();
+                        }
+                    </script>
+                </div>
+            </section>
+            <hr />
+            <section class="row">
+                <div class="col-12">
+                    <h2>Current climb List</h2>
+                    <p>Some more text here.</p>
+                    <div class="mdc-data-table">
+                        <table class="mdc-data-table__table">
+                            <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Published</th>
+                                    <th  class="mdc-data-table__header-cell" role="columnheader" scope="col">Cliff</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Climb</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Edit</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Topo</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Needs Update</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody" class="mdc-data-table__content">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer text-center">
+        <section class="footer-copyright">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2019 Creative Commons</a> -
+            <a href="/"> multi-pitch.com </a> - 
+            <a href="/about/#contact">Contact</a>
+        </section>
+    </footer>
+    <a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
+    <div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile()">
+        <section class="row">
+            <div class="col-8"style="background-color: #FFF;margin: 20px auto;" id="overlayContent">
+                
+            </div>
+        </section>
+    </div>
+</body>
+</html>

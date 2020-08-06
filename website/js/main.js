@@ -696,7 +696,7 @@ function deliverChange(climb, popped){
     }
     document.getElementById('overlay').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-    var fullCard = climbCard(climbData);
+    var fullCard = climbCard(climb);
     document.getElementById('overlay').innerHTML = fullCard;
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
@@ -817,6 +817,7 @@ const infoBoxColor = 'rgba(28, 35, 49, 0.95)';
 var maxWidth = 'max';
 var arrowSize = 20;
 var dashSpace = [32, 8, 5, 8];
+var dotted = [5, 10]
 var belayScale = 1; // used to scale the line and labels inline with belay size
 
 function initTopo() {
@@ -851,6 +852,7 @@ function updateScale() {
     lineWidth = sThis(6) * belayScale;
     fontsize = sThis(55) * belayScale;
     dashSpace = [sThis(32) * belayScale, sThis(8) * belayScale, sThis(5) * belayScale, sThis(8) * belayScale];
+    dotted = [sThis(5) * belayScale, sThis(10) * belayScale];
     arrowSize = 20 * belayScale;
 }
 
@@ -863,6 +865,7 @@ function draw() {
     let belayPoints = document.getElementById('c3').checked;
     let abseilPoints = document.getElementById('c4').checked;
     let pitchLabels = document.getElementById('c5').checked;
+    let alternatives = document.getElementById('c6').checked;
     var ctx = document.getElementById('canvas').getContext('2d');
 
     const imgWidth = sThis(img.width);
@@ -898,6 +901,16 @@ function draw() {
     if (routeLine === true) {
         if (topoData.route.length > 1) {
             drawLine(ctx, topoData.route, true, false, lineColor);
+        }    
+        if (topoData.alternatives && alternatives === true){
+            for(let i = 0; i < topoData.alternatives.length; i++){
+                drawLine(ctx, topoData.alternatives[i].route, true, false, "rgba(255, 239, 101, 0.85)");
+                drawBelay(ctx, topoData.alternatives[i].route[0][0], topoData.alternatives[i].route[0][1], "rgba(255, 239, 101, 0.95)", "rgba(255, 239, 101, .95)");
+                annotate(ctx, topoData.alternatives[i].referance,
+                    sThis(topoData.alternatives[i].route[0][0] - 12),
+                    sThis(topoData.alternatives[i].route[0][1] + 12),
+                    "rgb(0,0,0)");
+            }
         }
     }
 
@@ -951,14 +964,14 @@ function draw() {
 }
 
 // A set of helper functions 
-function drawBelay(context, x, y, line, fill) {
+function drawBelay(context, x, y, line, fill, size = belaySize ) {
     if (x > 0 && y > 0) {
         context.strokeStyle = line;
         context.setLineDash([]);
         context.lineWidth = lineWidth;
         context.fillStyle = fill;
         context.beginPath();
-        context.arc(sThis(x), sThis(y), belaySize, 0, 2 * Math.PI, false);
+        context.arc(sThis(x), sThis(y), size, 0, 2 * Math.PI, false);
         context.fill();
         context.stroke();
         context.closePath();
@@ -990,7 +1003,7 @@ function drawLine(context, arrayOfxy, dashed, arrowEnd, color) {
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
     context.lineCap = 'round';
-    dashed === true ? context.setLineDash(dashSpace) : context.setLineDash([]);
+    dashed === true ? context.setLineDash(dashSpace) : context.setLineDash(dotted);
     context.stroke();
     if (arrowEnd === true) {
         drawArrowhead(context, arrayOfxy[arrayOfxy.length - 2], arrayOfxy[arrayOfxy.length - 1], arrowSize, color);

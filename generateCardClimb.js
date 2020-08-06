@@ -21,8 +21,8 @@ function generate() {
     var climbsAndHtml = climbsData.map(climb => {
 
         var climbId = climb.id;
-        let thisClimb = require('./website/data/climbs/' + climbId + '.json').climbData;
-        var folderName = "".concat(climb.routeName, '-on-', climb.cliff + '/')
+        let thisClimb = require('./website/data/climbs/' + climbId + '.json');
+        var folderName = "".concat(climb.routeName.trim(), '-on-', climb.cliff.trim() + '/')
             .toLowerCase()
             .replace(/'/g, "")
             .replace(/\//g, "")

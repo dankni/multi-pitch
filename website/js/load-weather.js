@@ -1,6 +1,5 @@
 const getWeatherUrl = 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-weather.json';
 
-
 function checkStatusIs200AndReturnJson(response) {
     if (response.status === 200) {
         return response.json();

@@ -1411,7 +1411,7 @@ select:focus {
   background-position: calc(100% - 15px) 10px, calc(100% - 20px) 10px;
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
-  outline: 0;
+  outline: 1px dotted;
 }
 select:-moz-focusring {
   color: transparent;
@@ -2123,4 +2123,31 @@ hr {
 }
 .moon {
   background-image: url(/img/icons/weather/Moon-Waning-Crescent.svg);
+}
+details{
+  margin:10px 0;
+}
+summary:focus{
+  background:rgba(122, 130, 183, 0.15);
+}
+summary {
+  transition: all 1s ease;
+  cursor: pointer;
+  font-size: 1.3rem;
+  padding:4px;
+}
+details[open] summary ~ * {
+  animation: openH .5s ease;
+  animation: openOp 1s ease;
+}
+@keyframes openOp {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+@keyframes openH {
+  0% {height:0%}
+  100% {height:100%}
+}
+input:disabled + span {
+  color:#ccc;
 }

@@ -2,7 +2,7 @@
 var img = new Image();
 var flag = new Image();
 var logo = new Image();
-logo.src = '../website/img/logo/mp-logo-white.png';        
+logo.src = '/img/logo/mp-logo-white.png';        
 img.src = topoData.image;
 flag.src = topoData.flag;
 const scaleRadio = document.getElementsByName("scale"); 

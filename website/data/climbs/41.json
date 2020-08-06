@@ -41,7 +41,7 @@
         "topo": {
             "url": "img/topos/lamagan/slieve-lamagan-fm-climb-in-the-mournes.jpg",
             "alt": "Slieve Lamagan climb FM in the mournes",
-            "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+            "atributionURL": "https://creativecommons.org/licenses/by-sa/4/",
             "attributionText": "our own image",
             "dataFile": 5
         },
@@ -145,6 +145,31 @@
         ],
         "decent":[
             {"anchor":[null,null],"labelPosition":[null,null],"path":[[2643,1085],[2477,1002]],"label":""}
+        ],
+        "varients" : [
+            {
+                "notePosition":[2061,3166],
+                "note":"A",
+                "route" : [
+                    [1956,3130],[1878,3070],[1774,2996],[1614,2918],[1530,2826],[1474,2776],[1542,2712],[1564,2656],
+                    [1602,2572],[1634,2558],[1696,2512],[1730,2524],[1796,2476],[1820,2423],[1870,2393],[2046,2365],
+                    [2072,2337]
+                ]
+            },
+            {
+                "notePosition":[2061,3166],
+                "note":"B",
+                "route" : [
+                    [2186, 1651],[2208, 1627],[2160, 1583],[2054, 1553],[1936, 1471],[1942, 1351],[1992, 1248],[1988, 1133],[2024, 1101]
+                ]
+            },
+            {
+                "notePosition":[2061,3166],
+                "note":"C",
+                "route" : [
+                    [2212, 1643],[2320, 1605],[2368, 1499],[2398, 1441],[2404, 1355],[2382, 1297],[2394, 1189],[2402, 1091] 
+                ]
+            } 
         ]
     }
 }

@@ -278,19 +278,31 @@ function getWeather(climb) {
 
 }
 
-function getRouteTopo(climb) {
+function getRouteTopo(climb, topoData) {
     var routeTopo = '';
     if(climb.topo.dataFile > 1){
+        let belayDisabled = altDisabled = deceDisabled = "disabled";
+        try{
+            belayDisabled = topoData.pitches.length >= 1 ? "checked" : "disabled";
+        } catch (e) { }
+        try {
+            altDisabled = topoData.alternatives.length >= 1 ? "checked" : "disabled";
+        } catch (e) { }
+        try {
+            deceDisabled = topoData.decent.length >= 1 ? "checked" : "disabled";
+        } catch (e) { }
+
         routeTopo += `
         <aside class="topo-controls">
             <small>
                 The below controls change the image so you can better see the rock if needed.
             </small><br />
-            <label for="c1"><input type="checkbox" value="infoBox" checked id="c1" name="c1" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Info Box</label>
-            <label for="c2"><input type="checkbox" value="routeLine" checked id="c2" name="c2" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Route</label>
-            <label for="c3"><input type="checkbox" value="belays" checked id="c3" name="c3" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Belay&nbsp;Points</label>
-            <label for="c4"><input type="checkbox" value="abseil" checked id="c4" name="c4" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Approach&nbsp;/&nbsp;Decent</label>
-            <label for="c5"><input type="checkbox" value="labels" checked id="c5" name="c5" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" />Labels</label>
+            <label for="c1"><input type="checkbox" value="infoBox" checked id="c1" name="c1" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" /><span>Info Box</span></label>
+            <label for="c2"><input type="checkbox" value="routeLine" checked id="c2" name="c2" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" /><span>Route</span></label>
+            <label for="c3"><input type="checkbox" value="belays" ${belayDisabled} id="c3" name="c3" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" /><span>Belay&nbsp;Points</span></label>
+            <label for="c4"><input type="checkbox" value="abseil" ${deceDisabled} id="c4" name="c4" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" /><span>Approach&nbsp;/&nbsp;Decent</span></label>
+            <label for="c5"><input type="checkbox" value="labels" ${belayDisabled} id="c5" name="c5" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" /><span>Labels</span></label>
+            <label for="c6"><input type="checkbox" value="Alternatives" ${altDisabled} id="c6" name="c6" onclick="topoInteraction(${climb.id}, '${climb.routeName}', '${climb.cliff}')" /><span>Alternatives</span></label>
         </aside>`;
     }
     routeTopo += `
@@ -418,9 +430,40 @@ function getMap(climb) {
     }
 }
 
-function climbCard(climb) {
+function getVariants(topoData, climb){
+    try {
+        let html = '';
+        if(topoData.alternatives){
+            html += `
+            <div class="col-12">
+                <h3>Alternative Routes</h3>        
+            </div>
+            `
+            for(let i = 0; i < topoData.alternatives.length; i++){
+                html += `<div class="col-12">
+                    <details>
+                    <summary>
+                        ${topoData.alternatives[i].referance}. ${topoData.alternatives[i].routeName} |
+                        ${topoData.alternatives[i].grade} - ${topoData.alternatives[i].length}
+                    </summary>
+                        <p>${topoData.alternatives[i].description}</p>
+                    </details>
+                    </div>`
+            }
+        }
+        return html;
+    } catch (e) {
+        // no alternative
+    }
+}
+
+function climbCard(climbData) {
+    let climb = climbData.climbData;
+    let topoData = climbData.topoData;
+
+    var variants = getVariants(topoData, climb);
     /* LOTS TO REFACTOR HERE */
-    var routeTopoModule = getRouteTopo(climb);
+    var routeTopoModule = getRouteTopo(climb, topoData);
     var approachInfoModule = getApproachInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
     var referanceModule = getReferanceInfo(climb);
@@ -553,6 +596,7 @@ function climbCard(climb) {
                             </small></em>
                         </aside>
                     </div>
+                    ${variants}
                 </section>
                 ${approachInfoModule}
                 ${pitchInfoModule}
