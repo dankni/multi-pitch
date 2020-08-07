@@ -57,7 +57,7 @@ function getTide(climb){
 }
 
 function getTides(climbsData){
-    tidalClimb = climbsData.filter(c => c.tidal == 1);
+    var tidalClimb = climbsData.climbs.filter(c => c.tidal == 1);
 
     return tidalClimb.reduce((p, climb) =>
 			       p.then(all_result => {
