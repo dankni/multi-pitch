@@ -33,7 +33,7 @@ function isValidGeo(geoLocation) {
 function getWeather(climbsData) {
     let pastAndCurrentFuture = climbsData.climbs
         .filter(climb =>
-            climb.status !== 'draft'
+            climb.status == 'publish'
             &&
             isValidGeo(climb.geoLocation)
         ).map(climb => {
@@ -43,19 +43,20 @@ function getWeather(climbsData) {
             d.setDate(d.getDate() - value);
             const tsInSeconds = (d.getTime() / 1000).toFixed(0);
             const darkSkyPastUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${climb.geoLocation},${tsInSeconds}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
-            console.log("going to call", darkSkyPastUrl);
+            console.log("going to call Past", darkSkyPastUrl);
             return axios.get(darkSkyPastUrl);
         });
 
         const darkSkyCurrentlyAndFutureUrl = `https://api.darksky.net/forecast/${darkSkyKey}/${geoLocation}?exclude=currently,flags,minutely,hourly,alerts&units=si`;
-        console.log("going to call", darkSkyCurrentlyAndFutureUrl);
+        console.log("going to call Current and Future", darkSkyCurrentlyAndFutureUrl);
         const darkSkyCurrentlyAndFuturePromise = axios.get(darkSkyCurrentlyAndFutureUrl);
 
         return [darkSkyPastPromises, darkSkyCurrentlyAndFuturePromise]
     });
 
     const p = pastAndCurrentFuture.map((tuple, index) => {
-        const climb = climbsData[index];
+        const climb = climbsData.climbs[index];
+        console.log("going to process climb with id: " + climb.id);
         const [pastPromises, currentAndFuturePromise] = tuple;
         return axios.all(pastPromises)
             .then(axiosResponse => axiosResponse.map(resp => resp.data))
