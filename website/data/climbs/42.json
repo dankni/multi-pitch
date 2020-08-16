@@ -114,7 +114,7 @@
                 "title": "Clibing in Val Gardena, Dolomites",
                 "type": "guidebook",
                 "pg": 162,
-                "description": "A brilliant guide book covering 70 of the best multi-pitch climbs in the Dolomites from grades II to VI. The book has a two-page spread per climb with a photo and a hand drawn topo. The approch and descent infomation is much better than the roxfax guide. However, the downside to this book is it has no pitch by pitch description which will make route finding on bigger walls hard. The book covers Via Maria and the the other climbs on this site and is a worthwhile purchase if your able to get hold of it. The gift shop in the Sella pass, closest to the sella towers stocked it at the time of writting (Aug 2020).",
+                "description": "A brilliant guide book covering 70 of the best multi-pitch climbs in the Dolomites from grades II to VI. The book has a two-page spread per climb with a photo and a hand drawn topo. The approch and descent infomation is much better than the rockfax guide. However, the downside to this book is it has no pitch by pitch description which will make route finding on bigger walls hard. The book covers Via Maria and the the other climbs on this site and is a worthwhile purchase if you're able to get hold of it. The gift shop in the Sella pass, closest to the sella towers stocked it at the time of writting (Aug 2020).",
                 "imgURL": "img/guidebooks/climbing-in-val-gardena-dolomites.jpg",
                 "link": "https://goo.gl/maps/spCT4ZUHZwQCA3UKA",
                 "rrp": 24.99
@@ -135,7 +135,7 @@
         "pitches":[
             {"belayPosition":[1376,2300],"labelPosition":[1466,2429],"grade":"IV","height":"25m"},
             {"belayPosition":[1226,1886],"labelPosition":[1354,2052],"grade":"IV+","height":"35m"},
-            {"belayPosition":[1188,1611],"labelPosition":[1271,1710],"grade":"IV-","height":"25m"},
+            {"belayPosition":[1188,1611],"labelPosition":[1271,1710],"grade":"IV","height":"25m"},
             {"belayPosition":[1246,1387],"labelPosition":[1298,1486],"grade":"IV","height":"40m"},
             {"belayPosition":[1229,1237],"labelPosition":[1310,1284],"grade":"III+","height":"50m"},
             {"belayPosition":[1376,1019],"labelPosition":[1381,1109],"grade":"IV","height":"35m"},
