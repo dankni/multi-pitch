@@ -217,7 +217,7 @@ function getWeather(climb) {
         <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
           <h4  tabindex="0">Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
           <p class="min-height">
-            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>.<br /><br />
+            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>. <small id="lastDate">Updated: </small><br /><br />
             <span class="weather tempr"></span> Temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c.<br />
             <span id="sunMovement">
                 <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between 

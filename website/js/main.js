@@ -1089,7 +1089,7 @@ function loadWeather() {
         toggleWeather.classList.remove("toggle-weather-off");
       }
     } catch (e) {
-      console.log("No weather found -> " + climb.id);
+      console.log("No weather found -> " + climb.id + ". Error -> " + e);
     }
   });
   setTimeout(() => loadWeather(), fourHoursInMilliseconds)
@@ -1182,6 +1182,8 @@ function loadCurrentWeatherModule(id){
                 document.getElementById('sunMovement').innerHTML = '<span class="weather moon"></span> 24h Darkness! No sunrise here today.';
             }
         }
+        const currentDay = new Date(dsWeather.currently.time * 1000);
+        document.getElementById('lastDate').innerHTML = '<br />Updated:' + currentDay.toString().substring(0,15);
         document.getElementById('precip_pos').innerText = Math.round(dsWeather.currently.precipProbability * 100);
         document.getElementById('precip_intense').innerText = dsWeather.currently.precipIntensity.toFixed(1);
         document.getElementById('wind_speed').innerText = dsWeather.currently.windGust.toFixed(1);
@@ -1198,7 +1200,7 @@ function loadCurrentWeatherModule(id){
         }
     }
   } catch (e) {
-    console.log("Weather Data Error " + climbid);
+    console.log("Weather Data Error " + climbid + ". Error -> " + e);
   }
 }
 

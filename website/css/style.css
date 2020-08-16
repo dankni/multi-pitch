@@ -791,7 +791,7 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
 }
 .card a picture {
   height: 10rem; /* keeps the page for too much jumping on load */
-  width: 20rem;
+  width: 100%;
   display: block;
   background: #b4b4b4;
   text-align: center;
@@ -2084,6 +2084,9 @@ hr {
   height: 38px;
   width: 38px;
   margin: -12px 0 0 0;
+}
+#lastDate{
+  color: #999;
 }
 .rain{
   background-image: url(/img/icons/weather/rain.svg);

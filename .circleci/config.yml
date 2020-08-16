@@ -63,7 +63,7 @@ jobs:
       # Deploy to the S3
       - run:
           name: Deploy to S3
-          command: aws s3 sync website s3://www.multi-pitch.com --delete
+          command: aws s3 sync website s3://www.multi-pitch.com --delete --exclude website/editor
       - run:
           name: Add a file to know which version was deployed
           command: |
