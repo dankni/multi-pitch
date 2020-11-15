@@ -1342,6 +1342,14 @@ nav ul li a {
 nav ul li a:hover {
   color: rgba(255, 255, 255, .75);
 }
+@media (max-width:360px){
+  nav ul li a {
+    margin-right:0.6rem;
+  }
+  .navbar-brand{
+    margin-right:0.5rem;
+  }
+}
 #map{
   position:fixed;
   margin-top:55px;

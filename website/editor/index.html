@@ -328,10 +328,146 @@
                                         "mainFileData" : true,
                                         "section" : "location",
                                         "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "county",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "location",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "length",
+                                        "type" : "int",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "pitches",
+                                        "type" : "int",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "dataGrade",
+                                        "type" : "int",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "grades",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "tradGrade",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "grades",
+                                        "derivedValue" : true 
+                                    },
+                                    {
+                                        "name" : "techGrade",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "grades",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "gradeSys",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "grades",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "originalGrade",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "grades",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "geoLocation",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "location",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "approachDifficulty",
+                                        "type" : "int",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "approachTime",
+                                        "type" : "int",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "incline",
+                                        "type" : "text",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "face",
+                                        "type" : "text",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "summary",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "url",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "tileImg",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "alt",
+                                        "type" : "text",
+                                        "mandetory" : true,
+                                        "mainFileData" : true,
+                                        "section" : "tileImg",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "atributionURL",
+                                        "type" : "text",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "tileImg",
+                                        "derivedValue" : false 
+                                    },
+                                    {
+                                        "name" : "attributionText",
+                                        "type" : "text",
+                                        "mandetory" : false,
+                                        "mainFileData" : true,
+                                        "section" : "tileImg",
+                                        "derivedValue" : false
                                     }
                                 ],
                                 "sections" : {
-                                    "mainFileData" : ["summary", "grades", "location", "attributes"],
+                                    "mainFileData" : ["summary", "grades", "location", "attributes", "tileImg"],
                                     "detailedData" : ["approach","pitches", "guidebooks", "weather", "referances"]
                                 },
                             }
@@ -339,15 +475,32 @@
                             const tileImg = ['url','alt','atributionURL','attributionText'];
                             const numbers = ['length','pitches','dataGrade','approachTime','approachDifficulty','updateTimestamp'];
                             document.getElementById('lastUpdate').innerText = chosenClimb.lastUpdate;
-                            for (var key in chosenClimb) {
-                                if(text.includes(key) || numbers.includes(key)){
-                                    let type = '';
-                                    text.includes(key) ? type = 'text' : type = 'number';
-                                    let hr = ''
-                                    if(key === 'face'){ hr = '<hr />' }
-                                    let input = `
+                            for(let i = 0; i < dataStructure.sections.mainFileData.length; i++){
+                                document.getElementById('inputs').innerHTML += `<h3>${dataStructure.sections.mainFileData[i]}</h3>`;
+                                let section = dataStructure.elements.filter(elem => elem.section === dataStructure.sections.mainFileData[i]);
+                                for(let j = 0; j < section.length; j++){
+                                    if(dataStructure.sections.mainFileData[i] === "tileImg"){
+                                        document.getElementById('inputs').innerHTML += formElement(section[j].type, chosenClimb.tileImage[section[j].name], 'tileImage.' + section[j].name);
+                                    } else {
+                                        document.getElementById('inputs').innerHTML += formElement(section[j].type, chosenClimb[section[j].name], section[j].name);
+                                    }
+                                }
+                                document.getElementById('inputs').innerHTML += `<hr>`;
+                            }
+                            document.getElementById('quickEditForm').style.display = 'block';
+                            mdc.autoInit();
+                            openModal();
+                        }
+
+                        /**
+                          RETURN FORM ELEMENT 
+                          **/
+                        function formElement(type, value, key){
+                            switch(type){
+                                case 'text':
+                                    return `
                                     <div class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
-                                        <input class="mdc-text-field__input" id="${key}" value="${chosenClimb[key]}" type="${type}">
+                                        <input class="mdc-text-field__input" id="${key}" value="${value}" type="text">
                                         <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
@@ -355,7 +508,44 @@
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                         </div>
-                                    </div>${hr}`
+                                    </div>`
+                                    break;
+                                case 'int':
+                                    return `
+                                    <div class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+                                        <input class="mdc-text-field__input" id="${key}" value="${value}" type="number">
+                                        <div class="mdc-notched-outline">
+                                        <div class="mdc-notched-outline__leading"></div>
+                                        <div class="mdc-notched-outline__notch">
+                                            <label for="text-field-${key}" class="mdc-floating-label">${key}</label>
+                                        </div>
+                                        <div class="mdc-notched-outline__trailing"></div>
+                                        </div>
+                                    </div>`
+                                    break;
+                                case 'boolean':
+                                    let checked = value === 1 ? 'checked' : '';
+                                    return `
+                                    <div class="mdc-checkbox" data-mdc-auto-init="MDCCheckbox">
+                                            <input type="checkbox" class="mdc-checkbox__native-control" id="${key}" ${checked}/>
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                                </svg>
+                                            </div>
+                                            <div class="mdc-checkbox__ripple"></div>
+                                        </div>
+                                        <label for="${key}">${key}</label>`
+                                    break;
+                            }
+                        }
+                        /*    for (var key in chosenClimb) {
+                                if(text.includes(key) || numbers.includes(key)){
+                                    let type = '';
+                                    text.includes(key) ? type = 'text' : type = 'number';
+                                    let hr = ''
+                                    if(key === 'face'){ hr = '<hr />' }
+                                    ${hr}`
                                     document.getElementById('inputs').innerHTML += input;
                                 } 
                                 if(toggles.includes(key)){
@@ -394,8 +584,8 @@
                             }
                             document.getElementById('quickEditForm').style.display = 'block';
                             mdc.autoInit();
-                            openModal();
-                        }
+                            openModal();*/
+                        
 
                         /**
                          * SHOW CLIMB DETAILS FROM LOCAL 
