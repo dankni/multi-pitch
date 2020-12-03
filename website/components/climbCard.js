@@ -430,7 +430,7 @@ function getMap(climb) {
     }
 }
 
-function getVariants(topoData, climb){
+function getVariants(topoData){
     try {
         let html = '';
         if(topoData.alternatives){
@@ -454,6 +454,7 @@ function getVariants(topoData, climb){
         return html;
     } catch (e) {
         // no alternative
+        return "";
     }
 }
 
@@ -461,8 +462,8 @@ function climbCard(climbData) {
     let climb = climbData.climbData;
     let topoData = climbData.topoData;
 
-    var variants = getVariants(topoData, climb);
-    /* LOTS TO REFACTOR HERE */
+    var variants = getVariants(topoData);
+    /* ToDo: LOTS TO REFACTOR HERE */
     var routeTopoModule = getRouteTopo(climb, topoData);
     var approachInfoModule = getApproachInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
