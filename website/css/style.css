@@ -93,7 +93,7 @@ html {
 .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg,
 .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl,
 .col-xl-auto {
-  position: relative;
+ /* position: relative; BREAK SLIDERS SO TRYING WITHOUT */
   width: 100%;
   min-height: 1px;
   padding-right: 15px;
@@ -519,7 +519,7 @@ html {
 
 /**************/
 /** ELEMENTS **/
-h1,h3,h4,p,ul {
+h1,h3,h4,h5,p,ul {
   margin-top: 0;
 }
 h1 {
@@ -535,6 +535,14 @@ h3 {
 }
 h4 {
   font-size: 1.4rem
+}
+h5 {
+  font-size: 1.2rem;
+  margin-bottom:1rem;
+  font-weight: 300;
+}
+h5 > small {
+  font-size: 0.8rem;
 }
 p,ul {
   margin-bottom: 1rem;
@@ -1156,14 +1164,17 @@ position: relative;
 }
 .current-values{
   padding-left:30%;
-  margin:0;
+  margin: 10PX 0 0 0;
 }
 .filters .row {
   padding:1rem;
 }
-.filters .row .col-md-4{
-  background-color:rgba(3,3,3,.03);
+.filters {
+  background-color:rgba(3,3,3,.1);
   padding:1rem;
+}
+.filters h4 {
+  padding: 0 0 0 1rem;
 }
 .sort-list{
   margin:20px auto 0 auto;
@@ -1249,68 +1260,6 @@ a:focus .crag-hero{
 @media (max-width:740px){
   .scroll-down-link{
     display: none;
-  }
-}
-/************************/
-/** multi range slider **/
-.break{
-  display: none;
-}
-@supports (--css: variables) {
-  input[type="range"].multirange {
-  padding: 0;
-  margin: 0;
-  display: inline-block;
-  vertical-align: top;
-  }
-
-  input[type="range"].multirange.original {
-  position: absolute;
-  width:60%;
-  }
-
-  input[type="range"].multirange.original::-webkit-slider-thumb {
-    position: relative;
-    z-index: 2;
-  }
-
-  input[type="range"].multirange.original::-moz-range-thumb {
-    transform: scale(1); /* FF doesn't apply position it seems */
-    z-index: 1;
-  }
-
-  input[type="range"].multirange::-moz-range-track {
-    border-color: transparent; /* needed to switch FF to "styleable" control */
-  }
-
-  input[type="range"].multirange.ghost {
-  position: relative;
-  background: var(--track-background);
-  --track-background: linear-gradient(to right,
-    transparent var(--low), var(--range-color) 0,
-    var(--range-color) var(--high), transparent 0
-    ) no-repeat 0 45% / 100% 40%;
-  --range-color: hsl(190, 80%, 40%);
-  width:65%;
-  }
-
-  input[type="range"].multirange.ghost::-webkit-slider-runnable-track {
-  background: var(--track-background);
-  }
-
-  input[type="range"].multirange.ghost::-moz-range-track {
-  background: var(--track-background);
-  }
-  @media(min-width:750px) and (max-width:1080px){
-    .break{
-      display:initial;
-    }
-    input[type="range"].multirange.original{
-      width:90%;
-    }
-    input[type="range"].multirange.ghost{
-      width:95%;
-    }
   }
 }
 
@@ -2161,4 +2110,159 @@ details[open] summary ~ * {
 }
 input:disabled + span {
   color:#ccc;
+}
+
+/************************/
+/** multi range slider **/
+.controls {
+  text-align: center;
+  background: #0055b8;
+  color: white;
+  width: 100%;
+  border-radius: 1rem;
+}
+/* Two-thumb range input */
+div.input-range {
+display: inline-block;
+position: relative;
+width: 65%;
+height: 1.3em;
+vertical-align: middle;
+margin: 0 1.8em;
+margin-top: -3px;
+}
+
+div.input-range > label {
+position: absolute;
+transform: translateY(-50%);
+font-size: 0.7em;
+top: 50%;
+}
+
+div.input-range > label:first-child {
+right: 102%;
+}
+
+div.input-range > label:last-child {
+left: 102%;
+}
+
+div.input-range > input {
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+margin: 0;
+padding: 0;
+font: inherit;
+width: 100%;
+height: 100%;
+background: transparent;
+position: absolute;
+top: 0;
+left: 0;
+display: inline-block;
+cursor: pointer;
+}
+
+div.input-range > input:focus {
+outline: 0;
+}
+
+div.input-range > input::-moz-focus-outer {
+border: 0;
+}
+
+div.input-range > input::-webkit-slider-thumb {
+border: none;
+-webkit-appearance: none;
+pointer-events: all;
+height: 1em;
+width: 1em;
+border-radius: 50%;
+background: white;
+z-index: 2;
+position: relative;
+box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
+margin-top: -6px; /* Chrome needs to shift the thumb up. */
+}
+
+@supports (-ms-accelerator:true) {
+div.input-range > input::-webkit-slider-thumb {
+    margin-top: 0; /* Remove margin on Edge */
+}
+}
+
+div.input-range > input::-moz-range-thumb {
+border: none;
+-moz-appearance: none;
+pointer-events: all;
+height: 1em;
+width: 1em;
+border-radius: 50%;
+background: white;
+z-index: 2;
+position: relative;
+box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
+}
+
+div.input-range > input::-ms-thumb {
+border: none;
+appearance: none;
+height: 1em;
+width: 1em;
+border-radius: 50%;
+background: white;
+z-index: 2;
+position: relative;
+box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
+}
+
+div.input-range > input:focus::-webkit-slider-thumb {
+box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
+    0 0 0 4px rgba(0, 0, 0, 0.07);
+}
+
+div.input-range > input:focus::-moz-range-thumb {
+box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
+    0 0 0 4px rgba(0, 0, 0, 0.07);
+}
+
+div.input-range > input:focus::-ms-thumb {
+box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
+    0 0 0 4px rgba(0, 0, 0, 0.07);
+}
+
+div.input-range > input::-webkit-slider-runnable-track {
+width: 100%;
+height: 4px;
+background: rgba(255, 255, 255, 0.3);
+border: none;
+border-radius: 2px;
+}
+
+div.input-range > input::-moz-range-track {
+width: 100%;
+height: 4px;
+background: rgba(255, 255, 255, 0.3);
+border: none;
+border-radius: 2px;
+}
+
+div.input-range > input::-ms-track {
+background: transparent; /* No background color. */
+border-color: transparent; /* No border. */
+color: transparent; /* No tick marks. */
+width: 100%;
+height: 4px;
+border: none;
+}
+
+div.input-range > input::-ms-tooltip {
+display: none;
+}
+
+div.input-range > input::-ms-fill-lower,
+div.input-range > input::-ms-fill-upper {
+background: rgba(255, 255, 255, 0.3);
+border-radius: 2px;
 }

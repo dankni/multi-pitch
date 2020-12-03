@@ -188,16 +188,20 @@ function trackGA(category, action, label, value = 0){
 /**
  SHOW THE CURRENT VALUE OF THE SLIDERS
  **/
-function showVal(values, field) {
+function showVal(field) {
 
-    var lowerValue = values.split(',')[0];
-    var higherValue = values.split(',')[1];
+    let gradePreference = 'BAS'; //default
+
+    let val1 = parseInt(document.getElementById(field + 'Range1').value);
+    let val2 = parseInt(document.getElementById(field + 'Range2').value);
+
+    let lowerValue = val1 < val2 ? val1 : val2;
+    let higherValue = val2 >= val1 ? val2 : val1;
+
     if(localStorage.getItem('gradePreference')){
-       var gradePreference = localStorage.getItem('gradePreference');
+       gradePreference = localStorage.getItem('gradePreference');
        document.getElementById('gradeSys').title = gradeMappings[gradePreference].title;
        document.getElementById('gradeSys').textContent = gradePreference;
-    } else {
-        var gradePreference = 'BAS';
     }
 
     if (field === 'grade') {
@@ -222,7 +226,7 @@ function updateGradePref() {
     for (let i=0; i < radios.length; i++) {
         if (radios[i].checked) { 
             localStorage.setItem('gradePreference', radios[i].value); 
-            showVal(document.getElementById('gradeRange').value, 'grade');
+            showVal('grade');
             if(document.getElementById(radios[i].value)){
                 document.getElementById(radios[i].value).style.display = 'block';
             }
@@ -280,18 +284,39 @@ function toggleUseConverted(){
 }
 
 /**
+ FUNCTION TO GET FILTER VALUES FROM HTML 
+ **/
+function getFilters(){
+    let filters = {
+        "height" :   { "low" : 50, "high" : 720 },
+        "grade" :    { "low" : 1,  "high" : 7   },
+        "approach" : { "low" : 0,  "high" : 200  }
+    };
+    const keys = Object.keys(filters);
+    for(let i = 0; i < keys.length; i++){
+        let val1 = parseInt(document.getElementById(keys[i] + 'Range1').value);
+        let val2 = parseInt(document.getElementById(keys[i] + 'Range2').value);
+        
+        if(val1 < val2) {
+            filters[keys[i]].low = val1;
+            filters[keys[i]].high = val2;
+        } else {
+            filters[keys[i]].low = val2;
+            filters[keys[i]].high = val1;
+        }
+    }
+    return filters;
+}
+
+
+/**
  A FUNCTION TO FILTER THE CARD BY THE USERS SELECTION
  **/
 function filterCards() {
 
     let resultCount = 0;
-    
-    let lowGrade = parseInt(document.getElementById('gradeRange').value.split(',')[0]);
-    let highGrade = parseInt(document.getElementById('gradeRange').value.split(',')[1]);
-    let lowHeight = parseInt(document.getElementById('heightRange').value.split(',')[0]);
-    let highHeight = parseInt(document.getElementById('heightRange').value.split(',')[1]);
-    let lowApproach = parseInt(document.getElementById('approachRange').value.split(',')[0]);
-    let highApproach = parseInt(document.getElementById('approachRange').value.split(',')[1]);
+    let filters = getFilters();
+
     var cards = document.getElementsByClassName('card');
 
     for (let i = 0; i < cards.length; i++) {
@@ -312,12 +337,12 @@ function filterCards() {
         }
 
         if (
-            parseInt(dataGrade) >= lowGrade
-            && parseInt(dataGrade) <= highGrade
-            && parseInt(dataHeight) >= lowHeight
-            && parseInt(dataHeight) <= highHeight
-            && parseInt(dataApproach) >= lowApproach
-            && parseInt(dataApproach) <= highApproach
+            parseInt(dataGrade) >= filters.grade.low
+            && parseInt(dataGrade) <= filters.grade.high
+            && parseInt(dataHeight) >= filters.height.low
+            && parseInt(dataHeight) <= filters.height.high
+            && parseInt(dataApproach) >= filters.approach.low
+            && parseInt(dataApproach) <= filters.approach.high
             && clash < 1
         ) {
             cards[i].style.display = "block";
@@ -348,10 +373,8 @@ function toggleFilters(){
 }
 
 function saveFilter() {
-    let filter = {};
-    filter.gradeRange = document.getElementById('gradeRange').value;
-    filter.heightRange = document.getElementById('heightRange').value;
-    filter.approachRange = document.getElementById('approachRange').value
+    let filter = getFilters();
+
     let advancedLabels = document.getElementsByClassName('advancedLabel');
     for(let j = 0; j < advancedLabels.length; j++){
         let title = advancedLabels[j].getAttribute('for');
@@ -366,10 +389,8 @@ function trackFilter(filterType){
     lastUpdate.innerHTML = new Date().getTime();
     setTimeout(function(){
         if (parseInt(lastUpdate.innerHTML) + 1999 < new Date().getTime()){
-            let grade = document.getElementById('grade').innerText;
-            let height = document.getElementById('height').innerText;
-            let approach = document.getElementById('approach').innerText;
-            let label = "G = " + grade + " | H = " + height + " | A = " + approach;
+            let filters = getFilters();
+            let label = `G = ${filters.grade.low},${filters.grade.high} | H = ${filters.height.low},${filters.height.high} | A = ${filters.approach.low},${filters.approach.high}`;
             saveFilter();
             trackGA('sort-and-filter', filterType + '-filter', label, 0);
         }
@@ -435,6 +456,52 @@ helper.arr = {
         });
     }
 };
+
+/**
+ RANGE SLIDERS
+ **/
+function mousemoveListener(event) {
+    var x = (event.clientX - this.offsetLeft) / this.offsetWidth;
+    var inputs = this.getElementsByTagName('input');
+    var min_dist = Infinity,
+        min_index = 0;
+    for(var i = 0; i < inputs.length; i++) {
+    	var dist = (inputs[i].value - inputs[i].min) / (inputs[i].max - inputs[i].min);
+        dist = Math.abs(dist - x);
+        if (dist < min_dist) {
+            min_dist = dist;
+            min_index = i;
+        }
+    }
+    for(var i = 0; i < inputs.length; i++) {
+        inputs[i].style.zIndex = i == min_index ? 1 : 0;
+    }
+}
+function changeListener(event) {
+    var parent = this.parentNode;
+    var inputs = parent.getElementsByTagName('input');
+    var values = [];
+    for(var i = 0; i < inputs.length; i++) {
+        values[i] = +inputs[i].value;
+    }
+    parent.value = values[0] < values[1] ? values : [values[1], values[0]];
+    var event = document.createEvent('Event');
+    event.initEvent('change', true, true);
+    parent.dispatchEvent(event);
+}
+function attachInputRangeListeners(containers) {
+    var containers = containers || document.getElementsByClassName('input-range');
+    for(var i = 0; i < containers.length; i++) {
+    	// Move the closest input range to the top.
+        containers[i].addEventListener('mousemove', mousemoveListener);
+        // Generate an onchange event for the input range container.
+        var inputs = containers[i].getElementsByTagName('input');
+        for (var j = 0; j < inputs.length; j++) {
+            inputs[j].addEventListener('input', changeListener);
+            inputs[j].addEventListener('change', changeListener);
+        }
+    }
+}
 
 /**
  GET GRADE TO SHOW BASED ON ClimbID & PREFFERED GRADE
@@ -1261,14 +1328,17 @@ function execFilter(){
     for(let i = 0; i < advancedLabels.length; i++){
         document.getElementById(advancedLabels[i].getAttribute('for')).checked = filters[advancedLabels[i].getAttribute('for')];
     }
-    document.getElementById('gradeRange').value = filters.gradeRange;
-    showVal(filters.gradeRange, 'grade');
-    document.getElementById('heightRange').value = filters.heightRange;
-    showVal(filters.heightRange, 'height');
-    document.getElementById('approachRange').value = filters.approachRange;
-    showVal(filters.approachRange, 'approach');
+
+    const keys = Object.keys(filters); // load range sliders from localstorage
+    for(let i = 0; i < 2; i++){
+        document.getElementById(keys[i] + 'Range1').value = filters[keys[i]].low;
+        document.getElementById(keys[i] + 'Range2').value = filters[keys[i]].high;
+        showVal([keys[i]]);
+    }
+    showVal('grade');
     updateTotalCount();
 }
+
 function clearFilters(){    
     try {
         localStorage.removeItem('filters');
@@ -1281,17 +1351,18 @@ function clearFilters(){
         document.getElementById(labels[i].getAttribute('for')).checked = true;
     }
     // reset the normal filters
-    let options = { "filters": 
-                    [{"el":"gradeRange", "name":"grade"},
-                    {"el":"heightRange", "name":"height"},
-                    {"el":"approachRange", "name":"approach"}]
-                };
-    for(let i = 0; i < options.filters.length; i++){
-        let range = document.getElementById(options.filters[i].el);
-        let valueString = range.min + ',' + range.max;
-        range.value = valueString
-        showVal(valueString, options.filters[i].name);
+    let filters = {
+        "height" :   { "low" : 50, "high" : 720 },
+        "grade" :    { "low" : 1,  "high" : 7   },
+        "approach" : { "low" : 0,  "high" : 200  }
+    };
+    const keys = Object.keys(filters);
+    for(let i = 0; i < keys.length; i++){
+        document.getElementById(keys[i] + 'Range1').value = filters[keys[i]].low;
+        document.getElementById(keys[i] + 'Range2').value = filters[keys[i]].high;
+        showVal([keys[i]]);
     }
+    showVal('grade'); // ToDo: not sure why we need this here
     filterCards();
     return false;
 }
@@ -1345,7 +1416,8 @@ function init () {
         if(localStorage.getItem('filters')){
             execFilter();
         }
-        loadWeather();
+    //    loadWeather();
+        attachInputRangeListeners(); // set up the range sliders
         window.performance.mark('all-climbs-loaded');
     }
     if (geoLocationSupport === true && hp === true) {

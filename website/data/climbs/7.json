@@ -30,7 +30,7 @@
         "loose": null,
         "seepage": null,
         "grassLegdes": null,
-        "lastUpdate": "2020-08-06T12:42:33.782Z",
+        "lastUpdate": "2020-08-06T12:43:33.782Z",
         "weatherData": [
             {
                 "type": "rainyDays",
@@ -165,7 +165,7 @@
                 "referance" : "C",
                 "grade" : "VDiff 3b",
                 "length" : "151m",
-                "description" : "The route Faith takes a line up the right-hand side of the Idwal Slabs. It’s a quality route, although more likely to suffer seepage than the other lines. It’s usually done in 5 pitches and requires some confidence with footwork early on but offers little in the way of technical challenge. It is also an ideal line to take if heading up the Holy Tree Wall or Continuation Wall because it ends directly by them.",
+                "description" : "The route Faith takes a line up the right-hand side of the Idwal Slabs. It’s a quality route, although more likely to suffer seepage than the other lines. It’s usually done in 5 pitches and requires some confidence with footwork early on but offers little in the way of technical challenge. It is also an ideal line to take if heading up the Holly Tree Wall or Continuation Wall because it ends directly by them.",
                 "route":[
                     [3904, 1564],[3650, 1436],[3476, 1320],[3286, 1128],[3176, 1050],[3174, 940],[3196, 924],[3028, 848],[2918, 818],[2770, 766],
                     [2698, 698],[2642, 610],[2556, 558],[2500, 526],[2438, 502],[2348, 480],[2294, 448],[2302, 434],[2302, 408],[2268, 394],
@@ -177,7 +177,7 @@
                 "referance" : "D",
                 "grade" : "S 4a",
                 "length" : "40m",
-                "description" : "Although a higher grade and therefore harder finish than many of the routes up the Idwal Slabs, Lazarus offers and exceptional end to any of the routes listed. It’s also the easiest route up the Holy Tree Wall at grade Severe. The holds are good and protection plentiful. The wall will look and feel steep and exposed after climbing the slabs below. The first pitch of Lazarus moves up into the gully and is fine but not super interesting. The second pitch is incredible. It traverses out on the steep Holy Tree Headwall before climbing up past a clean-cut looking block, passing on the right. Then following an easier gully up onto a large ledge of the continuation wall. From the ledge, another pitch can be taken up The Groove Above (also Severe). There are also a number of alternative pitch options ranging from grade Diff like The Upper Staircase to HVS like Continuation Crack. Climbers could also scramble off.",
+                "description" : "Although a higher grade and therefore harder finish than many of the routes up the Idwal Slabs, Lazarus offers and exceptional end to any of the routes listed. It’s also the easiest route up the Holly Tree Wall at grade Severe. The holds are good and protection plentiful. The wall will look and feel steep and exposed after climbing the slabs below. The first pitch of Lazarus moves up into the gully and is fine but not super interesting. The second pitch is incredible. It traverses out on the steep Holly Tree Headwall before climbing up past a clean-cut looking block, passing on the right. Then following an easier gully up onto a large ledge of the continuation wall. From the ledge, another pitch can be taken up The Groove Above (also Severe). There are also a number of alternative pitch options ranging from grade Diff like The Upper Staircase to HVS like Continuation Crack. Climbers could also scramble off.",
                 "route":[
                     [2164,323],[2183,280],[2220,255],[2240,231],[2220,215],[2184,190],[2161,185],[2141,176],[2146,151],[2173,134],[2173,119]
                 ]

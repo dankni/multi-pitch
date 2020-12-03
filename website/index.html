@@ -20,11 +20,11 @@
     <meta name="description" content="Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m.." />
 
     <!-- Styles -->
-    <link href="css/style.css?Jun=2020" rel="stylesheet" />
+    <link href="css/style.css?Dec=2020" rel="stylesheet" />
 
     <!-- JavaScripts -->
     <script async src="components/climbCard.js"></script>
-    <script async src="js/main.js?Jun=2020"></script>
+    <script async src="js/main.js?Dec=2020"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
@@ -168,33 +168,40 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <span id="lastUpdate" style="display:none;"></span>
-                                    <label for="gradeRange">
-                                        Grade
-                                    </label><br class="break" />
-                                    <input id="gradeRange" type="range" multiple value="1,7" min="1" max="7" step="1"
-                                           oninput="showVal(this.value, 'grade');trackFilter('grade');" /><br />
-                                    <p id="grade" class="current-values">
-                                        <span id="grade1">Diff</span> to <span id="grade2">E1</span>
-                                        <small>
-                                            (<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-tips/climbing-grades/content.html', this.id)">BAS</abbr>)
-                                        </small>    
-                                    </p>
+                                    <h5>
+                                        Grade 
+                                        <small>(<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-tips/climbing-grades/content.html', this.id)">BAS</abbr>)</small>  
+                                    </h5>
+                                    <div class="controls">
+                                        <div class="input-range" data-tostring="x">
+                                            <label id="grade1">Diff</label>
+                                            <input id="gradeRange1" value="1" min="1" max="7" step="1" type="range" oninput="showVal('grade');trackFilter('grade');" />
+                                            <input id="gradeRange2" value="7" min="1" max="7" step="1" type="range" oninput="showVal('grade');trackFilter('grade');" />
+                                            <label id="grade2">E1</label>
+                                        </div>     
+                                    </div> <br class="break" />
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="heightRange">Height </label><br class="break" />
-                                    <input id="heightRange" type="range" multiple value="50,720" min="50" max="720" step="10"
-                                           oninput="showVal(this.value, 'height');trackFilter('height');" /><br />
-                                    <p id="height" class="current-values">
-                                        <span id="height1">50</span>m to <span id="height2">720</span>m
-                                    </p>
+                                    <h5>Height </h5>
+                                    <div class="controls">
+                                        <div class="input-range" data-tostring="x">
+                                            <label id="height1">51</label>
+                                            <input id="heightRange1" value="51" min="50" max="720" step="10" type="range" oninput="showVal('height');trackFilter('height');" />
+                                            <input id="heightRange2" value="720" min="50" max="720" step="10" type="range" oninput="showVal('height');trackFilter('height');" />
+                                            <label id="height2">720</label>
+                                        </div>     
+                                    </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="approachRange">Approach </label><br class="break" />
-                                    <input id="approachRange" type="range" multiple value="0,200" min="0" max="200" step="10"
-                                           oninput="showVal(this.value, 'approach');trackFilter('approach');" /><br />
-                                    <p id="approach" class="current-values">
-                                        <span id="approach1">0</span> to <span id="approach2">200</span> mins
-                                    </p>
+                                    <h5>Approach </h5>
+                                    <div class="controls">
+                                        <div class="input-range" data-tostring="x">
+                                            <label id="approach1">0</label>
+                                            <input id="approachRange1" value="0" min="0" max="200" step="5" type="range" oninput="showVal('approach');trackFilter('approach');" />
+                                            <input id="approachRange2" value="200" min="0" max="200" step="5" type="range" oninput="showVal('approach');trackFilter('approach');" />
+                                            <label id="approach2">200</label>
+                                        </div>     
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <h5 class="filter-toggle" 
@@ -341,6 +348,5 @@
     <script>
         window.performance.mark('html-end');
     </script>
-    <script async defer src="https://niceice.io/js/nif.js" id="ni-f-w" data-config="{'name': 'nif', 'config': {'projectId': 'e0006ab084a04ebca7f19524cd3c7ea9'}}"></script>
 </body>
 </html>
