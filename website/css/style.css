@@ -2120,6 +2120,7 @@ input:disabled + span {
   color: white;
   width: 100%;
   border-radius: 1rem;
+  margin-bottom: 1.5rem;
 }
 /* Two-thumb range input */
 div.input-range {
