@@ -98,7 +98,7 @@ function getReferanceInfo(climb) {
                 </p>
                 <p>`;
                     for (let i = 0; i < climb.referances.length; i++) {
-                        refInfo += `<a href="${climb.referances[i].url}" target="blank">${climb.referances[i].text} <i class="icon-link-ext"></i></a><br />`;
+                        refInfo += `<a href="${climb.referances[i].url}" target="blank" rel="noopener">${climb.referances[i].text} <i class="icon-link-ext"></i></a><br />`;
                     }
                     refInfo += `
                 </p>

@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2020-11-29T12:51:11.339Z",
+  "lastUpdate": "2021-05-28T12:53:10.339Z",
   "climbs": [
     {
       "cliff": "Great Tor",
@@ -588,7 +588,7 @@
       "loose": null,
       "seepage": null,
       "grassLegdes": "",
-      "lastUpdate": "2019-07-23T12:00:00.000Z",
+      "lastUpdate": "2021-01-01T12:00:00.000Z",
       "tileImage": {
         "url": "img/tiles/old-man-of-stoer-small.jpg",
         "alt": "The Sea Stack Know as The Old Man of Stoer",
@@ -1165,7 +1165,7 @@
       "loose": null,
       "seepage": null,
       "grassLegdes": "",
-      "lastUpdate": "2020-06-18T19:33:12.275Z",
+      "lastUpdate": "2019-05-10T12:00:00.000Z",
       "tileImage": {
         "url": "img/tiles/devils-tower-wyoming.jpg",
         "alt": "The Back of the Devils tower Wyoming",
@@ -1451,6 +1451,42 @@
       "tileImage": {
         "url": "img/tiles/via-maria-climb-in-dolomites-sass-pordoi.jpg",
         "alt": "Via Maria Climb in the Dolomites on the South Face of Sass Pordoi",
+        "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attributionText": "our own image"
+      } 
+    },
+    {
+      "cliff": "Sella Towers",
+      "status": "publish",
+      "id": 43,
+      "country": "Italy",
+      "county": "South Tyrol",
+      "routeName": "Via Steger",
+      "length": 175,
+      "pitches": 8,
+      "dataGrade": 4,
+      "tradGrade": "HS",
+      "techGrade": "4a",
+      "gradeSys": "UIAA",
+      "originalGrade": "IV+",
+      "geoLocation": "46.509105837, 11.7738439522",
+      "approachTime": 10,
+      "approachDifficulty": 1,
+      "rock": "Dolomite",
+      "incline": "Vertical",
+      "face": "SW",
+      "abseil": 1,
+      "traverse": 1,
+      "boat": null,
+      "tidal": null,
+      "polished": 1,
+      "loose": null,
+      "seepage": null,
+      "grassLegdes": null,
+      "lastUpdate": "2021-05-24T12:53:10.339Z",
+      "tileImage": {
+        "url": "img/tiles/sella-towers-in-dolomites.jpg",
+        "alt": "The First & Second Sella Towers in the the Sella Pass in Italy",
         "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
         "attributionText": "our own image"
       } 

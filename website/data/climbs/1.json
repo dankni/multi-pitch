@@ -1,1 +1,112 @@
-{"climbData":{"cliff":"Old Man of Stoer","status":"publish","id":1,"country":"Scotland","county":"Sutherland","routeName":"Original Route","length":67,"pitches":5,"dataGrade":5,"tradGrade":"VS","techGrade":"5a","gradeSys":"BAS","originalGrade":"VS 5a","geoLocation":"58.26094,-5.38266","approachTime":50,"approachDifficulty":3,"rock":"Sandstone","intro":"Arguably one of the best sea stacks in the United Kingdom, The Old Man of Stoer (Stake), makes for an adventurous day out and an all round exceptional climb. The rock is Torridonian sandstone, meaning it was formed before any significant life on earth existed. The approach is either some wet rock hopping 100m north of the stack at the lowest tide or the more classic Tyrolean traverse which needs to be set up by swimming the 8 meter channel if there is not one left in place when you arrive. The route itself, Original Route, meanders the landward face. Larger cams and hexs are recommended. Be wary of nesting seagulls who first line of defence is usually to attack you with projectile vomit.","approach":"Park at the car park near the Stoer Light house (58.237948, -5.400902). Head 3Km northwards to the sea stack, going over the hill of Sidhean Mor. Take a steep scramble down and either boulder hop to the stack at the lowest of tides or set up a Tyrolean traverse if one is not in place already by swimming the 8 meter channel. Using a static rope for this will be easier than dynamic climbing ropes if you can be bothered to carry it.","pitchInfo":null,"incline":"Vertical","face":"SE","abseil":1,"traverse":1,"boat":null,"tidal":1,"polished":null,"loose":null,"seepage":null,"grassLegdes":null,"lastUpdate":"2019-07-23T12:00:00.000Z","weatherData":[{"type":"rainyDays","Jan":20,"Feb":17,"Mar":20,"Apr":16,"May":15,"Jun":14,"Jul":15,"Aug":17,"Sep":17,"Oct":20,"Nov":19,"Dec":17},{"type":"tempH","Jan":8,"Feb":7,"Mar":8,"Apr":9,"May":11,"Jun":13,"Jul":15,"Aug":15,"Sep":14,"Oct":12,"Nov":10,"Dec":8},{"type":"tempL","Jan":5,"Feb":5,"Mar":5,"Apr":6,"May":8,"Jun":10,"Jul":12,"Aug":13,"Sep":11,"Oct":9,"Nov":7,"Dec":6}],"mapImg":{"url":"img/topos/stoer/maps/","alt":"The Old Man of Stoer's Location in Scotland","atributionURL":"https://www.mapbox.com/","attributionText":"Mapbox","geo":"58.26094,-5.38266"},"topo":{"url":"img/topos/stoer/old-man-of-stoer-climbing-topo.jpg","alt":"Topo for The Old Man of Stoer","atributionURL":"https://commons.wikimedia.org/wiki/File:Old_man_of_stoer.jpg","attributionText":"original image","dataFile":5},"referances":[{"url":"https://www.mountainproject.com/route/106636010/the-old-man-of-stoer","text":"Mountain Project Page"},{"url":"https://www.ukclimbing.com/logbook/crag.php?id=300","text":"UKC Page"},{"url":"https://www.worldtides.info/","text":"Tidal Information (lon/lat = 58.26094,-5.38266)"},{"url":"https://www.youtube.com/watch?v=pgrfVtOotb8","text":"Video of the swim & climb"}],"guideBooks":[{"isbn":"9781906095468","title":"Scottish Rock, Volume 2, North","type":"guidebook","pg":266,"description":"A brilliant book covering such a wide and varied set of crags in the north of Scotland. The section on The Old Man of Stoer Routes is good. The images of longer routes can be a bit small at other crags thou.","imgURL":"img/guidebooks/scottish-rock-volume-2.jpg","link":"https://amzn.to/2C1KKgp","rrp":25}]},"topoData":{"image":"/img/topos/stoer/crag.jpg","flag":"/img/flags/sco.png","title":"Old Man of Stoer > Original Route | VS 5a - 70m","belaySize":18,"route":[[1111,1664],[1103,1631],[1106,1593],[1070,1588],[1031,1609],[980,1635],[889,1661],[825,1670],[809,1625],[796,1548],[799,1491],[805,1434],[856,1401],[905,1367],[937,1359],[933,1311],[940,1249],[945,1227],[968,1178],[932,1135],[883,1135],[870,1101],[886,1065],[888,1033],[925,1026],[991,970],[1011,942],[1034,888],[1079,826],[1103,805],[1139,768],[1158,703],[1160,653],[1170,595],[1156,537],[1123,534],[1118,414],[1120,296],[1027,219]],"pitches":[{"belayPosition":[1113,1657],"labelPosition":[952,1725],"grade":"5a","height":"15m"},{"belayPosition":[825,1657],"labelPosition":[689,1497.6],"grade":"4b","height":"12m"},{"belayPosition":[920,1358],"labelPosition":[825,1223.4],"grade":"4b","height":"15m"},{"belayPosition":[907,1025],"labelPosition":[1057,957],"grade":"4c","height":"10m"},{"belayPosition":[1158,691],"labelPosition":[962,446],"grade":"4a","height":"15m"},{"belayPosition":[1027,219],"labelPosition":[null,null],"grade":"","height":""}],"decent":[{"anchor":[null,null],"labelPosition":[1163,249],"path":[[1047,212],[1060,209],[1120,209],[1123,252]],"label":"~40m to next absail"},{"anchor":[1092,1362],"labelPosition":[987,1529],"path":[[1093,1381],[1092,1462]],"label":"~12m"},{"anchor":[null,null],"labelPosition":[1524,1708.1],"path":[[1134.5,1653.4],[1467,1704]],"label":"Tyrolean rope traverse"},{"anchor":[null,null],"labelPosition":[2063,1056.4],"path":[[2264,1098.4],[2119,1102.4],[2005,1138.4],[1950,1178.4],[1855,1201.4]],"label":"Low tide option"}]}}
+{
+    "climbData": {
+        "cliff": "Old Man of Stoer",
+        "status": "publish",
+        "id": 1,
+        "country": "Scotland",
+        "county": "Sutherland",
+        "routeName": "Original Route",
+        "length": 67,
+        "pitches": 5,
+        "dataGrade": 5,
+        "tradGrade": "VS",
+        "techGrade": "5a",
+        "gradeSys": "BAS",
+        "originalGrade": "VS 5a",
+        "geoLocation": "58.26094,-5.38266",
+        "approachTime": 50,
+        "approachDifficulty": 3,
+        "rock": "Sandstone",
+        "intro": "Arguably one of the best sea stacks in the United Kingdom, The Old Man of Stoer (Stake), makes for an adventurous day out and an all round exceptional climb. The rock is Torridonian sandstone, meaning it was formed before any significant life on earth existed. The approach is either some wet rock hopping 100m north of the stack at the lowest tide or the more classic Tyrolean traverse which needs to be set up by swimming the 8 meter channel if there is not one left in place when you arrive. The route itself, Original Route, meanders the landward face. Larger cams and hexs are recommended. Be wary of nesting seagulls who first line of defence is usually to attack you with projectile vomit.",
+        "approach": "Park at the car park near the Stoer Light house (58.237948, -5.400902). Head 3Km northwards to the sea stack, going over the hill of Sidhean Mor. Take a steep scramble down and either boulder hop to the stack at the lowest of tides or set up a Tyrolean traverse if one is not in place already by swimming the 8 meter channel. Using a 40m static rope for this will be easier than dynamic climbing ropes if you can be bothered to carry it. 30m is a little short for easy retrieval.",
+        "pitchInfo": null,
+        "incline": "Vertical",
+        "face": "SE",
+        "abseil": 1,
+        "traverse": 1,
+        "boat": null,
+        "tidal": 1,
+        "polished": null,
+        "loose": null,
+        "seepage": null,
+        "grassLegdes": null,
+        "lastUpdate": "2021-01-01T12:00:00.000Z",
+        "weatherData": [
+            {"type": "rainyDays", "Jan": 20,  "Feb": 17, "Mar": 20, "Apr": 16, "May": 15, "Jun": 14, "Jul": 15, "Aug": 17, "Sep": 17,"Oct": 20,"Nov": 19, "Dec": 17 },
+            {"type": "tempH", "Jan": 8, "Feb": 7, "Mar": 8, "Apr": 9, "May": 11, "Jun": 13, "Jul": 15, "Aug": 15, "Sep": 14, "Oct": 12, "Nov": 10, "Dec": 8 },
+            { "type": "tempL", "Jan": 5, "Feb": 5, "Mar": 5, "Apr": 6, "May": 8, "Jun": 10, "Jul": 12, "Aug": 13, "Sep": 11, "Oct": 9, "Nov": 7, "Dec": 6 }
+        ],
+        "mapImg": {
+            "url": "img/topos/stoer/maps/",
+            "alt": "The Old Man of Stoer's Location in Scotland",
+            "atributionURL": "https://www.mapbox.com/",
+            "attributionText": "Mapbox",
+            "geo": "58.26094,-5.38266"
+        },
+        "topo": {
+            "url": "img/topos/stoer/old-man-of-stoer-climbing-topo.jpg",
+            "alt": "Topo for The Old Man of Stoer",
+            "atributionURL": "https://commons.wikimedia.org/wiki/File:Old_man_of_stoer.jpg",
+            "attributionText": "original image",
+            "dataFile": 5
+        },
+        "referances": [
+            {
+                "url": "https://www.mountainproject.com/route/106636010/the-old-man-of-stoer",
+                "text": "Climb Info: Mountain Project Page"
+            },
+            {
+                "url": "https://www.ukclimbing.com/logbook/crag.php?id=300",
+                "text": "Climb Info: UKC Page"
+            },
+            {
+                "url": "https://www.multi-pitch.com/img/topos/stoer/belay-position-on-stoer-sea-stack.jpg",
+                "text": "Climb Image: Climber on better penultimate belay. Credit Malcolm H."
+            }, 
+            {
+                "url": "https://www.youtube.com/watch?v=pgrfVtOotb8",
+                "text": "Video: The swim & climb to the sea stack"
+            }
+        ],
+        "guideBooks": [
+            {
+                "isbn": "9781906095468",
+                "title": "Scottish Rock, Volume 2, North",
+                "type": "guidebook",
+                "pg": 266,
+                "description": "A brilliant book covering such a wide and varied set of crags in the north of Scotland. The section on The Old Man of Stoer Routes is good. The images of longer routes can be a bit small at other crags thou.",
+                "imgURL": "img/guidebooks/scottish-rock-volume-2.jpg",
+                "link": "https://amzn.to/2C1KKgp",
+                "rrp": 25
+            }
+        ]
+    },
+    "topoData": {
+        "image": "/img/topos/stoer/crag.jpg",
+        "flag": "/img/flags/sco.png",
+        "title": "Old Man of Stoer > Original Route | VS 5a - 70m",
+        "belaySize": 18,
+        "route": [
+            [1111, 1664], [1103, 1631], [1106, 1593], [1070, 1588], [1031, 1609], [980, 1635], [889, 1661], [825, 1670], [809, 1625], 
+            [796, 1548], [799, 1491], [805, 1434], [856, 1401], [905, 1367], [937, 1359], [933, 1311], [940, 1249], [945, 1227], 
+            [968, 1178], [932, 1135], [883, 1135], [870, 1101], [886, 1065], [888, 1033], [925, 1026], [991, 970],
+            [1076.0, 809.0],[1053.0, 735.3],[1123.0, 742.0], [1152.0, 708.0], [1150.0, 693.0],[1145.0, 547.0],
+            [1123, 534], [1118, 414], [1120, 296], [1027, 219]
+        ],
+        "pitches": [
+            { "belayPosition": [1112.0, 1660.3], "labelPosition": [952,1725], "grade": "5a", "height": "15m"},
+            { "belayPosition": [825,1657], "labelPosition": [689,1497.6], "grade": "4b", "height": "12m"},
+            { "belayPosition": [920,1358], "labelPosition": [825,1223.4], "grade": "4b", "height": "15m"},
+            { "belayPosition": [907,1025], "labelPosition": [1057,957], "grade": "4c", "height": "10m"},
+            { "belayPosition": [1053.0, 735.3], "labelPosition": [962,446], "grade": "4a", "height": "15m"},
+            { "belayPosition": [1027,219], "labelPosition": [null,null ], "grade": "", "height": ""}
+        ],
+        "decent": [
+            { "anchor": [null,null ], "labelPosition": [1163,249], "path": [[1047,212],[1060,209],[1120,209],[1123,252]], "label": "~40m to next absail"},
+            { "anchor": [1092,1362 ], "labelPosition": [987,1529], "path": [[1093,1381],[1092,1462]], "label": "~12m" },
+            { "anchor": [null,null ], "labelPosition": [1524,1708.1 ], "path": [[1134.5,1653.4],[1467,1704]], "label": "Tyrolean rope traverse"},
+            { "anchor": [null,null ], "labelPosition": [2063,1056.4 ], "path": [[2264,1098.4],[2119,1102.4],[2005,1138.4],[1950,1178.4],[1855,1201.4]], "label": "Low tide option"
+            }
+        ]
+    }
+}

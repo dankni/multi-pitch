@@ -40,3 +40,8 @@ Depending on the number possible based on the original image size, the value in 
 
 ### WebP Conversion 
 WebP conversion uses [this node package](https://www.npmjs.com/package/webp-converter-cli). It can be run using the command `webpc -r` from command line in the relavant folder where ` -r` makes it recursively convert all sub folder images. 
+
+### JSON updating
+The site is built from JSON data files that, once loaded are saved in local storage for very fast page load times and less network traffic (and more offline capabilities in the future). This comes at the cost of a lot  development complexity. I have built an slighlty unwieldy beast, in order to 
+optimise the user experiance. This is how the logic should work:
+![Local storage data flow](https://www.multi-pitch.com/img/other/flow.png)
