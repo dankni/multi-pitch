@@ -415,7 +415,9 @@ helper.arr = {
 
         if(columns[0] === 'lastUpdate'){
             for(let i = 0; i < arr.length; i++){
-                arr[i].lastUpdate = Date.parse(arr[i].lastUpdate); // this is converting climbsData to timestamp
+                if(isNaN(arr[i].lastUpdate)){ // if its not a number convert it, if it is, its been converted already
+                    arr[i].lastUpdate = Date.parse(arr[i].lastUpdate); // this is converting climbsData to timestamp
+                }
             }
         }
         if (typeof columns === 'undefined') {
@@ -673,7 +675,8 @@ function sortCards(sortBy, direction) {
         document.getElementById('loading').style.display = "block";
         document.getElementById('loadingMsg').innerHTML = "Requesting Geo-Location...";
         navigator.geolocation.getCurrentPosition(locationLoaded, locationFailed);
-    } else {
+    }
+    else {
         var c = document.getElementsByClassName("card");
         while (c.length > 0) c[0].remove();
         var climbsSorted = helper.arr.multisort(climbsData.climbs, [sortBy, 'dataGrade'], [direction, 'ASC']);
