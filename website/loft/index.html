@@ -97,9 +97,25 @@
 			<h3>Belays: <br /><span id="belays">0</span>
 		</div>
     <script>
+		// The wake lock sentinel.
+		let wakeLock = null;
+
+		// Function that attempts to request a screen wake lock.
+		const requestWakeLock = async () => {
+			try {
+				wakeLock = await navigator.wakeLock.request();
+				wakeLock.addEventListener('release', () => {
+					console.log('Screen Wake Lock released:', wakeLock.released);
+				});
+				console.log('Screen Wake Lock released:', wakeLock.released);
+			} catch (err) {
+				console.error(`${err.name}, ${err.message}`);
+			}
+		};
 		// kick of the first task and give chrome permission to use speechSynthesis
 		let started = false;
 		function setStarted(value){
+			requestWakeLock();
 			fullscreen(document.documentElement);
 			document.querySelector('button').innerHTML = 'Stop';
 			started = value;
