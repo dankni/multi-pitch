@@ -1,5 +1,5 @@
 # multi-pitch
-*A site dedicated to traditional multi-pitch rock climbing*
+*A site dedicated to traditional multi-pitch rock climbing (https://www.multi=pitch.com)* 
 
 ## The Site & It’s Values
 The site aims to be a useful resource for Traditional climbers focused on multi-pitch and adventure / mountain climbing. [The about page](https://www.multi-pitch.com/about/) has a full explanation of what the site is all about, but broadly speaking we want to:
