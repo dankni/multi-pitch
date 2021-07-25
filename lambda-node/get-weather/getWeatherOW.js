@@ -40,7 +40,7 @@ function mapToMultipitcherDomainFromAlerts(owAlerts = []){
                 "event" : a.event,
                 "start" : a.start,
                 "end" : a.end,
-                "description" : a.description,
+                "description" : a.description
             }
         })
 }
@@ -95,8 +95,8 @@ function mapToMultipitcherDomainFromDaily(owDaily) {
         "precipIntensity": owDaily.rain || owDaily.snow || 0,
         "precipProbability": owDaily.pop || 0,
 
-        "temperatureHigh": owDaily.temp.day || 0,
-        "temperatureMin": owDaily.temp.night || 0,
+        "temperatureHigh": owDaily.temp.max || 0,
+        "temperatureMin": owDaily.temp.min || 0,
 
         "pressure": owDaily.pressure,
         "humidity": owDaily.humidity / 100 ,
@@ -110,8 +110,6 @@ function mapToMultipitcherDomainFromDaily(owDaily) {
     	"sunsetTime": owDaily.sunset,
 
         "new_fields": {
-            "sunrise": owDaily.sunrise,
-            "sunset": owDaily.sunset,
             "moonrise": owDaily.moonrise,
             "moonset": owDaily.moonset,
             "moonPhase": owDaily.moon_phase,
@@ -136,7 +134,6 @@ function mapToMultipitcherDomainFromDaily(owDaily) {
             "weather": owDaily.weather.map(w => {
                 return {"id": w.id, 
                         "main": w.main,
-                        "description": w.description,
                         "icon": w.icon}
             })
         }
