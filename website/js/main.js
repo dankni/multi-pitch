@@ -1258,7 +1258,7 @@ function loadCurrentWeatherModule(id){
         document.getElementById('precip_intense').innerText = dsWeather.currently.precipIntensity.toFixed(1);
         document.getElementById('wind_speed').innerText = dsWeather.currently.windGust.toFixed(1);
         document.getElementById('uv_index').innerText = dsWeather.currently.uvIndex;
-        document.getElementById('cloud_cover').innerText = Math.round(dsWeather.currently.cloudCover * 100);
+        document.getElementById('cloud_cover').innerText = Math.round(dsWeather.currently.cloudCover);
         document.getElementById('bearing').style  = 'transform: rotate(' + dsWeather.currently.windBearing + 'deg);display:inline-block;';
         for(let i = 0; i < currentWeather.length; i++){
             let listItem = document.getElementById(currentWeather[i]);
