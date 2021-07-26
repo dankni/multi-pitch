@@ -68,7 +68,7 @@ function mapToMultipitcherDomainFromHourly(owHourly){
         "humidity": owHourly.humidity / 100,
         "dew_point": owHourly.dew_point, //Atmospheric temperature (varying according to pressure and humidity) below which water droplets begin to condense and dew can form. Units – default: kelvin, metric: Celsius, imperial: Fahrenheit
         "uvi": owHourly.uvi,
-        "clouds":owHourly.clouds,
+        "clouds":owHourly.clouds / 100,
         "visibility":owHourly.visibility,
         "wind_speed": owHourly.wind_speed,
         "wind_deg": owHourly.wind_deg * 10,
@@ -101,7 +101,7 @@ function mapToMultipitcherDomainFromDaily(owDaily) {
         "pressure": owDaily.pressure,
         "humidity": owDaily.humidity / 100 ,
 
-        "cloudCover": owDaily.clouds,
+        "cloudCover": owDaily.clouds / 100,
     	"windGust": owDaily.wind_gust || 0,
     	"windBearing": owDaily.wind_deg * 10 || 0,
     	"windSpeed": owDaily.wind_speed || 0,
