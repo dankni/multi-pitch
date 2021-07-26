@@ -1135,6 +1135,14 @@ function LoadAnalytics(){
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'UA-123782847-1'); // variable also declared in the global variable scope at the top
+        switch(window.location.pathname.split('/')[1]) {
+            case 'climbing-tips' : 
+                gtag('set', {'content_group1': 'content page'}); 
+                break;
+            case 'climbs': 
+                gtag('set', {'content_group2': 'climb page'});
+                break;
+        }
         window.performance.mark('gta-end');
     }, 1000);
 
