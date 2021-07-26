@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const climbData = require('./climbing-data.json');
+const climbData = require('./climbing-data-small.json');
 
 const {getWeather} = require("../getWeatherOW.js");
 

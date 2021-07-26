@@ -91,7 +91,8 @@ function mapToMultipitcherDomainFromDaily(owDaily) {
         // TODO map Icons or use weather.id
         "icon": mapOWicon(owDaily.weather[0].icon),
         "description": owDaily.weather[0].description,
-
+        // This works only for the Forcasting. The historical value doesn't have it but we take it from the hourly measurements.
+        // Even if the Docs says that they have it. 
         "precipIntensity": owDaily.rain || owDaily.snow || 0,
         "precipProbability": owDaily.pop || 0,
 
@@ -146,8 +147,8 @@ function mapTodayAndFutureToMultipitcherDomain(owResponse){
     todayDaily = mapToMultipitcherDomainFromDaily(weatherToday)
     todayHourly = owResponse.hourly.map(mapToMultipitcherDomainFromHourly)
     todayMinutely = owResponse.minutely && owResponse.minutely.map(mapToMultipitcherDomainFromMinutely)
-    todayDaily["hourly"] = todayHourly
     // TODO we can add it but I am removing it otherwise the response to the client will be to big
+    // todayDaily["hourly"] = todayHourly
     // todayDaily["minutely"] = todayMinutely
     todayDaily["alerts"] = mapToMultipitcherDomainFromAlerts(owResponse.alerts)
     
@@ -167,7 +168,17 @@ function mapPastToMultipitcherDomain(owResponses){
         const offsetKey = `offsetMinus${index + 1}`;
         pastDaily = mapToMultipitcherDomainFromDaily(owResponse.current)
         pastHourly = owResponse.hourly.map(mapToMultipitcherDomainFromHourly)
-        pastDaily["hourly"] = pastHourly
+        // For the past API the precipitation intesity comes from the hourly measurement.
+        // So I need to adds them up 
+        allPastPrecipIntensity = owResponse.hourly.reduce( (acc,x) => acc + ( 
+                                                                                (x.rain && x.rain["1h"]) ||  // Check if it was raining
+                                                                                (x.snow && x.snow["1h"]) ||  // or snowing 
+                                                                                0                            // default to zero if any of the above
+                                                                            ) , 0)
+        pastDaily["precipIntensity"] = allPastPrecipIntensity
+        // Response is too big and the &exclude=hourly did not exclude it from the OW response. 
+        // So manually I don't add in here
+        // pastDaily["hourly"] = pastHourly
         acc[offsetKey] = pastDaily
         return acc
     }, {});
