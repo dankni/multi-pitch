@@ -1,0 +1,41 @@
+{
+  "lastUpdate": "2021-06-14T12:54:10.339Z",
+  "climbs": [
+    {
+      "cliff": "Sella Towers",
+      "status": "publish",
+      "id": 43,
+      "country": "Italy",
+      "county": "South Tyrol",
+      "routeName": "Via Steger",
+      "length": 175,
+      "pitches": 8,
+      "dataGrade": 4,
+      "tradGrade": "HS",
+      "techGrade": "4a",
+      "gradeSys": "UIAA",
+      "originalGrade": "IV+",
+      "geoLocation": "46.509105837, 11.7738439522",
+      "approachTime": 10,
+      "approachDifficulty": 1,
+      "rock": "Dolomite",
+      "incline": "Vertical",
+      "face": "SW",
+      "abseil": 1,
+      "traverse": 1,
+      "boat": null,
+      "tidal": null,
+      "polished": 1,
+      "loose": null,
+      "seepage": null,
+      "grassLegdes": null,
+      "lastUpdate": "2021-05-24T12:54:10.339Z",
+      "tileImage": {
+        "url": "img/tiles/sella-towers-in-dolomites.jpg",
+        "alt": "The First & Second Sella Towers in the the Sella Pass in Italy",
+        "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attributionText": "our own image"
+      } 
+    }
+  ]
+}
