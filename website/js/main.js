@@ -1263,7 +1263,7 @@ function loadCurrentWeatherModule(id){
         for(let i = 0; i < currentWeather.length; i++){
             let listItem = document.getElementById(currentWeather[i]);
             let rain = dsWeather[currentWeather[i]].precipIntensity;
-            let height = rain > 5 ? 100 : rain * 25;
+            let height = rain > 10 ? 100 : rain * 10;
             let label = document.createTextNode(rain.toFixed(1) + "mm");
             listItem.firstElementChild.style.height = height + "%";
             listItem.prepend(label);

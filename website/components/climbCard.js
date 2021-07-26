@@ -232,7 +232,7 @@ function getWeather(climb) {
           </p>
           ${tideInfoBox}
           <p class="chart-title">
-            Max Hourly Precipitation Per Day
+            Daily Precipitation
           </p>
           <strong id="backChev" class="weatherChev inactiveChev" onClick="weatherBars('back')">&#171;</strong>
           <strong id="forwardChev" class="weatherChev" onClick="weatherBars('forward')">&#187;</strong>
