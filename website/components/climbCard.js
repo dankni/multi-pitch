@@ -249,7 +249,7 @@ function getWeather(climb) {
           </ul>
           
           
-          <p class="credit" style="margin-top:15px;color:#ca6666;">Weather contains errors while we are migrating API provider!</p>
+          <p class="credit" style="margin-top:15px;">Using open weather API</p>
         </div>
         <div class="col-12" id="seasonalWeather">
           <h4 tabindex="0">Seasonal Weather Infomation</h4>
