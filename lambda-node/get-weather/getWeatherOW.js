@@ -176,7 +176,6 @@ function mapPastToMultipitcherDomain(owResponses){
                                                                                 0                            // default to zero if any of the above
                                                                             ) , 0)
         pastDaily["precipIntensity"] = allPastPrecipIntensity
-        console.log("Past allPastPrecipIntensity ",allPastPrecipIntensity)
         // Response is too big and the &exclude=hourly did not exclude it from the OW response. 
         // So manually I don't add in here
         // pastDaily["hourly"] = pastHourly
