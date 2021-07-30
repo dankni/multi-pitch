@@ -891,7 +891,6 @@ var dotted = [5, 10]
 var belayScale = 1; // used to scale the line and labels inline with belay size
 
 function initTopo() {
-
     img = new Image(); 
     flag = new Image();
     logo = new Image();
@@ -1135,7 +1134,7 @@ function LoadAnalytics(){
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'UA-123782847-1'); // variable also declared in the global variable scope at the top
-        switch(window.location.pathname.split('/')[1]) {
+        switch(window.location.pathname.split('/')[1]) { // can remove this at some point - just a test
             case 'climbing-tips' : 
                 gtag('set', {'content_group1': 'content page'}); 
                 break;

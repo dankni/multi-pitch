@@ -388,7 +388,7 @@ function getMap(climb) {
                type="image/png" >
              <img
                src="/${climb.mapImg.url}1080x200x1.png"
-               type="image/png" class="big-card-map" 
+               class="big-card-map" 
                alt="${climb.mapImg.alt}">
         </picture>`;
             return mapPicture;
@@ -511,99 +511,100 @@ function climbCard(climbData) {
         <div class="container">
             <div class="map-card-body">
                 <div class="big-card-body pull-onto-map">
-                <div class="row">
-                    <div class="col-sm">
-                        <h1 id="articleTitle" tabindex="0">
-                            <span class="flag big-flag ${climb.country.toLowerCase()}"></span>
-                            ${climb.cliff} - ${climb.routeName}
-                        </h1>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h1 id="articleTitle" tabindex="0">
+                                <span class="flag big-flag ${climb.country.toLowerCase()}"></span>
+                                ${climb.cliff} - ${climb.routeName}
+                            </h1>
+                        </div>
                     </div>
+                    <section class="row">
+                        <div class="col">
+                            <p>
+                                ${climb.intro}
+                            </p>
+                        </div>
+                    </section>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-9 info-ring-holder">
+                            <div class="info-ring">
+                                <span class="grade what">Grade</span>
+                                <span class="info-divider"></span>
+                                <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
+                            </div>        
+                            <div class="info-ring">
+                                <span class="grade what">Length</span>
+                                <span class="info-divider"></span>
+                                <span class="grade amount">${climb.length}m</span>
+                            </div>      
+                            <div class="info-ring">
+                                <span class="grade what">Pitches</span>
+                                <span class="info-divider"></span>
+                                <span class="grade amount">${climb.pitches}</span>
+                            </div>
+                            <div class="info-ring">
+                                <span class="grade what">Approach</span>
+                                <span class="info-divider"></span>
+                                <span class="grade amount">${climb.approachTime}<small>min</small></span>
+                            </div>
+                            ${face}
+                            <div class="info-ring">
+                                <span class="single-attribute">${climb.rock}</span>
+                            </div>
+                            ${tidal}
+                            ${abReq}
+                        </div>
+                        <div class="col-lg-3 col-md-12 social-share">
+                            <p class="share-tip">Share this page:</p>
+                            <a  id="whatsappShare" title="Share this page to Whatsapp"
+                                href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
+                                target="blank"
+                                onClick="trackGA('social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                                <i class="icon-whatsapp"></i></a>
+                            <a  title="Tweet this page"
+                                href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
+                                target="blank"
+                                onClick="trackGA('social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                                <i class="icon-twitter"></i></a>
+                            <a  title="Share this page to Facebook"
+                                href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
+                                target="blank"
+                                    onClick="trackGA('social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                                <i class="icon-facebook"></i></a>
+                            <a  title="Share this page via Email"
+                                href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
+                                target="blank"
+                                    onClick="trackGA('social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
+                                <i class="icon-mail"></i></a>
+                        </div>
+                    </div>
+                    <hr />  
+                    <section class="row">
+                        <div class="col">
+                            <h2 tabindex="0">The Route Topography</h2>
+                            <p>
+                                This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}.
+                                It represents ${climb.length}m of ${climb.rock} rock climbing, usually over ${climb.pitches} pitches, of a max grade of ${climb.tradGrade}&nbsp;${techGrade}.
+                                Clicking the image will load the <a href="/${climb.topo.url}" target="blank">full screen high resolution ${climb.routeName} climb topo</a>.
+                            </p>
+                            ${routeTopoModule}
+                            <aside>
+                                <em><small>
+                                    Please note: Great care has been taken to create accurate and useful climbing topos. 
+                                    However there may be mistakes and cliffs can suffer rockfall and change. Information is provided without guarantee. 
+                                    Climbing is dangerous.
+                                </small></em>
+                            </aside>
+                        </div>
+                        ${variants}
+                    </section>
+                    ${approachInfoModule}
+                    ${pitchInfoModule}
+                    ${guideBookModule}
+                    ${weatherInfoModule}
+                    ${referanceModule}
                 </div>
-                <section class="row">
-                    <div class="col">
-                        <p>
-                            ${climb.intro}
-                        </p>
-                    </div>
-                </section>
-                <div class="row">
-                    <div class="col-md-12 col-lg-9 info-ring-holder">
-                        <div class="info-ring">
-                            <span class="grade what">Grade</span>
-                            <span class="info-divider"></span>
-                            <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
-                        </div>        
-                        <div class="info-ring">
-                            <span class="grade what">Length</span>
-                            <span class="info-divider"></span>
-                            <span class="grade amount">${climb.length}m</span>
-                        </div>      
-                        <div class="info-ring">
-                            <span class="grade what">Pitches</span>
-                            <span class="info-divider"></span>
-                            <span class="grade amount">${climb.pitches}</span>
-                        </div>
-                        <div class="info-ring">
-                            <span class="grade what">Approach</span>
-                            <span class="info-divider"></span>
-                            <span class="grade amount">${climb.approachTime}<small>min</small></span>
-                        </div>
-                        ${face}
-                        <div class="info-ring">
-                            <span class="single-attribute">${climb.rock}</span>
-                        </div>
-                        ${tidal}
-                        ${abReq}
-                    </div>
-                    <div class="col-lg-3 col-md-12 social-share">
-                        <p class="share-tip">Share this page:</p>
-                        <a  id="whatsappShare" title="Share this page to Whatsapp"
-                            href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
-                            target="blank"
-                            onClick="trackGA('social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                            <i class="icon-whatsapp"></i></a>
-                        <a  title="Tweet this page"
-                            href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
-                            target="blank"
-                            onClick="trackGA('social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                            <i class="icon-twitter"></i></a>
-                        <a  title="Share this page to Facebook"
-                            href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
-                            target="blank"
-                                onClick="trackGA('social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                            <i class="icon-facebook"></i></a>
-                        <a  title="Share this page via Email"
-                            href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
-                            target="blank"
-                                onClick="trackGA('social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                            <i class="icon-mail"></i></a>
-                    </div>
-                </div>
-                <hr />  
-                <section class="row">
-                    <div class="col">
-                        <h2 tabindex="0">The Route Topography</h2>
-                        <p>
-                            This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}.
-                            It represents ${climb.length}m of ${climb.rock} rock climbing, usually over ${climb.pitches} pitches, of a max grade of ${climb.tradGrade}&nbsp;${techGrade}.
-                            Clicking the image will load the <a href="/${climb.topo.url}" target="blank">full screen high resolution ${climb.routeName} climb topo</a>.
-                        </p>
-                        ${routeTopoModule}
-                        <aside>
-                            <em><small>
-                                Please note: Great care has been taken to create accurate and useful climbing topos. 
-                                However there may be mistakes and cliffs can suffer rockfall and change. Information is provided without guarantee. 
-                                Climbing is dangerous.
-                            </small></em>
-                        </aside>
-                    </div>
-                    ${variants}
-                </section>
-                ${approachInfoModule}
-                ${pitchInfoModule}
-                ${guideBookModule}
-                ${weatherInfoModule}
-                ${referanceModule}
             </div>
         </div>
     </article>`;

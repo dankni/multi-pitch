@@ -30,7 +30,7 @@
         "loose": null,
         "seepage": 1,
         "grassLegdes": null,
-        "lastUpdate": "2019-09-09T00:00:00.000Z",
+        "lastUpdate": "2020-09-09T00:00:00.000Z",
         "weatherData": [
             {
                 "type": "rainyDays",
@@ -135,222 +135,51 @@
         "title": "Bosigran > Doorpost | HS 4b - 67m",
         "belaySize": 24,
         "route": [
-            [
-                2103,
-                2415
-            ],
-            [
-                2110,
-                2333
-            ],
-            [
-                2092,
-                2222
-            ],
-            [
-                2108,
-                2157
-            ],
-            [
-                2118,
-                2057
-            ],
-            [
-                2142,
-                2030
-            ],
-            [
-                2162,
-                2023
-            ],
-            [
-                2215,
-                1937
-            ],
-            [
-                2247,
-                1905
-            ],
-            [
-                2263,
-                1833
-            ],
-            [
-                2285,
-                1812
-            ],
-            [
-                2310,
-                1772
-            ],
-            [
-                2320,
-                1730
-            ],
-            [
-                2305,
-                1690
-            ],
-            [
-                2285,
-                1658
-            ],
-            [
-                2265,
-                1658
-            ],
-            [
-                2265,
-                1600
-            ],
-            [
-                2272,
-                1482
-            ],
-            [
-                2272,
-                1447
-            ],
-            [
-                2308,
-                1435
-            ],
-            [
-                2308,
-                1382
-            ],
-            [
-                2320,
-                1308
-            ],
-            [
-                2378,
-                1255
-            ],
-            [
-                2335,
-                1288
-            ],
-            [
-                2293,
-                1278
-            ],
-            [
-                2295,
-                1175
-            ],
-            [
-                2297,
-                1094
-            ],
-            [
-                2290,
-                1009
-            ],
-            [
-                2265,
-                937
-            ],
-            [
-                2247,
-                877
-            ],
-            [
-                2267,
-                767
-            ],
-            [
-                2263,
-                704
-            ],
-            [
-                2260,
-                627
-            ],
-            [
-                2288,
-                596
-            ],
-            [
-                2342,
-                551
-            ]
-        ],
+            [2103,2415],[2110,2333],[2092,2222],[2108,2157],[2118,2057],[2142,2030],[2162,2023],
+            [2215,1937],[2247,1905],[2263,1833],[2285,1812],[2310,1772],[2320,1730],[2305,1690],
+            [2285,1658],[2265,1658],[2265,1600],[2272,1482],[2272,1447],[2308,1435],[2308,1382],
+            [2320,1308],[2378,1255],[2335,1288],[2293,1278],[2295,1175],[2297,1094],[2290,1009],
+            [2265,937],[2247,877],[2267,767],[2263,704],[2260,627],[2288,596],[2342,551]
+        ],   
         "pitches": [
             {
-                "belayPosition": [
-                    2315,
-                    1719
-                ],
-                "labelPosition": [
-                    2268,
-                    1960
-                ],
-                "grade": "4a",
-                "height": "27m"
+                "belayPosition": [2315,1719],
+                "labelPosition": [2268,1960],
+                "grade": "4a","height": "27m"
             },
             {
-                "belayPosition": [
-                    2365,
-                    1264
-                ],
-                "labelPosition": [
-                    2353,
-                    1464
-                ],
-                "grade": "4b",
-                "height": "15m"
+                "belayPosition": [2365,1264],
+                "labelPosition": [2353,1464],
+                "grade": "4b","height": "15m"
             },
             {
-                "belayPosition": [
-                    2318,
-                    576
-                ],
-                "labelPosition": [
-                    2353,
-                    904
-                ],
-                "grade": "4a",
-                "height": "25m"
+                "belayPosition": [2318,576],
+                "labelPosition": [2353,904],
+                "grade": "4a","height": "25m"
             }
-        ],
-        "decent": [
+        ],   
+        "decent": [ 
             {
-                "anchor": [
-                    null,
-                    null
-                ],
-                "labelPosition": [
-                    null,
-                    null
-                ],
+                "anchor": [null,null],
+                "labelPosition": [null,null],
                 "path": [
-                    [
-                        3592,
-                        2090
-                    ],
-                    [
-                        3440,
-                        2170
-                    ],
-                    [
-                        3323,
-                        2210
-                    ],
-                    [
-                        3180,
-                        2252
-                    ],
-                    [
-                        3083,
-                        2223
-                    ],
-                    [
-                        2967,
-                        2253
-                    ]
+                    [3592,2090],[3440,2170],[3323,2210],[3180,2252],[3083,2223],[2967,2253]
                 ],
                 "label": ""
+            }
+        ],
+        "alternatives" : [
+            {
+                "routeName" : "Ledge Climb",
+                "referance" : "A",
+                "grade" : "HVD 3c",
+                "length" : "63m",
+                "description" : "A gem of a climb with an exceptional last pitch with 3 dimensional moves into the chimney followed by exposure along the ledge that gives the climb its name. The first pitch is just over 15m up a lovely crack to a decent ledge with a spiky bush. From here a somewhat delicate pitch takes the climb across to the ledge/niche below the chimney (approx. 22m). From here the final 35m pitch requires the climbers to make their way straight up into the chimney. This crux can be climbed in many different ways. Although leading is the most fun, watching your partner(s) struggle up awkwardly, directly above the belay ledge is a suitable consolation prize.  Once the chimney is completed a third belay could be made to break the pitch up. The final exposed ledge leading to the left offers a great climax to this climb. The route finishes up some easy moves at the end.",                
+                "route":[
+                    [2758.0, 2231.0],[2775.0, 2140.0],[2806.0, 2038.0],[2845.0, 1843.0],[2795.0, 1747.0],[2739.0, 1656.0],[2695.0, 1560.0],[2702.0, 1449.0],[2729.0, 1374.0],
+                    [2685.0, 1300.0],[2706.0, 1112.0],[2718.0, 982.0],[2729.0, 882.0],[2708.0, 828.0],[2616.0, 659.0],[2589.0, 560.0],[2613.0, 418.0] 
+                ]
+
             }
         ]
     }
