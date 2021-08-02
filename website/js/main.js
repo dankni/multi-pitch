@@ -1133,14 +1133,15 @@ function LoadAnalytics(){
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'UA-123782847-1'); // variable also declared in the global variable scope at the top
         switch(window.location.pathname.split('/')[1]) { // can remove this at some point - just a test
             case 'climbing-tips' : 
-                gtag('set', {'content_group1': 'content page'}); 
+                gtag('config', 'UA-123782847-1', {'content_group1': 'content page'}); 
                 break;
             case 'climbs': 
-                gtag('set', {'content_group2': 'climb page'});
+                gtag('config', 'UA-123782847-1', {'content_group2': 'climb page'});
                 break;
+            default:
+                gtag('config', 'UA-123782847-1');
         }
         window.performance.mark('gta-end');
     }, 1000);
