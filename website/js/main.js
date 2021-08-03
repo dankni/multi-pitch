@@ -1138,7 +1138,7 @@ function LoadAnalytics(){
                 gtag('config', 'UA-123782847-1', {'content_group1': 'content page'}); 
                 break;
             case 'climbs': 
-                gtag('config', 'UA-123782847-1', {'content_group2': 'climb page'});
+                gtag('config', 'UA-123782847-1', {'content_group2': 'console.log(document.title.split(" - ")[0])'});
                 break;
             default:
                 gtag('config', 'UA-123782847-1');
