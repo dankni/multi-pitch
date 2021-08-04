@@ -1138,7 +1138,8 @@ function LoadAnalytics(){
                 gtag('config', 'UA-123782847-1', {'content_group1': 'content page'}); 
                 break;
             case 'climbs': 
-                gtag('config', 'UA-123782847-1', {'content_group2': 'console.log(document.title.split(" - ")[0])'});
+                let cliffName = console.log(document.title.split(" - ")[0]);
+                gtag('config', 'UA-123782847-1', {'content_group2': cliffName});
                 break;
             default:
                 gtag('config', 'UA-123782847-1');
