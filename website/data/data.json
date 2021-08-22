@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2021-06-14T12:54:10.339Z",
+  "lastUpdate": "2021-06-16T12:54:10.339Z",
   "climbs": [
     {
       "cliff": "Great Tor",
@@ -518,7 +518,7 @@
       "loose": null,
       "seepage": 1,
       "grassLegdes": "",
-      "lastUpdate": "2019-08-24T00:00:00.000Z",
+      "lastUpdate": "2020-08-24T00:00:00.000Z",
       "tileImage": {
         "url": "img/tiles/bosigran-small.jpg",
         "alt": "Bosigran's Sea Cliffs offer accessible rock climbing",
@@ -532,7 +532,7 @@
       "id": 30,
       "country": "England",
       "county": "Bristol",
-      "routeName": "Morpheus ",
+      "routeName": "Morpheus",
       "length": 67,
       "pitches": 4,
       "dataGrade": 3,
@@ -553,7 +553,7 @@
       "loose": null,
       "seepage": null,
       "grassLegdes": "",
-      "lastUpdate": "2019-07-30T13:00:00.000Z",
+      "lastUpdate": "2020-07-30T13:00:00.000Z",
       "tileImage": {
         "url": "img/tiles/sea-walls-avon-gorge.jpg",
         "alt": "The Sea Walls City Multi-pitch Climbing in Bristol",
@@ -623,7 +623,7 @@
       "loose": null,
       "seepage": null,
       "grassLegdes": "",
-      "lastUpdate": "2021-06-14T12:00:00.000Z",
+      "lastUpdate": "2021-06-15T12:00:00.000Z",
       "tileImage": {
         "url": "img/tiles/wintours-leap-wye-valley-climbs.jpg",
         "alt": "Limestone Outcrop Wintours Leap in the Wye Valley",

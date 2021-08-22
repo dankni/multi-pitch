@@ -66,3 +66,15 @@
         </Redirect>
     </RoutingRule>
   </RoutingRules>
+      <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbs/morpheus--on-avon-gorge</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>climbs/morpheus-on-avon-gorge</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+  </RoutingRules>
