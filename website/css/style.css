@@ -1699,6 +1699,17 @@ hr {
   margin-top: 20px;
   display: inline-block;
 }
+.nearby-climb{
+  margin-bottom: 20px;
+}
+.nearby-climb .card-text{
+  font-size: 0.9rem;
+  color: #4f4f4f;
+}
+.nearby-climb .card-text strong{
+  font-weight: 700;
+  color: #000;
+}
 /***********/
 /** FLAGS **/
 .no-webp .england{
@@ -2188,9 +2199,9 @@ margin-top: -6px; /* Chrome needs to shift the thumb up. */
 }
 
 @supports (-ms-accelerator:true) {
-div.input-range > input::-webkit-slider-thumb {
-    margin-top: 0; /* Remove margin on Edge */
-}
+  div.input-range > input::-webkit-slider-thumb {
+      margin-top: 0; /* Remove margin on Edge */
+  }
 }
 
 div.input-range > input::-moz-range-thumb {

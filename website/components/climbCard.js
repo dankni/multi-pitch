@@ -458,7 +458,89 @@ function getVariants(topoData){
     }
 }
 
-function climbCard(climbData) {
+function getOtherClimbs(climbGeo){
+    try{
+        let allClimbsData = JSON.parse(localStorage.getItem('climbsData'));
+        let nearbyClimbs = [];
+        for (let i = 0; i < allClimbsData.climbs.length; i++) {
+            let compClimb = climbsData.climbs[i]; //comparison climb
+            if(compClimb.status === "publish") { // ensures unpublished climbs are not processed
+                let distance = calcDistanceBetweenPoints(compClimb.geoLocation.split(',')[0], compClimb.geoLocation.split(',')[1], climbGeo.split(',')[0], climbGeo.split(',')[1]);
+                if((distance <= 40) && (distance != 0)){
+                    let nearbyClimb = {}
+                    nearbyClimb.distance = distance;
+                    nearbyClimb.id = compClimb.id;
+                    nearbyClimb.tileImg = compClimb.tileImage;
+                    nearbyClimb.cliff = compClimb.cliff;
+                    nearbyClimb.routeName = compClimb.routeName;
+                    nearbyClimb.grade = compClimb.originalGrade;
+                    nearbyClimb.length = compClimb.length;
+                    nearbyClimbs.push(nearbyClimb);
+                }
+            } 
+        }
+        return nearbyClimbs;
+    } catch(e){
+        console.error(e);
+        return '';
+    }
+}
+
+function outputNearbyClimbs(nearbyClimbs){
+        let html = "";
+        if(nearbyClimbs.length >= 1){
+            html +=`
+            <div class="col-12">
+                <h3>Listed Nearby Climbs</h3>
+                <p>The are some top quality multi-pitch rock climbs nearby.
+                Guidebooks (see above) will have a more comprehensive list of other local climbing venues.</p>
+            </div>`;
+            for (let i = 0; i < nearbyClimbs.length; i++) {
+                let url = returnClimbURL(nearbyClimbs[i].routeName, nearbyClimbs[i].cliff);
+                let webPUrl =  nearbyClimbs[i].tileImg.url.replace(".jpg", ".webp");
+                // ToDo: make this pushstate eg onclick="showTile(${nearbyClimbs[i].id});return false;"
+                let climbLink = `
+                <div class="col-sm-6 col-md-6 col-lg-3 nearby-climb">
+                    <a href="/climbs/${url}" id="${nearbyClimbs[i].id}Focus">
+                        <picture>
+                            <source srcset="/${webPUrl}" type="image/webp">
+                            <img src="/${nearbyClimbs[i].tileImg.url}" alt="${nearbyClimbs[i].tileImg.alt}" class="crag-hero" loading="lazy" />
+                        </picture>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-3 nearby-climb">
+                    <p class="card-text">
+                        <a href="/climbs/${url}">${nearbyClimbs[i].routeName} on ${nearbyClimbs[i].cliff}</a><br />
+                        ${nearbyClimbs[i].length}m climb graded ${nearbyClimbs[i].grade}.<br />
+                        <strong>${nearbyClimbs[i].distance}km away</strong> </p>
+                </div>`;
+                html += climbLink;
+            }
+            html += "<br />"
+        }
+        html += `
+        <div class="col-12">
+            <p style="text-align:center;margin-top:50px">
+                There are currently over 40 published multi-pitch climbs on the site. <br />
+                <!-- ToDo: make this use push state for super fast load if it's an option -->
+                <br />
+                <a class="primary-link" href="/">View All Listed Rock Climbs</a>
+            </p>
+        </div>`;
+        return html;
+}
+
+function returnClimbURL(route, cliff){
+    let folderName = "".concat(route.trim(), '-on-', cliff.trim())
+            .toLowerCase()
+            .replace(/'/g, "")
+            .replace(/\//g, "")
+            .replace(/ /g, "-");
+        folderName = folderName + '/';
+    return folderName;
+}
+
+function climbCard(climbData, nearbyClimbsServerSide) {
     let climb = climbData.climbData;
     let topoData = climbData.topoData;
 
@@ -471,12 +553,13 @@ function climbCard(climbData) {
     var guideBookModule = getGuidebook(climb);
     var weatherInfoModule = getWeather(climb);
     var mapModule = getMap(climb);
-    var folderName = "".concat(climb.routeName.trim(), '-on-', climb.cliff.trim())
-            .toLowerCase()
-            .replace(/'/g, "")
-            .replace(/\//g, "")
-            .replace(/ /g, "-");
-        folderName = folderName + '/';
+    if(nearbyClimbsServerSide != null){
+        var nearbyClimbs = nearbyClimbsServerSide; 
+    } else {
+        var nearbyClimbs = getOtherClimbs(climb.geoLocation);
+    }
+    var otherClimbs = outputNearbyClimbs(nearbyClimbs);
+    var folderName = returnClimbURL(climb.routeName, climb.cliff);
 
     if (climb.techGrade === null) {
         var techGrade = "";
@@ -604,6 +687,10 @@ function climbCard(climbData) {
                     ${guideBookModule}
                     ${weatherInfoModule}
                     ${referanceModule}
+                    <hr />  
+                    <section class="row">
+                        ${otherClimbs}
+                    </section>
                 </div>
             </div>
         </div>

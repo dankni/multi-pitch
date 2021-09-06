@@ -1133,17 +1133,6 @@ function LoadAnalytics(){
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        switch(window.location.pathname.split('/')[1]) { // can remove this at some point - just a test
-            case 'climbing-tips' : 
-                gtag('config', 'UA-123782847-1', {'content_group1': 'content page'}); 
-                break;
-            case 'climbs': 
-                let cliffName = console.log(document.title.split(" - ")[0]);
-                gtag('config', 'UA-123782847-1', {'content_group2': cliffName});
-                break;
-            default:
-                gtag('config', 'UA-123782847-1');
-        }
         window.performance.mark('gta-end');
     }, 1000);
 
