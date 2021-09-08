@@ -1133,6 +1133,7 @@ function LoadAnalytics(){
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
+        gtag('config', 'UA-123782847-1');
         window.performance.mark('gta-end');
     }, 1000);
 
