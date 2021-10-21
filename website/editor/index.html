@@ -5,16 +5,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    
 
-    <title>Editor</title>
+    <title>Climb Editor</title>
     <meta name="description" content="Editor" />
+
     <link href="../css/style.css?Apr=2020" rel="stylesheet" />
     <script src="js/common.js"></script>
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <!-- locking to version 3.2.0 because this doesn't like the latest version for some reason -->
+    <link href="https://unpkg.com/material-components-web@3.1.0/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@3.1.0/dist/material-components-web.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">  
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="js/dataStructure.js"></script>
     <style>
         .mdl-data-table td, .mdl-data-table th{
             padding: 12px 10px !important;
@@ -25,6 +27,15 @@
         }
         .mdc-text-field--outlined{
             margin:10px;
+        }
+        .mdc-notched-outline__notch {
+            width: auto !important; /*bug fix for material design*/
+        }
+        .missingClimb {
+           padding:8px;
+           border-radius: 5px;
+           background-color: #75bdbd; 
+           margin: 0 16px;
         }
     </style>
     
@@ -45,7 +56,6 @@
                 <div class="col-6">
                     <canvas id="gradeBar"></canvas>
                     <script>
-
                         /**
                          * GET THE JSON CONTENT - either from data.json or local storage
                          **/
@@ -61,11 +71,17 @@
                                         localStorage.setItem('climbsData', this.response);
                                         climbsData = JSON.parse(localStorage.getItem('climbsData'));
                                         jsonLoaded();
-                                    } else {
+                                    } else if(this.status === 404) { 
+                                        let missingClimb = document.createElement('span');
+                                        missingClimb.innerHTML = "Climb: " + id;
+                                        missingClimb.classList.add('missingClimb');
+                                        document.getElementById('missingClimbs').appendChild(missingClimb);
+                                    }
+                                    else {
                                         console.log("Error getting content");
                                     }
                                 }
-                                request.onerror = function() { console.log('Error ' + this.status);   };
+                             //   request.onerror = function() { console.log('Error ' + this.status);   };
                                 request.send();
                             }
                         }
@@ -144,7 +160,7 @@
                                         topoState = localClimb.climbData.topo.dataFile >= 1 ? localClimb.climbData.topo.dataFile : 0;
                                     }
                                 } catch (e) {
-                                    console.log("error = " + e);
+                                  //  console.log("error = " + e);
                                 }
                                 if(climbsData.climbs[i].status === 'publish'){
                                     publish = 'checked';
@@ -198,7 +214,14 @@
                                         localStorage.setItem('climb' + id, this.response);
                                         climb = JSON.parse(this.response);
                                         return climb;
-                                    } else { console.log("couldn't load climbsData - likley server error / file not found"); }
+                                    } else if(this.status === 404) { 
+                                        let missingClimb = document.createElement('span');
+                                        missingClimb.innerHTML = "Climb: " + id;
+                                        missingClimb.classList.add('missingClimb');
+                                        document.getElementById('missingClimbs').appendChild(missingClimb);
+                                    } else {
+                                        console.log("unexpected error. Status = " + this.status); 
+                                    }
                                 };
                                 request.onerror = function() { console.log("couldn't load climbsData " + id); };
                                 request.send();
@@ -246,247 +269,36 @@
                             </form>`;
                             document.getElementById('id').innerHTML = climbId;
                             document.getElementById('inputs').innerHTML = '';
-                            const chosenClimb = climbsData.climbs.find(climb => climb.id === climbId);
-                            const dataStructure = {
-                                "elements": [
-                                    {
-                                        "name" : "abseil",
-                                        "type" : "boolean",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "attributes",
-                                        "derivedValue" : false
-                                    },
-                                    {
-                                        "name" : "seepage",
-                                        "type" : "boolean",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "attributes",
-                                        "derivedValue" : false   
-                                    },
-                                    {
-                                        "name" : "tidal",
-                                        "type" : "boolean",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "attributes",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "loose",
-                                        "type" : "boolean",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "attributes",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "polished",
-                                        "type" : "boolean",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "attributes",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "traverse",
-                                        "type" : "boolean",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "attributes",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "cliff",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "routeName",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "status",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "country",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "location",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "county",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "location",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "length",
-                                        "type" : "int",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "pitches",
-                                        "type" : "int",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "dataGrade",
-                                        "type" : "int",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "grades",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "tradGrade",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "grades",
-                                        "derivedValue" : true 
-                                    },
-                                    {
-                                        "name" : "techGrade",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "grades",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "gradeSys",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "grades",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "originalGrade",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "grades",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "geoLocation",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "location",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "approachDifficulty",
-                                        "type" : "int",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "approachTime",
-                                        "type" : "int",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "incline",
-                                        "type" : "text",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "face",
-                                        "type" : "text",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "summary",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "url",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "tileImg",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "alt",
-                                        "type" : "text",
-                                        "mandetory" : true,
-                                        "mainFileData" : true,
-                                        "section" : "tileImg",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "atributionURL",
-                                        "type" : "text",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "tileImg",
-                                        "derivedValue" : false 
-                                    },
-                                    {
-                                        "name" : "attributionText",
-                                        "type" : "text",
-                                        "mandetory" : false,
-                                        "mainFileData" : true,
-                                        "section" : "tileImg",
-                                        "derivedValue" : false
-                                    }
-                                ],
-                                "sections" : {
-                                    "mainFileData" : ["summary", "grades", "location", "attributes", "tileImg"],
-                                    "detailedData" : ["approach","pitches", "guidebooks", "weather", "referances"]
-                                },
-                            }
-                            const text = ['','','county','tradGrade','techGrade','gradeSys','originalGrade','flag','geoLocation','face'];
-                            const tileImg = ['url','alt','atributionURL','attributionText'];
-                            const numbers = ['length','pitches','dataGrade','approachTime','approachDifficulty','updateTimestamp'];
-                            document.getElementById('lastUpdate').innerText = chosenClimb.lastUpdate;
-                            for(let i = 0; i < dataStructure.sections.mainFileData.length; i++){
-                                document.getElementById('inputs').innerHTML += `<h3>${dataStructure.sections.mainFileData[i]}</h3>`;
-                                let section = dataStructure.elements.filter(elem => elem.section === dataStructure.sections.mainFileData[i]);
+
+                            const chosenClimb = climbsData.climbs.find(climb => climb.id === climbId); // has tile images
+                            const climbJSON = JSON.parse(localStorage.getItem('climb' + climbId));
+                            const fullClimb = climbJSON.climbData;
+                            
+                            document.getElementById('lastUpdate').innerText = fullClimb.lastUpdate;
+                            for(let i = 0; i < dataStructure.sections.length; i++){
+                                document.getElementById('inputs').innerHTML += `<h3>${dataStructure.sections[i]}</h3>`;
+                                let section = dataStructure.elements.filter(elem => elem.section === dataStructure.sections[i]);
                                 for(let j = 0; j < section.length; j++){
-                                    if(dataStructure.sections.mainFileData[i] === "tileImg"){
+                                    if(dataStructure.sections[i] === "tileImg"){
                                         document.getElementById('inputs').innerHTML += formElement(section[j].type, chosenClimb.tileImage[section[j].name], 'tileImage.' + section[j].name);
+                                    } else if (dataStructure.sections[i] === "weatherData"){
+                                        for (var key in fullClimb.weatherData) {
+                                            if (fullClimb.weatherData.hasOwnProperty(key)) {
+                                                document.getElementById('inputs').innerHTML += formElement(section[j].type, fullClimb.weatherData[key], key);
+                                            }
+                                        }
+                                    } else if (dataStructure.sections[i]  === "guideBooks") {
+                                        for(let p = 0; p < fullClimb.guideBooks.length; p++){
+                                            document.getElementById('inputs').innerHTML += formElement(section[j].type, fullClimb.guideBooks[p][section[j].name], 'guideBooks.' + section[j].name);
+                                        }
                                     } else {
-                                        document.getElementById('inputs').innerHTML += formElement(section[j].type, chosenClimb[section[j].name], section[j].name);
+                                        document.getElementById('inputs').innerHTML += formElement(section[j].type, fullClimb[section[j].name], section[j].name);
                                     }
                                 }
                                 document.getElementById('inputs').innerHTML += `<hr>`;
                             }
+
+
                             document.getElementById('quickEditForm').style.display = 'block';
                             mdc.autoInit();
                             openModal();
@@ -496,6 +308,7 @@
                           RETURN FORM ELEMENT 
                           **/
                         function formElement(type, value, key){
+
                             switch(type){
                                 case 'text':
                                     return `
@@ -537,55 +350,44 @@
                                         </div>
                                         <label for="${key}">${key}</label>`
                                     break;
+                                case 'multi-line':
+                                    return `
+                                    <br /> <label class="mdc-text-field mdc-text-field--textarea">
+                                        <span class="mdc-notched-outline">
+                                            <span class="mdc-notched-outline__leading"></span>
+                                            <span class="mdc-notched-outline__notch">
+                                            <span class="mdc-floating-label" id="${key}"></span>
+                                            </span>
+                                            <span class="mdc-notched-outline__trailing"></span>
+                                        </span>
+                                        <span class="mdc-text-field__resizer">
+                                            <textarea class="mdc-text-field__input" aria-labelledby="my-label-${key}" rows="6"
+                                            cols="200">${value}</textarea>
+                                        </span>
+                                    </label>`
+                                    break;
+                                case 'array':
+                                    let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                                    let html = "<h4>" + key + "</h4>";
+                                    for(let i = 0; i < 12; i++){
+                                        
+                                        html += `
+                                        <div class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+                                            <input class="mdc-text-field__input" id="${key}_${months[i]}" value="${value[i]}" type="number" style="width:74px;">
+                                            <div class="mdc-notched-outline">
+                                            <div class="mdc-notched-outline__leading"></div>
+                                            <div class="mdc-notched-outline__notch">
+                                                <label for="text-field-${key}_${months[i]}" class="mdc-floating-label">${months[i]}</label>
+                                            </div>
+                                            <div class="mdc-notched-outline__trailing"></div>
+                                            </div>
+                                        </div>`
+                                    }
+                                    return html += "<br />";
+                                    break;
                             }
                         }
-                        /*    for (var key in chosenClimb) {
-                                if(text.includes(key) || numbers.includes(key)){
-                                    let type = '';
-                                    text.includes(key) ? type = 'text' : type = 'number';
-                                    let hr = ''
-                                    if(key === 'face'){ hr = '<hr />' }
-                                    ${hr}`
-                                    document.getElementById('inputs').innerHTML += input;
-                                } 
-                                if(toggles.includes(key)){
-                                    let hr = ''
-                                    if(key === 'seepage'){ hr = '<hr />' }
-                                    let checked = ''
-                                    chosenClimb[key] === 1 ? checked = 'checked' : checked = '';
-                                    let toggle = `
-                                        <div class="mdc-checkbox" data-mdc-auto-init="MDCCheckbox">
-                                            <input type="checkbox" class="mdc-checkbox__native-control" id="${key}" ${checked}/>
-                                            <div class="mdc-checkbox__background">
-                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                                                </svg>
-                                            </div>
-                                            <div class="mdc-checkbox__ripple"></div>
-                                        </div>
-                                        <label for="${key}">${key}</label> ${hr}`;
-                                    document.getElementById('inputs').innerHTML += toggle;
-                                }                           
-                            }
-                            for(let i = 0; i < tileImg.length; i++){
-                                let tileImageOb = chosenClimb.tileImage;
-                                let input = `
-                                    <div class="mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField" style="width:45%">
-                                        <input class="mdc-text-field__input" id="tileImage.${tileImg[i]}" value="${tileImageOb[tileImg[i]]}" type="text">
-                                        <div class="mdc-notched-outline">
-                                        <div class="mdc-notched-outline__leading"></div>
-                                        <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-tileImage.${tileImg[i]}" class="mdc-floating-label">tileImage.${tileImg[i]}</label>
-                                        </div>
-                                        <div class="mdc-notched-outline__trailing"></div>
-                                        </div>
-                                    </div>`;
-                                document.getElementById('inputs').innerHTML += input;
-                            }
-                            document.getElementById('quickEditForm').style.display = 'block';
-                            mdc.autoInit();
-                            openModal();*/
-                        
+                                               
 
                         /**
                          * SHOW CLIMB DETAILS FROM LOCAL 
@@ -645,6 +447,19 @@
                             outputTable();
                         }
                     </script>
+                </div>
+            </section>
+            <hr />
+            <section class="row">
+                <div class="col-12">
+                    <h3>Missing Climbs</h3>
+                    <p>
+                        The following climbs do not have a .json file in the data folder. 
+                        This needs to be created, all work in the editor is stored in local storage.
+                    </p>
+                    <div id="missingClimbs">
+
+                    </div>
                 </div>
             </section>
             <hr />

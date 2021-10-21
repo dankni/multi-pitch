@@ -118,80 +118,62 @@ function getGraph(type, climb) {
     try {
         var date = new Date;
         var curentMonth = date.getMonth();
-        var bold = "";
-        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var minTemprature = 0;
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var topValues;
+        var bottomValues;
+        var bold;    
 
-        if (type === "temperature") {
-            var high = climb.weatherData.find(h => h.type === 'tempH');
-            var chartClass = "temp";
+        if (type === "temp") {
+            topValues = climb.weatherData.tempH;
+            bottomValues = climb.weatherData.tempL;
+            minTemprature = Math.min.apply(null, bottomValues);
         } else {
-            var high = climb.weatherData.find(h => h.type === 'rainyDays');
-            var chartClass = "seasonal-rain";
+            topValues = climb.weatherData.rainyDays;
+            bottomValues = [0,0,0,0,0,0,0,0,0,0,0,0];
         }
-
-        var highArray = [];
-        for (let i = 1; i < 13; i++) {
-            highArray.push(parseInt(Object.values(high)[i]));
-        }
-        var maxValue = Math.max.apply(null, highArray);
+  
+        var maxValue = Math.max.apply(null, topValues);
         var graphHeight = 40;
-        if (maxValue < 18) graphHeight -= 5; // makes the bars fill more of the height
-
-        var lowArray = [];
-        if (type === "temperature") {
-            var tempL = climb.weatherData.find(l => l.type === 'tempL');
-            for (let i = 1; i < 13; i++) {
-                lowArray.push(parseInt(Object.values(tempL)[i]));
-            }
-            var minTemprature = Math.min.apply(null, lowArray);
-        } else {
-            for (let i = 0; i < 12; i++) {
-                lowArray.push(0);
-            }
+        if (maxValue < 18) graphHeight -= 5;        // makes the bars fill more of the height (zooms in)
+        
+        var barHeightModifier = 0;                  // if all temps are above 0 no adjustment needed   
+        if (minTemprature < -8) {                   // ensure all numbers are > 0 so we dont subtract a minus number (which would be addative)
+            barHeightModifier = 16;                 // if its really cold adjust the graph a lot
+        } else if (minTemprature < 0) {
+            barHeightModifier = 8;                  // if its a bit cold adjust it a little
         }
 
-        var tempInfo = `<ul class="chart ${chartClass}">`;
+        var tempInfo = `<ul class="chart ${type}">`;
 
         for (let i = 0; i < 12; i++) {
             i === curentMonth ? bold = "font-weight:900;" : bold = "";
-            if (minTemprature < -8) {
-                // if its really cold adjust the graph a lot
-                var lowTemp = (lowArray[i] + 16) / graphHeight * 100;
-                var highTemp = ((highArray[i] + 16) - (lowArray[i] + 16)) / graphHeight * 100;
-            } else if (minTemprature < 0) {
-                // if its a bit cold adjust it a little
-                var lowTemp = (lowArray[i] + 8) / graphHeight * 100;
-                var highTemp = ((highArray[i] + 8) - (lowArray[i] + 8)) / graphHeight * 100;
-            } else {
-                // if all temps are above 0 no adjustment needed 
-                var lowTemp = (lowArray[i]) / graphHeight * 100;
-                var highTemp = (highArray[i] - lowArray[i]) / graphHeight * 100;
-            }
-
-            tempInfo += `
-  	  <li>
-	    ${parseInt(highArray[i])}
-	    <span style="height:${highTemp}%;${bold}"  title="${months[i]}"></span>`;
-            if (type === "temperature") {
-                tempInfo += `<span style="height:${lowTemp}%;background-color:rgba(0,0,0,0);">${parseInt(lowArray[i])}</span>`;
+            // the bottom bar "pushes up" the top bar so barEndingHeight is the delta which sits on the bottom bar
+            barEndingHeight = ((topValues[i] + barHeightModifier) - (bottomValues[i] + barHeightModifier)) / graphHeight * 100;
+            barStartingHeight = ((bottomValues[i] + barHeightModifier)) / graphHeight * 100;
+            tempInfo += `<li>
+                            ${topValues[i]}<span style="height:${barEndingHeight}%;${bold}"  title="${months[i]}"></span>`;
+            if (type === "temp") {
+                tempInfo += `<span style="height:${barStartingHeight}%;background-color:rgba(0,0,0,0);">${bottomValues[i]}</span>`;
             }
             tempInfo += `</li>`;
         }
         tempInfo += `</ul>`;
 
     } catch (e) {
-        tempInfo = '';
+        console.log(e);
+        tempInfo = "";
     }
     return tempInfo;
 }
 
 function getWeather(climb) {
     try {
-        var temperature = getGraph("temperature", climb);
+        var temperature = getGraph("temp", climb);
         if (temperature == '') {
             return '';
         }
-        var rain = getGraph("rain", climb);
+        var rain = getGraph("seasonal-rain", climb);
         if (climb.seepage >= 1) {
             var seepage = `<p>The climb ${climb.routeName} on ${climb.cliff} suffers from seepage 
             and will need time to dry out after rain. Rock climbing after heavy rainfall could 
@@ -274,7 +256,7 @@ function getWeather(climb) {
         weatherInfo = '';
         console.log("card weather error for: " + climb.id);
         return weatherInfo;
-    }
+   } 
 
 }
 

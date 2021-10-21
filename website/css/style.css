@@ -849,18 +849,16 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   border-top-left-radius: calc(.25rem - 1px);
   border-top-right-radius: calc(.25rem - 1px);
 }
-@media (min-width: 800px) {
-  .align-items-center {
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-  }
-  .view{
-    text-align:right;
-  }
+.align-items-center {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.view{
+  text-align:center;
 }
 .text-center {
   text-align: center!important;
@@ -890,7 +888,8 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   height: auto
 }
 .hr-light {
-  border-top: 1px solid #fff
+  border-top: 1px solid #fff;
+  margin: 1.2rem 0;
 }
 .font-small {
   font-size: .9rem
@@ -1148,13 +1147,16 @@ position: relative;
 }
 .hero-text {
   text-shadow: 1px 1px 2px #000;
+  background-color: rgba(0,0,0,0.75);
+  padding:20px;
+  color:#FFF;
 }
 .hero{
   display:block;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: 0 0;
+  object-position: center left;
 }
 .filters label {
   width: 30%;
@@ -1230,7 +1232,7 @@ a:focus .crag-hero{
   line-height: 60px;
   position: absolute;
   left: 50%;
-  bottom: 15px;
+  bottom: 15vh;
   color: #FFF;
   text-align: center;
   font-size: 70px;
@@ -1948,7 +1950,7 @@ hr {
 /** HP HERO **/
 
 .full-page-intro{
-  background-position:top left;
+  background-position:bottom left;
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -1975,13 +1977,13 @@ hr {
     margin-top: 0;
   }
 }
-/*
+/* DARK MODE
 @media (prefers-color-scheme: dark) {
   body{
     background: #333;
     color: #FFF;
   }
-}*/
+} */
 .map-card-body {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;

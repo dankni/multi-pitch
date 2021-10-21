@@ -19,11 +19,11 @@
     <meta name="description" content="Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m.." />
 
     <!-- Styles -->
-    <link href="css/style.css?Dec=2020" rel="stylesheet" />
+    <link href="css/style.css?Sept=2021" rel="stylesheet" />
 
     <!-- JavaScripts -->
     <script async src="components/climbCard.js"></script>
-    <script async src="js/main.js?Dec=2020"></script>
+    <script async src="js/main.js?Sept=2021"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
@@ -50,7 +50,7 @@
           content="Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.multi-pitch.com/" />
-    <meta property="og:image" content="https://www.multi-pitch.com/img/tiles/old-man-of-stoer-small.jpg" />
+    <meta property="og:image" content="https://www.multi-pitch.com/img/tiles/bosigran-climbing-small.jpg" />
     <meta property="og:image:type" content="image/jpg" />
 </head>
 <body id="bdy">
@@ -96,30 +96,33 @@
 
     <!-- Full Page Intro -->
     <div class="view full-page-intro" id="hero">
-        <picture style="display:block;width: 100vw;height: 100vh;object-fit: cover; object-position: 0 0;">
-            <source media="(max-width: 1080px)" type="image/webp"
-                    srcset="/img/heros/old-man-of-stoer-hero-1800.webp 1x, /img/heros/old-man-of-stoer-hero-2400.webp 2x">
-            <source media="(min-width: 1080px)" type="image/webp"
-                    srcset="/img/heros/old-man-of-stoer-hero-2400.webp">
-            <source media="(max-width: 1080px)" type="image/jpeg"
-                    srcset="/img/heros/old-man-of-stoer-hero-1800.jpg 1x, /img/heros/old-man-of-stoer-hero-2400.jpg 2x">
-            <source media="(min-width: 1080px)" type="image/jpeg"
-                    srcset="/img/heros/old-man-of-stoer-hero-2400.jpg">
-            <img src="/img/heros/old-man-of-stoer-hero-1800.jpg"
-                 class="hero" alt="The Old Man of Stoer multi-pitch climb" />
+        <picture style="display:block;width: 100%;height: 92vh;object-fit: cover; object-position: 0 100px;">         
+            <source media="(max-width: 600px)" type="image/webp"
+                    srcset="/img/heros/bosigran/bosigran-climbing-hero-phone.webp 1x, 
+                            /img/heros/bosigran/bosigran-climbing-hero-phone-high-res.webp 2x">
+            <source media="(max-width: 1200px)" type="image/webp"
+                    srcset="/img/heros/bosigran/bosigran-climbing-hero-1200.webp,
+                            /img/heros/bosigran/bosigran-climbing-hero-2400.webp 2x">
+            <source media="(max-width: 2400px)" type="image/webp"
+                    srcset="/img/heros/bosigran/bosigran-climbing-hero.webp,
+                            /img/heros/bosigran/bosigran-climbing-hero.webp 2x">
+            <source media="(min-width: 2400px)" type="image/webp"
+                    srcset="/img/heros/bosigran/bosigran-climbing-hero.webp">
+            <img src="/img/heros/bosigran-climbing-hero-1800.jpg"
+                 class="hero" alt="Bosigran sea cliff multi-pitch rock climbing" />
         </picture>
 
-        <div class="mask rgba-black-light d-flex align-items-center">
+        <div class="mask d-flex align-items-center">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3 white-text not-mobile">
+                    <div class="col-md-3 not-mobile">
                         <!--offsets text -->
                     </div>
-                    <div class="col-md-9 mb-4 white-text hero-text">
-                        <h1 class="display-4">Only the best multi&#8209;pitch&nbsp;climbs</h1>
-                        <h3 class="display-6">Carefully curated & meticulously&nbsp;detailed</h3>
+                    <div class="col-md-6 mb-4 hero-text">
+                        <h1>Great multi&#8209;pitch rock&nbsp;climbs</h1>
+                        <!--<h3>Carefully curated & meticulously&nbsp;detailed</h3>-->
                         <hr class="hr-light">
-                        <p class="mb-4 d-md-block">
+                        <p>
                             <strong>
                                 Muti-pitch.com is dedicated to cataloguing the best traditionally protected
                                 multi-pitch rock climbs that are at least 50m high.
@@ -138,7 +141,7 @@
             <section class="mt-5">
                 <div class="row">
                     <div class="col-md-12 mb-12">
-                        <h3 class="h3">Find Your Climb</h3>
+                        <h2 class="h3">Find your perfect multi-pitch rock climb</h2>
                         <p>
                             We are activly expnding and our selection of traditional multi-pitch rock
                             climbs. The site is built on a <em>less but better</em> Philosophy.
@@ -344,7 +347,7 @@
             <a href="/about/#contact">Contact</a>
         </section>
     </footer>
-     <a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
+    <a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
     <div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile()"></div>
     <script>
         window.performance.mark('html-end');

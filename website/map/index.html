@@ -153,7 +153,7 @@
                     var lon = parseFloat(climbsData.climbs[i].geoLocation.split(',')[1]);
                     var climbId = climbsData.climbs[i].id;
                     var climbName = ""
-                        .concat(climbsData.climbs[i].routeName, '-on-', climbsData.climbs[i].cliff)
+                        .concat(climbsData.climbs[i].routeName.trim(), '-on-', climbsData.climbs[i].cliff.trim())
                         .toLowerCase()
                         .replace(/'/g, "")
                         .replace(/\//g, "")
