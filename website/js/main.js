@@ -1240,7 +1240,7 @@ function loadCurrentWeatherModule(id){
         document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
         document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
         if(dsWeather.currently.sunriseTime){
-            document.getElementById("sunrise").innerText = new Date(dsWeather.currently.sunriseTime  * 1000).toTimeString().substring(0,5);
+            document.getElementById("sunrise").innerText = new Date(dsWeather.currently.sunriseTime  * 1000).toTimeString().substring(0,5); // suspect this is user browser time not location time
             document.getElementById("sunset").innerText = new Date(dsWeather.currently.sunsetTime  * 1000).toTimeString().substring(0,5);
             document.getElementById('light_hours').innerText = (((dsWeather.currently.sunsetTime - dsWeather.currently.sunriseTime)/60)/60).toFixed(1);
         } else {

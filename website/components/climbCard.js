@@ -201,16 +201,15 @@ function getWeather(climb) {
           <p class="min-height">
             The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>. <small id="lastDate">Updated: </small><br /><br />
             <span class="weather tempr"></span> Temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c.<br />
-            <span id="sunMovement">
-                <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between 
-                <strong id="sunrise"></strong> & <strong id="sunset"></strong>.
-            </span>
-            <br />
             <span class="weather wind"></span> <strong id="wind_speed"></strong><abbr title="Miles Per Hour">mph</abbr> wind gusts, 
             bearing &nbsp; <span id="bearing">&#8611;</span>.<br />
+            <strong id="precip_pos"></strong>% chance of rain today with an intensity of <strong id="precip_intense"></strong>mm per hour.<br />
             <span class="weather clear-day"></span> <abbr title="Ultraviolet">UV</abbr> Index of <strong id="uv_index"></strong> 
             and cloud cover of <strong id="cloud_cover"></strong>%.<br />
-            <strong id="precip_pos"></strong>% chance of rain today with an intensity of <strong id="precip_intense"></strong>mm per hour.
+            <span id="sunMovement">
+                <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between 
+                <strong id="sunrise"></strong> & <strong id="sunset"></strong> <small>based on your current time</small>.
+            </span>
           </p>
           ${tideInfoBox}
           <p class="chart-title">

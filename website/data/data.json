@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2021-10-15T01:01:02.339Z",
+  "lastUpdate": "2021-12-16T02:01:02.339Z",
   "climbs": [
     {
       "cliff": "Great Tor",
@@ -1469,7 +1469,7 @@
       "techGrade": "4a",
       "gradeSys": "UIAA",
       "originalGrade": "IV+",
-      "geoLocation": "46.509105837, 11.7738439522",
+      "geoLocation": "46.509105837,11.7738439522",
       "approachTime": 10,
       "approachDifficulty": 1,
       "rock": "Dolomite",
@@ -1490,6 +1490,42 @@
         "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
         "attributionText": "our own image"
       } 
+    },
+    {
+      "cliff": "Puig Campana",
+      "status": "publish",
+      "id": 44,
+      "country": "Spain",
+      "county": "Valencia",
+      "routeName": "Espolón Central",
+      "length": 400,
+      "pitches": 10,
+      "dataGrade": 4,
+      "tradGrade": "HS",
+      "techGrade": "4c",
+      "gradeSys": "UIAA",
+      "originalGrade": "IV+",
+      "geoLocation": "38.589097,-0.206519",
+      "approachTime": 60,
+      "approachDifficulty": 2,
+      "rock": "Limestone",
+      "incline": "Vertical",
+      "face": "S",
+      "abseil": null,
+      "traverse": null,
+      "boat": null,
+      "tidal": null,
+      "polished": null,
+      "loose": null,
+      "seepage": null,
+      "grassLegdes": null,
+      "lastUpdate": "2021-12-16T01:01:02.339Z",
+      "tileImage": {
+        "url": "img/tiles/epsolon-central-on-puig-campana-costa-blanca.jpg",
+        "alt": "Epsolon Central climb on Puig Campana Mountain",
+        "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attributionText": "our own image"
+      }
     }
   ]
 }
