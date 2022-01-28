@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+	<link href="style.css" rel="stylesheet" />
+	<script src="main.js" ></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" /> 
+    <title>Rock Ring Training</title>
+  </head>
+
+  <body>
+    <h1>Rock Ring Trainer</h1>
+	<button onClick="setStarted()">Start</button>
+
+	<div id="data">
+		<h3>Timer:<br /><span id="elapsed">00:00</span></h3>
+	</div>
+	<section id="first">
+		<img id="first_hold" src="img/plain.png" class="ring" />
+		<p class="task" id="first_task">Text</p>
+	</section>
+	<section id="second">
+		<img id="second_hold" src="img/plain.png" class="ring" />
+		<p class="task" id="second_task">Text</p>
+	</section>
+	<footer>
+		based on 
+		<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="blank">
+			metoliusclimbing.com plan
+		</a>
+	</footer>
+  </body>
+</html>
