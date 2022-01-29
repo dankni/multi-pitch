@@ -100,6 +100,12 @@ const plan = [
             "order" : 2,
             "hold" : "three_fingers.png",
             "task" : "Striagt-arm hang to failure"
+        },
+        {
+            "min" : 11,
+            "order" : 1,
+            "hold" : "three_fingers.png",
+            "task" : "Striagt-arm hang to failure"
         }
     ];
 
@@ -125,10 +131,12 @@ function setStarted(){
         started = true;
         startTimer();
         document.querySelector('button').innerHTML = 'Stop';
+        document.getElementById('reset').style.display = 'none';
     } else {
         started = false;
         stopTimer();
         document.querySelector('button').innerHTML = 'Resume';
+        document.getElementById('reset').style.display = 'inline-block'
     }
     
 }
@@ -152,32 +160,54 @@ function speak(inputTxt){
 
 function displayTask(min){
     min = min + 1;
+    let hasSecond = false;
     for(let i = 0; i < plan.length; i++){
         // ToDo: use something more elegant here like a map? 
         if((plan[i].min == min) && (plan[i].order == 1)) {
-            document.getElementById("first").style.display = "block";
+            document.getElementById("first").style.display = "flex";
             document.getElementById("first_hold").src = "img/" + plan[i].hold;
             document.getElementById("first_task").innerHTML = plan[i].task;
+            speak(plan[i].task);
         } 
         if((plan[i].min == min) && (plan[i].order == 2)) {
-            document.getElementById("second").style.display = "block";
+            hasSecond = true;
             document.getElementById("second_hold").src = "img/" + plan[i].hold;
             document.getElementById("second_task").innerHTML = plan[i].task;
-        } 
+            speak(" followed by " + plan[i].task);
+        }
+        if(hasSecond) {
+            document.getElementById("second").style.display = "flex";
+        } else {
+            document.getElementById("second").style.display = "none";
+        }
     }
 }
 
 // To Count Elapsed time
-var min = 0;
-var sec = 0;
-var stoptime = true;
+let min = 0;
+let sec = 0;
+let stoptime = true;
+let introRun = false;
 
 function startTimer() {
-    displayTask(0);
-    if (stoptime == true) {
+
+    if(introRun === false && stoptime === true) { 
+      setTimeout(speak("Three"), 1000);
+      setTimeout(speak("Two"), 2000);
+      setTimeout(speak("One"), 3000);
+      setTimeout(function(){
+          displayTask(min);
+          stoptime = false;
+          timerCycle();
+          introRun = true
+      }, 4000);
+      
+    }
+    if (introRun === true && stoptime == true) {
         stoptime = false;
         timerCycle();
     }
+
 }
 function stopTimer() {
     if (stoptime == false) {
@@ -210,6 +240,14 @@ function timerCycle() {
     }
 }
 
-function resetTimer() {
+function reset() {
     document.getElementById('elapsed').innerHTML = '00:00';
+    min = 0;
+    sec = 0;
+    stoptime = true;
+    document.getElementById("first").style.display = "none";
+    document.getElementById("second").style.display = "none";
+    document.getElementById("reset").style.display = "none";
+    document.querySelector('button').innerHTML = 'Start';
+    introRun = false;
 }

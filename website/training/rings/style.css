@@ -8,11 +8,11 @@ h1 {
     top: 0;
     left: 0;
     width:100%;
-    font-size:24px;
+    font-size:22px;
     background-color: #121212;
     color: #FFFFFF;
     margin:0;
-    padding:12px 0;
+    padding:6px 0;
 }
 h2{
     text-transform: capitalize;
@@ -28,8 +28,8 @@ h2{
     margin:0 auto 20px;
 }
 button {
-    margin: 75px auto 0;
-    display: block;
+    margin: 25px auto 0;
+    display: inline-block;
     border: none;
     padding: 1rem 2rem;
     text-decoration: none;
@@ -54,35 +54,45 @@ button:focus {
 button:active {
     transform: scale(0.99);
 }
+.secondary {
+    border: 2px solid rgb(165, 3, 3);
+    color: rgb(165, 3, 3);
+    background: #FFF;
+    display: none;
+}
+.secondary:hover, .secondary:focus {
+    background: #fcc2c2;
+}
 section {
     display:inline-block;
     width:90%;
     padding:10px;
     border-radius:5px;
     background: #F9F9F9;		
-    margin: 4%;
+    margin: 3%;
     display: none;
     height: 160px;
 }
-h3 span {
+h3 {
     font-size:60px;
+    margin: 12px;
 }
 footer {
     position: fixed;
     bottom: 0;
     text-align: center;
     width: 100%;
+    background-color: #fff;
+    font-size: 10px;
 }
 .ring{
     max-width: 100px;
     margin: 20px 0 20px 20px;
-    display: block;
-    float: left;
+    flex: 40%;
 }
 .task {
     margin: 20px 20px 20px 60px;
-    display: block;
-    float:left;
-    font-size: 18px;
-    max-width: 200px;
+    flex: 60%;
+    font-size: 24px;
+    text-align: left;
 }
