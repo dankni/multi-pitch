@@ -280,7 +280,7 @@ function timerCycle() {
     }
 
     document.getElementById('elapsed').innerHTML = min + ':' + sec;
-        setTimeout("timerCycle()", 40); // to test the app fast, set between 40 to 100 ^__^
+        setTimeout("timerCycle()", 1000); // to test the app fast, set between 40 to 100 ^__^
     }
 }
 
