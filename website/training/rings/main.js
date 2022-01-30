@@ -100,12 +100,6 @@ const plan = [
             "order" : 2,
             "hold" : "three_fingers.png",
             "task" : "Straight-arm hang to failure"
-        },
-        {
-            "min" : 11,
-            "order" : 1,
-            "hold" : "three_fingers.png",
-            "task" : "Straight-arm hang to failure"
         }
     ];
 
@@ -199,12 +193,10 @@ function displayTask(min, preview){
             document.getElementById("second_task" + idAppend).innerHTML = plan[i].task;
             if(!preview) { speak(" followed by " + plan[i].task); }
         }
-        if(!preview) { 
-            if(hasSecond) {
-                document.getElementById("second").style.display = "flex";
-            } else {
-                document.getElementById("second").style.display = "none";
-            }
+        if(hasSecond) {
+            document.getElementById("second" + idAppend).style.display = "flex";
+        } else {
+            document.getElementById("second" + idAppend).style.display = "none";
         }
     }
 }
@@ -272,9 +264,11 @@ function timerCycle() {
     if (sec == 60) {
         min = min + 1;
         sec = 0;
-        displayTask(min, false);
+        if (min < 10){
+            displayTask(min, false);
+        }
     }
-    if (sec === 45) {
+    if (sec === 45 && min < 9) {
         displayTask(min, true);
     }
 
@@ -286,7 +280,7 @@ function timerCycle() {
     }
 
     document.getElementById('elapsed').innerHTML = min + ':' + sec;
-        setTimeout("timerCycle()", 1000); // to test the app fast, set between 40 to 100 ^__^
+        setTimeout("timerCycle()", 40); // to test the app fast, set between 40 to 100 ^__^
     }
 }
 
