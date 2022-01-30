@@ -15,23 +15,37 @@
     <h1>Rock Ring Trainer</h1>
 	<button onClick="setStarted()">Start</button>
 	<button class="secondary" id="reset" onClick="reset()">Reset</button>
-
 	<div id="data">
 		<h3 id="elapsed">00:00</h3>
 	</div>
-	<section id="first">
-		<img id="first_hold" src="img/plain.png" class="ring" />
-		<p class="task" id="first_task">Text</p>
-	</section>
-	<section id="second">
-		<img id="second_hold" src="img/plain.png" class="ring" />
-		<p class="task" id="second_task">Text</p>
-	</section>
+	<div class="holder">
+		<section id="first">
+			<img id="first_hold" src="img/plain.png" class="ring" />
+			<p class="task" id="first_task">Text</p>
+		</section>
+		<section id="second">
+			<img id="second_hold" src="img/plain.png" class="ring" />
+			<p class="task" id="second_task">Text</p>
+		</section>
+		<h2 id="next">Next Up...</h2>
+		<aside id="preview">
+			<div id="first_preview">
+				<img id="first_hold_preview" src="img/plain.png" class="ring" />
+				<p class="task" id="first_task_preview">Text</p>
+			</div>
+			<div id="second_preview">
+				<img id="second_hold_preview" src="img/plain.png" class="ring" />
+				<p class="task" id="second_task_preview">Text</p>
+			</div>
+		</aside>
+	</div>
+<!--
+	ToDo: move this to nav "about" icon
 	<footer>
 		based on 
 		<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="blank">
 			metoliusclimbing.com plan
 		</a>
-	</footer>
+	</footer> -->
   </body>
 </html>

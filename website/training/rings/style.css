@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     text-align: center;
     font-family: 'Hind', sans-serif;
+    transition: background-color 0.5s ease;
 }
 h1 {
     top: 0;
@@ -18,7 +19,7 @@ h2{
     text-transform: capitalize;
     margin-bottom:20px;
     display: block;
-    margin: 20px auto;
+    margin: 20px 0 0 0;
 }
 #color{
     display:block;
@@ -63,19 +64,25 @@ button:active {
 .secondary:hover, .secondary:focus {
     background: #fcc2c2;
 }
+.holder{
+    width: 90%;
+    padding: 0 5%;
+}
 section {
     display:inline-block;
-    width:90%;
-    padding:10px;
+    width:100%;
     border-radius:5px;
     background: #F9F9F9;		
-    margin: 3%;
     display: none;
-    height: 160px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+.shrink{
+    transform: scale(70%);
 }
 h3 {
     font-size:60px;
-    margin: 12px;
+    margin: 0;
 }
 footer {
     position: fixed;
@@ -86,13 +93,36 @@ footer {
     font-size: 10px;
 }
 .ring{
-    max-width: 100px;
+    max-width: 75px;
     margin: 20px 0 20px 20px;
-    flex: 40%;
+    flex: 30%;
 }
 .task {
-    margin: 20px 20px 20px 60px;
-    flex: 60%;
-    font-size: 24px;
+    margin: 20px;
+    flex: 70%;
+    font-size: 20px;
     text-align: left;
+}
+aside{
+    width: 100%;
+}
+aside div {
+    display: flex;
+    flex:50%;
+    background-color: #F9F9F9;
+    margin: 5px;
+}
+aside .task{
+    font-size: 12px;
+    margin: 10px;
+}
+aside .ring {
+    max-width: 50px;
+    margin: 10px;
+}
+#preview{
+    display: none;
+}
+#next{
+    display: none;
 }

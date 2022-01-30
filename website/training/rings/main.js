@@ -39,7 +39,7 @@ const plan = [
             "min" : 4,
             "order" : 2,
             "hold" : "three_fingers.png",
-            "task" : "10 second straight arm hang"
+            "task" : "10 second straight-arm hang"
         },
         {
             "min" : 5,
@@ -99,13 +99,13 @@ const plan = [
             "min" : 10,
             "order" : 2,
             "hold" : "three_fingers.png",
-            "task" : "Striagt-arm hang to failure"
+            "task" : "Straight-arm hang to failure"
         },
         {
             "min" : 11,
             "order" : 1,
             "hold" : "three_fingers.png",
-            "task" : "Striagt-arm hang to failure"
+            "task" : "Straight-arm hang to failure"
         }
     ];
 
@@ -124,6 +124,18 @@ const requestWakeLock = async () => {
         console.log(`${err.name}, ${err.message} - this probubly means the broswer doesn't support it`);
     }
 };
+
+function background(color){
+
+    let colors =  { 
+            "red" : "rgba(255,65,54,0.5)",
+            "orange" : "rgba(255,133,27,0.5)",
+            "yellow" : "rgba(255,220,0,0.5)",
+            "green" : "rgba(46,204,64,0.5)",
+            "white" : "#FFF"
+    }
+    document.body.style.backgroundColor = colors[color];
+}
 
 function setStarted(){
     if(started === false) {
@@ -158,29 +170,52 @@ function speak(inputTxt){
     }
 }
 
-function displayTask(min){
+function displayTask(min, preview){
+    let idAppend = ""
+    if(preview){
+        document.getElementById("preview").style.display = "flex";
+        document.getElementById("next").style.display = "block";
+        idAppend = "_preview";
+        min = min + 1;
+        background("red");
+    } else {
+        document.getElementById("preview").style.display = "none";
+        document.getElementById("next").style.display = "none";
+        background("green")
+    }
     min = min + 1;
     let hasSecond = false;
     for(let i = 0; i < plan.length; i++){
         // ToDo: use something more elegant here like a map? 
         if((plan[i].min == min) && (plan[i].order == 1)) {
-            document.getElementById("first").style.display = "flex";
-            document.getElementById("first_hold").src = "img/" + plan[i].hold;
-            document.getElementById("first_task").innerHTML = plan[i].task;
-            speak(plan[i].task);
+            document.getElementById("first" + idAppend).style.display = "flex";
+            document.getElementById("first_hold" + idAppend).src = "img/" + plan[i].hold;
+            document.getElementById("first_task" + idAppend).innerHTML = plan[i].task;
+            if(!preview) { speak(plan[i].task); }
         } 
         if((plan[i].min == min) && (plan[i].order == 2)) {
             hasSecond = true;
-            document.getElementById("second_hold").src = "img/" + plan[i].hold;
-            document.getElementById("second_task").innerHTML = plan[i].task;
-            speak(" followed by " + plan[i].task);
+            document.getElementById("second_hold" + idAppend).src = "img/" + plan[i].hold;
+            document.getElementById("second_task" + idAppend).innerHTML = plan[i].task;
+            if(!preview) { speak(" followed by " + plan[i].task); }
         }
-        if(hasSecond) {
-            document.getElementById("second").style.display = "flex";
-        } else {
-            document.getElementById("second").style.display = "none";
+        if(!preview) { 
+            if(hasSecond) {
+                document.getElementById("second").style.display = "flex";
+            } else {
+                document.getElementById("second").style.display = "none";
+            }
         }
     }
+}
+function showPreview(min){
+    min = min + 2;
+    document.getElementById("first").classList.add("shrink");
+    document.getElementById("second").classList.add("shrink");
+}
+function hidePreview(){
+    document.getElementById("first").classList.remove("shrink");
+    document.getElementById("second").classList.remove("shrink");
 }
 
 // To Count Elapsed time
@@ -192,11 +227,21 @@ let introRun = false;
 function startTimer() {
 
     if(introRun === false && stoptime === true) { 
-      setTimeout(speak("Three"), 1000);
-      setTimeout(speak("Two"), 2000);
-      setTimeout(speak("One"), 3000);
+      setTimeout(function(){
+          speak("Three");
+          background("red");
+        }, 1000);
+      setTimeout(function(){
+          speak("Two");
+          background("orange");
+      }, 2000);
+      setTimeout(function(){
+            speak("One");
+            background("yellow");
+        }, 3000);
       setTimeout(function(){
           displayTask(min);
+          background("green");
           stoptime = false;
           timerCycle();
           introRun = true
@@ -221,11 +266,16 @@ function timerCycle() {
     min = parseInt(min);
 
     sec = sec + 1;
-
+    if (sec === 5){
+        background("white");
+    }
     if (sec == 60) {
         min = min + 1;
         sec = 0;
-        displayTask(min);
+        displayTask(min, false);
+    }
+    if (sec === 45) {
+        displayTask(min, true);
     }
 
     if (sec < 10 || sec == 0) {
@@ -236,7 +286,7 @@ function timerCycle() {
     }
 
     document.getElementById('elapsed').innerHTML = min + ':' + sec;
-    setTimeout("timerCycle()", 1000); // to test the app take set between 40 to 100 ^__^
+        setTimeout("timerCycle()", 1000); // to test the app fast, set between 40 to 100 ^__^
     }
 }
 
