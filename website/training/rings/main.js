@@ -141,12 +141,12 @@ function setStarted(){
         requestWakeLock();
         started = true;
         startTimer();
-        document.querySelector('button').innerHTML = 'Stop';
+        document.querySelector('button').innerHTML = '<i class="demo-icon icon-pause"></i>Pause';
         document.getElementById('reset').style.display = 'none';
     } else {
         started = false;
         stopTimer();
-        document.querySelector('button').innerHTML = 'Resume';
+        document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>Resume';
         document.getElementById('reset').style.display = 'inline-block'
     }
     
@@ -294,7 +294,7 @@ function reset() {
     document.getElementById("first").style.display = "none";
     document.getElementById("second").style.display = "none";
     document.getElementById("reset").style.display = "none";
-    document.querySelector('button').innerHTML = 'Start';
+    document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>Start';
     introRun = false;
 }
 
