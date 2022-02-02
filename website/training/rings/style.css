@@ -152,7 +152,7 @@ aside .ring {
 #next{
     display: none;
 }
-aside{
+#about {
     position:fixed;
     left: 0;
     top: 0;
@@ -163,12 +163,12 @@ aside{
     display: none;
     padding:0;
 }
-aside p, aside h2 {
+#about p, #about h2 {
     width:80%;
     max-width: 450px;
     margin: 20px auto;
 }
-aside h2{
+#about h2{
     margin-top:60px;
 }
 .slim{
