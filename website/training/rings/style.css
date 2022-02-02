@@ -5,13 +5,39 @@ html, body {
     font-family: 'Hind', sans-serif;
     transition: background-color 0.5s ease;
 }
-h1 {
+nav {
     top: 0;
     left: 0;
     width:100%;
     font-size:22px;
     background-color: #121212;
     color: #FFFFFF;
+    margin:0;
+    padding:6px 0;
+    height:45px;
+}
+.left-nav{
+    float: left;
+    width: 100px;
+}
+.right-nav{
+    float: right;
+    width: 100px;
+}
+.icon-menu, .icon-info{
+    float: left;
+    margin:0;
+    padding:12px 6px 0 6px;
+}
+.icon-resize-full-alt,.icon-resize-small-alt, .icon-volume-high, .icon-volume-off {
+    float: right;
+    margin:0;
+    padding:12px 12px 0 6px;
+    display: none;
+}
+h1{
+    font-size:22px; 
+    display: inline-block;
     margin:0;
     padding:6px 0;
 }
@@ -126,3 +152,74 @@ aside .ring {
 #next{
     display: none;
 }
+aside{
+    position:fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.98);
+    color:#FFF;
+    display: none;
+    padding:0;
+}
+aside p, aside h2 {
+    width:80%;
+    max-width: 450px;
+    margin: 20px auto;
+}
+aside h2{
+    margin-top:60px;
+}
+.slim{
+    padding:0.8rem 2rem;
+}
+  .demo-icon {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+   
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    /* opacity: .8; */
+   
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+   
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+   
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: .2em;
+   
+    /* You can be more comfortable with increased icons size */
+    /* font-size: 120%; */
+   
+    /* Font smoothing. That was taken from TWBS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+   
+    /* Uncomment for 3D effect */
+    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+  }
+
+  .icon-resize-full-alt:before { content: '\e800'; } /* '' */
+  .icon-resize-small-alt:before { content: '\e801'; } /* '' */
+  .icon-cog:before { content: '\e802'; } /* '' */
+  .icon-wrench:before { content: '\e803'; } /* '' */
+  .icon-play:before { content: '\e804'; } /* '' */
+  .icon-pause:before { content: '\e805'; } /* '' */
+  .icon-volume-off:before { content: '\e806'; } /* '' */
+  .icon-volume-high:before { content: '\e807'; } /* '' */
+  .icon-mic:before { content: '\e808'; } /* '' */
+  .icon-link:before { content: '\e80a'; } /* '' */
+  .icon-info:before { content: '\e80b'; } /* '' */
+  .icon-menu:before { content: '\e80c'; } /* '' */
+  .icon-github:before { content: '\e80d'; } /* '' */
+  .icon-ccw:before { content: '\e80f'; } /* '' */
+  

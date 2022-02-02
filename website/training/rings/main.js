@@ -105,17 +105,22 @@ const plan = [
 
 let started = false;
 let wakeLock = null;
+let sound = true;
 
 // Function that attempts to request a screen stay awake.
 const requestWakeLock = async () => {
-    try {
-        wakeLock = await navigator.wakeLock.request();
-        wakeLock.addEventListener('release', () => {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => {
+                console.log('Screen Wake Lock released:', wakeLock.released);
+            });
             console.log('Screen Wake Lock released:', wakeLock.released);
-        });
-        console.log('Screen Wake Lock released:', wakeLock.released);
-    } catch (err) {
-        console.log(`${err.name}, ${err.message} - this probubly means the broswer doesn't support it`);
+        } catch (err) {
+            console.log(`${err.name}, ${err.message}`);
+        }
+    } else {
+        console.log(`Wakelock unsupported by browser`);
     }
 };
 
@@ -147,18 +152,8 @@ function setStarted(){
     
 }
 
-function fullscreen(elem){
-if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { /* IE11 */
-        elem.msRequestFullscreen();
-    }
-}
-
 function speak(inputTxt){
-    if (started === true){										// Chrome needs user activation
+    if (started === true && sound === true){			  // Chrome needs user activation
     var utterThis = new SpeechSynthesisUtterance(inputTxt);
     window.speechSynthesis.speak(utterThis);
     }
@@ -278,6 +273,13 @@ function timerCycle() {
     if (min < 10 || min == 0) {
         min = '0' + min;
     }
+    if (min === 11 && wakeLock != null){
+        //don't force the screen to stay awake anymore 
+        wakeLock.release()
+        .then(() => {
+            wakeLock = null;
+        });
+    }
 
     document.getElementById('elapsed').innerHTML = min + ':' + sec;
         setTimeout("timerCycle()", 1000); // to test the app fast, set between 40 to 100 ^__^
@@ -294,4 +296,45 @@ function reset() {
     document.getElementById("reset").style.display = "none";
     document.querySelector('button').innerHTML = 'Start';
     introRun = false;
+}
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    if (document.documentElement.requestFullscreen) {
+        document.getElementById("fullscreen").style.display = "inline-block";
+    }
+});
+
+function fullscreen(){
+    let icon = document.getElementById('fullscreen');
+    let fsClass = "icon-resize-full-alt";
+    let resizeClass = "icon-resize-small-alt";
+
+    if(document.fullscreenElement === null) {
+        // App is not fullscreen so make it full
+        document.documentElement.requestFullscreen();
+        icon.classList.remove(fsClass);
+        icon.classList.add(resizeClass);
+    } else {
+        document.exitFullscreen();
+        icon.classList.remove(resizeClass);
+        icon.classList.add(fsClass);
+    }
+}
+
+function toggleSound(){
+    if(sound === true){
+        sound = false;
+        document.getElementById('sound').classList.replace("icon-volume-high", "icon-volume-off");
+    } else {
+        sound = true;
+        document.getElementById('sound').classList.replace("icon-volume-off", "icon-volume-high");
+    }
+}
+
+function openInfoBox(){
+    document.getElementById("about").style.display = "block";
+}
+function hideAbout(){
+    document.getElementById("about").style.display = "none";
 }

@@ -9,10 +9,31 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" /> 
     <title>Rock Ring Training</title>
+	<style>
+		@font-face {
+    font-family: 'fontello';
+    src: url('font/fontello.eot?55138958');
+    src: url('font/fontello.eot?55138958#iefix') format('embedded-opentype'),
+         url('font/fontello.woff?55138958') format('woff'),
+         url('font/fontello.ttf?55138958') format('truetype'),
+         url('font/fontello.svg?55138958#fontello') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+	</style>
   </head>
 
   <body>
-    <h1>Rock Ring Trainer</h1>
+	<nav>
+		<div class="left-nav">
+			<i class="demo-icon icon-info" onclick="openInfoBox()"></i>
+		</div>
+		<h1> Rock Ring Trainer</h1>
+		<div class="right-nav">
+			<i id="fullscreen" class="demo-icon icon-resize-full-alt" onclick="fullscreen()"></i>
+			<i id="sound" class="demo-icon icon-volume-high" onclick="toggleSound()"></i>
+		</div>
+	</nav>
 	<button onClick="setStarted()">Start</button>
 	<button class="secondary" id="reset" onClick="reset()">Reset</button>
 	<div id="data">
@@ -39,13 +60,22 @@
 			</div>
 		</aside>
 	</div>
-<!--
-	ToDo: move this to nav "about" icon
-	<footer>
-		based on 
-		<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="blank">
-			metoliusclimbing.com plan
-		</a>
-	</footer> -->
+	<aside id="about">
+		<h2>About this application</h2>
+		<p>
+			This app is based on the 
+			<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="blank">
+				metoliusclimbing.com plan
+			</a> for use with their rock rings. We are not in any way affiliated with Metolius.
+			This application was built for personal use but is free to use for anyone that finds
+			it helpful. The code is also open scourced to anyone who wants to use, copy or 
+			contribute to it. Be warned, it was made in a couple of hours last weekend 
+			(Jan 2022) and the code quality reflects that. 
+			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/rings" target="blank">
+				<i class="demo-icon icon-github"></i> Github Page
+			</a>
+		</p>
+		<button onclick="hideAbout()" class="slim">close</button>
+	</aside>
   </body>
 </html>
