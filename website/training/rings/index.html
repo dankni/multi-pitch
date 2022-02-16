@@ -30,7 +30,7 @@
 		</div>
 		<h1> Rock Ring Trainer</h1>
 		<div class="right-nav">
-			<i id="fullscreen" class="demo-icon icon-resize-full-alt" onclick="fullscreen()"></i>
+			<i id="fullscreen" class="demo-icon icon-resize-full" onclick="fullscreen()"></i>
 			<i id="sound" class="demo-icon icon-volume-high" onclick="toggleSound()"></i>
 		</div>
 	</nav>
@@ -63,19 +63,34 @@
 	<aside id="about">
 		<h2>About this application</h2>
 		<p>
-			This app is based on the 
+			This app is based on the Metolius plan for use with their rock rings.
+			We are not in any way affiliated with Metolius. This application was 
+			built for personal use but is free to use for anyone that finds
+			it helpful.
+		</p>
+		<p>
 			<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="blank">
-				metoliusclimbing.com plan
-			</a> for use with their rock rings. We are not in any way affiliated with Metolius.
-			This application was built for personal use but is free to use for anyone that finds
-			it helpful. The code is also open scourced to anyone who wants to use, copy or 
-			contribute to it. Be warned, it was made in a couple of hours last weekend 
-			(Jan 2022) and the code quality reflects that. 
+				metoliusclimbing.com plan <i class="demo-icon icon-link-ext"></i>
+			</a>
+			<br />
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/rings" target="blank">
-				<i class="demo-icon icon-github"></i> Github Page
+				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
 		</p>
-		<button onclick="hideAbout()" class="slim">close</button>
+		<hr />
+		<label>
+			<input type="checkbox" onchange="toggleDebug()" id="debugMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-bug"></i> Debug Mode <span id="debugStatus">Off</span>
+			</span>
+		</label>
+		<label>
+			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+			</span>
+		</label>
+		<a onclick="hideAbout()" class="close" title="close"></a>
 	</aside>
   </body>
 </html>

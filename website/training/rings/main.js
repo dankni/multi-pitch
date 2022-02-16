@@ -106,6 +106,8 @@ const plan = [
 let started = false;
 let wakeLock = null;
 let sound = true;
+let debug = false;
+let darkMode = false;
 
 // Function that attempts to request a screen stay awake.
 const requestWakeLock = async () => {
@@ -125,15 +127,12 @@ const requestWakeLock = async () => {
 };
 
 function background(color){
-
-    let colors =  { 
-            "red" : "rgba(255,65,54,0.5)",
-            "orange" : "rgba(255,133,27,0.5)",
-            "yellow" : "rgba(255,220,0,0.5)",
-            "green" : "rgba(46,204,64,0.5)",
-            "white" : "#FFF"
+    if(darkMode === true && color === "white"){ // ToDo: use "default" not white
+        // keep it in darkMode
+        document.body.classList = 'dark';
+    } else {
+        document.body.classList = color;
     }
-    document.body.style.backgroundColor = colors[color];
 }
 
 function setStarted(){
@@ -282,7 +281,7 @@ function timerCycle() {
     }
 
     document.getElementById('elapsed').innerHTML = min + ':' + sec;
-        setTimeout("timerCycle()", 1000); // to test the app fast, set between 40 to 100 ^__^
+        debug ? setTimeout("timerCycle()", 100) : setTimeout("timerCycle()", 1000);
     }
 }
 
@@ -301,14 +300,20 @@ function reset() {
 
 document.addEventListener('DOMContentLoaded', (event) => {
     if (document.documentElement.requestFullscreen) {
+        //supports fullscreen mode
         document.getElementById("fullscreen").style.display = "inline-block";
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // user is in dark mode
+        toggleDarkMode();
+        document.getElementById("darkMode").checked = true;
     }
 });
 
 function fullscreen(){
     let icon = document.getElementById('fullscreen');
-    let fsClass = "icon-resize-full-alt";
-    let resizeClass = "icon-resize-small-alt";
+    let fsClass = "icon-resize-full";
+    let resizeClass = "icon-resize-normal";
 
     if(document.fullscreenElement === null) {
         // App is not fullscreen so make it full
@@ -337,4 +342,28 @@ function openInfoBox(){
 }
 function hideAbout(){
     document.getElementById("about").style.display = "none";
+}
+function toggleDebug(){
+    if(debug === false){
+        debug = true;
+        document.getElementById('debugStatus').innerText = `On`;
+    } else {
+        debug = false;
+        document.getElementById('debugStatus').innerText = `Off`;
+    }
+}
+function toggleDarkMode(){
+    if(darkMode === true){
+        darkMode = false;
+        if(document.body.classList.contains('dark')){
+            document.body.classList.remove('dark');
+        }
+        document.getElementById('darkStatus').innerText = `Off`;
+    } else {
+        darkMode = true;
+        if(!document.body.classList.contains('dark')){
+            document.body.classList.add('dark');
+        }
+        document.getElementById('darkStatus').innerText = `On`;
+    }
 }
