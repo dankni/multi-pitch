@@ -127,12 +127,13 @@ const requestWakeLock = async () => {
 };
 
 function background(color){
-    if(darkMode === true && color === "white"){ // ToDo: use "default" not white
-        // keep it in darkMode
-        document.body.classList = 'dark';
-    } else {
-        document.body.classList = color;
+
+    let base = "white";
+    if(darkMode === true) {
+        base = "dark";
     }
+    document.body.classList = color + " " + base;
+
 }
 
 function setStarted(){
@@ -253,7 +254,7 @@ function timerCycle() {
 
     sec = sec + 1;
     if (sec === 5){
-        background("white");
+        background("");// default
     }
     if (sec == 60) {
         min = min + 1;

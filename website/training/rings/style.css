@@ -146,7 +146,7 @@ footer {
 .task {
     margin: 20px;
     flex: 70%;
-    font-size: 20px;
+    font-size: 28px;
     text-align: left;
 }
 aside{
@@ -162,7 +162,7 @@ aside div {
     margin: 5px;
 }
 aside .task{
-    font-size: 12px;
+    font-size: 18px;
     margin: 10px;
 }
 aside .ring {
@@ -345,6 +345,15 @@ input[type=checkbox]:checked::before {
 .green {
     background-color:rgba(46,204,64,0.8);
 }
-.white {
-    background-color: #FFF;
+.dark.red{
+    background-color: #a13333;
+}
+.dark.orange{
+    background-color: #c84b31;
+}
+.dark.yellow{
+    background-color: #e79e4f;
+}
+.dark.green{
+    background-color: #519872;
 }
