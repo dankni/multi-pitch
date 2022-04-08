@@ -1,0 +1,360 @@
+html, body {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-family: 'Hind', sans-serif;
+    transition: background-color 0.5s ease;
+}
+nav {
+    top: 0;
+    left: 0;
+    width:100%;
+    font-size:22px;
+    background-color: #121212;
+    color: #FFFFFF;
+    margin:0;
+    padding:6px 0;
+    height:45px;
+}
+hr {
+    max-width: 50%;
+    opacity: 0.8;
+}
+.left-nav{
+    float: left;
+    width: 100px;
+}
+.right-nav{
+    float: right;
+    width: 100px;
+}
+.icon-menu, .icon-info{
+    float: left;
+    margin:0;
+    padding:12px 6px 0 6px;
+}
+.icon-resize-full,.icon-resize-normal, .icon-volume-high, .icon-volume-off {
+    float: right;
+    margin:0;
+    padding:12px 12px 0 6px;
+    display: none;
+}
+h1{
+    font-size:22px; 
+    display: inline-block;
+    margin:0;
+    padding:6px 0;
+}
+h2{
+    text-transform: capitalize;
+    margin-bottom:20px;
+    display: block;
+    margin: 20px 0 0 0;
+}
+#color{
+    display:block;
+    width:80px;
+    height:80px;
+    border-radius:40px;
+    margin:0 auto 20px;
+}
+button {
+    margin: 25px auto 0;
+    display: inline-block;
+    border: none;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    background: #0069ed;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background 250ms ease-in-out, 
+                transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+button:hover, button:focus {
+    background: #0053ba;
+}
+button:focus {
+    outline: 1px solid #fff;
+    outline-offset: -4px;
+}
+button:active {
+    transform: scale(0.99);
+}
+.slim{
+    padding:8px 18px;
+    border-radius: 0.8rem;
+    background: #3d83d886;
+    display: block;
+    min-width: 200px;
+}
+.slim i{
+    color: rgba(255,65,54,1);
+}
+.active {
+    background: #0069ed;
+}
+.active i{
+    color: rgba(46,204,64,1);
+}
+.secondary {
+    border: 2px solid rgb(165, 3, 3);
+    color: rgb(165, 3, 3);
+    background: #FFF;
+    display: none;
+}
+.secondary:hover, .secondary:focus {
+    background: #fcc2c2;
+}
+.holder{
+    width: 90%;
+    padding: 0 5%;
+}
+section {
+    display:inline-block;
+    width:100%;
+    border-radius:5px;
+    background: #F9F9F9;		
+    display: none;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+.shrink{
+    transform: scale(70%);
+}
+h3 {
+    font-size:60px;
+    margin: 0;
+}
+footer {
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    background-color: #fff;
+    font-size: 10px;
+}
+.ring{
+    max-width: 75px;
+    margin: 20px 0 20px 20px;
+    flex: 30%;
+    height: max-content;
+}
+.task {
+    margin: 20px;
+    flex: 70%;
+    font-size: 26px;
+    text-align: left;
+}
+aside{
+    width: 100%;
+}
+aside a{
+    color: #FFF;
+}
+aside div {
+    display: flex;
+    flex:50%;
+    background-color: #F9F9F9;
+    margin: 5px;
+}
+aside .task{
+    font-size: 15px;
+    margin: 8px;
+}
+aside .ring {
+    max-width: 50px;
+    margin: 10px;
+}
+#preview{
+    display: none;
+}
+#next{
+    display: none;
+}
+#about {
+    position:fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.98);
+    color:#FFF;
+    display: none;
+    padding:0;
+}
+#about p, #about h2 {
+    width:80%;
+    max-width: 450px;
+    margin: 20px auto;
+}
+#about h2{
+    margin-top:60px;
+}
+  .demo-icon {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+   
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    /* opacity: .8; */
+   
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+   
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+   
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: .2em;
+   
+    /* You can be more comfortable with increased icons size */
+    /* font-size: 120%; */
+   
+    /* Font smoothing. That was taken from TWBS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+   
+    /* Uncomment for 3D effect */
+    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+  }
+
+  .icon-moon:before { content: '\e800'; } /* '' */
+  .icon-sun:before { content: '\e801'; } /* '' */
+  .icon-cog:before { content: '\e802'; } /* '' */
+  .icon-wrench:before { content: '\e803'; } /* '' */
+  .icon-play:before { content: '\e804'; } /* '' */
+  .icon-pause:before { content: '\e805'; } /* '' */
+  .icon-volume-off:before { content: '\e806'; } /* '' */
+  .icon-volume-high:before { content: '\e807'; } /* '' */
+  .icon-mic:before { content: '\e808'; } /* '' */
+  .icon-resize-full:before { content: '\e809'; } /* '' */
+  .icon-link:before { content: '\e80a'; } /* '' */
+  .icon-info:before { content: '\e80b'; } /* '' */
+  .icon-menu:before { content: '\e80c'; } /* '' */
+  .icon-github:before { content: '\e80d'; } /* '' */
+  .icon-resize-normal:before { content: '\e80e'; } /* '' */
+  .icon-ccw:before { content: '\e80f'; } /* '' */
+  .icon-link-ext:before { content: '\f08e'; } /* '' */
+  .icon-bug:before { content: '\f188'; } /* '' */
+
+/* close Icon */
+.close {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+}
+.close:hover {
+    opacity: 0.7;
+    cursor: pointer;
+}
+.close:before, .close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: #FFF;
+}
+.close:before {
+    transform: rotate(45deg);
+}
+.close:after {
+    transform: rotate(-45deg);
+}
+
+/* Toggles */
+label{
+    min-width:280px;
+    display: block;
+    margin:10px auto
+}
+label .label-content {
+    width: 200px;
+    display: inline-block;
+    text-align: left;
+}
+input[type=checkbox] {
+    position: relative;
+    width: 51px;
+    height: 31px;
+    -webkit-appearance: none;
+    -webkit-appearance: none;
+    background: rgba(120, 120, 128, 0.6);
+    outline: none;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: background 300ms linear;
+    margin-bottom: -10px;
+}
+input[type=checkbox]::before {
+    position: absolute;
+    content: "";
+    width: 27px;
+    height: 27px;
+    top: 2px;
+    left: 2px;
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: left 300ms;
+}
+input[type=checkbox]:checked {
+    background: #3b94ff;
+}
+input[type=checkbox]:checked::before {
+    left: 22px;
+    background-color: #fff;
+}
+
+/* Background colors */
+.dark{
+    background:#111;
+}
+.dark nav{
+    border-bottom: 1px solid #666;
+}
+.dark h3{ 
+    color:#FFF;
+}
+.dark section, .dark aside div {
+    background-color: #BFBDBD;
+}
+.red {
+    background-color: rgba(255,65,54,0.8);
+}
+.orange {
+    background-color: rgba(255,133,27,0.8);
+}
+.yellow {
+    background-color: rgba(255,220,0,0.81);
+}
+.green {
+    background-color:rgba(46,204,64,0.8);
+}
+.dark.red{
+    background-color: #a13333;
+}
+.dark.orange{
+    background-color: #c84b31;
+}
+.dark.yellow{
+    background-color: #e79e4f;
+}
+.dark.green{
+    background-color: #519872;
+}

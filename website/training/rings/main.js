@@ -104,36 +104,15 @@ const plan = [
     ];
 
 let started = false;
-let wakeLock = null;
-let sound = true;
 let debug = false;
-let darkMode = false;
 
-// Function that attempts to request a screen stay awake.
-const requestWakeLock = async () => {
-    if ('wakeLock' in navigator) {
-        try {
-            wakeLock = await navigator.wakeLock.request('screen');
-            wakeLock.addEventListener('release', () => {
-                console.log('Screen Wake Lock released:', wakeLock.released);
-            });
-            console.log('Screen Wake Lock released:', wakeLock.released);
-        } catch (err) {
-            console.log(`${err.name}, ${err.message}`);
-        }
-    } else {
-        console.log(`Wakelock unsupported by browser`);
-    }
-};
-
+// sets background color
 function background(color){
-
     let base = "white";
     if(darkMode === true) {
         base = "dark";
     }
     document.body.classList = color + " " + base;
-
 }
 
 function setStarted(){
@@ -150,13 +129,6 @@ function setStarted(){
         document.getElementById('reset').style.display = 'inline-block'
     }
     
-}
-
-function speak(inputTxt){
-    if (started === true && sound === true){			  // Chrome needs user activation
-    var utterThis = new SpeechSynthesisUtterance(inputTxt);
-    window.speechSynthesis.speak(utterThis);
-    }
 }
 
 function displayTask(min, preview){
@@ -217,23 +189,22 @@ function startTimer() {
       setTimeout(function(){
           speak("Three");
           background("red");
+          setTimeout(function(){
+                speak("Two");
+                background("orange");
+                setTimeout(function(){
+                    speak("One");
+                    background("yellow");
+                    setTimeout(function(){
+                        displayTask(min);
+                        background("green");
+                        stoptime = false;
+                        timerCycle();
+                        introRun = true
+                    }, 1000);
+                }, 1000);
+            }, 1000);
         }, 1000);
-      setTimeout(function(){
-          speak("Two");
-          background("orange");
-      }, 2000);
-      setTimeout(function(){
-            speak("One");
-            background("yellow");
-        }, 3000);
-      setTimeout(function(){
-          displayTask(min);
-          background("green");
-          stoptime = false;
-          timerCycle();
-          introRun = true
-      }, 4000);
-      
     }
     if (introRun === true && stoptime == true) {
         stoptime = false;
@@ -298,36 +269,6 @@ function reset() {
     introRun = false;
 }
 
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    if (document.documentElement.requestFullscreen) {
-        //supports fullscreen mode
-        document.getElementById("fullscreen").style.display = "inline-block";
-    }
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        // user is in dark mode
-        toggleDarkMode();
-        document.getElementById("darkMode").checked = true;
-    }
-});
-
-function fullscreen(){
-    let icon = document.getElementById('fullscreen');
-    let fsClass = "icon-resize-full";
-    let resizeClass = "icon-resize-normal";
-
-    if(document.fullscreenElement === null) {
-        // App is not fullscreen so make it full
-        document.documentElement.requestFullscreen();
-        icon.classList.remove(fsClass);
-        icon.classList.add(resizeClass);
-    } else {
-        document.exitFullscreen();
-        icon.classList.remove(resizeClass);
-        icon.classList.add(fsClass);
-    }
-}
-
 function toggleSound(){
     if(sound === true){
         sound = false;
@@ -351,20 +292,5 @@ function toggleDebug(){
     } else {
         debug = false;
         document.getElementById('debugStatus').innerText = `Off`;
-    }
-}
-function toggleDarkMode(){
-    if(darkMode === true){
-        darkMode = false;
-        if(document.body.classList.contains('dark')){
-            document.body.classList.remove('dark');
-        }
-        document.getElementById('darkStatus').innerText = `Off`;
-    } else {
-        darkMode = true;
-        if(!document.body.classList.contains('dark')){
-            document.body.classList.add('dark');
-        }
-        document.getElementById('darkStatus').innerText = `On`;
     }
 }
