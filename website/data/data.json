@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2021-12-16T02:01:02.339Z",
+  "lastUpdate": "2022-11-04T01:02:02.339Z",
   "climbs": [
     {
       "cliff": "Great Tor",
@@ -1519,10 +1519,46 @@
       "loose": null,
       "seepage": null,
       "grassLegdes": null,
-      "lastUpdate": "2021-12-16T01:01:02.339Z",
+      "lastUpdate": "2022-11-04T01:01:02.339Z",
       "tileImage": {
         "url": "img/tiles/epsolon-central-on-puig-campana-costa-blanca.jpg",
         "alt": "Epsolon Central climb on Puig Campana Mountain",
+        "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attributionText": "our own image"
+      }
+    },
+    {
+      "cliff": "Dinorwic Quarry",
+      "status": "publish",
+      "id": 45,
+      "country": "Wales",
+      "county": "Gwynedd",
+      "routeName": "Australia West Face",
+      "length": 113,
+      "pitches": 6,
+      "dataGrade": 7,
+      "tradGrade": "E1",
+      "techGrade": "5b",
+      "gradeSys": "BAS",
+      "originalGrade": "E1 5b",
+      "geoLocation": "53.124912557009, -4.0997935507929",
+      "approachTime": 15,
+      "approachDifficulty": 1,
+      "rock": "Slate",
+      "incline": "Slab",
+      "face": "SE",
+      "abseil": null,
+      "traverse": 1,
+      "boat": null,
+      "tidal": null,
+      "polished": null,
+      "loose": null,
+      "seepage": null,
+      "grassLegdes": 1,
+      "lastUpdate": "2022-11-04T01:02:02.339Z",
+      "tileImage": {
+        "url": "img/tiles/dinorwic-slate-quarry-west-face-climbs.jpg",
+        "alt": "The West face of Dinorwic Slate Quarry gives a grand day of climbing",
         "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
         "attributionText": "our own image"
       }
