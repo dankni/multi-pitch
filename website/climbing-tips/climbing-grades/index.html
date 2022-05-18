@@ -95,7 +95,193 @@
     </div>        
     <div class="row">
         <div class="col">
-            <p id="intro">Climbing grades in theory follow quite logical rules. However in practice they are incredibly subjective and inconsistent, even within a single climbing grade system. Different climbing grade systems use very different criteria, which cannot be translated accurately, so don't rely on the converted grade.</p>
+            <p id="intro">Climbing grades in theory follow quite logical rules. However in practice they are incredibly subjective and inconsistent, even within a single climbing grade system. Different climbing grade systems use very different criteria, which cannot be translated accurately, so don't rely on the converted grade. <br /><style>
+                table{
+                    text-align: center;
+                    margin-left: auto;
+                    margin-right: auto;
+                    min-width:350px;
+                    border-spacing: 0;
+                }
+                thead tr th {
+                    background-color: #222;
+                    color: #FFF;
+                }
+                td{
+                    min-width: 70px;
+                    border:1px solid #222;
+                }
+                tr{
+                    height:25px;
+                }
+                .very-easy.active{
+                    background-color: #a9dfbf; 
+                }
+                .easy.active{
+                    background-color: #d5f5e3;
+                }
+                .easy-medium.active{
+                    background-color: #fcf3cf;
+                }
+                .medium.active{
+                    background-color: #f9e79f;
+                }
+                .medium-hard.active {
+                    background-color: #f5cba7;
+                }
+                .hard.active{
+                    background-color: #f5b7b1;
+                }
+                .very-hard.active{
+                    background-color: #d98880;
+                }
+                .hard-edge.active{
+                    background-color: #b03a2e;
+                }
+            </style>
+            <table id="gradeTable">
+                <thead>
+                    <tr>
+                        <th colspan="2" aria-colspan="2">BAS</th>
+                        <th>UIAA</th>
+                        <th>N</th>
+                        <th>FS</th>
+                        <th>FS simp.</th>
+                        <th>YDS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <!-- row 1 -->
+                        <td></td>
+                        <td rowspan="2" aria-rowspan="2" class="very-easy active BAS">Diff 3a</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-easy UIAA">II</td>
+                        <td class="very-easy N">2</td>
+                        <td class="very-easy FS">3a</td>
+                        <td rowspan="4" aria-rowspan="4" class="very-easy FS">f3</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-easy YDS">5.3</td>
+                    </tr>
+                    <tr>
+                        <!-- row 2 -->
+                        <td rowspan="2" aria-rowspan="2" class="very-easy active BAS">Diff 3b</td>
+                        <td class="very-easy N">3</td>
+                        <td class="very-easy FS">3b</td>
+                    </tr>
+                    <tr>
+                        <!-- row 3 -->
+                        <td rowspan="2" aria-rowspan="2" class="easy active BAS">VDiff 3b</td>
+                        <td rowspan="3" aria-rowspan="3" class="easy UIAA">III</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy N">4</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy FS">3c</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy YDS">5.4</td>
+                    </tr>
+                    <tr>
+                        <!-- row 4 -->
+                        <td rowspan="2" aria-rowspan="2" class="easy active BAS">VDiff 3c</td>
+                    </tr>
+                    <tr>
+                        <!-- row 5 -->
+                        <td rowspan="2" aria-rowspan="2" class="easy-medium active BAS">Sev 3c</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy-medium N">4+</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy-medium FS">4a</td>
+                        <td rowspan="4" aria-rowspan="4" class="medium FS">f4</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy-medium YDS">5.5</td>
+                    </tr>
+                    <tr>
+                        <!-- row 6 -->
+                        <td rowspan="2" aria-rowspan="2" class="easy-medium active BAS">Sev 4a</td>
+                        <td rowspan="2" aria-rowspan="2" class="easy-medium UIAA">IV</td>
+                    </tr>
+                    <tr>
+                        <!-- row 7 -->                        
+                        <td rowspan="2" aria-rowspan="2" class="medium active BAS">HS 3c</td>                        
+                        <td rowspan="3" aria-rowspan="3" class="medium N">5-</td>
+                        <td rowspan="2" aria-rowspan="2" class="medium FS">4b</td>                        
+                        <td rowspan="2" aria-rowspan="2" class="medium YDS">5.6</td>
+                    </tr>
+                    <tr>
+                        <!-- row 8 -->
+                        <td rowspan="2" aria-rowspan="2" class="medium active BAS">HS 4a</td>
+                        <td rowspan="2" aria-rowspan="2"  class="medium UIAA">IV+</td>
+                    </tr>
+                    <tr>
+                        <!-- row 9 -->
+                        <td rowspan="2" aria-rowspan="2" class="medium active BAS">HS 4b</td>                     
+                        <td rowspan="2" aria-rowspan="2" class="medium FS">4c</td>
+                        <td rowspan="3" aria-rowspan="3" class="medium FS">f4+</td>
+                        <td rowspan="3" aria-rowspan="3" class="medium YDS">5.7</td>
+                    </tr>
+                    <tr>
+                        <!-- row 10 -->
+                        <td rowspan="2" aria-rowspan="2" class="medium-hard active BAS">VS 4b</td>
+                        <td rowspan="3" aria-rowspan="3" class="medium UIAA">V-</td>
+                        <td rowspan="3" aria-rowspan="3" class="medium-hard N">5</td>                                         
+                   </tr>
+                    <tr>
+                        <!-- row 11 -->
+                        <td rowspan="2" aria-rowspan="2" class="medium-hard active BAS">VS 4c</td>                     
+                        <td rowspan="2" aria-rowspan="2" class="medium-hard FS">5a</td>                    
+                    </tr>
+                    <tr>
+                        <!-- row 12 -->
+                        <td rowspan="2" aria-rowspan="2" class="medium-hard active BAS">VS 5a</td>
+                        <td rowspan="3" aria-rowspan="3" class="medium-hard FS">f5</td>
+                        <td rowspan="2" aria-rowspan="2" class="medium-hard YDS">5.8</td>
+                    </tr>
+                    <tr>
+                        <!-- row 13 -->
+                        <td rowspan="2" aria-rowspan="2" class="hard active BAS">HVS 4c</td>
+                        <td rowspan="2" aria-rowspan="2" class="medium-hard UIAA">V+</td>
+                        <td rowspan="3" aria-rowspan="3" class="hard N">5+</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard FS">5b</td>
+                    </tr>
+                    <tr>
+                        <!-- row 14 -->
+                        <td rowspan="2" aria-rowspan="2" class="hard active BAS">HVS 5a</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard YDS">5.9</td>
+                    </tr>
+                    <tr>
+                        <!-- row 15 -->
+                        <td rowspan="2" aria-rowspan="2" class="hard active BAS">HVS 5b</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard UIAA">IV-</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard FS">5c</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard FS">f5+</td>
+                        
+                    </tr>
+                    <tr>
+                        <!-- row 16 -->
+                        <td rowspan="2" aria-rowspan="2" class="very-hard active BAS">E1 5a</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard N">6-</td>
+                        <td rowspan="2" aria-rowspan="2" class="hard YDS">5.10a</td>
+                    </tr>
+                    <tr>
+                        <!-- row 17 -->
+                        <td rowspan="2" aria-rowspan="2" class="very-hard active BAS">E1 5b</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard UIAA">IV</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard FS">6a</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard FS">f6a</td>
+                        
+                    </tr>
+                    <tr>
+                        <!-- row 18 -->
+                        <td rowspan="2" aria-rowspan="2" class="very-hard active BAS">E1 5c</td>
+                        <td rowspan="3" aria-rowspan="3" class="very-hard N">6</td>
+                        <td class="very-hard YDS">5.10b</td>
+                    </tr>
+                    <tr>
+                        <!-- row 19 -->
+                        <td rowspan="2" aria-rowspan="2" class="hard-edge active BAS">E2 5c</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard UIAA">IV+</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard FS">6a+</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard FS">f6a+</td>
+                        <td rowspan="2" aria-rowspan="2" class="very-hard YDS">5.10c</td>
+                    </tr>
+                    <tr>
+                        <!-- row 20 -->
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table></p>
         </div>
     </div>
     <form id="search" style="display:none;">
@@ -141,7 +327,7 @@
                 </figure>
             </div>
             <p class="col-12 col-md-8 col-sm-7 col-lg-9">
-                The International Union of Alpine Associations, or UIAA grading system, grading system reasonably common in mainland Europe. It’s represented by Roman numerals from I through to VII and is now open ended to X (ten) and beyond. One key advantage of this system is its <a href="https://www.theuiaa.org/mountaineering/uiaa-grades-for-rock-climbing/" target="blank">clear descriptions</a> from grades I to VII. Essentially the system grades the hardest move in the route. However, the system takes no real account of either protection available or other factors that may impact a climber’s performance like exposure or altitude. As such the Alpine system or Scale of Global Assessment and French <em>sport</em> systems are both offshoots/additions of the UIAA scale, which itself is developed from the Welzenbach Scale.<br /><strong>Example</strong>: The climb <a href="/climbs/esparraguera-on-roca-gris/">Esparraguera on Roca Gris</a> is graded V+. This speaks to the hardest move, which is pulling up on a jug on the 3rd pitch. However the climb is also graded f5c, which is a slightly high conversion. The reason being the French sport system looks at the difficulty of each pitch (or length of rope) not just the hardest move, but also not the whole route like the alpine system. The UIAA scale and sport grade say nothing about the complexity of the route in terms of exposure, loose rock, route finding and run-out sections. Being comfortable climbing a UIAA V+ or f5c for 30m would be poor training for this beautifully complex route. <br /> <a class="seperated-link " href="/climbs/esparraguera-on-roca-gris/">The climb Esparraguera on Grey Rock graded UIAA V+ &#8250;</a>
+                The International Union of Alpine Associations, or UIAA grading system, is reasonably common in mainland Europe. It’s represented by Roman numerals from I through to VII and is now open ended to X (ten) and beyond. One key advantage of this system is its <a href="https://www.theuiaa.org/mountaineering/uiaa-grades-for-rock-climbing/" target="blank">clear descriptions</a> from grades I to VII. Essentially the system grades the hardest move in the route. However, the system takes no real account of either protection available or other factors that may impact a climber’s performance like exposure or altitude. As such the Alpine system or Scale of Global Assessment and French <em>sport</em> systems are both offshoots/additions of the UIAA scale, which itself is developed from the Welzenbach Scale.<br /><strong>Example</strong>: The climb <a href="/climbs/esparraguera-on-roca-gris/">Esparraguera on Roca Gris</a> is graded V+. This speaks to the hardest move, which is pulling up on a jug on the 3rd pitch. However the climb is also graded f5c, which is a slightly high conversion. The reason being the French sport system looks at the difficulty of each pitch (or length of rope) not just the hardest move, but also not the whole route like the alpine system. The UIAA scale and sport grade say nothing about the complexity of the route in terms of exposure, loose rock, route finding and run-out sections. Being comfortable climbing a UIAA V+ or f5c for 30m would be poor training for this beautifully complex route. <br /> <a class="seperated-link " href="/climbs/esparraguera-on-roca-gris/">The climb Esparraguera on Grey Rock graded UIAA V+ &#8250;</a>
             </p>
         </article><article class="row">
             <h2 class="col-12">Yosemite Decimal System</h2>
@@ -253,15 +439,15 @@
         </div>
     </section>
     <section class="footer-copyright">
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2019 Creative Commons</a> -
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2021 Creative Commons</a> -
         <a href="/"> multi-pitch.com </a> - 
         <a href="/about/#contact">Contact</a>
     </section>
 
 </footer>    
-    <a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
-    <div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile(false)"></div>
-    <script>
-        window.performance.mark('html-end');
-    </script>
-</body>
+<a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
+<div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile(false)"></div>
+<script>
+    window.performance.mark('html-end');
+</script>
+ </body>

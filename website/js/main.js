@@ -214,6 +214,27 @@ function showVal(field) {
 }
 
 /**
+ UPDATE WHICH COL TO HIGHLIGHT IN GRADE CONVERSION TABLE
+ **/
+function updateTableHighlight(){
+    if(document.getElementById('gradeTable')){
+        const tableData = document.getElementsByTagName('td');
+        gradePreference = localStorage.getItem('gradePreference');
+        for(let i=0; i < tableData.length; i++){
+            if(tableData[i].classList.contains(gradePreference)){
+                if(tableData[i].classList.contains('active')){
+                    // has right class
+                } else {
+                    tableData[i].classList.add('active');
+                }
+            } else if(tableData[i].classList.contains('active')){
+                tableData[i].classList.remove('active');
+            }
+        } 
+    }  
+}
+
+/**
  UPDATE THE USERS GRADE PREFERANCE
  **/
 function updateGradePref() {
@@ -234,6 +255,8 @@ function updateGradePref() {
             break;
         }
     }
+    // update table highlighting
+    updateTableHighlight();
     updateListingGrades();
 }
 
