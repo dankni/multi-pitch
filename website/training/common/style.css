@@ -357,6 +357,7 @@ input[type=checkbox]:checked::before {
 .dark.green{
     background-color: #519872;
 }
+
 /* This hides the default radio buttons */
 [type="radio"]:checked,
 [type="radio"]:not(:checked){
@@ -371,7 +372,6 @@ input[type=checkbox]:checked::before {
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
   position: relative;
-  left: 14px;
   z-index: 99;
 }
 
@@ -379,30 +379,27 @@ input[type=checkbox]:checked::before {
 .nice-radios:not(:checked) + label {
   position: relative;
   display: inline-block;
-  padding: 10px 20px 10px 20px;
-  font-size: 14px;
+  padding: 8px;
+  font-size: 12px;
   letter-spacing: 1px;
   text-align: center;
   border-radius: 4px;
   text-transform: uppercase;
-  color: black;
+  color: #FFF;
   -webkit-transition: box-shadow 150ms ease;
   transition: box-shadow 150ms ease;
-  left: -20px;
-  width: 70px;
+  min-width: 65px;
   margin-bottom: 10px;
 }
 
 .nice-radios:checked + label {
   background-color: #3b94ff;
   border: 0;
-  color:#FFF;
-  /* box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); */
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 
 .nice-radios:not(:checked) + label {
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(120, 120, 128, 0.6);
   border: 1px solid transparent;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
