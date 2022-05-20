@@ -142,12 +142,11 @@ footer {
     max-width: 75px;
     margin: 20px 0 20px 20px;
     flex: 30%;
-    height: max-content;
 }
 .task {
     margin: 20px;
     flex: 70%;
-    font-size: 26px;
+    font-size: 28px;
     text-align: left;
 }
 aside{
@@ -163,8 +162,8 @@ aside div {
     margin: 5px;
 }
 aside .task{
-    font-size: 15px;
-    margin: 8px;
+    font-size: 18px;
+    margin: 10px;
 }
 aside .ring {
     max-width: 50px;
@@ -277,7 +276,7 @@ aside .ring {
 }
 
 /* Toggles */
-label{
+.switch-label{
     min-width:280px;
     display: block;
     margin:10px auto
@@ -357,4 +356,62 @@ input[type=checkbox]:checked::before {
 }
 .dark.green{
     background-color: #519872;
+}
+/* This hides the default radio buttons */
+[type="radio"]:checked,
+[type="radio"]:not(:checked){
+	position: absolute;
+	left: -9999px;
+	width: 0;
+	height: 0;
+	visibility: hidden;
+}
+/* End Hide */
+
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+  position: relative;
+  left: 14px;
+  z-index: 99;
+}
+
+.nice-radios:checked + label,
+.nice-radios:not(:checked) + label {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px 10px 20px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-align: center;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: black;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+  left: -20px;
+  width: 70px;
+  margin-bottom: 10px;
+}
+
+.nice-radios:checked + label {
+  background-color: #3b94ff;
+  border: 0;
+  color:#FFF;
+  /* box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); */
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.nice-radios:not(:checked) + label {
+  background-color: rgba(255,255,255,0.8);
+  border: 1px solid transparent;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.nice-radios:not(:checked) + label:hover,
+.nice-radios:checked + label:hover,
+[type="radio"]:hover + label {
+  box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  -webkit-transition: box-shadow 300ms ease;
+  transition: box-shadow 300ms ease;
 }

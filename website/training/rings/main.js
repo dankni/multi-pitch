@@ -1,4 +1,108 @@
-const plan = [
+const planEasy = [
+    {
+        "min" : 1,
+        "order" : 1,
+        "hold" : "jug.png",
+        "task" : "2 pull ups"
+    }, 
+    {
+        "min" : 2,
+        "order" : 1,
+        "hold" : "three_fingers.png",
+        "task" : "10 second bent-arm hang"
+    }, 
+    {
+        "min" : 2,
+        "order" : 2,
+        "hold" : "two_fingers.png",
+        "task" : "10 second straight-arm hang"
+    }, 
+    {
+        "min" : 3,
+        "order" : 1,
+        "hold" : "offset.png",
+        "task" : "2 pull ups"
+    }, 
+    {
+        "min" : 3,
+        "order" : 2,
+        "hold" : "offset2.png",
+        "task" : "2 pull ups"
+    }, 
+    {
+        "min" : 4,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "10 second sit hang"
+    }, 
+    {
+        "min" : 4,
+        "order" : 2,
+        "hold" : "three_fingers.png",
+        "task" : "10 second straight-arm hang"
+    },
+    {
+        "min" : 5,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "4 pull ups"
+    }, 
+    {
+        "min" : 6,
+        "order" : 1,
+        "hold" : "three_fingers.png",
+        "task" : "15 second bent-arm hang"
+    }, 
+    {
+        "min" : 6,
+        "order" : 2,
+        "hold" : "two_fingers.png",
+        "task" : "10 second straight-arm hang"
+    }, 
+    {
+        "min" : 7,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "10 second sit hang"
+    }, 
+    {
+        "min" : 7,
+        "order" : 2,
+        "hold" : "four_fingers.png",
+        "task" : "10 second straight-arm hang"
+    },
+    {
+        "min" : 8,
+        "order" : 1,
+        "hold" : "offset.png",
+        "task" : "10 second offset hang"
+    }, 
+    {
+        "min" : 8,
+        "order" : 2,
+        "hold" : "offset2.png",
+        "task" : "10 second offset hang"
+    },
+    {
+        "min" : 9,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "15 second sit hang"
+    }, 
+    {
+        "min" : 10,
+        "order" : 1,
+        "hold" : "three_fingers.png",
+        "task" : "4 pull ups"
+    },
+    {
+        "min" : 10,
+        "order" : 2,
+        "hold" : "three_fingers.png",
+        "task" : "Straight-arm hang to failure"
+    }
+];
+const planOriginal = [
         {
             "min" : 1,
             "order" : 1,
@@ -102,7 +206,111 @@ const plan = [
             "task" : "Straight-arm hang to failure"
         }
     ];
-
+const planHard = [
+    {
+        "min" : 1,
+        "order" : 1,
+        "hold" : "jug.png",
+        "task" : "4 pull ups"
+    }, 
+    {
+        "min" : 2,
+        "order" : 1,
+        "hold" : "three_fingers.png",
+        "task" : "15 second bent-arm hang"
+    }, 
+    {
+        "min" : 2,
+        "order" : 2,
+        "hold" : "two_fingers.png",
+        "task" : "15 second straight-arm hang"
+    }, 
+    {
+        "min" : 3,
+        "order" : 1,
+        "hold" : "offset.png",
+        "task" : "3 pull ups"
+    }, 
+    {
+        "min" : 3,
+        "order" : 2,
+        "hold" : "offset2.png",
+        "task" : "3 pull ups"
+    }, 
+    {
+        "min" : 4,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "20 second sit hang"
+    }, 
+    {
+        "min" : 4,
+        "order" : 2,
+        "hold" : "three_fingers.png",
+        "task" : "10 second straight-arm hang"
+    },
+    {
+        "min" : 5,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "6 pull ups"
+    }, 
+    {
+        "min" : 6,
+        "order" : 1,
+        "hold" : "three_fingers.png",
+        "task" : "25 second bent-arm hang"
+    }, 
+    {
+        "min" : 6,
+        "order" : 2,
+        "hold" : "two_fingers.png",
+        "task" : "12 second straight-arm hang"
+    }, 
+    {
+        "min" : 7,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "15 second sit hang"
+    }, 
+    {
+        "min" : 7,
+        "order" : 2,
+        "hold" : "four_fingers.png",
+        "task" : "20 second straight-arm hang"
+    },
+    {
+        "min" : 8,
+        "order" : 1,
+        "hold" : "offset.png",
+        "task" : "15 second offset hang"
+    }, 
+    {
+        "min" : 8,
+        "order" : 2,
+        "hold" : "offset2.png",
+        "task" : "15 second offset hang"
+    },
+    {
+        "min" : 9,
+        "order" : 1,
+        "hold" : "four_fingers.png",
+        "task" : "25 second sit hang"
+    }, 
+    {
+        "min" : 10,
+        "order" : 1,
+        "hold" : "three_fingers.png",
+        "task" : "6 pull ups"
+    },
+    {
+        "min" : 10,
+        "order" : 2,
+        "hold" : "three_fingers.png",
+        "task" : "Straight-arm hang to failure"
+    }
+];
+let plan;
 let started = false;
 let debug = false;
 
@@ -294,3 +502,30 @@ function toggleDebug(){
         document.getElementById('debugStatus').innerText = `Off`;
     }
 }
+
+function setDifficulty(){
+
+    let difficulty;
+    localStorage.getItem("difficulty") ? difficulty = localStorage.getItem("difficulty") : difficulty = "original";
+    document.getElementById(difficulty).checked = true;
+    // ToDo: Refactor
+    if(difficulty === "original"){
+        plan = planOriginal;
+    }
+    if(difficulty === "hard"){
+        plan = planHard;
+    }
+    if(difficulty === "easy"){
+        plan = planEasy;
+    }
+}
+function changeDifficulty(){
+    let difficulty = document.querySelector('input[name="mode"]:checked').value;
+    localStorage.setItem("difficulty", difficulty);
+    setDifficulty();
+}
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    setDifficulty();
+});
+

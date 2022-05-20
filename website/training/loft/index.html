@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
-	<link href="style.css" rel="stylesheet" />
+	<link href="../common/style.css" rel="stylesheet" />
 	<script src="main.js" ></script>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" /> 
@@ -12,7 +12,16 @@
   </head>
 
   <body>
-    <h1>Climbing Trainer</h1>
+	<nav>
+		<div class="left-nav">
+			<i class="demo-icon icon-info" onclick="openInfoBox()"></i>
+		</div>
+		<h1>Climbing Trainer</h1>
+		<div class="right-nav">
+			<i id="fullscreen" class="demo-icon icon-resize-full" onclick="fullscreen()"></i>
+			<i id="sound" class="demo-icon icon-volume-high" onclick="toggleSound()"></i>
+		</div>
+	</nav> 
 	<button onClick="setStarted(true)">Start</button>
 	<h2 id="task"></h2>
 	<div id="color"></div>
@@ -30,19 +39,5 @@
 			<h3>Belays: <br /><span id="belays">0</span>
 		</div>
 	</div>
-	<nav>
-		<li>
-			<a href="#climb" return="false">Climb</a>
-		</li>
-		<li>
-			<a href="#score" return="false">Scores</a>
-		</li>
-		<li>
-			<a href="#settings" return="false">Settings</a>
-		</li>
-		<li>
-			<a href="#about" return="false">About</a>
-		</li>
-	</nav>
   </body>
 </html>
