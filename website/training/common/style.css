@@ -64,7 +64,7 @@ button {
     border: none;
     padding: 1rem 2rem;
     text-decoration: none;
-    background: #0069ed;
+    background: #3b94ff;
     color: #ffffff;
     font-family: sans-serif;
     font-size: 1rem;
@@ -74,6 +74,9 @@ button {
                 transform 150ms ease;
     -webkit-appearance: none;
     -moz-appearance: none;
+    border-radius: 4px;
+    text-transform: capitalize;
+    letter-spacing: 1px;
 }
 button:hover, button:focus {
     background: #0053ba;
@@ -246,6 +249,8 @@ aside .ring {
   .icon-ccw:before { content: '\e80f'; } /* '' */
   .icon-link-ext:before { content: '\f08e'; } /* '' */
   .icon-bug:before { content: '\f188'; } /* '' */
+  .icon-star:before { content: '\e810'; } /* '' */
+  .icon-star-empty:before { content: '\e811'; } /* '' */
 
 /* close Icon */
 .close {
@@ -412,3 +417,29 @@ input[type=checkbox]:checked::before {
   -webkit-transition: box-shadow 300ms ease;
   transition: box-shadow 300ms ease;
 }
+.ending{
+   display: none;
+}
+
+/** Star Rating **/
+.star-holder{
+    font-size: 32px;
+    cursor: pointer;
+    user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.icon-star { 
+    color:rgba(120, 120, 128, 0.6);
+}
+.icon-star.active { 
+    color: #FFD700; 
+    background: none; 
+} 
+.icon-star:hover { 
+    color: #FFED85;
+} 
+.icon-star.hover {
+    color: #FFED85;
+} 

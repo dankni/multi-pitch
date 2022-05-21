@@ -328,12 +328,12 @@ function setStarted(){
         requestWakeLock();
         started = true;
         startTimer();
-        document.querySelector('button').innerHTML = '<i class="demo-icon icon-pause"></i>Pause';
+        document.querySelector('button').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
         document.getElementById('reset').style.display = 'none';
     } else {
         started = false;
         stopTimer();
-        document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>Resume';
+        document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
         document.getElementById('reset').style.display = 'inline-block'
     }
     
@@ -445,6 +445,9 @@ function timerCycle() {
     if (sec === 45 && min < 9) {
         displayTask(min, true);
     }
+    if (sec === 30 && min === 9) {
+        showEndingDiv();
+    }
 
     if (sec < 10 || sec == 0) {
         sec = '0' + sec;
@@ -473,8 +476,51 @@ function reset() {
     document.getElementById("first").style.display = "none";
     document.getElementById("second").style.display = "none";
     document.getElementById("reset").style.display = "none";
-    document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>Start';
+    document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>START';
     introRun = false;
+    if(document.getElementById("endingDiv").style.display === "block"){
+        document.getElementById("endingDiv").style.display = "none";
+    }
+}
+
+function setStar(value){
+    let stars = document.querySelectorAll('.icon-star');
+    for(let i = 0; i < stars.length; i++){
+        if(i < value){
+            if(!stars[i].classList.contains('active')){
+                stars[i].classList.add('active');
+            }
+        } else {
+            if(stars[i].classList.contains('active')){
+                stars[i].classList.remove('active');
+            }  
+        }
+    }
+}
+
+function showEndingDiv() {
+    document.getElementById("endingDiv").style.display = "block"
+}
+function saveSession() {
+    let activeStars = document.querySelectorAll('.icon-star.active');
+    let score = activeStars.length;
+    let date =  new Date().toISOString().slice(0, 10); // today yyyy-mm-dd
+    let difficulty = localStorage.getItem("difficulty");
+
+    let session = new Object();
+    session.difficulty = difficulty;
+    session.score  = score;
+    session.date = date;
+
+    let rockRingsLog;
+    if(localStorage.getItem("rockRingsLog")){
+        rockRingsLog = JSON.parse(localStorage.getItem("rockRingsLog"));
+    } else {
+        rockRingsLog = [];
+    }
+    rockRingsLog.push(session);
+    localStorage.setItem("rockRingsLog", JSON.stringify(rockRingsLog));
+    document.getElementById("endingDiv").style.display = "none"
 }
 
 function toggleSound(){
