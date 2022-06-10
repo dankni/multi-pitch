@@ -520,7 +520,8 @@ function saveSession() {
     }
     rockRingsLog.push(session);
     localStorage.setItem("rockRingsLog", JSON.stringify(rockRingsLog));
-    document.getElementById("endingDiv").style.display = "none"
+    document.getElementById("endingDiv").style.display = "none";
+    showSessionLog();
 }
 
 function toggleSound(){
@@ -571,7 +572,51 @@ function changeDifficulty(){
     setDifficulty();
 }
 
+function showSessionLog(){
+    let sessionLog = localStorage.getItem("rockRingsLog");
+    if(sessionLog){
+        let logHolder = document.getElementById("log");
+        logHolder.innerHTML = '';
+        let sessionCount = 0;
+        sessionLog = JSON.parse(sessionLog);
+        sessionLog.forEach((session, index) => {
+            let singleEntry = `<p>${session.date} - ${session.difficulty} - `;
+            for(let i = 0; i < 5; i++){
+                let active = "";
+                if(i < session.score) {
+                    active = "active";
+                }
+                singleEntry += `<i class="demo-icon icon-star ${active}"></i>`;
+            }
+
+            singleEntry += `<i class="demo-icon icon-trash" onclick="toggleConfirm(${sessionCount})"></i> 
+            <span style="display:none" id="confirm${sessionCount}"> Are you sure? <br /> 
+            <i class="demo-icon icon-ok" onclick="removeLog(${sessionCount})"></i> 
+            <i class="demo-icon icon-cancel" onclick="toggleConfirm(${sessionCount})"></i>
+            </span>
+            </p>`
+            logHolder.innerHTML += singleEntry;
+            sessionCount ++;
+        });
+    }
+}
+
+function toggleConfirm(arrayId){
+    let element = document.getElementById("confirm" + arrayId);
+    element.style.display === "none" ? element.style.display = "block" : element.style.display = "none";
+}
+
+function removeLog(arrayId){
+    let sessionLog = JSON.parse(localStorage.getItem("rockRingsLog"));
+    sessionLog.splice(arrayId,1);
+    console.log(sessionLog);
+    localStorage.setItem("rockRingsLog", JSON.stringify(sessionLog));
+    showSessionLog();
+
+}
+
 window.addEventListener('DOMContentLoaded', (event) => {
     setDifficulty();
+    showSessionLog();
 });
 
