@@ -1,0 +1,26 @@
+{
+    "heading" : "Climbing & Mountain Terminology",
+    "navLink" : "Climbing Terms",
+    "intro" : "Climbing system. Different climbing grade systems use very different criteria, which cannot be translated accurately, so don't rely on the converted grade.",
+    "description" : "Understand climbing grades. Climbing grades in theory follow quite logical rules, in practice they are inconsistent, even within a single climbing grade system.",
+    "lastUpdated" : "31/03/2022",
+    "url" : "/climbing-tips/climbing-terminology/",
+    "heroImg" : "/img/other/mountain-terminology.jpg",
+    "search" : false,
+    "articles" : [
+        {
+            "publish" : true,
+            "title" : "British Adjectival System",
+            "paragraph" : "The British Adjectival System is usually seen as two different grades. An adjectival grade, for example <abbr title=\"Very Severe\">VS</abbr>, and a technical grade for example 4b. The adjectival grade is an all-encompassing view of the difficulty of the climb. This looks at how hard the moves are, how good the protection is, how strenuous the overall route is, how loose the rock is etc. The technical grade simply looks at the hardest move on the route and grades it using the British system, which is, unfortunately different to the French sport system used in almost all British climbing walls, making it easy to get confused! For example an English 6a is much, much harder than a French sport 6a, often shown as f6a. <br /><strong>Example</strong>: <a href=\"/climbs/wreakers-slab-on-cornakey-cliff/\">Wreakers slab on Cornakey Cliff</a> is graded VS 4b. This is an unusually high adjectival grade for such a low technical grade. On the route the climber will notice a few key factors which lead to the VS grade. Firstly, it has a lot of loose rock. In addition, protection is not straightforward or easy to find early on. It’s also tidal, meaning escape down could be closed for a long time if ascent is not possible. The route has a lot of exposure. Finally, it’s over 100m long, meaning some endurance is required. In contrast, <a href=\"/climbs/doorpost-on-bosigran/\">Doorpost at Bosigran</a>, Cornwall, is also 4b in technical grade, but has an overall adjectival grade of Hard Severe which is a grade Lower. Doorpost probably has a harder crux on pitch 2, but protection is good throughout the route and the rock is solid, so overall it has a lower adjectival grade.",
+            "img" : {
+                "url" : "/img/other/grades/weakers-slab-in-north-cornwall.jpg",
+                "alt": "VS climbing in North Cornwall"
+            },
+            "link" : {
+                "href" : "/climbs/wreakers-slab-on-cornakey-cliff/",
+                "text" : "Wreakers Slab on Cornakey Cliff graded VS 4b",
+                "pushable" : false
+            }
+        }
+    ]
+}    

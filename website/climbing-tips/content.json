@@ -38,15 +38,15 @@
         },
         {
             "publish" : false,
-            "title" : "Mountain Terminology",
+            "title" : "Climbing & Mountain Terminology",
             "paragraph" :  "Mountain terminology can sound like a foreign language to the new climber. Some reasonably common mountain terminology has quite literally, been taken from different languages, for example crag. The content here hopes to explain most mountain terminology from the common terms like summit to the niche terms like cairn or mesa. A number of British guidebooks published in the late 20th century seem to go out if their way to make descriptions as complex as possible. This glossary will help the climber understand some of the terminology used when finding the route on the mountain, as well as terms used to describe the route once climbing. For example: Climb the crest of the rib to a ledge. Go diagonally right to a platform on the rib with a belay at the top of the corner. Scramble diagonally right to a small buttress.",
             "img" : {
-                "url" : "/img/other/mountain-terminology.jpg",
+                "url" : "/img/other/climbing-terminology.jpg",
                 "alt" : "Scarfel crag has complex mountain terrain"
             },
             "link" : {
-                "href" : "/climbing-tips/mountain-terminology/",
-                "text" : "Mountain Terminology Explained",
+                "href" : "/climbing-tips/climbing-terminology/",
+                "text" : "Climbing Terminology Explained",
                 "pushable" : true
             }
         },

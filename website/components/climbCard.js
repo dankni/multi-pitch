@@ -43,7 +43,7 @@ function getApproachInfo(climb) {
     <hr />
     <section class="row">
         <div class="col">
-            <h3 tabindex="0">Approach & Descent Infomation</h3>
+            <h3 tabindex="0">Approach & Descent Information</h3>
             <p>${climb.approach}</p>
             <p style="text-align:center"> 
                 <a href="/map/?loc=${climb.geoLocation}" class="open-tile inline-button">
@@ -91,10 +91,10 @@ function getReferanceInfo(climb) {
         <hr />
         <section class="row">
             <div class="col">
-                <h3 tabindex="0" id="refs">Referances &amp; additional links</h3>
+                <h3 tabindex="0" id="refs">References &amp; additional links</h3>
                 <p>
                     The following links will take you to external websites specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
-                    <em>Note: They contined relavant infomation at the time of publishing.</em>
+                    <em>Note: They contained relevant information at the time of publishing.</em>
                 </p>
                 <p>`;
                     for (let i = 0; i < climb.referances.length; i++) {
@@ -233,7 +233,7 @@ function getWeather(climb) {
           <p class="credit" style="margin-top:15px;">Using open weather API</p>
         </div>
         <div class="col-12" id="seasonalWeather">
-          <h4 tabindex="0">Seasonal Weather Infomation</h4>
+          <h4 tabindex="0">Seasonal Weather Information</h4>
           <p>Note that some weather stations are close or even on the mountain, others are in nearby towns. 
           Plan accordingly!</p>
           <p class="chart-title">Estimated Rainy Days Per Month</p>
