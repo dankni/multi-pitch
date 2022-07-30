@@ -46,7 +46,7 @@ jobs:
   deploy:
     working_directory: /tmp/multipitch
     docker:
-      - image: circleci/aws-cli@3.1
+      - image: cimg/aws:2022.06
     steps:
       - checkout
       # build folder that needs to be deployed
