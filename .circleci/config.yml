@@ -46,20 +46,20 @@ jobs:
   deploy:
     working_directory: /tmp/multipitch
     docker:
-      - image: circleci/node:lts-browsers-legacy
+      - image: circleci/aws-cli@3.1
     steps:
       - checkout
       # build folder that needs to be deployed
       - restore_cache:
           key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
       # Install AWS cli
-      - run:
-          name: Install aws cli and python-pip
-          working_directory: /
-          command: |
-            sudo apt-get -y -qq update
-            sudo apt-get install python-pip python-dev build-essential
-            sudo pip install awscli
+    #  - run:
+     #     name: Install aws cli and python-pip
+      #    working_directory: /
+       #   command: |
+        #    sudo apt-get -y -qq update
+         #   sudo apt-get install python-pip python-dev build-essential
+          #  sudo pip install awscli
       # Deploy to the S3
       - run:
           name: Deploy to S3
