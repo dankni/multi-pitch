@@ -43,5 +43,5 @@ WebP conversion uses [this node package](https://www.npmjs.com/package/webp-conv
 
 ### JSON updating
 The site is built from JSON data files that, once loaded are saved in local storage for very fast page load times and less network traffic (and more offline capabilities in the future). This comes at the cost of a lot  development complexity. I have built an slighlty unwieldy beast, in order to 
-optimise the user experiance. This is how the logic should work:
+optimise the user experiance. The lastUpdate format is Year-Month-Day. This is how the logic should work:
 ![Local storage data flow](https://www.multi-pitch.com/img/other/flow.png)
