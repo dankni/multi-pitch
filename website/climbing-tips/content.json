@@ -63,6 +63,20 @@
                 "text" : "Understanding Rock Climbing Grades",
                 "pushable" : true
             }
+        },
+        {
+            "publish" : true,
+            "title" : "Training Tools",
+            "paragraph" :  "There are lots of great training tools and programs out there. We built a digital version of the Metolious Rock Ring Training Guide, to make it easy to follow along. We also added some basic progress tracking. We built it for personal use, but wanted to share it for anyone else who may find it useful. We added an easier and harder variant to the existing Rock Ring plan. Anyone is welcome to use it but do so at your own risk and don't treat the tool as instruction. It's easy to injure yourself badly when training so take care.",
+            "img" : {
+                "url" : "/img/other/rock-ring-training-app.jpg",
+                "alt" : "Our Free Rock Ring Training App"
+            },
+            "link" : {
+                "href" : "/training/rings/",
+                "text" : "Free Rock Ring Training Tool",
+                "pushable" : false
+            }
         }
     ]
 }

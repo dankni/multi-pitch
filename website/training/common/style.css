@@ -145,6 +145,7 @@ footer {
     max-width: 75px;
     margin: 20px 0 20px 20px;
     flex: 30%;
+    object-fit:scale-down;
 }
 .task {
     margin: 20px;
@@ -171,6 +172,7 @@ aside .task{
 aside .ring {
     max-width: 50px;
     margin: 10px;
+    object-fit:scale-down;
 }
 #preview{
     display: none;
