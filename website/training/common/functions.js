@@ -64,6 +64,25 @@ function toggleDarkMode(){
     }
 }
 
+function loadNonEssential(type, url){
+        const tag =  document.createElement(type);
+        tag.src = url
+        tag.async = true;
+        tag.defer = true;
+        document.getElementsByTagName("body")[0].appendChild(tag);
+}
+function loadAnalytics(){
+    window.performance.mark('gta-start');
+    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1");
+    setTimeout(function(){
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-123782847-1');
+        window.performance.mark('gta-end');
+    }, 1000);
+
+}
 
 // Events to show or hide icons based on browser support
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -76,4 +95,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
         toggleDarkMode();
         document.getElementById("darkMode").checked = true;
     }
+    loadAnalytics();
 });
