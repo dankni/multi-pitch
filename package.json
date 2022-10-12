@@ -26,7 +26,7 @@
     "cwebp": "^2.0.5",
     "express": "^4.17.1",
     "node-static": "^0.7.11",
-    "read-excel-file": "^2.0.10"
+    "read-excel-file": "^5.5.1"
   },
     "devDependencies": {
       "chai": "^4.2.0",
