@@ -44,7 +44,7 @@ function getApproachInfo(climb) {
     <section class="row">
         <div class="col">
             <h3 tabindex="0">Approach & Descent Information</h3>
-            <p>${climb.approach}</p>
+            <p id="approach">${climb.approach}</p>
             <p style="text-align:center"> 
                 <a href="/map/?loc=${climb.geoLocation}" class="open-tile inline-button">
                     See ${climb.cliff} on the climb map
@@ -72,7 +72,7 @@ function getPitchInfo(climb) {
     <section class="row">
         <div class="col">
            <h3 tabindex="0">Pitch By Pitch Information</h3>
-           <p>${climb.pitchInfo}</p>
+           <p id="pitchInfo">${climb.pitchInfo}</p>
         </div>
       </section>`;
         } else {
@@ -562,7 +562,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
     }
     if (climb.face != null){
         face = `<div class="info-ring compass ${climb.face}">
-            <span class="single-attribute"  title="${mapping[climb.face]}">${climb.face}</span>
+            <span class="single-attribute"  title="${mapping[climb.face]}" id="face">${climb.face}</span>
         </div>`
     }
     var fullCard = `
@@ -595,26 +595,26 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                             <div class="info-ring">
                                 <span class="grade what">Grade</span>
                                 <span class="info-divider"></span>
-                                <span class="grade amount">${climb.tradGrade}&nbsp;${techGrade}</span>
+                                <span class="grade amount" id="grade">${climb.tradGrade}&nbsp;${techGrade}</span>
                             </div>        
                             <div class="info-ring">
                                 <span class="grade what">Length</span>
                                 <span class="info-divider"></span>
-                                <span class="grade amount">${climb.length}m</span>
+                                <span class="grade amount" id="length">${climb.length}m</span>
                             </div>      
                             <div class="info-ring">
                                 <span class="grade what">Pitches</span>
                                 <span class="info-divider"></span>
-                                <span class="grade amount">${climb.pitches}</span>
+                                <span class="grade amount" id="pitches">${climb.pitches}</span>
                             </div>
                             <div class="info-ring">
                                 <span class="grade what">Approach</span>
                                 <span class="info-divider"></span>
-                                <span class="grade amount">${climb.approachTime}<small>min</small></span>
+                                <span class="grade amount" id="approachTime">${climb.approachTime}<small>min</small></span>
                             </div>
                             ${face}
                             <div class="info-ring">
-                                <span class="single-attribute">${climb.rock}</span>
+                                <span class="single-attribute" id="rockType">${climb.rock}</span>
                             </div>
                             ${tidal}
                             ${abReq}

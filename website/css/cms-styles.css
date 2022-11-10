@@ -1,0 +1,13 @@
+#newJSON, .overlay-title {
+    width:80%;
+    display: block;
+}
+#newJSON{
+    height: 60vh;
+    margin: 20px auto;
+}
+.overlay-title{
+    color: #FFF;
+    margin: 80px auto 30px auto;
+    font-weight: 800;
+}

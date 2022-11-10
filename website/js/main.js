@@ -1130,12 +1130,13 @@ function sThis(number) {
 /**
  ADDS SCRIPTS & CSS TO THE PAGE FOOTER
  **/
-function loadNonEssential(type, url){
+function loadNonEssential(type, url, module = false){
     if(type == "script" && isScriptLoaded(url) === false){
         const tag =  document.createElement(type);
         tag.src = url
         tag.async = true;
         tag.defer = true;
+        if(module === true) { tag.type = "module";}
         document.getElementsByTagName("footer")[0].appendChild(tag);
     }
     if(type == "link"){
@@ -1467,6 +1468,10 @@ window.addEventListener('load', (event) => {
                 console.log("Can't load tide data. " + e)
             })
         }
+    }
+    if (document.location.href.includes('god-mode') === true) {
+        loadNonEssential("script", "/js/cms-mode.js", true);
+        loadNonEssential("link", "/css/cms-styles.css")
     }
 //    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();
