@@ -11,3 +11,21 @@
     margin: 80px auto 30px auto;
     font-weight: 800;
 }
+*[contenteditable="true"] {
+    border: 1px dotted rgba(95, 20, 48, 0.6);
+}
+.overlay p {
+    display: block;
+    padding: 5px;
+    margin: 20px auto;
+    background: #FFF;
+    width: 80%;
+}
+.inline-button {
+    background-color: #FFF;
+}
+
+#saveChanges {
+    margin: 0 auto;
+    display: block;
+}

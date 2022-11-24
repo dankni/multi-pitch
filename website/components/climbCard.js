@@ -5,7 +5,7 @@ function getGuidebook(climb) {
         try {
             var guideBookModule = `
         <hr />
-        <section class="row">
+        <section class="row" id="guidebooks">
             <div class="col-sm-12">
                 <h3 tabindex="0">Guidebooks</h3>
             </div>`;
@@ -16,12 +16,15 @@ function getGuidebook(climb) {
                         </div>
                         <div class="col-sm-10 ${twoColsImgClass[1]}">
                             <p>
-                                <strong>${climb.guideBooks[i].title}</strong> - pg. ${climb.guideBooks[i].pg} <br />
+                                <strong class="guide-name">${climb.guideBooks[i].title}</strong> - pg.<span class="page"> ${climb.guideBooks[i].pg}</span>
+                            </p>
+                            <p class="guide-desc">
                                 ${climb.guideBooks[i].description}
-                                <br />
+                            </p>
+                            <p>
                                 <a href="${climb.guideBooks[i].link}" onClick="trackGA('external-link', 'guidebook', 'ID = ${climb.id} | B = ${climb.guideBooks[i].title}', '${climb.guideBooks[i].rrp}');" target="blank">Availible Here</a>
-                                R.R.P. <strong>£ ${climb.guideBooks[i].rrp}</strong><br />
-                                <small>ISBN: ${climb.guideBooks[i].isbn} </small>
+                                R.R.P. <strong class="guide-rrp">£ ${climb.guideBooks[i].rrp}</strong><br />
+                                <small>ISBN: <span class="guide-isbn">${climb.guideBooks[i].isbn}</span></small>
                             </p>
                         </div>`;
                 }
