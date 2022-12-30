@@ -32,7 +32,7 @@
       "chai": "^4.2.0",
       "cypress": "^4.11.0",
       "eslint": "^7.5.0",
-      "mocha": "^8.0.1",
+      "mocha": "^8.4.0",
       "start-server-and-test": "^1.11.2",
       "webp-converter": "^2.2.3"
     }
