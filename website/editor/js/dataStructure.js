@@ -190,7 +190,9 @@ const dataStructure = {
             "mandetory" : true,
             "mainFileData" : true,
             "section" : "tileImg",
-            "derivedValue" : false 
+            "derivedValue" : false,
+            "nested" : true,
+            "canBeMultiple" : false
         },
         {
             "name" : "alt",
@@ -198,7 +200,9 @@ const dataStructure = {
             "mandetory" : true,
             "mainFileData" : true,
             "section" : "tileImg",
-            "derivedValue" : false 
+            "derivedValue" : false,
+            "nested" : true,
+            "canBeMultiple" : false
         },
         {
             "name" : "atributionURL",
@@ -206,7 +210,9 @@ const dataStructure = {
             "mandetory" : false,
             "mainFileData" : true,
             "section" : "tileImg",
-            "derivedValue" : false 
+            "derivedValue" : false,
+            "nested" : true,
+            "canBeMultiple" : false
         },
         {
             "name" : "attributionText",
@@ -214,7 +220,9 @@ const dataStructure = {
             "mandetory" : false,
             "mainFileData" : true,
             "section" : "tileImg",
-            "derivedValue" : false
+            "derivedValue" : false,
+            "nested" : true,
+            "canBeMultiple" : false
         },
         {
             "name" : "approachTime",
@@ -270,7 +278,8 @@ const dataStructure = {
             "mandetory" : false,
             "mainFileData" : false,
             "section" : "weatherData",
-            "derivedValue" : false
+            "derivedValue" : false,
+            "nested": true,
         },           
         {
             "name" : "isbn",
@@ -279,7 +288,8 @@ const dataStructure = {
             "mainFileData" : false,
             "section" : "guideBooks",
             "derivedValue" : false,
-            "nested": true
+            "nested": true,
+            "canBeMultiple" : true
         },              
         {
             "name" : "title",
@@ -288,11 +298,22 @@ const dataStructure = {
             "mainFileData" : false,
             "section" : "guideBooks",
             "derivedValue" : false,
-            "nested": true
+            "nested": true,
+            "canBeMultiple" : true
+        },              
+        {
+            "name" : "description",
+            "type" : "multi-line",
+            "mandetory" : false,
+            "mainFileData" : false,
+            "section" : "guideBooks",
+            "derivedValue" : false,
+            "nested": true,
+            "canBeMultiple" : true
         }
     ],
     "sections" : [
-        "summary", "grades", "location", "attributes", "tileImg",
-        "intro", "approach","pitches", "guideBooks", "weatherData", "referances"
+        "summary", "grades", "location", "attributes", "intro", 
+        "approach","pitches", "guideBooks", "weatherData", "referances"
     ]
 }

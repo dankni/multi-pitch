@@ -21,18 +21,25 @@ if(localStorage.getItem('climb' + climbId)){
 
 /* INITIALISE */
 initaliseEditMode();
+updateFromLocalStorage();
+
+/* UPDATE PAGE FROM LOCAL STOREAGE */
+// ToDo: help stop acidently overwritting changes
+function updateFromLocalStorage(){
+
+}
 
 /* FUNCTIONS */
 function initaliseEditMode(){
     showCMSNav();
-    showGuidebooks();
+    enableGuidebookEdit('.guidebook-img');
+    enableGradeEdit();
     mappings.attributes.forEach(element => {
-        if(element.type != "object"){
+        if(element.type != "array"){
             enableFieldEditing(element.name, element.querySelector);
         } else {
-            let objectName = element.objectName;
-            mappings[objectName].forEach(subElement => {
-                enableObjectEditing(subElement.name, subElement.querySelector);
+            element.arrayParts.forEach(part =>{
+                enableFieldEditing(part.name, part.querySelector);
             });
         }
     });
@@ -76,22 +83,23 @@ function textAreaWithTitle(title, text){
     `;
 }
 
-
-function showGuidebooks(){
+function enableGuidebookEdit(selector, attribute){
     try {   
-        let guidebookImages = document.querySelectorAll('.guidebook-img');
+        let guidebookImages = document.querySelectorAll(selector);
         for(let i = 0; i < guidebookImages.length; i++){
             guidebookImages[i].addEventListener('click', function(){
                 showOverlay(
                     `<div class="holder">
                         <h2 class="overlay-title">Edit guidebook image</h2>
-                        <p id="src" contentEditable="true">/img/${guidebookImages[i].src.split('/img/')[1]}</p>
+                        <p>Guidebook image location:</p>
+                        <p id="src" contentEditable="true" style="width:400px">/img/${guidebookImages[i].src.split('/img/')[1]}</p>
                         <a id="saveChanges" class="open-tile inline-button">Save Changes</a>
                     </div>
                     `
                 );
                 document.getElementById('saveChanges').addEventListener('click', function(){
-                    guidebookImages[i].src = document.getElementById('src').textContent; 
+                    guidebookImages[i].src = document.getElementById('src').textContent;
+                    // must also save to local storeage. 
                 });
             });
         }
@@ -100,16 +108,41 @@ function showGuidebooks(){
     }
 }
 
-function enableFieldEditing(name, selector) {
-    let element = document.querySelector(selector);
-    element.id = name;
-    element.contentEditable = true;
+function enableGradeEdit(){
+    document.getElementById('grade').addEventListener('click', function(){
+        showOverlay(
+            `<div class="holder">
+                <h2 class="overlay-title">Edit grade</h2>
+                <p>Adjectival Trad Grade:</p>
+                <p id="tradGrade" contentEditable="true">${climbVariable.climbData.tradGrade}</p><br/>
+                <p>Technical Grade:</p>
+                <p id="techGrade" contentEditable="true">${climbVariable.climbData.techGrade}</p><br/>
+                <p>Data Grade:</p>
+                <p id="techGrade" contentEditable="true">${climbVariable.climbData.dataGrade}</p><br/>
+                <p>Original Grade System:</p>
+                <p id="techGrade" contentEditable="true">${climbVariable.climbData.gradeSys}</p><br/>
+                <p>Original Grade:</p>
+                <p id="techGrade" contentEditable="true">${climbVariable.climbData.originalGrade}</p><br/>
+                <a id="saveChanges" class="open-tile inline-button">Save Changes</a>
+            </div>
+            `
+        );
+        document.getElementById('saveChanges').addEventListener('click', function(){
+            climbVariable.climbData.tradGrade = document.getElementById('tradGrade').textContent;
+            climbVariable.climbData.techGrade = document.getElementById('techGrade').textContent;
+        });
+    });
 }
-function enableObjectEditing(name, selector){
-    let object = document.querySelectorAll(selector);
-    for(let i = 0; i < object.length; i++){
-        object[i].id = name + [i];
-        object[i].contentEditable = true;
+
+function enableFieldEditing(name, selector) {
+    let array = document.querySelectorAll(selector);
+    for(let i = 0; i < array.length; i++){
+        if(i > 0) {
+            array[i].id = name + [i]; // only append a number when there are multiple
+        } else {
+            array[i].id = name;
+        }
+        array[i].contentEditable = true;
     }
 }
 
@@ -147,11 +180,11 @@ function cleanType(type, value){
 
 function saveChanges(){
     mappings.attributes.forEach(el => {
-            if(el.type === 'object'){
-                mappings[el.objectName].forEach(subElement => {
-                    let objectPart = document.querySelectorAll(subElement.querySelector);
-                    for(let i = 0; i < objectPart.length; i++){
-                        climbVariable.climbData[el.name][i][subElement.name] = cleanType(subElement.type, objectPart[i].innerHTML);
+            if(el.type === 'array'){
+                el.arrayParts.forEach(arrayPart => {
+                    let item = document.querySelectorAll(arrayPart.querySelector);
+                    for(let i = 0; i < item.length; i++){
+                        climbVariable.climbData[el.name][i][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML);
                     }
                 });
             } else {

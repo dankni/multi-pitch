@@ -5,7 +5,7 @@ export function cmsMapping() {
                 "name" : "intro",
                 "type" : "text",
                 "mandetory" : true,
-                "querySelector" : ".big-card-body p"
+                "querySelector" : "#intro"
             },
             {
                 "name" : "approach",
@@ -51,45 +51,43 @@ export function cmsMapping() {
             },
             {
                 "name" : "guideBooks",
-                "type" : "object",
+                "type" : "array",
                 "mandetory" : false,
                 "multiple" : true,
-                "objectName" : "guidebookAttributes"
-            }
-        ],
-        "guidebookAttributes" : [
-            {
-                "name" : "isbn",
-                "type" : "int",
-                "mandetory" : false,
-                "querySelector" : ".guide-isbn"
-            },
-            { 
-                "name" : "title",
-                "type" : "text",
-                "mandetory" : true,
-                "querySelector" : ".guide-name"
-            },
-            { 
-                "name" : "description",
-                "type" : "text",
-                "mandetory" : true,
-                "querySelector" : ".guide-desc"
-            },
-            { 
-                "name" : "rrp",
-                "type" : "float",
-                "mandetory" : false,
-                "querySelector" : ".guide-rrp"
-            },
-            { 
-                "name" : "pg",
-                "type" : "int",
-                "mandetory" : false,
-                "querySelector" : ".page"
+                "arrayParts" : [
+                    {
+                        "name" : "isbn",
+                        "type" : "int",
+                        "mandetory" : false,
+                        "querySelector" : ".guide-isbn"
+                    },
+                    { 
+                        "name" : "title",
+                        "type" : "text",
+                        "mandetory" : true,
+                        "querySelector" : ".guide-name"
+                    },
+                    { 
+                        "name" : "description",
+                        "type" : "text",
+                        "mandetory" : true,
+                        "querySelector" : ".guide-desc"
+                    },
+                    { 
+                        "name" : "rrp",
+                        "type" : "float",
+                        "mandetory" : false,
+                        "querySelector" : ".guide-rrp"
+                    },
+                    { 
+                        "name" : "pg",
+                        "type" : "int",
+                        "mandetory" : false,
+                        "querySelector" : ".page"
+                    }
+                ]
             }
         ]
-    }
-    
+    }   
     return mapping;
   }

@@ -103,47 +103,51 @@
                          * PUBLISH GRAPH
                          **/
                         function publishGraph(){
-                            let publishedClimbCount = [];
-                            let draftClimbCount = [];
+                            try{
+                                let publishedClimbCount = [];
+                                let draftClimbCount = [];
 
-                            for(let i = 1; i <= 7; i++){
-                                publishedClimbCount.push(countClimbs(i, 'publish'));
-                                draftClimbCount.push(countClimbs(i, 'draft'));
-                            }
-                            var ctx = document.getElementById('gradeBar').getContext('2d');
-                            var myDoughnutChart = new Chart(ctx, {
-                                type: 'bar',
-                                data: { 
-                                    labels: ['D', 'VD', 'S', 'HS', 'VS', 'HVS', 'E1'],
-                                    datasets: [{
-                                        label: 'Published Climbs',
-                                        data: publishedClimbCount,
-                                        backgroundColor: '#4caf50'
-                                    },
-                                    {
-                                        label: 'Draft Climbs',
-                                        data: draftClimbCount,
-                                        backgroundColor: '#f44235'
-                                    }],
-                                    
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                            ticks: {
-                                                beginAtZero: true
-                                            },
-                                            stacked: true
-                                        }],
-                                        xAxes: [{
-                                            stacked: true,
-                                            gridLines: {
-                                                drawOnChartArea: false
-                                            }
-                                        }]
-                                    }
+                                for(let i = 1; i <= 7; i++){
+                                    publishedClimbCount.push(countClimbs(i, 'publish'));
+                                    draftClimbCount.push(countClimbs(i, 'draft'));
                                 }
-                            });
+                                var ctx = document.getElementById('gradeBar').getContext('2d');
+                                var myDoughnutChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: { 
+                                        labels: ['D', 'VD', 'S', 'HS', 'VS', 'HVS', 'E1'],
+                                        datasets: [{
+                                            label: 'Published Climbs',
+                                            data: publishedClimbCount,
+                                            backgroundColor: '#4caf50'
+                                        },
+                                        {
+                                            label: 'Draft Climbs',
+                                            data: draftClimbCount,
+                                            backgroundColor: '#f44235'
+                                        }],
+                                        
+                                    },
+                                    options: {
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    beginAtZero: true
+                                                },
+                                                stacked: true
+                                            }],
+                                            xAxes: [{
+                                                stacked: true,
+                                                gridLines: {
+                                                    drawOnChartArea: false
+                                                }
+                                            }]
+                                        }
+                                    }
+                                });
+                            } catch (e){
+                                console.log("prob offline: " + e);
+                            }
                         }
 
                         /**
@@ -268,35 +272,59 @@
                                 </button> <span style="color:#666">Last Updated: <span id="lastUpdate"></span></span>
                             </form>`;
                             document.getElementById('id').innerHTML = climbId;
-                            document.getElementById('inputs').innerHTML = '';
+                            let inputHTML = '';
 
                             const chosenClimb = climbsData.climbs.find(climb => climb.id === climbId); // has tile images
                             const climbJSON = JSON.parse(localStorage.getItem('climb' + climbId));
                             const fullClimb = climbJSON.climbData;
                             
                             document.getElementById('lastUpdate').innerText = fullClimb.lastUpdate;
+                            
+                            // ToDo: change to external function               
+                            dataStructure.sections.forEach(section => {
+                                console.log(section);
+
+                                inputHTML += `<h3>${section}</h3>`;
+
+                                let sectionParts = dataStructure.elements.filter(elem => elem.section === section);
+                            
+                                sectionParts.forEach(part => {
+                                    if(part.nested !== true){
+                                        console.log(part.type, fullClimb[part.name], part.name);
+                                        inputHTML += formElement(part.type, fullClimb[part.name], part.name);
+                                    }
+                                });
+                                
+                                inputHTML += `<hr />`;
+                                
+                            });
+                            
+                            // udate the html
+                            document.getElementById('inputs').innerHTML = inputHTML;
+
+                            /*
                             for(let i = 0; i < dataStructure.sections.length; i++){
-                                document.getElementById('inputs').innerHTML += `<h3>${dataStructure.sections[i]}</h3>`;
+                                
                                 let section = dataStructure.elements.filter(elem => elem.section === dataStructure.sections[i]);
                                 for(let j = 0; j < section.length; j++){
                                     if(dataStructure.sections[i] === "tileImg"){
-                                        document.getElementById('inputs').innerHTML += formElement(section[j].type, chosenClimb.tileImage[section[j].name], 'tileImage.' + section[j].name);
+                                        inputHTML += formElement(section[j].type, chosenClimb.tileImage[section[j].name], 'tileImage.' + section[j].name);
                                     } else if (dataStructure.sections[i] === "weatherData"){
                                         for (var key in fullClimb.weatherData) {
                                             if (fullClimb.weatherData.hasOwnProperty(key)) {
-                                                document.getElementById('inputs').innerHTML += formElement(section[j].type, fullClimb.weatherData[key], key);
+                                                inputHTML += formElement(section[j].type, fullClimb.weatherData[key], key);
                                             }
                                         }
                                     } else if (dataStructure.sections[i]  === "guideBooks") {
                                         for(let p = 0; p < fullClimb.guideBooks.length; p++){
-                                            document.getElementById('inputs').innerHTML += formElement(section[j].type, fullClimb.guideBooks[p][section[j].name], 'guideBooks.' + section[j].name);
+                                            inputHTML += formElement(section[j].type, fullClimb.guideBooks[p][section[j].name], 'guideBooks.' + section[j].name);
                                         }
                                     } else {
-                                        document.getElementById('inputs').innerHTML += formElement(section[j].type, fullClimb[section[j].name], section[j].name);
+                                        inputHTML += formElement(section[j].type, fullClimb[section[j].name], section[j].name);
                                     }
                                 }
-                                document.getElementById('inputs').innerHTML += `<hr>`;
-                            }
+                                inputHTML += `<hr>`;
+                            }*/
 
 
                             document.getElementById('quickEditForm').style.display = 'block';

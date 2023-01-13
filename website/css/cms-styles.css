@@ -6,26 +6,38 @@
     height: 60vh;
     margin: 20px auto;
 }
+.overlay .holder{
+    max-width: 800px;
+    margin: 20px auto 0;
+    padding:30px;
+    background-color: rgba(0,0,0, 0.75);
+}
 .overlay-title{
     color: #FFF;
-    margin: 80px auto 30px auto;
     font-weight: 800;
-}
-*[contenteditable="true"] {
-    border: 1px dotted rgba(95, 20, 48, 0.6);
+    margin: 10px;
 }
 .overlay p {
-    display: block;
+    display: inline-block;
     padding: 5px;
-    margin: 20px auto;
-    background: #FFF;
-    width: 80%;
+    margin: 10px;
+    width: 200px;
+    color:#FFF;
 }
-.inline-button {
-    background-color: #FFF;
+.overlay p[contenteditable="true"] {
+    background: #FFF;
+    color:#111;
+    margin: 10px;
+}
+#saveChanges {
+    margin: 10px;
+    display: block;
 }
 
-#saveChanges {
-    margin: 0 auto;
-    display: block;
+*[contenteditable="true"], #grade {
+    border: 1px dotted rgba(95, 20, 48, 0.6);
+}
+
+.inline-button {
+    background-color: #FFF;
 }

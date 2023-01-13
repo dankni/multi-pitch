@@ -588,7 +588,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                     </div>
                     <section class="row">
                         <div class="col">
-                            <p>
+                            <p id="intro">
                                 ${climb.intro}
                             </p>
                         </div>
