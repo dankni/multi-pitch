@@ -1,22 +1,55 @@
 export function cmsMapping() {
     const mapping = {
-        "attributes" : [
+        "items" : [
             {
                 "name" : "intro",
                 "type" : "text",
+                "acceptsHTML" : true,
                 "mandetory" : true,
                 "querySelector" : "#intro"
+            },
+            {
+                "name" : "tradGrade",
+                "type" : "text",
+                "mandetory" : true,
+                "hidden" : true,
+                "groupSelector": "#gradeGroup",
+                "querySelector" : "#tradGrade"
+            },
+            {
+                "name" : "techGrade",
+                "type" : "text",
+                "mandetory" : true,
+                "hidden" : true,
+                "groupSelector": "#gradeGroup",
+                "querySelector" : "#techGrade"
+            },
+            {
+                "name" : "dataGrade",
+                "type" : "int",
+                "mandetory" : true,
+                "hidden" : true,
+                "groupSelector": "#gradeGroup",
+                "querySelector" : "#dataGrade"
+            },
+            {
+                "name" : "originalGrade",
+                "type" : "text",
+                "hidden" : true,
+                "groupSelector": "#gradeGroup",
+                "querySelector" : "#originalGrade"
             },
             {
                 "name" : "approach",
                 "type" : "text",
                 "mandetory" : true,
+                "acceptsHTML" : true,
                 "querySelector" : "#approach"
             },
             {
                 "name" : "pitchInfo",
                 "type" : "text",
-                "mandetory" : false,
+                "acceptsHTML" : true,
                 "querySelector" : "#pitchInfo"
             },
             {
@@ -51,39 +84,61 @@ export function cmsMapping() {
             },
             {
                 "name" : "guideBooks",
-                "type" : "array",
-                "mandetory" : false,
+                "type" : "object",
                 "multiple" : true,
                 "arrayParts" : [
                     {
                         "name" : "isbn",
                         "type" : "int",
-                        "mandetory" : false,
                         "querySelector" : ".guide-isbn"
                     },
                     { 
                         "name" : "title",
                         "type" : "text",
-                        "mandetory" : true,
                         "querySelector" : ".guide-name"
                     },
                     { 
                         "name" : "description",
                         "type" : "text",
-                        "mandetory" : true,
                         "querySelector" : ".guide-desc"
                     },
                     { 
                         "name" : "rrp",
                         "type" : "float",
-                        "mandetory" : false,
                         "querySelector" : ".guide-rrp"
                     },
                     { 
                         "name" : "pg",
                         "type" : "int",
-                        "mandetory" : false,
                         "querySelector" : ".page"
+                    },
+                    { 
+                        "name" : "imgURL",
+                        "type" : "text",
+                        "querySelector" : ".imgURL",
+                        "attribute" : "src",
+                        "hidden" : true,
+                        "groupSelector" : "guidebook-img-holder"
+                    }
+                ]
+            },
+            {
+                "name" : "referances",
+                "type" : "object",
+                "multiple" : true,
+                "arrayParts" : [
+                    {
+                        "name" : "url",
+                        "type" : "text",
+                        "attribute" : "href",
+                        "querySelector" : ".url",
+                        "hidden" : true
+                    },
+                    {
+                        "name" : "text",
+                        "type" : "text",
+                        "attribute" : "textContent",
+                        "querySelector" : ".referance"
                     }
                 ]
             }

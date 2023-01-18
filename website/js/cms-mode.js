@@ -2,7 +2,7 @@
 import { cmsMapping } from '/editor/cms-mapping.js';
 let mappings = cmsMapping(); 
 
-/*GLOBAL VARIABLES */
+/* GLOBAL VARIABLES */
 const climbId = parseInt(document.getElementById('climbIdMeta').content);
 let allClimbsData = JSON.parse(localStorage.getItem('climbsData'));
 let climbVariable;
@@ -23,22 +23,26 @@ if(localStorage.getItem('climb' + climbId)){
 initaliseEditMode();
 updateFromLocalStorage();
 
-/* UPDATE PAGE FROM LOCAL STOREAGE */
-// ToDo: help stop acidently overwritting changes
-function updateFromLocalStorage(){
-
-}
-
 /* FUNCTIONS */
 function initaliseEditMode(){
     showCMSNav();
-    enableGuidebookEdit('.guidebook-img');
-    enableGradeEdit();
-    mappings.attributes.forEach(element => {
-        if(element.type != "array"){
-            enableFieldEditing(element.name, element.querySelector);
+    // add guidebooks
+    addTextBoxsToEditAttributes('.guidebook-img', "src", "Guidebook Image URL", "imgURL");
+    // referances
+    addTextBoxsToEditAttributes('.referance', "href", "Referance link", "url");
+
+    document.getElementById('grade').addEventListener('click', function(){
+        hiddenEdit('gradeGroup');
+    });
+
+    mappings.items.forEach(item => {
+        if(item.type != "object"){
+            enableFieldEditing(item.name, item.querySelector);
+            if(item.hidden === true) {
+                addHiddenElementsToPage(item);
+            }
         } else {
-            element.arrayParts.forEach(part =>{
+            item.arrayParts.forEach(part =>{
                 enableFieldEditing(part.name, part.querySelector);
             });
         }
@@ -74,6 +78,105 @@ function showCMSNav(){
     document.getElementById('showHTML').addEventListener('click', toggleHTML);
 }
 
+// To help stop acidently overwritting changes not commited
+// Only pulls in stuff in the mapping file e.g. not pulling in guidebook img src
+function updateFromLocalStorage(){
+    mappings.items.forEach(el => {
+        if(el.type === 'object'){
+            el.arrayParts.forEach(arrayPart => {
+                let item = document.querySelectorAll(arrayPart.querySelector);
+                for(let i = 0; i < item.length; i++){
+                    item[i].innerHTML = climbVariable.climbData[el.name][i][arrayPart.name];
+                }
+            });
+        } else {
+            document.querySelector(el.querySelector).innerHTML = climbVariable.climbData[`${el.name}`];
+        }
+    });
+}
+
+function addTextBoxsToEditAttributes(attributeSelector, attribute, label, cssClass){
+    try { 
+        let array = document.querySelectorAll(attributeSelector);
+        let value;
+        for(let i = 0; i < array.length; i++){
+            if(attribute === "src"){
+                value = "/img/" + array[i].src.split('/img/')[1];
+            }
+            let element = document.createElement('p');
+            element.classList = cssClass; 
+            element.contentEditable = true;
+            element.textContent = value
+            array[i].after(element);
+        }    
+    } catch (e) {
+        // no guidebook
+    }
+}
+
+function addHiddenElementsToPage(item){
+    // check if the group can have multiple or it's not been created yet
+    if(item.groupSelector.charAt(0) != "#" || !document.querySelector(item.groupSelector)){
+        let holderElement = document.createElement('div');
+        if(item.groupSelector.charAt(0) === "#"){
+            holderElement.id = item.groupSelector.substring(1, item.groupSelector.length);
+        } else {
+            holderElement.classList = item.groupSelector.substring(1, item.groupSelector.length);
+        }
+        holderElement.style.display = 'none';
+        document.body.appendChild(holderElement);
+    }
+    let label = document.createElement('p');
+    label.textContent = item.name;
+    let hiddenElement = document.createElement('p');
+    hiddenElement.id = item.name; // a little risky, as could be different 
+    hiddenElement.contentEditable = true;
+    let hiddenGroupHolder = document.querySelector(item.groupSelector)
+    hiddenGroupHolder.appendChild(label);
+    hiddenGroupHolder.appendChild(hiddenElement);
+    hiddenGroupHolder.innerHTML += "<br />";
+}
+
+function hiddenEdit(hiddenGroupName){
+    
+    let hiddenGroup = document.getElementById(hiddenGroupName);
+    let html = hiddenGroup.innerHTML;
+    hiddenGroup.innerHTML = '';
+    close
+    showOverlay(
+        `<div class="holder">
+            <h2 class="overlay-title">Edit grade</h2>
+            <div id="newHiddenContent">
+                ${html}
+            </div>
+            <button class="open-tile inline-button primary" id="saveHid">Keep Changes & Close</button>
+            <button class="open-tile inline-button" id="cancel">Cancel</button>
+        </div>
+        `
+    );
+    // hide close to ensure content is properly handled.
+    document.getElementById('close').style.display = 'none';
+
+    document.getElementById('saveHid').addEventListener('click', function(){
+        document.getElementById(hiddenGroupName).innerHTML = document.getElementById('newHiddenContent').innerHTML;
+        document.getElementById('newHiddenContent').innerHTML = "";
+        hideTile();
+    }); 
+
+    document.getElementById('cancel').addEventListener('click', function(){
+        document.getElementById(hiddenGroupName).innerHTML = html;
+        document.getElementById('newHiddenContent').innerHTML = "";
+        hideTile();
+    }); 
+}
+
+function showOverlay(content){
+    document.getElementById('overlay').innerHTML = content;
+    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.85);z-index:14;");
+    document.getElementById('close').setAttribute("style", "display:block;");
+    document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+}
+
 function textAreaWithTitle(title, text){
     return `
     <div class="holder">
@@ -83,71 +186,16 @@ function textAreaWithTitle(title, text){
     `;
 }
 
-function enableGuidebookEdit(selector, attribute){
-    try {   
-        let guidebookImages = document.querySelectorAll(selector);
-        for(let i = 0; i < guidebookImages.length; i++){
-            guidebookImages[i].addEventListener('click', function(){
-                showOverlay(
-                    `<div class="holder">
-                        <h2 class="overlay-title">Edit guidebook image</h2>
-                        <p>Guidebook image location:</p>
-                        <p id="src" contentEditable="true" style="width:400px">/img/${guidebookImages[i].src.split('/img/')[1]}</p>
-                        <a id="saveChanges" class="open-tile inline-button">Save Changes</a>
-                    </div>
-                    `
-                );
-                document.getElementById('saveChanges').addEventListener('click', function(){
-                    guidebookImages[i].src = document.getElementById('src').textContent;
-                    // must also save to local storeage. 
-                });
-            });
-        }
-    } catch (e) {
-        // no guidebook
-    }
-}
-
-function enableGradeEdit(){
-    document.getElementById('grade').addEventListener('click', function(){
-        showOverlay(
-            `<div class="holder">
-                <h2 class="overlay-title">Edit grade</h2>
-                <p>Adjectival Trad Grade:</p>
-                <p id="tradGrade" contentEditable="true">${climbVariable.climbData.tradGrade}</p><br/>
-                <p>Technical Grade:</p>
-                <p id="techGrade" contentEditable="true">${climbVariable.climbData.techGrade}</p><br/>
-                <p>Data Grade:</p>
-                <p id="techGrade" contentEditable="true">${climbVariable.climbData.dataGrade}</p><br/>
-                <p>Original Grade System:</p>
-                <p id="techGrade" contentEditable="true">${climbVariable.climbData.gradeSys}</p><br/>
-                <p>Original Grade:</p>
-                <p id="techGrade" contentEditable="true">${climbVariable.climbData.originalGrade}</p><br/>
-                <a id="saveChanges" class="open-tile inline-button">Save Changes</a>
-            </div>
-            `
-        );
-        document.getElementById('saveChanges').addEventListener('click', function(){
-            climbVariable.climbData.tradGrade = document.getElementById('tradGrade').textContent;
-            climbVariable.climbData.techGrade = document.getElementById('techGrade').textContent;
-        });
-    });
-}
-
 function enableFieldEditing(name, selector) {
     let array = document.querySelectorAll(selector);
     for(let i = 0; i < array.length; i++){
-        if(i > 0) {
-            array[i].id = name + [i]; // only append a number when there are multiple
-        } else {
-            array[i].id = name;
-        }
         array[i].contentEditable = true;
     }
 }
 
 function toggleHTML(){
-    mappings.attributes.forEach(element => {
+    // dosen't toggle any HTML in arrays like guidebooks but I think thats fine. 
+    mappings.items.forEach(element => {
         let el = document.querySelector(element.querySelector);
         if(element.type === 'text') {
             el.classList.contains('html') ? el.innerHTML = el.textContent : el.textContent = el.innerHTML;
@@ -157,14 +205,7 @@ function toggleHTML(){
     
 }
 
-function showOverlay(content){
-    document.getElementById('overlay').innerHTML = content;
-    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
-    document.getElementById('close').setAttribute("style", "display:block;");
-    document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-}
-
-function cleanType(type, value){
+function cleanType(type, value, acceptsHTML){
     switch (type) {
         case 'int':
           value = parseInt(value.replace(/[^\d.]/g,"")); // regex removes anything not a digit or dot
@@ -175,20 +216,25 @@ function cleanType(type, value){
         default:
             value = value.trim(); // is text or html
     }
-        return(value);
+    // strips out any html tags
+    if(acceptsHTML !== true && type === "text"){
+        let regex = /<[^>]*>?/gm;
+        value = value.toString().replace(regex, '')
+    }
+    return(value);
 }
 
 function saveChanges(){
-    mappings.attributes.forEach(el => {
-            if(el.type === 'array'){
+    mappings.items.forEach(el => {
+            if(el.type === 'object'){
                 el.arrayParts.forEach(arrayPart => {
                     let item = document.querySelectorAll(arrayPart.querySelector);
                     for(let i = 0; i < item.length; i++){
-                        climbVariable.climbData[el.name][i][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML);
+                        climbVariable.climbData[el.name][i][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML, arrayPart.acceptsHTML);
                     }
                 });
             } else {
-                climbVariable.climbData[`${el.name}`] = cleanType(el.type, document.querySelector(el.querySelector).innerHTML);
+                climbVariable.climbData[`${el.name}`] = cleanType(el.type, document.querySelector(el.querySelector).innerHTML, el.acceptsHTML);
             }
     });
 
