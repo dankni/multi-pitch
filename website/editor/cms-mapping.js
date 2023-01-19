@@ -116,9 +116,10 @@ export function cmsMapping() {
                         "name" : "imgURL",
                         "type" : "text",
                         "querySelector" : ".imgURL",
+                        "visible" : false,
                         "attribute" : "src",
-                        "hidden" : true,
-                        "groupSelector" : "guidebook-img-holder"
+                        "elementSelector" : ".guidebook-img",
+                        "label" : "Guidebook Image URL"
                     }
                 ]
             },
@@ -130,9 +131,11 @@ export function cmsMapping() {
                     {
                         "name" : "url",
                         "type" : "text",
-                        "attribute" : "href",
                         "querySelector" : ".url",
-                        "hidden" : true
+                        "visible" : false,
+                        "attribute" : "href",
+                        "elementSelector" : ".referance",
+                        "label" : "Referance URL"
                     },
                     {
                         "name" : "text",

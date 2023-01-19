@@ -20,32 +20,31 @@ if(localStorage.getItem('climb' + climbId)){
 }
 
 /* INITIALISE */
+showCMSNav();
 initaliseEditMode();
 updateFromLocalStorage();
 
 /* FUNCTIONS */
 function initaliseEditMode(){
-    showCMSNav();
-    // add guidebooks
-    addTextBoxsToEditAttributes('.guidebook-img', "src", "Guidebook Image URL", "imgURL");
-    // referances
-    addTextBoxsToEditAttributes('.referance', "href", "Referance link", "url");
-
-    document.getElementById('grade').addEventListener('click', function(){
-        hiddenEdit('gradeGroup');
-    });
-
+    
     mappings.items.forEach(item => {
         if(item.type != "object"){
-            enableFieldEditing(item.name, item.querySelector);
+            enableFieldEditing(item.querySelector);
             if(item.hidden === true) {
                 addHiddenElementsToPage(item);
             }
         } else {
             item.arrayParts.forEach(part =>{
-                enableFieldEditing(part.name, part.querySelector);
+                enableFieldEditing(part.querySelector);
+                if(part.visible === false){
+                    addTextBoxsToEditAttributes(part.elementSelector, part.attribute, part.label, part.querySelector);
+                }
             });
         }
+    });
+
+    document.getElementById('grade').addEventListener('click', function(){
+        hiddenEdit('gradeGroup');
     });
 }
 
@@ -79,7 +78,6 @@ function showCMSNav(){
 }
 
 // To help stop acidently overwritting changes not commited
-// Only pulls in stuff in the mapping file e.g. not pulling in guidebook img src
 function updateFromLocalStorage(){
     mappings.items.forEach(el => {
         if(el.type === 'object'){
@@ -100,17 +98,14 @@ function addTextBoxsToEditAttributes(attributeSelector, attribute, label, cssCla
         let array = document.querySelectorAll(attributeSelector);
         let value;
         for(let i = 0; i < array.length; i++){
-            if(attribute === "src"){
-                value = "/img/" + array[i].src.split('/img/')[1];
-            }
             let element = document.createElement('p');
-            element.classList = cssClass; 
+            element.classList = cssClass.replace(/[^a-zA-Z ]/g, ""); 
             element.contentEditable = true;
             element.textContent = value
             array[i].after(element);
         }    
     } catch (e) {
-        // no guidebook
+        // no guidebook etc
     }
 }
 
@@ -186,7 +181,7 @@ function textAreaWithTitle(title, text){
     `;
 }
 
-function enableFieldEditing(name, selector) {
+function enableFieldEditing(selector) {
     let array = document.querySelectorAll(selector);
     for(let i = 0; i < array.length; i++){
         array[i].contentEditable = true;
