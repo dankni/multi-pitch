@@ -45,3 +45,12 @@ WebP conversion uses [this node package](https://www.npmjs.com/package/webp-conv
 The site is built from JSON data files that, once loaded are saved in local storage for very fast page load times and less network traffic (and more offline capabilities in the future). This comes at the cost of a lot  development complexity. I have built an slighlty unwieldy beast, in order to 
 optimise the user experiance. The lastUpdate format is Year-Month-Day. This is how the logic should work:
 ![Local storage data flow](https://github.com/dankni/multi-pitch/blob/master/website/img/other/flow.png)
+
+## CMS Mode
+I have created a CMS mode to make it quicker and easier to edit climb date (vs editing JSON files directly). 
+
+To enter CMS mode just add `?god-mode` to any climb url. This will editing of page content. When saved the new content is added to local storage. This can then be copy pasted into the repo and commited. 
+
+Essentially gitHub is still being used for authentication and version control. 
+
+![How the CMS should work](https://github.com/dankni/multi-pitch/blob/master/website/img/other/multi-pitch-cms-mode.png)

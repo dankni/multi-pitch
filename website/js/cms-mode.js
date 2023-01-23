@@ -1,8 +1,17 @@
-/* IMPORT MAPPING FILE */
-import { cmsMapping } from '/editor/cms-mapping.js';
-let mappings = cmsMapping(); 
+/* IMPORT SUPPORTING FILES */
+import { 
+    cmsMapping 
+} from '/editor/cms-mapping.js';
+
+import { 
+    textAreaWithTitle, 
+    cmsNavigation, 
+    saveAndCancelOptions,
+    labelAndInput 
+} from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
+let mappings = cmsMapping(); 
 const climbId = parseInt(document.getElementById('climbIdMeta').content);
 let allClimbsData = JSON.parse(localStorage.getItem('climbsData'));
 let climbVariable;
@@ -20,8 +29,8 @@ if(localStorage.getItem('climb' + climbId)){
 }
 
 /* INITIALISE */
-showCMSNav();
 initaliseEditMode();
+showCMSNav();
 updateFromLocalStorage();
 
 /* FUNCTIONS */
@@ -39,27 +48,31 @@ function initaliseEditMode(){
                 if(part.visible === false){
                     addTextBoxsToEditAttributes(part.elementSelector, part.attribute, part.label, part.querySelector);
                 }
+                if(part.hidden === true) {
+                    addHiddenElementsToPage(part);
+                }
             });
         }
     });
-
+    // to Do: clean up event managment into a function
     document.getElementById('grade').addEventListener('click', function(){
         hiddenEdit('gradeGroup');
+    });
+    document.querySelector('.seasonal-rain').addEventListener('click', function(){
+        hiddenEdit('seasonalRain');
+    });
+    document.querySelector('.temp').addEventListener('click', function(){
+        hiddenEdit('temp');
+    }); 
+    document.querySelector('.big-card-map').addEventListener('click', function(){
+        hiddenEdit('map');
+        //toDo: remove existing map click action;
     });
 }
 
 function showCMSNav(){
     let url = window.location.href.split('?')[0];
-    let cmsNav = `<div class="container">
-    <a class="navbar-brand" href="/"><img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo"></a>
-    <ul>
-        <li><a href="${url}">Exit CMS mode</a></li>
-        <li><a id="save">Save changes</a></li>
-        <li><a id="showHTML">Toggle HTML</a></li>
-        <li><a id="showJSON">Show new JSON</a></li>
-        <li><a href="/editor/topo-edit/?climbId=${climbId}">Topo editor</a></li>
-        <li><a id="showDataFile">Show all-climb data file</a></li>
-    </ul></div>`;
+    let cmsNav = cmsNavigation(url, climbId);
     let nav = document.getElementsByTagName("nav")[0];
     nav.style.backgroundColor = '#5f1430';
     nav.innerHTML = cmsNav;
@@ -75,16 +88,24 @@ function showCMSNav(){
     });
     document.getElementById('save').addEventListener('click', saveChanges);
     document.getElementById('showHTML').addEventListener('click', toggleHTML);
+    document.querySelector('.card-img-anch').href = '#';
 }
 
 // To help stop acidently overwritting changes not commited
+// Also adds non visable data to the page
 function updateFromLocalStorage(){
     mappings.items.forEach(el => {
         if(el.type === 'object'){
             el.arrayParts.forEach(arrayPart => {
                 let item = document.querySelectorAll(arrayPart.querySelector);
-                for(let i = 0; i < item.length; i++){
-                    item[i].innerHTML = climbVariable.climbData[el.name][i][arrayPart.name];
+                if(el.multiple !== true){
+                    // there is only one array
+                    item[0].innerHTML = climbVariable.climbData[el.name][arrayPart.name];
+                } else {
+                    // for guidebooks there may be multiple
+                    for(let i = 0; i < item.length; i++){ 
+                        item[i].innerHTML = climbVariable.climbData[el.name][i][arrayPart.name];
+                    }
                 }
             });
         } else {
@@ -111,25 +132,17 @@ function addTextBoxsToEditAttributes(attributeSelector, attribute, label, cssCla
 
 function addHiddenElementsToPage(item){
     // check if the group can have multiple or it's not been created yet
-    if(item.groupSelector.charAt(0) != "#" || !document.querySelector(item.groupSelector)){
+    if(!document.querySelector(item.groupSelector)){
         let holderElement = document.createElement('div');
-        if(item.groupSelector.charAt(0) === "#"){
-            holderElement.id = item.groupSelector.substring(1, item.groupSelector.length);
-        } else {
-            holderElement.classList = item.groupSelector.substring(1, item.groupSelector.length);
-        }
+        holderElement.id = item.groupSelector.substring(1, item.groupSelector.length);
         holderElement.style.display = 'none';
         document.body.appendChild(holderElement);
     }
-    let label = document.createElement('p');
-    label.textContent = item.name;
-    let hiddenElement = document.createElement('p');
-    hiddenElement.id = item.name; // a little risky, as could be different 
-    hiddenElement.contentEditable = true;
     let hiddenGroupHolder = document.querySelector(item.groupSelector)
-    hiddenGroupHolder.appendChild(label);
-    hiddenGroupHolder.appendChild(hiddenElement);
-    hiddenGroupHolder.innerHTML += "<br />";
+    let labelText;
+    item.label ? labelText = item.label : labelText = item.name;
+    let id = item.querySelector.substring(1, item.querySelector.length);
+    hiddenGroupHolder.innerHTML += labelAndInput(labelText, id);
 }
 
 function hiddenEdit(hiddenGroupName){
@@ -137,18 +150,8 @@ function hiddenEdit(hiddenGroupName){
     let hiddenGroup = document.getElementById(hiddenGroupName);
     let html = hiddenGroup.innerHTML;
     hiddenGroup.innerHTML = '';
-    close
-    showOverlay(
-        `<div class="holder">
-            <h2 class="overlay-title">Edit grade</h2>
-            <div id="newHiddenContent">
-                ${html}
-            </div>
-            <button class="open-tile inline-button primary" id="saveHid">Keep Changes & Close</button>
-            <button class="open-tile inline-button" id="cancel">Cancel</button>
-        </div>
-        `
-    );
+    let content = saveAndCancelOptions(html);
+    showOverlay(content);
     // hide close to ensure content is properly handled.
     document.getElementById('close').style.display = 'none';
 
@@ -170,15 +173,6 @@ function showOverlay(content){
     document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.85);z-index:14;");
     document.getElementById('close').setAttribute("style", "display:block;");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-}
-
-function textAreaWithTitle(title, text){
-    return `
-    <div class="holder">
-        <h2 class="overlay-title">${title}</h2>
-        <textarea id="newJSON">${text}</textarea>
-    </div>
-    `;
 }
 
 function enableFieldEditing(selector) {
@@ -208,6 +202,9 @@ function cleanType(type, value, acceptsHTML){
         case 'float':
             value = parseFloat(value.replace(/[^\d.]/g,""));
           break;
+        case 'array':
+            value = value.split(',');
+            break
         default:
             value = value.trim(); // is text or html
     }
@@ -225,7 +222,12 @@ function saveChanges(){
                 el.arrayParts.forEach(arrayPart => {
                     let item = document.querySelectorAll(arrayPart.querySelector);
                     for(let i = 0; i < item.length; i++){
-                        climbVariable.climbData[el.name][i][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML, arrayPart.acceptsHTML);
+                        if(el.multiple !== true){
+                            // there can only be one so loosing the first [i]
+                            climbVariable.climbData[el.name][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML, arrayPart.acceptsHTML);
+                        } else {
+                            climbVariable.climbData[el.name][i][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML, arrayPart.acceptsHTML);
+                        }
                     }
                 });
             } else {
