@@ -35,7 +35,6 @@ updateFromLocalStorage();
 
 /* FUNCTIONS */
 function initaliseEditMode(){
-    
     mappings.items.forEach(item => {
         if(item.type != "object"){
             enableFieldEditing(item.querySelector);
@@ -53,20 +52,6 @@ function initaliseEditMode(){
                 }
             });
         }
-    });
-    // to Do: clean up event managment into a function
-    document.getElementById('grade').addEventListener('click', function(){
-        hiddenEdit('gradeGroup');
-    });
-    document.querySelector('.seasonal-rain').addEventListener('click', function(){
-        hiddenEdit('seasonalRain');
-    });
-    document.querySelector('.temp').addEventListener('click', function(){
-        hiddenEdit('temp');
-    }); 
-    document.querySelector('.big-card-map').addEventListener('click', function(){
-        hiddenEdit('map');
-        //toDo: remove existing map click action;
     });
 }
 
@@ -88,11 +73,11 @@ function showCMSNav(){
     });
     document.getElementById('save').addEventListener('click', saveChanges);
     document.getElementById('showHTML').addEventListener('click', toggleHTML);
-    document.querySelector('.card-img-anch').href = '#';
+    document.querySelector('.card-img-anch').removeAttribute('href');
 }
 
 // To help stop acidently overwritting changes not commited
-// Also adds non visable data to the page
+// Also adds non visable data to the waiting page elements
 function updateFromLocalStorage(){
     mappings.items.forEach(el => {
         if(el.type === 'object'){
@@ -127,6 +112,7 @@ function addTextBoxsToEditAttributes(attributeSelector, attribute, label, cssCla
         }    
     } catch (e) {
         // no guidebook etc
+        console.log("The page has no guidebooks to edit.");
     }
 }
 
@@ -137,6 +123,17 @@ function addHiddenElementsToPage(item){
         holderElement.id = item.groupSelector.substring(1, item.groupSelector.length);
         holderElement.style.display = 'none';
         document.body.appendChild(holderElement);
+        try{
+            let tiggerElements = document.querySelectorAll(item.trigger);
+            tiggerElements.forEach(element => {
+                    element.addEventListener('click', function(){
+                    hiddenEdit(holderElement.id);
+                });
+            });
+        } catch (e) {
+            // there are no attributes on the page
+            console.log("No trigger for " + item.name + ". ie. this climb probubly has no attributes.");
+        }
     }
     let hiddenGroupHolder = document.querySelector(item.groupSelector)
     let labelText;
@@ -150,7 +147,7 @@ function hiddenEdit(hiddenGroupName){
     let hiddenGroup = document.getElementById(hiddenGroupName);
     let html = hiddenGroup.innerHTML;
     hiddenGroup.innerHTML = '';
-    let content = saveAndCancelOptions(html);
+    let content = saveAndCancelOptions(hiddenGroupName, html);
     showOverlay(content);
     // hide close to ensure content is properly handled.
     document.getElementById('close').style.display = 'none';
@@ -183,10 +180,10 @@ function enableFieldEditing(selector) {
 }
 
 function toggleHTML(){
-    // dosen't toggle any HTML in arrays like guidebooks but I think thats fine. 
+    // dosen't toggle any HTML in nested objects like guidebooks but I think thats fine. 
     mappings.items.forEach(element => {
-        let el = document.querySelector(element.querySelector);
-        if(element.type === 'text') {
+        if(element.acceptsHTML === true) {
+            let el = document.querySelector(element.querySelector);
             el.classList.contains('html') ? el.innerHTML = el.textContent : el.textContent = el.innerHTML;
             el.classList.toggle('html');
         }
@@ -204,6 +201,7 @@ function cleanType(type, value, acceptsHTML){
           break;
         case 'array':
             value = value.split(',');
+            value = value.map(Number); // converts to ints
             break
         default:
             value = value.trim(); // is text or html

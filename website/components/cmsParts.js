@@ -25,10 +25,10 @@ export function cmsNavigation (url, climbId){
     return html;
 }
 
-export function saveAndCancelOptions(content){
+export function saveAndCancelOptions(hiddenGroupName, content){
     const html = `
         <div class="holder">
-            <h2 class="overlay-title">Edit grade</h2>
+            <h2 class="overlay-title">${hiddenGroupName}</h2>
             <div id="newHiddenContent">
                 ${content}
             </div>
@@ -39,9 +39,6 @@ export function saveAndCancelOptions(content){
 }
 
 export function labelAndInput(labelText, inputId){
-    const html = `
-        <p>${labelText}</p>
-        <p contentEditable="true" id="${inputId}"></p>
-        <br />`;
+    const html = `<p>${labelText}</p><p contentEditable="true" id="${inputId}"></p><br />`;
     return html;
 }
