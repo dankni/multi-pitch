@@ -16,8 +16,8 @@
     font-weight: 800;
     margin: 10px;
 }
-.overlay p {
-    display: inline-block;
+.overlay p, .overlay label {
+    display: block;
     padding: 5px;
     margin: 10px;
     width: 250px;
@@ -28,7 +28,9 @@
     background: #FFF;
     color:#111;
 }
-
+.hidden{
+    display: none;
+}
 *[contenteditable="true"], #grade, .single-attribute, .seasonal-rain, h1 {
     border: 1px dotted rgba(95, 20, 48, 0.6);
 }

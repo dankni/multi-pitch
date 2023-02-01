@@ -1169,7 +1169,7 @@ function loadWeather() {
   const fourHoursInMilliseconds = 4000 * 60 * 60;
   if (window.darkSkyWeatherData && (document.getElementById('cardHolder') || document.getElementById('map'))) {
   //  console.log(window.darkSkyWeatherData);
-    climbsData.climbs.map(climb => {   
+    climbsData.climbs.map(climb => {   // currently loops all climbs even on a single climb page (ToDo: fix!)
     try {
       if(climb.status === "publish"){
         const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
@@ -1182,7 +1182,7 @@ function loadWeather() {
         toggleWeather.classList.remove("toggle-weather-off");
       }
     } catch (e) {
-      console.log("No weather found -> " + climb.id + ". Error -> " + e);
+    //  console.log("No weather found -> " + climb.id + ". Error -> " + e);
     }
   });
   setTimeout(() => loadWeather(), fourHoursInMilliseconds)

@@ -42,3 +42,16 @@ export function labelAndInput(labelText, inputId){
     const html = `<p>${labelText}</p><p contentEditable="true" id="${inputId}"></p><br />`;
     return html;
 }
+
+export function labelAndCheckbox(labelText, inputId){
+    const html = `<label for="${inputId}Check">
+                    ${labelText}
+                    <input name="${inputId}Check" 
+                     onChange="Boolean(this.checked) ? document.getElementById('${inputId}').textContent = 'true' : 
+                     document.getElementById('${inputId}').textContent = 'false';"
+                     type="checkbox" 
+                     id="${inputId}Check" />
+                 </label>
+                 <p class="hidden" style="display:none" id="${inputId}"></p>`;
+    return html;
+}

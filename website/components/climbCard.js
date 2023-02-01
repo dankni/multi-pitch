@@ -553,17 +553,17 @@ function climbCard(climbData, nearbyClimbsServerSide) {
 
     var tidal = '', abReq = '', face = '';
     const mapping = {'N' : 'North Facing', 'NE' : 'North East Facing', 'E' : 'East Facing', 'SE' : 'South East Facing', 'S' : 'South Facing', 'SW' : 'South West Facing', 'W' : 'West Facing', 'NW' : ' North West Facing'}
-    if (climb.tidal === 1){
+    if (Boolean(climb.tidal)){
         tidal = `<div class="info-ring">
             <span class="single-attribute">Tidal<br/> Access</span>
         </div>`
     }
-    if (climb.abseil === 1){
+    if (Boolean(climb.abseil)){
         abReq = `<div class="info-ring">
             <span class="single-attribute">Abseil<br/> Required</span>
         </div>`
     }
-    if (climb.face != null){
+    if (Boolean(climb.face)){
         face = `<div class="info-ring compass ${climb.face}">
             <span class="single-attribute"  title="${mapping[climb.face]}" id="face">${climb.face}</span>
         </div>`

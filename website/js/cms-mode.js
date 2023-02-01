@@ -7,7 +7,8 @@ import {
     textAreaWithTitle, 
     cmsNavigation, 
     saveAndCancelOptions,
-    labelAndInput 
+    labelAndInput,
+    labelAndCheckbox
 } from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
@@ -94,6 +95,9 @@ function updateFromLocalStorage(){
                 }
             });
         } else {
+            if(el.type === 'bool' && Boolean(climbVariable.climbData[`${el.name}`])){
+                document.querySelector(`${el.querySelector}Check`).checked = true;
+            }
             document.querySelector(el.querySelector).innerHTML = climbVariable.climbData[`${el.name}`];
         }
     });
@@ -139,7 +143,11 @@ function addHiddenElementsToPage(item){
     let labelText;
     item.label ? labelText = item.label : labelText = item.name;
     let id = item.querySelector.substring(1, item.querySelector.length);
-    hiddenGroupHolder.innerHTML += labelAndInput(labelText, id);
+    if(item.type === 'bool'){
+        hiddenGroupHolder.innerHTML += labelAndCheckbox(labelText, id);
+    } else {
+        hiddenGroupHolder.innerHTML += labelAndInput(labelText, id);
+    }
 }
 
 function hiddenEdit(hiddenGroupName){
@@ -149,6 +157,14 @@ function hiddenEdit(hiddenGroupName){
     hiddenGroup.innerHTML = '';
     let content = saveAndCancelOptions(hiddenGroupName, html);
     showOverlay(content);
+
+    // if its a checkbox and not null or false, check it. bit of a waste for non checkbox overlays
+    mappings.items.forEach(el => {
+        if(el.type === 'bool' && Boolean(document.querySelector(el.querySelector).textContent)){
+            document.querySelector(`${el.querySelector}Check`).checked = true;
+        }
+    });
+
     // hide close to ensure content is properly handled.
     document.getElementById('close').style.display = 'none';
 

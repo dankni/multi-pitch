@@ -25,7 +25,7 @@ function getWeatherAddScoreAndSaveInWindow() {
         .then(checkStatusIs200AndReturnJson)
         .then(weatherScoreFun)
         .then(function (jsonData) {
-            console.log("Successfully download weather data from:", getWeatherUrl);
+        //    console.log("Successfully download weather data from:", getWeatherUrl);
             window.darkSkyWeatherData = jsonData
         })
         .catch(err => console.warn("Failed download weather:", err))
