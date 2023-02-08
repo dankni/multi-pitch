@@ -12,7 +12,7 @@ export function textAreaWithTitle (title, text){
 export function cmsNavigation (url){
     const html = `
         <div class="container">
-            <a class="navbar-brand" href="/"><img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo"></a>
+            <a class="navbar-brand" href="/?god-mode"><img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo"></a>
             <ul>
                 <li><a href="${url}">Exit CMS mode</a></li>
                 <li><a id="save">Save changes</a></li>

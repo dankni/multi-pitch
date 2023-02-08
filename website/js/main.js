@@ -780,7 +780,6 @@ function deliverChange(climb, popped){
     let climbData = climb.climbData;
     localStorage.setItem('focusId', climbData.id + 'Focus');
     localStorage.setItem('lastClimb', climbData.id );
-    
      
     var url = '/climbs/' + climbData.routeName.trim() + '-on-' + climbData.cliff.trim() + '/';
     url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
@@ -1469,9 +1468,18 @@ window.addEventListener('load', (event) => {
             })
         }
     }
-    if (document.location.href.includes('god-mode') === true) {
+    if (document.location.href.includes('god-mode') === true && hp === false) {
         loadNonEssential("script", "/js/cms-mode.js", true);
         loadNonEssential("link", "/css/cms-styles.css")
+    }
+    if (document.location.href.includes('god-mode') === true && hp === true) {
+        // lets user stay in "CMS mode" on Homepage
+        document.getElementsByTagName("nav")[0].style.backgroundColor = '#5f1430';
+        let anchors = document.querySelectorAll("a");
+        anchors.forEach(aTag => {
+            aTag.removeAttribute("onClick");
+            aTag.href = aTag.href + "?god-mode";
+        });
     }
 //    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();

@@ -12,13 +12,18 @@ import {
 } from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
-let mappings = cmsMapping(); 
+let mappings = cmsMapping();
 const climbId = parseInt(document.getElementById('climbIdMeta').content);
 let allClimbsData = JSON.parse(localStorage.getItem('climbsData'));
 let climbVariable;
 if(localStorage.getItem('climb' + climbId)){
     climbVariable = JSON.parse(localStorage.getItem('climb' + climbId)); 
+    /* INITIALISE */
+    initaliseEditMode();
+    showCMSNav();
+    updateFromLocalStorage();
 } else {
+    // this is mandetory so need to ensure it's loaded
     fetch('/data/climbs/' + climbId + '.json')
     .then(res => res.json())
     .then(data => {
@@ -26,13 +31,13 @@ if(localStorage.getItem('climb' + climbId)){
     })
     .then(() => {
         localStorage.setItem('climb' + climbId, JSON.stringify(climbVariable));
+    }).then(()=>{
+        /* INITIALISE */
+        initaliseEditMode();
+        showCMSNav();
+        updateFromLocalStorage();
     });
 }
-
-/* INITIALISE */
-initaliseEditMode();
-showCMSNav();
-updateFromLocalStorage();
 
 /* FUNCTIONS */
 function initaliseEditMode(){
@@ -252,16 +257,14 @@ function saveChanges(){
     // sets the climb lastUpdate date in 3 places. 
     // For minor edits only incremnet a second on the old date to cache bust but not disrupt sort order
     let now = new Date();
-    console.log(now);
     let lastUpdate = new Date(climbVariable.climbData.lastUpdate);
-    console.log(lastUpdate)
+
     if(document.getElementById('minor').checked){
-        // TODO - HERE change this to make it work 
         lastUpdate = new Date(lastUpdate.setSeconds(lastUpdate.getSeconds() + 1));
     } else {
         lastUpdate = now;
     }
-    console.log(lastUpdate);
+
     climbVariable.climbData.lastUpdate = lastUpdate;
     allClimbsData.lastUpdate = now; // to ensure cache busting
     let arrayIndex = allClimbsData.climbs.findIndex(

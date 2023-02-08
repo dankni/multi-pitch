@@ -169,7 +169,7 @@ export function cmsMapping() {
                 "type" : "int",
                 "mandetory" : true,
                 "hidden" : true,
-                "trigger" : "#approach",
+                "trigger" : "#approachTimeRing",
                 "groupSelector" : "#approachEdit",
                 "querySelector" : "#approachTime"
             },
@@ -178,7 +178,7 @@ export function cmsMapping() {
                 "type" : "int",
                 "mandetory" : true,
                 "hidden" : true,
-                "trigger" : "#approach",
+                "trigger" : "#approachTimeRing",
                 "groupSelector" : "#approachEdit",
                 "querySelector" : "#approachDifficulty"
             },
@@ -201,10 +201,11 @@ export function cmsMapping() {
                 "querySelector" : "#pitches"
             },
             {
-                "name" : "approachTime",
-                "type" : "int",
+                "name" : "approach",
+                "type" : "text",
                 "mandetory" : true,
-                "querySelector" : "#approachTime"
+                "acceptsHTML" : true,
+                "querySelector" : "#approach"
             },
             {
                 "name" : "face",

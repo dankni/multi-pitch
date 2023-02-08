@@ -613,7 +613,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                             <div class="info-ring">
                                 <span class="grade what">Approach</span>
                                 <span class="info-divider"></span>
-                                <span class="grade amount" id="approach">${climb.approachTime}<small>min</small></span>
+                                <span class="grade amount" id="approachTimeRing">${climb.approachTime}<small>min</small></span>
                             </div>
                             ${face}
                             <div class="info-ring">
