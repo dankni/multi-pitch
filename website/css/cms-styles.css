@@ -31,7 +31,7 @@
 .hidden{
     display: none;
 }
-*[contenteditable="true"], #grade, .single-attribute, .seasonal-rain, h1 {
+*[contenteditable="true"], #grade, .single-attribute, .seasonal-rain, h1, #approachEdit {
     border: 1px dotted rgba(95, 20, 48, 0.6);
 }
 

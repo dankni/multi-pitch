@@ -165,11 +165,22 @@ export function cmsMapping() {
                 "groupSelector" : "#properties"
             },
             {
-                "name" : "approach",
-                "type" : "text",
+                "name" : "approachTime",
+                "type" : "int",
                 "mandetory" : true,
-                "acceptsHTML" : true,
-                "querySelector" : "#approach"
+                "hidden" : true,
+                "trigger" : "#approach",
+                "groupSelector" : "#approachEdit",
+                "querySelector" : "#approachTime"
+            },
+            {
+                "name" : "approachDifficulty",
+                "type" : "int",
+                "mandetory" : true,
+                "hidden" : true,
+                "trigger" : "#approach",
+                "groupSelector" : "#approachEdit",
+                "querySelector" : "#approachDifficulty"
             },
             {
                 "name" : "pitchInfo",

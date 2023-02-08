@@ -58,7 +58,7 @@ function initaliseEditMode(){
 
 function showCMSNav(){
     let url = window.location.href.split('?')[0];
-    let cmsNav = cmsNavigation(url, climbId);
+    let cmsNav = cmsNavigation(url);
     let nav = document.getElementsByTagName("nav")[0];
     nav.style.backgroundColor = '#5f1430';
     nav.innerHTML = cmsNav;
@@ -249,15 +249,26 @@ function saveChanges(){
             }
     });
 
-    // sets the climb lastUpdate date in 3 places 
+    // sets the climb lastUpdate date in 3 places. 
+    // For minor edits only incremnet a second on the old date to cache bust but not disrupt sort order
     let now = new Date();
-    climbVariable.climbData.lastUpdate = now;
-    allClimbsData.lastUpdate = now;
+    console.log(now);
+    let lastUpdate = new Date(climbVariable.climbData.lastUpdate);
+    console.log(lastUpdate)
+    if(document.getElementById('minor').checked){
+        // TODO - HERE change this to make it work 
+        lastUpdate = new Date(lastUpdate.setSeconds(lastUpdate.getSeconds() + 1));
+    } else {
+        lastUpdate = now;
+    }
+    console.log(lastUpdate);
+    climbVariable.climbData.lastUpdate = lastUpdate;
+    allClimbsData.lastUpdate = now; // to ensure cache busting
     let arrayIndex = allClimbsData.climbs.findIndex(
         function(item, i){
             return item.id === climbId
         });
-    allClimbsData.climbs[arrayIndex].lastUpdate = now;
+    allClimbsData.climbs[arrayIndex].lastUpdate = lastUpdate;
 
     // saves the changes to local storage
     localStorage.setItem('climb' + climbId, JSON.stringify(climbVariable));

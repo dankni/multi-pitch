@@ -9,7 +9,7 @@ export function textAreaWithTitle (title, text){
     return html;
 }
 
-export function cmsNavigation (url, climbId){
+export function cmsNavigation (url){
     const html = `
         <div class="container">
             <a class="navbar-brand" href="/"><img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo"></a>
@@ -18,8 +18,8 @@ export function cmsNavigation (url, climbId){
                 <li><a id="save">Save changes</a></li>
                 <li><a id="showHTML">Toggle HTML</a></li>
                 <li><a id="showJSON">Show new JSON</a></li>
-                <li><a href="/editor/topo-edit/?climbId=${climbId}">Topo editor</a></li>
                 <li><a id="showDataFile">Show all-climb data file</a></li>
+                <li><label for"minor"><em>Minor Edit</em> <input id="minor" type="checkbox" checked="true" /></label></li>
             </ul>
         </div>`;
     return html;
