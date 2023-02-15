@@ -37,6 +37,15 @@
         },
         {
             "publish" : true,
+            "title" : "Belay Device",
+            "paragraph" : "Every year climbing companies release new and varied belay devices. Belay devices fall into two broad categories of solid vs mechanical/assisted. All devices work by increasing friction on the rope making it easier to catch and hold a falling climber, but some 'assisted' devices like the grigi go as far as to (mostly) automatically lock in the event of a fall. The range of choice can seem confusing, but there are clear pros and cons to the options. <br />An assisted device is typically much more expensive to buy, weights more and are <em>usually</em> only usable with a single rope. The advantage is that they automatically lock (some exceptions) which is helpful if the belayer has a lapse of concentration. This is typically used for sport climbing but can be used for trad climbing on a single strand of rope.<br />A static 'tube' device has the advantage of being cheap, light, and usually designed to take 2 ropes. Some devices are also designed specifically for multi-pitch and have an option to belay from above in 'guide mode'. The petzl Reverso or DMM pivot are two good examples. This means the belayer can attach the device to the anchor rather than belay from the harness when bringing up a second. The advantages here are comfort of belaying, plus the fact the device will (mostly) automatically lock if the second falls. This is ideal for bringing up two climbers together where both falling would be a problem to hold the weight on the harness. The downside here is complexity of set up and the need to change the belay system when 'swinging leads' ie the second then leads the next pitch.<br />Additionally there are other ways to belay (plate, eight or hitch etc), which typically don't have any major advantages over a tube device.",
+            "img" : {
+                "url" : "/img/other/gear/belay-device-on-a-screw-gate.jpg",
+                "alt": "Belay Device on an HMS screw Gate"
+            }
+        },
+        {
+            "publish" : true,
             "title" : "Head Torch",
             "paragraph" : "Most of the time the climber won't need a head torch, but if it gets dark during the climb or in the middle of a decent, the climber will be glad for having it. In these situations, the options are to continue with a headtorch or face benightment while waiting for the morning sun. It can be easier to get lost than it may seem. To replay a chain of events from January 2018, myself and a party of 3 got lost navigating to Roca Gris in Span. When this happend, it meant we started climbing just an hour late, we also moved slower than expected and then took a while to find the abseil anchor. The days were still short and it was pitch black on the third and final abseil. If I didn't have a head torch the three or us might have been benighted hanging from 2 bolts on a sheer face.",
             "img" : {
