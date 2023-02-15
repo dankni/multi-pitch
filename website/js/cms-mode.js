@@ -8,7 +8,8 @@ import {
     cmsNavigation, 
     saveAndCancelOptions,
     labelAndInput,
-    labelAndCheckbox
+    labelAndCheckbox,
+    face
 } from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
@@ -18,10 +19,7 @@ let allClimbsData = JSON.parse(localStorage.getItem('climbsData'));
 let climbVariable;
 if(localStorage.getItem('climb' + climbId)){
     climbVariable = JSON.parse(localStorage.getItem('climb' + climbId)); 
-    /* INITIALISE */
-    initaliseEditMode();
-    showCMSNav();
-    updateFromLocalStorage();
+    innit();
 } else {
     // this is mandetory so need to ensure it's loaded
     fetch('/data/climbs/' + climbId + '.json')
@@ -31,34 +29,46 @@ if(localStorage.getItem('climb' + climbId)){
     })
     .then(() => {
         localStorage.setItem('climb' + climbId, JSON.stringify(climbVariable));
-    }).then(()=>{
-        /* INITIALISE */
-        initaliseEditMode();
-        showCMSNav();
-        updateFromLocalStorage();
+    }).then(() => {
+        innit()
     });
 }
 
+/* INITIALISE */
+function innit(){
+    addAnyMissingElementsToPage();
+    makeEditable();
+    showCMSNav();
+    updateFromLocalStorage();
+}
+
 /* FUNCTIONS */
-function initaliseEditMode(){
-    mappings.items.forEach(item => {
-        if(item.type != "object"){
-            enableFieldEditing(item.querySelector);
-            if(item.hidden === true) {
-                addHiddenElementsToPage(item);
-            }
-        } else {
-            item.arrayParts.forEach(part =>{
-                enableFieldEditing(part.querySelector);
-                if(part.visible === false){
+function addAnyMissingElementsToPage(){
+    if(!document.getElementById('face')){
+        document.querySelector('.info-ring-holder').innerHTML += face(null);
+    }
+}
+
+function makeEditable(){
+
+        mappings.items.filter(item => item.type === 'object').map(object => {
+            object.arrayParts.map(part => {
+                if(part.visible === false){ 
                     addTextBoxsToEditAttributes(part.elementSelector, part.attribute, part.label, part.querySelector);
                 }
                 if(part.hidden === true) {
                     addHiddenElementsToPage(part);
                 }
+                enableFieldEditing(part.querySelector);
             });
-        }
-    });
+        });
+
+        mappings.items.forEach(item => {
+            if(item.hidden === true) {
+                addHiddenElementsToPage(item);
+            }
+            enableFieldEditing(item.querySelector);
+        });
 }
 
 function showCMSNav(){
@@ -85,27 +95,43 @@ function showCMSNav(){
 // To help stop acidently overwritting changes not commited
 // Also adds non visable data to the waiting page elements
 function updateFromLocalStorage(){
-    mappings.items.forEach(el => {
-        if(el.type === 'object'){
-            el.arrayParts.forEach(arrayPart => {
-                let item = document.querySelectorAll(arrayPart.querySelector);
-                if(el.multiple !== true){
-                    // there is only one array
-                    item[0].innerHTML = climbVariable.climbData[el.name][arrayPart.name];
-                } else {
-                    // for guidebooks there may be multiple
-                    for(let i = 0; i < item.length; i++){ 
-                        item[i].innerHTML = climbVariable.climbData[el.name][i][arrayPart.name];
-                    }
-                }
+
+    // Objects like guidebooks or rain
+    mappings.items.filter(item => item.type === 'object').map(object => {
+        object.arrayParts.map(part => {
+            document.querySelectorAll(part.querySelector).forEach((element, i) => {
+                let localValue = (object.multiple === true) ? climbVariable.climbData[object.name][i][part.name] : climbVariable.climbData[object.name][part.name];
+                element.innerHTML = localValue;
             });
-        } else {
-            if(el.type === 'bool' && Boolean(climbVariable.climbData[`${el.name}`])){
-                document.querySelector(`${el.querySelector}Check`).checked = true;
-            }
-            document.querySelector(el.querySelector).innerHTML = climbVariable.climbData[`${el.name}`];
-        }
+        });
     });
+
+    // all other items - ToDo: check this doesn't need a filter
+    mappings.items.map(part => {
+        document.querySelectorAll(part.querySelector).forEach((element) => {
+            element.innerHTML = climbVariable.climbData[part.name];
+        });
+    });
+
+    // set checkboxes for boolean values that are true
+    mappings.items.filter(item => item.type === 'bool' && Boolean(climbVariable.climbData[`${item.name}`])).map(part => {
+        document.querySelector(`${part.querySelector}Check`).checked = true;
+    });
+
+    updateWeatherBars();
+}
+
+function updateWeatherBars(climbData = climbVariable.climbData){
+    let hiddenDiv = document.createElement('div');
+    hiddenDiv.style.display = 'none';
+    hiddenDiv.id = "hiddenWeatherDiv";
+    document.body.append(hiddenDiv);
+    document.getElementById('hiddenWeatherDiv').innerHTML = getWeather(climbData);
+    let rain = document.querySelector('#hiddenWeatherDiv .seasonal-rain').innerHTML;
+    let temp = document.querySelector('#hiddenWeatherDiv .temp').innerHTML;
+    document.querySelector('.seasonal-rain').innerHTML = rain;
+    document.querySelector('.temp').innerHTML = temp;
+    document.getElementById('hiddenWeatherDiv').remove();
 }
 
 function addTextBoxsToEditAttributes(attributeSelector, attribute, label, cssClass){
@@ -170,13 +196,20 @@ function hiddenEdit(hiddenGroupName){
         }
     });
 
-    // hide close to ensure content is properly handled.
+    // hide close button to ensure content is properly handled.
     document.getElementById('close').style.display = 'none';
 
     document.getElementById('saveHid').addEventListener('click', function(){
         document.getElementById(hiddenGroupName).innerHTML = document.getElementById('newHiddenContent').innerHTML;
         document.getElementById('newHiddenContent').innerHTML = "";
         hideTile();
+        // updates weather bars
+        if(hiddenGroupName === 'seasonalRain' || hiddenGroupName === 'temp'){
+            climbVariable.climbData.weatherData.rainyDays = cleanType('array', document.querySelector('#rainyDays').innerHTML, false);
+            climbVariable.climbData.weatherData.tempH = cleanType('array', document.querySelector('#tempH').innerHTML, false);
+            climbVariable.climbData.weatherData.tempL = cleanType('array', document.querySelector('#tempL').innerHTML, false);
+            updateWeatherBars();
+        }
     }); 
 
     document.getElementById('cancel').addEventListener('click', function(){
@@ -194,28 +227,26 @@ function showOverlay(content){
 }
 
 function enableFieldEditing(selector) {
-    let array = document.querySelectorAll(selector);
-    for(let i = 0; i < array.length; i++){
-        array[i].contentEditable = true;
-    }
+    document.querySelectorAll(selector).forEach(el => {
+        el.contentEditable = true;
+    });
 }
 
 function toggleHTML(){
-    // dosen't toggle any HTML in nested objects like guidebooks but I think thats fine. 
-    mappings.items.forEach(element => {
-        if(element.acceptsHTML === true) {
-            let el = document.querySelector(element.querySelector);
+    // dosen't toggle any HTML in nested objects like guidebooks but thats fine. 
+    mappings.items.filter(item => item.acceptsHTML === true).forEach(i => {
+        if(document.querySelector(i.querySelector)){ // check it's on the page
+            let el = document.querySelector(i.querySelector);
             el.classList.contains('html') ? el.innerHTML = el.textContent : el.textContent = el.innerHTML;
             el.classList.toggle('html');
         }
     });
-    
 }
 
 function cleanType(type, value, acceptsHTML){
     switch (type) {
         case 'int':
-          value = parseInt(value.replace(/[^\d.]/g,"")); // regex removes anything not a digit or dot
+          value = parseInt(value.replace(/[^\d.]/g,"")); // regex removes anything not a digit or . or ?
           break;
         case 'float':
             value = parseFloat(value.replace(/[^\d.]/g,""));
@@ -236,26 +267,27 @@ function cleanType(type, value, acceptsHTML){
 }
 
 function saveChanges(){
-    mappings.items.forEach(el => {
-            if(el.type === 'object'){
-                el.arrayParts.forEach(arrayPart => {
-                    let item = document.querySelectorAll(arrayPart.querySelector);
-                    for(let i = 0; i < item.length; i++){
-                        if(el.multiple !== true){
-                            // there can only be one so loosing the first [i]
-                            climbVariable.climbData[el.name][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML, arrayPart.acceptsHTML);
-                        } else {
-                            climbVariable.climbData[el.name][i][arrayPart.name] = cleanType(arrayPart.type, item[i].innerHTML, arrayPart.acceptsHTML);
-                        }
+
+        mappings.items.forEach(item => {
+            document.querySelectorAll(item.querySelector).forEach(el => {
+                climbVariable.climbData[item.name] = cleanType(item.type, el.innerHTML, item.acceptsHTML);
+            });
+        });
+
+        mappings.items.filter(item => item.type === 'object').map(object => {
+            object.arrayParts.map(part => {
+                document.querySelectorAll(part.querySelector).forEach((el, i) => {
+                    if(object.multiple === true){
+                        climbVariable.climbData[object.name][i][part.name] = cleanType(part.type, el.innerHTML, part.acceptsHTML);
+                    } else {
+                        climbVariable.climbData[object.name][part.name] = cleanType(part.type, el.innerHTML, part.acceptsHTML);
                     }
-                });
-            } else {
-                climbVariable.climbData[`${el.name}`] = cleanType(el.type, document.querySelector(el.querySelector).innerHTML, el.acceptsHTML);
-            }
-    });
+                });              
+            });
+        });
 
     // sets the climb lastUpdate date in 3 places. 
-    // For minor edits only incremnet a second on the old date to cache bust but not disrupt sort order
+    // For minor edits only incremnet 1 second on the old date to cache bust but not disrupt sort order
     let now = new Date();
     let lastUpdate = new Date(climbVariable.climbData.lastUpdate);
 

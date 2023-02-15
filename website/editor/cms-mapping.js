@@ -2,7 +2,7 @@
 
 /**
  * "name" is the name from the climbData in localStorage & JSON files
- * "querySelector" is the querySelector for the editable on page element that will be saved
+ * "querySelector" is the querySelector for the editable on-page element that will be saved
  * "acceptsHTML" will prevent HTML stripping when set to true 
  * "groupSelector" will group hidden elements together for easy editing
  * 

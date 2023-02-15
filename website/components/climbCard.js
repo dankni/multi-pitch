@@ -10,13 +10,14 @@ function getGuidebook(climb) {
                 <h3 tabindex="0">Guidebooks</h3>
             </div>`;
                 for (let i = 0; i < climb.guideBooks.length; i++) {
+                    let pg = (climb.guideBooks[i].pg === null) ? "?" : climb.guideBooks[i].pg;
                     guideBookModule += `
                         <div class="col-sm-2 ${twoColsImgClass[0]}">
                             <img src="/${climb.guideBooks[i].imgURL}" alt="${climb.guideBooks[i].title}" class="guidebook-img" /> 
                         </div>
                         <div class="col-sm-10 ${twoColsImgClass[1]}">
                             <p>
-                                <strong class="guide-name">${climb.guideBooks[i].title}</strong> - pg.<span class="page"> ${climb.guideBooks[i].pg}</span>
+                                <strong class="guide-name">${climb.guideBooks[i].title}</strong> - pg.<span class="page"> ${pg}</span>
                             </p>
                             <p class="guide-desc">
                                 ${climb.guideBooks[i].description}
@@ -152,8 +153,8 @@ function getGraph(type, climb) {
         for (let i = 0; i < 12; i++) {
             i === curentMonth ? bold = "font-weight:900;" : bold = "";
             // the bottom bar "pushes up" the top bar so barEndingHeight is the delta which sits on the bottom bar
-            barEndingHeight = ((topValues[i] + barHeightModifier) - (bottomValues[i] + barHeightModifier)) / graphHeight * 100;
-            barStartingHeight = ((bottomValues[i] + barHeightModifier)) / graphHeight * 100;
+            let barEndingHeight = ((topValues[i] + barHeightModifier) - (bottomValues[i] + barHeightModifier)) / graphHeight * 100;
+            let barStartingHeight = ((bottomValues[i] + barHeightModifier)) / graphHeight * 100;
             tempInfo += `<li>
                             ${topValues[i]}<span style="height:${barEndingHeight}%;${bold}"  title="${months[i]}"></span>`;
             if (type === "temp") {
@@ -563,7 +564,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
             <span class="single-attribute">Abseil<br/> Required</span>
         </div>`
     }
-    if (Boolean(climb.face)){
+    if (climb.face){
         face = `<div class="info-ring compass ${climb.face}">
             <span class="single-attribute"  title="${mapping[climb.face]}" id="face">${climb.face}</span>
         </div>`

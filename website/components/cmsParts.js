@@ -55,3 +55,12 @@ export function labelAndCheckbox(labelText, inputId){
                  <p class="hidden" style="display:none" id="${inputId}"></p>`;
     return html;
 }
+
+export function face(direction){
+    const mapping = {null : 'Add Direction', 'N' : 'North Facing', 'NE' : 'North East Facing', 'E' : 'East Facing', 'SE' : 'South East Facing', 'S' : 'South Facing', 'SW' : 'South West Facing', 'W' : 'West Facing', 'NW' : ' North West Facing'}
+    const html = `
+        <div class="info-ring compass ${direction}">
+            <span class="single-attribute"  title="${mapping[direction]}" id="face">${direction}</span>
+        </div>`;
+    return html;
+}

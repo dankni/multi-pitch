@@ -1469,6 +1469,7 @@ window.addEventListener('load', (event) => {
         }
     }
     if (document.location.href.includes('god-mode') === true && hp === false) {
+        loadNonEssential("script", "/components/climbCard.js", false);
         loadNonEssential("script", "/js/cms-mode.js", true);
         loadNonEssential("link", "/css/cms-styles.css")
     }
