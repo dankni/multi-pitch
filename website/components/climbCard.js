@@ -222,15 +222,17 @@ function getWeather(climb) {
           <strong id="backChev" class="weatherChev inactiveChev" onClick="weatherBars('back')">&#171;</strong>
           <strong id="forwardChev" class="weatherChev" onClick="weatherBars('forward')">&#187;</strong>
           <ul id="currentRain" class="chart" style="max-width:84%;" data-state="3">
-            <li id="offsetMinus3"><span style="height:0%;" title="-3 days"></span></li>
-            <li id="offsetMinus2"><span style="height:0%;" title="-2 days"></span></li>
-            <li id="offsetMinus1"><span style="height:0%;" title="Yest"></span></li>
-            <li id="currently"><span style="height:0%;font-weight:900;" title="Today"></span></li>
-            <li id="offsetPlus1"><span style="height:0%;" title="Tomor"></span></li>
-            <li id="offsetPlus2"><span style="height:0%;" title="+2 days"></span></li>
-            <li id="offsetPlus3"><span style="height:0%;" title="+3 days"></span></li>
-            <li id="offsetPlus4" style="display:none;"><span style="height:0%;" title="+4 days"></span></li>
-            <li id="offsetPlus5" style="display:none;"><span style="height:0%;" title="+5 days"></span></li>
+            <li id="offsetMinus3" class="bar0"><span style="height:0%;" title="-3 days"></span></li>
+            <li id="offsetMinus2" class="bar1"><span style="height:0%;" title="-2 days"></span></li>
+            <li id="offsetMinus1" class="bar2"><span style="height:0%;" title="Yest"></span></li>
+            <li id="currently" class="bar3"><span style="height:0%;font-weight:900;" title="Today"></span></li>
+            <li id="offsetPlus1" class="bar4"><span style="height:0%;" title="Tomor"></span></li>
+            <li id="offsetPlus2" class="bar5"><span style="height:0%;" title="+2 days"></span></li>
+            <li id="offsetPlus3" class="bar6"><span style="height:0%;" title="+3 days"></span></li>
+            <li id="offsetPlus4" class="bar7" style="display:none;"><span style="height:0%;" title="+4 days"></span></li>
+            <li id="offsetPlus5" class="bar8" style="display:none;"><span style="height:0%;" title="+5 days"></span></li>
+            <li id="offsetPlus6" class="bar9" style="display:none;"><span style="height:0%;" title="+6 days"></span></li>
+            <li id="offsetPlus7" class="bar10" style="display:none;"><span style="height:0%;" title="+7 days"></span></li>
           </ul>
           
           

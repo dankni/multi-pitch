@@ -1256,7 +1256,7 @@ function loadCurrentWeatherModule(id){
     if(dsWeather != null){
         document.getElementById("currentWeather").style.display = "block";
         document.getElementById("seasonalWeather").classList.add("col-lg-6");
-        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3", "offsetPlus4", "offsetPlus5"];
+        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3", "offsetPlus4", "offsetPlus5", "offsetPlus6", "offsetPlus7"];
         document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
         document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
         document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
@@ -1297,36 +1297,28 @@ function loadCurrentWeatherModule(id){
 }
 
 function weatherBars(direction) {
-    let state = document.getElementById('currentRain').dataset.state;
-    switch (state + ' ' + direction){
-        case ('3 forward'):
-            document.getElementById('offsetPlus4').setAttribute('style', '');
-            document.getElementById('offsetMinus3').setAttribute('style', 'display:none;');
-            document.getElementById('currentRain').dataset.state = '4';
-            document.getElementById('backChev').classList.remove('inactiveChev');
-            break;
-        case ('4 forward'):
-            document.getElementById('offsetPlus5').setAttribute('style', '');
-            document.getElementById('offsetMinus2').setAttribute('style', 'display:none;');
-            document.getElementById('currentRain').dataset.state = '5';
-            document.getElementById('forwardChev').classList.add('inactiveChev');
-            break;
-        case ('5 back'):
-            document.getElementById('offsetMinus2').setAttribute('style', '');
-            document.getElementById('offsetPlus5').setAttribute('style', 'display:none;');
-            document.getElementById('currentRain').dataset.state = '4';
-            document.getElementById('forwardChev').classList.remove('inactiveChev');
-            break;
-        case ('4 back'):
-            document.getElementById('offsetMinus1').setAttribute('style', '');
-            document.getElementById('offsetPlus4').setAttribute('style', 'display:none;');
-            document.getElementById('currentRain').dataset.state = '3';
-            document.getElementById('backChev').classList.add('inactiveChev');
-            break;
-        default:
-            break;
+    let state = parseInt(document.getElementById('currentRain').dataset.state);
+    state = (direction === 'forward') ? parseInt(state + 1) : parseInt(state -1);
+    document.getElementById('currentRain').dataset.state = state;
 
+    if (direction === 'forward') {
+        document.querySelector('.bar' + parseInt(state - 4)).setAttribute('style', 'display:none;');
+        document.querySelector('.bar' + parseInt(state + 3)).setAttribute('style', '');
+
+    } else {
+        document.querySelector('.bar' + parseInt(state - 3)).setAttribute('style', '');
+        document.querySelector('.bar' + parseInt(state + 4)).setAttribute('style', 'display:none;');
     }
+
+    const toggle = function(element, disable){
+        let secondClass = (disable === true) ? 'inactiveChev' : '';
+        let pointerEvent = (disable === true) ? 'none' : 'auto';
+        document.getElementById(element).classList = 'weatherChev ' + secondClass;
+        document.getElementById(element).style.pointerEvents = pointerEvent;
+    } 
+    
+    state <= 3 ? toggle('backChev', true) : toggle('backChev', false);
+    state >= 7 ? toggle('forwardChev', true) : toggle('forwardChev', false);
 }
 /**
  UPDATE TOTAL COUNTS
