@@ -56,11 +56,30 @@ export function labelAndCheckbox(labelText, inputId){
     return html;
 }
 
+// export function updaeFace(){
+//     document.querySelector('.compass').classList = `info-ring compass ${document.getElementById('face').innerHTML}`;
+// }
+
 export function face(direction){
     const mapping = {null : 'Add Direction', 'N' : 'North Facing', 'NE' : 'North East Facing', 'E' : 'East Facing', 'SE' : 'South East Facing', 'S' : 'South Facing', 'SW' : 'South West Facing', 'W' : 'West Facing', 'NW' : ' North West Facing'}
     const html = `
-        <div class="info-ring compass ${direction}">
-            <span class="single-attribute"  title="${mapping[direction]}" id="face">${direction}</span>
+        <div class="info-ring compass ${direction}" id="compass">
+            <span class="single-attribute face" 
+            onBlur="document.getElementById('compass').classList = document.getElementById('face').innerHTML + ' info-ring compass'"
+            title="${mapping[direction]}" id="face">
+                ${direction}
+            </span>
         </div>`;
+    return html;
+}
+
+export function button(){
+    const html = `
+    <div class="info-ring">
+        <span class="single-attribute" id="addAttribute">
+            <a onClick="hiddenEdit('properties');">Add Attribute</a>
+        </span>
+    </div>
+    `;
     return html;
 }

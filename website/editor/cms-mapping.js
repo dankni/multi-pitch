@@ -28,7 +28,8 @@ export function cmsMapping() {
                 "querySelector" : "#country",
                 "trigger" : "h1",
                 "hidden" : true,
-                "groupSelector" : "#heading"
+                "groupSelector" : "#heading",
+                "allClimbData" : true
             },
             {
                 "name" : "county",
@@ -37,7 +38,8 @@ export function cmsMapping() {
                 "querySelector" : "#county",
                 "trigger" : "h1",
                 "hidden" : true,
-                "groupSelector" : "#heading"
+                "groupSelector" : "#heading",
+                "allClimbData" : true
             },
             {
                 "name" : "cliff",
@@ -46,7 +48,8 @@ export function cmsMapping() {
                 "querySelector" : "#cliff",
                 "trigger" : "h1",
                 "hidden" : true,
-                "groupSelector" : "#heading"
+                "groupSelector" : "#heading",
+                "allClimbData" : true
             },
             {
                 "name" : "routeName",
@@ -55,7 +58,8 @@ export function cmsMapping() {
                 "querySelector" : "#routeName",
                 "trigger" : "h1",
                 "hidden" : true,
-                "groupSelector" : "#heading"
+                "groupSelector" : "#heading",
+                "allClimbData" : true
             },
             {
                 "name" : "intro",
@@ -71,7 +75,8 @@ export function cmsMapping() {
                 "hidden" : true,
                 "groupSelector": "#gradeGroup",
                 "trigger" : "#grade",
-                "querySelector" : "#tradGrade"
+                "querySelector" : "#tradGrade",
+                "allClimbData" : true
             },
             {
                 "name" : "techGrade",
@@ -89,7 +94,8 @@ export function cmsMapping() {
                 "hidden" : true,
                 "groupSelector": "#gradeGroup",
                 "trigger" : "#grade",
-                "querySelector" : "#dataGrade"
+                "querySelector" : "#dataGrade",
+                "allClimbData" : true
             },
             {
                 "name" : "originalGrade",
@@ -97,7 +103,8 @@ export function cmsMapping() {
                 "hidden" : true,
                 "groupSelector": "#gradeGroup",
                 "trigger" : "#grade",
-                "querySelector" : "#originalGrade"
+                "querySelector" : "#originalGrade",
+                "allClimbData" : true
             },
             {
                 "name" : "abseil",
@@ -106,7 +113,8 @@ export function cmsMapping() {
                 "trigger" : "#grade",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)", // sorry 
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "traverse",
@@ -114,7 +122,8 @@ export function cmsMapping() {
                 "querySelector" : "#traverse",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "boat",
@@ -122,7 +131,8 @@ export function cmsMapping() {
                 "querySelector" : "#boat",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "tidal",
@@ -130,7 +140,8 @@ export function cmsMapping() {
                 "querySelector" : "#tidal",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "polished",
@@ -138,7 +149,8 @@ export function cmsMapping() {
                 "querySelector" : "#polished",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "loose",
@@ -146,7 +158,8 @@ export function cmsMapping() {
                 "querySelector" : "#loose",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "seepage",
@@ -154,7 +167,8 @@ export function cmsMapping() {
                 "querySelector" : "#seepage",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
             },
             {
                 "name" : "grassLegdes",
@@ -162,7 +176,19 @@ export function cmsMapping() {
                 "querySelector" : "#grassLegdes",
                 "hidden" : true,
                 "trigger" : ".single-attribute:not(#face):not(#rockType)",
-                "groupSelector" : "#properties"
+                "groupSelector" : "#properties",
+                "allClimbData" : true
+            },
+            {
+                "hidden" : true,
+                "mandetory" : true,
+                "allClimbData" : true,
+                "name" : "geoLocation",
+                "type" : "text",
+                "querySelector" : "#geo",
+                "groupSelector" : "#map",                        
+                "trigger" : "img.big-card-map",
+                "label" : "Geo Location"
             },
             {
                 "name" : "approachTime",
@@ -171,7 +197,8 @@ export function cmsMapping() {
                 "hidden" : true,
                 "trigger" : "#approachTimeRing",
                 "groupSelector" : "#approachEdit",
-                "querySelector" : "#approachTime"
+                "querySelector" : "#approachTime",
+                "allClimbData" : true
             },
             {
                 "name" : "approachDifficulty",
@@ -180,7 +207,8 @@ export function cmsMapping() {
                 "hidden" : true,
                 "trigger" : "#approachTimeRing",
                 "groupSelector" : "#approachEdit",
-                "querySelector" : "#approachDifficulty"
+                "querySelector" : "#approachDifficulty",
+                "allClimbData" : true
             },
             {
                 "name" : "pitchInfo",
@@ -192,13 +220,15 @@ export function cmsMapping() {
                 "name" : "length",
                 "type" : "int",
                 "mandetory" : true,
-                "querySelector" : "#length"
+                "querySelector" : "#length",
+                "allClimbData" : true
             },
             {
                 "name" : "pitches",
                 "type" : "int",
                 "mandetory" : true,
-                "querySelector" : "#pitches"
+                "querySelector" : "#pitches",
+                "allClimbData" : true
             },
             {
                 "name" : "approach",
@@ -331,15 +361,6 @@ export function cmsMapping() {
                         "groupSelector" : "#map",
                         "trigger" : "img.big-card-map",
                         "label" : "Map Images Folder"
-                    },
-                    {
-                        "hidden" : true,
-                        "name" : "geo",
-                        "type" : "text",
-                        "querySelector" : "#geo",
-                        "groupSelector" : "#map",                        
-                        "trigger" : "img.big-card-map",
-                        "label" : "Geo Location"
                     },
                     {
                         "hidden" : true,

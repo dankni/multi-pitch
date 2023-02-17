@@ -9,7 +9,8 @@ import {
     saveAndCancelOptions,
     labelAndInput,
     labelAndCheckbox,
-    face
+    face,
+    button
 } from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
@@ -47,6 +48,8 @@ function addAnyMissingElementsToPage(){
     if(!document.getElementById('face')){
         document.querySelector('.info-ring-holder').innerHTML += face(null);
     }
+    
+    document.querySelector('.info-ring-holder').innerHTML += button();
 }
 
 function makeEditable(){
@@ -106,7 +109,7 @@ function updateFromLocalStorage(){
         });
     });
 
-    // all other items - ToDo: check this doesn't need a filter
+    // all other items
     mappings.items.map(part => {
         document.querySelectorAll(part.querySelector).forEach((element) => {
             element.innerHTML = climbVariable.climbData[part.name];
@@ -290,20 +293,24 @@ function saveChanges(){
     // For minor edits only incremnet 1 second on the old date to cache bust but not disrupt sort order
     let now = new Date();
     let lastUpdate = new Date(climbVariable.climbData.lastUpdate);
-
     if(document.getElementById('minor').checked){
         lastUpdate = new Date(lastUpdate.setSeconds(lastUpdate.getSeconds() + 1));
     } else {
         lastUpdate = now;
     }
-
     climbVariable.climbData.lastUpdate = lastUpdate;
     allClimbsData.lastUpdate = now; // to ensure cache busting
+
     let arrayIndex = allClimbsData.climbs.findIndex(
         function(item, i){
             return item.id === climbId
         });
     allClimbsData.climbs[arrayIndex].lastUpdate = lastUpdate;
+
+    // Add other key attributes to allClimbsData
+    mappings.items.filter(item => item.allClimbData === true).forEach(attribute => {
+        allClimbsData.climbs[arrayIndex][attribute.name] = climbVariable.climbData[attribute.name];
+    });
 
     // saves the changes to local storage
     localStorage.setItem('climb' + climbId, JSON.stringify(climbVariable));
