@@ -3,7 +3,6 @@ let wakeLock = null;
 let sound = true;
 let darkMode = false;
 
-
 // Function that attempts to request a screen stay awake.
 const requestWakeLock = async () => {
     if ('wakeLock' in navigator) {

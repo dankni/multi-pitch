@@ -51,7 +51,7 @@ const planEasy = [
         "min" : 6,
         "order" : 1,
         "hold" : "three_fingers.png",
-        "task" : "15 second bent-arm hang"
+        "task" : "12 second bent-arm hang"
     }, 
     {
         "min" : 6,
