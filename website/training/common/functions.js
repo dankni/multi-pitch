@@ -2,6 +2,7 @@
 let wakeLock = null;
 let sound = true;
 let darkMode = false;
+let debug = false;
 
 // Function that attempts to request a screen stay awake.
 const requestWakeLock = async () => {
@@ -63,6 +64,18 @@ function toggleDarkMode(){
     }
 }
 
+// Function to toggle sound on and off
+function toggleSound(){
+    if(sound === true){
+        sound = false;
+        document.getElementById('sound').classList.replace("icon-volume-high", "icon-volume-off");
+    } else {
+        sound = true;
+        document.getElementById('sound').classList.replace("icon-volume-off", "icon-volume-high");
+    }
+}
+
+// Next two functions load the tracking script
 function loadNonEssential(type, url){
         const tag =  document.createElement(type);
         tag.src = url
@@ -83,6 +96,32 @@ function loadAnalytics(){
 
 }
 
+// function to change the background color and manage the defult color based on DarkMode
+function background(color){
+    let base = "white";
+    if(darkMode === true) {
+        base = "dark";
+    }
+    document.body.classList = color + " " + base;
+}
+// Show or hide the info menu (top left)
+function openInfoBox(){
+    document.getElementById("about").style.display = "block";
+}
+function hideAbout(){
+    document.getElementById("about").style.display = "none";
+}
+
+// Toggles debug/preview mode on which speeds up time (it could do other things in the future)
+function toggleDebug(){
+    if(debug === false){
+        debug = true;
+        document.getElementById('debugStatus').innerText = `On`;
+    } else {
+        debug = false;
+        document.getElementById('debugStatus').innerText = `Off`;
+    }
+}
 // Events to show or hide icons based on browser support
 document.addEventListener('DOMContentLoaded', (event) => {
     if (document.documentElement.requestFullscreen && document.getElementById("fullscreen")) {

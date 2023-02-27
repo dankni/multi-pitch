@@ -312,16 +312,6 @@ const planHard = [
 ];
 let plan;
 let started = false;
-let debug = false;
-
-// sets background color
-function background(color){
-    let base = "white";
-    if(darkMode === true) {
-        base = "dark";
-    }
-    document.body.classList = color + " " + base;
-}
 
 function setStarted(){
     if(started === false) {
@@ -522,32 +512,6 @@ function saveSession() {
     localStorage.setItem("rockRingsLog", JSON.stringify(rockRingsLog));
     document.getElementById("endingDiv").style.display = "none";
     showSessionLog();
-}
-
-function toggleSound(){
-    if(sound === true){
-        sound = false;
-        document.getElementById('sound').classList.replace("icon-volume-high", "icon-volume-off");
-    } else {
-        sound = true;
-        document.getElementById('sound').classList.replace("icon-volume-off", "icon-volume-high");
-    }
-}
-
-function openInfoBox(){
-    document.getElementById("about").style.display = "block";
-}
-function hideAbout(){
-    document.getElementById("about").style.display = "none";
-}
-function toggleDebug(){
-    if(debug === false){
-        debug = true;
-        document.getElementById('debugStatus').innerText = `On`;
-    } else {
-        debug = false;
-        document.getElementById('debugStatus').innerText = `Off`;
-    }
 }
 
 function setDifficulty(){

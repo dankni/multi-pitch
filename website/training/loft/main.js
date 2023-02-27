@@ -1,37 +1,20 @@
 let started = false;
-let wakeLock = null;
 
-// Function that attempts to request a screen stay awake.
-const requestWakeLock = async () => {
-    try {
-        wakeLock = await navigator.wakeLock.request();
-        wakeLock.addEventListener('release', () => {
-            console.log('Screen Wake Lock released:', wakeLock.released);
-        });
-        console.log('Screen Wake Lock released:', wakeLock.released);
-    } catch (err) {
-        console.error(`${err.name}, ${err.message}`);
-    }
-};
 // kick of the first task and give chrome permission to use speechSynthesis
-function setStarted(value){
-    requestWakeLock();
-    document.querySelector('button').innerHTML = 'Stop';
-    started = value;
-    speak(chooseTask());
-    recognition.start();
-    startTimer();
-    console.log('Microphone ready to receive a command.');
-}
-
-function fullscreen(elem){
-if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { /* IE11 */
-        elem.msRequestFullscreen();
+function setStarted(){
+    if(started === false) {
+        requestWakeLock();
+        started = true;
+        startTimer();
+        document.querySelector('button').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
+        document.getElementById('reset').style.display = 'none';
+    } else {
+        started = false;
+        stopTimer();
+        document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
+        document.getElementById('reset').style.display = 'inline-block'
     }
+    
 }
 
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
@@ -54,7 +37,7 @@ let justPlaced = false;
 let anchorJustPlaced = false;
 
 // restart in 0.2secs because the Google API won't constantly run
-function startSoon (startIn = 200){
+function startSoon (startIn = 10){
     setTimeout(function(){
         recognition.start();
     }, startIn);
@@ -82,10 +65,10 @@ recognition.onend = function () {
 };
 
 function processResults(command){
-    if(command.includes('completed')){
-    speak(chooseTask());
+    if(command.includes('next')){
+        speak(chooseTask());
     } else {
-    speak("I didn't understand");
+        speak("I didn't understand");
     }
     recognition.abort();
 }
@@ -128,14 +111,89 @@ function chooseTask(){
     }
 }
 
-function speak(inputTxt){
-    if (started === true){										// Chrome needs user activation
-    var utterThis = new SpeechSynthesisUtterance(inputTxt);
-    window.speechSynthesis.speak(utterThis);
+// To Count Elapsed time
+let min = 0;
+let sec = 0;
+let stoptime = true;
+let introRun = false;
+
+function startTimer() {
+
+    if(introRun === false && stoptime === true) { 
+      setTimeout(function(){
+          speak("Three");
+          background("red");
+          setTimeout(function(){
+                speak("Two");
+                background("orange");
+                setTimeout(function(){
+                    speak("One");
+                    background("yellow");
+                    setTimeout(function(){
+                        speak(chooseTask());
+                        recognition.start();
+                        stoptime = false;
+                        timerCycle();
+                        introRun = true
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }, 1000);
+    }
+    if (introRun === true && stoptime == true) {
+        stoptime = false;
+        timerCycle();
+    }
+}
+function stopTimer() {
+    if (stoptime == false) {
+        stoptime = true;
     }
 }
 
-// To Count Elapsed time... why not eh
+function timerCycle() {
+    if (stoptime == false) {
+    sec = parseInt(sec);
+    min = parseInt(min);
+
+    sec = sec + 1;
+    if (sec === 1){
+        background("");// default
+    }
+    if (sec < 10 || sec == 0) {
+        sec = '0' + sec;
+    }
+    if (min < 10 || min == 0) {
+        min = '0' + min;
+    }
+    if (min === 60 && wakeLock != null){
+        //don't force the screen to stay awake anymore 
+        wakeLock.release()
+        .then(() => {
+            wakeLock = null;
+        });
+    }
+
+    document.getElementById('elapsed').innerHTML = min + ':' + sec;
+        debug ? setTimeout("timerCycle()", 100) : setTimeout("timerCycle()", 1000);
+    }
+}
+
+function reset() {
+    document.getElementById('elapsed').innerHTML = '00:00';
+    min = 0;
+    sec = 0;
+    stoptime = true;
+    document.getElementById("first").style.display = "none";
+    document.getElementById("second").style.display = "none";
+    document.getElementById("reset").style.display = "none";
+    document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>START';
+    introRun = false;
+    if(document.getElementById("endingDiv").style.display === "block"){
+        document.getElementById("endingDiv").style.display = "none";
+    }
+}
+/*/ To Count Elapsed time... why not eh
 const timer = document.getElementById('elapsed');
 
 var hr = 0;
@@ -192,3 +250,4 @@ function timerCycle() {
 function resetTimer() {
     timer.innerHTML = '00:00:00';
 }
+*/

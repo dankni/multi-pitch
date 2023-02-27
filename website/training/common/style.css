@@ -42,7 +42,7 @@ hr {
 h1{
     font-size:22px; 
     display: inline-block;
-    margin:0;
+    margin:0 auto;
     padding:6px 0;
 }
 h2{
@@ -190,7 +190,6 @@ aside .ring {
     color:#FFF;
     display: none;
     padding:0;
-
 }
 #about p, #about h2 {
     width:80%;
@@ -200,66 +199,51 @@ aside .ring {
 #about h2{
     margin-top:60px;
 }
-  .demo-icon {
+.demo-icon {
     font-family: "fontello";
     font-style: normal;
     font-weight: normal;
-   
     display: inline-block;
     text-decoration: inherit;
     width: 1em;
     margin-right: .2em;
     text-align: center;
-    /* opacity: .8; */
-   
-    /* For safety - reset parent styles, that can break glyph codes*/
     font-variant: normal;
     text-transform: none;
-   
-    /* fix buttons height, for twitter bootstrap */
-    line-height: 1em;
-   
-    /* Animation center compensation - margins should be symmetric */
-    /* remove if not needed */
     margin-left: .2em;
-   
-    /* You can be more comfortable with increased icons size */
-    /* font-size: 120%; */
-   
-    /* Font smoothing. That was taken from TWBS */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-   
+
     /* Uncomment for 3D effect */
     /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
-  }
+}
 
-  .icon-moon:before { content: '\e800'; } /* '' */
-  .icon-sun:before { content: '\e801'; } /* '' */
-  .icon-cog:before { content: '\e802'; } /* '' */
-  .icon-wrench:before { content: '\e803'; } /* '' */
-  .icon-play:before { content: '\e804'; } /* '' */
-  .icon-pause:before { content: '\e805'; } /* '' */
-  .icon-volume-off:before { content: '\e806'; } /* '' */
-  .icon-volume-high:before { content: '\e807'; } /* '' */
-  .icon-mic:before { content: '\e808'; } /* '' */
-  .icon-resize-full:before { content: '\e809'; } /* '' */
-  .icon-link:before { content: '\e80a'; } /* '' */
-  .icon-info:before { content: '\e80b'; } /* '' */
-  .icon-menu:before { content: '\e80c'; } /* '' */
-  .icon-github:before { content: '\e80d'; } /* '' */
-  .icon-resize-normal:before { content: '\e80e'; } /* '' */
-  .icon-ccw:before { content: '\e80f'; } /* '' */
-  .icon-star:before { content: '\e810'; } /* '' */
-  .icon-star-empty:before { content: '\e811'; } /* '' */
-  .icon-ok:before { content: '\e812'; } /* '' */
-  .icon-cancel:before { content: '\e813'; } /* '' */
-  .icon-mail:before { content: '\e814'; } /* '' */
-  .icon-link-ext:before { content: '\f08e'; } /* '' */
-  .icon-mail-alt:before { content: '\f0e0'; } /* '' */
-  .icon-bug:before { content: '\f188'; } /* '' */
-  .icon-share:before { content: '\f1e0'; } /* '' */
-  .icon-trash:before { content: '\f1f8'; } /* '' */
+.icon-moon:before { content: '\e800'; } /* '' */
+.icon-sun:before { content: '\e801'; } /* '' */
+.icon-cog:before { content: '\e802'; } /* '' */
+.icon-wrench:before { content: '\e803'; } /* '' */
+.icon-play:before { content: '\e804'; } /* '' */
+.icon-pause:before { content: '\e805'; } /* '' */
+.icon-volume-off:before { content: '\e806'; } /* '' */
+.icon-volume-high:before { content: '\e807'; } /* '' */
+.icon-mic:before { content: '\e808'; } /* '' */
+.icon-resize-full:before { content: '\e809'; } /* '' */
+.icon-link:before { content: '\e80a'; } /* '' */
+.icon-info:before { content: '\e80b'; } /* '' */
+.icon-menu:before { content: '\e80c'; } /* '' */
+.icon-github:before { content: '\e80d'; } /* '' */
+.icon-resize-normal:before { content: '\e80e'; } /* '' */
+.icon-ccw:before { content: '\e80f'; } /* '' */
+.icon-star:before { content: '\e810'; } /* '' */
+.icon-star-empty:before { content: '\e811'; } /* '' */
+.icon-ok:before { content: '\e812'; } /* '' */
+.icon-cancel:before { content: '\e813'; } /* '' */
+.icon-mail:before { content: '\e814'; } /* '' */
+.icon-link-ext:before { content: '\f08e'; } /* '' */
+.icon-mail-alt:before { content: '\f0e0'; } /* '' */
+.icon-bug:before { content: '\f188'; } /* '' */
+.icon-share:before { content: '\f1e0'; } /* '' */
+.icon-trash:before { content: '\f1f8'; } /* '' */
 
 /* close Icon */
 .close {
@@ -382,13 +366,11 @@ input[type=checkbox]:checked::before {
 	visibility: hidden;
 }
 /* End Hide */
-
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
   position: relative;
   z-index: 99;
 }
-
 .nice-radios:checked + label,
 .nice-radios:not(:checked) + label {
   position: relative;
@@ -405,19 +387,16 @@ input[type=checkbox]:checked::before {
   min-width: 65px;
   margin-bottom: 10px;
 }
-
 .nice-radios:checked + label {
   background-color: #3b94ff;
   border: 0;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
-
 .nice-radios:not(:checked) + label {
   background-color: rgba(120, 120, 128, 0.6);
   border: 1px solid transparent;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
-
 .nice-radios:not(:checked) + label:hover,
 .nice-radios:checked + label:hover,
 [type="radio"]:hover + label {
@@ -460,8 +439,6 @@ input[type=checkbox]:checked::before {
     margin:42px auto 0;
     font-size: 16px;
 }
-
-/* Graph styles */
 #log{
     background: rgba(0,0,0,0.98);
     max-width: 300px;
@@ -482,3 +459,40 @@ input[type=checkbox]:checked::before {
 .icon-ok, .icon-cancel {
     font-size: 16px;
 }
+/* small screen of very zoomed in */
+@media (max-width: 380px) {
+    .task {
+        font-size: 20px
+    }
+    .ring{
+        max-width: 60px;
+    }
+    aside .ring{
+        max-width: 40px;
+    }
+    aside .task{
+        font-size: 14px;
+    }
+    h3{
+        font-size: 46px;
+    }
+    h1 {
+        font-size: 18px;
+    }
+    nav{
+        font-size: 14px;
+        padding: 6px 6px 0 3px;
+    }
+    .left-nav, .right-nav{
+        width: 80px;
+    }
+    button{
+        font-size: 16px;
+        padding: 0.8rem 1.2rem;
+        margin-right: 8px;
+    }
+    #about{
+        font-size: 14px;
+    }
+  }
+  
