@@ -1324,15 +1324,13 @@ function weatherBars(direction) {
  UPDATE TOTAL COUNTS
  **/
 function updateTotalCount(){
-    const cards = document.getElementsByClassName('card')
-    const total = cards.length;
     let showing = 0;
-    for(let i = 0; i < total; i++){
-        if(cards[i].style.display != 'none'){
+    document.querySelectorAll('.card').forEach(card => {
+        if(card.style.display != 'none'){
             showing += 1;
         }
-    }
-    document.getElementById('total').innerHTML = total;
+    });
+    document.getElementById('total').innerHTML = document.querySelectorAll('.card').length;
     document.getElementById('showing').innerHTML = showing;
 }
 

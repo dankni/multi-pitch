@@ -10,7 +10,8 @@ import {
     labelAndInput,
     labelAndCheckbox,
     face,
-    button
+    button,
+    pitch
 } from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
@@ -45,11 +46,40 @@ function innit(){
 
 /* FUNCTIONS */
 function addAnyMissingElementsToPage(){
+    // face element
     if(!document.getElementById('face')){
         document.querySelector('.info-ring-holder').innerHTML += face(null);
     }
-    
+    // attributes
     document.querySelector('.info-ring-holder').innerHTML += button();
+
+    // pitch info
+    if(!document.getElementById('pitchInfo')){
+       let newSection = document.createElement('section');
+       newSection.classList.add('row');
+       newSection.id = "pitchesSection";
+       let sections = document.querySelectorAll('section');
+       let hr = document.createElement('hr');
+       sections[2].after(newSection);
+       sections[2].after(hr);
+       if(climbVariable.climbData.pitchInfo !== null) {
+            // it's there locally but not on the sever
+            newSection.innerHTML = `
+                <div class="col">
+                    <h3 tabindex="0">Pitch By Pitch Information</h3>
+                    <p id="pitchInfo" contenteditable="true">${climbVariable.climbData.pitchInfo}</p>
+                </div>`;
+       } else {
+            newSection.innerHTML = `<a class="open-tile inline-button" id="addPitch">Add Pitch Info</a>`;
+            document.getElementById('addPitch').addEventListener('click', function(){
+                    newSection.innerHTML = pitch('Pitch By Pitch Information', '');
+            });
+        }
+    }
+}
+
+function addPitch(){
+    
 }
 
 function makeEditable(){
