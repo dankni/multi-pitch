@@ -42,6 +42,7 @@ function innit(){
     makeEditable();
     showCMSNav();
     updateFromLocalStorage();
+    removeRefernce();
 }
 
 /* FUNCTIONS */
@@ -152,6 +153,24 @@ function updateFromLocalStorage(){
     });
 
     updateWeatherBars();
+}
+
+function removeRefernce(){
+    let referances = document.querySelectorAll('.referance');
+    let urls = document.querySelectorAll('.url');
+    for(let i = 0; i < referances.length; i++){
+        let deleteButton = document.createElement('i');
+   //     deleteButton.textContent = '';
+        deleteButton.id = 'deleteRef' + i;
+        deleteButton.classList = "icon-cancel"
+        referances[i].before(deleteButton);
+        deleteButton.addEventListener('click', function(){
+            referances[i].remove();
+            urls[i].remove();
+            document.getElementById('deleteRef'+i).remove();
+            climbVariable.climbData.referances.splice(i,1);
+        });
+    }
 }
 
 function updateWeatherBars(climbData = climbVariable.climbData){
