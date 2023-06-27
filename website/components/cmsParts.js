@@ -94,3 +94,8 @@ export function pitch(title, id){
     </div>`;
     return html;
 }
+
+export function reference(id){
+    const html = `<i id="deleteRef${id}" class="icon-cancel"></i>`;
+    return html;
+}

@@ -11,7 +11,8 @@ import {
     labelAndCheckbox,
     face,
     button,
-    pitch
+    pitch,
+    reference
 } from '/components/cmsParts.js';
 
 /* GLOBAL VARIABLES */
@@ -42,7 +43,8 @@ function innit(){
     makeEditable();
     showCMSNav();
     updateFromLocalStorage();
-    removeRefernce();
+    removeReference();
+    addReference();
 }
 
 /* FUNCTIONS */
@@ -54,7 +56,7 @@ function addAnyMissingElementsToPage(){
     // attributes
     document.querySelector('.info-ring-holder').innerHTML += button();
 
-    // pitch info
+    // pitch info ToDo: refactor this
     if(!document.getElementById('pitchInfo')){
        let newSection = document.createElement('section');
        newSection.classList.add('row');
@@ -73,14 +75,10 @@ function addAnyMissingElementsToPage(){
        } else {
             newSection.innerHTML = `<a class="open-tile inline-button" id="addPitch">Add Pitch Info</a>`;
             document.getElementById('addPitch').addEventListener('click', function(){
-                    newSection.innerHTML = pitch('Pitch By Pitch Information', '');
+                    newSection.innerHTML = pitch('Pitch By Pitch Information', 'pitch');
             });
         }
     }
-}
-
-function addPitch(){
-    
 }
 
 function makeEditable(){
@@ -154,23 +152,35 @@ function updateFromLocalStorage(){
 
     updateWeatherBars();
 }
-
-function removeRefernce(){
-    let referances = document.querySelectorAll('.referance');
+function removeReference(){
+    let references = document.querySelectorAll('.reference');
     let urls = document.querySelectorAll('.url');
-    for(let i = 0; i < referances.length; i++){
+    for(let i = 0; i < references.length; i++){
         let deleteButton = document.createElement('i');
-   //     deleteButton.textContent = '';
         deleteButton.id = 'deleteRef' + i;
         deleteButton.classList = "icon-cancel"
-        referances[i].before(deleteButton);
+        references[i].before(deleteButton);
         deleteButton.addEventListener('click', function(){
-            referances[i].remove();
+            references[i].remove();
             urls[i].remove();
             document.getElementById('deleteRef'+i).remove();
-            climbVariable.climbData.referances.splice(i,1);
+            climbVariable.climbData.references.splice(i,1);
         });
     }
+}
+function addReference(){
+    let refHeading = document.getElementById('refs');
+    let addButton = document.createElement('i');
+    addButton.id = 'addRefButton';
+    addButton.classList = "icon-cancel"
+    addButton.style.transform = 'rotate(45deg)';
+    addButton.style.display = 'inline-block';
+    refHeading.append(addButton);
+    addButton.addEventListener('click', function(){
+        let count = document.querySelectorAll('.reference').count;
+        let refs = document.getElementById('refs');
+        refs.parentElement.innerHTML += reference(count+1);
+    });
 }
 
 function updateWeatherBars(climbData = climbVariable.climbData){

@@ -73,7 +73,7 @@ function getPitchInfo(climb) {
         if (climb.pitchInfo !== null)  {
             var pitchInfo = `
     <hr />
-    <section class="row">
+    <section class="row" id="pitchesSection">
         <div class="col">
            <h3 tabindex="0">Pitch By Pitch Information</h3>
            <p id="pitchInfo">${climb.pitchInfo}</p>
@@ -88,24 +88,22 @@ function getPitchInfo(climb) {
     return pitchInfo;
 }
 
-function getReferanceInfo(climb) {
+function getreferenceInfo(climb) {
     try {
-        if (climb.referances.length >= 1) {
+        if (climb.references.length >= 1) {
             var refInfo = `
         <hr />
-        <section class="row">
+        <section class="row" id="references">
             <div class="col">
                 <h3 tabindex="0" id="refs">References &amp; additional links</h3>
                 <p>
                     The following links will take you to external websites specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
                     <em>Note: They contained relevant information at the time of publishing.</em>
-                </p>
-                <p>`;
-                    for (let i = 0; i < climb.referances.length; i++) {
-                        refInfo += `<a class="referance" href="${climb.referances[i].url}" target="blank" rel="noopener">${climb.referances[i].text} <i class="icon-link-ext"></i></a><br />`;
-                    }
-                    refInfo += `
-                </p>
+                </p>`;
+                for (let i = 0; i < climb.references.length; i++) {
+                    refInfo += `<p><a class="reference" href="${climb.references[i].url}" target="blank" rel="noopener">${climb.references[i].text} <i class="icon-link-ext"></i></a></p>`;
+                }
+                refInfo += `
             </div>
         </section>`;
         } else {
@@ -430,7 +428,7 @@ function getVariants(topoData){
                 html += `<div class="col-12">
                     <details>
                     <summary>
-                        ${topoData.alternatives[i].referance}. ${topoData.alternatives[i].routeName} |
+                        ${topoData.alternatives[i].reference}. ${topoData.alternatives[i].routeName} |
                         ${topoData.alternatives[i].grade} - ${topoData.alternatives[i].length}
                     </summary>
                         <p>${topoData.alternatives[i].description}</p>
@@ -536,7 +534,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
     var routeTopoModule = getRouteTopo(climb, topoData);
     var approachInfoModule = getApproachInfo(climb);
     var pitchInfoModule = getPitchInfo(climb);
-    var referanceModule = getReferanceInfo(climb);
+    var referenceModule = getreferenceInfo(climb);
     var guideBookModule = getGuidebook(climb);
     var weatherInfoModule = getWeather(climb);
     var mapModule = getMap(climb);
@@ -673,7 +671,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                     ${pitchInfoModule}
                     ${guideBookModule}
                     ${weatherInfoModule}
-                    ${referanceModule}
+                    ${referenceModule}
                     <hr />  
                     <section class="row">
                         ${otherClimbs}

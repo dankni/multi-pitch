@@ -235,7 +235,7 @@ function updateTableHighlight(){
 }
 
 /**
- UPDATE THE USERS GRADE PREFERANCE
+ UPDATE THE USERS GRADE Preference
  **/
 function updateGradePref() {
     const radios = document.querySelectorAll('input[type=radio][name=gradeChanger]');
@@ -261,7 +261,7 @@ function updateGradePref() {
 }
 
 /**
- UPDATE THE LISTED GRADES TO MATCH GRADE PREFERANCE
+ UPDATE THE LISTED GRADES TO MATCH GRADE Preference
  **/
 function updateListingGrades(){
     let cards = document.getElementsByClassName('card');
@@ -997,7 +997,7 @@ function draw() {
             for(let i = 0; i < topoData.alternatives.length; i++){
                 drawLine(ctx, topoData.alternatives[i].route, true, false, "rgba(255, 239, 101, 0.85)");
                 drawBelay(ctx, topoData.alternatives[i].route[0][0], topoData.alternatives[i].route[0][1], "rgba(255, 239, 101, 0.95)", "rgba(255, 239, 101, .95)");
-                annotate(ctx, topoData.alternatives[i].referance,
+                annotate(ctx, topoData.alternatives[i].reference,
                     sThis(topoData.alternatives[i].route[0][0] - 12),
                     sThis(topoData.alternatives[i].route[0][1] + 12),
                     "rgb(0,0,0)");
@@ -1042,13 +1042,16 @@ function draw() {
                     topoData.decent[i].anchor[1],
                     decentLine, decentBelay);
             }
-            if (topoData.decent[i].path !== null) {
-                drawLine(ctx, topoData.decent[i].path, true, true, decentLine);
-            }
             if (topoData.decent[i].label !== null && pitchLabels === true) {
-                annotate(ctx, topoData.decent[i].label, sThis(topoData.decent[i].labelPosition[0]),
+                annotate(
+                    ctx, 
+                    topoData.decent[i].label, 
+                    sThis(topoData.decent[i].labelPosition[0]),
                     sThis(topoData.decent[i].labelPosition[1]), decentLine);
             }
+            if (topoData.decent[i].path !== null) {
+                drawLine(ctx, topoData.decent[i].path, true, true, decentLine);
+            }            
         }
     }
     document.getElementById('canvas').dataset.success = 'true'; // for automated testing

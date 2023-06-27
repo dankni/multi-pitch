@@ -291,7 +291,7 @@ export function cmsMapping() {
                 ]
             },
             {
-                "name" : "referances",
+                "name" : "references",
                 "type" : "object",
                 "multiple" : true,
                 "arrayParts" : [
@@ -301,14 +301,14 @@ export function cmsMapping() {
                         "querySelector" : ".url",
                         "visible" : false,
                         "attribute" : "href",
-                        "elementSelector" : ".referance",
-                        "label" : "Referance URL"
+                        "elementSelector" : ".reference",
+                        "label" : "reference URL"
                     },
                     {
                         "name" : "text",
                         "type" : "text",
                         "attribute" : "textContent",
-                        "querySelector" : ".referance"
+                        "querySelector" : ".reference"
                     }
                 ]
             },
