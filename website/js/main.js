@@ -595,19 +595,22 @@ function publishCards(climbsArr) {
             sys = answer.sys;
             const grade = answer.grade;
             const conv = answer.converted;
-
+            const boolToNumber = function (value){
+                value === "true" || value === "1" || value === true || value === 1 ? value = 1 : value = "";
+                return value;
+            }
             var card = `
     <div data-climb-id="${climbsArr[i].id}" 
          data-test="climbid-${climbsArr[i].id}"
          data-grade="${climbsArr[i].dataGrade}" 
          data-height="${climbsArr[i].length}"
          data-approach="${climbsArr[i].approachTime}"
-         data-abseil="${climbsArr[i].abseil}"
-         data-traverse="${climbsArr[i].traverse}"
-         data-loose="${climbsArr[i].loose}"
-         data-tidal="${climbsArr[i].tidal}"
-         data-seepage="${climbsArr[i].seepage}"
-         data-polished="${climbsArr[i].polished}"
+         data-abseil="${boolToNumber(climbsArr[i].abseil)}"
+         data-traverse="${boolToNumber(climbsArr[i].traverse)}"
+         data-loose="${boolToNumber(climbsArr[i].loose)}"
+         data-tidal="${boolToNumber(climbsArr[i].tidal)}"
+         data-seepage="${boolToNumber(climbsArr[i].seepage)}"
+         data-polished="${boolToNumber(climbsArr[i].polished)}"
          data-saved="${saved}"
          data-unsaved="${unsaved}"
          data-done="${done}"

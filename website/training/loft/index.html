@@ -38,7 +38,7 @@
 			<i id="sound" class="demo-icon icon-volume-high" onclick="toggleSound()"></i>
 		</div>
 	</nav> 
-	<button onClick="setStarted(true)"><i class="demo-icon icon-play"></i>START</button>
+	<button id="primaryButton"><i class="demo-icon icon-play"></i>START</button>
 	<button class="secondary" id="reset" onClick="reset()"><i class="demo-icon icon-ccw"></i>RESET</button>
 	<h2 id="task"></h2>
 	<div id="color"></div>
@@ -59,10 +59,9 @@
 	<aside id="about">
 		<h2>About this application</h2>
 		<p>
-			T
+			Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move.Settings below can be used to customise the colors availible.
 		</p>
 		<p>
-			<br />
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/loft" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
@@ -81,8 +80,20 @@
 				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
 			</span>
 		</label>
-		<p>Adjust Availible Colors:</p>
+		<h2>Adjust Availible Colors:</h2>
+		<div id="coloursHolder">
 
+		</div>
+		<h2>Trad Climbing Mode:</h2>
+		<p>
+			<strong>Warning:</strong> this mode is not intented for public use. Bouldering with trad gear is a bad idea!
+		</p>
+		<label class="switch-label">
+			<input type="checkbox" onchange="toggleTradkMode()" id="tradMode"/>
+			<span class="label-content">
+				<!-- cam icon? --> Trad Mode <span id="tradStatus">Off</span>
+			</span>
+		</label>
 		<hr />
 		<h2>Activity Log</h2>
 		<!--

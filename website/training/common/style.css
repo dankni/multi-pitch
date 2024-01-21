@@ -160,9 +160,7 @@ aside a{
     color: #FFF;
 }
 aside div {
-    display: flex;
     flex:50%;
-    background-color: #F9F9F9;
     margin: 5px;
 }
 aside .task{
@@ -328,7 +326,7 @@ input[type=checkbox]:checked::before {
 .dark h3{ 
     color:#FFF;
 }
-.dark section, .dark aside div {
+.dark section {
     background-color: #BFBDBD;
 }
 .red {

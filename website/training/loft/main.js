@@ -1,18 +1,87 @@
-let started = false;
+let state = {  
+    "started" : false,
+    "listening" : false,
+    "movesMade" : 0,
+    "gearPlaced": 0,
+    "beleysMade" : 0,
+    "justPlaced" : false,
+    "anchorJustPlaced" : false
+};
+
+
+// When the HTML Document Object Model is loaded
+document.addEventListener("DOMContentLoaded", (event) => {
+    document.getElementById('primaryButton').addEventListener('click',setStarted);
+    getOrSetColours();
+});
+
+// Get or set the colors
+function getOrSetColours(){
+    let colours;
+    let defaulColours = ["white", "yellow", "orange", "grey", "red", "pink", "blue", "purple", "black", "green"]
+    if(localStorage.getItem("colours")){
+        colours = JSON.parse(localStorage.getItem("colours"));
+    } else {
+        colours = defaulColours;
+        localStorage.setItem("colours", JSON.stringify(colours));
+    }
+    colours.forEach(colour => {
+        addColorSwitch(colour, "On");
+    });
+    defaulColours.forEach(defaulColour => {
+        if(colours.includes(defaulColour) !== true){
+            addColorSwitch(defaulColour, "Off");
+        }
+    })
+}
+
+function addColorSwitch(colour, status){
+    let coloursHolder = document.getElementById("coloursHolder");
+    let check = '';
+    if (status === 'On') {
+        check = 'checked="checked"';
+    }
+    
+    let html = `
+        <label class="switch-label">
+			<input type="checkbox" onchange="updateColors()" class="holds" data-color="${colour}" ${check}/>
+			<span class="label-content">
+				<i style="color:${colour}">&#x25CD;</i> ${colour} <span id="${colour}Status">${status}</span>
+			</span>
+		</label>`;
+    coloursHolder.innerHTML += html;
+}
+
+function updateColors(){
+    let allColourSwitches = document.querySelectorAll(".holds"); 
+    let newColours = [];
+    allColourSwitches.forEach(holdSwitch =>{
+        if(holdSwitch.checked === true){
+            document.getElementById(holdSwitch.dataset.color + "Status").textContent = "On";
+            newColours.push(holdSwitch.dataset.color);
+        } else {
+            document.getElementById(holdSwitch.dataset.color + "Status").textContent = "Off";
+        }
+    });
+    localStorage.setItem("colours", JSON.stringify(newColours));
+}
+
 
 // kick of the first task and give chrome permission to use speechSynthesis
 function setStarted(){
-    if(started === false) {
-        requestWakeLock();
-        started = true;
+    if(state.started === false) {
+        requestWakeLock(); // in common.js
+        state.started = true;
         startTimer();
-        document.querySelector('button').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
+        document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
         document.getElementById('reset').style.display = 'none';
     } else {
-        started = false;
+        state.started = false;
         stopTimer();
-        document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
+        recognition.abort();
+        document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
         document.getElementById('reset').style.display = 'inline-block'
+
     }
     
 }
@@ -36,11 +105,9 @@ let beleysMade = 0;
 let justPlaced = false;
 let anchorJustPlaced = false;
 
-// restart in 0.2secs because the Google API won't constantly run
-function startSoon (startIn = 10){
-    setTimeout(function(){
-        recognition.start();
-    }, startIn);
+function startSoon (){
+    state.started ? console.log("already running") : recognition.start();
+    console.log("func startSoon");
 }
 
 recognition.onresult = function(event) {
@@ -49,8 +116,8 @@ recognition.onresult = function(event) {
     processResults(command);
 }
 
-recognition.onspeechend = function() {}
-recognition.onstart = function () {};
+recognition.onspeechend = function() {state.started = false}
+recognition.onstart = function () {state.started = true};
 
 recognition.onnomatch = function(event) {
     console.log('I didn\'t recognise that command.');
@@ -61,7 +128,7 @@ recognition.onerror = function(event) {
     startSoon();
 }
 recognition.onend = function () {
-    startSoon(1500);
+    startSoon();
 };
 
 function processResults(command){
@@ -70,13 +137,12 @@ function processResults(command){
     } else {
         speak("I didn't understand");
     }
-    recognition.abort();
+//    recognition.abort();
 }
 
 function chooseTask(){
     // ToDo: Make all these configurable 
-    let limb = ["left arm", "right arm", "left leg", "right leg"]
-    let color = ["white", "yellow", "orange", "grey", "red", "pink", "blue", "purple", "black", "green"]
+    let limb = ["left arm", "right arm", "left leg", "right leg"];
     let gear = ["cam", "nut", "sling"];
     
     // todo - make this more readable 
@@ -193,6 +259,7 @@ function reset() {
         document.getElementById("endingDiv").style.display = "none";
     }
 }
+
 /*/ To Count Elapsed time... why not eh
 const timer = document.getElementById('elapsed');
 

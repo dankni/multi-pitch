@@ -24,3 +24,6 @@ h3{
     color:#FFF;
     margin:12px;
 }
+#coloursHolder .switch-label {
+    display: inline-block;
+}

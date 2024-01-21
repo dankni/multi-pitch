@@ -45,7 +45,7 @@ function getApproachInfo(climb) {
         if (climb.approach != '') {
             var approachInfo = `
     <hr />
-    <section class="row">
+    <section class="row" id="approachDescent">
         <div class="col">
             <h3 tabindex="0">Approach & Descent Information</h3>
             <p id="approach">${climb.approach}</p>

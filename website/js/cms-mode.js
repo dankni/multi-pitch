@@ -57,6 +57,13 @@ function addAnyMissingElementsToPage(){
     document.querySelector('.info-ring-holder').innerHTML += button();
 
     // pitch info ToDo: refactor this
+    const sectionsToAdd = [{
+        "elementId" : "pitchInfo",
+        "title" : "Pitch By Pitch Information",
+        "editableElementId" : "pitch",
+        "previousRow" : "approachDescent",
+        "nextRow" : "guidebooks"
+    }];
     if(!document.getElementById('pitchInfo')){
        let newSection = document.createElement('section');
        newSection.classList.add('row');
@@ -152,6 +159,7 @@ function updateFromLocalStorage(){
 
     updateWeatherBars();
 }
+// ToDo: make these functions safe if section not on page
 function removeReference(){
     let references = document.querySelectorAll('.reference');
     let urls = document.querySelectorAll('.url');
@@ -317,6 +325,13 @@ function cleanType(type, value, acceptsHTML){
             value = value.split(',');
             value = value.map(Number); // converts to ints
             break
+        case 'bool':
+            if(value === "true" || value === "1" || value === true || value === 1){
+                value = true; 
+            } else {
+                value = false;
+            }
+            break;
         default:
             value = value.trim(); // is text or html
     }
@@ -340,6 +355,14 @@ function saveChanges(){
             object.arrayParts.map(part => {
                 document.querySelectorAll(part.querySelector).forEach((el, i) => {
                     if(object.multiple === true){
+                        // the count on page is different to the count in the JSON
+                        let ammountDiffernet = document.querySelectorAll(part.querySelector).length - climbVariable.climbData[object.name].length;
+                        for(ammountDiffernet; ammountDiffernet > 0; ammountDiffernet--){
+                            // add another object
+                        //     climbVariable.climbData[object.name].push();
+                        }
+                    //    console.log("name = " + part.name + " " + climbVariable.climbData[object.name].length + " vs " + document.querySelectorAll(part.querySelector).length)
+                        
                         climbVariable.climbData[object.name][i][part.name] = cleanType(part.type, el.innerHTML, part.acceptsHTML);
                     } else {
                         climbVariable.climbData[object.name][part.name] = cleanType(part.type, el.innerHTML, part.acceptsHTML);

@@ -96,6 +96,14 @@ export function pitch(title, id){
 }
 
 export function reference(id){
-    const html = `<i id="deleteRef${id}" class="icon-cancel"></i>`;
+    const html = `
+    <p>
+        <i id="deleteRef${id}" class="icon-cancel"></i>
+        <a class="reference" href="" target="blank" rel="noopener" contenteditable="true">Placeholder</a>
+    </p>
+    <p class="url" contenteditable="true">
+        http://www.multi-pitch.com
+    </p>
+    `;
     return html;
 }
