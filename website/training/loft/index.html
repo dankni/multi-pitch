@@ -47,12 +47,12 @@
 			<h3>Timer:<br /><span id="elapsed">0:00:00</span>
 		</div>
 		<div class="box">
-			<h3>Moves: <br /><span id="moves">0</span>
+			<h3>Move: <br /><span id="moves">0</span>
 		</div>
-		<div class="box">
+		<div class="box" id="gearDiv">
 			<h3>Gear: <br /><span id="gear">0</span>
 		</div>
-		<div class="box">
+		<div class="box" id="belaysDiv">
 			<h3>Belays: <br /><span id="belays">0</span>
 		</div>
 	</div>
@@ -69,27 +69,28 @@
 		<hr />
 		<h2>Settings</h2>
 		<label class="switch-label">
-			<input type="checkbox" onchange="toggleDebug()" id="debugMode"/>
-			<span class="label-content">
-				<i class="demo-icon icon-bug"></i> Debug/Preview Mode <span id="debugStatus">Off</span>
-			</span>
-		</label>
-		<label class="switch-label">
 			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
 			<span class="label-content">
 				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
 			</span>
 		</label>
-		<h2>Adjust Availible Colors:</h2>
-		<div id="coloursHolder">
-
-		</div>
-		<h2>Trad Climbing Mode:</h2>
+		<h2>Adjust Availible Colours</h2>
 		<p>
-			<strong>Warning:</strong> this mode is not intented for public use. Bouldering with trad gear is a bad idea!
+			Set availible colours or add a colour: <br />
+			<input type="text" placeholder="new-colour" id="newColour" /> 
+			<button class="small" id="addColourButton" onclick="addColorSwitch(document.getElementById('newColour').value, 'On')"> 
+				<span id="newColorName"></span> &#43; 
+			</button>
+		</p>
+		<div id="coloursHolder">
+			<!-- JavaScript will populate this -->
+		</div>
+		<h2>Trad Climbing Mode</h2>
+		<p>
+			<strong>Warning:</strong> this mode is not intended for public use. Bouldering with trad gear is a bad idea!
 		</p>
 		<label class="switch-label">
-			<input type="checkbox" onchange="toggleTradkMode()" id="tradMode"/>
+			<input type="checkbox" onchange="toggleTradMode()" id="tradMode"/>
 			<span class="label-content">
 				<!-- cam icon? --> Trad Mode <span id="tradStatus">Off</span>
 			</span>

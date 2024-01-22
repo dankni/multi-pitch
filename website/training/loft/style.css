@@ -27,3 +27,22 @@ h3{
 #coloursHolder .switch-label {
     display: inline-block;
 }
+#gearDiv, #belaysDiv {
+    display: none;
+}
+.small{
+    transition: all 0.5s ease;
+    padding: 0.5rem;
+    border-radius: 18px;
+    width: 36px;
+    height: 36px;
+}
+#newColour{
+    width: 120px;
+    border-radius: 4px;
+    padding:0 8px;
+    height: 28px;
+    border: none;
+    margin-right:12px;
+    background-color: #ffffffee;
+}
