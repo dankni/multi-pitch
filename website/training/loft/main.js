@@ -1,6 +1,5 @@
 let state = {  
     "started" : false,
-    "listening" : false,
     "movesMade" : 0,
     "gearPlaced": 0,
     "beleysMade" : 0,
@@ -18,6 +17,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.getElementById('primaryButton').addEventListener('click',setStarted);
     getOrSetColours();
     checkTradMode();
+    // check browser support
+    if(SpeechRecognition || webkitSpeechRecognition) { 
+        document.getElementById('browserSupport').remove();
+    }
 });
 
 // Get or set the colors
@@ -109,7 +112,8 @@ function setStarted(){
         document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
         document.getElementById('reset').style.display = 'none';
     } else {
-        state.aborted = true;
+        state.aborted = true; // so it stops listening
+        state.started === false; // so it can resume on next click
         recognition.abort();
         stopTimer();
         document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
@@ -119,9 +123,9 @@ function setStarted(){
     
 }
 
-var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
-var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
-var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
 var grammar = '#JSGF V1.0; grammar replies; public <reply> = next | compleated | done;';
 var recognition = new SpeechRecognition();
 var speechRecognitionList = new SpeechGrammarList();
@@ -134,7 +138,9 @@ recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
 function startSoon (){
-    state.started ? console.log("already running") : recognition.start();
+    if(!state.started){ 
+        recognition.start();
+    }
 }
 recognition.onstart = function () {
     state.started = true;
@@ -235,7 +241,7 @@ function startTimer() {
                         recognition.start();
                         stoptime = false;
                         timerCycle();
-                        introRun = true
+                        introRun = true;
                     }, 1000);
                 }, 1000);
             }, 1000);
@@ -243,6 +249,7 @@ function startTimer() {
     }
     if (introRun === true && stoptime == true) {
         stoptime = false;
+        recognition.start(); // restart listening 
         timerCycle();
     }
 }
@@ -304,7 +311,6 @@ function reset() {
     introRun = false;
     state = {  
         "started" : false,
-        "listening" : false,
         "movesMade" : 0,
         "gearPlaced": 0,
         "beleysMade" : 0,
