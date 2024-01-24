@@ -49,3 +49,16 @@ h3{
 footer{
     background-color: #ffc640;
 }
+summary{
+    font-size:18px;
+    margin: 0 auto;
+    background: #000;
+}
+details {
+    border-top:1px solid #333;
+    background: #000;
+    padding:12px;
+}
+details[open] summary, details[open]  {
+    background: #111;
+  }

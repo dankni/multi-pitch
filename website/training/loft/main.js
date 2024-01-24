@@ -124,14 +124,8 @@ function setStarted(){
 }
 
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
-var grammar = '#JSGF V1.0; grammar replies; public <reply> = next | compleated | done;';
 var recognition = new SpeechRecognition();
-var speechRecognitionList = new SpeechGrammarList();
-
-speechRecognitionList.addFromString(grammar, 1);
-recognition.grammars = speechRecognitionList;
 recognition.continuous = false; // keeps service open to allow multiple words if true
 recognition.lang = 'en-GB';
 recognition.interimResults = false;

@@ -9,10 +9,12 @@ const requestWakeLock = async () => {
     if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
-            wakeLock.addEventListener('release', () => {
+            if(debug === true) {
+                wakeLock.addEventListener('release', () => {
+                    console.log('Screen Wake Lock released:', wakeLock.released);
+                });
                 console.log('Screen Wake Lock released:', wakeLock.released);
-            });
-            console.log('Screen Wake Lock released:', wakeLock.released);
+            }
         } catch (err) {
             console.log(`${err.name}, ${err.message}`);
         }

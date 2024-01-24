@@ -59,53 +59,57 @@
 	<aside id="about">
 		<h2>About this application</h2>
 		<p>
-			Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move. Settings below can be used to customise the colors availible.
+			Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move. Settings below can be used to customise the colors availible. Feedback welcome: <a href="mailto:admin@multi-pitch.com">admin@multi-pitch.com</a>.
 		</p>
 		<p>
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/loft" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
 		</p>
-		<hr />
-		<h2>Settings</h2>
-		<label class="switch-label">
-			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
-			<span class="label-content">
-				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
-			</span>
-		</label>
-		<h2>Adjust Availible Colours</h2>
-		<p>
-			Set availible colours or add a colour below.
-			
-		</p>
-		<div id="coloursHolder">
-			<!-- JavaScript will populate this -->
-		</div>
-		<input type="text" placeholder="new-colour" id="newColour" /> 
-		<button class="small" id="addColourButton" onclick="addColorSwitch(document.getElementById('newColour').value, 'On')"> 
-			<span id="newColorName"></span> &#43; 
-		</button>
-		<h2>Trad Climbing Mode</h2>
-		<p>
-			<strong>Warning:</strong> this mode is not intended for public use. Bouldering with trad gear is a bad idea!
-		</p>
-		<label class="switch-label">
-			<input type="checkbox" onchange="toggleTradMode()" id="tradMode"/>
-			<span class="label-content">
-				<!-- cam icon? --> Trad Mode <span id="tradStatus">Off</span>
-			</span>
-		</label>
-		<hr />
-		<h2>Activity Log</h2>
-		<p>Tracking coming soon.</p>
-		<!--
+		<details>
+			<summary>Adjust Availible Colours</summary>
+			<p>
+				Set availible colours or add a colour below.
+				
+			</p>
+			<div id="coloursHolder">
+				<!-- JavaScript will populate this -->
+			</div>
+			<input type="text" placeholder="new-colour" id="newColour" /> 
+			<button class="small" id="addColourButton" onclick="addColorSwitch(document.getElementById('newColour').value, 'On')"> 
+				<span id="newColorName"></span> &#43; 
+			</button>
+		</details>
+		<details>
+			<summary>Dark Mode</summary>
+			<label class="switch-label">
+				<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+				<span class="label-content">
+					<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+				</span>
+			</label>
+		</details>
+		<details>
+			<summary>Trad Climbing Mode</summary>	
+			<p>
+				<strong>Warning:</strong> this mode is not intended for public use. Bouldering with trad gear is a bad idea!
+			</p>
+			<label class="switch-label">
+				<input type="checkbox" onchange="toggleTradMode()" id="tradMode"/>
+				<span class="label-content">
+					<!-- cam icon? --> Trad Mode <span id="tradStatus">Off</span>
+				</span>
+			</label>
+		</details>
+		<details>
+			<summary>Activity Log</summary>	
+			<p>Tracking coming soon.</p>
+				<!--
 		<p>Sessions This Month:</p>
 		<p>Monthly Dificulty Mix:</p>
 		<p> Year To Date:</p>-->
 		<div id="log"></div>
-		<br />
-		<hr />
+		</details>
 		<a onclick="hideAbout()" class="close" title="close"></a>
 	</aside>
 	<footer id="browserSupport">
