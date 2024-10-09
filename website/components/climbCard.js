@@ -582,7 +582,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                     <div class="row">
                         <div class="col-sm">
                             <h1 id="articleTitle" tabindex="0">
-                                <span class="flag big-flag ${climb.country.toLowerCase()}"></span>
+                                <span class="flag big-flag ${climb.country.toLowerCase().replace(' ', '')}"></span>
                                 ${climb.cliff} - ${climb.routeName}
                             </h1>
                         </div>
