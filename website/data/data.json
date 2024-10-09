@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2023-12-04T13:25:31.356Z",
+    "lastUpdate": "2024-10-09T13:25:31.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -413,7 +413,7 @@
             "loose": null,
             "seepage": 1,
             "grassLegdes": "",
-            "lastUpdate": "2021-10-15T01:01:12.339Z",
+            "lastUpdate": "2024-10-09T13:25:31.356Z",
             "tileImage": {
                 "url": "img/tiles/slieve-beg-crag-in-the-mourne-mountains.jpg",
                 "alt": "slieve beg crag in the mournes",
@@ -1411,7 +1411,7 @@
             "loose": null,
             "seepage": null,
             "grassLegdes": null,
-            "lastUpdate": "2021-10-15T01:01:12.339Z",
+            "lastUpdate": "2024-10-09T13:25:31.356Z",
             "tileImage": {
                 "url": "img/tiles/slieve-lamagan-mountain.jpg",
                 "alt": "Slieve Lamagan",
