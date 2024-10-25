@@ -62,3 +62,6 @@ details {
 details[open] summary, details[open]  {
     background: #111;
   }
+  aside div, .dark aside div{
+  background-color: #111;
+ }

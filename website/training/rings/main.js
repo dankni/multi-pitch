@@ -394,6 +394,7 @@ function startTimer() {
                     speak("One");
                     background("yellow");
                     setTimeout(function(){
+                        document.querySelector(".holder").style = "display:block";
                         displayTask(min);
                         background("green");
                         stoptime = false;

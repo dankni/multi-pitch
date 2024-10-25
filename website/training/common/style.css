@@ -117,12 +117,12 @@ button:active {
     width: 90%;
     padding: 0 5%;
 }
-section {
+section, aside div {
     display:inline-block;
     width:100%;
     border-radius:5px;
     background: #F9F9F9;		
-    display: none;
+/*    display: none;*/
     margin-bottom: 12px;
     transition: all 0.2s ease;
 }
@@ -326,7 +326,7 @@ input[type=checkbox]:checked::before {
 .dark h3{ 
     color:#FFF;
 }
-.dark section {
+.dark section, .dark aside div {
     background-color: #BFBDBD;
 }
 .red {
