@@ -1779,6 +1779,9 @@ hr {
 .webp .england{
   background-image: url('/img/flags/en.webp');
 }
+.webp .northernireland{
+  background-image: url('/img/flags/gb.webp');
+}
 .webp .scotland {
   background-image: url('/img/flags/sco.webp');
 }
