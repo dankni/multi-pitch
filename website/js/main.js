@@ -435,6 +435,7 @@ helper.arr = {
     // returns {array}
 
     multisort: function (arr, columns, order_by) {
+        
 
         if(columns[0] === 'lastUpdate'){
             for(let i = 0; i < arr.length; i++){
@@ -458,10 +459,9 @@ helper.arr = {
 
         function multisort_recursive(a, b, columns, order_by, index) {
             var direction = order_by[index] === 'DESC' ? 1 : 0;
-
             var is_numeric = !isNaN(a[columns[index]] - b[columns[index]]);
             var x = is_numeric ? a[columns[index]] : a[columns[index]].toLowerCase();
-            var y = is_numeric ? b[columns[index]] : b[columns[index]].toLowerCase();
+            var y = is_numeric ? b[columns[index]] : b[columns[index]].toLowerCase();        
 
             if (!is_numeric) {
                 x = helper.string.to_ascii(a[columns[index]].toLowerCase(), -1),
@@ -748,7 +748,7 @@ function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
-    return Math.round(d); // km
+    return d.toFixed(1); // km to 1 decimal place 
 }
 
 /**

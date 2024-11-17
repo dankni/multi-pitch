@@ -1,0 +1,329 @@
+{
+    "climbData": {
+        "cliff": "Cwm Cneifion",
+        "status": "publish",
+        "id": 46,
+        "country": "Wales",
+        "county": "Conwy",
+        "routeName": "Cneifion Arete",
+        "length": 120,
+        "pitches": 4,
+        "dataGrade": 1,
+        "tradGrade": "D",
+        "techGrade": "3a",
+        "gradeSys": "BAS",
+        "originalGrade": "Diff",
+        "geoLocation": "53.108676163,-4.020066400",
+        "approachTime": 50,
+        "approachDifficulty": 1,
+        "rock": "Rhyolite",
+        "intro": "The Cneifion Arete is an imposing looking ridge sat high on mountainside of Cwm Cneifion, overlooking the lake of Lynn Idwal. Despite its looks, this route is actually at the intersection between scrambling and rock climbing, a sort of gateway drug into the world of multi-pitch mountaineering. With a few proper climbing moves to get off the ground, a long and easy climb / grade 3 scramble follows. The route takes the right side of the arete (edge) for around 120 meters to the top. From the ground it looks like challenging terrain, but once passed the first 20 or so meters, the ridge itself offers big holds and a gentle angle with the ability to rest at more or less any point. That said the exposure is fantastic and the route offers enjoyable moves along the way. Protection is also plentiful and the route happily takes slings and nuts throughout. The only downside is the routes popularity, which can leave climbing parties queuing and has led to significant polish in places.",
+        "approach": "<strong>Approach</strong>: Whilst the route can be approached directly as described here, it is common to link onto another multi-pitch climb. Either starting with the original route on the Sub Cneifion rib or a route on the <a href='/climbs/ordinary-route-on-cwm-idwal/'>Idwal Slabs</a>.<br><strong>Direct Approach</strong>: Parking in the free laybys next to Lynn Ogwen (Lake Ogwen), walk to Ogwen cottage (Limited paid parking available), and follow the path to the left side of this. Take a right fork towards Lynn Idwal (Lake Idwal). After passing a gate in dry stone wall, the path folks into 3. The left path follows the wall and the right most follows the lake towards the Idwal Slabs. The middle path moves up towards the Sub Cneifion rib. Either climb the a route on the rib and take the path right at the top, or move around this crag on the right side to join a path right (south) at the top. The path will go to a point below the clearly visible Cneifion Arete, with a short scramble up some scree needed to reach the base of the climb.<br><strong>Sub Cneifion rib </strong>: This is a logical link up, more or less on the way to the Cneifion Arete. It is described as a 125-meter, 3-star route, graded VDiff. Arguably the route is neither 125m nor worthy of 3 stars. Pitch one is solid climbing, probably at the upper end of what is quite a variable grade. Pitch two has little in the way of climbing. Pitch 3 is walking along a path. Thankfully the final pitch is enjoyable, well protected, VDiff climb up the Arete with a fun move around the corner to reach the arete.  <a href='/climbs/ordinary-route-on-cwm-idwal/'>The Idwal slabs</a> therefore, offer a much more enjoyable, if more circuitous, set of climbs to get to the Cneifion Arete.<br><br><strong>Descent</strong>: From the top of the route, a path leading north offers wonderful views, with Glyder Fatch and Tryfan to the right (east) and Cwm Idwal and Y Garin to the left (west). Follow this path on flat at first before descending to where there is a rough T junction. The left offers a path then scree slope back down to the approach path which can be revered to reach Ogwen cottage. The right fork at the T junction offers an alternative path down to Lynn Bochlwyd (the lake on the right). At the north of this lake (its outflow) is a major path back to Ogwen cottage. In both scenarios the decent is as long as the approach.",
+        "pitchInfo": "First climbed in 1905 the Cneifion Arete is sometimes described a grade 3 scramble or sometimes Diff graded climb. Either way, it is popular, polished, pretty easy to protect and full of character and exposure.<br>\n<strong class=\"pitch-title\">Pitch 1 –<span class=\"length\">20m</span> <span class=\"pitchGrade brit\">Diff</span></strong><br /> Starting just right of the base, climb up a short steep wall on good but polished holds. A belay can be created on the small ledge or the next pitch can be done as well, this leads to a bigger belay ledge. <br /><strong class=\"pitch-title\">Pitch 2 –<span class=\"length\">10m</span> <span class=\"pitchGrade brit\">Diff</span></strong><br />Climb up a short gully, sometimes generously referred to as a chimney, to a larger belay ledge/area. Whilst the slab to the left of the gully is easier, the goal when climbing the Cneifion Arete should be to find harder moves and sections, not easier ones. <br /><strong class=\"pitch-title\">Pitch 3 & 4 (and maybe 5) –<span class=\"length\">100m</span> <span class=\"pitchGrade brit\"></span></strong><br /> follow the ridge to the top with multiple options for belay as needed. The right side offers more dramatic positions and exposure. The climbing is easy and long slings make the spikes easy to protect. Some loose parts, but not a major concern. ",
+        "incline": "Slab",
+        "face": "SW",
+        "abseil": "",
+        "traverse": "",
+        "boat": "",
+        "tidal": "",
+        "polished": true,
+        "loose": "",
+        "seepage": "",
+        "grassLegdes": "",
+        "lastUpdate": "2024-11-16T21:28:15.590Z",
+        "weatherData": {
+            "rainyDays": [
+                13,
+                10,
+                11,
+                9,
+                8,
+                8,
+                8,
+                9,
+                10,
+                14,
+                14,
+                14
+            ],
+            "tempH": [
+                8,
+                8,
+                9,
+                12,
+                15,
+                17,
+                19,
+                18,
+                17,
+                13,
+                10,
+                8
+            ],
+            "tempL": [
+                3,
+                2,
+                3,
+                4,
+                7,
+                10,
+                12,
+                12,
+                10,
+                8,
+                5,
+                3
+            ]
+        },
+        "mapImg": {
+            "url": "img/topos/cneifion/maps/",
+            "alt": "Map showing Cwm Cneifion location in Ogwen Valley in Wales"
+        },
+        "topo": {
+            "url": "img/topos/cneifion/cneifion-arete-climb-north-wales.jpg",
+            "alt": "The Cneifion Arete route shown in this topo offers easy multi-picth climbing.",
+            "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+            "attributionText": "Our own image",
+            "dataFile": 5
+        },
+        "references": [
+            {
+                "url": "https://www.ukclimbing.com/logbook/crags/cwm_cneifion-2157/cneifion_arete-33981",
+                "text": "Climb Info: UKC Page"
+            }
+        ],
+        "guideBooks": [
+            {
+                "isbn": 9781873341827,
+                "title": "North Wales Climbs",
+                "type": "guidebook",
+                "pg": 187,
+                "description": "North wales has plenty of multi-pitch Trad climbs. This book covers a good selection of climbs from the best mountains and cliff faces in North Wales. It has a page (187) dedicated to the Cneifion Arete. The book is very much a worthwhile investment for any rock climbing trip to the Llanberris and Snowdon area of Wales. The book also covers nearby climbs on Tryfan, the Idwal Slabs, Sub Cneifion Rib and Glyder Fatch.",
+                "imgURL": "img/guidebooks/north-wales-climbs.jpg",
+                "link": "https://amzn.to/2RJohKd",
+                "rrp": 24.99
+            }
+        ]
+    },
+    "topoData": {
+        "image": "/img/topos/cneifion/crag.jpg",
+        "flag": "/img/flags/wa.png",
+        "title": "Cwm Cneifion > Cneifion Arete | D 3a - 120m",
+        "belaySize": 26,
+        "route": [
+            [
+                1458,
+                4515
+            ],
+            [
+                1317,
+                4346
+            ],
+            [
+                1287,
+                3966
+            ],
+            [
+                1153,
+                3838
+            ],
+            [
+                1128,
+                3601
+            ],
+            [
+                990,
+                3468
+            ],
+            [
+                1085,
+                3198
+            ],
+            [
+                1072,
+                3063
+            ],
+            [
+                1003,
+                3011
+            ],
+            [
+                880,
+                2937
+            ],
+            [
+                733,
+                2908
+            ],
+            [
+                793,
+                2812
+            ],
+            [
+                887,
+                2618
+            ],
+            [
+                1030,
+                2545
+            ],
+            [
+                1410,
+                2358
+            ],
+            [
+                1740,
+                2242
+            ],
+            [
+                2100,
+                2067
+            ],
+            [
+                2353,
+                1730
+            ],
+            [
+                2537,
+                1537
+            ],
+            [
+                2830,
+                1485
+            ],
+            [
+                3190,
+                1385
+            ],
+            [
+                3065,
+                1302
+            ],
+            [
+                2758,
+                1069
+            ],
+            [
+                2545,
+                985
+            ],
+            [
+                2568,
+                837
+            ],
+            [
+                2552,
+                763
+            ],
+            [
+                2437,
+                652
+            ],
+            [
+                2438,
+                485
+            ],
+            [
+                2385,
+                373
+            ],
+            [
+                2445,
+                323
+            ],
+            [
+                2410,
+                288
+            ],
+            [
+                2440,
+                217
+            ]
+        ],
+        "pitches": [
+            {
+                "belayPosition": [
+                    1047,
+                    3041
+                ],
+                "labelPosition": [
+                    1410,
+                    3631
+                ],
+                "grade": "Diff 3a",
+                "height": "20m"
+            },
+            {
+                "belayPosition": [
+                    920,
+                    2600
+                ],
+                "labelPosition": [
+                    1063,
+                    2709
+                ],
+                "grade": "Diff 3a",
+                "height": "10m"
+            },
+            {
+                "belayPosition": [
+                    2567,
+                    1528
+                ],
+                "labelPosition": [
+                    null,
+                    null
+                ],
+                "grade": "",
+                "height": ""
+            },
+            {
+                "belayPosition": [
+                    2552,
+                    910
+                ],
+                "labelPosition": [
+                    null,
+                    null
+                ],
+                "grade": "",
+                "height": ""
+            },
+            {
+                "belayPosition": [
+                    2420,
+                    292
+                ],
+                "labelPosition": [
+                    null,
+                    null
+                ],
+                "grade": "",
+                "height": ""
+            }
+        ],
+        "decent": [
+            {
+                "anchor": [
+                    null,
+                    null
+                ],
+                "labelPosition": [
+                    null,
+                    null
+                ],
+                "path": [
+                    [
+                        2410,
+                        193
+                    ],
+                    [
+                        2223,
+                        202
+                    ]
+                ],
+                "label": ""
+            }
+        ]
+    }
+}
