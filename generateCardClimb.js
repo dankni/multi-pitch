@@ -26,7 +26,7 @@ function getOtherClimbs(climbGeo){
                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             var d = 6371 * c; // 6371 = km
-            var distance = Math.round(d);
+            var distance = d.toFixed(1);
             
             if((distance <= 40) && (distance != 0)){
                 var nearbyClimb = {}
