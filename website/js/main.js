@@ -1171,31 +1171,43 @@ function LoadAnalytics(){
  LOADS THE WEATHER
  **/
 function loadWeather() {
-  const fourHoursInMilliseconds = 4000 * 60 * 60;
+
   if (window.darkSkyWeatherData && (document.getElementById('cardHolder') || document.getElementById('map'))) {
-  //  console.log(window.darkSkyWeatherData);
-    climbsData.climbs.map(climb => {   // currently loops all climbs even on a single climb page (ToDo: fix!)
-    try {
-      if(climb.status === "publish"){
-        const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
-        const iconWeather = document.getElementById(`weather-${climb.id}`);
-        const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
-        const tempValues = document.getElementById(`temp-${climb.id}`);
-        iconWeather.classList.add(weatherData.currently.icon);
-        iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
-        tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
-        toggleWeather.classList.remove("toggle-weather-off");
+    
+    const fourHoursInMilliseconds = 4000 * 60 * 60;
+    const yesterday = Date.parse(new Date()) - 86401; // now minus 24hours and 1 second
+    const climbOneLastUpdate = window.darkSkyWeatherData.find(data => data.climbId === 1).currently.time;
+    const upToDate = climbOneLastUpdate > yesterday;
+    if(upToDate){
+      climbsData.climbs.map(climb => {   // currently loops all climbs even on a single climb page (ToDo: fix!)
+        try {
+          if(climb.status === "publish"){
+            const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
+            const iconWeather = document.getElementById(`weather-${climb.id}`);
+            const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
+            const tempValues = document.getElementById(`temp-${climb.id}`);
+            iconWeather.classList.add(weatherData.currently.icon);
+            iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
+            tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
+            toggleWeather.classList.remove("toggle-weather-off");
+          }
+        } catch (e) {
+         //  console.log("No weather found -> " + climb.id + ". Error -> " + e);
+        }
+      });
+    } else {
+      // there is a weather file but its not up to date so don't let users filer by good weather
+      if(document.getElementById('goodWeather')){
+        document.getElementById('goodWeather').remove();
       }
-    } catch (e) {
-    //  console.log("No weather found -> " + climb.id + ". Error -> " + e);
+       
     }
-  });
   setTimeout(() => loadWeather(), fourHoursInMilliseconds)
-} else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
-  try {
-        loadCurrentWeatherModule();
+  } else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
+    try {
+     loadCurrentWeatherModule();
     } catch (e) {
-        console.log("can't get weather for this climb");
+      console.log("can't get weather for this climb");
     }
     setTimeout(() => loadWeather(), fourHoursInMilliseconds)
   } else {
@@ -1251,7 +1263,7 @@ const loadTides = async (id) => {
 /**
  LOADS FULL WEATHER ON BACK OF CARD
  **/
-function loadCurrentWeatherModule(id){
+function loadCurrentWeatherModule(id){/*
   if(id) {
     var climbid = id;
   } else {
@@ -1299,7 +1311,7 @@ function loadCurrentWeatherModule(id){
     }
   } catch (e) {
     console.log("Weather Data Error " + climbid + ". Error -> " + e);
-  }
+  }*/
 }
 
 function weatherBars(direction) {

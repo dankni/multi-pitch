@@ -2021,7 +2021,7 @@ hr {
 
 /** WEATHER **/
 .toggle-weather-off{
-  display:block;
+  display:none;
   height:24px;
 }
 .toggle-weather-off span{

@@ -1,11 +1,10 @@
-var static = require('node-static');
-var http = require('http');
-//
-// Create a node-static server instance to serve the './public' folder
-//
-var file = new static.Server('./website');
+//const { createServer } = require('node:http'); 
+const port = 8080;
+const static = require('node-static');
+const http = require('http');
+const file = new static.Server('./website');
 
-var server;
+let server;
 
 
 function start() {
@@ -15,7 +14,7 @@ function start() {
                 file.serve(request, response);
             }).resume();
         });
-        server.listen(9000);
+        server.listen(port);
         setTimeout(resolve);
     });
 }
@@ -32,5 +31,3 @@ module.exports = {
     promiseStart,
     stop
 };
-
-
