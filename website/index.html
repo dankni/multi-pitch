@@ -146,26 +146,22 @@
                     <div class="col-md-12 mb-12">
                         <h2 class="h3">Find your perfect multi-pitch rock climb</h2>
                         <p>
-                            We are activly expnding and our selection of traditional multi-pitch rock
+                            We are actively expanding the site with high quality or unique traditional multi-pitch rock
                             climbs. The site is built on a <em>less but better</em> Philosophy.
                         </p>
                         <p>
-                            These are the latest climbs we have cataloged and outlined in detail. There
-                            are 2 main methods for finding your perfect multi-pitch rock climb,
-                            you can either browse the <a href="map/">map view</a> to find nearby crags
-                            or you can use the list view below with detailed filtering capabilities.
+                            To find your perfect multi-pitch rock climb, either browse the <a href="map/">map view</a> 
+                            or you can use the list below with detailed filtering and sorting capabilities.
                         </p>
                         <p>
                             All climbs are graded using their original grading system. For ease of 
-                            filltering they have been mapped to a single system. You can
+                            filtering they have been mapped to a single system. You can
                             <a href="/climbing-tips/climbing-grades/" rel="no-follow" id="climbingGradeModal"
                                 onClick="openModal('/climbing-tips/climbing-grades/content.html', this.id);return false;"
                                 onKeyDown="return event.code != 'Enter' || openModal('/climbing-tips/climbing-grades/content.html',  this.id);"> 
                                 convert climbing grades
                             </a>
-                            to a different system. This is however, by its nature, <em>very</em> subjective.
-                            Different climbing grade systems use very different criteria, which
-                            cannot be translated accurately, so don't rely on the converted grade. 
+                            to a different system. This is however, by its nature, <em>wildly</em> subjective. 
                         </p>
                         <form class="filters" id="filters">
                             <h4>Filter &amp; Sort Climbs</h4>
@@ -210,7 +206,22 @@
                                         </div>     
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-6">
+                                    <div class="sort-list">
+                                        <h5 style="display:inline-block">Sort Climbs: </h5>
+                                        <select id="sortOrder" onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
+                                                trackGA('sort-and-filter', 'sort', this.value, 0);">
+                                            <option value="lastUpdate,DESC">Recently Added / Updated</option>
+                                            <option value="length,DESC">Longest Climbs First</option>
+                                            <option value="length,ASC">Shortest Climbs First</option>
+                                            <option value="dataGrade,ASC">Easiest Climbs First</option>
+                                            <option value="dataGrade,DESC">Hardest Climbs First</option>
+                                            <option id="distance" style="display: none;" value="distance,ASC">Closest Climbs First</option>
+                                            <option id="goodWeather" value="weatherScore,DESC">Good Weather</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
                                     <h5 class="filter-toggle" 
                                         onclick="toggleFilters()" 
                                         onkeydown="return event.code != 'Enter' || toggleFilters()" tabindex="0" 
@@ -260,28 +271,13 @@
                                     </small>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col sort-list">
-                                    <p style="display:inline-block">Sort Climbs: </p>
-                                    <select id="sortOrder" onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
-                                            trackGA('sort-and-filter', 'sort', this.value, 0);">
-                                        <option value="lastUpdate,DESC">Recently Added / Updated</option>
-                                        <option value="length,DESC">Longest Climbs First</option>
-                                        <option value="length,ASC">Shortest Climbs First</option>
-                                        <option value="dataGrade,ASC">Easiest Climbs First</option>
-                                        <option value="dataGrade,DESC">Hardest Climbs First</option>
-                                        <option id="distance" style="display: none;" value="distance,ASC">Closest Climbs First</option>
-                                        <option id="goodWeather" value="weatherScore,DESC">Good Weather</option>
-                                    </select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
                 <div class="row" id="cardHolder">
                     <div class="loading" id="loading">
                         <img src="https://www.multi-pitch.com/img/logo/mp-logo-white.png" alt="Loading">
-                        <p id="loadingMsg">Loading</p>
+                        <p id="loadingMsg">Loading climbs...</p>
                     </div>
                     <div class="col-md-12 no-results" id="noResults" style="display:none">
                         <p>

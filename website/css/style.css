@@ -534,12 +534,22 @@ h3 {
   padding-top:0.8rem
 }
 h4 {
-  font-size: 1.4rem
+  font-size: 1.4rem;
+  margin-bottom: 0;
 }
 h5 {
-  font-size: 1.2rem;
-  margin-bottom:1rem;
+  font-size: 1.1rem;
+  margin:0.6rem 0;
   font-weight: 300;
+}
+h1,h3, h4 {
+  font-family: inherit;
+  font-weight: 300;
+  line-height: 1.2;
+  color: inherit;
+}
+h1,h3 {
+  margin-bottom: .5rem;
 }
 h5 > small {
   font-size: 0.8rem;
@@ -558,9 +568,7 @@ body {
   color: #212529;
   background-color: #fff
 }
-h1,h3,h4 {
-  margin-bottom: .5rem;
-}
+
 figure,footer,main,nav,section {
   display: block;
 }
@@ -604,13 +612,6 @@ a:hover {
   text-decoration: none;
   color: #002657;
   text-decoration: underline;
-}
-h1,h3,h4 {
-  margin-bottom: .5rem;
-  font-family: inherit;
-  font-weight: 300;
-  line-height: 1.2;
-  color: inherit;
 }
 abbr{
   cursor: default;
@@ -1179,7 +1180,7 @@ position: relative;
   padding: 0 0 0 1rem;
 }
 .sort-list{
-  margin:20px auto 0 auto;
+  margin:0 auto;
   text-align:center;
 }
 .flag {
@@ -1346,7 +1347,7 @@ select {
   border: none;
   display: inline-block;
   font: inherit;
-  line-height: 1.2em;
+  line-height: 1.1em;
   padding: 0 3em 0.2em .2em;
   margin: 0;  /* reset */
   -webkit-box-sizing: border-box;
@@ -1354,7 +1355,7 @@ select {
   box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
-  font-size:1.2em;
+  font-size:1.1rem;
   border-bottom:1px solid rgba(0,0,0,0.1);
   background-image:
   linear-gradient(45deg, transparent 50%, gray 50%),
@@ -1558,10 +1559,8 @@ input[type="checkbox"] {
   vertical-align:middle;
 }
 .filter-toggle{
-  margin:10px 10px 0 10px;
   text-align: center;
   color: #0055B8;
-  font-size: 0.8rem;
   cursor: pointer;
 }
 .advanced-filters{
