@@ -642,7 +642,8 @@ button {
 }
 button,
 html [type=button] {
-  -webkit-appearance: button
+  -webkit-appearance: button;
+  appearance: button
 }
 [type=button]::-moz-focus-inner,
 button::-moz-focus-inner {
@@ -1355,6 +1356,7 @@ select {
   box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
   font-size:1.1rem;
   border-bottom:1px solid rgba(0,0,0,0.1);
   background-image:
