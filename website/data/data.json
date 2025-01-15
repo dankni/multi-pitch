@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2024-11-17T21:28:15.590Z",
+    "lastUpdate": "2025-01-14T22:25:08.262Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -615,9 +615,9 @@
             "originalGrade": "HS 4b",
             "geoLocation": "50.036867,-5.681878",
             "approachTime": 25,
-            "approachDifficulty": true,
+            "approachDifficulty": 1,
             "tidal": true,
-            "lastUpdate": "2021-10-15T01:01:12.339Z",
+            "lastUpdate": "2021-10-15T01:01:15.339Z",
             "tileImage": {
                 "url": "img/tiles/chair-ladder-climbing.jpg",
                 "alt": "Chair Ladder Crag",
@@ -767,7 +767,7 @@
             "originalGrade": "V+ (f5c)",
             "geoLocation": "41.588762,1.814984",
             "approachTime": 35,
-            "approachDifficulty": true,
+            "approachDifficulty": 1,
             "abseil": true,
             "traverse": true,
             "loose": true,
