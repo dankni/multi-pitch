@@ -1,7 +1,7 @@
 /* IMPORT SUPPORTING FILES */
 import { 
     cmsMapping 
-} from '/editor/cms-mapping.js';
+} from '/js/modules/cms-mapping.js';
 
 import { 
     textAreaWithTitle, 

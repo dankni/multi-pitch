@@ -50,7 +50,7 @@ const getOnlineClimbsData = async (set) => {
         // if the DOM is not ready add an event listener to launch init, otherwise just launch it. 
         document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init()) : init();
     } else {
-        serverClimbsData = await response.json();
+        let serverClimbsData = await response.json();
         if(serverClimbsData.lastUpdate > climbsData.lastUpdate){
             climbsData = serverClimbsData;
             localStorage.setItem('climbsData', JSON.stringify(climbsData));
@@ -85,104 +85,38 @@ function trackGA(category, action, label, value = 0){
 /**
  THE SLIDER FUNCTION FOR FILTERS
  **/
-(function () {
-    "use strict";
-
-    var supportsMultiple = self.HTMLInputElement && "valueLow" in HTMLInputElement.prototype;
-
-    var descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
-
-    self.multirange = function (input) {
-        if (supportsMultiple || input.classList.contains("multirange")) {
-            return;
-        }
-
-        var value = input.getAttribute("value");
-        var values = value === null ? [] : value.split(",");
-        var min = +(input.min || 0);
-        var max = +(input.max || 100);
-        var ghost = input.cloneNode();
-        ghost.id = ''; // stops 2 elements with the same id issue
-
-        input.classList.add("multirange", "original");
-        ghost.classList.add("multirange", "ghost");
-
-        input.value = values[0] || min + (max - min) / 2;
-        ghost.value = values[1] || min + (max - min) / 2;
-
-        input.parentNode.insertBefore(ghost, input.nextSibling);
-
-        Object.defineProperty(input, "originalValue", descriptor.get ? descriptor : {
-            // Damn you Safari
-            get: function () {
-                return this.value;
-            },
-            set: function (v) {
-                this.value = v;
-            }
-        });
-
-        Object.defineProperties(input, {
-            valueLow: {
-                get: function () {
-                    return Math.min(this.originalValue, ghost.value);
-                },
-                set: function (v) {
-                    this.originalValue = v;
-                },
-                enumerable: true
-            },
-            valueHigh: {
-                get: function () {
-                    return Math.max(this.originalValue, ghost.value);
-                },
-                set: function (v) {
-                    ghost.value = v;
-                },
-                enumerable: true
-            }
-        });
-
-        if (descriptor.get) {
-            Object.defineProperty(input, "value", {
-                get: function () {
-                    return this.valueLow + "," + this.valueHigh;
-                },
-                set: function (v) {
-                    var values = v.split(",");
-                    this.valueLow = values[0];
-                    this.valueHigh = values[1];
-                    update();
-                },
-                enumerable: true
+(function () { // self executing anonymous function
+    const priceGap = 0;
+    const ranges = ['grade', 'height', 'approach'];
+    ranges.forEach((type) =>{
+        const rangeInput = document.querySelectorAll("." + type + "-range-input input");
+        rangeInput.forEach((input) => {
+            let hiddenInput = document.querySelectorAll("." + type + "-input input"); // could prob refactor this out
+            let range = document.querySelector(".slider ." + type + "-progress");
+            input.addEventListener("input", (e) => {
+                let minVal = parseInt(rangeInput[0].value),
+                maxVal = parseInt(rangeInput[1].value);
+                if (maxVal - minVal < priceGap) {
+                if (e.target.className === "range-min") {
+                    rangeInput[0].value = maxVal - priceGap;
+                } else {
+                    rangeInput[1].value = minVal + priceGap;
+                }
+                } else {
+                    hiddenInput[0].value = minVal;
+                    hiddenInput[1].value = maxVal;
+                }
+                if(hiddenInput[0].value === rangeInput[0].max ){
+                    document.querySelector('#' + type + 'Low').style.zIndex = "2"; // refactor to use above variable 
+                    document.querySelector('#' + type + 'High').style.zIndex = "1";
+                } else {
+                    document.querySelector('#' + type + 'High').style.zIndex = "2";
+                    document.querySelector('#' + type + 'Low').style.zIndex = "1";
+                }
+                showVal(type);
             });
-        }
-
-        if (typeof input.oninput === "function") {
-            ghost.oninput = input.oninput.bind(input);
-        }
-
-        function update() {
-            ghost.style.setProperty("--low", 100 * ((input.valueLow - min) / (max - min)) + 1 + "%");
-            ghost.style.setProperty("--high", 100 * ((input.valueHigh - min) / (max - min)) - 1 + "%");
-        }
-
-        input.addEventListener("input", update);
-        ghost.addEventListener("input", update);
-
-        update();
-    };
-
-    multirange.init = function () {
-        [].slice.call(document.querySelectorAll("input[type=range][multiple]:not(.multirange)")).forEach(multirange);
-    };
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", multirange.init);
-    } else {
-        multirange.init();
-    }
-
+        })
+    });
 })();
 
 /**
@@ -486,19 +420,19 @@ helper.arr = {
  RANGE SLIDERS
  **/
 function mousemoveListener(event) {
-    var x = (event.clientX - this.offsetLeft) / this.offsetWidth;
-    var inputs = this.getElementsByTagName('input');
-    var min_dist = Infinity,
-        min_index = 0;
-    for(var i = 0; i < inputs.length; i++) {
-    	var dist = (inputs[i].value - inputs[i].min) / (inputs[i].max - inputs[i].min);
+    let x = (event.clientX - this.offsetLeft) / this.offsetWidth;
+    let inputs = this.getElementsByTagName('input');
+    let min_dist = Infinity;
+    let min_index = 0;
+    for(let i = 0; i < inputs.length; i++) {
+    	let dist = (inputs[i].value - inputs[i].min) / (inputs[i].max - inputs[i].min);
         dist = Math.abs(dist - x);
         if (dist < min_dist) {
             min_dist = dist;
             min_index = i;
         }
     }
-    for(var i = 0; i < inputs.length; i++) {
+    for(let i = 0; i < inputs.length; i++) {
         inputs[i].style.zIndex = i == min_index ? 1 : 0;
     }
 }
@@ -709,7 +643,7 @@ function sortCards(sortBy, direction) {
         publishCards(climbsSorted);
         filterCards(); // ensures filters are kept
     }
-    loadWeather();
+//    loadWeather();
 }
 
 /**
@@ -1171,7 +1105,7 @@ function LoadAnalytics(){
  LOADS THE WEATHER
  **/
 function loadWeather() {
-
+/*
   if (window.darkSkyWeatherData && (document.getElementById('cardHolder') || document.getElementById('map'))) {
     
     const fourHoursInMilliseconds = 4000 * 60 * 60;
@@ -1213,7 +1147,7 @@ function loadWeather() {
   } else {
     //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
     setTimeout(() => loadWeather(), 1000)
-  }
+  }*/
 }
 /**
  * LOAD TIDE INFO
@@ -1387,12 +1321,19 @@ function clearFilters(){
     let filters = {
         "height" :   { "low" : 50, "high" : 720 },
         "grade" :    { "low" : 1,  "high" : 7   },
-        "approach" : { "low" : 0,  "high" : 200  }
+        "approach" : { "low" : 0,  "high" : 220 }
     };
     const keys = Object.keys(filters);
     for(let i = 0; i < keys.length; i++){
         document.getElementById(keys[i] + 'Range1').value = filters[keys[i]].low;
         document.getElementById(keys[i] + 'Range2').value = filters[keys[i]].high;
+        try {
+            // Hack
+            document.getElementById(keys[i] + 'Low').value = filters[keys[i]].low;
+            document.getElementById(keys[i] + 'High').value = filters[keys[i]].high;
+        } catch (e) {
+            console.log('failed to do low' + keys[i] + "with error: " + e);
+        }        
         showVal([keys[i]]);
     }
     showVal('grade'); // ToDo: not sure why we need this here

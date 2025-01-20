@@ -2141,67 +2141,67 @@ input:disabled + span {
 }
 /* Two-thumb range input */
 div.input-range {
-display: inline-block;
-position: relative;
-width: 65%;
-height: 1.3em;
-vertical-align: middle;
-margin: 0 1.8em;
-margin-top: -3px;
+  display: inline-block;
+  position: relative;
+  width: 65%;
+  height: 1.3em;
+  vertical-align: middle;
+  margin: 0 1.8em;
+  margin-top: -3px;
 }
 
 div.input-range > label {
-position: absolute;
-transform: translateY(-50%);
-font-size: 0.7em;
-top: 50%;
+  position: absolute;
+  transform: translateY(-50%);
+  font-size: 0.7em;
+  top: 50%;
 }
 
 div.input-range > label:first-child {
-right: 102%;
+  right: 102%;
 }
 
 div.input-range > label:last-child {
-left: 102%;
+  left: 102%;
 }
 
 div.input-range > input {
--webkit-appearance: none;
--moz-appearance: none;
-appearance: none;
-margin: 0;
-padding: 0;
-font: inherit;
-width: 100%;
-height: 100%;
-background: transparent;
-position: absolute;
-top: 0;
-left: 0;
-display: inline-block;
-cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  cursor: pointer;
 }
 
 div.input-range > input:focus {
-outline: 0;
+  outline: 0;
 }
 
 div.input-range > input::-moz-focus-outer {
-border: 0;
+  border: 0;
 }
 
 div.input-range > input::-webkit-slider-thumb {
-border: none;
--webkit-appearance: none;
-pointer-events: all;
-height: 1em;
-width: 1em;
-border-radius: 50%;
-background: white;
-z-index: 2;
-position: relative;
-box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
-margin-top: -6px; /* Chrome needs to shift the thumb up. */
+  border: none;
+  -webkit-appearance: none;
+  pointer-events: all;
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  background: white;
+  z-index: 1;
+  position: relative;
+  box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
+  margin-top: -6px; /* Chrome needs to shift the thumb up. */
 }
 
 @supports (-ms-accelerator:true) {
@@ -2211,76 +2211,120 @@ margin-top: -6px; /* Chrome needs to shift the thumb up. */
 }
 
 div.input-range > input::-moz-range-thumb {
-border: none;
--moz-appearance: none;
-pointer-events: all;
-height: 1em;
-width: 1em;
-border-radius: 50%;
-background: white;
-z-index: 2;
-position: relative;
-box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
+  border: none;
+  -moz-appearance: none;
+  pointer-events: all;
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  background: white;
+  z-index: 1;
+  position: relative;
+  box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
 }
 
 div.input-range > input::-ms-thumb {
-border: none;
-appearance: none;
-height: 1em;
-width: 1em;
-border-radius: 50%;
-background: white;
-z-index: 2;
-position: relative;
-box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
+  border: none;
+  appearance: none;
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  background: white;
+  z-index: 1;
+  position: relative;
+  box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5);
 }
 
 div.input-range > input:focus::-webkit-slider-thumb {
-box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
+  box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
     0 0 0 4px rgba(0, 0, 0, 0.07);
 }
 
 div.input-range > input:focus::-moz-range-thumb {
-box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
+  box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
     0 0 0 4px rgba(0, 0, 0, 0.07);
 }
 
 div.input-range > input:focus::-ms-thumb {
-box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
+  box-shadow: 0 2px 6px -3px rgba(0, 0, 0, 0.5),
     0 0 0 4px rgba(0, 0, 0, 0.07);
 }
 
 div.input-range > input::-webkit-slider-runnable-track {
-width: 100%;
-height: 4px;
-background: rgba(255, 255, 255, 0.3);
-border: none;
-border-radius: 2px;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 2px;
 }
 
 div.input-range > input::-moz-range-track {
-width: 100%;
-height: 4px;
-background: rgba(255, 255, 255, 0.3);
-border: none;
-border-radius: 2px;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 2px;
 }
 
 div.input-range > input::-ms-track {
-background: transparent; /* No background color. */
-border-color: transparent; /* No border. */
-color: transparent; /* No tick marks. */
-width: 100%;
-height: 4px;
-border: none;
+  background: transparent; /* No background color. */
+  border-color: transparent; /* No border. */
+  color: transparent; /* No tick marks. */
+  width: 100%;
+  height: 4px;
+  border: none;
 }
 
 div.input-range > input::-ms-tooltip {
-display: none;
+  display: none;
 }
 
 div.input-range > input::-ms-fill-lower,
 div.input-range > input::-ms-fill-upper {
-background: rgba(255, 255, 255, 0.3);
-border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+/** NEW SLIDERS **/
+.slider {
+  height: 5px;
+  position: relative;
+  background: #dddddd90;
+  border-radius: 5px;
+  top:7px;
+}
+.slider .progress {
+  height: 100%;
+  left: 0%;
+  right: 0%;
+  position: absolute;
+  border-radius: 5px;
+}
+.grade-range-input input,
+.height-range-input input,
+.approach-range-input input {
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  left:-2px;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  pointer-events: auto;
+  -webkit-appearance: none;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+input[type="range"]::-moz-range-thumb {
+  height: 17px;
+  width: 17px;
+  border: none;
+  border-radius: 50%;
+  pointer-events: auto;
+  -moz-appearance: none;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
 }
