@@ -175,15 +175,6 @@
                                             <a id="changeLink" href="/climbing-tips/climbing-grades/" onClick="openModal('/climbing-tips/climbing-grades/content.html', this.id); return false">change</a>
                                         </small>  
                                     </h5>
-                                    <!-- To Do: refactor to remove hidden input -->
-                                    <div class="grade-input">
-                                        <div class="field">
-                                          <input type="hidden" id="gradeRange1" class="input-min" value="1" />
-                                        </div>
-                                        <div class="field">
-                                          <input type="hidden" id="gradeRange2" class="input-max" value="7" />
-                                        </div>
-                                    </div>
                                     <div class="controls">
                                         <div class="input-range">
                                             <label id="grade1">Diff</label>
@@ -191,8 +182,8 @@
                                                 <div class="grade-progress"></div>
                                             </div>
                                             <div class="grade-range-input">
-                                                <input id="gradeLow" type="range" class="range-min" min="1" max="7" value="1" step="1" oninput="trackFilter('grade');"/>
-                                                <input id="gradeHigh"  type="range" class="range-max" min="1" max="7" value="7" step="1" oninput="trackFilter('grade');"/>
+                                                <input id="gradeRange1" type="range" class="range-min" min="1" max="7" value="1" step="1" oninput="trackFilter('grade');"/>
+                                                <input id="gradeRange2"  type="range" class="range-max" min="1" max="7" value="7" step="1" oninput="trackFilter('grade');"/>
                                             </div>
                                             <label id="grade2">E1</label>
                                         </div>
@@ -200,14 +191,6 @@
                                 </div>
                                 <div class="col-md-4">
                                     <h5>Height <small>(metres)</small></h5>
-                                    <div class="height-input">
-                                        <div class="field">
-                                          <input type="hidden" id="heightRange1" class="input-min" value="50" />
-                                        </div>
-                                        <div class="field">
-                                          <input type="hidden" id="heightRange2" class="input-max" value="720" />
-                                        </div>
-                                    </div>
                                     <div class="controls">
                                         <div class="input-range">
                                             <label id="height1">50</label>
@@ -215,8 +198,8 @@
                                                 <div class="height-progress"></div>
                                             </div>
                                             <div class="height-range-input">
-                                                <input id="heightLow" type="range" class="range-min" min="50" max="720" value="50" step="10" oninput="trackFilter('height');"/>
-                                                <input id="heightHigh"  type="range" class="range-max" min="50" max="720" value="720" step="10" oninput="trackFilter('height');"/>
+                                                <input id="heightRange1" type="range" class="range-min" min="50" max="720" value="50" step="10" oninput="trackFilter('height');"/>
+                                                <input id="heightRange2"  type="range" class="range-max" min="50" max="720" value="720" step="10" oninput="trackFilter('height');"/>
                                             </div>
                                             <label id="height2">720</label>
                                         </div>
@@ -224,14 +207,6 @@
                                 </div>
                                 <div class="col-md-4">
                                     <h5>Approach <small>(mins)</small></h5>
-                                    <div class="approach-input">
-                                        <div class="field">
-                                          <input type="hidden" id="approachRange1" class="input-min" value="0" />
-                                        </div>
-                                        <div class="field">
-                                          <input type="hidden" id="approachRange2" class="input-max" value="220" />
-                                        </div>
-                                    </div>
                                     <div class="controls">
                                         <div class="input-range">
                                             <label id="approach1">0</label>
@@ -239,8 +214,8 @@
                                                 <div class="approach-progress"></div>
                                             </div>
                                             <div class="approach-range-input">
-                                                <input id="approachLow" type="range" class="range-min" min="0" max="220" value="0" step="5" oninput="trackFilter('approach');"/>
-                                                <input id="approachHigh"  type="range" class="range-max" min="0" max="220" value="220" step="5" oninput="trackFilter('approach');"/>
+                                                <input id="approachRange1" type="range" class="range-min" min="0" max="220" value="0" step="5" oninput="trackFilter('approach');"/>
+                                                <input id="approachRange2"  type="range" class="range-max" min="0" max="220" value="220" step="5" oninput="trackFilter('approach');"/>
                                             </div>
                                             <label id="approach2">200</label>
                                         </div>

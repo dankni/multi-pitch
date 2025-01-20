@@ -2137,16 +2137,19 @@ input:disabled + span {
   color: white;
   width: 100%;
   border-radius: 1rem;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0 1.5rem;
+  padding-top:2px;
+  height:28px;
+
 }
 /* Two-thumb range input */
 div.input-range {
   display: inline-block;
   position: relative;
-  width: 65%;
+  width: 63%;
   height: 1.3em;
   vertical-align: middle;
-  margin: 0 1.8em;
+  margin: 0 1.5rem;
   margin-top: -3px;
 }
 
@@ -2168,6 +2171,7 @@ div.input-range > label:last-child {
 div.input-range > input {
   -webkit-appearance: none;
   -moz-appearance: none;
+  -ms-appearance: none;
   appearance: none;
   margin: 0;
   padding: 0;
@@ -2310,21 +2314,44 @@ div.input-range > input::-ms-fill-upper {
   pointer-events: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+}
+input[type="range"]::slider-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  pointer-events: auto;
+  appearance: none;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  background: #fff;
 }
 input[type="range"]::-webkit-slider-thumb {
-  height: 17px;
-  width: 17px;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
   pointer-events: auto;
   -webkit-appearance: none;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  background: #fff;
 }
 input[type="range"]::-moz-range-thumb {
-  height: 17px;
-  width: 17px;
+  height: 18px;
+  width: 18px;
   border: none;
   border-radius: 50%;
   pointer-events: auto;
   -moz-appearance: none;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+input[type="range"]::-ms-range-thumb {
+  height: 18px;
+  width: 18px;
+  border: none;
+  border-radius: 50%;
+  pointer-events: auto;
+  -ms-appearance: none;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  background: #fff;
 }

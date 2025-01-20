@@ -68,8 +68,6 @@ if(localStorage.getItem('climbsData')){
     getOnlineClimbsData(true);
 }
     
-
-
 /**
 GA TRACKING HELPER
 **/
@@ -86,32 +84,17 @@ function trackGA(category, action, label, value = 0){
  THE SLIDER FUNCTION FOR FILTERS
  **/
 (function () { // self executing anonymous function
-    const priceGap = 0;
     const ranges = ['grade', 'height', 'approach'];
     ranges.forEach((type) =>{
         const rangeInput = document.querySelectorAll("." + type + "-range-input input");
         rangeInput.forEach((input) => {
-            let hiddenInput = document.querySelectorAll("." + type + "-input input"); // could prob refactor this out
-            let range = document.querySelector(".slider ." + type + "-progress");
             input.addEventListener("input", (e) => {
-                let minVal = parseInt(rangeInput[0].value),
-                maxVal = parseInt(rangeInput[1].value);
-                if (maxVal - minVal < priceGap) {
-                if (e.target.className === "range-min") {
-                    rangeInput[0].value = maxVal - priceGap;
+                if(rangeInput[0].value === rangeInput[0].max ){
+                    rangeInput[0].style.zIndex = "2"; 
+                    rangeInput[1].style.zIndex = "1";
                 } else {
-                    rangeInput[1].value = minVal + priceGap;
-                }
-                } else {
-                    hiddenInput[0].value = minVal;
-                    hiddenInput[1].value = maxVal;
-                }
-                if(hiddenInput[0].value === rangeInput[0].max ){
-                    document.querySelector('#' + type + 'Low').style.zIndex = "2"; // refactor to use above variable 
-                    document.querySelector('#' + type + 'High').style.zIndex = "1";
-                } else {
-                    document.querySelector('#' + type + 'High').style.zIndex = "2";
-                    document.querySelector('#' + type + 'Low').style.zIndex = "1";
+                    rangeInput[1].style.zIndex = "2";
+                    rangeInput[0].style.zIndex = "1";
                 }
                 showVal(type);
             });
@@ -1326,14 +1309,7 @@ function clearFilters(){
     const keys = Object.keys(filters);
     for(let i = 0; i < keys.length; i++){
         document.getElementById(keys[i] + 'Range1').value = filters[keys[i]].low;
-        document.getElementById(keys[i] + 'Range2').value = filters[keys[i]].high;
-        try {
-            // Hack
-            document.getElementById(keys[i] + 'Low').value = filters[keys[i]].low;
-            document.getElementById(keys[i] + 'High').value = filters[keys[i]].high;
-        } catch (e) {
-            console.log('failed to do low' + keys[i] + "with error: " + e);
-        }        
+        document.getElementById(keys[i] + 'Range2').value = filters[keys[i]].high;  
         showVal([keys[i]]);
     }
     showVal('grade'); // ToDo: not sure why we need this here
