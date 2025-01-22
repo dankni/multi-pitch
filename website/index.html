@@ -177,7 +177,7 @@
                                     </h5>
                                     <div class="controls">
                                         <div class="input-range">
-                                            <label id="grade1">Diff</label>
+                                            <label id="grade1" for="gradeRange1">Diff</label>
                                             <div class="slider">
                                                 <div class="grade-progress"></div>
                                             </div>
@@ -185,7 +185,7 @@
                                                 <input id="gradeRange1" type="range" class="range-min" min="1" max="7" value="1" step="1" oninput="trackFilter('grade');"/>
                                                 <input id="gradeRange2"  type="range" class="range-max" min="1" max="7" value="7" step="1" oninput="trackFilter('grade');"/>
                                             </div>
-                                            <label id="grade2">E1</label>
+                                            <label id="grade2" for="gradeRange2">E1</label>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +193,7 @@
                                     <h5>Height <small>(metres)</small></h5>
                                     <div class="controls">
                                         <div class="input-range">
-                                            <label id="height1">50</label>
+                                            <label id="height1" for="heightRange1">50</label>
                                             <div class="slider">
                                                 <div class="height-progress"></div>
                                             </div>
@@ -201,7 +201,7 @@
                                                 <input id="heightRange1" type="range" class="range-min" min="50" max="720" value="50" step="10" oninput="trackFilter('height');"/>
                                                 <input id="heightRange2"  type="range" class="range-max" min="50" max="720" value="720" step="10" oninput="trackFilter('height');"/>
                                             </div>
-                                            <label id="height2">720</label>
+                                            <label id="height2" for="heightRange2">720</label>
                                         </div>
                                     </div>
                                 </div>
@@ -209,7 +209,7 @@
                                     <h5>Approach <small>(mins)</small></h5>
                                     <div class="controls">
                                         <div class="input-range">
-                                            <label id="approach1">0</label>
+                                            <label id="approach1" for="approachRange1">0</label>
                                             <div class="slider">
                                                 <div class="approach-progress"></div>
                                             </div>
@@ -217,13 +217,13 @@
                                                 <input id="approachRange1" type="range" class="range-min" min="0" max="220" value="0" step="5" oninput="trackFilter('approach');"/>
                                                 <input id="approachRange2"  type="range" class="range-max" min="0" max="220" value="220" step="5" oninput="trackFilter('approach');"/>
                                             </div>
-                                            <label id="approach2">200</label>
+                                            <label id="approach2" for="approachRange2">200</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="sort-list">
-                                        <h5 style="display:inline-block">&#8645; Sort Climbs: </h5>
+                                        <label for="sortOrder" class="auto"><h5 style="display:inline-block">&#8645; Sort Climbs:</h5></label>
                                         <select id="sortOrder" onChange="sortCards(this.value.split(',')[0], value.split(',')[1]),filterCards();
                                                 trackGA('sort-and-filter', 'sort', this.value, 0);">
                                             <option value="lastUpdate,DESC">Recently Added / Updated</option>
