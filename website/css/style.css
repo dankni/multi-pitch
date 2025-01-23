@@ -772,9 +772,6 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
 .text-center {
   text-align: center!important;
 }
-.view, .view .mask, .waves-effect {
-  overflow: hidden;
-}
 .card .card-body .card-text, .card .map-card-body .card-text {
     color: #4f4f4f;
     margin-top: .8rem;
@@ -801,7 +798,9 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   top: 0;
   width: 100%;
   height: 100%;
-  background-attachment: fixed
+  background-attachment: fixed;
+  display: flex !important;
+  overflow: hidden;
 }
 .card .card-body .card-title a,
 .card .card-body .card-title a:hover {
