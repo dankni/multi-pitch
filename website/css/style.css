@@ -2049,40 +2049,40 @@ div.input-range > label:last-child {
   appearance: none;
 }
 input[type="range"]::slider-thumb {
-  height: 18px;
-  width: 18px;
+  height: 22px;
+  width: 22px;
   border-radius: 50%;
   pointer-events: auto;
   appearance: none;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
   background: #fff;
 }
 input[type="range"]::-webkit-slider-thumb {
-  height: 18px;
-  width: 18px;
+  height: 22px;
+  width: 22px;
   border-radius: 50%;
   pointer-events: auto;
   -webkit-appearance: none;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
   background: #fff;
 }
 input[type="range"]::-moz-range-thumb {
-  height: 18px;
-  width: 18px;
+  height: 22px;
+  width: 22px;
   border: none;
   border-radius: 50%;
   pointer-events: auto;
   -moz-appearance: none;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
   background: #fff;
 }
 input[type="range"]::-ms-range-thumb {
-  height: 18px;
-  width: 18px;
+  height: 22px;
+  width: 22px;
   border: none;
   border-radius: 50%;
   pointer-events: auto;
   -ms-appearance: none;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
   background: #fff;
 }
