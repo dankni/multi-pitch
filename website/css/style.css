@@ -873,13 +873,13 @@ footer .grey a i {
 .no-webp .footer-image{
   color: black;
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: repeat-x;
   background-image: url('/img/other/subscribe/subscribe-back-1080.jpg'); /* could native lazy load if it's not css */
 }
 .webp .footer-image{
   color: black;
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: repeat-x;
   background-image: url('/img/other/subscribe/subscribe-back-1080.webp');
 }
 @media (min-width:1081px){

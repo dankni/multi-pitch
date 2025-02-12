@@ -42,7 +42,7 @@ var webPsupport = (function() {
  * SET THE climbsData VARIABLE BUT USE localStorage FIRST
  **/
 const getOnlineClimbsData = async (set) => {
-    const response = await fetch('/data/data.json');
+    const response = await fetch('/data/data.json', {cache: "no-cache"});
     if(set === true){
         climbsData = await response.json();
         window.performance.mark('data.json-from-server');
@@ -683,8 +683,9 @@ function showTile(climbId, popped = false) {
     if(climb !== null && localClimbFileDate >= summaryFileClimbTime){
         deliverChange(climb, popped);
     } else {
-        let request = new XMLHttpRequest();
+        let request = new XMLHttpRequest(); /* To Do: update this to fetch */ 
         request.open('GET', '/data/climbs/' + climbId + '.json', true);
+        request.setRequestHeader('Cache-Control', 'no-cache, no-store, max-age=0');
         request.onload = function() {
             if (this.status >= 200 && this.status < 400) {
                 localStorage.setItem('climb' + climbId, this.response);
@@ -800,7 +801,7 @@ function tryLoadTopo(climbId, enviroment = '') {
     if (topoData === null) {
         // page was direct load so add data to local storage;
         const getData = async (climbId) => {
-            const response = await fetch('/data/climbs/' + climbId + '.json');
+            const response = await fetch('/data/climbs/' + climbId + '.json', {cache: "no-cache"});
             let climbData = await response.json();
             localStorage.setItem('climb' + climbId, JSON.stringify(climbData));
             topoData = climbData.topoData;

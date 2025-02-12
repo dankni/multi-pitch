@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2025-01-20T22:44:43.367Z",
+    "lastUpdate": "2025-02-10T01:01:12.339Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -1136,6 +1136,33 @@
             "tileImage": {
                 "url": "img/tiles/cneifion-arete-in-wales.jpg",
                 "alt": "The Cneifion Arete is a a classic climb with a dramatic ridge",
+                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "attributionText": "our own image"
+            }
+        },
+        {
+            "cliff": "Penya Roc",
+            "status": "publish",
+            "id": 47,
+            "country": "Spain",
+            "county": "Costa Blanca",
+            "routeName": "Dos Hermanos",
+            "length": 205,
+            "pitches": 7,
+            "dataGrade": 5,
+            "tradGrade": "VS",
+            "techGrade": "5a",
+            "gradeSys": "UIAA",
+            "originalGrade": "V",
+            "geoLocation": "38.63503594, -0.18222043614",
+            "approachTime": 45,
+            "approachDifficulty": 1,
+            "loose": true,
+            "abseil": true,
+            "lastUpdate": "2025-02-10T01:01:12.339Z",
+            "tileImage": {
+                "url": "img/tiles/two-brothers-climb-dos-hermanos-costa-blanca.jpg",
+                "alt": "The Two Brothers Climb or Dos Hermanos in Costa Blanca",
                 "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
                 "attributionText": "our own image"
             }
