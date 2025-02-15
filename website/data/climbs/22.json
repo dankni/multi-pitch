@@ -11,7 +11,7 @@
         "dataGrade": 6,
         "tradGrade": "HVS",
         "techGrade": "5a",
-        "gradeSys": "BAS",
+        "gradeSys": "UIAA",
         "originalGrade": "V+",
         "geoLocation": "38.633896,0.074286",
         "approachTime": 20,
@@ -83,7 +83,7 @@
             "url": "img/topos/penon/diedro-ubsa-topos-hvs-climb-on-penon-ifach-calpe.jpg",
             "alt": "Diedro UBSA topo on the south face of Penon Ifach, Calpe",
             "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-            "attributionText": "original: our own image",
+            "attributionText": "Our own image",
             "dataFile": null
         },
         "references": [
