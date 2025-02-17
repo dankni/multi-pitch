@@ -1169,6 +1169,31 @@
                 "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
                 "attributionText": "our own image"
             }
+        },    
+        {
+            "cliff": "Peñón de Ifach",
+            "status": "publish",
+            "id": 48,
+            "country": "Spain",
+            "county": "Costa Blanca",
+            "routeName": "Via Pany",
+            "length": 220,
+            "pitches": 7,
+            "dataGrade": 5,
+            "tradGrade": "VS",
+            "techGrade": "4c",
+            "gradeSys": "UIAA",
+            "originalGrade": "IV+",
+            "geoLocation": "38.635491775,0.07455539474",
+            "approachTime": 20,
+            "approachDifficulty": 1,
+            "lastUpdate": "2025-02-15T13:32:34.952Z",
+            "tileImage": {
+                "url": "img/tiles/via-pany-costa-blanca.jpg",
+                "alt": "Peñón de Ifach rising out of Calpe offers great climbing on Via Pany",
+                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "attributionText": "our own image"
+            }
         }
     ]
 }

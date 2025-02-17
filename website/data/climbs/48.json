@@ -1,0 +1,113 @@
+{
+    "climbData": {
+        "cliff": "Peñón de Ifach",
+        "status": "draft",
+        "id": 48,
+        "country": "Spain",
+        "county": "Costa Blanca",
+        "routeName": "Via Pany",
+        "length": 220,
+        "pitches": 7,
+        "dataGrade": 5,
+        "tradGrade": "VS",
+        "techGrade": "4c",
+        "gradeSys": "UIAA",
+        "originalGrade": "IV+",
+        "geoLocation": "38.635491775,0.07455539474",
+        "approachTime": 20,
+        "approachDifficulty": 1,
+        "lastUpdate": "2025-02-15T13:32:34.952Z",
+        "rock": "Limestone",
+        "intro": "Via Pany was the first climbing route established up Penon Ifach (in 1955) and is, to this day, the easiest climbing route to the summit. It sits on the North face so it is in shade until late in the day. The North face also has a climbing ban due to nesting birds in April, May and June. The route is around the UIAA grade IV+. Roughy hard serve but often graded very severe (VS) in UK guides. The route has some great pitches with a variety of different styles needed making it a very accessible and very enjoyable route. Whilst it’s still a serious climb it's much more forgiving than the south face routes like Diedro UBSA because Via Pany has less sun, less loose rock, less polish and less sustained climbing, it is nevertheless, very worthwhile with incredible views looking back over Calpe throughout the route.",
+        "approach": "<strong>Approach:</strong><br>Parking in Calpe and following the tourist path until under the climb would be recommended. There is a shorter scrappy scrambling path, used by climbers which cuts from the marina up to the tourist path avoiding the information center.<br><br><strong>Descent:</strong><br>The route finishes by the summit. From here follow the circuitous tourist path marked with large red dots. The path is very polished and slippery, so wearing good approach footwear is recommended.",
+        "pitchInfo": "<strong class=\"pitch-title\">Pitch 1 – <span class=\"length\">30m</span> <span class=\"pitchGrade uiaa\">Grade IV</span></strong><br>Climb up the initial grove on the right hand side. Moving up and slightly left onto a block. Use both walls to gain the good handholds on the steep right hand wall and climb this until it eases and reaches a bolted belay.<br> <strong class=\"pitch-title\">Pitch 2 – <span class=\"length\">48m</span> <span class=\"pitchGrade uiaa\">Grade III+</span></strong><br> Initially a long and easy scramble sticking to the rock while passing through vegetation. The pitch approaches another bigger gully on the left and a steeper wall in-front/to the right. A belay can be made below the steep wall or this can be climbed directly (probably more like IV) to reach a large ledge with a pair of bolts for the belay.<br> <strong class=\"pitch-title\">Pitch 3 – <span class=\"length\">25m</span> <span class=\"pitchGrade uiaa\">Grade IV+</span></strong><br> A dog leg shaped pitch. Starting with easier moves up into a niche. This is passed with much harder moves to the right before moving up and doing a delicate traverse left to belay under the steeper overhang below the gully / chimney section. <br> <strong class=\"pitch-title\">Pitch 4 – <span class=\"length\">25m</span> <span class=\"pitchGrade uiaa\">Grade IV+</span></strong><br>Probably the crux of the route, this pitch is sometimes given the higher grade of V. It climbs the chimney directly before moving onto the steep right wall and then onto a good ledge along to the belay.<br> <strong class=\"pitch-title\">Pitch 5 – <span class=\"length\">~25m</span> <span class=\"pitchGrade uiaa\">Grade IV</span></strong><br>Move right stepping across a gap and moving around a corner, going up the slab to the belay.<br> <strong class=\"pitch-title\">Pitch 6 – <span class=\"length\">30m</span> <span class=\"pitchGrade uiaa\">Grade IV+</span></strong><br>Climb a wonderful slab above the belay to a crack system. Pass a bolt at around 7m. Pass an orange bulge on the right and move up and left to belay on a pair of bolts.<br> <strong class=\"pitch-title\">Pitch 7 – <span class=\"length\">~30m</span> <span class=\"pitchGrade uiaa\">IV+</span></strong><br>Climb leftwards with steep initial moves that ease as the pitch and route come to an end at the summit.",
+        "incline": "Slab & Vertical",
+        "face": "N",
+        "abseil": false,
+        "traverse": true,
+        "boat": false,
+        "tidal": false,
+        "polished": true,
+        "loose": false,
+        "seepage": false,
+        "grassLegdes": true,
+        "weatherData": {
+            "rainyDays": [
+                4,
+                3,
+                4,
+                4,
+                4,
+                2,
+                1,
+                1,
+                3,
+                4,
+                4,
+                4
+            ],
+            "tempH": [
+                15,
+                16,
+                18,
+                19,
+                23,
+                27,
+                29,
+                29,
+                27,
+                24,
+                18,
+                16
+            ],
+            "tempL": [
+                6,
+                6,
+                8,
+                10,
+                13,
+                17,
+                20,
+                21,
+                18,
+                14,
+                9,
+                7
+            ]
+        },
+        "mapImg": {
+            "url": "img/topos/penon-north/maps/",
+            "alt": "Costa Blanca climbing location"
+        },
+        "topo": {
+            "url": "img/topos/penon-north/via-pany-topo.jpg",
+            "alt": "Via Pany on the face of Penon Ifach, Calpe",
+            "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+            "attributionText": "Our own image",
+            "dataFile": null
+        },
+        "references": [
+            {
+                "url": "https://www.calpe.es/sites/default/files/descubre_calpe_docs/2023-02/senderos_de_la_roca_-_penon_de_ifach_-_ruta_07_-_pany.pdf",
+                "text": "Climb Info: Good Guide to Via Pany in Spanish"
+            },
+            {
+                "url": "https://www.blogdeaventura.com/escalada-penon-de-ifach/",
+                "text": "Climb Info: A very detailed guide to Pany in Spanish"
+            }
+        ],
+        "guideBooks": [
+            {
+                "isbn": 9781873341954,
+                "title": "Costa Blanca",
+                "type": "guidebook",
+                "pg": 267,
+                "description": "A good book covering a lot of sport, trad and multi-pitch climbing, as well as ridge climbs and via feretta in the Costa Blanca area of Spain. This guide covers the climbs around Calpe including Via Pany. Rockfax grades the steep 4th pitch, UIAA grade V which is a little higher than local guides which put it at IV+. The drawn topo also seems wrong on pitches 3, 6 and 7.",
+                "imgURL": "img/guidebooks/costa-blanca.jpg",
+                "link": "https://amzn.to/2Emt6Wb",
+                "rrp": 29.95
+            }
+        ]
+    },
+    "topoData": {"image":"/img/topos/penon-north/via-pany-topo.jpg","flag":"/img/flags/es.png","title":"Peñón de Ifach > Via Pany | UIAA IV+ or VS 4c - ~220m","belaySize":26,"route":[[420,4405],[428,4007],[683,3808],[925,3533],[1144,3307],[1192,3277],[1189,3133],[1252,3016],[1343,2909],[1445,2876],[1443,2676],[1431,2560],[1436,2423],[1389,2349],[1275,2389],[1167,2416],[1183,2007],[1339,1899],[1465,1776],[1551,1592],[1652,1516],[1763,1476],[1821,1377],[1829,1173],[1823,993],[1680,846],[1599,828],[1502,651],[1349,456]],"pitches":[{"belayPosition":[654,3822],"labelPosition":[557,4152],"grade":"Grade IV","height":"~30m"},{"belayPosition":[1433,2861],"labelPosition":[1149,3497],"grade":"III+","height":"48m"},{"belayPosition":[1188,2389],"labelPosition":[1517,2543],"grade":"Grade IV+","height":"~25m"},{"belayPosition":[1286,1918],"labelPosition":[1276,2139],"grade":"Grade IV+","height":"20m"},{"belayPosition":[1763,1454],"labelPosition":[1645,1693],"grade":"Grade IV","height":"25m"},{"belayPosition":[1777,951],"labelPosition":[1897,1230],"grade":"Grade IV+","height":"~30m"},{"belayPosition":[1345,457],"labelPosition":[1591,570],"grade":"Grade IV+","height":"~30m"}],"decent":[]}
+}
