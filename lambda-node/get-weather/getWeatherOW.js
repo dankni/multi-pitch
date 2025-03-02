@@ -166,23 +166,16 @@ function mapTodayAndFutureToMultipitcherDomain(owResponse){
 function mapPastToMultipitcherDomain(owResponses){
     return owResponses.reduce((acc, owResponse, index) => {
         const offsetKey = `offsetMinus${index + 1}`;
-        pastDaily = mapToMultipitcherDomainFromDaily(owResponse.current)
-        pastHourly = owResponse.hourly.map(mapToMultipitcherDomainFromHourly)
-        // For the past API the precipitation intesity comes from the hourly measurement.
-        // So I need to adds them up 
-        allPastPrecipIntensity = owResponse.hourly.reduce( (acc,x) => acc + ( 
+        pastDaily = mapToMultipitcherDomainFromDaily(owResponse.current || owResponse.data[0]);
+        allPastPrecipIntensity = owResponse.data.reduce( (acc,x) => acc + (
                                                                                 (x.rain && x.rain["1h"]) ||  // Check if it was raining
-                                                                                (x.snow && x.snow["1h"]) ||  // or snowing 
+                                                                                (x.snow && x.snow["1h"]) ||  // or snowing
                                                                                 0                            // default to zero if any of the above
                                                                             ) , 0)
         pastDaily["precipIntensity"] = allPastPrecipIntensity
-        // Response is too big and the &exclude=hourly did not exclude it from the OW response. 
-        // So manually I don't add in here
-        // pastDaily["hourly"] = pastHourly
         acc[offsetKey] = pastDaily
         return acc
     }, {});
-     
 }
 
 function isValidGeo(climb) {
@@ -211,13 +204,13 @@ function getWeather(climbsData) {
                 let d = new Date();
                 d.setDate(d.getDate() - value);
                 const tsInSeconds = (d.getTime() / 1000).toFixed(0);
-                const owPastUrl = `https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&dt=${tsInSeconds}&units=metric&appid=${owKey}`;
+                const owPastUrl = `https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=${lat}&lon=${lon}&dt=${tsInSeconds}&units=metric&appid=${owKey}`;
                 
                 console.log("going to call Past", owPastUrl);
                 return axios.get(owPastUrl);
             });
             
-            const owCurrentlyAndFutureUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${owKey}`;
+            const owCurrentlyAndFutureUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${owKey}`;
             console.log("going to call Current and Future", owCurrentlyAndFutureUrl);
             const owCurrentlyAndFuturePromise = axios.get(owCurrentlyAndFutureUrl);
     
@@ -262,5 +255,8 @@ function getWeather(climbsData) {
     return axios.all(p)
 
 }
+
+
+getWeather()
 
 module.exports = {getWeather,  mapTodayAndFutureToMultipitcherDomain, mapPastToMultipitcherDomain};
