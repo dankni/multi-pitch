@@ -1,5 +1,6 @@
 // START
 window.performance.mark('start-js-read');
+
 /**
  GLOBAL VARIABLES
  **/
@@ -186,24 +187,20 @@ function updateListingGrades(){
         let climb = climbsData.climbs.find(climb => climb.id === parseInt(cards[i].id));
         let answer = gradeToShow(climb, localStorage.getItem('gradePreference'));
         let card = document.getElementById(climb.id);
-        // Could Prob clean this up in a refactor: 
+        function updateHTML(gradeTxt, conTxt, abbrEl, abbrTitle){
+            card.querySelector('.card-body .gradeTxt').innerHTML = gradeTxt;
+            card.querySelector('.card-body .convTxt').innerHTML = conTxt;
+            card.querySelector('.card-body abbr').innerHTML = abbrEl;
+            card.querySelector('.card-body abbr').title = abbrTitle;
+        }
         if(localStorage.getItem('useConverted')){
             if(answer.converted == 'Converted '){
-                card.querySelector('.card-body .gradeTxt').innerHTML = answer.grade;
-                card.querySelector('.card-body .convTxt').innerHTML = "Converted Grade:";
-                card.querySelector('.card-body abbr').innerHTML = localStorage.getItem('gradePreference');
-                card.querySelector('.card-body abbr').title = gradeMappings[localStorage.getItem('gradePreference')].title;
+                updateHTML(answer.grade, "Converted Grade:", localStorage.getItem('gradePreference'), gradeMappings[localStorage.getItem('gradePreference')].title);
             } else {
-                card.querySelector('.card-body .gradeTxt').innerHTML = answer.grade;
-                card.querySelector('.card-body .convTxt').innerHTML = "Grade:";
-                card.querySelector('.card-body abbr').innerHTML = climb.gradeSys;
-                card.querySelector('.card-body abbr').title = gradeMappings[climb.gradeSys].title;
+                updateHTML(answer.grade, "Grade:", climb.gradeSys, gradeMappings[climb.gradeSys].title);
             }
         } else {
-            card.querySelector('.card-body .gradeTxt').innerHTML = climb.originalGrade;
-            card.querySelector('.card-body .convTxt').innerHTML = "Grade:";
-            card.querySelector('.card-body abbr').innerHTML = climb.gradeSys;
-            card.querySelector('.card-body abbr').title = gradeMappings[climb.gradeSys].title;
+            updateHTML(climb.originalGrade, "Grade:", climb.gradeSys, gradeMappings[climb.gradeSys].title);
         }
     }
 }
@@ -382,7 +379,7 @@ helper.arr = {
 
             if (!is_numeric) {
                 x = helper.string.to_ascii(a[columns[index]].toLowerCase(), -1),
-                    y = helper.string.to_ascii(b[columns[index]].toLowerCase(), -1);
+                y = helper.string.to_ascii(b[columns[index]].toLowerCase(), -1);
             }
             if (x < y) {
                 return direction === 0 ? -1 : 1;
@@ -400,55 +397,9 @@ helper.arr = {
 };
 
 /**
- RANGE SLIDERS
- **/
-function mousemoveListener(event) {
-    let x = (event.clientX - this.offsetLeft) / this.offsetWidth;
-    let inputs = this.getElementsByTagName('input');
-    let min_dist = Infinity;
-    let min_index = 0;
-    for(let i = 0; i < inputs.length; i++) {
-    	let dist = (inputs[i].value - inputs[i].min) / (inputs[i].max - inputs[i].min);
-        dist = Math.abs(dist - x);
-        if (dist < min_dist) {
-            min_dist = dist;
-            min_index = i;
-        }
-    }
-    for(let i = 0; i < inputs.length; i++) {
-        inputs[i].style.zIndex = i == min_index ? 1 : 0;
-    }
-}
-function changeListener(event) {
-    var parent = this.parentNode;
-    var inputs = parent.getElementsByTagName('input');
-    var values = [];
-    for(var i = 0; i < inputs.length; i++) {
-        values[i] = +inputs[i].value;
-    }
-    parent.value = values[0] < values[1] ? values : [values[1], values[0]];
-    var event = document.createEvent('Event');
-    event.initEvent('change', true, true);
-    parent.dispatchEvent(event);
-}
-function attachInputRangeListeners(containers) {
-    var containers = containers || document.getElementsByClassName('input-range');
-    for(var i = 0; i < containers.length; i++) {
-    	// Move the closest input range to the top.
-        containers[i].addEventListener('mousemove', mousemoveListener);
-        // Generate an onchange event for the input range container.
-        var inputs = containers[i].getElementsByTagName('input');
-        for (var j = 0; j < inputs.length; j++) {
-            inputs[j].addEventListener('input', changeListener);
-            inputs[j].addEventListener('change', changeListener);
-        }
-    }
-}
-
-/**
  GET GRADE TO SHOW BASED ON ClimbID & PREFFERED GRADE
  **/
-function gradeToShow(climb, sys){
+ function gradeToShow(climb, sys){
     let answer = {'converted' : '', 'grade': 'tbc', 'sys' : sys};
     if ((climb.gradeSys === sys) || (localStorage.getItem('useConverted') != 'true')) {                              // The grade pref matches original grade
         answer.grade = '' + climb.originalGrade;
@@ -529,6 +480,7 @@ function publishCards(climbsArr) {
          data-seepage="${boolToNumber(climbsArr[i].seepage)}"
          data-polished="${boolToNumber(climbsArr[i].polished)}"
          data-saved="${saved}"
+         data-weatherscore=""
          data-unsaved="${unsaved}"
          data-done="${done}"
          id="${climbsArr[i].id}" 
@@ -609,10 +561,15 @@ function sortCards(sortBy, direction) {
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
     }
     if (sortBy === 'weatherScore') {
-        climbsData.climbs = climbsData.climbs.map(climb => {
-            let climbWeather = darkSkyWeatherData.find(weatherData => weatherData.climbId === climb.id);
-            return Object.assign({}, climb, {weatherScore: climbWeather ? climbWeather.weatherScore : Number.MIN_VALUE})
-        })
+        for (let i = 0; i < climbsData.climbs.length; i++) {
+            if (climbsData.climbs[i].status === "publish") { // ensures unpublished climbs are not processed
+                let climb = climbsData.climbs[i];
+                let weatherScore = document.getElementById(climb.id).dataset.weatherScore;
+                climbsData.climbs[i].weatherScore = weatherScore; // add weather score to the js climb data
+            } else {
+                climbsData.climbs[i].weatherScore = 0; 
+            }
+        }           
     }
     if (sortBy === 'distance' && userLat === null) {
         document.getElementById('loading').style.display = "block";
@@ -626,7 +583,21 @@ function sortCards(sortBy, direction) {
         publishCards(climbsSorted);
         filterCards(); // ensures filters are kept
     }
-//    loadWeather();
+    if(localStorage.getItem('weather')){   // toDo check its up to date 
+        const weatherData = JSON.parse(localStorage.getItem('weather'));
+        document.querySelectorAll('.card').forEach(element => {
+            let id = parseInt(element.id);
+            const climbWeatherData = weatherData.find(data => data.climb=== id);
+            const iconWeather = document.getElementById(`weather-${id}`);
+            const toggleWeather = document.getElementById(`toggle-weather-${id}`);
+            const tempValues = document.getElementById(`temp-${id}`);
+            iconWeather.classList.add(climbWeatherData.weather);
+            iconWeather.title = climbWeatherData.weather.replace(/-/g, " ");
+            tempValues.innerHTML = climbWeatherData.temp;
+            document.getElementById(id).dataset.weatherScore = climbWeatherData.score;
+            toggleWeather.classList.remove("toggle-weather-off");
+        });
+    }
 }
 
 /**
@@ -683,7 +654,7 @@ function showTile(climbId, popped = false) {
     if(climb !== null && localClimbFileDate >= summaryFileClimbTime){
         deliverChange(climb, popped);
     } else {
-        let request = new XMLHttpRequest(); /* To Do: update this to fetch */ 
+        let request = new XMLHttpRequest(); /* To Do: update this to fetch */
         request.open('GET', '/data/climbs/' + climbId + '.json', true);
         request.setRequestHeader('Cache-Control', 'no-cache, no-store, max-age=0');
         request.onload = function() {
@@ -1085,54 +1056,7 @@ function LoadAnalytics(){
     }, 1000);
 
 }
-/**
- LOADS THE WEATHER
- **/
-function loadWeather() {
-/*
-  if (window.darkSkyWeatherData && (document.getElementById('cardHolder') || document.getElementById('map'))) {
-    
-    const fourHoursInMilliseconds = 4000 * 60 * 60;
-    const yesterday = Date.parse(new Date()) - 86401; // now minus 24hours and 1 second
-    const climbOneLastUpdate = window.darkSkyWeatherData.find(data => data.climbId === 1).currently.time;
-    const upToDate = climbOneLastUpdate > yesterday;
-    if(upToDate){
-      climbsData.climbs.map(climb => {   // currently loops all climbs even on a single climb page (ToDo: fix!)
-        try {
-          if(climb.status === "publish"){
-            const weatherData = window.darkSkyWeatherData.find(data => data.climbId === climb.id);
-            const iconWeather = document.getElementById(`weather-${climb.id}`);
-            const toggleWeather = document.getElementById(`toggle-weather-${climb.id}`);
-            const tempValues = document.getElementById(`temp-${climb.id}`);
-            iconWeather.classList.add(weatherData.currently.icon);
-            iconWeather.title = weatherData.currently.icon.replace(/-/g, " ");
-            tempValues.innerHTML = Math.round(weatherData.currently.temperatureMin) + '-' + Math.round(weatherData.currently.temperatureHigh) + "&#176; C";
-            toggleWeather.classList.remove("toggle-weather-off");
-          }
-        } catch (e) {
-         //  console.log("No weather found -> " + climb.id + ". Error -> " + e);
-        }
-      });
-    } else {
-      // there is a weather file but its not up to date so don't let users filer by good weather
-      if(document.getElementById('goodWeather')){
-        document.getElementById('goodWeather').remove();
-      }
-       
-    }
-  setTimeout(() => loadWeather(), fourHoursInMilliseconds)
-  } else if (window.darkSkyWeatherData && document.location.href.includes('/climbs/') === true){
-    try {
-     loadCurrentWeatherModule();
-    } catch (e) {
-      console.log("can't get weather for this climb");
-    }
-    setTimeout(() => loadWeather(), fourHoursInMilliseconds)
-  } else {
-    //    If window.darkSkyWeatherData is not loaded yet, I will keep calling this function a bit faster then normally
-    setTimeout(() => loadWeather(), 1000)
-  }*/
-}
+
 /**
  * LOAD TIDE INFO
  **/
@@ -1368,7 +1292,6 @@ function init () {
             execFilter();
         }
     //    loadWeather();
-        attachInputRangeListeners(); // set up the range sliders
         window.performance.mark('all-climbs-loaded');
     }
     if (geoLocationSupport === true && hp === true) {
@@ -1382,12 +1305,15 @@ function init () {
 }
 window.addEventListener('load', (event) => {
     var hp = document.getElementById('cardHolder') ? true : false;
+    // Load HP only JS
+    if (hp === true){
+        loadNonEssential("script", "/js/module-loader.js", true);
+    }
     // if the browser supports webP add a class to the body to allow css to use webp version
     webPsupport ? document.querySelector('body').classList.add('webp') : document.querySelector('body').classList.add('no-webp'); 
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css");
     if (document.location.href.includes('/climbs/') === true || hp === true) {
-        loadNonEssential("script", "/js/load-weather.js");
         if(document.getElementById('tideHolder')){
             loadTides(parseInt(document.getElementById('climbIdMeta').content)).catch((e) => {
                 console.log("Can't load tide data. " + e)
