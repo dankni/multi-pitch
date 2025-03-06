@@ -479,8 +479,8 @@ function publishCards(climbsArr) {
          data-tidal="${boolToNumber(climbsArr[i].tidal)}"
          data-seepage="${boolToNumber(climbsArr[i].seepage)}"
          data-polished="${boolToNumber(climbsArr[i].polished)}"
-         data-saved="${saved}"
          data-weatherscore=""
+         data-saved="${saved}"
          data-unsaved="${unsaved}"
          data-done="${done}"
          id="${climbsArr[i].id}" 
@@ -1024,13 +1024,13 @@ function sThis(number) {
 /**
  ADDS SCRIPTS & CSS TO THE PAGE FOOTER
  **/
-function loadNonEssential(type, url, module = false){
+function loadNonEssential(type, url, mod = false){
     if(type == "script" && isScriptLoaded(url) === false){
         const tag =  document.createElement(type);
         tag.src = url
         tag.async = true;
         tag.defer = true;
-        if(module === true) { tag.type = "module";}
+        if(mod === true) { tag.type = "module";}
         document.getElementsByTagName("footer")[0].appendChild(tag);
     }
     if(type == "link"){
@@ -1304,13 +1304,15 @@ function init () {
     }
 }
 window.addEventListener('load', (event) => {
+    // if the browser supports webP add a class to the body to allow css to use webp version
+    webPsupport ? document.querySelector('body').classList.add('webp') : document.querySelector('body').classList.add('no-webp'); 
+    
     var hp = document.getElementById('cardHolder') ? true : false;
     // Load HP only JS
     if (hp === true){
         loadNonEssential("script", "/js/module-loader.js", true);
     }
-    // if the browser supports webP add a class to the body to allow css to use webp version
-    webPsupport ? document.querySelector('body').classList.add('webp') : document.querySelector('body').classList.add('no-webp'); 
+    
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css");
     if (document.location.href.includes('/climbs/') === true || hp === true) {
