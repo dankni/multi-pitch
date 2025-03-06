@@ -3,14 +3,19 @@
 /**
  LOAD HOMEPAGE WEATHER
  **/
- import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore } from "./modules/getWeather.js";
-let weather = await loadWeather();
-if(weatherUpToDateCheck(weather)){
-    updateWeatherOnHP(weather);
-    generateWeatherScore(weather);
-}; 
+import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore } from "./modules/getWeather.js";
+
+(async function () {
+    await loadWeather().then(response => {
+        if(weatherUpToDateCheck(response)){
+            updateWeatherOnHP(response);
+            generateWeatherScore(response);
+        };
+    });
+});
+
 /**
  LOAD RANGE SLIDERS
  **/
- import {attachInputRangeListeners } from "./modules/rangeSliders.js";
- attachInputRangeListeners();
+import {attachInputRangeListeners } from "./modules/rangeSliders.js";
+attachInputRangeListeners();

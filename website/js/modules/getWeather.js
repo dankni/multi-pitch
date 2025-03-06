@@ -111,6 +111,4 @@ export function generateWeatherScore(weatherData){
 
     //save it in local storage so there isn't a problem when sorting
     localStorage.setItem('weather', JSON.stringify(weather));
-
-    
 }
