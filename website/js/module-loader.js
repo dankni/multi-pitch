@@ -5,14 +5,13 @@
  **/
 import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore } from "./modules/getWeather.js";
 
-(async function () {
-    await loadWeather().then(response => {
-        if(weatherUpToDateCheck(response)){
-            updateWeatherOnHP(response);
-            generateWeatherScore(response);
-        };
-    });
+loadWeather().then(response => {
+    if(weatherUpToDateCheck(response)){
+        updateWeatherOnHP(response);
+        generateWeatherScore(response);
+    };
 });
+
 
 /**
  LOAD RANGE SLIDERS

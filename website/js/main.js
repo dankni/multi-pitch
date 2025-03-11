@@ -43,20 +43,24 @@ var webPsupport = (function() {
  * SET THE climbsData VARIABLE BUT USE localStorage FIRST
  **/
 const getOnlineClimbsData = async (set) => {
-    const response = await fetch('/data/data.json', {cache: "no-cache"});
-    if(set === true){
-        climbsData = await response.json();
-        window.performance.mark('data.json-from-server');
-        localStorage.setItem('climbsData', JSON.stringify(climbsData));
-        // if the DOM is not ready add an event listener to launch init, otherwise just launch it. 
-        document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init()) : init();
-    } else {
-        let serverClimbsData = await response.json();
-        if(serverClimbsData.lastUpdate > climbsData.lastUpdate){
-            climbsData = serverClimbsData;
+    try{
+        const response = await fetch('/data/data.json', {cache: "no-cache"});
+        if(set === true){
+            climbsData = await response.json();
+            window.performance.mark('data.json-from-server');
             localStorage.setItem('climbsData', JSON.stringify(climbsData));
+            // if the DOM is not ready add an event listener to launch init, otherwise just launch it. 
             document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init()) : init();
+        } else {
+            let serverClimbsData = await response.json();
+            if(serverClimbsData.lastUpdate > climbsData.lastUpdate){
+                climbsData = serverClimbsData;
+                localStorage.setItem('climbsData', JSON.stringify(climbsData));
+                document.readyState == 'loading' ? document.addEventListener('DOMContentLoaded', init()) : init();
+            }
         }
+    } catch (e){
+        console.log(e);
     }
 }
 if(localStorage.getItem('climbsData')){

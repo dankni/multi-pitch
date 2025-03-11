@@ -26,7 +26,7 @@ export function updateWeatherOnHP(weatherData){
             const tempValues = document.getElementById(`temp-${id}`);
             iconWeather.classList.add(climbWeatherData.currently.icon);
             iconWeather.title = climbWeatherData.currently.icon.replace(/-/g, " ");
-            tempValues.innerHTML = Math.round(climbWeatherData.currently.temperatureMin) + '-' + Math.round(climbWeatherData.currently.temperatureHigh) + "&#176; C";
+            tempValues.innerHTML = Math.round(climbWeatherData.currently.temperatureMin) + ' to ' + Math.round(climbWeatherData.currently.temperatureHigh) + "&#176; C";
             toggleWeather.classList.remove("toggle-weather-off");
         } catch (e) {
               console.log("No weather found -> " + id + ". Error -> " + e);
