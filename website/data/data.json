@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2025-02-15T13:32:34.952Z",
+    "lastUpdate": "2025-04-15T13:25:31.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -1157,7 +1157,7 @@
             "techGrade": "5a",
             "gradeSys": "UIAA",
             "originalGrade": "V",
-            "geoLocation": "38.63503594, -0.18222043614",
+            "geoLocation": "38.63503594,-0.18222043614",
             "approachTime": 45,
             "approachDifficulty": 1,
             "loose": true,
@@ -1191,6 +1191,31 @@
             "tileImage": {
                 "url": "img/tiles/via-pany-costa-blanca.jpg",
                 "alt": "Peñón de Ifach rising out of Calpe offers great climbing on Via Pany",
+                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "attributionText": "our own image"
+            }
+        },
+        {
+            "cliff": "Buzzards Roost",
+            "status": "publish",
+            "id": 49,
+            "country": "Northern Ireland",
+            "county": "Mourne and Down",
+            "routeName": "The Sheugh",
+            "length": 71,
+            "pitches": 3,
+            "dataGrade": 3,
+            "tradGrade": "Severe",
+            "techGrade": "3c",
+            "gradeSys": "BAS",
+            "originalGrade": "Severe 3c",
+            "geoLocation": "54.156849423,-5.97937236724",
+            "approachTime": 75,
+            "approachDifficulty": 1,
+            "lastUpdate": "2025-04-15T13:25:31.356Z",
+            "tileImage": {
+                "url": "img/tiles/buzzards-roost-crag-mournes.jpg",
+                "alt": "Buzzards Roost Crag in the Mournes",
                 "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
                 "attributionText": "our own image"
             }
