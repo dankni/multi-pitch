@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2025-05-01T13:25:31.356Z",
+    "lastUpdate": "2025-05-05T13:25:31.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -1216,6 +1216,31 @@
             "tileImage": {
                 "url": "img/tiles/buzzards-roost-crag-mournes.jpg",
                 "alt": "Buzzards Roost Crag in the Mournes",
+                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "attributionText": "our own image"
+            }
+        },
+        {
+            "cliff": "Pigeon Rock",
+            "status": "publish",
+            "id": 50,
+            "country": "Northern Ireland",
+            "county": "Mourne and Down",
+            "routeName": "Virgo",
+            "length": 90,
+            "pitches": 4,
+            "dataGrade": 3,
+            "tradGrade": "VS",
+            "techGrade": "4c",
+            "gradeSys": "BAS",
+            "originalGrade": "VS 4c",
+            "geoLocation": "54.14471186,-6.06284104561",
+            "approachTime": 15,
+            "approachDifficulty": 1,
+            "lastUpdate": "2025-05-05T13:25:31.356Z",
+            "tileImage": {
+                "url": "img/tiles/pigeon-rock-virgo.jpg",
+                "alt": "Pigeon Rock Crag in the Mournes",
                 "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
                 "attributionText": "our own image"
             }
