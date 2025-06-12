@@ -303,13 +303,16 @@ function filterCards() {
 
 function toggleFilters(){
     let advancedFilters = document.getElementById('advancedFilters');
+    let filterArrow = document.getElementById('filterArrow');
     if(advancedFilters.style.display === 'flex'){
         advancedFilters.style.display = 'none';
         localStorage.setItem('showFilters', false);
+        filterArrow.style.rotate = '0deg';
     } else {
         advancedFilters.style.display = 'flex';
         document.getElementById('abseil').focus(); // keyboard acessibility 
         localStorage.setItem('showFilters', true);
+        filterArrow.style.rotate = '180deg';
     }
 }
 
@@ -483,6 +486,7 @@ function publishCards(climbsArr) {
          data-tidal="${boolToNumber(climbsArr[i].tidal)}"
          data-seepage="${boolToNumber(climbsArr[i].seepage)}"
          data-polished="${boolToNumber(climbsArr[i].polished)}"
+         data-draft="${boolToNumber(climbsArr[i].draft)}"
          data-weatherscore=""
          data-saved="${saved}"
          data-unsaved="${unsaved}"

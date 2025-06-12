@@ -28,7 +28,8 @@
         },
         {
             "cliff": "Old Man of Hoy",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 34,
             "country": "Scotland",
             "county": "Orkney",
@@ -184,7 +185,8 @@
         },
         {
             "cliff": "Mount Indefatigable",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 19,
             "country": "Canada",
             "county": "Alberta",
@@ -236,7 +238,8 @@
         },
         {
             "cliff": "Lundy",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 8,
             "country": "England",
             "county": "Lundy",
@@ -263,7 +266,8 @@
         },
         {
             "cliff": "Grande Fermeda",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 33,
             "country": "Italy",
             "county": "South Tyrol",
@@ -315,7 +319,8 @@
         },
         {
             "cliff": "Vratsa",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 4,
             "country": "Bulgaria",
             "county": "Vratsa",
@@ -340,7 +345,8 @@
         },
         {
             "cliff": "Freÿr",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 32,
             "country": "Belgium",
             "county": "Wallonia",
@@ -498,7 +504,8 @@
         },
         {
             "cliff": "Brüggler",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 25,
             "country": "Switzerland",
             "county": "Canton of Glarus",
@@ -524,7 +531,8 @@
         },
         {
             "cliff": "Aiguille Dibona",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 24,
             "country": "France",
             "county": "Hautes-Alpes",
@@ -576,7 +584,8 @@
         },
         {
             "cliff": "Sass Pordoi",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 6,
             "country": "Italy",
             "county": "Dolomites",
@@ -646,7 +655,8 @@
         },
         {
             "cliff": "Clogwyn Dur Arddu",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 3,
             "country": "Wales",
             "county": "Gwynedd",
@@ -673,6 +683,7 @@
         {
             "cliff": "Tormore Group",
             "status": "publish",
+            "draft": true,
             "id": 5,
             "country": "Ireland",
             "county": "Donegal",
@@ -729,6 +740,7 @@
         {
             "cliff": "Cir Mhor",
             "status": "publish",
+            "draft": true,
             "id": 11,
             "country": "Scotland",
             "county": "Arran",
@@ -782,6 +794,7 @@
         {
             "cliff": "Sail Rock",
             "status": "publish",
+            "draft": true,
             "id": 13,
             "country": "Ireland",
             "county": "Co. Donegal",
@@ -808,6 +821,7 @@
         {
             "cliff": "The Devils Tower",
             "status": "publish",
+            "draft": true,
             "id": 15,
             "country": "USA",
             "county": "Wyoming",
@@ -833,7 +847,8 @@
         },
         {
             "cliff": "Heiliger Geist",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 23,
             "country": "Greece",
             "county": "Meteora",
@@ -859,7 +874,8 @@
         },
         {
             "cliff": "Cathedral Rock",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 28,
             "country": "Spain",
             "county": "Teneriffe",
@@ -885,7 +901,8 @@
         },
         {
             "cliff": "Lion Rock",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 21,
             "country": "Hong Kong",
             "county": "Kowloon",
@@ -939,7 +956,8 @@
         },
         {
             "cliff": "Meadinha",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 9,
             "country": "Portugal",
             "county": "Região do Norte",
@@ -964,7 +982,8 @@
         },
         {
             "cliff": "Stetind",
-            "status": "publish",
+            "status": "publish",        
+            "draft": true,
             "id": 17,
             "country": "Norway",
             "county": "Nordland",

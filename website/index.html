@@ -235,13 +235,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <h5 class="filter-toggle" 
-                                        onclick="toggleFilters()" 
-                                        onkeydown="return event.code != 'Enter' || toggleFilters()" tabindex="0" 
-                                        role="button" aria-expanded="false" aria-pressed="false">
-                                        <i class="icon-sliders"></i> Advanced Climbing Filters
-                                    </h5>
+                                <div class="col-md-6 ">
+                                    <div style="margin:0 auto; width:50%;">
+                                        <input style="margin-top:1rem" type="checkbox" id="draft" onchange="saveFilter();filterCards()" checked/>
+                                        <label  style="margin-top:1rem; width:auto" class="advancedLabel" for="draft"></i>Show draft climbs</label><br />
+                                    </div>
                                 </div>
                             </div>
                             <div id="advancedFilters" class="row advanced-filters" style="display: none;">
@@ -278,13 +276,21 @@
                                     <input type="checkbox" id="done" onchange="saveFilter();filterCards()" checked />
                                     <label class="advancedLabel" for="done"><i class="icon-ok"></i> Compleated <span class="not-tablet">Climbs</span></label><br />
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" style="margin-top: 1rem;">
                                     <small style="text-align:right;display:block;">
                                         <span style="font-size:0.9rem;color:#555"><span id="showing" style="font-size:1.2rem">32</span><small>/<span id="total">32</span> climbs </small></span>
                                         <a onclick="clearFilters()"><i class="icon-cancel"></i> Reset all filters</a>
                                     </small>
                                 </div>
                             </div>
+                            <div class="col-12">
+                                    <h5 class="filter-toggle" 
+                                        onclick="toggleFilters()" 
+                                        onkeydown="return event.code != 'Enter' || toggleFilters()" tabindex="0" 
+                                        role="button" aria-expanded="false" aria-pressed="false">
+                                        <i class="icon-sliders"></i> Advanced Climbing Filters <span id="filterArrow" style="display: inline-block;">&#x25BC;</span>
+                                    </h5>
+                                </div>
                         </form>
                     </div>
                 </div>
