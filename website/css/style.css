@@ -1004,6 +1004,12 @@ position: relative;
 .right{
   text-align:right;
 }
+.align-center {
+  margin:0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /*************/
 /** CLASSES **/
 .subscribe {
@@ -1027,7 +1033,6 @@ position: relative;
 .filters label {
   width: 30%;
   float: left;
-  top: -5px;
   position: relative;
 }
 .filters .auto{
@@ -1151,6 +1156,9 @@ nav ul, nav ul li, nav ul li a{
 }
 nav ul li a {
   margin-right:1rem;
+}
+.current {
+  font-weight: 600;
 }
 .last-nav {
   margin-right: 0;

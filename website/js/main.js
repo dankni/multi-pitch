@@ -1276,6 +1276,20 @@ window.onpopstate = function (event) {
     }
 };
 
+/**
+ NAV HIGHLIGHT FOR CURRENT PAGE
+ **/
+function highlightNavLocation(){
+    const navLinks = document.querySelectorAll('nav li a');
+    navLinks.forEach(a => {
+        console.log(a.getAttribute('href') + " = ");
+        console.log(location.pathname)
+        if(a.getAttribute('href') === location.pathname){
+            a.classList.add('current');
+        }
+    });
+}
+
 function init () {
     window.performance.mark('onload-event-happened');
     // Check it's the homepage
@@ -1344,6 +1358,7 @@ window.addEventListener('load', (event) => {
             aTag.href = aTag.href + "?god-mode";
         });
     }
+    highlightNavLocation();
 //    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();
 });

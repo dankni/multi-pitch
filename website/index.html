@@ -66,10 +66,9 @@
             </a>
             <ul>
                 <li>
-                    <a href="/#filters"
+                    <a href="/"
                        onclick='document.location.href.indexOf("/climbs/") > 0 ? hideTile() : window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>
-                        Find <span class="not-mobile">Your Climb</span>
-                    </a>
+                        Find <span class="not-mobile">Your Climb</span></a>
                 </li>
                 <li>
                     <a href="/map/">Map <span class="not-mobile">View</span></a>
@@ -236,7 +235,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 ">
-                                    <div style="margin:0 auto; width:50%;">
+                                    <div class="align-center">
                                         <input style="margin-top:1rem" type="checkbox" id="draft" onchange="saveFilter();filterCards()" checked/>
                                         <label  style="margin-top:1rem; width:auto" class="advancedLabel" for="draft"></i>Show draft climbs</label><br />
                                     </div>

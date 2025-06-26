@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2025-05-05T13:25:31.356Z",
+    "lastUpdate": "2025-05-06T13:25:31.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -1103,7 +1103,7 @@
             "geoLocation": "38.589097,-0.206519",
             "approachTime": 60,
             "approachDifficulty": 2,
-            "lastUpdate": "2022-11-04T01:01:15.339Z",
+            "lastUpdate": "2023-11-04T01:01:15.339Z",
             "tileImage": {
                 "url": "img/tiles/epsolon-central-on-puig-campana-costa-blanca.jpg",
                 "alt": "Epsolon Central climb on Puig Campana Mountain",
