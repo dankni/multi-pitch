@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2025-06-05T13:25:31.356Z",
+    "lastUpdate": "2025-07-10T01:01:27.339Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -874,8 +874,7 @@
         },
         {
             "cliff": "Cathedral Rock",
-            "status": "publish",        
-            "draft": true,
+            "status": "publish",
             "id": 28,
             "country": "Spain",
             "county": "Teneriffe",
@@ -891,12 +890,13 @@
             "approachTime": 15,
             "approachDifficulty": 1,
             "abseil": true,
-            "lastUpdate": "2022-11-15T01:01:27.339Z",
+            "loose": true,
+            "lastUpdate": "2025-07-10T01:01:27.339Z",
             "tileImage": {
                 "url": "img/tiles/cathederal-rock-tenerife.jpg",
                 "alt": "Cathederal Rock in Tenerife offers great climbing",
-                "atributionURL": "https://www.ukclimbing.com/logbook/crag.php?id=17495#photos",
-                "attributionText": "mes32"
+                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "attributionText": "our own image"
             }
         },
         {
