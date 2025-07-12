@@ -1282,8 +1282,6 @@ window.onpopstate = function (event) {
 function highlightNavLocation(){
     const navLinks = document.querySelectorAll('nav li a');
     navLinks.forEach(a => {
-        console.log(a.getAttribute('href') + " = ");
-        console.log(location.pathname)
         if(a.getAttribute('href') === location.pathname){
             a.classList.add('current');
         }
