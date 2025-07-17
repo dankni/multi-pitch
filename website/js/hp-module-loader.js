@@ -5,12 +5,20 @@
  **/
 import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore } from "./modules/getWeather.js";
 
-loadWeather().then(response => {
-    if(weatherUpToDateCheck(response)){
+if (window.weatherData) {
+    if(weatherUpToDateCheck(window.weatherData)){
+        // the loaded weather data is up to date, so we can use it
         updateWeatherOnHP(response);
         generateWeatherScore(response);
-    };
-});
+    }
+} else {
+    loadWeather().then(response => {
+        if(weatherUpToDateCheck(response)){
+            updateWeatherOnHP(response);
+            generateWeatherScore(response);
+        };
+    });
+}
 
 
 /**

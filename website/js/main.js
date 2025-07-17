@@ -662,20 +662,28 @@ function showTile(climbId, popped = false) {
     if(climb !== null && localClimbFileDate >= summaryFileClimbTime){
         deliverChange(climb, popped);
     } else {
-        let request = new XMLHttpRequest(); /* To Do: update this to fetch */
-        request.open('GET', '/data/climbs/' + climbId + '.json', true);
-        request.setRequestHeader('Cache-Control', 'no-cache, no-store, max-age=0');
-        request.onload = function() {
-            if (this.status >= 200 && this.status < 400) {
-                localStorage.setItem('climb' + climbId, this.response);
-                climb = JSON.parse(this.response);
+        fetch('/data/climbs/' + climbId + '.json', {
+            cache: "no-cache",
+            headers: {'Cache-Control': 'no-cache, no-store, max-age=0'}
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } 
+        })
+        .then(data => {
+            if (data) {
+                localStorage.setItem('climb' + climbId, data);
+                climb = JSON.parse(data);
                 deliverChange(climb, popped);
-            } else { console.log("couldn't load climbsData - likley server error / file not found"); }
-        };
-        request.onerror = function() { console.log("couldn't load climbsData - likley connection error"); };
-        request.send();
+            }
+        })
+        .catch(() => {
+            console.log("couldn't load climbsData - likley connection error");
+        });
     }
 }
+
 function deliverChange(climb, popped){
     let climbData = climb.climbData;
     localStorage.setItem('focusId', climbData.id + 'Focus');
@@ -694,7 +702,7 @@ function deliverChange(climb, popped){
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climbData.cliff + " - " + climbData.routeName;
     document.getElementById('articleTitle').focus(); // Set focus on the climb card article for accessibility 
-    loadCurrentWeatherModule(climbData.id);
+    loadCurrentWeatherModule();
     if(climbData.tidal >= 1){
         loadTides(climbData.id);
     }
@@ -717,7 +725,7 @@ function openModal(url, id) {
             document.getElementById('bdy').setAttribute("style", "overflow:hidden");
             document.getElementById('modalStart').focus(); // accessibility
             if(document.getElementById('newScript')){
-                eval(document.getElementById('newScript').textContent); // bit of a hack to run any scripts that are in the new html
+                eval(document.getElementById('newScript').textContent); // ToDo: Fix this! A hack to run any scripts that are in the new html
             }
         } else {
             console.log('failed to get modal');
@@ -1113,57 +1121,17 @@ const loadTides = async (id) => {
 /**
  LOADS FULL WEATHER ON BACK OF CARD
  **/
-function loadCurrentWeatherModule(id){/*
-  if(id) {
-    var climbid = id;
-  } else {
-    var climbid = parseInt(document.getElementById('climbIdMeta').content);
-  }
-  try{
-    const dsWeather = window.darkSkyWeatherData.find(data => data.climbId === climbid);
-    if(dsWeather != null){
-        document.getElementById("currentWeather").style.display = "block";
-        document.getElementById("seasonalWeather").classList.add("col-lg-6");
-        const currentWeather = ["currently", "offsetMinus1", "offsetMinus2", "offsetMinus3", "offsetPlus1", "offsetPlus2", "offsetPlus3", "offsetPlus4", "offsetPlus5", "offsetPlus6", "offsetPlus7"];
-        document.getElementById("wIcon").classList.add(dsWeather.currently.icon);
-        document.getElementById("wIcon").title = dsWeather.currently.icon.replace(/-/g, " ");
-        document.getElementById("weatheName").innerText = dsWeather.currently.icon.replace(/-/g, " ");
-        document.getElementById("highT").innerText = dsWeather.currently.temperatureHigh.toFixed(1);
-        document.getElementById("lowT").innerText = dsWeather.currently.temperatureMin.toFixed(1);
-        if(dsWeather.currently.sunriseTime){
-            document.getElementById("sunrise").innerText = new Date(dsWeather.currently.sunriseTime  * 1000).toTimeString().substring(0,5); // suspect this is user browser time not location time
-            document.getElementById("sunset").innerText = new Date(dsWeather.currently.sunsetTime  * 1000).toTimeString().substring(0,5);
-            document.getElementById('light_hours').innerText = (((dsWeather.currently.sunsetTime - dsWeather.currently.sunriseTime)/60)/60).toFixed(1);
-        } else {
-            // The sun doesn't always rise and set everyday in all locations (eg North Norway)
-            if(dsWeather.currently.uvIndex >= 1) {
-                document.getElementById('sunMovement').innerHTML = '<span class="weather clear-day"></span> 24h Sun! No sunset here today.';
-            } else {
-                document.getElementById('sunMovement').innerHTML = '<span class="weather moon"></span> 24h Darkness! No sunrise here today.';
-            }
-        }
-        const currentDay = new Date(dsWeather.currently.time * 1000);
-        document.getElementById('lastDate').innerHTML = '<br />Updated:' + currentDay.toString().substring(0,15);
-        document.getElementById('precip_pos').innerText = Math.round(dsWeather.currently.precipProbability * 100);
-        document.getElementById('precip_intense').innerText = dsWeather.currently.precipIntensity.toFixed(1);
-        document.getElementById('wind_speed').innerText = dsWeather.currently.windGust.toFixed(1);
-        document.getElementById('uv_index').innerText = dsWeather.currently.uvIndex;
-        document.getElementById('cloud_cover').innerText = Math.round(dsWeather.currently.cloudCover);
-        document.getElementById('bearing').style  = 'transform: rotate(' + dsWeather.currently.windBearing + 'deg);display:inline-block;';
-        for(let i = 0; i < currentWeather.length; i++){
-            let listItem = document.getElementById(currentWeather[i]);
-            let rain = dsWeather[currentWeather[i]].precipIntensity;
-            let height = rain > 10 ? 100 : rain * 10;
-            let label = document.createTextNode(rain.toFixed(1) + "mm");
-            listItem.firstElementChild.style.height = height + "%";
-            listItem.prepend(label);
-        }
-    }
-  } catch (e) {
-    console.log("Weather Data Error " + climbid + ". Error -> " + e);
-  }*/
-}
+function loadCurrentWeatherModule(){
 
+    if (isScriptLoaded("/js/card-module-loader.js") === false) {
+        loadNonEssential("script", "/js/card-module-loader.js", true);
+    } else {
+        loadCurrentWeather(); 
+    }
+}
+/**
+ ALLOWS USER TO NAVIGATE THE WEATHER PER DAY
+ **/
 function weatherBars(direction) {
     let state = parseInt(document.getElementById('currentRain').dataset.state);
     state = (direction === 'forward') ? parseInt(state + 1) : parseInt(state -1);
@@ -1330,7 +1298,7 @@ window.addEventListener('load', (event) => {
     var hp = document.getElementById('cardHolder') ? true : false;
     // Load HP only JS
     if (hp === true){
-        loadNonEssential("script", "/js/module-loader.js", true);
+        loadNonEssential("script", "/js/hp-module-loader.js", true);
     }
     
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
@@ -1341,6 +1309,9 @@ window.addEventListener('load', (event) => {
                 console.log("Can't load tide data. " + e)
             })
         }
+    }
+    if (document.location.href.includes('/climbs/') === true) {
+        loadCurrentWeatherModule()
     }
     if (document.location.href.includes('god-mode') === true && hp === false) {
         loadNonEssential("script", "/components/climbCard.js", false);
