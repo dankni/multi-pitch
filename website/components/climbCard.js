@@ -524,20 +524,7 @@ function returnClimbURL(route, cliff){
     return folderName;
 }
 
-function addClimbIdMetaTag(climbId) {
-    // Check if the meta tag already exists
-    if(document.getElementById('climbIdMeta')){
-        // If it exists, update its content
-        document.getElementById('climbIdMeta').content = climbId;
-        return;
-    } else {
-        var meta = document.createElement('meta');
-        meta.name = 'climbId';
-        meta.id = 'climbIdMeta';
-        meta.content = climbId;
-        document.head.appendChild(meta);
-    }
-}
+    
 
 function climbCard(climbData, nearbyClimbsServerSide) {
     let climb = climbData.climbData;
@@ -551,7 +538,6 @@ function climbCard(climbData, nearbyClimbsServerSide) {
     var referenceModule = getreferenceInfo(climb);
     var guideBookModule = getGuidebook(climb);
     var weatherInfoModule = getWeather(climb);
-    addClimbIdMetaTag(climb.id);
     var mapModule = getMap(climb);
     if(nearbyClimbsServerSide != null){
         var nearbyClimbs = nearbyClimbsServerSide; 
@@ -585,6 +571,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
         </div>`
     }
     var fullCard = `
+    <meta name="climbId" id="climbIdMeta" content="${climb.id}" />
     <article id="climbCardDetails" class="main">
         <div style="width:100%;max-height:300px;">
             <a href="/map/?loc=${climb.geoLocation}" class="card-img-anch">
