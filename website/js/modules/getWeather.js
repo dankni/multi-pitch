@@ -22,7 +22,7 @@ export function fullWeatherForOneClimb(weatherData, climbIdToFind){
     return climbWeather;
 }
 
-export function updateSpecificClimbCurrentWeather(climbWeather) {
+export function updateSpecificClimbCurrentWeather(climbWeather, timeZone) {
     
     document.getElementById("currentWeather").style.display = "block";
     document.getElementById("seasonalWeather").classList.add("col-lg-6");
@@ -31,9 +31,13 @@ export function updateSpecificClimbCurrentWeather(climbWeather) {
     document.getElementById("weatheName").innerText = climbWeather.currently.icon.replace(/-/g, " ");
     document.getElementById("highT").innerText = climbWeather.currently.temperatureHigh.toFixed(1);
     document.getElementById("lowT").innerText = climbWeather.currently.temperatureMin.toFixed(1);
+    
     if(climbWeather.currently.sunriseTime){
-        document.getElementById("sunrise").innerText = new Date(climbWeather.currently.sunriseTime  * 1000).toTimeString().substring(0,5); // suspect this is user browser time not location time
-        document.getElementById("sunset").innerText = new Date(climbWeather.currently.sunsetTime  * 1000).toTimeString().substring(0,5);
+        const sunrise = new Date(climbWeather.currently.sunriseTime * 1000);
+        const sunset = new Date(climbWeather.currently.sunsetTime * 1000);
+        const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: timeZone || 'UTC' }; 
+        document.getElementById("sunrise").innerText = new Intl.DateTimeFormat(navigator.language, timeOptions).format(sunrise);
+        document.getElementById("sunset").innerText = new Intl.DateTimeFormat(navigator.language, timeOptions).format(sunset);
         document.getElementById('light_hours').innerText = (((climbWeather.currently.sunsetTime - climbWeather.currently.sunriseTime)/60)/60).toFixed(1);
     } else {
         // The sun doesn't always rise and set everyday in all locations (eg North Norway)
@@ -53,11 +57,14 @@ export function updateSpecificClimbCurrentWeather(climbWeather) {
     let bars = document.getElementById('currentRain').children;
     for (let i = 0; i < bars.length; i++) {
         let id = bars[i].id;
+        let day = new Date(climbWeather[id].time * 1000);
+        day = day.toDateString().substring(0, 10);
+        document.querySelector(`#${id} span`).setAttribute('title', day);
         let rainAmount = climbWeather[id].precipIntensity * 5;
         rainAmount > 95 ? rainAmount = 95 : rainAmount; // max 95% height = 20mm
         bars[i].children[0].style.height = rainAmount + '%';
         bars[i].prepend(Math.round(climbWeather[id].precipIntensity) + 'mm');
-    }; 
+    }
 }
 
 export function updateWeatherOnHP(weatherData){

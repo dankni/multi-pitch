@@ -43,4 +43,4 @@ export function attachInputRangeListeners(containers) {
         }
     }
 }
-
+window.attachInputRangeListeners = attachInputRangeListeners;

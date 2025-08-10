@@ -2,6 +2,12 @@
 window.performance.mark('start-js-read');
 
 /**
+ IMPORTS
+ **/
+import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather } from "./modules/getWeather.js";
+import { climbCard, getRouteTopo } from "/components/climbCard.js";
+
+/**
  GLOBAL VARIABLES
  **/
 const rootProject = '/'; // adjust per enviroment
@@ -30,7 +36,10 @@ const gradeMappings = {
     'N':{1: '2', 2: '3', 3: '4', 4: '4+', 5: '5', 6: '5+', 7: '6', 'title': 'Norwegian'},
     'ALP':{1: 'PD-', 2: 'PD', 3: 'PD+', 4: 'AD-', 5: 'AD', 6: 'D', 7: 'TD', 'title': 'French Alpine Grades'}
 };
-
+if (!"content" in document.createElement("template") && document.getElementById('ie-warn')) {
+    // browser does not support <template> element
+    document.getElementById('ie-warn').setAttribute('style', 'display:block;');
+}
 var webPsupport = (function() {
     var webP = new Image();
     webP.onload = WebP.onerror = function () {
@@ -42,7 +51,7 @@ var webPsupport = (function() {
 /**
  * SET THE climbsData VARIABLE BUT USE localStorage FIRST
  **/
-const getOnlineClimbsData = async (set) => {
+window.getOnlineClimbsData = async (set) => {
     try{
         const response = await fetch('/data/data.json', {cache: "no-cache"});
         if(set === true){
@@ -62,7 +71,7 @@ const getOnlineClimbsData = async (set) => {
     } catch (e){
         console.log(e);
     }
-}
+};
 if(localStorage.getItem('climbsData')){
     climbsData = JSON.parse(localStorage.getItem('climbsData'));
     window.addEventListener('load', (event) => {
@@ -76,14 +85,14 @@ if(localStorage.getItem('climbsData')){
 /**
 GA TRACKING HELPER
 **/
-function trackGA(category, action, label, value = 0){
+window.trackGA = function(category, action, label, value = 0) {
     try{
         ga('gtag_UA_123782847_1' + '.send', 'event', category, action, label, value);
     }
     catch (e) {
         // console.log("failed to track event" + e);
     }
-}
+};
 
 /**
  THE SLIDER FUNCTION FOR FILTERS
@@ -110,7 +119,7 @@ function trackGA(category, action, label, value = 0){
 /**
  SHOW THE CURRENT VALUE OF THE SLIDERS
  **/
-function showVal(field) {
+window.showVal = function(field) {
 
     let gradePreference = 'BAS'; //default
 
@@ -133,12 +142,12 @@ function showVal(field) {
     document.getElementById(field + "1").innerHTML = lowerValue;
     document.getElementById(field + "2").innerHTML = higherValue;
     filterCards();
-}
+};
 
 /**
  UPDATE WHICH COL TO HIGHLIGHT IN GRADE CONVERSION TABLE
  **/
-function updateTableHighlight(){
+window.updateTableHighlight = function(){
     if(document.getElementById('gradeTable')){
         const tableData = document.getElementsByTagName('td');
         gradePreference = localStorage.getItem('gradePreference');
@@ -154,12 +163,12 @@ function updateTableHighlight(){
             }
         } 
     }  
-}
+};
 
 /**
  UPDATE THE USERS GRADE Preference
  **/
-function updateGradePref() {
+window.updateGradePref = function() {
     const radios = document.querySelectorAll('input[type=radio][name=gradeChanger]');
     const descriptions = document.getElementsByClassName('gradeDes');
     for (let j=0; j < descriptions.length; j++) {
@@ -180,12 +189,12 @@ function updateGradePref() {
     // update table highlighting
     updateTableHighlight();
     updateListingGrades();
-}
+};
 
 /**
  UPDATE THE LISTED GRADES TO MATCH GRADE Preference
  **/
-function updateListingGrades(){
+window.updateListingGrades = function(){
     let cards = document.getElementsByClassName('card');
     for(let i = 0; i < cards.length; i++){
         let climb = climbsData.climbs.find(climb => climb.id === parseInt(cards[i].id));
@@ -207,12 +216,12 @@ function updateListingGrades(){
             updateHTML(climb.originalGrade, "Grade:", climb.gradeSys, gradeMappings[climb.gradeSys].title);
         }
     }
-}
+};
 
 /**
  SET IF THE USER WANTS TO SHOW CONVERTED OR ORIGINAL GRADES
  **/
-function toggleUseConverted(){
+window.toggleUseConverted = function(){
     if(document.getElementById('useConverted').checked === true){
         trackGA('gradeConversion', "toogle use converted", 'on');
         localStorage.setItem('useConverted', true);
@@ -222,12 +231,12 @@ function toggleUseConverted(){
         trackGA('gradeConversion', "toogle use converted", 'off');
         updateListingGrades();
     }
-}
+};
 
 /**
  FUNCTION TO GET FILTER VALUES FROM HTML 
  **/
-function getFilters(){
+window.getFilters = function(){
     let filters = {
         "height" :   { "low" : 50, "high" : 720 },
         "grade" :    { "low" : 1,  "high" : 7   },
@@ -247,27 +256,25 @@ function getFilters(){
         }
     }
     return filters;
-}
+};
 
 
 /**
  A FUNCTION TO FILTER THE CARD BY THE USERS SELECTION
  **/
-function filterCards() {
+window.filterCards = function() {
 
     let resultCount = 0;
     let filters = getFilters();
-
-    var cards = document.getElementsByClassName('card');
+    let cards = document.getElementsByClassName('card');
 
     for (let i = 0; i < cards.length; i++) {
-
         let dataGrade = cards[i].getAttribute('data-grade');
         let dataHeight = cards[i].getAttribute('data-height');
         let dataApproach = cards[i].getAttribute('data-approach');
-
         let clash = 0;
         let advancedLabels = document.getElementsByClassName('advancedLabel');
+
         for(let j = 0; j < advancedLabels.length; j++){
           let title = advancedLabels[j].getAttribute('for');
           if(document.getElementById(title).checked === false && cards[i].getAttribute('data-' + title) === '1'){
@@ -299,9 +306,9 @@ function filterCards() {
         document.getElementById('noResults').style.display = 'none';
     }
     updateTotalCount();
-}
+};
 
-function toggleFilters(){
+window.toggleFilters = function(){
     let advancedFilters = document.getElementById('advancedFilters');
     let filterArrow = document.getElementById('filterArrow');
     if(advancedFilters.style.display === 'flex'){
@@ -314,9 +321,9 @@ function toggleFilters(){
         localStorage.setItem('showFilters', true);
         filterArrow.style.rotate = '180deg';
     }
-}
+};
 
-function saveFilter() {
+window.saveFilter = function() {
     let filter = getFilters();
 
     let advancedLabels = document.getElementsByClassName('advancedLabel');
@@ -326,9 +333,9 @@ function saveFilter() {
         filter[title] = value; 
     }
     localStorage.setItem('filters', JSON.stringify(filter));
-}
+};
 
-function trackFilter(filterType){
+window.trackFilter = function(filterType){
     let lastUpdate = document.getElementById("lastUpdate");
     lastUpdate.innerHTML = new Date().getTime();
     setTimeout(function(){
@@ -339,7 +346,7 @@ function trackFilter(filterType){
             trackGA('sort-and-filter', filterType + '-filter', label, 0);
         }
     }, 2000);
-}
+};
 
 /**
  FUNCTION TO SORT MULTIDIMENSIONAL ARRAYS
@@ -406,9 +413,9 @@ helper.arr = {
 /**
  GET GRADE TO SHOW BASED ON ClimbID & PREFFERED GRADE
  **/
- function gradeToShow(climb, sys){
+ window.gradeToShow = function(climb, sys){
     let answer = {'converted' : '', 'grade': 'tbc', 'sys' : sys};
-    if ((climb.gradeSys === sys) || (localStorage.getItem('useConverted') != 'true')) {                              // The grade pref matches original grade
+    if ((climb.gradeSys === sys) || (localStorage.getItem('useConverted') != 'true')) {  // The grade pref matches original grade
         answer.grade = '' + climb.originalGrade;
         answer.sys = climb.gradeSys;
         return answer;
@@ -422,23 +429,29 @@ helper.arr = {
         answer.converted = 'Converted ';
         return answer;
     } 
-}
+};
 
 /**
  PUBLISH THE FRONT OF THE CARDS
  **/
-function publishCards(climbsArr) {
+window.publishCards = async function(climbsArr) {
+    const boolToNumber = function (value){
+        value === "true" || value === "1" || value === true || value === 1 ? value = 1 : value = "";
+        return value;
+    }
+    const cardTemplateHTML = document.querySelector("#climb-card-template").innerHTML;
+
+    function fillCardTemplate(cardTemplateHTML, data) {
+        return cardTemplateHTML.replace(/{{(.*?)}}/g, (match, key) => data[key.trim()] ?? '');
+    }
+
     for (let i = 0; i < climbsArr.length; i++) {
         if (climbsArr[i].status === 'publish') {
-            let webPUrl =  climbsArr[i].tileImage.url.replace(".jpg", ".webp");
-            let url = '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/';
-            url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
             let status = "";
             let icon = "heart-empty";
             let saved = 0;
             let unsaved = 1;
             let done = 0
-            let flag = climbsArr[i].country.toLowerCase().replace(' ', '');
             if(localStorage.getItem('wishlist')){
                 try{
                     let wishlist = JSON.parse(localStorage.getItem('wishlist'));
@@ -470,72 +483,52 @@ function publishCards(climbsArr) {
             sys = answer.sys;
             const grade = answer.grade;
             const conv = answer.converted;
-            const boolToNumber = function (value){
-                value === "true" || value === "1" || value === true || value === 1 ? value = 1 : value = "";
-                return value;
-            }
-            var card = `
-    <div data-climb-id="${climbsArr[i].id}" 
-         data-test="climbid-${climbsArr[i].id}"
-         data-grade="${climbsArr[i].dataGrade}" 
-         data-height="${climbsArr[i].length}"
-         data-approach="${climbsArr[i].approachTime}"
-         data-abseil="${boolToNumber(climbsArr[i].abseil)}"
-         data-traverse="${boolToNumber(climbsArr[i].traverse)}"
-         data-loose="${boolToNumber(climbsArr[i].loose)}"
-         data-tidal="${boolToNumber(climbsArr[i].tidal)}"
-         data-seepage="${boolToNumber(climbsArr[i].seepage)}"
-         data-polished="${boolToNumber(climbsArr[i].polished)}"
-         data-draft="${boolToNumber(climbsArr[i].draft)}"
-         data-weatherscore=""
-         data-saved="${saved}"
-         data-unsaved="${unsaved}"
-         data-done="${done}"
-         id="${climbsArr[i].id}" 
-         class="card">
-         <div class="climb-status" id="${climbsArr[i].id}Status" data-climbId="${climbsArr[i].id}" data-status="${status}" onclick="cycleStatus(${climbsArr[i].id})">
-             <i class="icon-${icon}"></i>
-         </div>
-        <a href="${url}" onclick="showTile(${climbsArr[i].id});return false;" id="${climbsArr[i].id}Focus">
-            <picture>
-                <source srcset="/${webPUrl}" type="image/webp">
-                <img src="/${climbsArr[i].tileImage.url}" alt="${climbsArr[i].tileImage.alt}" class="crag-hero" loading="lazy" />
-            </picture>
-        </a>
-        <div class="card-body">
-            <h4>
-            <span class="flag ${flag}"></span>
-                 ${climbsArr[i].cliff}
-            </h4>
-            <p class="card-text">
-                <span class="what">Target Route:</span> ${climbsArr[i].routeName} <br />
-                <span class="what convTxt">${conv}Grade:</span> <span class="gradeTxt">${grade}</span>
-                <small>
-                    (<abbr title="${gradeMappings[sys].title}">${sys}</abbr>)
-                </small> <br />
-                <span class="what">Location:</span> <a href="/map/?loc=${climbsArr[i].geoLocation}">${climbsArr[i].county}</a> <br />
-                <span class="what">Length:</span> ${climbsArr[i].length}m - ${climbsArr[i].pitches} pitches <br />
-                <span class="what">Approach:</span> ${climbsArr[i].approachTime}min - <span class="approach-${climbsArr[i].approachDifficulty}"></span> <br />
-                <span id="toggle-weather-${climbsArr[i].id}" class="toggle-weather-off">
-                    <span class="what">Weather:</span>   
-                    <span id="weather-${climbsArr[i].id}" class="weather"></span>
-                    <span id="temp-${climbsArr[i].id}"></span>
-                </span>
-            </p>
-        </div>
-        <a class="open-tile" href="${url}" onclick="showTile(${climbsArr[i].id});return false;">SHOW MORE INFO</a>
-    </div>`;
-
-            cardHolder.innerHTML += card;
+        
+            const data = {
+                id: climbsArr[i].id,
+                flag: climbsArr[i].country.toLowerCase().replace(' ', ''),
+                cliff: climbsArr[i].cliff,
+                routeName: climbsArr[i].routeName,
+                webPUrl: climbsArr[i].tileImage.url.replace(".jpg", ".webp"),
+                url: '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/'.toLowerCase().replace(/'/g, "").replace(/ /g, "-"),
+                status: status,
+                icon: icon,
+                saved: saved,
+                unsaved: unsaved,
+                done: done,
+                sys: sys,
+                grade: grade,
+                conv: conv,
+                dataGrade: climbsArr[i].dataGrade,
+                length: climbsArr[i].length,
+                pitches: climbsArr[i].pitches,
+                approachTime: climbsArr[i].approachTime,
+                approachDifficulty: climbsArr[i].approachDifficulty,
+                abseil: boolToNumber(climbsArr[i].abseil),
+                traverse: boolToNumber(climbsArr[i].traverse),
+                loose: boolToNumber(climbsArr[i].loose),
+                tidal: boolToNumber(climbsArr[i].tidal),
+                seepage: boolToNumber(climbsArr[i].seepage),
+                polished: boolToNumber(climbsArr[i].polished),
+                draft: boolToNumber(climbsArr[i].draft),
+                tileImageUrl: climbsArr[i].tileImage.url,
+                tileImageAlt: climbsArr[i].tileImage.alt,
+                geoLocation: climbsArr[i].geoLocation,
+                county: climbsArr[i].county
+            };
+                    // Fill the template
+            const cardHTML = fillCardTemplate(cardTemplateHTML, data);
+            cardHolder.innerHTML += cardHTML;
         }
     }
     document.getElementById('loading').style.display = 'none';
-}
+    filterCards();
+};
 
 /**
 CHANGES THE USERS STATUS OF THE CLIMB CARD BETWEEN NONE, WISHED & DONE
 **/
-function cycleStatus(id){
+window.cycleStatus = function(id){
     let statusFlag = document.getElementById(id + 'Status');
     let curentState = statusFlag.dataset.status;
     let wishlist = {};
@@ -559,12 +552,12 @@ function cycleStatus(id){
     }
     trackGA('wishlist', statusFlag.dataset.status, id + ' = ' + statusFlag.dataset.status);
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
-}
+};
 
 /**
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
-function sortCards(sortBy, direction) {
+window.sortCards = function(sortBy, direction) {
     if(sortBy !== 'distance' && sortBy !== 'weatherScore') { // avoid the geo-location call or weather being the default
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
     }
@@ -606,12 +599,12 @@ function sortCards(sortBy, direction) {
             toggleWeather.classList.remove("toggle-weather-off");
         });
     }
-}
+};
 
 /**
  FUNCTION TO ADD DISTANCE FROM USER TO CLIMB TO ALL CLIMBS THEN SORT ASC
  **/
-function locationLoaded(position) {
+window.locationLoaded = function(position) {
     userLat = position.coords.latitude;
     userLon = position.coords.longitude;
     for (let i = 0; i < climbsData.climbs.length; i++) {
@@ -626,16 +619,16 @@ function locationLoaded(position) {
     document.getElementById('loading').style.display = "none";
     sortCards('distance', 'ASC');
 
-}
+};
 
-function locationFailed() {
+window.locationFailed = function() {
     console.log("failed to get location");
-}
+};
 
 /**
  FUNCTION TO GET KM BETWEEN TWO POINTS USING LAT LON
  **/
-function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
+window.calcDistanceBetweenPoints = function(lat1, lon1, lat2, lon2) {
     var R = 6371; // km (change this constant to get miles)
     var dLat = (lat2 - lat1) * Math.PI / 180;
     var dLon = (lon2 - lon1) * Math.PI / 180;
@@ -645,12 +638,12 @@ function calcDistanceBetweenPoints(lat1, lon1, lat2, lon2) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
     return d.toFixed(1); // km to 1 decimal place 
-}
+};
 
 /**
  SHOW FULL CLIMB INFO - IE LOAD THE BACK OF THE CARD
  **/
-function showTile(climbId, popped = false) {
+window.showTile = function(climbId, popped = false) {
     // ToDo: clean this up - its a bit messy because the lastUpdate could be a timestamp or JS date string
     climbId = parseInt(climbId);
     let climb = localStorage.getItem('climb' + climbId) ? JSON.parse(localStorage.getItem('climb' + climbId)) : null;
@@ -678,13 +671,13 @@ function showTile(climbId, popped = false) {
                 deliverChange(climb, popped);
             }
         })
-        .catch(() => {
-            console.log("couldn't load climbsData - likley connection error");
+        .catch((e) => {
+            console.log("couldn't load climbsData - likley connection error:" + e);
         });
     }
-}
+};
 
-function deliverChange(climb, popped){
+window.deliverChange = function(climb, popped){
     let climbData = climb.climbData;
     localStorage.setItem('focusId', climbData.id + 'Focus');
     localStorage.setItem('lastClimb', climbData.id );
@@ -706,12 +699,12 @@ function deliverChange(climb, popped){
     if(climbData.tidal >= 1){
         loadTides(climbData.id);
     }
-}
+};
 
 /**
  OPEN AN OVERLAY
  **/
-function openModal(url, id) {
+window.openModal = function(url, id) {
     localStorage.setItem('focusId', id)
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
@@ -737,12 +730,12 @@ function openModal(url, id) {
     request.send();
     const name = url.replace('/','');
     trackGA(name, 'Open', id);
-}
+};
 
 /**
  CLOSE THE OVERLAY OR GO BACK TO HOMEPAGE
  **/
-function hideTile() {
+window.hideTile = function() {
     document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
@@ -752,7 +745,8 @@ function hideTile() {
             localStorage.removeItem('focusId');
         }
     }
-}
+};
+
 function isScriptLoaded(url) {
     var scripts = document.getElementsByTagName('script');
     for (let i = 0; i < scripts.length; i++) {
@@ -762,7 +756,8 @@ function isScriptLoaded(url) {
     }
     return false;
 }
-function topoInteraction(climbId, name, cliff){
+
+window.topoInteraction = function(climbId, name, cliff){
     if(topoData === null){
         // landing direct and no local data
         toggleTopo();
@@ -778,11 +773,11 @@ function topoInteraction(climbId, name, cliff){
         }
     }
     trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
-}
+};
 /**
  LOAD TOPO DATA JS OBJECT
  **/
-function tryLoadTopo(climbId, enviroment = '') {
+window.tryLoadTopo = function (climbId, enviroment = '') {
     enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
     topoData = (localStorage.getItem('climb' + climbId)) ? JSON.parse(localStorage.getItem('climb' + climbId)).topoData : null ;
     if (topoData === null) {
@@ -820,7 +815,7 @@ var dashSpace = [32, 8, 5, 8];
 var dotted = [5, 10]
 var belayScale = 1; // used to scale the line and labels inline with belay size
 
-function initTopo() {
+window.initTopo = function() {
     img = new Image(); 
     flag = new Image();
     logo = new Image();
@@ -833,12 +828,12 @@ function initTopo() {
     }
 }
 
-function toggleTopo() {
+window.toggleTopo = function() {
     document.getElementById("staticTopo").style.display = "none";
     document.getElementById("canvas").style.display = "block";
 }
 
-function updateScale() {
+window.updateScale = function() {
     let vh90 = window.innerHeight * 0.9;
     let topoHolder = document.getElementById("topoHolder");
     let scaleVsVh, scaleVsHolder;
@@ -856,7 +851,7 @@ function updateScale() {
 }
 
 // Draws the topo on the canvas based on the current data
-function draw() {
+window.draw = function() {
     updateScale();
     /** DEFINE THE DERIVED DRAWING VARIABLES */
     let infoBox = document.getElementById('c1').checked;
@@ -966,7 +961,7 @@ function draw() {
 }
 
 // A set of helper functions 
-function drawBelay(context, x, y, line, fill, size = belaySize ) {
+window.drawBelay = function(context, x, y, line, fill, size = belaySize ) {
     if (x > 0 && y > 0) {
         context.strokeStyle = line;
         context.setLineDash([]);
@@ -980,7 +975,7 @@ function drawBelay(context, x, y, line, fill, size = belaySize ) {
     }
 }
 
-function annotate(context, msg, x, y, color) {
+window.annotate = function(context, msg, x, y, color) {
     context.font = "bold " + (fontsize * 0.8) + "px sans-serif";
     context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     context.lineWidth = sThis(10);
@@ -989,7 +984,7 @@ function annotate(context, msg, x, y, color) {
     context.fillText(msg, x, y);
 }
 
-function drawLine(context, arrayOfxy, dashed, arrowEnd, color) {
+window.drawLine = function(context, arrayOfxy, dashed, arrowEnd, color) {
     context.beginPath();
     context.moveTo(sThis(arrayOfxy[0][0]), sThis(arrayOfxy[0][1]));
     for (var i = 0; i < arrayOfxy.length - 2; i++) {
@@ -1012,7 +1007,7 @@ function drawLine(context, arrayOfxy, dashed, arrowEnd, color) {
     }
 }
 
-function drawArrowhead(context, from, to, radius, color) {
+window.drawArrowhead = function(context, from, to, radius, color) {
     context.beginPath();
     var angle = Math.atan2(to[1] - from[1], to[0] - from[0])
     var x = radius * Math.cos(angle) + to[0];
@@ -1034,7 +1029,7 @@ function drawArrowhead(context, from, to, radius, color) {
     context.fill();
 }
 
-function sThis(number) {
+window.sThis = function(number) {
     return number * scale;
 }
 /**
@@ -1076,63 +1071,55 @@ function LoadAnalytics(){
 /**
  * LOAD TIDE INFO
  **/
-const loadTides = async (id) => {
-    let tideUrl = 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-tides.json';
-    let response = await fetch(tideUrl,{
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
-        redirect: "follow", // manual, *follow, error
-    });
-    tideData = await response.json();
-    let thisTideData = tideData.find(tide => tide.climbId === parseInt(id));
-    let cleanArray = [];
-    let max = 0;
-    let min = 0;
-    for(let i = 0; i < thisTideData.heights.length; i++){
-        cleanArray.push(thisTideData.heights[i]);
-        max = (thisTideData.heights[i].height > max) ? thisTideData.heights[i].height : max;
-        min = (thisTideData.heights[i].height < min) ? thisTideData.heights[i].height : min;
+window.loadTides = function (climbId) {
+    if(climbId === undefined || climbId === null) {
+        climbId = parseInt(document.getElementById('climbIdMeta').content);
     }
-    let base = (min < 0) ? Math.abs(min) : min;
-    let diff = max - min;
-    let multiplier = 70 / diff;
-  
-    cleanArray.sort(function(a, b){
-        return a.timestamp - b.timestamp;
-    });
-    
-    let html = ' <p class="chart-title">Hourly Tide Heights</p><ul class="chart" style="margin-bottom:2em;max-width:100%;width:100%">';
-    for(let i = 0; i < cleanArray.length; i++){
-        let height = (base * multiplier) + (cleanArray[i].height * multiplier) + 15; // makes the smallest bar 15% and largest 85%
-        let color = (new Date().getHours() === new Date(cleanArray[i].timestamp * 1000).getHours()) ? 'background-color:rgba(53, 135, 216, 0.87);font-weight:600;' : '';
-        html += `
-                <li>
-                   <span class="tide" style="height:${height.toFixed(1)}%;writing-mode: vertical-rl;text-orientation: mixed;${color}" title="${new Date(cleanArray[i].timestamp * 1000).getHours()}:00">
-                        ${cleanArray[i].height.toFixed(1)}m
-                    </span>
-                </li>`;
+    if (document.getElementById('tideHolder')) {
+        import("./modules/loadTide.js").then(module => {
+            if (!window.tideData) {
+                module.loadTides(climbId).then(tideData =>{
+                    let localTide = module.fullTideDataForOneClimb(tideData, climbId);
+                    module.updateSpecificClimbTideInfo(localTide);
+                }).
+                catch((e) => {
+                    console.log("Can't load tide data. " + e);
+                });
+            } else {
+                let localTide = module.fullTideDataForOneClimb(tideData, climbId);
+                module.updateSpecificClimbTideInfo(localTide);
+            }
+        })
     }
-    html += '</ul><style>.chart .tide::before{padding: 1em 2em;}</style>';
-    document.getElementById('tideHolder').innerHTML = html;
-}
+};
 
 /**
  LOADS FULL WEATHER ON BACK OF CARD
  **/
-function loadCurrentWeatherModule(){
-
-    if (isScriptLoaded("/js/card-module-loader.js") === false) {
-        loadNonEssential("script", "/js/card-module-loader.js", true);
+window.loadCurrentWeatherModule = function(){
+    const climbId = document.querySelector('meta[name="climbId"]')?.content;
+    const timeZone = JSON.parse(localStorage.getItem('climb' + climbId)).climbData.timeZone;
+    if (window.weatherData) {
+        if(weatherUpToDateCheck(window.weatherData)){
+            let localWeather = fullWeatherForOneClimb(window.weatherData, climbId);
+            updateSpecificClimbCurrentWeather(localWeather, timeZone);
+        }
     } else {
-        loadCurrentWeather(); 
+        loadWeather().then(response => {
+            if(weatherUpToDateCheck(response)){
+                let localWeather = fullWeatherForOneClimb(response, climbId);
+                updateSpecificClimbCurrentWeather(localWeather, timeZone);
+            }; 
+        }).catch(error => {
+            console.error("Error loading weather data:", error);   
+        });
     }
 }
+
 /**
  ALLOWS USER TO NAVIGATE THE WEATHER PER DAY
  **/
-function weatherBars(direction) {
+window.weatherBars = function(direction) {
     let state = parseInt(document.getElementById('currentRain').dataset.state);
     state = (direction === 'forward') ? parseInt(state + 1) : parseInt(state -1);
     document.getElementById('currentRain').dataset.state = state;
@@ -1156,10 +1143,11 @@ function weatherBars(direction) {
     state <= 3 ? toggle('backChev', true) : toggle('backChev', false);
     state >= 7 ? toggle('forwardChev', true) : toggle('forwardChev', false);
 }
+
 /**
  UPDATE TOTAL COUNTS
  **/
-function updateTotalCount(){
+window.updateTotalCount = function(){
     let showing = 0;
     document.querySelectorAll('.card').forEach(card => {
         if(card.style.display != 'none'){
@@ -1168,7 +1156,7 @@ function updateTotalCount(){
     });
     document.getElementById('total').innerHTML = document.querySelectorAll('.card').length;
     document.getElementById('showing').innerHTML = showing;
-}
+};
 
 /**
  * EXECUTE THE FILTER FUCTION BASED ON LOCAL STORAGE
@@ -1190,7 +1178,7 @@ function execFilter(){
     updateTotalCount();
 }
 
-function clearFilters(){    
+window.clearFilters = function(){    
     try {
         localStorage.removeItem('filters');
     } catch (e){
@@ -1247,7 +1235,7 @@ window.onpopstate = function (event) {
 /**
  NAV HIGHLIGHT FOR CURRENT PAGE
  **/
-function highlightNavLocation(){
+window.highlightNavLocation = function(){
     const navLinks = document.querySelectorAll('nav li a');
     navLinks.forEach(a => {
         if(a.getAttribute('href') === location.pathname){
@@ -1279,7 +1267,6 @@ function init () {
         if(localStorage.getItem('filters')){
             execFilter();
         }
-    //    loadWeather();
         window.performance.mark('all-climbs-loaded');
     }
     if (geoLocationSupport === true && hp === true) {
@@ -1298,24 +1285,35 @@ window.addEventListener('load', (event) => {
     var hp = document.getElementById('cardHolder') ? true : false;
     // Load HP only JS
     if (hp === true){
-        loadNonEssential("script", "/js/hp-module-loader.js", true);
+        if (window.weatherData) {
+            if(weatherUpToDateCheck(window.weatherData)){
+                // the loaded weather data is up to date, so we can use it
+                updateWeatherOnHP(response);
+                generateWeatherScore(response);
+            }
+        } else {
+            loadWeather().then(response => {
+                if(weatherUpToDateCheck(response)){
+                    updateWeatherOnHP(response);
+                    generateWeatherScore(response);
+                };
+            });
+        }
+        import("./modules/rangeSliders.js");
     }
     
     loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css");
-    if (document.location.href.includes('/climbs/') === true || hp === true) {
-        if(document.getElementById('tideHolder')){
-            loadTides(parseInt(document.getElementById('climbIdMeta').content)).catch((e) => {
-                console.log("Can't load tide data. " + e)
-            })
-        }
+
+    if(document.getElementById('tideHolder')){
+        loadTides();
     }
+
     if (document.location.href.includes('/climbs/') === true) {
         loadCurrentWeatherModule()
     }
     if (document.location.href.includes('god-mode') === true && hp === false) {
-        loadNonEssential("script", "/components/climbCard.js", false);
-        loadNonEssential("script", "/js/cms-mode.js", true);
+        loadNonEssential("script", "/js/cms-mode.js", true); // To Do make import
         loadNonEssential("link", "/css/cms-styles.css")
     }
     if (document.location.href.includes('god-mode') === true && hp === true) {

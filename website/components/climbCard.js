@@ -210,10 +210,10 @@ function getWeather(climb) {
             and cloud cover of <strong id="cloud_cover"></strong>%.<br />
             <span id="sunMovement">
                 <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between 
-                <strong id="sunrise"></strong> & <strong id="sunset"></strong> <small>based on your current time</small>.
+                <strong id="sunrise"></strong> & <strong id="sunset"></strong>.
             </span>
           </p>
-          ${tideInfoBox}
+          
           <p class="chart-title">
             Daily Precipitation
           </p>
@@ -231,10 +231,9 @@ function getWeather(climb) {
             <li id="offsetPlus5" class="bar8" style="display:none;"><span style="height:0%;" title="+5 days"></span></li>
             <li id="offsetPlus6" class="bar9" style="display:none;"><span style="height:0%;" title="+6 days"></span></li>
             <li id="offsetPlus7" class="bar10" style="display:none;"><span style="height:0%;" title="+7 days"></span></li>
-          </ul>
-          
-          
+          </ul>        
           <p class="credit" style="margin-top:15px;">Using open weather API</p>
+          ${tideInfoBox}
         </div>
         <div class="col-12" id="seasonalWeather">
           <h4 tabindex="0">Seasonal Weather Information</h4>
@@ -263,10 +262,12 @@ function getWeather(climb) {
 
 }
 
-function getRouteTopo(climb, topoData) {
+export function getRouteTopo(climb, topoData) {
     var routeTopo = '';
     if(climb.topo.dataFile > 1){
-        let belayDisabled = altDisabled = deceDisabled = "disabled";
+        let belayDisabled = "disabled";
+        let altDisabled = "disabled";
+        let deceDisabled = "disabled";
         try{
             belayDisabled = topoData.pitches.length >= 1 ? "checked" : "disabled";
         } catch (e) { }
@@ -447,7 +448,7 @@ function getOtherClimbs(climbGeo){
         let allClimbsData = JSON.parse(localStorage.getItem('climbsData'));
         let nearbyClimbs = [];
         for (let i = 0; i < allClimbsData.climbs.length; i++) {
-            let compClimb = climbsData.climbs[i]; //comparison climb
+            let compClimb = allClimbsData.climbs[i]; //comparison climb
             if(compClimb.status === "publish") { // ensures unpublished climbs are not processed
                 let distance = calcDistanceBetweenPoints(compClimb.geoLocation.split(',')[0], compClimb.geoLocation.split(',')[1], climbGeo.split(',')[0], climbGeo.split(',')[1]);
                 if((distance <= 40) && (distance != 0)){
@@ -526,7 +527,7 @@ function returnClimbURL(route, cliff){
 
     
 
-function climbCard(climbData, nearbyClimbsServerSide) {
+export function climbCard(climbData, nearbyClimbsServerSide) {
     let climb = climbData.climbData;
     let topoData = climbData.topoData;
 

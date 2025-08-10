@@ -22,8 +22,7 @@
     <link href="css/style.css?Jan=2025" rel="stylesheet" />
 
     <!-- JavaScripts -->
-    <script async src="components/climbCard.js?Jan=2025"></script>
-    <script async src="js/main.js?Jan=2025"></script>
+    <script async src="js/main.js?Jul=2025" type="module"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
@@ -313,6 +312,58 @@
                             <a class="primary-link" href="#filters" onclick="clearFilters();return false;" >Clear All Filters</a>
                         </p>
                     </div>
+                    <template id="climb-card-template">
+                        <div data-climb-id="{{id}}"
+                            data-test="climbid-{{id}}"
+                            data-grade="{{dataGrade}}"
+                            data-height="{{length}}"
+                            data-approach="{{approachTime}}"
+                            data-abseil="{{abseil}}"
+                            data-traverse="{{traverse}}"
+                            data-loose="{{loose}}"
+                            data-tidal="{{tidal}}"
+                            data-seepage="{{seepage}}"
+                            data-polished="{{polished}}"
+                            data-draft="{{draft}}"
+                            data-weatherscore="0"
+                            data-saved="{{saved}}"
+                            data-unsaved="{{unsaved}}"
+                            data-done="{{done}}"
+                            id="{{id}}"
+                            class="card">
+                            <div class="climb-status" id="{{id}}Status" data-climbId="{{id}}" data-status="{{status}}" onclick="cycleStatus('{{id}}')">
+                            <i class="icon-{{icon}}"></i>
+                            </div>
+                            <a href="{{url}}" onclick="showTile('{{id}}');return false;" id="{{id}}Focus">
+                            <picture>
+                                <source srcset="/{{webPUrl}}" type="image/webp">
+                                <img src="/{{tileImageUrl}}" alt="{{tileImageAlt}}" class="crag-hero" loading="lazy" />
+                            </picture>
+                            </a>
+                            <div class="card-body">
+                            <h4>
+                                <span class="flag {{flag}}"></span>
+                                {{cliff}}
+                            </h4>
+                            <p class="card-text">
+                                <span class="what">Target Route:</span> {{routeName}} <br />
+                                <span class="what convTxt">{{conv}}Grade:</span> <span class="gradeTxt">{{grade}}</span>
+                                <small>
+                                (<abbr title="{{gradeTitle}}">{{sys}}</abbr>)
+                                </small> <br />
+                                <span class="what">Location:</span> <a href="/map/?loc={{geoLocation}}">{{county}}</a> <br />
+                                <span class="what">Length:</span> {{length}}m - {{pitches}} pitches <br />
+                                <span class="what">Approach:</span> {{approachTime}}min - <span class="approach-{{approachDifficulty}}"></span> <br />
+                                <span id="toggle-weather-{{id}}" class="toggle-weather-off">
+                                <span class="what">Weather:</span>
+                                <span id="weather-{{id}}" class="weather"></span>
+                                <span id="temp-{{id}}"></span>
+                                </span>
+                            </p>
+                            </div>
+                            <a class="open-tile" href="{{url}}" onclick="showTile('{{id}}');return false;">SHOW MORE INFO</a>
+                        </div>
+                    </template>
                 </div>
             </section>
         </div>
