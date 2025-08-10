@@ -262,7 +262,7 @@ function getWeather(climb) {
 
 }
 
-export function getRouteTopo(climb, topoData) {
+function getRouteTopo(climb, topoData) {
     var routeTopo = '';
     if(climb.topo.dataFile > 1){
         let belayDisabled = "disabled";
@@ -527,7 +527,7 @@ function returnClimbURL(route, cliff){
 
     
 
-export function climbCard(climbData, nearbyClimbsServerSide) {
+function climbCard(climbData, nearbyClimbsServerSide) {
     let climb = climbData.climbData;
     let topoData = climbData.topoData;
 
@@ -691,4 +691,5 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = {
         climbCard
     };
-}
+} 
+export { climbCard, getRouteTopo };
