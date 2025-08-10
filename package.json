@@ -12,7 +12,7 @@
     "generate-climbs": "node generateCardClimb.js",
     "generate-sitemap": "node generateSiteMap.js",
     "generate-all": "npm run generate-climbs && npm run generate-sitemap",
-    "start": "node server.js",
+    "start": "npx serve ./website -l 9000",
     "cy:run": "cypress run --headless",
     "test": "start-server-and-test start http://localhost:9000 cy:run",
     "deploy-test": "aws s3 sync website s3://multi-pitch-test.co.uk --delete"
@@ -39,6 +39,7 @@
     "cypress": "^14.5.4",
     "eslint": "^7.5.0",
     "mocha": "^11.7.1",
+    "serve": "^14.2.4",
     "start-server-and-test": "^2.0.13",
     "webp-converter": "^2.2.3"
   }
