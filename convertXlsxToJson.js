@@ -1,6 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const readXlsxFile = require('read-excel-file/node');
+import fs from 'fs';
+import path from 'path';
+import readXlsxFile from 'read-excel-file/node';
+import { fileURLToPath } from 'url';
+
+// ES6 replacement for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //This file can come from where ever.
 const EXCEL_PATH = './working-files/multi-pitch-data.xlsx';
@@ -14,7 +19,6 @@ const REFERANCES = 4;
 const GEOLOGY = 5;
 const WEATHER = 6;
 const TO_DO_SCORE_CARD = 7;
-
 
 const translationsKeys = [{
     fileName: OUTPUT_FILE,
@@ -35,14 +39,13 @@ const translationsKeys = [{
     fileName: OUTPUT_FILE,
     constName: "referances",
     objEntryPoint: "referanceLines",
-        sheetNuber: REFERANCES
+    sheetNuber: REFERANCES
 }, {
     fileName: OUTPUT_FILE,
     constName: "weatherData",
     objEntryPoint: "weatherLines",
     sheetNuber: WEATHER
 }];
-
 
 async function readExcelAndTranformInJavascript(excelFile, sheetNo) {
     var sheetOb = { sheet : sheetNo }
@@ -80,8 +83,8 @@ async function createFileFromTranslation(translation, result, outputFolder) {
             else resolve(data);
         })
     })
-
 }
+
 function appendTestAndBuildString() {
     const stringForMochaTests = `
     //So then I can use this in my mocha tests: 
@@ -106,7 +109,6 @@ if (dataFileExists === true) {
         console.log('old' + OUTPUT_FILE + ' removed. ');
     });
 }
-
 
 // creates or appends json to data file for each sheet
 Promise.all(translationsKeys.map(translation =>

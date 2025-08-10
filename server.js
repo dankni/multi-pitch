@@ -1,16 +1,21 @@
+import { createServer } from 'http';
+import { Server as StaticServer } from 'node-static';
+
 const port = 9000;
-const static = require('node-static');
-const http = require('http');
-const file = new static.Server('./website');
+const file = new StaticServer('./website');
 
 let server;
 
-
 function start() {
     return new Promise((resolve, reject) => {
-        server = http.createServer(function (request, response) {
+        server = createServer(function (request, response) {
             request.addListener('end', function () {
-                file.serve(request, response);
+                file.serve(request, response, function(err) {
+                    if (err) {
+                        response.writeHead(err.status, err.headers);
+                        response.end(err.message);
+                    }
+                });
             }).resume();
         });
         server.listen(port);
@@ -24,9 +29,9 @@ function stop() {
     });
 }
 
-var promiseStart = start();
+const promiseStart = start();
 
-module.exports = {
+export {
     promiseStart,
     stop
 };

@@ -5,7 +5,7 @@ window.performance.mark('start-js-read');
  IMPORTS
  **/
 import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather } from "./modules/getWeather.js";
-import { climbCard, getRouteTopo } from "/components/climbCard.mjs";
+import { climbCard, getRouteTopo } from "/components/climbCard.js";
 
 /**
  GLOBAL VARIABLES
@@ -121,7 +121,7 @@ window.trackGA = function(category, action, label, value = 0) {
  **/
 window.showVal = function(field) {
 
-    let gradePreference = 'BAS'; //default
+    window.gradePreference = 'BAS'; //default and global
 
     let val1 = parseInt(document.getElementById(field + 'Range1').value);
     let val2 = parseInt(document.getElementById(field + 'Range2').value);
