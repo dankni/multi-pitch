@@ -686,10 +686,11 @@ function climbCard(climbData, nearbyClimbsServerSide) {
     return fullCard;
 }
 
-//So then I can use this in nodejs and in the browser
+/*/So then I can use this in nodejs and in the browser
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = {
         climbCard
     };
-} 
+}*/
+
 export { climbCard, getRouteTopo };
