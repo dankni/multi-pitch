@@ -1,9 +1,13 @@
 {
   "name": "multi-pitch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A site dedicated to multi-pitch rock climbing",
   "main": "generateCardClimb.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "engineStrict": true,
   "scripts": {
     "generate-climbs": "node generateCardClimb.js",
     "generate-sitemap": "node generateSiteMap.js",
@@ -27,15 +31,15 @@
     "cwebp": "^2.0.5",
     "express": "^4.17.1",
     "node-static": "^0.7.11",
-    "read-excel-file": "^2.0.10",
+    "read-excel-file": "^5.8.8",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "cypress": "^4.11.0",
+    "cypress": "^14.5.4",
     "eslint": "^7.5.0",
-    "mocha": "^8.0.1",
-    "start-server-and-test": "^1.11.2",
+    "mocha": "^11.7.1",
+    "start-server-and-test": "^2.0.13",
     "webp-converter": "^2.2.3"
   }
 }
