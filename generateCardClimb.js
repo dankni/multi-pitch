@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-
 // given a climb id it will generate the html to display it
 const OUTPUT_FOLDER = './website/climbs';
-const climbCard = require('./website/components/climbCard').climbCard;
+const climbCard = require('./website/components/climbCard.mjs').climbCard;
 const allData = require('./website/data/data.json');
 var climbsData = allData;
 climbsData = climbsData.climbs.filter(climb => climb.status === 'publish');
@@ -108,7 +107,6 @@ function generate() {
     Promise.all(promises)
         .then(_ => console.log("All good man :)) file saved in here: " + OUTPUT_FOLDER))
         .catch(err => console.error(`Some shit happen.... ${err}`));
-
 }
 
 generate();
