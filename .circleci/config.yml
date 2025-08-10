@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cypress/base:18
+      - image: cypress/base:22.18.0
     working_directory: /tmp/multipitch
     steps:
       - checkout
