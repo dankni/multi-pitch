@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { climbCard } from './website/components/climbCard.js';
+import { returnClimbURL } from "./website/js/modules/convertNameToURL.js";
 
 // Path helpers for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -42,16 +43,6 @@ function getOtherClimbs(climbGeo) {
         }
     }
     return nearbyClimbs;
-}
-
-function returnClimbURL(route, cliff) {
-    let folderName = `${route.trim()}-on-${cliff.trim()}`
-        .toLowerCase()
-        .replace(/'/g, "")
-        .replace(/\//g, "")
-        .replace(/ /g, "-");
-    folderName += '/';
-    return folderName;
 }
 
 function generate() {

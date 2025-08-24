@@ -1,3 +1,5 @@
+import { returnClimbURL } from "../js/modules/convertNameToURL.js";
+
 function getGuidebook(climb) {
     guideBookModule = '';
     if(climb.guideBooks.length >= 1){
@@ -514,18 +516,6 @@ function outputNearbyClimbs(nearbyClimbs){
         </div>`;
         return html;
 }
-
-function returnClimbURL(route, cliff){
-    let folderName = "".concat(route.trim(), '-on-', cliff.trim())
-            .toLowerCase()
-            .replace(/'/g, "")
-            .replace(/\//g, "")
-            .replace(/ /g, "-");
-        folderName = folderName + '/';
-    return folderName;
-}
-
-    
 
 function climbCard(climbData, nearbyClimbsServerSide) {
     let climb = climbData.climbData;

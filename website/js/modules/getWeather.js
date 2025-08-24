@@ -1,3 +1,5 @@
+import { convertTime } from "/js/modules/convertTime.js";
+
 export const loadWeather =  async() => {
     const weatherUrl = 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-weather.json';
     try {
@@ -22,7 +24,7 @@ export function fullWeatherForOneClimb(weatherData, climbIdToFind){
     return climbWeather;
 }
 
-export function updateSpecificClimbCurrentWeather(climbWeather, timeZone) {
+export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
     
     document.getElementById("currentWeather").style.display = "block";
     document.getElementById("seasonalWeather").classList.add("col-lg-6");
@@ -31,13 +33,11 @@ export function updateSpecificClimbCurrentWeather(climbWeather, timeZone) {
     document.getElementById("weatheName").innerText = climbWeather.currently.icon.replace(/-/g, " ");
     document.getElementById("highT").innerText = climbWeather.currently.temperatureHigh.toFixed(1);
     document.getElementById("lowT").innerText = climbWeather.currently.temperatureMin.toFixed(1);
+    const options = {timeZone : climbTimeZone, hour: '2-digit', minute: '2-digit', hour12: false};
     
     if(climbWeather.currently.sunriseTime){
-        const sunrise = new Date(climbWeather.currently.sunriseTime * 1000);
-        const sunset = new Date(climbWeather.currently.sunsetTime * 1000);
-        const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: timeZone || 'UTC' }; 
-        document.getElementById("sunrise").innerText = new Intl.DateTimeFormat(navigator.language, timeOptions).format(sunrise);
-        document.getElementById("sunset").innerText = new Intl.DateTimeFormat(navigator.language, timeOptions).format(sunset);
+        document.getElementById("sunrise").innerText = convertTime(climbWeather.currently.sunriseTime, options);
+        document.getElementById("sunset").innerText = convertTime(climbWeather.currently.sunsetTime, options);
         document.getElementById('light_hours').innerText = (((climbWeather.currently.sunsetTime - climbWeather.currently.sunriseTime)/60)/60).toFixed(1);
     } else {
         // The sun doesn't always rise and set everyday in all locations (eg North Norway)

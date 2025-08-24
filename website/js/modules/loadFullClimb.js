@@ -1,3 +1,5 @@
+import { returnClimbURL } from "/js/modules/convertNameToURL.js";
+
 export function isClimbInLocalStorage(climbId) {
 
     climbId = parseInt(climbId);
@@ -28,8 +30,7 @@ export function loadClimb(climbId, popped){
     localStorage.setItem('focusId', climbData.id + 'Focus');
     localStorage.setItem('lastClimb', climbData.id );
      
-    let url = '/climbs/' + climbData.routeName.trim() + '-on-' + climbData.cliff.trim() + '/';
-    url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+    let url = '/climbs/' + returnClimbURL(climbData.routeName, climbData.cliff);
     if(popped === false) {
         window.history.pushState({"page": url}, climbData.cliff, url);
     }

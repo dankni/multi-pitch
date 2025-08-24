@@ -10,6 +10,10 @@ The site aims to be a useful resource for Traditional climbers focused on multi-
 ## Site Status
 When the site reaches 100 climbs it will be of comparable size to dedicated guidebooks. This point I will consider the first phase (v1.0.0) to be completed and will start the work of promoting the site on forums and through other means. For now, it’s essentially in beta. 
 
+## Run the project
+* Start the server `npm start`
+* Run the tests `npm run test`
+
 ## Content Rules
 ### Descriptions
 * Avoid I or We, instead use “the climber”

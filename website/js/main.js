@@ -6,6 +6,7 @@ window.performance.mark('start-js-read');
  **/
 import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather } from "./modules/getWeather.js";
 import { climbCard, getRouteTopo } from "/components/climbCard.js";
+import { returnClimbURL } from "./modules/convertNameToURL.js";
 
 /**
  GLOBAL VARIABLES
@@ -490,7 +491,7 @@ window.publishCards = async function(climbsArr) {
                 cliff: climbsArr[i].cliff,
                 routeName: climbsArr[i].routeName,
                 webPUrl: climbsArr[i].tileImage.url.replace(".jpg", ".webp"),
-                url: '/climbs/' + climbsArr[i].routeName + '-on-' + climbsArr[i].cliff + '/'.toLowerCase().replace(/'/g, "").replace(/ /g, "-"),
+                url: '/climbs/' + returnClimbURL(climbsArr[i].routeName, climbsArr[i].cliff),
                 status: status,
                 icon: icon,
                 saved: saved,
@@ -682,8 +683,7 @@ window.deliverChange = function(climb, popped){
     localStorage.setItem('focusId', climbData.id + 'Focus');
     localStorage.setItem('lastClimb', climbData.id );
      
-    var url = '/climbs/' + climbData.routeName.trim() + '-on-' + climbData.cliff.trim() + '/';
-    url = url.toLowerCase().replace(/'/g, "").replace(/ /g, "-");
+    var url = '/climbs/' + returnClimbURL(climbData.routeName, climbData.cliff);
     if(popped === false) {
         window.history.pushState({"page": url}, climbData.cliff, url);
     }
@@ -1080,14 +1080,16 @@ window.loadTides = function (climbId) {
             if (!window.tideData) {
                 module.loadTides(climbId).then(tideData =>{
                     let localTide = module.fullTideDataForOneClimb(tideData, climbId);
-                    module.updateSpecificClimbTideInfo(localTide);
+                    let timeZone = JSON.parse(localStorage.getItem('climb' + climbId)).climbData.timeZone;
+                    module.updateSpecificClimbTideInfo(localTide, timeZone);
                 }).
                 catch((e) => {
                     console.log("Can't load tide data. " + e);
                 });
             } else {
                 let localTide = module.fullTideDataForOneClimb(tideData, climbId);
-                module.updateSpecificClimbTideInfo(localTide);
+                let timeZone = JSON.parse(localStorage.getItem('climb' + climbId)).climbData.timeZone;
+                module.updateSpecificClimbTideInfo(localTide, timeZone);
             }
         })
     }

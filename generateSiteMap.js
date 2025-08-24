@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { returnClimbURL } from "./website/js/modules/convertNameToURL.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,11 +17,7 @@ const climbsData = allData.climbs.filter(climb => climb.status === 'publish');
 
 function generate() {
     const urlsEntry = climbsData.map(climb => {
-        const loc = "https://www.multi-pitch.com/climbs/"
-            .concat(climb.routeName.trim(), '-on-', climb.cliff.trim() + '/')
-            .toLowerCase()
-            .replace(/'/g, "")
-            .replace(/ /g, "-");
+        const loc = "https://www.multi-pitch.com/climbs/" + returnClimbURL(climb.routeName, climb.cliff);
         let lastmod;
         if (climb.lastUpdate !== null) {
             lastmod = climb.lastUpdate.substring(0, 10);
