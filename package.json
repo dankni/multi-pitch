@@ -38,7 +38,7 @@
     "cypress": "^14.5.4",
     "eslint": "^7.5.0",
     "mocha": "^11.7.1",
-    "serve": "^14.2.4",
+    "serve": "^14.2.5",
     "webp-converter": "^2.2.3"
   }
 }
