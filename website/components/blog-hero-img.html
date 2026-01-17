@@ -1,0 +1,19 @@
+<div class="view full-page-intro" id="hero">
+    <picture class="blog-picture">
+        <source media="(max-width: 600px)" type="image/webp" srcset="{{heroImg}}-phone.webp 1x, 
+                    {{heroImg}}-phone-high-res.webp 2x">
+        <source media="(max-width: 1200px)" type="image/webp" srcset="{{heroImg}}-1200.webp,
+                    {{heroImg}}-2400.webp 2x">
+        <source media="(max-width: 1800px)" type="image/webp" srcset="{{heroImg}}-1800.webp,
+                    {{heroImg}}-2400.webp 2x">
+        <source media="(max-width: 2400px)" type="image/webp" srcset="{{heroImg}}-2400.webp,
+                    {{heroImg}}.webp 2x">
+        <source media="(min-width: 2400px)" type="image/webp"
+            srcset="{{heroImg}}.webp">
+        <img src="{{heroImg}}.jpg" class="hero"
+            alt="{{heroAlt}}" />
+    </picture>
+    <p class="blog-caption">
+        {{heroCaption}}
+    </p>
+</div>

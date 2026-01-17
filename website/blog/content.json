@@ -1,0 +1,45 @@
+{
+"articles" : [
+    {
+        "publish" : true,
+        "created" : "14th Sep 2025",
+        "lastUpdated" : "2025-09-14T01:01:42.339Z",
+        "author" : "Dan Knight",
+        "title" : "8 training routines to boost climbing performance",
+        "metaDescription"  : "8 training routines ranging from 10 mins to 3 hours that can help push into new grades and improve endurance for long routes.",
+        "summary"  : "8 different training routines, ranging from 10 minutes to 3 hours, that can help a climber push into new grades and improve endurance for long multi-pitch routes. This post covers the pros and cons of each as well as helpful tools to support tracking and completing them.",
+        "heroImg" :  "/img/blog/training/climbers-hands-on-a-fingerboard",
+        "heroAlt" : "Fingers hanging from a beastmaker fingerboard.",
+        "heroCaption" : "Michel warming down with his favorite 10 min fingerboard routine, the 'no-hang'.",
+        "url" : "/blog/8-training-routines-to-boost-climbing-performance/",
+        "readingTime" : "15 min read"
+    },
+    {
+        "publish" : false,
+        "created" : "11th Jan 2016",
+        "lastUpdated" : "2025-09-14T01:01:42.339Z",
+        "author" : "Dan Knight",
+        "title" : "Trad Climbing Protection Ranked 2026",
+        "metaDescription"  :"A review and ranked teir list of climbing protection I rely on most for traditional multipitch climbing.",
+        "summary"  : "Understanding and selecting the optimum equipment is a key part to success in traditional multi-pitch climbing. Understanding the different types of climbing gear available, and their respective strengths and weaknesses can make a huge difference to both the safety and chance of success on a route.",
+        "heroImg" :  "/img/blog/trad-gear/a-trad-climbing-rack-on-gower-sea-cliffs",
+        "heroAlt" : "Part of a trad climbing rack",
+        "heroCaption" : "Photo: Part of a trad climbing rack on <a  href=\"/climbs/east-ridge-on-great-tor/\">Gower sea cliffs.</a>",
+        "url" : "/blog/trad-climbing-gear-teir-list-2025/",
+        "readingTime" : "12 min read"
+    },
+    {
+        "publish" : true,
+        "created" : "14th Sep 2025",
+        "lastUpdated" : "2025-09-14T01:01:42.339Z",
+        "author" : "Dan Knight",
+        "title" : "Multi-Pitch Climbing Blog | Gear, Techniques & Training",
+        "metaDescription"  : "A blog to champion the virtues of the traditional climbing ethic. Written by un-remarkable climber talking about multi-pitch gear, techniques, training and training.",
+        "heroImg" :  "/img/blog/morocco-trad-climbing",
+        "heroAlt" : "Danny Wing leading the second pitch of a granite climb in Morocco near Tafraoute.",
+        "heroCaption" : "Photo: Danny Wing leading the second pitch of a <a href=\"/climbs/high-sierra-on-high-sierra-dome/\">granite climb in Morocco near Tafraoute</a>.",
+        "url" : "/blog/"
+    }
+]
+}
+

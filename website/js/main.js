@@ -704,30 +704,26 @@ window.deliverChange = function(climb, popped){
 /**
  OPEN AN OVERLAY
  **/
-window.openModal = function(url, id) {
-    localStorage.setItem('focusId', id)
-    var request = new XMLHttpRequest();
-    request.open('GET', url, true);
-
-    request.onload = function () {
-        if (this.status >= 200 && this.status < 400) {
-            var resp = this.response;
-            document.getElementById('overlay').innerHTML = resp;
-            document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
-            document.getElementById('close').setAttribute("style", "display:block;");
-            document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-            document.getElementById('modalStart').focus(); // accessibility
-            if(document.getElementById('newScript')){
-                eval(document.getElementById('newScript').textContent); // ToDo: Fix this! A hack to run any scripts that are in the new html
-            }
-        } else {
+window.openModal = async function(url, id) {
+    localStorage.setItem('focusId', id);
+    try {
+        const response = await fetch(url, { cache: "no-cache" });
+        if (!response.ok) {
             console.log('failed to get modal');
+            return;
         }
-    };
-    request.onerror = function () {
-        console.log('There was a connection error of some sort');
-    };
-    request.send();
+        const resp = await response.text();
+        document.getElementById('overlay').innerHTML = resp;
+        document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
+        document.getElementById('close').setAttribute("style", "display:block;");
+        document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+        document.getElementById('modalStart').focus(); // accessibility
+        if(document.getElementById('newScript')){
+            eval(document.getElementById('newScript').textContent); // ToDo: Fix this! A hack to run any scripts that are in the new html
+        }
+    } catch (e) {
+        console.log('There was a connection error of some sort', e);
+    }
     const name = url.replace('/','');
     trackGA(name, 'Open', id);
 };
@@ -772,7 +768,7 @@ window.topoInteraction = function(climbId, name, cliff){
             draw();
         }
     }
-    trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N =  ' + name + ' on  ' + cliff, 0);
+    trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N = ' + name + ' on  ' + cliff, 0);
 };
 /**
  LOAD TOPO DATA JS OBJECT
@@ -1225,10 +1221,9 @@ window.onpopstate = function (event) {
         } else {
             // forwards won't work
         }
-    } else if(pageToLoad.includes('/climbing-tips/')){
+    } else if(pageToLoad.includes('/blog/')){
         // else it's a content page
-        let url = document.location + 'content.json';
-        getContent(url, false);
+        getContent(pageToLoad, false);
     } else {
         history.back();
     }
@@ -1319,7 +1314,7 @@ window.addEventListener('load', (event) => {
         loadNonEssential("link", "/css/cms-styles.css")
     }
     if (document.location.href.includes('god-mode') === true && hp === true) {
-        // lets user stay in "CMS mode" on Homepage
+        // lets user stay in "CMS mode" onHomepage
         document.getElementsByTagName("nav")[0].style.backgroundColor = '#5f1430';
         let anchors = document.querySelectorAll("a");
         anchors.forEach(aTag => {

@@ -11,7 +11,8 @@
   "scripts": {
     "generate-climbs": "node generateCardClimb.js",
     "generate-sitemap": "node generateSiteMap.js",
-    "generate-all": "npm run generate-climbs && npm run generate-sitemap",
+    "generate-blog" : "node generateBlogPages.js",
+    "generate-all": "npm run generate-climbs && npm run generate-sitemap && npm run generate-blog",
     "start": "npx serve ./website -l 9000",
     "test": "cypress run --headless",
     "deploy-test": "aws s3 sync website s3://multi-pitch-test.co.uk --delete"

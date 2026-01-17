@@ -492,6 +492,9 @@ h5 > small {
 p,ul {
   margin-bottom: 1rem;
 }
+ul {
+  padding-left:0.5rem
+}
 body {
   text-align: left;
   margin: 0;
@@ -561,6 +564,9 @@ hr {
 img {
   vertical-align: middle;
   border-style: none;
+}
+li {
+  list-style:none;
 }
 button:focus {
   outline: dotted 1px;
@@ -807,6 +813,45 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   -webkit-transition: .2s ease-in-out;
   -o-transition: .2s ease-in-out;
   transition: .2s ease-in-out
+}
+.blog-caption {
+  font-size:0.8rem;
+  margin:0;background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  text-align: right;
+  padding: 0.5rem;
+  width:100%;
+  display:inline-block;
+  position:absolute;
+  left:0;
+  bottom: 0;
+}
+.blog-article {
+  padding: 0;
+  border: 1px solid #cccccc56;
+  border-radius: 1rem;
+  margin-top: 2%;
+}
+@media (min-width: 768px) {
+  .blog-article {
+    flex: 0 0 46%;
+    margin:2%;
+  }
+}
+.blog-caption a {
+  color:#FFF;
+  text-decoration: underline;
+}
+.blog-h1{
+  margin:  2rem 0;
+  font-size:3rem;
+}
+.blog-picture{
+  display:block;
+  width:100%;
+  max-height:75vh;
+  object-fit:cover;
+  object-position:0 100px;
 }
 footer.page-footer, footer a{
   bottom: 0;
@@ -1148,6 +1193,13 @@ nav {
   padding:.5rem;
   font-weight:100;
 }
+nav .container{
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; 
+  -webkit-overflow-style: none; 
+  text-wrap: nowrap;
+}
 nav ul, nav ul li, nav ul li a{
   list-style:none;
   display:inline;
@@ -1261,13 +1313,13 @@ select:-moz-focusring {
     align-items: none;
   }
   .view{
-    height:600px;
+    height:580px;
     text-align:center;
   }
 }
 blockquote{
   margin-top:-1rem;
-  margin-bottom: 1.6rem;
+  margin-left:3rem;
 }
 blockquote:before {
   content: '\201C';
@@ -1282,6 +1334,11 @@ blockquote:before {
   top:.5rem;
   display:block;
   font-family:Times,serif;
+}
+.author{
+  font-weight: 900;
+  margin-bottom: 1.6rem;
+  margin-left:3rem;
 }
 .overlay{
   display:none;
