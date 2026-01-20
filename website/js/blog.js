@@ -8,6 +8,14 @@ function makeLinksPushable () {
         pushableLinks[i].classList.remove('pushable');
         // popstate event in main.js
     }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => { // in page smooth scroll for anchor links
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {

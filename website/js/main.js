@@ -1209,6 +1209,9 @@ window.clearFilters = function(){
  **/
 // need to handle history.onPopstate ie. user presses back OR forwards which makes it tricky!
 window.onpopstate = function (event) {  
+    if(location.hash){
+        return; // anchor link like #go-to-id
+    }
     let pageToLoad = document.location.pathname;
     if(pageToLoad === '/' && document.getElementById('overlay').style.display === 'block'){ 
         // the climb Card overlay is being used
