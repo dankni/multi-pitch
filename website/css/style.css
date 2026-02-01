@@ -568,6 +568,10 @@ img {
 li {
   list-style:none;
 }
+.classic-bullets li {
+  list-style: disc;
+  margin-left: 1.5rem;
+}
 button:focus {
   outline: dotted 1px;
   outline: -webkit-focus-ring-color auto 5px
@@ -772,9 +776,6 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   -ms-flex-align: center;
   align-items: center;
 }
-.view{
-  text-align:center;
-}
 .text-center {
   text-align: center!important;
 }
@@ -795,10 +796,6 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
 .font-small {
   font-size: .9rem
 }
-.view {
-  position: relative;
-  cursor: default
-}
 .view .mask {
   position: absolute;
   top: 0;
@@ -813,6 +810,11 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   -webkit-transition: .2s ease-in-out;
   -o-transition: .2s ease-in-out;
   transition: .2s ease-in-out
+}
+@media (max-width: 799px) {
+  .smaller-hero{
+    max-height: 500px;
+  }
 }
 .blog-caption {
   font-size:0.8rem;
@@ -852,6 +854,10 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   max-height:75vh;
   object-fit:cover;
   object-position:0 100px;
+}
+.blog-img{
+  max-width: 100%;
+  margin-bottom: 1rem;
 }
 footer.page-footer, footer a{
   bottom: 0;
@@ -978,12 +984,12 @@ footer .grey a i {
 }
 @media (max-width: 740px) {
   html, body, .view {
-    height: 1000px;
+    max-height: 1000px;
   }
 }
 @media (min-width: 800px) and (max-width: 850px) {
   html, body, .view {
-    height: 650px;
+    max-height: 650px;
   }
   .scroll-down-link{
     display: none;
@@ -1026,9 +1032,10 @@ position: relative;
 /************************/
 /** LISTING PAGE CARDS **/
 .view {
-  position: relative;
   overflow: hidden;
+  position: relative;
   cursor: default;
+  text-align:center;
 }
 *, ::after, ::before {
   box-sizing: border-box;
@@ -1313,7 +1320,7 @@ select:-moz-focusring {
     align-items: none;
   }
   .view{
-    height:580px;
+    max-height:580px;
     text-align:center;
   }
 }

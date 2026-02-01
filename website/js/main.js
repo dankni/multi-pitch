@@ -590,6 +590,7 @@ window.sortCards = function(sortBy, direction) {
         document.querySelectorAll('.card').forEach(element => {
             let id = parseInt(element.id);
             const climbWeatherData = weatherData.find(data => data.climb=== id);
+            if(!climbWeatherData){ return; } // no weather data for this climb - likley a new climb added since last weather fetch
             const iconWeather = document.getElementById(`weather-${id}`);
             const toggleWeather = document.getElementById(`toggle-weather-${id}`);
             const tempValues = document.getElementById(`temp-${id}`);
@@ -1100,7 +1101,9 @@ window.loadCurrentWeatherModule = function(){
     if (window.weatherData) {
         if(weatherUpToDateCheck(window.weatherData)){
             let localWeather = fullWeatherForOneClimb(window.weatherData, climbId);
-            updateSpecificClimbCurrentWeather(localWeather, timeZone);
+            if(localWeather){ // otherwise no weather data for this climb - likley a new climb added since last weather fetch
+                updateSpecificClimbCurrentWeather(localWeather, timeZone);
+            }
         }
     } else {
         loadWeather().then(response => {
