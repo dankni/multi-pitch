@@ -386,8 +386,8 @@ function getMap(climb) {
         var lon = climb.geoLocation.split(',')[1];
         var lat = climb.geoLocation.split(',')[0];
         var mid = ',13.0,0,0/';
-        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNtM2wxZTc3cjBrdDUyanM3aWZ2dGRpZjcifQ.k9CA326xdlX4pf7ND3-iQA';
-        var mapPicture = `
+        var end = '?access_token=<redacted>';
+      /*  var mapPicture = `
         <picture class="big-card-map">    
             <source
                media="(max-width: 400px)"
@@ -405,7 +405,7 @@ function getMap(climb) {
                src="${urlStart}${lon},${lat}${mid}1080x200${end}"
                type="image/jpeg" class="big-card-map" 
                alt="Climb Location">
-        </picture>`;
+        </picture>`;*/
 
         console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
         console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
