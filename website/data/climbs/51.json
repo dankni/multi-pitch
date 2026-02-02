@@ -1,0 +1,363 @@
+{
+    "climbData": {
+        "cliff": "El Castellet",
+        "status": "publish",
+        "id": 51,
+        "country": "Spain",
+        "timeZone": "Europe/Madrid",
+        "county": " Alicante",
+        "routeName": "Rincón de Placa",
+        "length": 120,
+        "pitches": 4,
+        "dataGrade": 5,
+        "tradGrade": "VS",
+        "techGrade": "4c",
+        "gradeSys": "UIAA",
+        "originalGrade": "V+",
+        "geoLocation": "38.6275318021,-0.1563388592019",
+        "approachTime": 10,
+        "approachDifficulty": 1,
+        "rock": "Limestone",
+        "intro": "The Val de Guadar, often called echo valley by the British, offers a great range of climbing from easy to hard, with plenty of multi-pitch options up to just over 100m. The climbs described here on the el Castellet peak have a very short approach, typically 5 to 10mins, so the routes offer good half day options, or could be combined to make a great long day. Rincon de placa (plate corner) offers 4 pitches of solid grade V climbing or VS in British grades. The first pitch gets the highest technical grade in the new Spanish guide escaldes en Alacante, but all four pitches have engaging sections. The gear is also good, with the last pitch perhaps requiring a little more thought to keep it well protected. The route has been almost entirely de-bolted so a full rack is needed. Futher left the routes scorpion and wasp offer less balanced but still fun outings overall. As their names suggest, they have a sting in the tail with the last pitch having noticeably harder climbing. ",
+        "approach": "<strong>Approach:</strong><br>It’s possible to park right next to the crag, half on the narrow road (<a href=\"https://maps.app.goo.gl/A2tHy5F79qGQxQFs8\" target=\"blank\">38.62679459,-0.15848976025</a>). A better option is to park either before the crag or past it where there is room for a few cars in the bays on the bend (<a href=\"https://maps.app.goo.gl/K3DViqyaKKVNEW5i7\" target=\"blank\">38.62771448,-0.15886262726</a>). The descent path from the routes on the left like Scorpion and Wasp lead back here. From parking, walk to the crag and follow the various paths along the base to the climb. 5 to 15 mins depending on where you park.<br><br><strong>Descent:</strong><br>Descent from Rincón de Placa is by 2 x ~50m abseils With the second being from the station passed just before the belay point at the end of pitch 2. <strong>Note:</strong> Take care not to get the knot caught in the crack at the very top. When first climbing Via Esther I had to top rope solo up the last 2 pitches of Rincon de Placa using just prussicks to free the knot (<a href=\"/img/other/stuck-abseil.jpg\" target=\"blank\">see photo</a>); a formative early climbing experience of questionable safety.<br><br> Descent from the left side after Scorpion or Wasp is a more straightforward walk off. ",
+        "pitchInfo": "Rincón de Placa weaves the obvious line of weakness up to the high point of the  El Castellet peak on the right. The pitches are all pretty good and pretty consistent in grade. <br /><br/><strong class=\"pitch-title\">Pitch 1 –<span class=\"length\">~30m</span> <span class=\"pitchGrade uiaa\">V/V+</span></strong>:<br />Climb the grove left of the arete/edge. The crux is on the lower half of this pitch in a corner section. The pitch steepens but with better handholds up to a vegetated ledge with options for a good thread belay just right of a bolted lower off, below the flat streaked 'plate' face. <br /><br/><strong class=\"pitch-title\">Pitch 2 –<span class=\"length\">~35m</span> <span class=\"pitchGrade uiaa\">V-</span></strong>:<br />Climb the slab above up to the orange stained limestone, but stay below this on good rock trending up and left to the obvious corner. Climb the steep corner onto the block. Cross this and down climb a meter or so on the other side (very vegetated in 2026). Then traverse left on good holds past the lower off, then onto a ledge with a single bolt. Make a belay here. <br /><br/><strong class=\"pitch-title\">Pitch 2 –<span class=\"length\">~25m</span> <span class=\"pitchGrade uiaa\">V</span></strong>:<br />A brilliant pitch more or less straight up to a double bolt belay on a ledge. Good holds and good gear but a slightly steeper wall.<br /><br/><strong class=\"pitch-title\">Pitch 2 –<span class=\"length\">~30m</span> <span class=\"pitchGrade uiaa\">IV+ </span></strong>:<br />Graded the lowest, this pitch isn't really any easier than the others. Climb up the block right of the stance. Then move back left to a position above the belay then climb this slab directly to the top, keeping right of the steep corner higher up. Climbing above the block & tree (rather than moving back left above the belay) can lead into the slightly harder pitch of Dierdo Edwards.",
+        "incline": "Vertical",
+        "face": "S",
+        "abseil": true,
+        "traverse": true,
+        "boat": null,
+        "tidal": null,
+        "polished": null,
+        "loose": null,
+        "seepage": null,
+        "grassLegdes": null,
+        "lastUpdate": "2026-04-30T13:26:01.356Z",
+        "mapImg": {
+            "url": "img/topos/echo-valley/maps/",
+            "alt": "Map of Echo Valley climbing area near Alicante Spain"
+        },
+        "topo": {
+            "url": "img/topos/echo-valley/rincon-de-placa-climb-topo-echo-valley.jpg",
+            "alt": "Rincon de Placa climb on El Castellet in Echo Valley near Polop Spain",
+            "atributionURL": "https://creativecommons.org/licenses/by-sa/4/",
+            "attributionText": "our own image",
+            "dataFile": 5
+        },
+        "references": [],
+        "weatherData": {
+            "rainyDays": [
+                4,
+                3,
+                4,
+                4,
+                4,
+                2,
+                1,
+                1,
+                3,
+                4,
+                4,
+                4
+            ],
+            "tempH": [
+                15,
+                16,
+                18,
+                19,
+                23,
+                27,
+                29,
+                29,
+                27,
+                24,
+                18,
+                16
+            ],
+            "tempL": [
+                6,
+                6,
+                8,
+                10,
+                13,
+                17,
+                20,
+                21,
+                18,
+                14,
+                9,
+                7
+            ]
+        },
+        "guideBooks": [
+            {
+                "isbn": 9781873341954,
+                "title": "Costa Blanca",
+                "type": "guidebook",
+                "pg": 235,
+                "description": "An okay book, covering a lot of sport, trad and multi-pitch climbing in the Costa Blanca area of Spain. This guide covers many routes in the Echo Valley. However the more you use the book the more mistakes you find. On this route belay and abseil are mixed up at the end of pitch 2 and the grades are wrong in relative terms, if not also absolute terms. That aside, the topo for Rincon de Placa is usable. The description is weak. In short the spanish guide is easier to use, even for non-spanish speakers.",
+                "imgURL": "img/guidebooks/costa-blanca.jpg",
+                "link": "https://amzn.to/2Emt6Wb",
+                "rrp": 29.95
+            },
+            {
+                "isbn": 9788412230642,
+                "title": "Escaladas en Alacant / Selección de itinerarios",
+                "type": "guidebook",
+                "pg": 188,
+                "description": "This new 2025 guidebook covers 145 of the best climbs in the Alacant region of Spain including Rincon de Placa. The book is in Spanish but has clear topos and good local route information. The book is ideal for those who like longer routes that need a trad rack to protect them. This is a very well produced guidebook. If you can't read Spanish, Google lens does a good enough job translating pages.The hand drawn topo of Rincón de Placa is brilliant and makes route finding easy.",
+                "imgURL": "img/guidebooks/Escaladas-en-Alacant.jpg",
+                "link": "https://www.climbing-guide.eu/climbing-guidebook-escaladas-en-alacant-seleccion-de-itinerarios-20004/",
+                "rrp": 35
+            }
+        ]
+    },
+    "topoData": {
+        "image": "/img/topos/echo-valley/crag.jpg",
+        "flag": "/img/flags/es.png",
+        "title": "El Castellet > Rincón de Placa | UIAA V+ or Very Severe 4c - 120m",
+        "belaySize": 20,
+        "route": [
+            [
+                2599,
+                2630
+            ],
+            [
+                2621,
+                2458
+            ],
+            [
+                2612,
+                2325
+            ],
+            [
+                2584,
+                2249
+            ],
+            [
+                2563,
+                2218
+            ],
+            [
+                2557,
+                2182
+            ],
+            [
+                2492,
+                2006
+            ],
+            [
+                2489,
+                1913
+            ],
+            [
+                2480,
+                1809
+            ],
+            [
+                2416,
+                1749
+            ],
+            [
+                2387,
+                1706
+            ],
+            [
+                2367,
+                1655
+            ],
+            [
+                2328,
+                1591
+            ],
+            [
+                2307,
+                1519
+            ],
+            [
+                2237,
+                1467
+            ],
+            [
+                2201,
+                1407
+            ],
+            [
+                2171,
+                1349
+            ],
+            [
+                2129,
+                1331
+            ],
+            [
+                2127,
+                1241
+            ],
+            [
+                2043,
+                1254
+            ],
+            [
+                2031,
+                1303
+            ],
+            [
+                1883,
+                1310
+            ],
+            [
+                1907,
+                1230
+            ],
+            [
+                1891,
+                1118
+            ],
+            [
+                1900,
+                1013
+            ],
+            [
+                1909,
+                891
+            ],
+            [
+                1991,
+                745
+            ],
+            [
+                1947,
+                741
+            ],
+            [
+                1953,
+                670
+            ],
+            [
+                1988,
+                566
+            ],
+            [
+                2040,
+                482
+            ],
+            [
+                2061,
+                409
+            ],
+            [
+                2085,
+                294
+            ],
+            [
+                2089,
+                161
+            ]
+        ],
+        "pitches": [
+            {
+                "belayPosition": [
+                    2363,
+                    1655
+                ],
+                "labelPosition": [
+                    2264,
+                    2171
+                ],
+                "grade": "UIAA V / V+",
+                "height": "30m"
+            },
+            {
+                "belayPosition": [
+                    1893,
+                    1285
+                ],
+                "labelPosition": [
+                    2036,
+                    1495
+                ],
+                "grade": "UIAA V-",
+                "height": "35m"
+            },
+            {
+                "belayPosition": [
+                    1933,
+                    857
+                ],
+                "labelPosition": [
+                    1645,
+                    1039
+                ],
+                "grade": "UIAA V",
+                "height": "25m"
+            },
+            {
+                "belayPosition": [
+                    2088,
+                    162
+                ],
+                "labelPosition": [
+                    1773,
+                    438
+                ],
+                "grade": "UIAA IV+ / V",
+                "height": "30m"
+            }
+        ],
+        "decent": [
+            {
+                "anchor": [
+                    null,
+                    null
+                ],
+                "labelPosition": [
+                    2216,
+                    234
+                ],
+                "path": [
+                    [
+                        2095,
+                        178
+                    ],
+                    [
+                        2108,
+                        207
+                    ],
+                    [
+                        2109,
+                        251
+                    ]
+                ],
+                "label": "50m"
+            },
+            {
+                "anchor": [
+                    1955,
+                    1262
+                ],
+                "labelPosition": [
+                    1800,
+                    1395
+                ],
+                "path": [
+                    [1959.0, 1279.0],
+                    [
+                        1964,
+                        1374
+                    ]
+                ],
+                "label": "50m"
+            }
+        ],
+        "varients": [
+            {
+                "notePosition": [
+                    2061,
+                    3166
+                ],
+                "note": "A",
+                "route": []
+            }
+        ]
+    }
+}

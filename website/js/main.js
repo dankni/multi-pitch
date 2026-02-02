@@ -13,7 +13,10 @@ import { returnClimbURL } from "./modules/convertNameToURL.js";
  **/
 const rootProject = '/'; // adjust per enviroment
 var climbsData;
-var topoData = null;
+let topoData = null;
+export function setTopoData(d) { topoData = d; }
+export function getTopoData() { return topoData; }
+
 var historyData = {"page": window.location.pathname}; // push state
 var dataSavingMode = false;
 var geoLocationSupport = false;
@@ -849,6 +852,7 @@ window.updateScale = function() {
 
 // Draws the topo on the canvas based on the current data
 window.draw = function() {
+    
     updateScale();
     /** DEFINE THE DERIVED DRAWING VARIABLES */
     let infoBox = document.getElementById('c1').checked;

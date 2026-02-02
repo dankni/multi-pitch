@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <!-- Styles -->
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+    <!-- Scripts-->
+    <script src="/js/main.js" type="module"></script>
+    <style>
+        html{
+            padding-top:150px;
+        }
+        *, option {
+            font-size: 35px;
+        }
+        label {
+            margin-right:60px;
+        }
+        button{
+           color:#FFFFFF;
+            border:0;
+            padding:.4rem 1.5rem;
+            font-size: 40px; 
+        }
+        .safe{
+            background-color: #4CAF50;
+        }
+        .danger{
+            background-color: #f44336;
+        }
+        .black {
+            background-color: #111111;
+        }
+        .short{
+            width:6rem;
+        }
+        .long{
+            width:100%;
+        }
+        input{
+            font-size:0.8rem;
+        }
+        #actions{
+            top:0;
+            left:0;
+            height:120px;
+            margin-bottom:20px;
+            min-width:100%;
+            background:#111;
+            color:#FFF;
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: -ms-autohiding-scrollbar;
+            padding:0; 
+        }
+        #actions span {
+            color:#FFF;
+            height:120px;
+            padding:20px 60px;
+            font-size:40px;
+            border-right:2px solid #666;
+            cursor: pointer;
+            display: inline-block;
+        }
+        #actions span:hover{
+            background: #333;
+        }
+        fieldset{
+            display:none;
+            background:#FFF;
+            width: 100%;
+            position:fixed;
+            border: 2px 0 0 0 solid #111;
+            padding:40px;
+            bottom:0;
+            left:0;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding-left: 0;
+        }
+
+        li {
+            color: #fff;
+            display: block;
+            padding: 1rem;
+            position: relative;
+            text-decoration: none;
+            transition-duration: 0.5s;
+        }
+        
+        li a {
+            color: #fff;
+        }
+        li:hover {
+            cursor: pointer;
+        }
+        ul li ul {
+            visibility: hidden;
+            opacity: 0;
+            min-width: 5rem;
+            position: absolute;
+            transition: all 0.5s ease;
+            left: 0;
+            display: none;
+        }
+        ul li:hover > ul, ul li ul:hover {
+            visibility: visible;
+            opacity: 1;
+            display: block;
+            background: #1C2331;
+        }
+        ul li ul li {
+            clear: both;
+            width: 100%;
+            display: inline-block;
+            padding:0.8rem 1.5rem;
+        }
+        ul li ul li:hover {
+            background: #275BAE;
+        }
+    </style>
+    <script>
+        function toggle(id){
+            let list = ['toggle', 'selectHolder', 'route', 'pitchOutput', 'descent', 'belay', 'json'];
+            for(let i = 0; i < list.length; i++){
+                document.getElementById(list[i]).style.display = 'none';
+            }
+            document.getElementById(id).style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="container">
+            <a class="navbar-brand" href="/" aria-label="Multi-Pitch Climbing, Homepage Link">
+                <img src="http://www.multi-pitch.com/img/logo/mp-logo-white.png" alt="multi-pitch climbing">
+            </a>
+            <ul>
+                <li onclick="toggle('selectHolder'); return false;"><a>Choose Climb</a></li>
+                <li onClick="toggle('toggle'); return false;"><a>Visual Toggle</a></li>
+                <li onclick="toggle('route'); return false;"><a>Route</a></li>
+                <li onclick="toggle('pitchOutput'); return false;"><a>Pitchs</a></li>
+                <li onclick="toggle('descent'); return false;"><a>Descent</a></li>
+                <li onclick="toggle('belay'); return false;"><a>Size</a></li>
+                <li onclick="toggle('json'); return false;"><a>Get JSON</a></li>
+            </ul>
+        </div>
+    </nav>
+   <div id="topoHolder" style="margin-bottom: 50px;">
+        <canvas id="canvas"></canvas>
+    </div>
+    <section style="margin:30px;">
+        <fieldset id="toggle" style="display:none;">
+            <label><input type="checkbox" value="infoBox" checked id="c1" onclick="draw();" />Info Box</label>
+            <label><input type="checkbox" value="routeLine" checked id="c2" onclick="draw();" />Route</label>
+            <label><input type="checkbox" value="belays" checked id="c3" onclick="draw();" />Belay Points</label>
+            <label><input type="checkbox" value="absail" checked id="c4" onclick="draw();" />Approch / Decent</label>
+            <label><input type="checkbox" value="labels" checked id="c5" onclick="draw();" />Labels</label>
+            <label><input type="checkbox" value="alternatives" checked id="c6" name="c6" onclick="draw();" />Alternatives</label>
+            <br />
+            <button onclick="draw()" class="black">Re-Draw Topo</button>
+        </fieldset>
+
+        <fieldset id="selectHolder" style="display:block;">
+            <h2 style="display:inline-block;">Choose Route:</h2>
+        </fieldset>
+        
+        <fieldset id="route" style="display:none;">
+            <label><input type="radio" value="rt" checked name="what" />Route </label>
+            <input type="text"  value="" id="routeOutput" class="long"/><br />
+            <button onclick="draw();" class="safe">Update Route</button>
+            <button onclick="setTopoData({...getTopoData(), route: []});document.getElementById('routeOutput').value = '';draw();" class="danger">Remove Route</button>
+        </fieldset>
+
+        <fieldset id="pitchOutput" style="display:none;">
+            <label><input type="radio" value="lp" name="what" />Label Position</label>
+            <input type="text"  value="" id="labelPositionX" class="short" /><input type="text" class="short" value="" id="labelPositionY"/><br />
+            <label><input type="radio" value="bp" name="what" />Belay Position</label>
+            <input type="text"  value="" id="belayPositionX" class="short" /><input type="text"  class="short" value="" id="belayPositionY"/><br />
+            <label><input type="radio" value="" name="what" />Height</label>
+            <input type="text"  value="" id="height"/><br />
+            <label><input type="radio" value="" name="what" />Grade</label>
+            <input type="text"  value="" id="grade"/><br />
+            <button onclick="pushPitch();" class="safe">Add Pitch</button> 
+            <button onclick="setTopoData({...getTopoData(), pitches: []});draw();" class="danger">Remove All Pitches</button> 
+        </fieldset>
+
+        <fieldset id="descent" style="display:none;">
+            <label><input type="radio" value="dlp" name="what" />Label Position</label>
+            <input type="text"  value="" id="dLabelPositionX" class="short" /><input type="text"  class="short" value="" id="dLabelPositionY"/><br />
+            <label><input type="radio" value="dbp" name="what" />Belay Position</label>
+            <input type="text"  value="" id="dBelayPositionX" class="short" /><input type="text"  class="short" value="" id="dBelayPositionY"/><br />
+            <label><input type="radio" value="dr" name="what" />Path</label>
+            <input type="text"  value="" id="decentRoute" class="long"/><br />
+            <label><input type="radio" value="" name="what" />Label</label>
+            <input type="text"  value="" id="label"/><br />
+            <button onclick="pushDecent();" class="safe">Add Decent</button> 
+            <button onclick="setTopoData({...getTopoData(), decent: []});draw();" class="danger">Remove All Decent Info</button> 
+        </fieldset>
+
+        <fieldset id="belay" style="display:none;">
+            <label><input type="text" value="24" name="belaySize" id="belaySize" />Belay Size</label>
+            <button onclick="setTopoData({...getTopoData(), belaySize: parseInt(document.getElementById('belaySize').value)});draw();" class="safe">Update Belay Size</button> 
+        </fieldset>
+
+        <fieldset  id="json" style="display:none;">
+            <button class="black" onclick="document.getElementById('rawOutput').value = JSON.stringify(getTopoData());">Publish</button>
+            <textarea id="rawOutput" style="width:100%;min-height:300px;"></textarea>
+        </fieldset>
+    </section>
+    <br />
+    <br />
+    <script type="module" src="./topo-edit.js"></script>
+    <!-- Footer -->
+    <footer class="page-footer text-center">
+
+    </footer>
+</body>
+</html>

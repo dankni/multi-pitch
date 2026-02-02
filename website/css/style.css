@@ -818,7 +818,7 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
 }
 .blog-caption {
   font-size:0.8rem;
-  margin:0;background-color: rgba(0, 0, 0, 0.6);
+  margin:0;background-color: rgba(0, 0, 0, 0.72);
   color: white;
   text-align: right;
   padding: 0.5rem;
@@ -1199,6 +1199,7 @@ nav {
   z-index:13;
   padding:.5rem;
   font-weight:100;
+  font-size: 1.1rem;
 }
 nav .container{
   overflow-y: scroll;
