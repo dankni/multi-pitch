@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2026-01-31T10:03:51.062Z",
+    "lastUpdate": "2026-02-02T21:28:45.590Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -1306,6 +1306,31 @@
                 "alt": "Rincon de Placa Climb in the Echo Valley",
                 "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
                 "attributionText": "our own image"
+            }
+        },
+        {
+            "cliff": "Tryfan",
+            "status": "publish",
+            "id": 52,
+            "country": "Wales",
+            "county": "Conwy",
+            "routeName": "Grooved Arete",
+            "length":240,
+            "pitches": 9,
+            "dataGrade": 3,
+            "tradGrade": "HVD",
+            "techGrade": "4a",
+            "gradeSys": "BAS",
+            "originalGrade": "HVD 4a",
+            "geoLocation": "53.115556,-3.994722",
+            "approachTime": 65,
+            "approachDifficulty": 2,
+            "lastUpdate": "2026-02-02T21:28:45.590Z",
+            "tileImage": {
+                "url": "img/tiles/tryfan.jpg",
+                "alt": "Grooved Arete Climb on Tryfan",
+                "atributionURL": "https://thebaldscrambler.co.uk/snowdonia/glyderau/easiest-route-tryfan/",
+                "attributionText": "Original Image: The Bald Scrambler"
             }
         }
     ]

@@ -1,0 +1,116 @@
+{
+    "climbData": {
+        "cliff": "Tryfan",
+        "status": "publish",
+        "id": 52,
+        "country": "Wales",
+        "county": "Conwy",
+        "timeZone": "Europe/London",
+        "routeName": "Grooved Arete",
+        "length": 240,
+        "pitches": 48,
+        "dataGrade": 3,
+        "tradGrade": "HVD",
+        "techGrade": "4a",
+        "gradeSys": "BAS",
+        "originalGrade": "HVD 4a",
+        "geoLocation": "53.115556,-3.994722",
+        "approachTime": 50,
+        "approachDifficulty": 1,
+        "rock": "Rhyolite",
+        "intro": "The Grooved Arete climb on Tryfan is one of the most popular multi-pitch climbs in the UK. Graded <abbr>HVD</abbr> or Hard Very Difficult, it’s got some serious british 4a moves, sometimes made harder by the increasingly polished rock. This site tends to avoid the grade HVD, opting to downgrade to VDiff or up to Severe. In this instance Severe is the better grade. Grooved Arete is a lovely outing and is described in The Long Routes book, as <q>one of the best of Snowdonia's classic mountaineering rock climbs.</q> Certainly it’s a quality route, but less popular locations like Lliwedd, offer routes just as good without the crowds. Polish aside, the Grooved Arete climb on Tryfan has an interesting mix of climbing, with enough gear options to feel comfortable. The hike in and hike / scramble out are reasonably lengthy and steep. Typically taking more than an hour. The Knights slab was the traditional crux when done in hobnailed boots, but with rock shoes pitches 1, 6 and 8 all offer comparably tricky moves.",
+        "approach": "<strong>Approach</strong>: Finding the start of the route, or the path beneath the route called the heather terrace, is not the easiest. From the roadside parking (<a href=\"https://maps.app.goo.gl/o6jhWFJrisPCZSRB8\" target=\"blank\">53.1252100,-3.99056583</a>) before Lynn Ogwen (Lake Ogwen) when traveling from the east / Capel Curig, take a path that leads past the base of Little Tryfan (flat Pyramid crag ~50m heigh). The path then cuts right, but is often overgrown, hard to find, or hard to distinguish from sheep paths or water runoff. There is a notch in a gully with the heather terrace behind and left of this (<a href=\"/img/other/grooved-arete-approch.jpg\" target=\"blank\">see photo</a>). The Grooved Arete is reasonably far along the heather terrace. Guidebooks suggest a 45min approach in total. Many parties may find it takes more than an hour. GA is scratched in large letters in a prominent and highly polished corner. If you are unsure, you are in the wrong place. <a href=\"/img/other/grooved-arete-start.jpg\" target=\"blank\">See photo</a>. <br /><br /><strong>Descent</strong>: There are multiple options for descent. None straightforward if you haven’t been to the mountain before. One option from the top of pitch 9, is to scramble with care on the right (facing in / west) back down to the end of pitch 8. From here a rightward (facing in) path leads via scrambling back down the south ridge to either the heather terrace or other paths that can take climbers back towards the path to the road.",
+        "pitchInfo": "Grooved Arete sees hundreds of sends a year with around half of these on the weekend (30% Sat, 19% Sun). If you prefer a quieter time, start very early or climb in the week, with Wednesday (8%) being the quietest based on logbook data. <br><strong class=\"pitch-title\">Pitch 1 –<span class=\"length\">35m</span> <span class=\"pitchGrade brit\">4a</span></strong>: Climb the polished corner, trending left at the top of corner, then move up the main rib on easier ground and belay before the next rib, on the left, just below a large pillar. <br><strong class=\"pitch-title\">Pitch 2 –<span class=\"length\">30m</span> <span class=\"pitchGrade brit\">4a</span></strong>: Move slightly left into the grove and climb up this using the right hand arete / edge. At a small edge about half way, step left and make a long reach (cruxy - especially so if shorter) upwards from polished footholds. Then carry on to belay below a small overhang. <br><strong class=\"pitch-title\">Pitch 3 –<span class=\"length\">20m</span> <span class=\"pitchGrade brit\"></span></strong>: Pass the overhang on the right and continue easily up to make a stance at the start of the terraces and ledges. <br><strong class=\"pitch-title\">Pitch 4 & 5 –<span class=\"length\">50m</span> <span class=\"pitchGrade brit\">3c</span></strong>: Walk right to another rib looking for ‘GA’ scratched in the rock again. Move up a short slab with an optional belay at the base of the grove or continue up pitch 5 via the groove, or rib on the right, to an uncomfortably small stance (especially when climbing in a 3). <br><strong class=\"pitch-title\">Pitch 6 –<span class=\"length\">25m</span> <span class=\"pitchGrade brit\">4a</span></strong>: Another contener for the crux, climb up the groove making tricky moves on polished footholds to exit it leftwards. Continue trending leftwards and upwards to the large (not that flat) ledge called the Haven. A belay can be made at the block at the top of this. <br><strong class=\"pitch-title\">Pitch 7 –<span class=\"length\">20m</span> <span class=\"pitchGrade brit\">4a</span></strong>: The Kinghts slab pitch moves up a crack then rightwards across the slab the around the corner to a little niche where a belay can be made. <br><strong class=\"pitch-title\">Pitch 8 –<span class=\"length\">20m</span> <span class=\"pitchGrade brit\">4a</span></strong>: Quite a burley and steep pitch on juggy holds. Move up and right into a steep corner. Climb this to a ledge with some large blocks. It’s possible to scramble off from here. <br><strong class=\"pitch-title\">Pitch 9 –<span class=\"length\">20m</span> <span class=\"pitchGrade brit\">4a</span></strong>: Another pitch with a good mix of different moves needed to ascend. Starting on the Quartz topped block, climb up to the top.",
+        "incline": "Slab",
+        "face": "E",
+        "abseil": false,
+        "traverse": false,
+        "boat": false,
+        "tidal": false,
+        "polished": true,
+        "loose": false,
+        "seepage": false,
+        "grassLegdes": false,
+        "lastUpdate": "2026-02-02T21:28:45.590Z",
+        "mapImg": {
+            "url": "img/topos/tryfan/maps/",
+            "alt": "Map of Tryfan climbing area near Snowdonia, Wales"
+        },
+        "weatherData": {
+            "rainyDays": [
+                13,
+                10,
+                11,
+                9,
+                8,
+                8,
+                8,
+                9,
+                10,
+                14,
+                14,
+                14
+            ],
+            "tempH": [
+                8,
+                8,
+                9,
+                12,
+                15,
+                17,
+                19,
+                18,
+                17,
+                13,
+                10,
+                8
+            ],
+            "tempL": [
+                3,
+                2,
+                3,
+                4,
+                7,
+                10,
+                12,
+                12,
+                10,
+                8,
+                5,
+                3
+            ]
+        },
+        "topo": {
+            "url": "img/topos/tryfan/grooved-arete-on-tryfans-east-face.jpg",
+            "alt": "The Grooved Arete route shown in this topo is one of the most popular multi-pitch climbs in North Wales.",
+            "atributionURL": "https://thebaldscrambler.co.uk/snowdonia/glyderau/easiest-route-tryfan/",
+            "attributionText": "The Bald Scrambler",
+            "dataFile": 5
+        },
+        "references": [
+            {
+                "url": "https://ogwen-rescue.org.uk/wp-content/uploads/2023/02/1000026186.jpg",
+                "text": "Climb Info: ⭐ Incredible topo of the Tryfan East Face ⭐"
+            },
+            {
+                "url": "https://www.ukclimbing.com/logbook/crags/tryfan-491/grooved_arete-29169",
+                "text": "Climb Info: UKC Page"
+            }
+        ],
+        "guideBooks": [
+            {
+                "isbn": 9781873341827,
+                "title": "North Wales Climbs",
+                "type": "guidebook",
+                "pg": 169,
+                "description": "North wales has plenty of multi-pitch Trad climbs. This book covers a good selection of climbs from the best mountains and cliff faces in North Wales. It has a few pages dedicated to the Tryfan and has a good description of the Grooved Arete. The book is very much a worthwhile investment for any rock climbing trip to the Llanberris and Snowdon area of Wales. The book also covers nearby climbs on the Idwal Slabs and Glyder Fatch.",
+                "imgURL": "img/guidebooks/north-wales-climbs.jpg",
+                "link": "https://amzn.to/2RJohKd",
+                "rrp": 24.99
+            }
+        ]
+    },
+    "topoData": {
+        "image":"/img/topos/tryfan/crag.jpg","flag":"/img/flags/wa.png","title":"Tryfan > Grooved Arete | HVD 4a - 240m","belaySize":11,"route":[[1674,1048],[1660,966],[1611,934],[1594,847],[1583,790],[1530,722],[1507,700],[1534,672],[1511,564],[1462,529],[1456,499],[1488,478],[1485,435],[1466,429],[1446,361],[1415,335]],"pitches":[{"belayPosition":[1047,3041],"labelPosition":[1410,3631],"grade":"Diff 3a","height":"20m"},{"belayPosition":[920,2600],"labelPosition":[1063,2709],"grade":"Diff 3a","height":"10m"},{"belayPosition":[2567,1528],"labelPosition":[null,null],"grade":"","height":""},{"belayPosition":[2552,910],"labelPosition":[null,null],"grade":"","height":""},{"belayPosition":[2420,292],"labelPosition":[null,null],"grade":"","height":""},{"belayPosition":[1618,935],"labelPosition":[1703,989],"grade":"4a","height":"35m"},{"belayPosition":[1561,761],"labelPosition":[1635,823],"grade":"4a","height":"30m"},{"belayPosition":[1512,693],"labelPosition":[1577,715],"grade":"","height":"20m"},{"belayPosition":[1516,590],"labelPosition":[1551,629],"grade":"3c","height":"50m"},{"belayPosition":[1462,524],"labelPosition":[1529,546],"grade":"4a","height":"25m"},{"belayPosition":[1485,453],"labelPosition":[1516,479],"grade":"4a","height":"20m"},{"belayPosition":[1457,396],"labelPosition":[1509,400],"grade":"4a","height":"15m"},{"belayPosition":[1417,335],"labelPosition":[1469,349],"grade":"3c","height":"30m"}],"decent":[{"anchor":[null,null],"labelPosition":[null,null],"path":[[2410,193],[2223,202]],"label":""},{"anchor":[null,null],"labelPosition":[null,null],"path":[[1561,452],[1624,494],[1700,533]],"label":""},{"anchor":[null,null],"labelPosition":[null,null],"path":[[1421,322],[1429,318],[1444,336]],"label":""}]
+    }
+}
