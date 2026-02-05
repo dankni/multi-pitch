@@ -29,7 +29,7 @@
   "homepage": "https://github.com/dankni/multi-pitch#readme",
   "dependencies": {
     "cwebp": "^2.0.5",
-    "express": "^4.17.1",
+    "express": "^4.22.1",
     "read-excel-file": "^5.8.8",
     "sharp": "^0.33.5"
   },
