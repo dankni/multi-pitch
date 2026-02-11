@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2026-02-02T21:28:45.590Z",
+    "lastUpdate": "2026-02-06T21:28:45.590Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -1331,6 +1331,31 @@
                 "alt": "Grooved Arete Climb on Tryfan",
                 "atributionURL": "https://thebaldscrambler.co.uk/snowdonia/glyderau/easiest-route-tryfan/",
                 "attributionText": "Original Image: The Bald Scrambler"
+            }
+        },
+        {
+            "cliff": "Puig Campana",
+            "status": "publish",
+            "id": 53,
+            "country": "Spain",
+            "county": "Alicante",
+            "routeName": "Aristotles",
+            "length":340,
+            "pitches": 9,
+            "dataGrade": 4,
+            "tradGrade": "HS",
+            "techGrade": "4b",
+            "gradeSys": "UIAA",
+            "originalGrade": "V",
+            "geoLocation": "38.58914075,-0.2077085118",
+            "approachTime": 45,
+            "approachDifficulty": 1,
+            "lastUpdate": "2026-02-06T21:28:45.590Z",
+            "tileImage": {
+                "url": "img/tiles/aristotles-puig-campana.jpg",
+                "alt": "Aristotles Climb on Puig Campana",
+                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "attributionText": "our own image"
             }
         }
     ]
