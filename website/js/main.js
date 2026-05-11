@@ -12,7 +12,7 @@ import {  } from "./modules/defineHighlightedText.js";
 /**
  GLOBAL VARIABLES
  **/
-const rootProject = '/'; // adjust per enviroment
+const rootProject = '/'; // adjust per enviroment 
 var climbsData;
 let topoData = null;
 export function setTopoData(d) { topoData = d; }

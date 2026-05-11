@@ -1683,7 +1683,7 @@ hr {
   font-size: 2rem;
   padding: 1rem;
   cursor: pointer;
-  z-index: 15;
+  z-index: 15; 
 }
 .lightbox-nav:hover {
   background: rgba(0, 0, 0, 0.7);

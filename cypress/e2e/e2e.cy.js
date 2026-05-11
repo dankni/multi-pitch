@@ -45,7 +45,7 @@ describe('Load the website page', function () {
     });
 
     it('Validates each published climb file matches the main data names', { defaultCommandTimeout: 6000 }, () => {
-        cy.readFile('website/data/data.json').then((data) => {
+        cy.readFile('website/data/data.json').then((data) => { 
             expect(data.climbs).to.be.an('array');
 
             data.climbs

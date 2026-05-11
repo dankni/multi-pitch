@@ -110,7 +110,7 @@ function generateArticlesHTML(){
             if(allBlogPosts[i].publish !== true || allBlogPosts[i].url === '/blog/'){
                 continue; // skip unpublished articles and the blog landing page itself
             }
-            
+
             articlesHTML += tpl
             .replace(/{{url}}/gi, allBlogPosts[i].url)
             .replace(/{{heroImg}}/gi, allBlogPosts[i].heroImg)
