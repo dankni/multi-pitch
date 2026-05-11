@@ -1,5 +1,31 @@
 {
 "articles" : [
+        {
+        "publish" : true,
+        "created" : "11th May 2026",
+        "lastUpdated" : "2026-04-04T01:01:42.339Z",
+        "author" : "Dan Knight",
+        "title" : "A very un-British way to build climbing anchors",
+        "metaDescription"  :"A comparison of two of the most common ways to build traditional rock climbing anchors. The pros and cons of each, as well as helpful tips and tricks.",
+        "summary"  : "A comparison of two of the most common ways to build traditional rock climbing anchors. The pros and cons of each, as well as helpful tips and tricks to balance safety, speed and simplicity. The article explores how modern climbing equipment should influence techniques used.",
+        "heroImg" :  "/img/blog/anchors/sling-master-point-hero",
+        "heroAlt" : "A rock climbing anchor using a sling and 3 points of protection in the mourne mountains",
+        "heroCaption" : "Photo: A climbing anchor using a sling and 3 points of protection, with a guide mode belay in the <a  href=\"/climbs/fm-on-slieve-lamagan/\">Mounre mountains</a>",
+        "url" : "/blog/a-very-un-british-way-to-build-climbing-anchors/"
+    },
+    {
+        "publish" : true,
+        "created" : "11th Jan 2026",
+        "lastUpdated" : "2026-01-11T01:01:42.339Z",
+        "author" : "Dan Knight",
+        "title" : "Trad Climbing Protection Ranked 2026",
+        "metaDescription"  :"A review and ranked teir list of climbing protection I rely on most for traditional multipitch climbing.",
+        "summary"  : "Understanding and selecting the optimum equipment is a key part to success in traditional multi-pitch climbing. Understanding the different types of climbing gear available, and their respective strengths and weaknesses can make a huge difference to both the safety and chance of success on a route.",
+        "heroImg" :  "/img/blog/trad-gear/a-trad-climbing-rack-on-gower-sea-cliffs",
+        "heroAlt" : "Part of a trad climbing rack",
+        "heroCaption" : "Photo: Part of a trad climbing rack on <a  href=\"/climbs/east-ridge-on-great-tor/\">Gower sea cliffs.</a>",
+        "url" : "/blog/trad-climbing-gear-teir-list-2025/"
+    },
     {
         "publish" : true,
         "created" : "14th Sep 2025",
@@ -11,22 +37,7 @@
         "heroImg" :  "/img/blog/training/climbers-hands-on-a-fingerboard",
         "heroAlt" : "Fingers hanging from a beastmaker fingerboard.",
         "heroCaption" : "Michel warming down with his favorite 10 min fingerboard routine, the 'no-hang'.",
-        "url" : "/blog/8-training-routines-to-boost-climbing-performance/",
-        "readingTime" : "15 min read"
-    },
-    {
-        "publish" : true,
-        "created" : "11th Jan 2026",
-        "lastUpdated" : "2025-09-14T01:01:42.339Z",
-        "author" : "Dan Knight",
-        "title" : "Trad Climbing Protection Ranked 2026",
-        "metaDescription"  :"A review and ranked teir list of climbing protection I rely on most for traditional multipitch climbing.",
-        "summary"  : "Understanding and selecting the optimum equipment is a key part to success in traditional multi-pitch climbing. Understanding the different types of climbing gear available, and their respective strengths and weaknesses can make a huge difference to both the safety and chance of success on a route.",
-        "heroImg" :  "/img/blog/trad-gear/a-trad-climbing-rack-on-gower-sea-cliffs",
-        "heroAlt" : "Part of a trad climbing rack",
-        "heroCaption" : "Photo: Part of a trad climbing rack on <a  href=\"/climbs/east-ridge-on-great-tor/\">Gower sea cliffs.</a>",
-        "url" : "/blog/trad-climbing-gear-teir-list-2025/",
-        "readingTime" : "12 min read"
+        "url" : "/blog/8-training-routines-to-boost-climbing-performance/"
     },
     {
         "publish" : true,

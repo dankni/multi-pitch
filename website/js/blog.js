@@ -117,7 +117,6 @@ function generateArticlesHTML(){
             .replace(/{{heroAlt}}/gi, allBlogPosts[i].heroAlt)
             .replace(/{{created}}/gi, allBlogPosts[i].created)
             .replace(/{{author}}/gi, allBlogPosts[i].author)
-            .replace(/{{readingTime}}/gi, allBlogPosts[i].readingTime)
             .replace(/{{title}}/gi, allBlogPosts[i].title)
             .replace(/{{summary}}/gi, allBlogPosts[i].summary);
             
@@ -131,9 +130,61 @@ function generateArticlesHTML(){
     });
 }
 
+window.openLightBox = function(img, alt) { // so that I can use it globally
+    const blogImgs = document.querySelectorAll('.blog-img');
+    let currentIndex = Array.from(blogImgs).findIndex(el => el.getAttribute('src') === img || el.getAttribute('data-src') === img);
+    if (currentIndex === -1) currentIndex = 0; // fallback
+
+    function showImage(index) {
+        const image = blogImgs[index];
+        if (image) {
+            const src = image.src || image.getAttribute('data-src');
+            const altText = image.alt || alt;
+            document.getElementById('overlay').innerHTML = `
+                <button id="prevBtn" class="lightbox-nav" ${index === 0 ? 'disabled' : ''}>&lt;</button>
+                <img src="${src}" alt="${altText}" id="modalStart" 
+                onKeyDown="return event.code != 'Escape' || hideTile(false)" tabindex="0" />
+                <button id="nextBtn" class="lightbox-nav" ${index === blogImgs.length - 1 ? 'disabled' : ''}>&gt;</button>
+                <p class="modal-caption">Photo: ${altText}</p>
+            `;
+            document.getElementById('modalStart').focus(); // accessibility
+            // Add event listeners for navigation
+            document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+            document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+        }
+    }
+
+    function navigate(direction) {
+        currentIndex += direction;
+        if (currentIndex < 0) currentIndex = 0;
+        if (currentIndex >= blogImgs.length) currentIndex = blogImgs.length - 1;
+        showImage(currentIndex);
+    }
+
+    // Keyboard navigation
+    function handleKeydown(event) {
+        if (event.code === 'ArrowLeft') {
+            navigate(-1);
+        } else if (event.code === 'ArrowRight') {
+            navigate(1);
+        } else if (event.code === 'Escape') {
+            document.removeEventListener('keydown', handleKeydown);
+            hideTile(false);
+        }
+    }
+
+    document.addEventListener('keydown', handleKeydown);
+
+    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
+    document.getElementById('close').setAttribute("style", "display:block;");
+    document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+
+    showImage(currentIndex);
+}
+
 //So then I can use this in nodejs and in the browser
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = {
-        getMainHTML, generateArticlesHTML, updateHeroImage, getAllPosts, getArticleFromURL
+        getMainHTML, generateArticlesHTML, updateHeroImage, getAllPosts, getArticleFromURL, openLightBox
     };
 }

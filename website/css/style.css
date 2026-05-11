@@ -859,6 +859,13 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   max-width: 100%;
   margin-bottom: 1rem;
 }
+@media (min-width: 768px) {
+  .reduced-on-desktop{
+    max-height: 250px; 
+    margin: 0 auto;  
+    display: block;
+  }
+}
 footer.page-footer, footer a{
   bottom: 0;
   color: #fff;
@@ -1648,6 +1655,48 @@ hr {
 .nearby-climb .card-text strong{
   font-weight: 700;
   color: #000;
+}
+#modalStart{
+  display:block;
+  margin:10px auto;
+  max-height:90vh;
+  max-width:90vw;
+}
+.modal-caption{
+  margin:0 auto;
+  display: block;
+  text-align: center;
+  background-color:#000000cd;
+  width:100%;
+  padding: 0.8rem;
+  color: #fff;
+  Position: fixed;
+  bottom: 0;
+}
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 2rem;
+  padding: 1rem;
+  cursor: pointer;
+  z-index: 15;
+}
+.lightbox-nav:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+.lightbox-nav:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+#prevBtn {
+  left: 1rem;
+}
+#nextBtn {
+  right: 1rem;
 }
 /***********/
 /** FLAGS **/

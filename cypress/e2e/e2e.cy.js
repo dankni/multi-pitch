@@ -43,4 +43,20 @@ describe('Load the website page', function () {
 		cy.get('label[for="c3"]').click({force: true})
 		cy.get('#canvas[data-success="true"]')
     });
+
+    it('Validates each published climb file matches the main data names', { defaultCommandTimeout: 6000 }, () => {
+        cy.readFile('website/data/data.json').then((data) => {
+            expect(data.climbs).to.be.an('array');
+
+            data.climbs
+                .filter((climb) => climb.status === 'publish')
+                .forEach((climb) => {
+                    cy.readFile(`website/data/climbs/${climb.id}.json`).then((fileData) => {
+                        const climbData = fileData.climbData || {};
+                        expect(climbData.routeName).to.equal(climb.routeName);
+                        expect(climbData.cliff).to.equal(climb.cliff);
+                    });
+                });
+        });
+    });
 });

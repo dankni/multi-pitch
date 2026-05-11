@@ -386,7 +386,7 @@ function getMap(climb) {
         var lon = climb.geoLocation.split(',')[1];
         var lat = climb.geoLocation.split(',')[0];
         var mid = ',13.0,0,0/';
-        var end = '?access_token=<redacted>';
+        var end = '?access_token=pk.eyJ1IjoiZGFua25pIiwiYSI6ImNtbDVsdTJjOTA1YmkzZnM4aWF5dmdidTgifQ.W8Xx1FfkraPiX5VdbZAjxA';
       /*  var mapPicture = `
         <picture class="big-card-map">    
             <source
