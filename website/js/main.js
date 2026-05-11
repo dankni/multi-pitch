@@ -7,7 +7,7 @@ window.performance.mark('start-js-read');
 import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather } from "./modules/getWeather.js";
 import { climbCard, getRouteTopo } from "/components/climbCard.js";
 import { returnClimbURL } from "./modules/convertNameToURL.js";
-import {  } from "./modules/defineHighlightedText.js";
+// import {  } from "./modules/defineHighlightedText.js";
 
 /**
  GLOBAL VARIABLES
