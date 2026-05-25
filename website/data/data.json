@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2026-05-11T21:28:45.590Z",
+    "lastUpdate": "2026-05-24T13:26:01.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -75,9 +75,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/lower-eagle-crag-in-the-anti-atlas.jpg",
-                "alt": "Lower Eagle Crag in the Anti-Atlas",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Lower Eagle Crag in the Anti-Atlas"
             }
         },
         {
@@ -100,9 +98,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/amzkhassan-wall-climb-in-morocco.jpg",
-                "alt": "Amzkhassan Wall Climbing in Morocco Jebel El Kest",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Amzkhassan Wall Climbing in Morocco Jebel El Kest"
             }
         },
         {
@@ -126,9 +122,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/high-sierra-dome-climb-in-tafraoute.jpg",
-                "alt": "The climb High Sierra on the granite dome near Tafraoute",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "The climb High Sierra on the granite dome near Tafraoute"
             }
         },
         {
@@ -312,9 +306,7 @@
             "lastUpdate": "2024-11-09T13:26:01.356Z",
             "tileImage": {
                 "url": "img/tiles/slieve-beg-crag-in-the-mourne-mountains.jpg",
-                "alt": "slieve beg crag in the mournes",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "slieve beg crag in the mournes"
             }
         },
         {
@@ -391,9 +383,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/bosigran-small.jpg",
-                "alt": "Bosigran's Sea Cliffs offer accessible rock climbing",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Bosigran's Sea Cliffs offer accessible rock climbing"
             }
         },
         {
@@ -417,9 +407,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/sea-walls-avon-gorge.jpg",
-                "alt": "The Sea Walls City Multi-pitch Climbing in Bristol",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "The Sea Walls City Multi-pitch Climbing in Bristol"
             }
         },
         {
@@ -471,9 +459,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/wintours-leap-wye-valley-climbs.jpg",
-                "alt": "Limestone Outcrop Wintours Leap in the Wye Valley",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Limestone Outcrop Wintours Leap in the Wye Valley"
             }
         },
         {
@@ -895,9 +881,7 @@
             "lastUpdate": "2025-07-10T01:01:59.339Z",
             "tileImage": {
                 "url": "img/tiles/cathederal-rock-tenerife.jpg",
-                "alt": "Cathederal Rock in Tenerife offers great climbing",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Cathederal Rock in Tenerife offers great climbing"
             },
             "boat": false,
             "tidal": false,
@@ -1037,9 +1021,7 @@
             "lastUpdate": "2026-05-09T14:26:03.356Z",
             "tileImage": {
                 "url": "img/tiles/slieve-lamagan-mountain.jpg",
-                "alt": "Slieve Lamagan",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Slieve Lamagan"
             },
             "abseil": false,
             "traverse": false,
@@ -1071,9 +1053,7 @@
             "lastUpdate": "2021-10-15T01:01:43.339Z",
             "tileImage": {
                 "url": "img/tiles/via-maria-climb-in-dolomites-sass-pordoi.jpg",
-                "alt": "Via Maria Climb in the Dolomites on the South Face of Sass Pordoi",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Via Maria Climb in the Dolomites on the South Face of Sass Pordoi"
             }
         },
         {
@@ -1099,9 +1079,7 @@
             "lastUpdate": "2021-10-15T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/sella-towers-in-dolomites.jpg",
-                "alt": "The First & Second Sella Towers in the the Sella Pass in Italy",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "The First & Second Sella Towers in the the Sella Pass in Italy"
             }
         },
         {
@@ -1124,9 +1102,7 @@
             "lastUpdate": "2023-11-04T01:01:45.339Z",
             "tileImage": {
                 "url": "img/tiles/epsolon-central-on-puig-campana-costa-blanca.jpg",
-                "alt": "Epsolon Central climb on Puig Campana Mountain",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Epsolon Central climb on Puig Campana Mountain"
             }
         },
         {
@@ -1149,9 +1125,7 @@
             "lastUpdate": "2022-11-13T21:27:45.590Z",
             "tileImage": {
                 "url": "img/tiles/dinorwic-slate-quarry-west-face-climbs.jpg",
-                "alt": "The West face of Dinorwic Slate Quarry gives a grand day of climbing",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "The West face of Dinorwic Slate Quarry gives a grand day of climbing"
             }
         },
         {
@@ -1175,9 +1149,7 @@
             "lastUpdate": "2024-11-17T21:28:45.590Z",
             "tileImage": {
                 "url": "img/tiles/cneifion-arete-in-wales.jpg",
-                "alt": "The Cneifion Arete is a a classic climb with a dramatic ridge",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "The Cneifion Arete is a a classic climb with a dramatic ridge"
             }
         },
         {
@@ -1202,9 +1174,7 @@
             "lastUpdate": "2025-02-10T01:01:42.339Z",
             "tileImage": {
                 "url": "img/tiles/two-brothers-climb-dos-hermanos-costa-blanca.jpg",
-                "alt": "The Two Brothers Climb or Dos Hermanos in Costa Blanca",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "The Two Brothers Climb or Dos Hermanos in Costa Blanca"
             }
         },
         {
@@ -1227,9 +1197,7 @@
             "lastUpdate": "2025-02-15T13:33:04.952Z",
             "tileImage": {
                 "url": "img/tiles/via-pany-costa-blanca.jpg",
-                "alt": "Peñón de Ifach rising out of Calpe offers great climbing on Via Pany",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Peñón de Ifach rising out of Calpe offers great climbing on Via Pany"
             }
         },
         {
@@ -1253,9 +1221,7 @@
             "lastUpdate": "2025-04-30T13:26:01.356Z",
             "tileImage": {
                 "url": "img/tiles/buzzards-roost-crag-mournes.jpg",
-                "alt": "Buzzards Roost Crag in the Mournes",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Buzzards Roost Crag in the Mournes"
             }
         },
         {
@@ -1278,9 +1244,7 @@
             "lastUpdate": "2025-04-30T13:26:01.356Z",
             "tileImage": {
                 "url": "img/tiles/pigeon-rock-virgo.jpg",
-                "alt": "Pigeon Rock Crag in the Mournes",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Pigeon Rock Crag in the Mournes"
             }
         },
         {
@@ -1303,9 +1267,7 @@
             "lastUpdate": "2026-01-31T10:03:51.356Z",
             "tileImage": {
                 "url": "img/tiles/rincon-de-placa-climb.jpg",
-                "alt": "Rincon de Placa Climb in the Echo Valley",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Rincon de Placa Climb in the Echo Valley"
             }
         },
         {
@@ -1353,9 +1315,30 @@
             "lastUpdate": "2026-02-06T21:28:45.590Z",
             "tileImage": {
                 "url": "img/tiles/aristotles-puig-campana.jpg",
-                "alt": "Aristotles Climb on Puig Campana",
-                "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
-                "attributionText": "our own image"
+                "alt": "Aristotles Climb on Puig Campana"
+            }
+        },
+        {
+            "cliff": "Eagle Mountain",
+            "status": "publish",
+            "id": 54,
+            "country": "Northern Ireland",
+            "county": "Mourne and Down",
+            "routeName": "Sammy Higgins", 
+            "length":56,
+            "pitches": 3,
+            "dataGrade": 5,
+            "tradGrade": "VS",
+            "techGrade": "4c",
+            "gradeSys": "BAS",
+            "originalGrade": "VS 4c",
+            "geoLocation": "54.134806,-6.089447",
+            "approachTime": 70,
+            "approachDifficulty": 2,
+            "lastUpdate": "2026-05-24T13:26:01.356Z",
+            "tileImage": {
+                "url": "img/tiles/eagle-mountains-mourne-mountains.jpg",
+                "alt": "Sammy Higgins Climb on Eagle Mountain"
             }
         }
     ]

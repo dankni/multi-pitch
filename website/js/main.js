@@ -1117,7 +1117,7 @@ window.loadCurrentWeatherModule = function(){
                 updateSpecificClimbCurrentWeather(localWeather, timeZone);
             }; 
         }).catch(error => {
-            console.error("Error loading weather data:", error);   
+            console.warn("Failed to load weather data:", error);   
         });
     }
 }

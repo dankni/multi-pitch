@@ -1,0 +1,346 @@
+{
+    "climbData": {
+        "cliff": "Eagle Mountain",
+        "status": "publish",
+        "id": 54,
+        "timeZone": "Europe/London",
+        "country": "Northern Ireland",
+        "county": "Mourne and Down",
+        "routeName": "Sammy Higgins",
+        "length": 56,
+        "pitches": 3,
+        "dataGrade": 5,
+        "tradGrade": "VS",
+        "techGrade": "4c",
+        "gradeSys": "BAS",
+        "originalGrade": "VS 4C",
+        "geoLocation": "54.134806,-6.089447",
+        "approachTime": 70,
+        "approachDifficulty": 2,
+        "rock": "Granite",
+        "intro": "Some brilliant climbing over 3 pitches, set high on eagle mountain, this old 1964 route is undeservingly neglected. The route has delicate slabs, steep moves to pass bulges, incredible exposure, a great corner crack (off width in places), and mostly good protection (the second pitch needs a big cam early on). The route is graded VS, but from the 1960’s. It's probably more like HVS compared to other Mournes climbs. There are some caveats with the route which means it isn’t as accessible as other Mourne multi-pitch. The final part of the walk-in is very steep, and the terrain is tricky. The second and third pitches require a longer dry period (perhaps a week) or they will be wet (still climbable though).",
+        "approach": "<strong>Approach:</strong> Allow 70 mins. Park by the fence on the left before the ford at Sandy Brae farm. <a href=\"https://maps.app.goo.gl/JEtoYtqPjdoZ92Dc8\" target=\"blank\">54.118412, -6.068513</a>. Cross over the ford on the footbridge and follow the path for about 30 mins until the route is clearly visible on the left. Then try to pick the best path up towards the base of the climb. The grass leading up to the start of the route is very steep and there is only a small ledge to belay from. Climbers may prefer to rack up on the larger (but still small), ledge below the gully / chimney. The approach to the start of the climb is steep grass. It's possible to build a belay anchor a few meters before the grass ends and the granite of the route is underfoot. It may also be preferable to abseil in from above.<br /><br /><strong>Descent</strong>: It's possible to scramble up and hike back over the top of eagle mountain to the car, or abseil off one of the larger spiked blocks. The abseil can take the climbers back to the 'racking up' point. We left a sling and maillon to do this in May 2026.",
+        "pitchInfo": "<strong class=\"pitch-title\">Pitch 1 –<span class=\"length\">28m</span> <span class=\"pitchGrade BAS\">4c</span></strong> Follow the corner (dihedral), before moving out right towards the right hand edge (arête) under a short bulge / roof. The rusted peg is now gone. Pass through the gap in the bulge with difficulty (crux) using the main vertical crack. From here proceed up the delicate slab, to exit via steeper rock, onto the large grassy belay ledge.<br><strong class=\"pitch-title\">Pitch 2 –<span class=\"length\">18m</span> <span class=\"pitchGrade BAS\">4b</span></strong> Another fantastic pitch with incredible views (although suffers seepage after rain). Climb the gradually widening corner crack to finish on a large block belay at the top on the left wall. <br><strong class=\"pitch-title\">Pitch 3 –<span class=\"length\">10m</span> <span class=\"pitchGrade BAS\">4a</span></strong> A short corner wall, offers a few interesting moves to reach the grass ledges and easier ground at the top.</p><p><strong>Protection Notes:</strong> The peg below the crux, on pitch 1, was well rusted in 2026 and disintegrated on touch, like something you would see in a cartoon leaving just a rusty smear there now. Otherwise the gear is good. At least one large cam (big silver DMM number 6 or bigger), may be helpful for the start of the second pitch.",
+        "incline": "Slab",
+        "face": "NE",
+        "abseil": true,
+        "traverse": null,
+        "boat": null,
+        "tidal": null,
+        "polished": null,
+        "loose": null,
+        "seepage": true,
+        "grassLegdes": true,
+        "lastUpdate": "2026-05-24T13:26:01.356Z",
+        "topo": {
+            "url": "img/topos/eagle/sammy-higgins-climb-topo-eagle-mountain.jpg",
+            "alt": "Route topo of Sammy Higgins climb on Eagle Mountain in Mournes",
+            "atributionURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+            "attributionText": "our own image",
+            "dataFile": 5
+        },
+        "mapImg": {
+            "url": "img/topos/eagle/maps/",
+            "alt": "Map of Eagle Mountain in the Mournes, NI"
+        },
+        "references": [
+        ],
+        "weatherData": {
+            "rainyDays": [
+                18,
+                15,
+                17,
+                16,
+                14,
+                14,
+                15,
+                14,
+                14,
+                18,
+                18,
+                20
+            ],
+            "tempH": [
+                5,
+                5,
+                7,
+                9,
+                12,
+                15,
+                16,
+                16,
+                14,
+                10,
+                7,
+                5
+            ],
+            "tempL": [
+                0,
+                0,
+                1,
+                2,
+                4,
+                7,
+                9,
+                9,
+                7,
+                5,
+                2,
+                0
+            ]
+        },
+        "guideBooks": [
+           {
+                "isbn": 9780902940291,
+                "title": "Rock Climbs in the Mourne Mountains",
+                "type": "guidebook",
+                "pg": 247,
+                "description": "This book covers almost all the trad climbing in the Mourne Mountains, although newer and old / niche routes are missing. The section on Eagle Mountain at the back feels like it was added as an afterthought to an otherwise good guide. The photography is terrible and makes the crag look small and slimy which is underserved, and perhaps why it sees so little traffic; although the NE aspect does mean it’s far from perfect. The description of Sammy Higgins is good enough. The guide also highlights the key nearby climbs like the Great Corner (E1) to the right and Motor Cycle Mania (VS) to the left.",
+                "imgURL": "img/guidebooks/rock-climbs-in-the-mournes-mountains.jpg",
+                "link": "https://amzn.to/2SKowVu",
+                "rrp": 19.95
+            }
+        ]
+    },
+    "topoData": {
+        "image": "/img/topos/eagle/crag.jpg",
+        "flag": "/img/flags/gb.png",
+        "title": "Eagle Mountain > Sammy Higgins | Very Severe 4c - 56m",
+        "belaySize": 32,
+        "route": [
+            [
+                1252,
+                2573
+            ],
+            [
+                1379,
+                2485
+            ],
+            [
+                1431,
+                2372
+            ],
+            [
+                1460,
+                2273
+            ],
+            [
+                1545,
+                2225
+            ],
+            [
+                1599,
+                2160
+            ],
+            [
+                1599,
+                2080
+            ],
+            [
+                1573,
+                2056
+            ],
+            [
+                1577,
+                1999
+            ],
+            [
+                1567,
+                1948
+            ],
+            [
+                1611,
+                1885
+            ],
+            [
+                1641,
+                1852
+            ],
+            [
+                1665,
+                1791
+            ],
+            [
+                1656,
+                1720
+            ],
+            [
+                1588,
+                1724
+            ],
+            [
+                1483,
+                1771
+            ],
+            [
+                1395,
+                1787
+            ],
+            [
+                1396,
+                1780
+            ],
+            [
+                1393,
+                1707
+            ],
+            [
+                1383,
+                1593
+            ],
+            [
+                1396,
+                1479
+            ],
+            [
+                1385,
+                1297
+            ],
+            [
+                1348,
+                1227
+            ],
+            [
+                1291,
+                1203
+            ],
+            [
+                1264,
+                1184
+            ],
+            [
+                1140,
+                1183
+            ],
+            [
+                1103,
+                1141
+            ],
+            [
+                1028,
+                1105
+            ],
+            [
+                1023,
+                969
+            ],
+            [
+                1012,
+                869
+            ],
+            [
+                973,
+                855
+            ],
+            [
+                827,
+                837
+            ],
+            [
+                760,
+                852
+            ],[
+                    667,
+                    730
+                ]
+        ],
+        "pitches": [
+            {
+                "belayPosition": [
+                    1583,
+                    1725
+                ],
+                "labelPosition": [
+                    1728,
+                    2167
+                ],
+                "grade": "4c",
+                "height": "28m"
+            },
+            {
+                "belayPosition": [
+                    1309,
+                    1208
+                ],
+                "labelPosition": [
+                    1497,
+                    1447
+                ],
+                "grade": "4b",
+                "height": "18m"
+            },
+            {
+                "belayPosition": [
+                    667,
+                    730
+                ],
+                "labelPosition": [
+                    1108,
+                    919
+                ],
+                "grade": "4a",
+                "height": "10m"
+            }
+        ],
+        "decent": [
+            {
+                "anchor": [
+                    null,
+                    null
+                ],
+                "labelPosition": [
+                    638,
+                    1070
+                ],
+                "path": [
+                    [
+                        662,
+                        764
+                    ],
+                    [
+                        670,
+                        884
+                    ]
+                ],
+                "label": "~60m"
+            },
+            {
+                "anchor": [
+                    null,
+                    null
+                ],
+                "labelPosition": [
+                    null,
+                    null
+                ],
+                "path": [
+                    [
+                        498,
+                        3096
+                    ],
+                    [
+                        818,
+                        2999
+                    ],
+                    [
+                        824,
+                        2924
+                    ],
+                    [
+                        671,
+                        2897
+                    ],
+                    [
+                        710,
+                        2811
+                    ],
+                    [
+                        908,
+                        2743
+                    ]
+                ],
+                "label": ""
+            }
+        ]
+    }
+}

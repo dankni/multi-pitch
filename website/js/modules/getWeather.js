@@ -21,11 +21,14 @@ export function weatherUpToDateCheck(weatherData){
 
 export function fullWeatherForOneClimb(weatherData, climbIdToFind){
     const climbWeather = weatherData.find(data => data.climbId === parseInt(climbIdToFind));
+    if (!climbWeather) {
+        console.warn(`No weather data found for climb ID: ${climbIdToFind}`);
+        return null; 
+    }
     return climbWeather;
 }
 
 export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
-    
     document.getElementById("currentWeather").style.display = "block";
     document.getElementById("seasonalWeather").classList.add("col-lg-6");
     document.getElementById("wIcon").classList.add(climbWeather.currently.icon);
