@@ -59,4 +59,26 @@ describe('Load the website page', function () {
                 });
         });
     });
+
+    it('opens and closes the lightbox via click on blog anchors page', () => {
+        const slug = '/blog/a-very-un-british-way-to-build-climbing-anchors/';
+        cy.visit(appUrl + slug);
+        cy.get('img[onclick*="openLightBox("]').first().click();
+
+        cy.get('#lightbox-overlay').should('be.visible');
+        cy.get('#modalStart').should('be.visible').invoke('attr', 'src').should('include', '/img/blog/anchors');
+
+        cy.get('#lightbox-close').click();
+        cy.get('#lightbox-overlay').should('not.be.visible');
+    });
+
+    it('closes the lightbox with Escape key on blog anchors page', () => {
+        const slug = '/blog/a-very-un-british-way-to-build-climbing-anchors/';
+        cy.visit(appUrl + slug);
+        cy.get('img[onclick*="openLightBox("]').first().click();
+
+        cy.get('#lightbox-overlay').should('be.visible');
+        cy.get('body').type('{esc}');
+        cy.get('#lightbox-overlay').should('not.be.visible');
+    });
 });
