@@ -1355,7 +1355,7 @@ blockquote:before {
   margin-bottom: 1.6rem;
   margin-left:3rem;
 }
-.overlay{
+.overlay, #lightbox-overlay{
   display:none;
   background-color:rgba(0,0,0, 0.0);
   width:100%;
@@ -1554,12 +1554,12 @@ hr {
 }
 .close:before, .close:after {
   position: absolute;
-  left: 24px;
+  left: 23px;
   content: ' ';
   height: 33px;
   width: 3px;
   background-color: #FFF;
-  top:8px
+  top:7px
 }
 .close:before {
   transform: rotate(45deg);

@@ -7,6 +7,8 @@ window.performance.mark('start-js-read');
 import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather } from "./modules/getWeather.js";
 import { climbCard, getRouteTopo } from "/components/climbCard.js";
 import { returnClimbURL } from "./modules/convertNameToURL.js";
+import { openLightBox } from "./modules/lightbox.js";
+
 // import {  } from "./modules/defineHighlightedText.js";
 
 /**
@@ -737,7 +739,6 @@ window.openModal = async function(url, id) {
  CLOSE THE OVERLAY OR GO BACK TO HOMEPAGE
  **/
 window.hideTile = function() {
-    document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
     document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
     document.getElementById('bdy').setAttribute("style", "");
     if(localStorage.getItem('focusId')){
@@ -1219,6 +1220,12 @@ window.clearFilters = function(){
 window.onpopstate = function (event) {  
     if(location.hash){
         return; // anchor link like #go-to-id
+    }
+    const lightboxOverlay = document.getElementById('lightbox-overlay');
+    if (lightboxOverlay?.style.display === 'block') {
+        if (typeof window.hideLightBox === 'function') {
+            window.hideLightBox();
+        }
     }
     let pageToLoad = document.location.pathname;
     if(pageToLoad === '/' && document.getElementById('overlay').style.display === 'block'){ 

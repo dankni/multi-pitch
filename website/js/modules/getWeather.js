@@ -13,10 +13,14 @@ export const loadWeather =  async() => {
 }
 
 export function weatherUpToDateCheck(weatherData){  
-    const yesterday = Date.parse(new Date()) - 86401000; // now minus 24hours and 1 second (in milliseconds)
-    const climbOneLastUpdate = weatherData.find(data => data.climbId === 1).currently.time;
-    const upToDate = parseInt(climbOneLastUpdate.toString().substring(0, 10)) > parseInt(yesterday.toString().substring(0, 10)); // trims to seconds
-    return upToDate; // true or false
+    if(weatherData){
+        const yesterday = Date.parse(new Date()) - 86401000; // now minus 24hours and 1 second (in milliseconds)
+        const climbOneLastUpdate = weatherData.find(data => data.climbId === 1).currently.time;
+        const upToDate = parseInt(climbOneLastUpdate.toString().substring(0, 10)) > parseInt(yesterday.toString().substring(0, 10)); // trims to seconds
+        return upToDate; // true or false
+    } else {
+        console.warn('No weather data stored locally, maybe offline'); // stopes console error if working offline
+    }
 }
 
 export function fullWeatherForOneClimb(weatherData, climbIdToFind){
