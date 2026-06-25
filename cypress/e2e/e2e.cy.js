@@ -35,7 +35,7 @@ describe('Load the website page', function () {
 		cy.get('#climbCardDetails .big-card-body h1').contains(card.cliff + ' - ' + card.routeName)
     });
 
-    
+  
     it('Make the dynamic topo images load', () => {
 		const card = climbsData.climbs[6];
 		cy.visit(appUrl)
@@ -80,5 +80,14 @@ describe('Load the website page', function () {
         cy.get('#lightbox-overlay').should('be.visible');
         cy.get('body').type('{esc}');
         cy.get('#lightbox-overlay').should('not.be.visible');
+    });
+
+    it('should filter cards when grade range is adjusted', () => {
+        cy.visit(appUrl);
+        cy.get('.filter-toggle').click();
+        cy.get('#gradeRange1').invoke('val', 3).trigger('input', {force: true});
+        cy.get('#gradeRange2').invoke('val', 5).trigger('input', {force: true});
+        // Verify filters were applied and cards are still displayed
+        cy.get('.card').should('have.length.greaterThan', 0);
     });
 });

@@ -7,7 +7,6 @@ function getLightboxOverlay() {
         if (!overlayElement) {
             overlayElement = document.createElement('div');
             overlayElement.id = 'lightbox-overlay';
-            overlayElement.className = 'overlay';
             overlayElement.setAttribute('style', 'display:none;');
             overlayElement.setAttribute('tabindex', '-1');
             document.body.appendChild(overlayElement);
@@ -69,9 +68,9 @@ function showImage(index) {
     }
 
     overlay.innerHTML = `
-        <button id="prevBtn" class="lightbox-nav" ${index === 0 ? 'disabled' : ''}>&lt;</button>
-        <img src="${item.src}" alt="${item.alt}" id="modalStart" tabindex="0" style="max-width:90vw;max-height:90vh;display:block;margin:0 auto;" />
-        <button id="nextBtn" class="lightbox-nav" ${index === currentGallery.length - 1 ? 'disabled' : ''}>&gt;</button>
+        <button id="prevBtn" class="lightbox-nav" ${index === 0 ? 'style="display:none;"' : ''}>&lt;</button>
+        <img src="${item.src}" alt="${item.alt}" id="modalStart" tabindex="0" class="lightbox-img" />
+        <button id="nextBtn" class="lightbox-nav" ${index === currentGallery.length - 1 ? 'style="display:none;"' : ''}>&gt;</button>
         <p class="modal-caption">Photo: ${item.alt || 'Image'}</p>
     `;
 
@@ -121,7 +120,7 @@ function openLightBox(img, alt) {
     const overlay = getLightboxOverlay();
     const closeBtn = getLightboxCloseButton();
 
-    overlay.setAttribute('style', 'display:block;');
+    overlay.setAttribute('style', 'display:flex;');
     closeBtn.setAttribute('style', 'display:block;');
     document.getElementById('bdy')?.setAttribute('style', 'overflow:hidden');
 
