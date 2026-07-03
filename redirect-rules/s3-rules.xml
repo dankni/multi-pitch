@@ -67,12 +67,12 @@
     </RoutingRule>
     <RoutingRule>
         <Condition>
-            <KeyPrefixEquals>climbs/morpheus--on-avon-gorge</KeyPrefixEquals>
+            <KeyPrefixEquals>climbs/morpheus--on-avon-gorge/</KeyPrefixEquals>
         </Condition>
         <Redirect>
             <Protocol>https</Protocol>
             <HostName>www.multi-pitch.com</HostName>
-            <ReplaceKeyWith>climbs/morpheus-on-avon-gorge</ReplaceKeyWith>
+            <ReplaceKeyWith>climbs/morpheus-on-avon-gorge/</ReplaceKeyWith>
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>
