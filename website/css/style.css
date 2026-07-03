@@ -988,6 +988,13 @@ footer .grey a i {
   h3, h1.h3{
     font-size:1.3rem;
   }
+  #gradeTable{
+    /* the conversion table's 7 columns are wider than a phone; scroll the
+       table inside its own box instead of side-scrolling the whole page */
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   p{
     font-size:.9rem;
   }
