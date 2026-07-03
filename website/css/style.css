@@ -486,8 +486,9 @@ h1,h3, h4 {
 h1,h3 {
   margin-bottom: .5rem;
 }
-.h3 {
-  /* headings promoted for document structure (e.g. the 404 h1) keep the h3 look */
+h1.h3 {
+  /* headings promoted to h1 for document structure (the 404 page) keep the h3 look;
+     scoped to h1 so the homepage's <h2 class="h3"> keeps its h2 styling */
   font-size: 1.5rem;
   padding-top: 0.8rem;
 }
