@@ -447,11 +447,6 @@ html {
     max-width: 100%;
   }
 }
-/******************/
-/** DOWNLOAD IMG **/
-#offline-img-yes {
-  display: none;
-}
 /**************/
 /** ELEMENTS **/
 h1,h3,h4,h5,p,ul {

@@ -1,3 +1,5 @@
+> Historical note: this documents the DarkSky → OpenWeatherMap migration that is **already complete** — getWeatherOW.js implements it. Kept for the field-mapping reference.
+
 # get climbing weather 
 *Showing weather forcast for all our climbing*
 
