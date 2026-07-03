@@ -70,8 +70,14 @@ content.articles.forEach(article => {
       ]
     })}</script>`;
   } else {
-    // article.created is human-readable ("11th May 2026"); strip the ordinal so Date can parse it
-    const datePublished = new Date(article.created.replace(/(\d+)(st|nd|rd|th)/, '$1')).toISOString().substring(0, 10);
+    // article.created is human-readable ("11th May 2026"); strip the ordinal so Date can parse it.
+    // Read the date back with local getters (not toISOString) so the result is the same
+    // calendar day regardless of the build machine's timezone.
+    const created = new Date(article.created.replace(/(\d+)(st|nd|rd|th)/i, '$1'));
+    if (isNaN(created)) {
+      throw new Error(`Cannot parse created date "${article.created}" for ${article.url}`);
+    }
+    const datePublished = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, '0')}-${String(created.getDate()).padStart(2, '0')}`;
     structuredData = `<script type="application/ld+json">${JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Article",
