@@ -37,13 +37,30 @@ pages.forEach(function(page) {
         </div>
     </main>`;
 
+    const canonical = 'https://www.multi-pitch.com' + page;
+    const isHubPage = page === '/climbing-tips/';
+    const breadcrumbItems = [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.multi-pitch.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Climbing Tips", "item": "https://www.multi-pitch.com/climbing-tips/" }
+    ];
+    if (!isHubPage) {
+        breadcrumbItems.push({ "@type": "ListItem", "position": 3, "name": content.heading, "item": canonical });
+    }
+    const structuredData = `<script type="application/ld+json">${JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbItems
+    })}</script>`;
+
     // a fresh copy of the head template per page, so placeholders are still present
     const pageHeadHTML = headHTML
-        .replace(/{{cannonical}}/gi, 'https://www.multi-pitch.com' + page)
+        .replace(/{{cannonical}}/gi, canonical)
         .replace(/{{description}}/gi, content.description)
         .replace(/{{title}}/gi, content.heading)
         .replace(/<!-- Scripts -->/gi, newScript)
         .replace(/{{heroJpg}}/gi, 'https://www.multi-pitch.com' + content.heroImg)
+        .replace(/{{ogType}}/gi, 'article')
+        .replace('<!-- Structured Data -->', structuredData)
         .replace(`<meta name="climbId" id="climbIdMeta" content="{{id}}" />`, '');
 
     const indexLoc = './website' + page + 'index.html';
