@@ -985,7 +985,7 @@ footer .grey a i {
     font-size:1.6rem;
     padding-top:1rem;
   }
-  h3{
+  h3, h1.h3{
     font-size:1.3rem;
   }
   p{
