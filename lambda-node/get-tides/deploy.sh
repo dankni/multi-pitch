@@ -10,7 +10,7 @@ npm install
 ZIP_NAME="get-tides.zip"
 LAMBDA_NAME="lambdaGetTides"
 
-zip -r ${ZIP_NAME} . -x "*test*" -x "*.secret*"
+zip -r ${ZIP_NAME} . -x "*test*" -x "*.secret*" -x "resp.json"
 aws lambda --profile multipitch update-function-code --function-name ${LAMBDA_NAME} --zip-file fileb://${ZIP_NAME}
 rm ${ZIP_NAME}
 

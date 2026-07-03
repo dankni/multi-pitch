@@ -32,7 +32,7 @@ function callTideApi(climb){
 	    .then(resp => resp.data)
             .then(tideApiResponse => mapTideApiToMultipitchClimb(tideApiResponse, climb))
 	    .then(resolve)
-            .catch(err => { console.error(err); reject({"error_message": "tide API request failed"}); })
+            .catch(err => { console.error("tide API request failed:", err.message, err.response && err.response.status); reject({"error_message": "tide API request failed"}); })
     })
     
     
