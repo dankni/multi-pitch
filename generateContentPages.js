@@ -58,7 +58,7 @@ pages.forEach(function(page) {
         .replace(/{{description}}/gi, content.description)
         .replace(/{{title}}/gi, content.heading)
         .replace(/<!-- Scripts -->/gi, newScript)
-        .replace(/{{heroJpg}}/gi, 'https://www.multi-pitch.com' + content.heroImg)
+        .replace(/{{heroJpg}}/gi, 'https://www.multi-pitch.com' + (content.heroImg || '/img/tiles/bosigran-climbing-small.jpg'))
         .replace(/{{ogType}}/gi, 'article')
         .replace('<!-- Structured Data -->', structuredData)
         .replace(`<meta name="climbId" id="climbIdMeta" content="{{id}}" />`, '');
