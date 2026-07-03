@@ -12,6 +12,7 @@ const regex = {
   'description': /{{description}}/gi,
   'title': /{{title}}/gi,
   'heroImg': /{{heroImg}}/gi,
+  'heroJpg': /{{heroJpg}}/gi,
   'heroCaption': /{{heroCaption}}/gi,
   'heroAlt': /{{heroAlt}}/gi,
   'scripts': /<!-- Scripts -->/gi
@@ -59,7 +60,7 @@ content.articles.forEach(article => {
   .replace(regex.description, article.metaDescription)
   .replace(regex.title, article.title)
   .replace(regex.scripts, newScript)
-  .replace(regex.heroImg, `https://www.multi-pitch.com${article.heroImg}.jpg`)
+  .replace(regex.heroJpg, `https://www.multi-pitch.com${article.heroImg}.jpg`)
   .replace(`<meta name="climbId" id="climbIdMeta" content="{{id}}" />`, '');
   
   let articleList = '';

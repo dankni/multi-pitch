@@ -150,9 +150,11 @@ function openLightBox(img, alt) {
     document.getElementById('modalStart').focus(); // accessibility
 }
 
-//So then I can use this in nodejs and in the browser
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = {
-        updateBreadcrumb, generateIntroHTML, generateArticlesHTML
-    };
+// Loaded as an ES module: expose the functions that generated pages call
+// from inline event handlers when running in the browser
+if (typeof window !== 'undefined') {
+    window.makeLinksPushable = makeLinksPushable;
+    window.openLightBox = openLightBox;
 }
+
+export { updateBreadcrumb, generateIntroHTML, generateArticlesHTML };

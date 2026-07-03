@@ -65,8 +65,7 @@
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>
-  </RoutingRules>
-      <RoutingRule>
+    <RoutingRule>
         <Condition>
             <KeyPrefixEquals>climbs/morpheus--on-avon-gorge</KeyPrefixEquals>
         </Condition>
@@ -74,6 +73,28 @@
             <Protocol>https</Protocol>
             <HostName>www.multi-pitch.com</HostName>
             <ReplaceKeyWith>climbs/morpheus-on-avon-gorge</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbs/donkey-serenades--on-lower-eagle-crag/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>climbs/donkey-serenades-on-lower-eagle-crag/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbs/high-sierra--on-high-sierra-dome/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>climbs/high-sierra-on-high-sierra-dome/</ReplaceKeyWith>
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>

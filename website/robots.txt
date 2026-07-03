@@ -1,9 +1,9 @@
-# /robots.txt file for http://www.multi-pitch.com
+# /robots.txt file for https://www.multi-pitch.com
 
 User-agent: *
 
-sitemap: http://www.multi-pitch.com/sitemap.xml
+Sitemap: https://www.multi-pitch.com/sitemap.xml
 
 Disallow: /subscribe/index.html
 Disallow: /subscribe/
-Disallow: /map/?loc*
+Disallow: /map/?loc
