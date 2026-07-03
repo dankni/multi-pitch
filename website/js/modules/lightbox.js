@@ -110,7 +110,8 @@ function navigate(direction, focusTarget) {
 
 function trapFocus(event) {
     const overlay = getLightboxOverlay();
-    const focusable = Array.from(overlay.querySelectorAll('button')).filter((el) => el.offsetParent !== null);
+    // these buttons are position:fixed (offsetParent === null), so test their inline display
+    const focusable = Array.from(overlay.querySelectorAll('button')).filter((el) => el.style.display !== 'none');
     if (!focusable.length) {
         return;
     }
@@ -210,6 +211,7 @@ function enhanceLightboxTriggers() {
 if (typeof window !== 'undefined') {
     window.openLightBox = openLightBox;
     window.hideLightBox = hideLightBox;
+    window.enhanceLightboxTriggers = enhanceLightboxTriggers; // re-run after injecting content with lightbox triggers
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', enhanceLightboxTriggers);
     } else {
