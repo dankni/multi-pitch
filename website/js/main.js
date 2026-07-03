@@ -540,21 +540,23 @@ window.cycleStatus = function(id){
     let statusFlag = document.getElementById(id + 'Status');
     let curentState = statusFlag.dataset.status;
     let wishlist = {};
+    const cardName = (statusFlag.closest('.card')?.querySelector('h4')?.textContent || '').trim();
+    const nameSuffix = cardName ? ' ' + cardName + '.' : '';
     switch(curentState) {
         case (""):
             statusFlag.dataset.status = "wished";
             statusFlag.innerHTML = "<i class='icon-heart' aria-hidden='true'></i>";
-            statusFlag.setAttribute('aria-label', 'Saved to wishlist. Press to mark as climbed.');
+            statusFlag.setAttribute('aria-label', 'Saved to wishlist:' + nameSuffix + ' Press to mark as climbed.');
             break;
         case ("wished"):
             statusFlag.dataset.status = "done";
             statusFlag.innerHTML = "<i class='icon-ok' aria-hidden='true'></i>";
-            statusFlag.setAttribute('aria-label', 'Marked as climbed. Press to clear saved status.');
+            statusFlag.setAttribute('aria-label', 'Marked as climbed:' + nameSuffix + ' Press to clear saved status.');
             break;
         default:
             statusFlag.dataset.status = "";
             statusFlag.innerHTML = "<i class='icon-heart-empty' aria-hidden='true'></i>";
-            statusFlag.setAttribute('aria-label', 'Not saved. Press to add to wishlist.');
+            statusFlag.setAttribute('aria-label', 'Not saved:' + nameSuffix + ' Press to add to wishlist.');
             break;
     }
     let climbSti = document.getElementsByClassName('climb-status');
@@ -705,6 +707,7 @@ window.deliverChange = function(climb, popped){
     document.addEventListener('keydown', overlayEscapeHandler);
     var fullCard = climbCard(climb);
     document.getElementById('overlay').innerHTML = fullCard;
+    window.enhanceLightboxTriggers?.();
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climbData.cliff + " - " + climbData.routeName;
@@ -766,9 +769,14 @@ function initGradeConversionOverlay() {
 }
 
 function overlayEscapeHandler(event) {
-    if (event.code === 'Escape') {
-        window.hideTile();
+    if (event.code !== 'Escape') {
+        return;
     }
+    const lightbox = document.getElementById('lightbox-overlay');
+    if (lightbox && lightbox.style.display && lightbox.style.display !== 'none') {
+        return; // the lightbox is on top and handles its own Escape
+    }
+    window.hideTile();
 }
 
 window.hideTile = function() {

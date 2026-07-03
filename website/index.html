@@ -295,7 +295,7 @@
                             <div class="col-12">
                                     <h5 class="filter-toggle" 
                                         onclick="toggleFilters()" 
-                                        onkeydown="return (event.code != 'Enter' && event.code != 'Space') || toggleFilters()" tabindex="0"
+                                        onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();toggleFilters();}" tabindex="0"
                                         role="button" aria-expanded="false" aria-controls="advancedFilters">
                                         <i class="icon-sliders"></i> Advanced Climbing Filters <span id="filterArrow" style="display: inline-block;">&#x25BC;</span>
                                     </h5>
