@@ -346,9 +346,10 @@ function getRouteTopo(climb, topoData) {
 }
 
 function getMap(climb) {
-    try {
-        if (climb.mapImg.url) {
-            var mapPicture = `
+    if (!climb.mapImg || !climb.mapImg.url) {
+        return '';
+    }
+    var mapPicture = `
         <picture class="big-card-map">    
             <source
                media="(max-width: 400px)"
@@ -379,11 +380,7 @@ function getMap(climb) {
                class="big-card-map" 
                alt="${climb.mapImg.alt}">
         </picture>`;
-            return mapPicture;
-        }
-    } catch (e) {
-        return '';
-    }
+    return mapPicture;
 }
 
 function getVariants(topoData){
