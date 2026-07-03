@@ -680,6 +680,8 @@ a[title]:hover:before, abbr[title]:hover:before, img[title]:hover:before {
   line-height:1.6rem;
 }
 .climb-status{
+  background: none;
+  cursor: pointer;
   position: absolute;
   right: 0;
   top: 0;
@@ -2011,6 +2013,10 @@ hr {
   font-size:35px;
   color:#000;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: bold;
 }
 .inactiveChev {
   color:#999;
@@ -2038,7 +2044,7 @@ hr {
   margin: -12px 0 0 0;
 }
 #lastDate{
-  color: #999;
+  color: #767676;
 }
 .rain{
   background-image: url(/img/icons/weather/rain.svg);
@@ -2210,4 +2216,29 @@ input[type="range"]::-ms-range-thumb {
   -ms-appearance: none;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
   background: #fff;
+}
+/* Screen-reader-only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Respect the user's motion preferences: stop infinite animations and the autoplaying footer video */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  video[autoplay].danger-gif {
+    display: none;
+  }
 }

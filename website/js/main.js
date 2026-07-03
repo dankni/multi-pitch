@@ -316,15 +316,18 @@ window.filterCards = function() {
 window.toggleFilters = function(){
     let advancedFilters = document.getElementById('advancedFilters');
     let filterArrow = document.getElementById('filterArrow');
+    let filterToggle = document.querySelector('.filter-toggle');
     if(advancedFilters.style.display === 'flex'){
         advancedFilters.style.display = 'none';
         localStorage.setItem('showFilters', false);
         filterArrow.style.rotate = '0deg';
+        filterToggle?.setAttribute('aria-expanded', 'false');
     } else {
         advancedFilters.style.display = 'flex';
-        document.getElementById('abseil').focus(); // keyboard acessibility 
+        document.getElementById('abseil').focus(); // keyboard acessibility
         localStorage.setItem('showFilters', true);
         filterArrow.style.rotate = '180deg';
+        filterToggle?.setAttribute('aria-expanded', 'true');
     }
 };
 
@@ -540,15 +543,18 @@ window.cycleStatus = function(id){
     switch(curentState) {
         case (""):
             statusFlag.dataset.status = "wished";
-            statusFlag.innerHTML = "<i class='icon-heart'></i>";
+            statusFlag.innerHTML = "<i class='icon-heart' aria-hidden='true'></i>";
+            statusFlag.setAttribute('aria-label', 'Saved to wishlist. Press to mark as climbed.');
             break;
         case ("wished"):
             statusFlag.dataset.status = "done";
-            statusFlag.innerHTML = "<i class='icon-ok'></i>";
+            statusFlag.innerHTML = "<i class='icon-ok' aria-hidden='true'></i>";
+            statusFlag.setAttribute('aria-label', 'Marked as climbed. Press to clear saved status.');
             break;
         default:
             statusFlag.dataset.status = "";
-            statusFlag.innerHTML = "<i class='icon-heart-empty'></i>";
+            statusFlag.innerHTML = "<i class='icon-heart-empty' aria-hidden='true'></i>";
+            statusFlag.setAttribute('aria-label', 'Not saved. Press to add to wishlist.');
             break;
     }
     let climbSti = document.getElementsByClassName('climb-status');
@@ -693,7 +699,10 @@ window.deliverChange = function(climb, popped){
         window.history.pushState({"page": url}, climbData.cliff, url);
     }
     document.getElementById('overlay').setAttribute("style", "display:block;");
+    document.getElementById('overlay').setAttribute("role", "dialog");
+    document.getElementById('overlay').setAttribute("aria-modal", "true");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+    document.addEventListener('keydown', overlayEscapeHandler);
     var fullCard = climbCard(climb);
     document.getElementById('overlay').innerHTML = fullCard;
     var navHeight = document.getElementsByTagName("nav")[0].height;
@@ -718,11 +727,15 @@ window.openModal = async function(url, id) {
             return;
         }
         const resp = await response.text();
-        document.getElementById('overlay').innerHTML = resp;
-        document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
-        document.getElementById('close').setAttribute("style", "display:block;");
+        const overlay = document.getElementById('overlay');
+        overlay.innerHTML = resp;
+        overlay.setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        document.getElementById('close')?.setAttribute("style", "display:block;"); // homepage has no #close element
         document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-        document.getElementById('modalStart').focus(); // accessibility
+        document.addEventListener('keydown', overlayEscapeHandler);
+        document.getElementById('modalStart')?.focus(); // accessibility
         if(document.getElementById('newScript')){
             eval(document.getElementById('newScript').textContent); // ToDo: Fix this! A hack to run any scripts that are in the new html
         }
@@ -736,8 +749,18 @@ window.openModal = async function(url, id) {
 /**
  CLOSE THE OVERLAY OR GO BACK TO HOMEPAGE
  **/
+function overlayEscapeHandler(event) {
+    if (event.code === 'Escape') {
+        window.hideTile();
+    }
+}
+
 window.hideTile = function() {
-    document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
+    const overlay = document.getElementById('overlay');
+    overlay.setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
+    overlay.removeAttribute("role");
+    overlay.removeAttribute("aria-modal");
+    document.removeEventListener('keydown', overlayEscapeHandler);
     document.getElementById('bdy').setAttribute("style", "");
     if(localStorage.getItem('focusId')){
         if(document.getElementById(localStorage.getItem('focusId'))){
@@ -1220,7 +1243,7 @@ window.onpopstate = function (event) {
         return; // anchor link like #go-to-id
     }
     const lightboxOverlay = document.getElementById('lightbox-overlay');
-    if (lightboxOverlay?.style.display === 'block') {
+    if (lightboxOverlay && lightboxOverlay.style.display !== 'none') {
         if (typeof window.hideLightBox === 'function') {
             window.hideLightBox();
         }

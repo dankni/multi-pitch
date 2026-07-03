@@ -64,8 +64,9 @@ return `
             <p id="intro">${intro}</p>
         </div>
     </div>
-    <form id="search" style="display:${searchDisplay};">
-    <input type="text" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
+    <form id="search" style="display:${searchDisplay};" role="search">
+    <label for="articleSearch" class="sr-only">Search articles</label>
+    <input type="text" id="articleSearch" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
     </form>
     ${breadcrumb}
 </section>
@@ -142,19 +143,11 @@ function updateBreadcrumb(url){
     return html;
 }
 
-function openLightBox(img, alt) {
-    document.getElementById('overlay').innerHTML = `<img src="${img}" alt="${alt}" id="modalStart" style="display:block;margin:10px auto;max-height:90vh;max-width:90vw" onKeyDown="return event.code != 'Escape' || hideTile(false)" tabindex="0" />`;
-    document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
-    document.getElementById('close').setAttribute("style", "display:block;");
-    document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-    document.getElementById('modalStart').focus(); // accessibility
-}
-
 // Loaded as an ES module: expose the functions that generated pages call
-// from inline event handlers when running in the browser
+// from inline event handlers when running in the browser.
+// (openLightBox comes from js/modules/lightbox.js, loaded via main.js.)
 if (typeof window !== 'undefined') {
     window.makeLinksPushable = makeLinksPushable;
-    window.openLightBox = openLightBox;
 }
 
 export { updateBreadcrumb, generateIntroHTML, generateArticlesHTML };

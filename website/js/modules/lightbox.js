@@ -1,5 +1,6 @@
 let overlayElement = null;
 let closeButtonElement = null;
+let triggerElement = null; // element that opened the lightbox, focus returns to it on close
 
 function getLightboxOverlay() {
     if (!overlayElement) {
@@ -9,6 +10,9 @@ function getLightboxOverlay() {
             overlayElement.id = 'lightbox-overlay';
             overlayElement.setAttribute('style', 'display:none;');
             overlayElement.setAttribute('tabindex', '-1');
+            overlayElement.setAttribute('role', 'dialog');
+            overlayElement.setAttribute('aria-modal', 'true');
+            overlayElement.setAttribute('aria-label', 'Image viewer');
             document.body.appendChild(overlayElement);
         }
     }
@@ -23,10 +27,11 @@ function getLightboxCloseButton() {
             closeButtonElement.type = 'button';
             closeButtonElement.id = 'lightbox-close';
             closeButtonElement.className = 'close';
-            closeButtonElement.setAttribute('aria-label', 'Close lightbox');
+            closeButtonElement.setAttribute('aria-label', 'Close image viewer');
             closeButtonElement.setAttribute('style', 'display:none;');
             closeButtonElement.addEventListener('click', hideLightBox);
-            document.body.appendChild(closeButtonElement);
+            // inside the dialog so it is part of the modal for assistive tech
+            getLightboxOverlay().appendChild(closeButtonElement);
         }
     }
     return closeButtonElement;
@@ -59,7 +64,7 @@ function buildGalleryItems() {
 let currentGallery = [];
 let currentIndex = 0;
 
-function showImage(index) {
+function showImage(index, focusTarget) {
     const item = currentGallery[index];
     const overlay = getLightboxOverlay();
     if (!item) {
@@ -67,27 +72,32 @@ function showImage(index) {
         return;
     }
 
+    // the caption carries the description, so the enlarged image is decorative
     overlay.innerHTML = `
-        <button id="prevBtn" class="lightbox-nav" ${index === 0 ? 'style="display:none;"' : ''}>&lt;</button>
-        <img src="${item.src}" alt="${item.alt}" id="modalStart" tabindex="0" class="lightbox-img" />
-        <button id="nextBtn" class="lightbox-nav" ${index === currentGallery.length - 1 ? 'style="display:none;"' : ''}>&gt;</button>
+        <button id="prevBtn" class="lightbox-nav" aria-label="Previous image" ${index === 0 ? 'style="display:none;"' : ''}>&lt;</button>
+        <img src="${item.src}" alt="" id="modalStart" tabindex="-1" class="lightbox-img" />
+        <button id="nextBtn" class="lightbox-nav" aria-label="Next image" ${index === currentGallery.length - 1 ? 'style="display:none;"' : ''}>&gt;</button>
         <p class="modal-caption">Photo: ${item.alt || 'Image'}</p>
     `;
+    getLightboxCloseButton(); // re-attach the close button after innerHTML wipe
+    overlay.appendChild(closeButtonElement);
 
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
     if (prevBtn) {
-        prevBtn.addEventListener('click', () => navigate(-1));
+        prevBtn.addEventListener('click', () => navigate(-1, 'prevBtn'));
     }
     if (nextBtn) {
-        nextBtn.addEventListener('click', () => navigate(1));
+        nextBtn.addEventListener('click', () => navigate(1, 'nextBtn'));
     }
 
-    document.getElementById('modalStart')?.focus();
+    // keep focus on the control the user activated; fall back to the dialog itself
+    const target = (focusTarget && document.getElementById(focusTarget)) || overlay;
+    target.focus();
 }
 
-function navigate(direction) {
+function navigate(direction, focusTarget) {
     currentIndex += direction;
     if (currentIndex < 0) {
         currentIndex = 0;
@@ -95,7 +105,28 @@ function navigate(direction) {
     if (currentIndex >= currentGallery.length) {
         currentIndex = currentGallery.length - 1;
     }
-    showImage(currentIndex);
+    showImage(currentIndex, focusTarget);
+}
+
+function trapFocus(event) {
+    const overlay = getLightboxOverlay();
+    const focusable = Array.from(overlay.querySelectorAll('button')).filter((el) => el.offsetParent !== null);
+    if (!focusable.length) {
+        return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === overlay)) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    } else if (!overlay.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+    }
 }
 
 function handleKeydown(event) {
@@ -105,6 +136,8 @@ function handleKeydown(event) {
         navigate(1);
     } else if (event.code === 'Escape') {
         hideLightBox();
+    } else if (event.code === 'Tab') {
+        trapFocus(event);
     }
 }
 
@@ -116,6 +149,10 @@ function openLightBox(img, alt) {
 
     const targetIndex = currentGallery.findIndex((item) => item.src === img);
     currentIndex = targetIndex === -1 ? 0 : targetIndex;
+
+    if (!overlayElement || overlayElement.style.display === 'none' || !overlayElement.style.display) {
+        triggerElement = document.activeElement; // only on first open, not re-entrant calls
+    }
 
     const overlay = getLightboxOverlay();
     const closeBtn = getLightboxCloseButton();
@@ -136,8 +173,48 @@ function hideLightBox() {
     closeBtn.setAttribute('style', 'display:none;');
     document.getElementById('bdy')?.setAttribute('style', '');
     document.removeEventListener('keydown', handleKeydown);
+
+    if (triggerElement && typeof triggerElement.focus === 'function') {
+        triggerElement.focus();
+        triggerElement = null;
+    }
 }
 
-window.openLightBox = openLightBox;
-window.hideLightBox = hideLightBox;
+// Blog content authors plain <img onclick="openLightBox(...)"> tags; make
+// those images keyboard-operable without editing every content.html
+function enhanceLightboxTriggers() {
+    const triggers = document.querySelectorAll('[onclick*="openLightBox("]');
+    triggers.forEach((el) => {
+        if (!el.hasAttribute('tabindex')) {
+            el.setAttribute('tabindex', '0');
+        }
+        if (!el.hasAttribute('role')) {
+            el.setAttribute('role', 'button');
+        }
+        if (!el.hasAttribute('aria-label')) {
+            const alt = el.alt || el.querySelector('img')?.alt || 'image';
+            el.setAttribute('aria-label', 'View larger image: ' + alt);
+        }
+        if (!el.dataset.lightboxKeys && !el.hasAttribute('onkeydown')) {
+            el.dataset.lightboxKeys = 'true';
+            el.addEventListener('keydown', (event) => {
+                if (event.code === 'Enter' || event.code === 'Space') {
+                    event.preventDefault();
+                    el.click();
+                }
+            });
+        }
+    });
+}
+
+if (typeof window !== 'undefined') {
+    window.openLightBox = openLightBox;
+    window.hideLightBox = hideLightBox;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', enhanceLightboxTriggers);
+    } else {
+        enhanceLightboxTriggers();
+    }
+}
+
 export { openLightBox, hideLightBox };
