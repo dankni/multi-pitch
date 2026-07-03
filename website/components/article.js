@@ -150,12 +150,6 @@ function openLightBox(img, alt) {
     document.getElementById('modalStart').focus(); // accessibility
 }
 
-/*function hideTile() {
-    document.getElementById('close').setAttribute("style", "display:none;"); // for the subscribe overlay
-    document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
-    document.getElementById('bdy').setAttribute("style", "");
-}*/
-  
 //So then I can use this in nodejs and in the browser
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = {

@@ -9,8 +9,6 @@ import { climbCard, getRouteTopo } from "/components/climbCard.js";
 import { returnClimbURL } from "./modules/convertNameToURL.js";
 import { openLightBox } from "./modules/lightbox.js";
 
-// import {  } from "./modules/defineHighlightedText.js";
-
 /**
  GLOBAL VARIABLES
  **/
@@ -1341,6 +1339,5 @@ window.addEventListener('load', (event) => {
         });
     }
     highlightNavLocation();
-//    loadNonEssential("script", "/js/auth-stuff.js"); 
     LoadAnalytics();
 });
