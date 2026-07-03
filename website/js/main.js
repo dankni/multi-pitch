@@ -1148,7 +1148,11 @@ window.loadTides = function (climbId) {
  **/
 window.loadCurrentWeatherModule = function(){
     const climbId = document.querySelector('meta[name="climbId"]')?.content;
-    const timeZone = JSON.parse(localStorage.getItem('climb' + climbId)).climbData.timeZone;
+    const cachedClimb = JSON.parse(localStorage.getItem('climb' + climbId) || 'null');
+    if (!cachedClimb) {
+        return; // first visit, nothing cached for this climb yet - skip weather hydration
+    }
+    const timeZone = cachedClimb.climbData.timeZone;
     if (window.weatherData) {
         if(weatherUpToDateCheck(window.weatherData)){
             let localWeather = fullWeatherForOneClimb(window.weatherData, climbId);
