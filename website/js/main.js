@@ -736,8 +736,8 @@ window.openModal = async function(url, id) {
         document.getElementById('bdy').setAttribute("style", "overflow:hidden");
         document.addEventListener('keydown', overlayEscapeHandler);
         document.getElementById('modalStart')?.focus(); // accessibility
-        if(document.getElementById('newScript')){
-            eval(document.getElementById('newScript').textContent); // ToDo: Fix this! A hack to run any scripts that are in the new html
+        if(document.getElementById('useConverted')){
+            initGradeConversionOverlay(); // the grade-conversion fragment needs its state restored
         }
     } catch (e) {
         console.log('There was a connection error of some sort', e);
@@ -749,6 +749,22 @@ window.openModal = async function(url, id) {
 /**
  CLOSE THE OVERLAY OR GO BACK TO HOMEPAGE
  **/
+function initGradeConversionOverlay() {
+    trackGA('gradeConversion', "open overlay", 'open');
+    if (localStorage.getItem('gradePreference')) {
+        document.querySelector(`input[type=radio][value=${localStorage.getItem('gradePreference')}]`).checked = true;
+        try {
+            document.getElementById(localStorage.getItem('gradePreference')).style.display = 'block';
+        } catch (e) {
+            console.log('no description for grade', localStorage.getItem('gradePreference'));
+        }
+    }
+    if (localStorage.getItem('useConverted')) {
+        document.getElementById('useConverted').checked = true;
+    }
+    updateTableHighlight();
+}
+
 function overlayEscapeHandler(event) {
     if (event.code === 'Escape') {
         window.hideTile();

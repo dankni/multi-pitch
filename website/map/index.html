@@ -184,7 +184,7 @@
         var baseLayerOptions = {
             maxZoom: 18
         }
-        var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             Object.assign({
                 attribution: '&copy; ' + '<a href="http://openstreetmap.org">OpenStreetMap</a>' + ' Contributors'
             }, baseLayerOptions));
@@ -196,8 +196,9 @@
             climbs.forEach(climb => {
                 try {
                     var climbWeather = mapWeatherData.find(data => data.climbId === climb.climbId);
-                    climb.content = climb.content.replace("${placeholder-conditions}", climbWeather.currently.icon);
-                    climb.content = climb.content.replace("${placeholder-icon}", climbWeather.currently.icon);
+                    var safeIcon = String(climbWeather.currently.icon).replace(/[^a-z0-9-]/gi, '');
+                    climb.content = climb.content.replace("${placeholder-conditions}", safeIcon);
+                    climb.content = climb.content.replace("${placeholder-icon}", safeIcon);
                     var temp = Math.round(climbWeather.currently.temperatureMin) + '-' + Math.round(climbWeather.currently.temperatureHigh) + "&#176; C";
                     climb.content = climb.content.replace("${placeholder-temp}", temp);
                     climb.content = climb.content.replace("${display}", "");

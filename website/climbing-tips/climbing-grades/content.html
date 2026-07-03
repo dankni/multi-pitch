@@ -4,21 +4,6 @@
             <h2 id="modalStart" tabindex="0">
                 Change Grading System:
             </h2>
-            <script id="newScript">
-                trackGA('gradeConversion', "open overlay", 'open');
-                if (localStorage.getItem('gradePreference')) {
-                    document.querySelector(`input[type=radio][value=${localStorage.getItem('gradePreference')}]`).checked = true;
-                    try {
-                        document.getElementById(localStorage.getItem('gradePreference')).style.display = 'block';
-                    } catch (e) {
-                        console.log('no description for grade', localStorage.getItem('gradePreference'));
-                    }
-                }
-                if (localStorage.getItem('useConverted')) {
-                    document.getElementById('useConverted').checked = true;
-                }
-                updateTableHighlight();
-            </script>
             <style>
                 .gradeLabel {
                     padding: .5rem;

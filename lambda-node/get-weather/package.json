@@ -1,7 +1,7 @@
 {
-  "name": "get-tides",
+  "name": "get-weather",
   "version": "1.0.0",
-  "description": "Daily Lambda that fetches tide data for tidal climbs and writes climbing-data-extended-tides.json to S3",
+  "description": "Daily Lambda that fetches OpenWeatherMap data for every published climb and writes climbing-data-extended-weather.json to S3",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
