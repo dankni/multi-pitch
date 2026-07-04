@@ -1,13 +1,16 @@
 # /robots.txt file for https://www.multi-pitch.com
 
 User-agent: *
-Disallow:
+# /map/?loc= is deliberately blocked to preserve crawl budget —
+# every climb card links to a parameterised map URL and crawlers
+# were wasting budget looping through them. Trade-off: Search
+# Console will list these under "Blocked by robots.txt", which is
+# expected and can be ignored.
+Disallow: /map/?loc
 
 Sitemap: https://www.multi-pitch.com/sitemap.xml
 
-# /map/?loc= and /subscribe/ are intentionally crawlable:
-# the map page canonicalises to /map/ and the subscribe
-# fragment carries a noindex meta tag. Blocking them here
-# left Google unable to see either signal, producing
-# "Blocked by robots.txt" / "Indexed, though blocked by
-# robots.txt" coverage errors in Search Console.
+# /subscribe/ stays crawlable on purpose: the fragment carries a
+# noindex meta tag, and Google can only see it if allowed to crawl
+# (blocking it is what caused the "Indexed, though blocked by
+# robots.txt" Search Console error).
