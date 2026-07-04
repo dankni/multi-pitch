@@ -12,10 +12,40 @@ const FILE_NAME = 'sitemap.xml';
 // Import JSON directly (Node >=17.5, with "type": "module" in package.json)
 const allData = JSON.parse(fs.readFileSync('./website/data/data.json'));
 const climbsData = allData.climbs.filter(climb => climb.status === 'publish');
-//import climbsDataJson from './website/data/data.json' assert { type: 'json' };
-//const climbsData = climbsDataJson;
+
+const tipsPages = [
+    '/climbing-tips/',
+    '/climbing-tips/climbing-grades/',
+    '/climbing-tips/climbing-gear/',
+    '/climbing-tips/rock-types/',
+    '/climbing-tips/climbing-terminology/'
+];
+
+// tips content.json stores lastUpdated as DD/MM/YYYY
+function tipsLastmod(lastUpdated) {
+    const [day, month, year] = lastUpdated.split('/');
+    return `${year}-${month}-${day}`;
+}
+
+const blogArticles = JSON.parse(fs.readFileSync('./website/blog/content.json')).articles
+    .filter(article => article.publish);
 
 function generate() {
+    const tipsEntries = tipsPages.map(page => {
+        const content = JSON.parse(fs.readFileSync('./website' + page + 'content.json'));
+        return `
+        <url>
+            <loc>https://www.multi-pitch.com${page}</loc>
+            <lastmod>${tipsLastmod(content.lastUpdated)}</lastmod>
+            <priority>0.7</priority>
+        </url>`;
+    });
+    const blogEntries = blogArticles.map(article => `
+        <url>
+            <loc>https://www.multi-pitch.com${article.url}</loc>
+            <lastmod>${article.lastUpdated.substring(0, 10)}</lastmod>
+            <priority>0.80</priority>
+        </url>`);
     const urlsEntry = climbsData.map(climb => {
         const loc = "https://www.multi-pitch.com/climbs/" + returnClimbURL(climb.routeName, climb.cliff);
         let lastmod;
@@ -53,26 +83,7 @@ function generate() {
             <lastmod>${date}</lastmod>
             <priority>0.6</priority>
         </url>
-        <url>
-            <loc>https://www.multi-pitch.com/climbing-tips/</loc>
-            <lastmod>2020-04-08</lastmod>
-            <priority>0.7</priority>
-        </url>
-        <url>
-            <loc>https://www.multi-pitch.com/climbing-tips/climbing-grades/</loc>
-            <lastmod>2020-03-31</lastmod>
-            <priority>0.7</priority>
-        </url>
-        <url>
-            <loc>https://www.multi-pitch.com/climbing-tips/rock-types/</loc>
-            <lastmod>2020-04-08</lastmod>
-            <priority>0.7</priority>
-        </url>
-        <url>
-            <loc>https://www.multi-pitch.com/climbing-tips/climbing-gear/</loc>
-            <lastmod>2020-04-15</lastmod>
-            <priority>0.7</priority>
-        </url>${urlsEntry.join('')}
+        ${tipsEntries.join('')}${blogEntries.join('')}${urlsEntry.join('')}
     </urlset>`;
 
     const fileLocation = path.resolve(__dirname, OUTPUT_FOLDER, FILE_NAME);

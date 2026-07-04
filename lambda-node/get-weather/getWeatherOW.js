@@ -46,16 +46,6 @@ function mapToMultipitcherDomainFromAlerts(owAlerts = []){
 }
 
 
-function mapToMultipitcherDomainFromMinutely(owMinutely){
-    // Data From the past are coming has hourly 
-    // contains hourly historical data starting at 00:00 on the requested day and continues until 23:59 on the same day (UTC time)
-    // Maybe take the time at 12??
-    return {
-        "time": owMinutely.dt,
-        "precipitation": owMinutely.precipitation
-    }
-}
-
 function mapToMultipitcherDomainFromHourly(owHourly){
     // Data From the past are coming has hourly 
     // contains hourly historical data starting at 00:00 on the requested day and continues until 23:59 on the same day (UTC time)
@@ -146,7 +136,6 @@ function mapTodayAndFutureToMultipitcherDomain(owResponse){
     const [weatherToday, ...weatherOffset] = owResponse.daily;
     todayDaily = mapToMultipitcherDomainFromDaily(weatherToday)
     todayHourly = owResponse.hourly.map(mapToMultipitcherDomainFromHourly)
-    todayMinutely = owResponse.minutely && owResponse.minutely.map(mapToMultipitcherDomainFromMinutely)
     // TODO we can add it but I am removing it otherwise the response to the client will be to big
     // todayDaily["hourly"] = todayHourly
     // todayDaily["minutely"] = todayMinutely
@@ -179,14 +168,12 @@ function mapPastToMultipitcherDomain(owResponses){
 }
 
 function isValidGeo(climb) {
-    const [lat, lon] = climb.geoLocation.split(",");
-    isValid = lat && lon && lat.length != 0 && lon.length != 0
-    if (!isValidGeo) {
-        console.error(`climb: ${climb}, has invalid geo location`)
-    } 
-
-    return isValid
-
+    const [lat, lon] = (climb.geoLocation || "").split(",");
+    const isValid = !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon));
+    if (!isValid) {
+        console.error(`climb ${climb.id} has invalid geo location: ${climb.geoLocation}`);
+    }
+    return isValid;
 }
 
 function getWeather(climbsData) {
@@ -198,19 +185,19 @@ function getWeather(climbsData) {
         ).map(climb => {
             const geoLocation = climb.geoLocation;
             const [lat_raw, lon_raw] = geoLocation.split(",");
-            const lat = lat_raw.trim()
-            const lon = lon_raw.trim()
+            const lat = encodeURIComponent(lat_raw.trim())
+            const lon = encodeURIComponent(lon_raw.trim())
             const owPastPromises = [1, 2, 3, 4].map(value => {
                 let d = new Date();
                 d.setDate(d.getDate() - value);
                 const tsInSeconds = (d.getTime() / 1000).toFixed(0);
-                const owPastUrl = `https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=${lat}&lon=${lon}&dt=${tsInSeconds}&units=metric&appid=${owKey}`;
+                const owPastUrl = `https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=${lat}&lon=${lon}&exclude=minutely&dt=${tsInSeconds}&units=metric&appid=${owKey}`;
                 
                 console.log("going to call Past", owPastUrl);
                 return axios.get(owPastUrl);
             });
             
-            const owCurrentlyAndFutureUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${owKey}`;
+            const owCurrentlyAndFutureUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely&units=metric&appid=${owKey}`;
             console.log("going to call Current and Future", owCurrentlyAndFutureUrl);
             const owCurrentlyAndFuturePromise = axios.get(owCurrentlyAndFutureUrl);
     
@@ -237,7 +224,6 @@ function getWeather(climbsData) {
                     .catch(err => {
                         console.error("ERRRRORORRO", err)
                         return {
-                            "error_message": err.message,
                             "routes": [],
                             "status": "REQUEST_DENIED"
                         }
@@ -245,7 +231,6 @@ function getWeather(climbsData) {
             ).catch(err => {
                 console.error("ERRRRORORRO", err)
                 return {
-                    "error_message": err.message,
                     "routes": [],
                     "status": "REQUEST_DENIED"
                 }
@@ -256,7 +241,5 @@ function getWeather(climbsData) {
 
 }
 
-
-getWeather()
 
 module.exports = {getWeather,  mapTodayAndFutureToMultipitcherDomain, mapPastToMultipitcherDomain};

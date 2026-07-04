@@ -1,32 +1,33 @@
-const fs = require('fs');
-const article = require('./website/components/article.js');
+import fs from 'fs';
+import { updateBreadcrumb, generateIntroHTML, generateArticlesHTML } from './website/components/article.js';
 
-const pages = ['/climbing-tips/', '/climbing-tips/climbing-grades/', '/climbing-tips/climbing-gear/', '/climbing-tips/rock-types/']; 
-const regexUrl = /{{cannonical}}/gi;
-const regexDesc = /{{description}}/gi;
-const regexTitle = /{{title}}/gi;
-const regexHero = /{{heroJpg}}/gi;
-const regexScripts = /<!-- Scripts -->/gi;
+const pages = [
+    '/climbing-tips/',
+    '/climbing-tips/climbing-grades/',
+    '/climbing-tips/climbing-gear/',
+    '/climbing-tips/rock-types/',
+    '/climbing-tips/climbing-terminology/'
+];
+
 const newScript = `<!--scripts -->
-<script src="/components/article.js"></script>
+<script src="/components/article.js" type="module"></script>
 <script>
     window.addEventListener('DOMContentLoaded', (event) => {
         makeLinksPushable();
-    }); 
+    });
 </script>`;
 
-let headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
-let footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
-let navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
+const headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
+const footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
+const navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
 
 pages.forEach(function(page) {
-    let contentLoc = './website' + page + 'content.json';
-    let content = JSON.parse(fs.readFileSync(contentLoc, 'utf8'));
+    const content = JSON.parse(fs.readFileSync('./website' + page + 'content.json', 'utf8'));
 
-    let breadcrumb = article.updateBreadcrumb(content.url);
-    let introHTML = article.generateIntroHTML(content, breadcrumb);
-    let articles = article.generateArticlesHTML(content, false);
-    let contentHTML = `
+    const breadcrumb = updateBreadcrumb(content.url);
+    const introHTML = generateIntroHTML(content, breadcrumb);
+    const articles = generateArticlesHTML(content, false);
+    const contentHTML = `
     <main id="main" style="margin-top:80px">
         <div class="container">
         ${introHTML}
@@ -36,18 +37,35 @@ pages.forEach(function(page) {
         </div>
     </main>`;
 
-    let indexLoc = './website' + page + 'index.html';
+    const canonical = 'https://www.multi-pitch.com' + page;
+    const isHubPage = page === '/climbing-tips/';
+    const breadcrumbItems = [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.multi-pitch.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Climbing Tips", "item": "https://www.multi-pitch.com/climbing-tips/" }
+    ];
+    if (!isHubPage) {
+        breadcrumbItems.push({ "@type": "ListItem", "position": 3, "name": content.heading, "item": canonical });
+    }
+    const structuredData = `<script type="application/ld+json">${JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbItems
+    })}</script>`;
 
-    headHTML = headHTML.replace(regexUrl, 'https://www.multi-pitch.com/' + page);
-    headHTML = headHTML.replace(regexDesc, content.description);
-    headHTML = headHTML.replace(regexTitle, content.heading);
-    headHTML = headHTML.replace(regexScripts, newScript);
-    headHTML = headHTML.replace(regexHero, 'https://www.multi-pitch.com' + content.heroImg);
+    // a fresh copy of the head template per page, so placeholders are still present
+    const pageHeadHTML = headHTML
+        .replace(/{{cannonical}}/gi, canonical)
+        .replace(/{{description}}/gi, content.description)
+        .replace(/{{title}}/gi, content.heading)
+        .replace(/<!-- Scripts -->/gi, newScript)
+        .replace(/{{heroJpg}}/gi, 'https://www.multi-pitch.com' + (content.heroImg || '/img/tiles/bosigran-climbing-small.jpg'))
+        .replace(/{{ogType}}/gi, 'article')
+        .replace('<!-- Structured Data -->', structuredData)
+        .replace(`<meta name="climbId" id="climbIdMeta" content="{{id}}" />`, '');
 
-    let data = headHTML + navHTML + contentHTML + footerHTML;
-    fs.writeFile(indexLoc, data, {encoding:'utf8',flag:'w'}, function (err) {
+    const indexLoc = './website' + page + 'index.html';
+    fs.writeFile(indexLoc, pageHeadHTML + navHTML + contentHTML + footerHTML, {encoding:'utf8',flag:'w'}, function (err) {
         if (err) throw err;
-        console.log("It's saved!");
+        console.log(indexLoc + " saved!");
     });
-
 });

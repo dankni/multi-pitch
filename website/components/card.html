@@ -18,9 +18,10 @@
        data-done="{{done}}"
        id="{{id}}"
        class="card">
-    <div class="climb-status" id="{{id}}Status" data-climbId="{{id}}" data-status="{{status}}" onclick="cycleStatus('{{id}}')">
-      <i class="icon-{{icon}}"></i>
-    </div>
+    <button type="button" class="climb-status" id="{{id}}Status" data-climbId="{{id}}" data-status="{{status}}" onclick="cycleStatus('{{id}}')"
+            aria-label="Change saved status of {{routeName}} on {{cliff}}">
+      <i class="icon-{{icon}}" aria-hidden="true"></i>
+    </button>
     <a href="{{url}}" onclick="showTile('{{id}}');return false;" id="{{id}}Focus">
       <picture>
         <source srcset="/{{webPUrl}}" type="image/webp">
@@ -29,7 +30,7 @@
     </a>
     <div class="card-body">
       <h4>
-        <span class="flag {{flag}}"></span>
+        <span class="flag {{flag}}" aria-hidden="true"></span>
         {{cliff}}
       </h4>
       <p class="card-text">

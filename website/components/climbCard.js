@@ -9,7 +9,7 @@ function getGuidebook(climb) {
         <hr />
         <section class="row" id="guidebooks">
             <div class="col-sm-12">
-                <h3 tabindex="0">Guidebooks</h3>
+                <h3>Guidebooks</h3>
             </div>`;
                 for (let i = 0; i < climb.guideBooks.length; i++) {
                     let pg = (climb.guideBooks[i].pg === null) ? "?" : climb.guideBooks[i].pg;
@@ -49,14 +49,14 @@ function getApproachInfo(climb) {
     <hr />
     <section class="row" id="approachDescent">
         <div class="col">
-            <h3 tabindex="0">Approach & Descent Information</h3>
+            <h3>Approach & Descent Information</h3>
             <p id="approach">${climb.approach}</p>
             <p style="text-align:center"> 
                 <a href="/map/?loc=${climb.geoLocation}" class="open-tile inline-button">
                     See ${climb.cliff} on the climb map
                 </a>
                 <a href="https://www.google.com/maps/place/${climb.geoLocation}" target="blank" class="open-tile inline-button">
-                    Open climb location in Google Maps<i class=" icon-link-ext"></i>
+                    Open climb location in Google Maps<i class=" icon-link-ext" aria-hidden="true"></i>
                 </a>
             </p>
         </div>
@@ -77,7 +77,7 @@ function getPitchInfo(climb) {
     <hr />
     <section class="row" id="pitchesSection">
         <div class="col">
-           <h3 tabindex="0">Pitch By Pitch Information</h3>
+           <h3>Pitch By Pitch Information</h3>
            <p id="pitchInfo">${climb.pitchInfo}</p>
         </div>
       </section>`;
@@ -97,7 +97,7 @@ function getreferenceInfo(climb) {
         <hr />
         <section class="row" id="references">
             <div class="col">
-                <h3 tabindex="0" id="refs">References &amp; additional links</h3>
+                <h3 id="refs">References &amp; additional links</h3>
                 <p>
                     The following links will take you to external websites specifically related to this climb: ${climb.routeName} on ${climb.cliff}.<br />
                     <em>Note: They contained relevant information at the time of publishing.</em>
@@ -190,7 +190,7 @@ function getWeather(climb) {
       <hr />
       <section class="row" id="weather">
         <div class="col-12">
-          <h3  tabindex="0">Weather & Local Conditions</h3>
+          <h3>Weather & Local Conditions</h3>
           ${seepage}
           <aside style="margin-bottom:2.5rem;">
             <small>
@@ -201,7 +201,7 @@ function getWeather(climb) {
           </aside>
         </div>
         <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
-          <h4  tabindex="0">Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
+          <h4>Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
           <p class="min-height">
             The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>. <small id="lastDate">Updated: </small><br /><br />
             <span class="weather tempr"></span> Temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c.<br />
@@ -219,8 +219,8 @@ function getWeather(climb) {
           <p class="chart-title">
             Daily Precipitation
           </p>
-          <strong id="backChev" class="weatherChev inactiveChev" onClick="weatherBars('back')">&#171;</strong>
-          <strong id="forwardChev" class="weatherChev" onClick="weatherBars('forward')">&#187;</strong>
+          <button type="button" id="backChev" class="weatherChev inactiveChev" aria-label="Earlier seasonal weather" onClick="weatherBars('back')">&#171;</button>
+          <button type="button" id="forwardChev" class="weatherChev" aria-label="Later seasonal weather" onClick="weatherBars('forward')">&#187;</button>
           <ul id="currentRain" class="chart" style="max-width:84%;" data-state="3">
             <li id="offsetMinus3" class="bar0"><span style="height:0%;" title="-3 days"></span></li>
             <li id="offsetMinus2" class="bar1"><span style="height:0%;" title="-2 days"></span></li>
@@ -238,7 +238,7 @@ function getWeather(climb) {
           ${tideInfoBox}
         </div>
         <div class="col-12" id="seasonalWeather">
-          <h4 tabindex="0">Seasonal Weather Information</h4>
+          <h4>Seasonal Weather Information</h4>
           <p>Note that some weather stations are close or even on the mountain, others are in nearby towns. 
           Plan accordingly!</p>
           <p class="chart-title">Estimated Rainy Days Per Month</p>
@@ -540,7 +540,7 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                 <div class="big-card-body pull-onto-map">
                     <div class="row">
                         <div class="col-sm">
-                            <h1 id="articleTitle" tabindex="0">
+                            <h1 id="articleTitle" tabindex="-1">
                                 <span class="flag big-flag ${climb.country.toLowerCase().replace(' ', '')}"></span>
                                 ${climb.cliff} - ${climb.routeName}
                             </h1>
@@ -584,32 +584,32 @@ function climbCard(climbData, nearbyClimbsServerSide) {
                         </div>
                         <div class="col-lg-3 col-md-12 social-share">
                             <p class="share-tip">Share this page:</p>
-                            <a  id="whatsappShare" title="Share this page to Whatsapp"
-                                href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://multi-pitch.com/climbs/${folderName}"
+                            <a  id="whatsappShare" title="Share this page to Whatsapp" aria-label="Share this page to WhatsApp"
+                                href="whatsapp://send?text=${climb.routeName} on ${climb.cliff} | https://www.multi-pitch.com/climbs/${folderName}"
                                 target="blank"
                                 onClick="trackGA('social-share', 'whatsapp', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                                <i class="icon-whatsapp"></i></a>
-                            <a  title="Tweet this page"
-                                href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://multi-pitch.com/climbs/${folderName}" 
+                                <i class="icon-whatsapp" aria-hidden="true"></i></a>
+                            <a  title="Tweet this page" aria-label="Tweet this page"
+                                href="https://twitter.com/intent/tweet/?text=${climb.routeName} on ${climb.cliff}&amp;url=https://www.multi-pitch.com/climbs/${folderName}" 
                                 target="blank"
                                 onClick="trackGA('social-share', 'twitter', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                                <i class="icon-twitter"></i></a>
-                            <a  title="Share this page to Facebook"
-                                href="https://facebook.com/sharer/sharer.php?u=https://multi-pitch.com/climbs/${folderName}" 
+                                <i class="icon-twitter" aria-hidden="true"></i></a>
+                            <a  title="Share this page to Facebook" aria-label="Share this page to Facebook"
+                                href="https://facebook.com/sharer/sharer.php?u=https://www.multi-pitch.com/climbs/${folderName}" 
                                 target="blank"
                                     onClick="trackGA('social-share', 'facebook', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                                <i class="icon-facebook"></i></a>
-                            <a  title="Share this page via Email"
-                                href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://multi-pitch.com/climbs/${folderName}" 
+                                <i class="icon-facebook" aria-hidden="true"></i></a>
+                            <a  title="Share this page via Email" aria-label="Share this page via email"
+                                href="mailto:?subject=${climb.routeName} on ${climb.cliff}&amp;body=https://www.multi-pitch.com/climbs/${folderName}" 
                                 target="blank"
                                     onClick="trackGA('social-share', 'email', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);">
-                                <i class="icon-mail"></i></a>
+                                <i class="icon-mail" aria-hidden="true"></i></a>
                         </div>
                     </div>
                     <hr />  
                     <section class="row">
                         <div class="col">
-                            <h2 tabindex="0">The Route Topography</h2>
+                            <h2>The Route Topography</h2>
                             <p>
                                 This is the route <strong>${climb.routeName}</strong> on ${climb.cliff} in ${climb.county}, ${climb.country}.
                                 It represents ${climb.length}m of ${climb.rock} rock climbing, usually over ${climb.pitches} pitches, of a max grade of ${climb.tradGrade}&nbsp;${techGrade}.

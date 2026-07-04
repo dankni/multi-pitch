@@ -180,12 +180,16 @@ const getWeatherExpected = {
 };
 
 describe('should call the OWM api in the right way', function () {
-    it("OWM today ok response ", async function () {
-        mockAxios.get = () => Promise.resolve(OWMOKtoday);
+    it("maps mocked OWM responses for every published climb", async function () {
+        mockAxios.get = (url) => Promise.resolve(url.includes('timemachine') ? OWMOKpast : OWMOKtoday);
         const fixture = await getWeather(climbData);
 
-        expect(fixture.length).to.eql(2);
-        expect(fixture[0]).to.eql({});
+        const published = climbData.climbs.filter(c => c.status === 'publish').length;
+        expect(fixture.length).to.eql(published);
+        expect(fixture[0]).to.have.property('climbId');
+        expect(fixture[0]).to.have.property('currently');
+        expect(fixture[0]).to.have.property('offsetMinus1');
+        expect(fixture[0].status).to.not.eql('REQUEST_DENIED');
     });
 
     // it("OWM today ok response ", async function () {
