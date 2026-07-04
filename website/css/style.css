@@ -1636,6 +1636,15 @@ hr {
 }
 /*******************/
 /** ARTICLE PAGES **/
+.warning{
+  background-color: #ffd;
+  padding: 1rem;
+}
+html[data-theme="dark"] .warning{
+  background-color: #87711e;
+  color: #fff;
+  padding: 1rem;
+}
 .cat-img{
   width:100%;
   max-width: 300px;
@@ -2265,19 +2274,39 @@ input[type="range"]::-ms-range-thumb {
 .theme-toggle:hover {
   border-color: #FFF;
 }
+.footer-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  margin: 0 0 0 1rem;
+  color: inherit;
+  border-color: currentColor;
+  border-radius: 999px;
+}
+.footer-theme-toggle:hover {
+  border-color: currentColor;
+}
+.theme-toggle-label {
+  font-size: .9rem;
+  font-weight: 600;
+  line-height: 1;
+}
 .theme-toggle svg {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 1rem;
+  height: 1rem;
 }
 .theme-toggle .tt-sun {
   display: none;
 }
 html[data-theme="dark"] .theme-toggle .tt-sun {
   display: block;
+  color: #ffd426;
 }
 html[data-theme="dark"] .theme-toggle .tt-moon {
   display: none;
+  color: #fff;
 }
 html[data-theme="dark"] {
   color-scheme: dark;
@@ -2394,11 +2423,6 @@ html[data-theme="dark"] .info-ring,
 html[data-theme="dark"] .info-divider {
   border-color: #8b95a5;
 }
-html[data-theme="dark"] .compass {
-  /* the compass artwork needs a light disc to stay legible */
-  background-color: #dfe3e8;
-  border-radius: 50%;
-}
 html[data-theme="dark"] .compass .single-attribute {
   color: #111;
 }
@@ -2444,4 +2468,26 @@ html[data-theme="dark"] .slider {
 }
 html[data-theme="dark"] .cat-img {
   background-color: #39424e;
+}
+/* invert the weather icons so they remain legible on dark backgrounds */
+html[data-theme="dark"] .rain, 
+html[data-theme="dark"] .clear-day,
+html[data-theme="dark"] .partly-cloudy-day,
+html[data-theme="dark"] .cloudy,
+html[data-theme="dark"] .fog,
+html[data-theme="dark"] .clear-night,
+html[data-theme="dark"] .partly-cloudy-night,
+html[data-theme="dark"] .sleet,
+html[data-theme="dark"] .snow,
+html[data-theme="dark"] .wind,
+html[data-theme="dark"] .sunrise,
+html[data-theme="dark"] .tempr,
+html[data-theme="dark"] .moon {
+  filter: invert(1);
+}
+#climbCardDetails{
+  background-color: #fff;
+}
+html[data-theme="dark"] #climbCardDetails {
+  background-color: #121821;
 }

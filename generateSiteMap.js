@@ -13,14 +13,6 @@ const FILE_NAME = 'sitemap.xml';
 const allData = JSON.parse(fs.readFileSync('./website/data/data.json'));
 const climbsData = allData.climbs.filter(climb => climb.status === 'publish');
 
-const tipsPages = [
-    '/climbing-tips/',
-    '/climbing-tips/climbing-grades/',
-    '/climbing-tips/climbing-gear/',
-    '/climbing-tips/rock-types/',
-    '/climbing-tips/climbing-terminology/'
-];
-
 // tips content.json stores lastUpdated as DD/MM/YYYY
 function tipsLastmod(lastUpdated) {
     const [day, month, year] = lastUpdated.split('/');
@@ -31,15 +23,6 @@ const blogArticles = JSON.parse(fs.readFileSync('./website/blog/content.json')).
     .filter(article => article.publish);
 
 function generate() {
-    const tipsEntries = tipsPages.map(page => {
-        const content = JSON.parse(fs.readFileSync('./website' + page + 'content.json'));
-        return `
-        <url>
-            <loc>https://www.multi-pitch.com${page}</loc>
-            <lastmod>${tipsLastmod(content.lastUpdated)}</lastmod>
-            <priority>0.7</priority>
-        </url>`;
-    });
     const blogEntries = blogArticles.map(article => `
         <url>
             <loc>https://www.multi-pitch.com${article.url}</loc>

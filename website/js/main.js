@@ -49,34 +49,29 @@ if (!"content" in document.createElement("template") && document.getElementById(
 /**
  * DARK MODE TOGGLE
  * The saved theme is applied before first paint by an inline snippet in each
- * page's <head>; this only builds the nav button and handles switching.
+ * page's <head>; this wires up the existing footer button and handles switching.
  **/
 (function initThemeToggle() {
     if (document.readyState === 'loading') {
-        // the homepage loads this module async, so the nav may not be parsed yet
         document.addEventListener('DOMContentLoaded', initThemeToggle);
         return;
     }
-    const navList = document.querySelector('nav ul');
-    if (!navList || document.querySelector('.theme-toggle')) { return; }
+
+    const button = document.querySelector('.theme-toggle');
+    if (!button) { return; }
 
     const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
-    const li = document.createElement('li');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'theme-toggle';
-    button.innerHTML =
-        '<svg class="tt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
-        '<svg class="tt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>';
 
     const reflectTheme = function () {
-        button.setAttribute('aria-pressed', isDark());
-        button.setAttribute('aria-label', isDark() ? 'Switch to light theme' : 'Switch to dark theme');
+        const isDarkTheme = isDark();
+        button.setAttribute('aria-pressed', String(isDarkTheme));
+        button.setAttribute('aria-label', isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme');
         const themeColorMeta = document.querySelector('meta[name="theme-color"]');
         if (themeColorMeta) {
-            themeColorMeta.setAttribute('content', isDark() ? '#121821' : '#ffffff');
+            themeColorMeta.setAttribute('content', isDarkTheme ? '#121821' : '#ffffff');
         }
     };
+
     button.addEventListener('click', function () {
         const next = isDark() ? 'light' : 'dark';
         if (next === 'dark') {
@@ -87,9 +82,8 @@ if (!"content" in document.createElement("template") && document.getElementById(
         try { localStorage.setItem('theme', next); } catch (e) { /* storage unavailable */ }
         reflectTheme();
     });
+
     reflectTheme();
-    li.appendChild(button);
-    navList.appendChild(li);
 
     // Follow live OS theme changes while the visitor has not made an
     // explicit choice (theme-init.js applies the same precedence on load).
@@ -786,7 +780,7 @@ window.deliverChange = function(climb, popped){
     document.getElementById('overlay').innerHTML = fullCard;
     window.enhanceLightboxTriggers?.();
     var navHeight = document.getElementsByTagName("nav")[0].height;
-    document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
+    document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;`;
     document.title = climbData.cliff + " - " + climbData.routeName;
     document.getElementById('articleTitle').focus(); // Set focus on the climb card article for accessibility 
     loadCurrentWeatherModule();
