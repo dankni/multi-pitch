@@ -122,7 +122,7 @@
                             /img/heros/bosigran/bosigran-climbing-hero.webp 2x">
             <source media="(min-width: 2400px)" type="image/webp"
                     srcset="/img/heros/bosigran/bosigran-climbing-hero.webp">
-            <img src="/img/heros/bosigran-climbing-hero-1800.jpg"
+            <img src="/img/heros/bosigran/bosigran-climbing-hero-1800.jpg"
                  class="hero" alt="Bosigran sea cliff multi-pitch rock climbing" />
         </picture>
         <div class="mask align-items-center">
@@ -346,10 +346,10 @@
                                 aria-label="Change saved status of {{routeName}} on {{cliff}}">
                             <i class="icon-{{icon}}" aria-hidden="true"></i>
                             </button>
-                            <a href="{{url}}" onclick="showTile('{{id}}');return false;" id="{{id}}Focus">
+                            <a data-href="{{url}}" onclick="showTile('{{id}}');return false;" id="{{id}}Focus">
                             <picture>
-                                <source srcset="/{{webPUrl}}" type="image/webp">
-                                <img src="/{{tileImageUrl}}" alt="{{tileImageAlt}}" class="crag-hero" loading="lazy" />
+                                <source data-srcset="/{{webPUrl}}" type="image/webp">
+                                <img data-src="/{{tileImageUrl}}" alt="{{tileImageAlt}}" class="crag-hero" loading="lazy" />
                             </picture>
                             </a>
                             <div class="card-body">
@@ -363,7 +363,7 @@
                                 <small>
                                 (<abbr title="{{gradeTitle}}">{{sys}}</abbr>)
                                 </small> <br />
-                                <span class="what">Location:</span> <a href="/map/?loc={{geoLocation}}">{{county}}</a> <br />
+                                <span class="what">Location:</span> <a data-href="/map/?loc={{geoLocation}}">{{county}}</a> <br />
                                 <span class="what">Length:</span> {{length}}m - {{pitches}} pitches <br />
                                 <span class="what">Approach:</span> {{approachTime}}min - <span class="approach-{{approachDifficulty}}"></span> <br />
                                 <span id="toggle-weather-{{id}}" class="toggle-weather-off">
@@ -373,7 +373,7 @@
                                 </span>
                             </p>
                             </div>
-                            <a class="open-tile" href="{{url}}" onclick="showTile('{{id}}');return false;">SHOW MORE INFO</a>
+                            <a class="open-tile" data-href="{{url}}" onclick="showTile('{{id}}');return false;">SHOW MORE INFO</a>
                         </div>
                     </template>
                 </div>
