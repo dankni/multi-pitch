@@ -1970,13 +1970,6 @@ hr {
     margin-top: 0;
   }
 }
-/* DARK MODE
-@media (prefers-color-scheme: dark) {
-  body{
-    background: #333;
-    color: #FFF;
-  }
-} */
 .map-card-body {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
@@ -2249,4 +2242,206 @@ input[type="range"]::-ms-range-thumb {
   video[autoplay].danger-gif {
     display: none;
   }
+}
+
+/***************/
+/** DARK MODE **/
+/* Everything below only applies when the user opts in via the nav toggle
+   (html gets data-theme="dark", persisted in localStorage). With the
+   attribute absent none of these rules match, so the default look is
+   untouched. */
+.theme-toggle {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, .45);
+  color: #FFF;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: .4rem;
+}
+.theme-toggle:hover {
+  border-color: #FFF;
+}
+.theme-toggle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.theme-toggle .tt-sun {
+  display: none;
+}
+html[data-theme="dark"] .theme-toggle .tt-sun {
+  display: block;
+}
+html[data-theme="dark"] .theme-toggle .tt-moon {
+  display: none;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --dm-bg: #121821;
+  --dm-surface: #1c2331;
+  --dm-surface-2: #242e40;
+  --dm-text: #dfe3e8;
+  --dm-text-muted: #b3bcc7;
+  --dm-link: #7db3ff;
+  --dm-link-hover: #a9ccff;
+  --dm-border: #4a5568;
+}
+html[data-theme="dark"] body {
+  background-color: var(--dm-bg);
+  color: var(--dm-text);
+}
+html[data-theme="dark"] a {
+  color: var(--dm-link);
+}
+html[data-theme="dark"] a:hover {
+  color: var(--dm-link-hover);
+}
+html[data-theme="dark"] hr {
+  border-bottom-color: rgba(255, 255, 255, .15);
+}
+/* links that sit on dark surfaces in both themes stay white */
+html[data-theme="dark"] nav ul li a,
+html[data-theme="dark"] footer.page-footer a,
+html[data-theme="dark"] .pop-up-title a,
+html[data-theme="dark"] .blog-caption a {
+  color: #FFF;
+}
+html[data-theme="dark"] nav ul li a:hover {
+  color: rgba(255, 255, 255, .75);
+}
+html[data-theme="dark"] .card {
+  background-color: var(--dm-surface);
+  border-color: rgba(255, 255, 255, .16);
+}
+html[data-theme="dark"] .card .card-body .card-text,
+html[data-theme="dark"] .card .map-card-body .card-text,
+html[data-theme="dark"] .nearby-climb .card-text {
+  color: var(--dm-text-muted);
+}
+html[data-theme="dark"] .nearby-climb .card-text strong {
+  color: var(--dm-text);
+}
+html[data-theme="dark"] .card a picture {
+  background-color: #39424e;
+  color: #c6ccd4;
+  animation: none;
+}
+html[data-theme="dark"] .open-tile,
+html[data-theme="dark"] .primary-link {
+  color: var(--dm-link);
+  border-color: var(--dm-border);
+  background: transparent;
+}
+html[data-theme="dark"] .open-tile:focus,
+html[data-theme="dark"] [role="button"][aria-pressed="true"],
+html[data-theme="dark"] .primary-link:focus {
+  border-color: #7d92b5;
+  background: #31435f;
+}
+html[data-theme="dark"] .filters {
+  background-color: rgba(255, 255, 255, .07);
+}
+html[data-theme="dark"] .filter-toggle {
+  color: var(--dm-link);
+}
+html[data-theme="dark"] select {
+  border-bottom-color: rgba(255, 255, 255, .25);
+}
+html[data-theme="dark"] select:-moz-focusring {
+  text-shadow: 0 0 0 #fff;
+}
+html[data-theme="dark"] .subscribe,
+html[data-theme="dark"] .big-card-body,
+html[data-theme="dark"] .map-card-body,
+html[data-theme="dark"] .topo-controls {
+  background-color: var(--dm-surface);
+}
+/* the subscribe and grade-conversion fragments carry inline
+   color/background styles, hence the !important */
+html[data-theme="dark"] .big-card {
+  color: var(--dm-text) !important;
+  background: var(--dm-surface) !important;
+}
+html[data-theme="dark"] .map-card-body:after,
+html[data-theme="dark"] .map-card-body:before {
+  border-bottom-color: var(--dm-surface);
+}
+html[data-theme="dark"] .leaflet-popup-content-wrapper,
+html[data-theme="dark"] .leaflet-popup-tip {
+  background: var(--dm-surface);
+  color: var(--dm-text);
+}
+html[data-theme="dark"] .gradeLabel {
+  background-color: var(--dm-surface-2);
+  border-color: var(--dm-border);
+}
+html[data-theme="dark"] .gradeLabel:hover {
+  background-color: #31435f;
+}
+html[data-theme="dark"] td {
+  border-color: var(--dm-border);
+}
+html[data-theme="dark"] #gradeTable .active {
+  /* the conversion table highlights cells with pastel backgrounds;
+     keep dark text on them */
+  color: #111;
+}
+html[data-theme="dark"] .info-ring,
+html[data-theme="dark"] .info-divider {
+  border-color: #8b95a5;
+}
+html[data-theme="dark"] .compass {
+  /* the compass artwork needs a light disc to stay legible */
+  background-color: #dfe3e8;
+  border-radius: 50%;
+}
+html[data-theme="dark"] .compass .single-attribute {
+  color: #111;
+}
+html[data-theme="dark"] .social-share a {
+  color: #c6ccd4;
+}
+html[data-theme="dark"] .credit a,
+html[data-theme="dark"] blockquote:before,
+html[data-theme="dark"] #lastDate {
+  color: #9aa3ad;
+}
+html[data-theme="dark"] footer .grey {
+  background: #161d29;
+  color: var(--dm-text);
+}
+html[data-theme="dark"] footer .grey a {
+  color: var(--dm-link);
+}
+html[data-theme="dark"] .loading p {
+  color: var(--dm-text-muted);
+}
+html[data-theme="dark"] .loading img {
+  /* the loading logo is white; the light theme inverts it to black */
+  filter: none;
+}
+html[data-theme="dark"] .chart {
+  background-image: linear-gradient(to top, rgba(255, 255, 255, .12) 2%, rgba(255, 255, 255, 0) 2%);
+}
+html[data-theme="dark"] .weatherChev {
+  color: var(--dm-text);
+}
+html[data-theme="dark"] .inactiveChev {
+  color: #5c6672;
+}
+html[data-theme="dark"] summary:focus {
+  background: rgba(122, 130, 183, .3);
+}
+html[data-theme="dark"] input:disabled + span {
+  color: #5c6672;
+}
+html[data-theme="dark"] .slider {
+  background: #dddddd40;
+}
+html[data-theme="dark"] .cat-img {
+  background-color: #39424e;
 }
