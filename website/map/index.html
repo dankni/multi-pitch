@@ -84,8 +84,11 @@
 			</ul>
         </div>
     </nav>
-    <!-- No Main Body - Just a Map -->
+    <main>
+    <h1 class="sr-only">Interactive map of multi-pitch climbs</h1>
+    <p class="sr-only">Each marker links to a climb page. Prefer a list? <a href="/">Browse all climbs on the homepage</a>.</p>
     <div id="map" style="width: 100%;overflow: none;height: 100%;display: block;min-height: 300px;"></div>
+    </main>
     <!--Footer-->
     <footer class="page-footer text-center font-small" style="background-color: #1C2331;">
         <div class="footer-copyright">
@@ -159,7 +162,7 @@
                         .replace(/\//g, "")
                         .replace(/ /g, "-");
                     var content = '<a href="/climbs/' + climbName + '"><img src="/' + climbsData.climbs[i].tileImage.url + '" alt="'+ climbsData.climbs[i].tileImage.alt + '" style="width:100%;" /><br />' +
-                        '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</a></strong>' +
+                        '<strong class="pop-up-title">' + climbsData.climbs[i].cliff + ' - ' + climbsData.climbs[i].routeName + '</strong></a>' +
                         '<p>Grade: <strong>' + climbsData.climbs[i].tradGrade + ' ' + climbsData.climbs[i].techGrade + '</strong><br />' +
                         'Length: <strong>' + climbsData.climbs[i].length + '</strong>m <br />Approach: <strong>' + climbsData.climbs[i].approachTime + '</strong>mins' +
                         '</p><hr style="width: 60%;margin: 10px auto;"/> ' +
@@ -170,7 +173,8 @@
                         content: content,
                         lat: lat,
                         lon: lon,
-                        climbId,climbId,
+                        climbId,
+                        name: climbsData.climbs[i].routeName + ' on ' + climbsData.climbs[i].cliff,
                         icon: iconColor
                     });
 
@@ -180,7 +184,7 @@
         var baseLayerOptions = {
             maxZoom: 18
         }
-        var osmLayer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             Object.assign({
                 attribution: '&copy; ' + '<a href="http://openstreetmap.org">OpenStreetMap</a>' + ' Contributors'
             }, baseLayerOptions));
@@ -192,8 +196,9 @@
             climbs.forEach(climb => {
                 try {
                     var climbWeather = mapWeatherData.find(data => data.climbId === climb.climbId);
-                    climb.content = climb.content.replace("${placeholder-conditions}", climbWeather.currently.icon);
-                    climb.content = climb.content.replace("${placeholder-icon}", climbWeather.currently.icon);
+                    var safeIcon = String(climbWeather.currently.icon).replace(/[^a-z0-9-]/gi, '');
+                    climb.content = climb.content.replace("${placeholder-conditions}", safeIcon);
+                    climb.content = climb.content.replace("${placeholder-icon}", safeIcon);
                     var temp = Math.round(climbWeather.currently.temperatureMin) + '-' + Math.round(climbWeather.currently.temperatureHigh) + "&#176; C";
                     climb.content = climb.content.replace("${placeholder-temp}", temp);
                     climb.content = climb.content.replace("${display}", "");
@@ -201,7 +206,7 @@
                     climb.content = climb.content.replace("${display}", "display:none");
                 }
                 
-                L.marker([climb.lat, climb.lon], {icon: climb.icon})
+                L.marker([climb.lat, climb.lon], {icon: climb.icon, alt: climb.name, title: climb.name})
                     .bindPopup(climb.content)
                     .addTo(map);
             });

@@ -53,13 +53,20 @@
     <meta name="theme-color" content="#ffffff" />
 
     <!-- Sharing Tags -->
+    <meta property="og:site_name" content="Multi-Pitch" />
     <meta property="og:title" content="Climbing & Mountain Terminology" />
     <meta property="og:description"
           content="A glossary of rock climbing and mountaineering terminology - understand the jargon used in guidebooks, topos and on multi-pitch climbs." />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="article" />
     <meta property="og:url" content="https://www.multi-pitch.com/climbing-tips/climbing-terminology/" />
     <meta property="og:image" content="https://www.multi-pitch.com/img/other/mountain-terminology.jpg" />
-    <meta property="og:image:type" content="image/jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Climbing & Mountain Terminology" />
+    <meta name="twitter:description" content="A glossary of rock climbing and mountaineering terminology - understand the jargon used in guidebooks, topos and on multi-pitch climbs." />
+    <meta name="twitter:image" content="https://www.multi-pitch.com/img/other/mountain-terminology.jpg" />
+
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.multi-pitch.com/"},{"@type":"ListItem","position":2,"name":"Climbing Tips","item":"https://www.multi-pitch.com/climbing-tips/"},{"@type":"ListItem","position":3,"name":"Climbing & Mountain Terminology","item":"https://www.multi-pitch.com/climbing-tips/climbing-terminology/"}]}</script>
 
 </head><body id="bdy">
 <!-- Navbar -->
@@ -98,8 +105,9 @@
             <p id="intro">Climbing has a language of its own. This glossary explains the mountain and climbing terminology you will meet on this site, in guidebooks and at the crag.</p>
         </div>
     </div>
-    <form id="search" style="display:none;">
-    <input type="text" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
+    <form id="search" style="display:none;" role="search">
+    <label for="articleSearch" class="sr-only">Search articles</label>
+    <input type="text" id="articleSearch" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
     </form>
     
     <div id="breadcrumb">
@@ -137,12 +145,12 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12 col-md-4">
-                        <h4 for="mce-EMAIL">Subscribe to Email Updates</h4>
+                        <h4><label for="mce-EMAIL">Subscribe to Email Updates</label></h4>
                     </div>
                     <div class="col-12 col-md-8">
                         <form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
                          method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="blank">
-                            <input type="email" aria-label="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
+                            <input type="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
                             <input  type="submit" aria-label="subscribe" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
                         </form>
                     </div>
@@ -166,7 +174,7 @@
                         danger of personal injury or death. Participants should be aware of and accept these risks and be
                         responsible for their own actions. If in doubt, don't climb.
                         <a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
-                            <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext"></i>
+                            <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext" aria-hidden="true"></i>
                         </a>
                     </p>
                 </div>

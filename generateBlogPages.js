@@ -55,12 +55,55 @@ content.articles.forEach(article => {
   .replace(regex.heroCaption, article.heroCaption)
   .replace(regex.heroImg, article.heroImg);
 
+  const canonical = `https://www.multi-pitch.com${article.url}`;
+  const heroJpgUrl = `https://www.multi-pitch.com${article.heroImg}.jpg`;
+  const isLandingPage = article.url === '/blog/';
+
+  let structuredData;
+  if (isLandingPage) {
+    structuredData = `<script type="application/ld+json">${JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.multi-pitch.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": canonical }
+      ]
+    })}</script>`;
+  } else {
+    // article.created is human-readable ("11th May 2026"); strip the ordinal so Date can parse it.
+    // Read the date back with local getters (not toISOString) so the result is the same
+    // calendar day regardless of the build machine's timezone.
+    const created = new Date(article.created.replace(/(\d+)(st|nd|rd|th)/i, '$1'));
+    if (isNaN(created)) {
+      throw new Error(`Cannot parse created date "${article.created}" for ${article.url}`);
+    }
+    const datePublished = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, '0')}-${String(created.getDate()).padStart(2, '0')}`;
+    structuredData = `<script type="application/ld+json">${JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": article.title,
+      "description": article.metaDescription,
+      "image": heroJpgUrl,
+      "author": { "@type": "Person", "name": article.author },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Multi-Pitch",
+        "logo": { "@type": "ImageObject", "url": "https://www.multi-pitch.com/img/favicon/android-icon-192x192.png" }
+      },
+      "datePublished": datePublished,
+      "dateModified": article.lastUpdated.substring(0, 10),
+      "mainEntityOfPage": canonical
+    })}</script>`;
+  }
+
   let articleHeadHTML = headHTML
-  .replace(regex.url, `https://www.multi-pitch.com${article.url}`)
+  .replace(regex.url, canonical)
   .replace(regex.description, article.metaDescription)
   .replace(regex.title, article.title)
   .replace(regex.scripts, newScript)
-  .replace(regex.heroJpg, `https://www.multi-pitch.com${article.heroImg}.jpg`)
+  .replace(regex.heroJpg, heroJpgUrl)
+  .replace(/{{ogType}}/gi, isLandingPage ? 'website' : 'article')
+  .replace('<!-- Structured Data -->', structuredData)
   .replace(`<meta name="climbId" id="climbIdMeta" content="{{id}}" />`, '');
   
   let articleList = '';

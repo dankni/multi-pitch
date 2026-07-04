@@ -16,7 +16,7 @@
     <link rel="preload" href="/css/fontello.css" as="style" />
 
     <title>The best multi-pitch rock climbs - Trad climbing</title>
-    <meta name="description" content="Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m.." />
+    <meta name="description" content="Multi-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
 
     <!-- Styles -->
     <link href="css/style.css?Jan=2025" rel="stylesheet" />
@@ -44,16 +44,32 @@
     <meta name="theme-color" content="#ffffff" />
 
     <!-- Sharing Tags -->
+    <meta property="og:site_name" content="Multi-Pitch" />
     <meta property="og:title" content="The best multi-pitch rock climbs" />
     <meta property="og:description"
-          content="Muti-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
+          content="Multi-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.multi-pitch.com/" />
     <meta property="og:image" content="https://www.multi-pitch.com/img/tiles/bosigran-climbing-small.jpg" />
-    <meta property="og:image:type" content="image/jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The best multi-pitch rock climbs" />
+    <meta name="twitter:description" content="Multi-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m." />
+    <meta name="twitter:image" content="https://www.multi-pitch.com/img/tiles/bosigran-climbing-small.jpg" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Multi-Pitch",
+        "url": "https://www.multi-pitch.com/",
+        "description": "Multi-pitch.com is dedicated to cataloguing the best traditionally protected multi-pitch rock climbs over 50m."
+    }
+    </script>
 </head>
 <body id="bdy">
-    <span class="scroll-down-link not-mobile not-tablet"
+    <span class="scroll-down-link not-mobile not-tablet" aria-hidden="true"
        onClick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>
     </span>
     <!-- Navbar -->
@@ -272,15 +288,15 @@
                                 <div class="col-12" style="margin-top: 1rem;">
                                     <small style="text-align:right;display:block;">
                                         <span style="font-size:0.9rem;color:#555"><span id="showing" style="font-size:1.2rem">32</span><small>/<span id="total">32</span> climbs </small></span>
-                                        <a onclick="clearFilters()"><i class="icon-cancel"></i> Reset all filters</a>
+                                        <a href="#" onclick="clearFilters();return false;" onkeydown="return event.code != 'Enter' || clearFilters()"><i class="icon-cancel" aria-hidden="true"></i> Reset all filters</a>
                                     </small>
                                 </div>
                             </div>
                             <div class="col-12">
                                     <h5 class="filter-toggle" 
                                         onclick="toggleFilters()" 
-                                        onkeydown="return event.code != 'Enter' || toggleFilters()" tabindex="0" 
-                                        role="button" aria-expanded="false" aria-pressed="false">
+                                        onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();toggleFilters();}" tabindex="0"
+                                        role="button" aria-expanded="false" aria-controls="advancedFilters">
                                         <i class="icon-sliders"></i> Advanced Climbing Filters <span id="filterArrow" style="display: inline-block;">&#x25BC;</span>
                                     </h5>
                                 </div>
@@ -326,9 +342,10 @@
                             data-done="{{done}}"
                             id="{{id}}"
                             class="card">
-                            <div class="climb-status" id="{{id}}Status" data-climbId="{{id}}" data-status="{{status}}" onclick="cycleStatus('{{id}}')">
-                            <i class="icon-{{icon}}"></i>
-                            </div>
+                            <button type="button" class="climb-status" id="{{id}}Status" data-climbId="{{id}}" data-status="{{status}}" onclick="cycleStatus('{{id}}')"
+                                aria-label="Change saved status of {{routeName}} on {{cliff}}">
+                            <i class="icon-{{icon}}" aria-hidden="true"></i>
+                            </button>
                             <a href="{{url}}" onclick="showTile('{{id}}');return false;" id="{{id}}Focus">
                             <picture>
                                 <source srcset="/{{webPUrl}}" type="image/webp">
@@ -337,7 +354,7 @@
                             </a>
                             <div class="card-body">
                             <h4>
-                                <span class="flag {{flag}}"></span>
+                                <span class="flag {{flag}}" aria-hidden="true"></span>
                                 {{cliff}}
                             </h4>
                             <p class="card-text">
@@ -370,7 +387,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-12 col-md-4">
-                            <h4 for="mce-EMAIL">Subscribe to Email Updates</h4>
+                            <h4><label for="mce-EMAIL">Subscribe to Email Updates</label></h4>
                         </div>
                         <div class="col-12 col-md-8">
                             <form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
