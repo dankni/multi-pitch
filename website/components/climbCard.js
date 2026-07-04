@@ -346,9 +346,10 @@ function getRouteTopo(climb, topoData) {
 }
 
 function getMap(climb) {
-    try {
-        if (climb.mapImg.url) {
-            var mapPicture = `
+    if (!climb.mapImg || !climb.mapImg.url) {
+        return '';
+    }
+    var mapPicture = `
         <picture class="big-card-map">    
             <source
                media="(max-width: 400px)"
@@ -379,42 +380,7 @@ function getMap(climb) {
                class="big-card-map" 
                alt="${climb.mapImg.alt}">
         </picture>`;
-            return mapPicture;
-        }
-    } catch (e) {
-        var urlStart = 'https://api.mapbox.com/styles/v1/mapbox/cj44mfrt20f082snokim4ungi/static/';
-        var lon = climb.geoLocation.split(',')[1];
-        var lat = climb.geoLocation.split(',')[0];
-        var mid = ',13.0,0,0/';
-        var end = '<redcted>';
-      /*  var mapPicture = `
-        <picture class="big-card-map">    
-            <source
-               media="(max-width: 400px)"
-               srcset="${urlStart}${lon},${lat}${mid}400x200${end} 1x, ${urlStart}${lon},${lat}${mid}400x200@2x${end} 2x"
-               type="image/jpeg" >
-             <source
-               media="(max-width: 1080px)"
-               srcset="${urlStart}${lon},${lat}${mid}1080x200${end} 1x, ${urlStart}${lon},${lat}${mid}1080x200@2x${end} 2x"
-               type="image/jpeg" >
-             <source
-               media="(min-width: 1080px)"
-               srcset="${urlStart}${lon},${lat}${mid}1280x200${end} 1x, ${urlStart}${lon},${lat}${mid}1280x200@2x${end} 2x"
-               type="image/jpeg" >
-             <img
-               src="${urlStart}${lon},${lat}${mid}1080x200${end}"
-               type="image/jpeg" class="big-card-map" 
-               alt="Climb Location">
-        </picture>`;*/
-
-        console.log("400x200x1 = " + `${urlStart}${lon},${lat}${mid}400x200${end}`);
-        console.log("400x200x2 = " + `${urlStart}${lon},${lat}${mid}400x200@2x${end}`);
-        console.log("1080x200x1 = " + `${urlStart}${lon},${lat}${mid}1080x200${end}`);
-        console.log("1080x200x2 = " + `${urlStart}${lon},${lat}${mid}1080x200@2x${end}`);
-        console.log("1280x200x1 = " + `${urlStart}${lon},${lat}${mid}1280x200${end}`);
-        console.log("1280x200x2 = " + `${urlStart}${lon},${lat}${mid}1280x200@2x${end}`);
-        return mapPicture;
-    }
+    return mapPicture;
 }
 
 function getVariants(topoData){

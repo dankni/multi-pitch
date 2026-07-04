@@ -68,3 +68,8 @@ working-files/runbook.docx
 
 
 */**/*~
+
+# Editor backups and test output dumps #
+########################################
+\#*\#
+lambda-node/**/resp.json

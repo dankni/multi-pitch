@@ -27,17 +27,8 @@
     "url": "https://github.com/dankni/multi-pitch/issues"
   },
   "homepage": "https://github.com/dankni/multi-pitch#readme",
-  "dependencies": {
-    "cwebp": "^2.0.5",
-    "express": "^4.17.1",
-    "read-excel-file": "^5.8.8",
-    "sharp": "^0.33.5"
-  },
   "devDependencies": {
-    "chai": "^4.2.0",
     "cypress": "^14.5.4",
-    "eslint": "^7.5.0",
-    "mocha": "^11.7.1",
     "serve": "^14.2.4",
     "webp-converter": "^2.2.3"
   }
