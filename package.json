@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/dankni/multi-pitch#readme",
   "devDependencies": {
-    "cypress": "^14.5.4",
+    "cypress": "^15.18.0",
     "serve": "^14.2.4",
     "webp-converter": "^2.2.3"
   }
