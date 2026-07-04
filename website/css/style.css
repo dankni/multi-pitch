@@ -2384,10 +2384,12 @@ html[data-theme="dark"] select:-moz-focusring {
   text-shadow: 0 0 0 #fff;
 }
 html[data-theme="dark"] .subscribe,
-html[data-theme="dark"] .big-card-body,
 html[data-theme="dark"] .map-card-body,
 html[data-theme="dark"] .topo-controls {
   background-color: var(--dm-surface);
+}
+html[data-theme="dark"] .big-card-body{
+    background-color: var(--dm-bg);
 }
 /* the subscribe and grade-conversion fragments carry inline
    color/background styles, hence the !important */
@@ -2489,5 +2491,5 @@ html[data-theme="dark"] .moon {
   background-color: #fff;
 }
 html[data-theme="dark"] #climbCardDetails {
-  background-color: #121821;
+  background-color: var(--dm-bg);
 }
