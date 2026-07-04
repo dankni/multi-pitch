@@ -90,6 +90,28 @@ if (!"content" in document.createElement("template") && document.getElementById(
     reflectTheme();
     li.appendChild(button);
     navList.appendChild(li);
+
+    // Follow live OS theme changes while the visitor has not made an
+    // explicit choice (theme-init.js applies the same precedence on load).
+    if (window.matchMedia) {
+        const osPreference = window.matchMedia('(prefers-color-scheme: dark)');
+        const followOs = function (e) {
+            let stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (err) { /* storage unavailable */ }
+            if (stored) { return; }
+            if (e.matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+            reflectTheme();
+        };
+        if (typeof osPreference.addEventListener === 'function') {
+            osPreference.addEventListener('change', followOs);
+        } else if (typeof osPreference.addListener === 'function') {
+            osPreference.addListener(followOs); // older Safari
+        }
+    }
 })();
 var webPsupport = (function() {
     var webP = new Image();

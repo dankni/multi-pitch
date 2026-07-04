@@ -92,7 +92,9 @@ describe('Load the website page', function () {
     });
 
     it('toggles dark mode, persists it across pages and switches back', () => {
-        cy.visit(appUrl);
+        // the default follows the OS preference, so pin the starting point
+        // to make the test deterministic on any machine
+        cy.visit(appUrl, { onBeforeLoad(win) { win.localStorage.setItem('theme', 'light'); } });
         cy.get('html').should('not.have.attr', 'data-theme');
 
         cy.get('.theme-toggle').click();
