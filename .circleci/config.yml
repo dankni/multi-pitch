@@ -55,7 +55,8 @@ jobs:
       # Deploy to the S3
       - run:
           name: Deploy to S3
-          command: aws s3 sync website s3://www.multi-pitch.com --delete --exclude website/editor
+          # note: --exclude paths are relative to the sync source (website/), not the repo root
+          command: aws s3 sync website s3://www.multi-pitch.com --delete
       - run:
           name: Add a file to know which version was deployed
           command: |
