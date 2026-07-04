@@ -529,6 +529,15 @@ window.publishCards = async function(climbsArr) {
             cardHolder.innerHTML += cardHTML;
         }
     }
+    // The template keeps href/src/srcset as data-* so crawlers reading the raw
+    // HTML don't extract literal {{placeholder}} URLs (they showed up as 404s
+    // in Search Console). Promote them to real attributes now the cards exist.
+    for (const attr of ['href', 'src', 'srcset']) {
+        cardHolder.querySelectorAll('[data-' + attr + ']').forEach(function (el) {
+            el.setAttribute(attr, el.getAttribute('data-' + attr));
+            el.removeAttribute('data-' + attr);
+        });
+    }
     document.getElementById('loading').style.display = 'none';
     filterCards();
 };
