@@ -90,4 +90,19 @@ describe('Load the website page', function () {
         // Verify filters were applied and cards are still displayed
         cy.get('.card').should('have.length.greaterThan', 0);
     });
+
+    it('toggles dark mode, persists it across pages and switches back', () => {
+        cy.visit(appUrl);
+        cy.get('html').should('not.have.attr', 'data-theme');
+
+        cy.get('.theme-toggle').click();
+        cy.get('html').should('have.attr', 'data-theme', 'dark');
+
+        // the choice must survive navigation to a different page
+        cy.visit(appUrl + '/about/');
+        cy.get('html').should('have.attr', 'data-theme', 'dark');
+
+        cy.get('.theme-toggle').click();
+        cy.get('html').should('not.have.attr', 'data-theme');
+    });
 });

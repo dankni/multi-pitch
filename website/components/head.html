@@ -4,6 +4,10 @@
     <script>
         window.performance.mark('start');
     </script>
+    <script>
+        /* apply the saved theme before first paint to avoid a light flash */
+        try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}
+    </script>
 
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <meta charset="utf-8" />
@@ -47,12 +51,19 @@
     <meta name="theme-color" content="#ffffff" />
 
     <!-- Sharing Tags -->
+    <meta property="og:site_name" content="Multi-Pitch" />
     <meta property="og:title" content="{{title}}" />
     <meta property="og:description"
           content="{{description}}" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="{{ogType}}" />
     <meta property="og:url" content="{{cannonical}}" />
     <meta property="og:image" content="{{heroJpg}}" />
-    <meta property="og:image:type" content="image/jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{title}}" />
+    <meta name="twitter:description" content="{{description}}" />
+    <meta name="twitter:image" content="{{heroJpg}}" />
+
+    <!-- Structured Data -->
 
 </head>

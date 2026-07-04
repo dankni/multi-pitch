@@ -4,12 +4,16 @@
     <script>
         window.performance.mark('start');
     </script>
+    <script>
+        /* apply the saved theme before first paint to avoid a light flash */
+        try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}
+    </script>
 
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <link rel="canonical" href="https://www.multi-pitch.com//climbing-tips/" />
+    <link rel="canonical" href="https://www.multi-pitch.com/climbing-tips/climbing-gear/" />
     
     <link rel="preconnect" href="https://s3-eu-west-1.amazonaws.com/" />
     <link rel="preconnect" href="https://www.google-analytics.com" />
@@ -17,21 +21,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preload" href="/css/fontello.css" as="style" />
 
-    <title>The Climbing Compendium</title>
-    <meta name="description" content="Detailed but brief information & tips on rock climbing. Including equipment, skills, knots & explanations of climbing terminology." />
-    <meta name="climbId" id="climbIdMeta" content="{{id}}" />
+    <title>Trad Climbing Gear Guide 2022</title>
+    <meta name="description" content="Depending on the kind of rock and the location, the trad climber will need a different mix of climbing gear. This page focuses on what's needed for a 'typical' traditional multi-pitch rock climb, if such a thing exists." />
+    
 
     <!-- Styles -->
     <link href="/css/style.css" rel="stylesheet" />
 
     <!--scripts -->
-<script src="/components/article.js"></script>
+<script src="/components/article.js" type="module"></script>
 <script>
     window.addEventListener('DOMContentLoaded', (event) => {
         makeLinksPushable();
-    }); 
+    });
 </script>
-    <script src="/js/main.js"></script>
+    <script src="/js/main.js" type="module"></script>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
@@ -53,13 +57,20 @@
     <meta name="theme-color" content="#ffffff" />
 
     <!-- Sharing Tags -->
-    <meta property="og:title" content="The Climbing Compendium" />
+    <meta property="og:site_name" content="Multi-Pitch" />
+    <meta property="og:title" content="Trad Climbing Gear Guide 2022" />
     <meta property="og:description"
-          content="Detailed but brief information & tips on rock climbing. Including equipment, skills, knots & explanations of climbing terminology." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.multi-pitch.com//climbing-tips/" />
-    <meta property="og:image" content="https://www.multi-pitch.com/img/other/trad-climbing-rack.jpg" />
-    <meta property="og:image:type" content="image/jpg" />
+          content="Depending on the kind of rock and the location, the trad climber will need a different mix of climbing gear. This page focuses on what's needed for a 'typical' traditional multi-pitch rock climb, if such a thing exists." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://www.multi-pitch.com/climbing-tips/climbing-gear/" />
+    <meta property="og:image" content="https://www.multi-pitch.com/img/tiles/bosigran-climbing-small.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Trad Climbing Gear Guide 2022" />
+    <meta name="twitter:description" content="Depending on the kind of rock and the location, the trad climber will need a different mix of climbing gear. This page focuses on what's needed for a 'typical' traditional multi-pitch rock climb, if such a thing exists." />
+    <meta name="twitter:image" content="https://www.multi-pitch.com/img/tiles/bosigran-climbing-small.jpg" />
+
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.multi-pitch.com/"},{"@type":"ListItem","position":2,"name":"Climbing Tips","item":"https://www.multi-pitch.com/climbing-tips/"},{"@type":"ListItem","position":3,"name":"Trad Climbing Gear Guide 2022","item":"https://www.multi-pitch.com/climbing-tips/climbing-gear/"}]}</script>
 
 </head><body id="bdy">
 <!-- Navbar -->
@@ -70,7 +81,7 @@
         </a>
         <ul>
             <li>
-                <a href="/">Find <span class="not-mobile">Your Climb</span></a>
+                <a href="/">Find <span class="not-mobile">A Climb</span></a>
             </li>
             <li>
                 <a href="/map/">Map <span class="not-mobile">View</span></a>
@@ -79,7 +90,7 @@
                 <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
             </li>
             <li>
-                <a href="/climbing-tips/" class="last-nav"><span class="not-mobile">Climbing </span>Compendium</a>
+                <a href="/blog/" class="last-nav"><span class="not-mobile">Our </span>Blog</a>
             </li>
         </ul>
     </div>
@@ -98,8 +109,9 @@
             <p id="intro">Depending on the kind of rock and the location, the trad climber will need a different mix of climbing gear. This page focuses on what's needed for a 'typical' traditional multi-pitch rock climb, if such a thing exists.</p>
         </div>
     </div>
-    <form id="search" style="display:none;">
-    <input type="text" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
+    <form id="search" style="display:none;" role="search">
+    <label for="articleSearch" class="sr-only">Search articles</label>
+    <input type="text" id="articleSearch" placeholder="Search" style="width:100%;padding:10px;font-size:1.6rem;">
     </form>
     
     <div id="breadcrumb">
@@ -425,13 +437,13 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12 col-md-4">
-                        <h4 for="mce-EMAIL">Subscribe to Email Updates</h4>
+                        <h4><label for="mce-EMAIL">Subscribe to Email Updates</label></h4>
                     </div>
                     <div class="col-12 col-md-8">
                         <form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
                          method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="blank">
                             <input type="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
-                            <input  type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
+                            <input  type="submit" aria-label="subscribe" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
                         </form>
                     </div>
                 </div>
@@ -448,11 +460,13 @@
                     </video>
                     <h4>Rock Climbing is Dangerous</h4>
                     <p style="min-height:90px">
-                        <strong>Do not treat this site as instruction.</strong> Rock climbing is an activitiy with a
+                        <strong>Do not use any information in this website to plan, attempt, or climb a particular route 
+                        unless you are willing to assume personal responsibility for all risks associated. Don't 
+                        treat this site as instruction.</strong> Rock climbing is an activitiy with a
                         danger of personal injury or death. Participants should be aware of and accept these risks and be
                         responsible for their own actions. If in doubt, don't climb.
                         <a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
-                            <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext"></i>
+                            <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext" aria-hidden="true"></i>
                         </a>
                     </p>
                 </div>
@@ -461,14 +475,13 @@
         </div>
     </section>
     <section class="footer-copyright">
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2025 Creative Commons</a> -
-        <a href="/"> multi-pitch.com </a> - 
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2026 Creative Commons</a> - 
+        <a href="/">multi-pitch.com </a> - 
         <a href="/about/#contact">Contact</a>
     </section>
 
-</footer>    
-<a onClick="hideTile(false)" onKeyDown="hideTile(false)" class="close" id="close"></a>
-<div class="overlay" id="overlay" onKeyDown="return event.code != 'Escape' || hideTile(false)"></div>
+</footer>
+<div class="overlay" id="overlay"></div>
 <script>
     window.performance.mark('html-end');
 </script>

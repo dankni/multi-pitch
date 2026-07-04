@@ -1,9 +1,13 @@
-# /robots.txt file for http://www.multi-pitch.com
+# /robots.txt file for https://www.multi-pitch.com
 
 User-agent: *
+Disallow:
 
-sitemap: http://www.multi-pitch.com/sitemap.xml
+Sitemap: https://www.multi-pitch.com/sitemap.xml
 
-Disallow: /subscribe/index.html
-Disallow: /subscribe/
-Disallow: /map/?loc*
+# /map/?loc= and /subscribe/ are intentionally crawlable:
+# the map page canonicalises to /map/ and the subscribe
+# fragment carries a noindex meta tag. Blocking them here
+# left Google unable to see either signal, producing
+# "Blocked by robots.txt" / "Indexed, though blocked by
+# robots.txt" coverage errors in Search Console.

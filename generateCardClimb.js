@@ -57,11 +57,35 @@ function generate() {
         const thisClimb = JSON.parse(fs.readFileSync(`./website/data/climbs/${climbId}.json`));
         climb.folderLocation = returnClimbURL(climb.routeName, climb.cliff);
 
+        const canonical = `https://www.multi-pitch.com/climbs/${climb.folderLocation}`;
+        const description = `An overview of ${climb.routeName}, a ${climb.length}m multi-pitch rock climb on ${climb.cliff} in ${climb.county}, ${climb.country}. Includes detailed photo topo of the route and more info.`;
+        const [lat, lon] = climb.geoLocation.split(',').map(Number);
+        const structuredData = `<script type="application/ld+json">${JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.multi-pitch.com/" },
+                { "@type": "ListItem", "position": 2, "name": `${climb.routeName} on ${climb.cliff}`, "item": canonical }
+            ]
+        })}</script>
+    <script type="application/ld+json">${JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Place",
+            "name": `${climb.routeName} on ${climb.cliff}`,
+            "description": description,
+            "url": canonical,
+            "image": `https://www.multi-pitch.com/${climb.tileImage.url}`,
+            "geo": { "@type": "GeoCoordinates", "latitude": lat, "longitude": lon },
+            "address": { "@type": "PostalAddress", "addressRegion": climb.county, "addressCountry": climb.country }
+        })}</script>`;
+
         let headHTML = fs.readFileSync('./website/components/head.html', 'utf8');
         headHTML = headHTML.replace(/{{title}}/gi, `${climb.routeName} on ${climb.cliff} | multi-pitch rock climbing`)
-            .replace(/{{cannonical}}/gi, `https://www.multi-pitch.com/climbs/${climb.folderLocation}`)
+            .replace(/{{cannonical}}/gi, canonical)
             .replace(/{{heroJpg}}/gi, `https://www.multi-pitch.com/${climb.tileImage.url}`)
-            .replace(/{{description}}/gi, `An overview of ${climb.routeName}, a ${climb.length}m multi-pitch rock climb on ${climb.cliff} in ${climb.county}, ${climb.country}. Includes detailed photo topo of the route and more info.`)
+            .replace(/{{description}}/gi, description)
+            .replace(/{{ogType}}/gi, 'website')
+            .replace('<!-- Structured Data -->', structuredData)
             .replace(/{{id}}/gi, climbId);
 
         const nearbyClimbsData = getOtherClimbs(climb.geoLocation);

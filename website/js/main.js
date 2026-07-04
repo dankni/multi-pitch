@@ -45,6 +45,52 @@ if (!"content" in document.createElement("template") && document.getElementById(
     // browser does not support <template> element
     document.getElementById('ie-warn').setAttribute('style', 'display:block;');
 }
+
+/**
+ * DARK MODE TOGGLE
+ * The saved theme is applied before first paint by an inline snippet in each
+ * page's <head>; this only builds the nav button and handles switching.
+ **/
+(function initThemeToggle() {
+    if (document.readyState === 'loading') {
+        // the homepage loads this module async, so the nav may not be parsed yet
+        document.addEventListener('DOMContentLoaded', initThemeToggle);
+        return;
+    }
+    const navList = document.querySelector('nav ul');
+    if (!navList || document.querySelector('.theme-toggle')) { return; }
+
+    const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+    const li = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'theme-toggle';
+    button.innerHTML =
+        '<svg class="tt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
+        '<svg class="tt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>';
+
+    const reflectTheme = function () {
+        button.setAttribute('aria-pressed', isDark());
+        button.setAttribute('aria-label', isDark() ? 'Switch to light theme' : 'Switch to dark theme');
+        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', isDark() ? '#121821' : '#ffffff');
+        }
+    };
+    button.addEventListener('click', function () {
+        const next = isDark() ? 'light' : 'dark';
+        if (next === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        try { localStorage.setItem('theme', next); } catch (e) { /* storage unavailable */ }
+        reflectTheme();
+    });
+    reflectTheme();
+    li.appendChild(button);
+    navList.appendChild(li);
+})();
 var webPsupport = (function() {
     var webP = new Image();
     webP.onload = WebP.onerror = function () {
@@ -316,15 +362,18 @@ window.filterCards = function() {
 window.toggleFilters = function(){
     let advancedFilters = document.getElementById('advancedFilters');
     let filterArrow = document.getElementById('filterArrow');
+    let filterToggle = document.querySelector('.filter-toggle');
     if(advancedFilters.style.display === 'flex'){
         advancedFilters.style.display = 'none';
         localStorage.setItem('showFilters', false);
         filterArrow.style.rotate = '0deg';
+        filterToggle?.setAttribute('aria-expanded', 'false');
     } else {
         advancedFilters.style.display = 'flex';
-        document.getElementById('abseil').focus(); // keyboard acessibility 
+        document.getElementById('abseil').focus(); // keyboard acessibility
         localStorage.setItem('showFilters', true);
         filterArrow.style.rotate = '180deg';
+        filterToggle?.setAttribute('aria-expanded', 'true');
     }
 };
 
@@ -526,6 +575,15 @@ window.publishCards = async function(climbsArr) {
             cardHolder.innerHTML += cardHTML;
         }
     }
+    // The template keeps href/src/srcset as data-* so crawlers reading the raw
+    // HTML don't extract literal {{placeholder}} URLs (they showed up as 404s
+    // in Search Console). Promote them to real attributes now the cards exist.
+    for (const attr of ['href', 'src', 'srcset']) {
+        cardHolder.querySelectorAll('[data-' + attr + ']').forEach(function (el) {
+            el.setAttribute(attr, el.getAttribute('data-' + attr));
+            el.removeAttribute('data-' + attr);
+        });
+    }
     document.getElementById('loading').style.display = 'none';
     filterCards();
 };
@@ -537,18 +595,23 @@ window.cycleStatus = function(id){
     let statusFlag = document.getElementById(id + 'Status');
     let curentState = statusFlag.dataset.status;
     let wishlist = {};
+    const cardName = (statusFlag.closest('.card')?.querySelector('h4')?.textContent || '').trim();
+    const nameSuffix = cardName ? ' ' + cardName + '.' : '';
     switch(curentState) {
         case (""):
             statusFlag.dataset.status = "wished";
-            statusFlag.innerHTML = "<i class='icon-heart'></i>";
+            statusFlag.innerHTML = "<i class='icon-heart' aria-hidden='true'></i>";
+            statusFlag.setAttribute('aria-label', 'Saved to wishlist:' + nameSuffix + ' Press to mark as climbed.');
             break;
         case ("wished"):
             statusFlag.dataset.status = "done";
-            statusFlag.innerHTML = "<i class='icon-ok'></i>";
+            statusFlag.innerHTML = "<i class='icon-ok' aria-hidden='true'></i>";
+            statusFlag.setAttribute('aria-label', 'Marked as climbed:' + nameSuffix + ' Press to clear saved status.');
             break;
         default:
             statusFlag.dataset.status = "";
-            statusFlag.innerHTML = "<i class='icon-heart-empty'></i>";
+            statusFlag.innerHTML = "<i class='icon-heart-empty' aria-hidden='true'></i>";
+            statusFlag.setAttribute('aria-label', 'Not saved:' + nameSuffix + ' Press to add to wishlist.');
             break;
     }
     let climbSti = document.getElementsByClassName('climb-status');
@@ -693,9 +756,13 @@ window.deliverChange = function(climb, popped){
         window.history.pushState({"page": url}, climbData.cliff, url);
     }
     document.getElementById('overlay').setAttribute("style", "display:block;");
+    document.getElementById('overlay').setAttribute("role", "dialog");
+    document.getElementById('overlay').setAttribute("aria-modal", "true");
     document.getElementById('bdy').setAttribute("style", "overflow:hidden");
+    document.addEventListener('keydown', overlayEscapeHandler);
     var fullCard = climbCard(climb);
     document.getElementById('overlay').innerHTML = fullCard;
+    window.enhanceLightboxTriggers?.();
     var navHeight = document.getElementsByTagName("nav")[0].height;
     document.getElementById('climbCardDetails').style = `margin: ${navHeight}px 0 0 0;Background: #fff;`;
     document.title = climbData.cliff + " - " + climbData.routeName;
@@ -718,13 +785,17 @@ window.openModal = async function(url, id) {
             return;
         }
         const resp = await response.text();
-        document.getElementById('overlay').innerHTML = resp;
-        document.getElementById('overlay').setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
-        document.getElementById('close').setAttribute("style", "display:block;");
+        const overlay = document.getElementById('overlay');
+        overlay.innerHTML = resp;
+        overlay.setAttribute("style", "display:block;background:rgba(0,0,0, 0.7);z-index:14;");
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        document.getElementById('close')?.setAttribute("style", "display:block;"); // homepage has no #close element
         document.getElementById('bdy').setAttribute("style", "overflow:hidden");
-        document.getElementById('modalStart').focus(); // accessibility
-        if(document.getElementById('newScript')){
-            eval(document.getElementById('newScript').textContent); // ToDo: Fix this! A hack to run any scripts that are in the new html
+        document.addEventListener('keydown', overlayEscapeHandler);
+        document.getElementById('modalStart')?.focus(); // accessibility
+        if(document.getElementById('useConverted')){
+            initGradeConversionOverlay(); // the grade-conversion fragment needs its state restored
         }
     } catch (e) {
         console.log('There was a connection error of some sort', e);
@@ -736,8 +807,39 @@ window.openModal = async function(url, id) {
 /**
  CLOSE THE OVERLAY OR GO BACK TO HOMEPAGE
  **/
+function initGradeConversionOverlay() {
+    trackGA('gradeConversion', "open overlay", 'open');
+    if (localStorage.getItem('gradePreference')) {
+        document.querySelector(`input[type=radio][value=${localStorage.getItem('gradePreference')}]`).checked = true;
+        try {
+            document.getElementById(localStorage.getItem('gradePreference')).style.display = 'block';
+        } catch (e) {
+            console.log('no description for grade', localStorage.getItem('gradePreference'));
+        }
+    }
+    if (localStorage.getItem('useConverted')) {
+        document.getElementById('useConverted').checked = true;
+    }
+    updateTableHighlight();
+}
+
+function overlayEscapeHandler(event) {
+    if (event.code !== 'Escape') {
+        return;
+    }
+    const lightbox = document.getElementById('lightbox-overlay');
+    if (lightbox && lightbox.style.display && lightbox.style.display !== 'none') {
+        return; // the lightbox is on top and handles its own Escape
+    }
+    window.hideTile();
+}
+
 window.hideTile = function() {
-    document.getElementById('overlay').setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
+    const overlay = document.getElementById('overlay');
+    overlay.setAttribute("style", "display:none;background:rgba(0,0,0, 0.0);");
+    overlay.removeAttribute("role");
+    overlay.removeAttribute("aria-modal");
+    document.removeEventListener('keydown', overlayEscapeHandler);
     document.getElementById('bdy').setAttribute("style", "");
     if(localStorage.getItem('focusId')){
         if(document.getElementById(localStorage.getItem('focusId'))){
@@ -1101,7 +1203,11 @@ window.loadTides = function (climbId) {
  **/
 window.loadCurrentWeatherModule = function(){
     const climbId = document.querySelector('meta[name="climbId"]')?.content;
-    const timeZone = JSON.parse(localStorage.getItem('climb' + climbId)).climbData.timeZone;
+    const cachedClimb = JSON.parse(localStorage.getItem('climb' + climbId) || 'null');
+    if (!cachedClimb) {
+        return; // first visit, nothing cached for this climb yet - skip weather hydration
+    }
+    const timeZone = cachedClimb.climbData.timeZone;
     if (window.weatherData) {
         if(weatherUpToDateCheck(window.weatherData)){
             let localWeather = fullWeatherForOneClimb(window.weatherData, climbId);
@@ -1220,7 +1326,7 @@ window.onpopstate = function (event) {
         return; // anchor link like #go-to-id
     }
     const lightboxOverlay = document.getElementById('lightbox-overlay');
-    if (lightboxOverlay?.style.display === 'block') {
+    if (lightboxOverlay && lightboxOverlay.style.display !== 'none') {
         if (typeof window.hideLightBox === 'function') {
             window.hideLightBox();
         }

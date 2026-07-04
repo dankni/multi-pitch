@@ -1,6 +1,10 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <script>
+        /* apply the saved theme before first paint to avoid a light flash */
+        try{if(localStorage.getItem("theme")==="dark"){document.documentElement.setAttribute("data-theme","dark")}}catch(e){}
+    </script>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <!-- Styles -->
@@ -139,7 +143,7 @@
     <nav>
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Multi-Pitch Climbing, Homepage Link">
-                <img src="http://www.multi-pitch.com/img/logo/mp-logo-white.png" alt="multi-pitch climbing">
+                <img src="/img/logo/mp-logo-white.png" alt="multi-pitch climbing">
             </a>
             <ul>
                 <li onclick="toggle('selectHolder'); return false;"><a>Choose Climb</a></li>

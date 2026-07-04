@@ -98,6 +98,7 @@ function getMainHTML(content){
     getTemplate(content.url + 'content.html')
         .then((html) => {
             document.getElementById('content').outerHTML = html;
+            window.enhanceLightboxTriggers?.(); // injected article images need keyboard access
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 }
