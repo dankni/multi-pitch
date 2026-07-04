@@ -66,7 +66,7 @@ function generate() {
             <lastmod>${date}</lastmod>
             <priority>0.6</priority>
         </url>
-        ${tipsEntries.join('')}${blogEntries.join('')}${urlsEntry.join('')}
+        ${blogEntries.join('')}${urlsEntry.join('')}
     </urlset>`;
 
     const fileLocation = path.resolve(__dirname, OUTPUT_FOLDER, FILE_NAME);
