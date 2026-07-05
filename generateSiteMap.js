@@ -22,6 +22,8 @@ function tipsLastmod(lastUpdated) {
 const blogArticles = JSON.parse(fs.readFileSync('./website/blog/content.json')).articles
     .filter(article => article.publish);
 
+const gradesContent = JSON.parse(fs.readFileSync('./website/climbing-grades/content.json'));
+
 function generate() {
     const blogEntries = blogArticles.map(article => `
         <url>
@@ -65,6 +67,11 @@ function generate() {
             <loc>https://www.multi-pitch.com/map/</loc>
             <lastmod>${date}</lastmod>
             <priority>0.6</priority>
+        </url>
+        <url>
+            <loc>https://www.multi-pitch.com${gradesContent.url}</loc>
+            <lastmod>${tipsLastmod(gradesContent.lastUpdated)}</lastmod>
+            <priority>0.7</priority>
         </url>
         ${blogEntries.join('')}${urlsEntry.join('')}
     </urlset>`;

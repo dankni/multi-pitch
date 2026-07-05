@@ -123,22 +123,14 @@ function generateArticlesHTML(content, sorted){
   
 function updateBreadcrumb(url){
     let parts = url.split('/');
-    let breadcrumbDisplay = 'none';
-    let breadcrumbUrl = '';
     let breadcrumbTxt = '';
-    // Its a 3rd lvl page
-    if(parts[2]){
-        breadcrumbDisplay = 'inline';
-        breadcrumbUrl = url;
-        parts[2] = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
-        breadcrumbTxt = parts[2].replace('-', ' ');
+    if(parts[1]){
+        breadcrumbTxt = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).replace(/-/g, ' ');
     }
     let html = `
     <div id="breadcrumb">
         <a href="/">Home</a> /
-        <a href="/climbing-tips/" class="pushable">Compendium</a> 
-        <span id="dividerTwo" style="display: ${breadcrumbDisplay};">/</span>
-        <a href="${breadcrumbUrl}" class="pushable" id="thirdLvl" style="display: ${breadcrumbDisplay};">${breadcrumbTxt}</a>
+        <a href="${url}" class="pushable" id="thirdLvl">${breadcrumbTxt}</a>
     </div>`;
     return html;
 }
