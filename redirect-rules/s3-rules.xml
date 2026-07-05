@@ -23,12 +23,56 @@
     </RoutingRule>
     <RoutingRule>
         <Condition>
-            <KeyPrefixEquals>climbing-grades/</KeyPrefixEquals>
+            <KeyPrefixEquals>climbing-tips/climbing-grades/</KeyPrefixEquals>
         </Condition>
         <Redirect>
             <Protocol>https</Protocol>
             <HostName>www.multi-pitch.com</HostName>
-            <ReplaceKeyWith>climbing-tips/climbing-grades/</ReplaceKeyWith>
+            <ReplaceKeyWith>climbing-grades/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbing-tips/climbing-gear/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>blog/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbing-tips/rock-types/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>blog/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbing-tips/climbing-terminology/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>blog/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
+            <KeyPrefixEquals>climbing-tips/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>blog/</ReplaceKeyWith>
             <HttpRedirectCode>301</HttpRedirectCode>
         </Redirect>
     </RoutingRule>

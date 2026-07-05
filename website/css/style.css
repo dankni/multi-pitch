@@ -1647,6 +1647,7 @@ html[data-theme="dark"] .warning{
 }
 .cat-img{
   width:100%;
+  height:auto;
   max-width: 300px;
   margin:0 10px 10px 0;
   background-color: #CCCCCC;
