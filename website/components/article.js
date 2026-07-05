@@ -106,7 +106,7 @@ function generateArticlesHTML(content, sorted){
                     <picture>    
                         <source srcset="${webPUrl}" type="image/webp" >
                         <source srcset="${url}" type="image/jpg" >
-                        <img src="${url}" alt="${alt}" class="cat-img" loading="lazy"/>
+                        <img src="${url}" alt="${alt}" class="cat-img" width="600" height="600" loading="lazy"/>
                     </picture>
                     <figcaption>${alt}</figcaption>
                 </figure>
