@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2026-06-24T13:26:01.356Z",
+    "lastUpdate": "2026-10-07T13:26:01.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -702,7 +702,7 @@
             "id": 10,
             "country": "England",
             "county": "Cornwall",
-            "routeName": "Wreakers Slab",
+            "routeName": "Wreckers Slab",
             "length": 130,
             "pitches": 3,
             "dataGrade": 5,
@@ -715,10 +715,10 @@
             "approachDifficulty": 2,
             "tidal": true,
             "loose": true,
-            "lastUpdate": "2021-10-15T01:01:42.339Z",
+            "lastUpdate": "2022-10-15T01:01:42.339Z",
             "tileImage": {
-                "url": "img/tiles/wreakers-slab-small.jpg",
-                "alt": "Wreakers Slab Sea Cliff in Cornwall",
+                "url": "img/tiles/wreckers-slab-small.jpg",
+                "alt": "Wreckers Slab Sea Cliff in Cornwall",
                 "atributionURL": null,
                 "attributionText": null
             }

@@ -78,6 +78,17 @@
     </RoutingRule>
     <RoutingRule>
         <Condition>
+            <KeyPrefixEquals>climbs/wreakers-slab-on-cornakey-cliff/</KeyPrefixEquals>
+        </Condition>
+        <Redirect>
+            <Protocol>https</Protocol>
+            <HostName>www.multi-pitch.com</HostName>
+            <ReplaceKeyWith>climbs/wreckers-slab-on-cornakey-cliff/</ReplaceKeyWith>
+            <HttpRedirectCode>301</HttpRedirectCode>
+        </Redirect>
+    </RoutingRule>
+    <RoutingRule>
+        <Condition>
             <KeyPrefixEquals>climbs/amzkhssan-wall-on-pinnacle-slab/</KeyPrefixEquals>
         </Condition>
         <Redirect>

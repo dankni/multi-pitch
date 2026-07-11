@@ -15,6 +15,25 @@ const climbsData = allData.climbs.filter(climb => climb.status === 'publish');
 const navHTML = fs.readFileSync('./website/components/nav.html', 'utf8');
 const footerHTML = fs.readFileSync('./website/components/footer.html', 'utf8');
 
+function getPublishedClimbsList() {
+    const listItems = climbsData.map(climb => {
+        const folderLocation = returnClimbURL(climb.routeName, climb.cliff);
+        return `<li><a href="/climbs/${folderLocation}/">${climb.routeName} on ${climb.cliff}</a></li>`;
+    }).join('');
+
+    return `<ul class="published-climbs-list">${listItems}</ul>`;
+}
+
+function getNoScriptHTML() {
+    return `<noscript>
+        <div class="no-js-climbs">
+            <h2>Published climbs</h2>
+            <p>This page uses JavaScript to filter and sort climbs. Here is a static list of all published climbs:</p>
+            ${getPublishedClimbsList()}
+        </div>
+    </noscript>`;
+}
+
 function getOtherClimbs(climbGeo) {
     const nearbyClimbs = [];
     for (const compClimb of allData.climbs) {
@@ -47,10 +66,15 @@ function getOtherClimbs(climbGeo) {
 
 function generate() {
     const baseFolder = path.resolve(__dirname, OUTPUT_FOLDER);
+    const homepagePath = path.resolve(__dirname, './website/index.html');
 
     if (!fs.existsSync(baseFolder)) {
         fs.mkdirSync(baseFolder);
     }
+
+    const homepageHTML = fs.readFileSync(homepagePath, 'utf8');
+    const updatedHomepageHTML = homepageHTML.replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/i, getNoScriptHTML());
+    fs.writeFileSync(homepagePath, updatedHomepageHTML);
 
     const climbsAndHtml = climbsData.map(climb => {
         const climbId = climb.id;

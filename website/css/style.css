@@ -1117,7 +1117,7 @@ position: relative;
   padding:1rem;
 }
 .filters h4 {
-  padding: 0 0 0 1rem;
+  font-size:1.1rem;
 }
 .sort-list{
   margin:0 auto;

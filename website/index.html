@@ -124,7 +124,8 @@
             <source media="(min-width: 2400px)" type="image/webp"
                     srcset="/img/heros/bosigran/bosigran-climbing-hero.webp">
             <img src="/img/heros/bosigran/bosigran-climbing-hero-1800.jpg"
-                 class="hero" alt="Bosigran sea cliff multi-pitch rock climbing" />
+                 class="hero" alt="Bosigran sea cliff multi-pitch rock climbing"
+                 fetchpriority="high"/>
         </picture>
         <div class="mask align-items-center">
             <div class="container">
@@ -138,7 +139,7 @@
                         <hr class="hr-light">
                         <p>
                             <strong>
-                                Muti-pitch.com highlights brilliant &amp; unique, traditionally protected
+                                Multi-pitch.com highlights brilliant &amp; unique, traditionally protected
                                 multi-pitch rock climbs that are at least 50m high.
                                 The focus of the site is on climbs graded from Difficult to Hard Very Severe & E1.
                             </strong>
@@ -173,17 +174,17 @@
                             to a different system. This is however, by its nature, <em>wildly</em> subjective. 
                         </p>
                         <form class="filters" id="filters">
-                            <h4>Filter &amp; Sort Climbs</h4>
+                            <h3>Filter &amp; Sort Climbs</h3>
                             <div class="row">
                                 <div class="col-md-4">
                                     <span id="lastUpdate" style="display:none;"></span>
-                                    <h5>
+                                    <h4>
                                         Grade 
                                         <small>
                                             (<abbr id="gradeSys" title="British Adjectival System" onClick="openModal('/climbing-grades/content.html', this.id)">British Adjectival System</abbr>)
                                             <a id="changeLink" href="/climbing-grades/" onClick="openModal('/climbing-grades/content.html', this.id); return false">change</a>
                                         </small>  
-                                    </h5>
+                                    </h4>
                                     <div class="controls">
                                         <div class="input-range">
                                             <label id="grade1" for="gradeRange1">Diff</label>
@@ -199,7 +200,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <h5>Height <small>(metres)</small></h5>
+                                    <h4>Height <small>(metres)</small></h4>
                                     <div class="controls">
                                         <div class="input-range">
                                             <label id="height1" for="heightRange1">50</label>
@@ -215,7 +216,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <h5>Approach <small>(mins)</small></h5>
+                                    <h4>Approach <small>(mins)</small></h4>
                                     <div class="controls">
                                         <div class="input-range">
                                             <label id="approach1" for="approachRange1">0</label>
@@ -284,7 +285,7 @@
                                     <label class="advancedLabel" for="saved"><i class="icon-heart"></i> Saved Climbs</label><br />
 
                                     <input type="checkbox" id="done" onchange="saveFilter();filterCards()" checked />
-                                    <label class="advancedLabel" for="done"><i class="icon-ok"></i> Compleated <span class="not-tablet">Climbs</span></label><br />
+                                    <label class="advancedLabel" for="done"><i class="icon-ok"></i> Completed <span class="not-tablet">Climbs</span></label><br />
                                 </div>
                                 <div class="col-12" style="margin-top: 1rem;">
                                     <small style="text-align:right;display:block;">
@@ -306,6 +307,13 @@
                 </div>
                 <div class="row" id="cardHolder">
                     <div class="loading" id="loading">
+                        <noscript>
+        <div class="no-js-climbs">
+            <h2>Published climbs</h2>
+            <p>This page uses JavaScript to filter and sort climbs. Here is a static list of all published climbs:</p>
+            <ul class="published-climbs-list"><li><a href="/climbs/east-ridge-on-great-tor//">East Ridge on Great Tor</a></li><li><a href="/climbs/original-route-on-old-man-of-hoy//">Original Route on Old Man of Hoy</a></li><li><a href="/climbs/donkey-serenades-on-lower-eagle-crag//">Donkey Serenades on Lower Eagle Crag</a></li><li><a href="/climbs/pinnacle-slab-on-amzkhssan-wall//">Pinnacle Slab on Amzkhssan Wall</a></li><li><a href="/climbs/high-sierra-on-high-sierra-dome//">High Sierra on High Sierra Dome</a></li><li><a href="/climbs/east-buttress-on-ksar-rock//">East Buttress on Ksar Rock</a></li><li><a href="/climbs/piaz-arete-delagokante-on-vajolet-towers//">Piaz Arete Delagokante on Vajolet towers</a></li><li><a href="/climbs/joy-on-mount-indefatigable//">Joy on Mount Indefatigable</a></li><li><a href="/climbs/ordinary-route-on-cwm-idwal//">Ordinary Route on Cwm Idwal</a></li><li><a href="/climbs/the-devils-slide-on-lundy//">The Devils Slide on Lundy</a></li><li><a href="/climbs/normal-route-on-grande-fermeda//">Normal Route on Grande Fermeda</a></li><li><a href="/climbs/poetic-justice-on-slieve-beg//">Poetic Justice on Slieve Beg</a></li><li><a href="/climbs/bulgaria-1300-on-vratsa//">Bulgaria 1300 on Vratsa</a></li><li><a href="/climbs/le-merinos-on-freÿr//">Le Merinos on Freÿr</a></li><li><a href="/climbs/doorpost-on-bosigran//">Doorpost on Bosigran</a></li><li><a href="/climbs/morpheus-on-avon-gorge//">Morpheus on Avon Gorge</a></li><li><a href="/climbs/original-route-on-old-man-of-stoer//">Original Route on Old Man of Stoer</a></li><li><a href="/climbs/right-hand-route-on-wintours-leap//">Right Hand Route on Wintours Leap</a></li><li><a href="/climbs/longlands-continuation-on-lliwedd//">Longlands Continuation on Lliwedd</a></li><li><a href="/climbs/direkte-plattenwand-on-brüggler//">Direkte Plattenwand on Brüggler</a></li><li><a href="/climbs/visite-obligatoire-on-aiguille-dibona//">Visite Obligatoire on Aiguille Dibona</a></li><li><a href="/climbs/keswick-brothers-climb-on-scafell//">Keswick Brother's Climb on Scafell</a></li><li><a href="/climbs/fedele-on-sass-pordoi//">Fedele on Sass Pordoi</a></li><li><a href="/climbs/pegasus-on-chair-ladder//">Pegasus on Chair Ladder</a></li><li><a href="/climbs/great-slab-on-clogwyn-dur-arddu//">Great Slab on Clogwyn Dur Arddu</a></li><li><a href="/climbs/cnoc-na-mara-on-tormore-group//">Cnoc Na Mara on Tormore Group</a></li><li><a href="/climbs/wreckers-slab-on-cornakey-cliff//">Wreckers Slab on Cornakey Cliff</a></li><li><a href="/climbs/south-ridge-on-cir-mhor//">South Ridge on Cir Mhor</a></li><li><a href="/climbs/esparraguera-on-roca-gris//">Esparraguera on Roca Gris</a></li><li><a href="/climbs/roaring-forties-on-sail-rock//">Roaring Forties on Sail Rock</a></li><li><a href="/climbs/durance-on-the-devils-tower//">Durance on The Devils Tower</a></li><li><a href="/climbs/traumpfeiler-on-heiliger-geist//">Traumpfeiler on Heiliger Geist</a></li><li><a href="/climbs/mendez-and-guillermo-on-cathedral-rock//">Mendez and Guillermo on Cathedral Rock</a></li><li><a href="/climbs/gweilo-via-topcat-on-lion-rock//">Gweilo via Topcat on Lion Rock</a></li><li><a href="/climbs/diedro-ubsa-on-peñón-de-ifach//">Diedro UBSA on Peñón de Ifach</a></li><li><a href="/climbs/queles-on-meadinha//">Queles on Meadinha</a></li><li><a href="/climbs/sydpillaren-on-stetind//">Sydpillaren on Stetind</a></li><li><a href="/climbs/fm-on-slieve-lamagan//">FM on Slieve Lamagan</a></li><li><a href="/climbs/via-maria-on-sass-pordoi-south-face//">Via Maria on Sass Pordoi South Face</a></li><li><a href="/climbs/via-steger-on-sella-towers//">Via Steger on Sella Towers</a></li><li><a href="/climbs/espolón-central-on-puig-campana//">Espolón Central on Puig Campana</a></li><li><a href="/climbs/australia-west-face-on-dinorwic-quarry//">Australia West Face on Dinorwic Quarry</a></li><li><a href="/climbs/cneifion-arete-on-cwm-cneifion//">Cneifion Arete on Cwm Cneifion</a></li><li><a href="/climbs/dos-hermanos-on-penya-roc//">Dos Hermanos on Penya Roc</a></li><li><a href="/climbs/via-pany-on-peñón-de-ifach//">Via Pany on Peñón de Ifach</a></li><li><a href="/climbs/the-sheugh-on-buzzards-roost//">The Sheugh on Buzzards Roost</a></li><li><a href="/climbs/virgo-on-pigeon-rock//">Virgo on Pigeon Rock</a></li><li><a href="/climbs/rincón-de-placa-on-el-castellet//">Rincón de Placa on El Castellet</a></li><li><a href="/climbs/grooved-arete-on-tryfan//">Grooved Arete on Tryfan</a></li><li><a href="/climbs/aristotles-on-puig-campana//">Aristotles on Puig Campana</a></li><li><a href="/climbs/sammy-higgins-on-eagle-mountain//">Sammy Higgins on Eagle Mountain</a></li></ul>
+        </div>
+    </noscript>
                         <img src="https://www.multi-pitch.com/img/logo/mp-logo-white.png" alt="Loading">
                         <p id="loadingMsg">Loading climbs...</p>
                     </div>
@@ -318,7 +326,7 @@
                             <a href="#filters"
                                 onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>
                                 Adjust the filters
-                            </a> to find great multipitch climbs to your linking!</em>
+                            </a> to find great multipitch climbs to your liking!</em>
                         </p>
                         <p>
                             <a class="primary-link" href="#filters" onclick="clearFilters();return false;" >Clear All Filters</a>
@@ -413,7 +421,7 @@
                         <p style="min-height:90px">
                             <strong>Do not use any information in this website to plan, attempt, or climb a particular route 
                             unless you are willing to assume personal responsibility for all risks associated. Don't 
-                            treat this site as instruction.</strong> Rock climbing is an activitiy with a
+                            treat this site as instruction.</strong> Rock climbing is an activity with a
                             danger of personal injury or death. Participants should be aware of and accept these risks and be
                             responsible for their own actions. If in doubt, don't climb.
                             <a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
