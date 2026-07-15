@@ -2211,12 +2211,19 @@ html[data-theme="dark"] .warning{
 .wx-hour .wx-temp strong{
   font-size: 0.9rem;
 }
-/* day chips for sorting climbs by the weather on a chosen day */
+/* day chips for sorting climbs by the weather on a chosen day:
+   one scrollable row, same interaction as the forecast strip */
 .wx-daypicker{
   display: flex;
-  flex-wrap: wrap;
   gap: 6px;
   margin-top: 0.75rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding-bottom: 6px;
+}
+.wx-chip{
+  flex: 0 0 auto;
 }
 .wx-chip{
   border: 1px solid #c6cfda;
