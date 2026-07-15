@@ -200,41 +200,22 @@ function getWeather(climb) {
             </small>
           </aside>
         </div>
-        <div class="col-12 col-lg-6" id="currentWeather" style="display:none;">
+        <div class="col-12" id="currentWeather" style="display:none;">
           <h4>Current Weather - <span id="wIcon" class="weather wLarge"></span></h4>
-          <p class="min-height">
-            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>. <small id="lastDate">Updated: </small><br /><br />
-            <span class="weather tempr"></span> Temperatures between <strong id="lowT"></strong> & <strong id="highT"></strong>&#176;c.<br />
-            <span class="weather wind"></span> <strong id="wind_speed"></strong><abbr title="Miles Per Hour">mph</abbr> wind gusts, 
-            bearing &nbsp; <span id="bearing">&#8611;</span>.<br />
-            <strong id="precip_pos"></strong>% chance of rain today with an intensity of <strong id="precip_intense"></strong>mm per hour.<br />
-            <span class="weather clear-day"></span> <abbr title="Ultraviolet">UV</abbr> Index of <strong id="uv_index"></strong> 
-            and cloud cover of <strong id="cloud_cover"></strong>%.<br />
+          <p>
+            The current weather at ${climb.cliff} in ${climb.county} looks like <strong id="weatheName"></strong>. <small id="lastDate">Updated: </small><br />
+            Local time at the crag is <strong id="cragLocalTime"></strong> <small id="cragTimeZone"></small>.<br />
             <span id="sunMovement">
-                <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between 
+                <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between
                 <strong id="sunrise"></strong> & <strong id="sunset"></strong>.
             </span>
           </p>
-          
           <p class="chart-title">
-            Daily Precipitation
+            Last 4 days & 16 day forecast
           </p>
-          <button type="button" id="backChev" class="weatherChev inactiveChev" aria-label="Earlier seasonal weather" onClick="weatherBars('back')">&#171;</button>
-          <button type="button" id="forwardChev" class="weatherChev" aria-label="Later seasonal weather" onClick="weatherBars('forward')">&#187;</button>
-          <ul id="currentRain" class="chart" style="max-width:84%;" data-state="3">
-            <li id="offsetMinus3" class="bar0"><span style="height:0%;" title="-3 days"></span></li>
-            <li id="offsetMinus2" class="bar1"><span style="height:0%;" title="-2 days"></span></li>
-            <li id="offsetMinus1" class="bar2"><span style="height:0%;" title="Yest"></span></li>
-            <li id="currently" class="bar3"><span style="height:0%;font-weight:900;" title="Today"></span></li>
-            <li id="offsetPlus1" class="bar4"><span style="height:0%;" title="Tomor"></span></li>
-            <li id="offsetPlus2" class="bar5"><span style="height:0%;" title="+2 days"></span></li>
-            <li id="offsetPlus3" class="bar6"><span style="height:0%;" title="+3 days"></span></li>
-            <li id="offsetPlus4" class="bar7" style="display:none;"><span style="height:0%;" title="+4 days"></span></li>
-            <li id="offsetPlus5" class="bar8" style="display:none;"><span style="height:0%;" title="+5 days"></span></li>
-            <li id="offsetPlus6" class="bar9" style="display:none;"><span style="height:0%;" title="+6 days"></span></li>
-            <li id="offsetPlus7" class="bar10" style="display:none;"><span style="height:0%;" title="+7 days"></span></li>
-          </ul>        
-          <p class="credit" style="margin-top:15px;">Using open weather API</p>
+          <div id="weatherStrip" class="weather-strip" aria-label="Twenty day weather overview"></div>
+          <div id="weatherHourly" style="display:none;"></div>
+          <p class="credit" style="margin-top:15px;">Weather data from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
           ${tideInfoBox}
         </div>
         <div class="col-12" id="seasonalWeather">

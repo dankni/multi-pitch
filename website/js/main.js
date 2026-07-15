@@ -645,12 +645,22 @@ window.sortCards = function(sortBy, direction) {
     if(sortBy !== 'distance' && sortBy !== 'weatherScore') { // avoid the geo-location call or weather being the default
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
     }
+    const weatherDate = document.getElementById('weatherDate');
+    if (weatherDate) { // date picker appears only while sorting by weather
+        weatherDate.style.display = (sortBy === 'weatherScore') ? 'inline-block' : 'none';
+        if (sortBy === 'weatherScore' && !weatherDate.value) {
+            const iso = date => date.toISOString().split('T')[0];
+            weatherDate.value = iso(new Date());
+            weatherDate.min = iso(new Date());
+            weatherDate.max = iso(new Date(Date.now() + 15 * 86400000)); // the feed carries offsetPlus1..15
+        }
+    }
     if (sortBy === 'weatherScore') {
         for (let i = 0; i < climbsData.climbs.length; i++) {
             if (climbsData.climbs[i].status === "publish") { // ensures unpublished climbs are not processed
                 let climb = climbsData.climbs[i];
                 let weatherScore = document.getElementById(climb.id).dataset.weatherScore;
-                climbsData.climbs[i].weatherScore = weatherScore; // add weather score to the js climb data
+                climbsData.climbs[i].weatherScore = weatherScore || '0'; // climbs without weather data sort last, not crash
             } else {
                 climbsData.climbs[i].weatherScore = 0; 
             }
@@ -677,7 +687,7 @@ window.sortCards = function(sortBy, direction) {
             const iconWeather = document.getElementById(`weather-${id}`);
             const toggleWeather = document.getElementById(`toggle-weather-${id}`);
             const tempValues = document.getElementById(`temp-${id}`);
-            iconWeather.classList.add(climbWeatherData.weather);
+            iconWeather.className = 'weather ' + climbWeatherData.weather; // replace, don't add: the icon changes when sorting by another date
             iconWeather.title = climbWeatherData.weather.replace(/-/g, " ");
             tempValues.innerHTML = climbWeatherData.temp;
             document.getElementById(id).dataset.weatherScore = climbWeatherData.score;
@@ -1243,32 +1253,24 @@ window.loadCurrentWeatherModule = function(){
     }
 }
 
+// weatherBars() (per-day chevron navigation) was removed with the old rain bar
+// chart; cached pages that still carry the chevrons must not throw on click
+window.weatherBars = function() {};
+
 /**
- ALLOWS USER TO NAVIGATE THE WEATHER PER DAY
+ SORT CLIMBS BY THE WEATHER ON A CHOSEN DATE (today .. +15 days)
  **/
-window.weatherBars = function(direction) {
-    let state = parseInt(document.getElementById('currentRain').dataset.state);
-    state = (direction === 'forward') ? parseInt(state + 1) : parseInt(state -1);
-    document.getElementById('currentRain').dataset.state = state;
-
-    if (direction === 'forward') {
-        document.querySelector('.bar' + parseInt(state - 4)).setAttribute('style', 'display:none;');
-        document.querySelector('.bar' + parseInt(state + 3)).setAttribute('style', '');
-
-    } else {
-        document.querySelector('.bar' + parseInt(state - 3)).setAttribute('style', '');
-        document.querySelector('.bar' + parseInt(state + 4)).setAttribute('style', 'display:none;');
-    }
-
-    const toggle = function(element, disable){
-        let secondClass = (disable === true) ? 'inactiveChev' : '';
-        let pointerEvent = (disable === true) ? 'none' : 'auto';
-        document.getElementById(element).classList = 'weatherChev ' + secondClass;
-        document.getElementById(element).style.pointerEvents = pointerEvent;
-    } 
-    
-    state <= 3 ? toggle('backChev', true) : toggle('backChev', false);
-    state >= 7 ? toggle('forwardChev', true) : toggle('forwardChev', false);
+window.sortByWeatherDate = function(dateString) {
+    if (!window.weatherData || !dateString) { return; }
+    const chosen = new Date(dateString + 'T12:00:00');
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const offset = Math.round((chosen - today) / 86400000);
+    const dayKey = offset <= 0 ? 'currently' : 'offsetPlus' + Math.min(offset, 15);
+    generateWeatherScore(window.weatherData, dayKey);
+    sortCards('weatherScore', 'DESC'); // re-applies each card's icon/temp/score from the recomputed data
+    filterCards();
+    trackGA('sort-and-filter', 'sort', 'weatherScore-date-' + dayKey, 0);
 }
 
 /**
@@ -1423,8 +1425,8 @@ window.addEventListener('load', (event) => {
         if (window.weatherData) {
             if(weatherUpToDateCheck(window.weatherData)){
                 // the loaded weather data is up to date, so we can use it
-                updateWeatherOnHP(response);
-                generateWeatherScore(response);
+                updateWeatherOnHP(window.weatherData);
+                generateWeatherScore(window.weatherData);
             }
         } else {
             loadWeather().then(response => {

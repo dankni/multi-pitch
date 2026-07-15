@@ -73,3 +73,5 @@ working-files/runbook.docx
 ########################################
 \#*\#
 lambda-node/**/resp.json
+cypress/screenshots
+

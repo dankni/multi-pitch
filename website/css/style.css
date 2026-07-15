@@ -2096,6 +2096,105 @@ html[data-theme="dark"] .warning{
 .moon {
   background-image: url(/img/icons/weather/Moon-Waning-Crescent.svg);
 }
+/* 12-day forecast strip */
+.weather-strip{
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 0 10px;
+  scrollbar-width: thin;
+}
+.wx-day{
+  flex: 0 0 66px;
+  text-align: center;
+  padding: 8px 2px;
+  border-radius: 8px;
+  background: #f2f5f9;
+}
+.wx-day .weather{
+  margin: 2px 0 0;
+}
+.wx-past{
+  opacity: 0.55;
+}
+.wx-today{
+  background: #e2edfa;
+  box-shadow: inset 0 0 0 2px #0055b8;
+}
+.wx-dow{
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+.wx-temp strong{
+  display: block;
+  font-size: 1rem;
+}
+.wx-temp span{
+  color: #767676;
+  font-size: 0.8rem;
+}
+.wx-rain{
+  height: 38px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 6px 8px 2px;
+  border-bottom: 1px solid #c6cfda;
+}
+.wx-rain-bar{
+  width: 14px;
+  min-height: 1px;
+  border-radius: 3px 3px 0 0;
+  background: #4a90d9;
+}
+.wx-pop{
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0055b8;
+}
+.wx-mm{
+  font-size: 0.68rem;
+  color: #767676;
+}
+.wx-wind{
+  font-size: 0.72rem;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.wx-arrow{
+  display: inline-block;
+  margin-right: 1px;
+  font-weight: 700;
+}
+.wx-clickable{
+  cursor: pointer;
+}
+.wx-clickable:hover,
+.wx-clickable:focus-visible{
+  background: #e8eef7;
+  outline: 1px solid #7a9cc6;
+}
+.wx-selected,
+.wx-today.wx-selected{
+  background: #d4e4f7;
+  box-shadow: inset 0 0 0 2px #003d85;
+}
+.wx-hour{
+  flex: 0 0 58px;
+  text-align: center;
+  padding: 6px 2px;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.wx-hour .weather{
+  margin: 2px 0 0;
+}
+.wx-hour .wx-temp strong{
+  font-size: 0.9rem;
+}
 details{
   margin:10px 0;
 }
@@ -2493,4 +2592,33 @@ html[data-theme="dark"] .moon {
 }
 html[data-theme="dark"] #climbCardDetails {
   background-color: var(--dm-bg);
+}html[data-theme="dark"] .wx-day {
+  background-color: var(--dm-surface);
+}
+html[data-theme="dark"] .wx-today {
+  background-color: var(--dm-surface-2);
+  box-shadow: inset 0 0 0 2px var(--dm-link);
+}
+html[data-theme="dark"] .wx-temp span,
+html[data-theme="dark"] .wx-mm {
+  color: var(--dm-text-muted);
+}
+html[data-theme="dark"] .wx-pop {
+  color: var(--dm-link);
+}
+html[data-theme="dark"] .wx-rain {
+  border-bottom-color: var(--dm-border);
+}
+html[data-theme="dark"] .wx-hour {
+  background-color: var(--dm-surface);
+}
+html[data-theme="dark"] .wx-clickable:hover,
+html[data-theme="dark"] .wx-clickable:focus-visible {
+  background-color: var(--dm-surface-2);
+  outline-color: var(--dm-border);
+}
+html[data-theme="dark"] .wx-selected,
+html[data-theme="dark"] .wx-today.wx-selected {
+  background-color: #2d4a75;
+  box-shadow: inset 0 0 0 2px var(--dm-link);
 }

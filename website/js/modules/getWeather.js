@@ -12,11 +12,16 @@ export const loadWeather =  async() => {
     }
 }
 
-export function weatherUpToDateCheck(weatherData){  
+export function weatherUpToDateCheck(weatherData){
     if(weatherData){
         const yesterday = Date.parse(new Date()) - 86401000; // now minus 24hours and 1 second (in milliseconds)
-        const climbOneLastUpdate = weatherData.find(data => data.climbId === 1).currently.time;
-        const upToDate = parseInt(climbOneLastUpdate.toString().substring(0, 10)) > parseInt(yesterday.toString().substring(0, 10)); // trims to seconds
+        const referenceClimb = weatherData.find(data => data.currently); // any climb that fetched ok (individual climbs can fail)
+        if (!referenceClimb) {
+            console.warn('Weather data contains no successful climbs');
+            return false;
+        }
+        const lastUpdate = referenceClimb.currently.time;
+        const upToDate = parseInt(lastUpdate.toString().substring(0, 10)) > parseInt(yesterday.toString().substring(0, 10)); // trims to seconds
         return upToDate; // true or false
     } else {
         console.warn('No weather data stored locally, maybe offline'); // stopes console error if working offline
@@ -32,16 +37,119 @@ export function fullWeatherForOneClimb(weatherData, climbIdToFind){
     return climbWeather;
 }
 
+// Days rendered in the forecast strip, oldest first. `currently` is today.
+// The feed carries up to offsetPlus15; days missing from the feed are skipped,
+// so this also renders the old 7-day feed correctly.
+const STRIP_DAYS = ['offsetMinus4', 'offsetMinus3', 'offsetMinus2', 'offsetMinus1', 'currently']
+    .concat(Array.from({ length: 15 }, (_, i) => 'offsetPlus' + (i + 1)));
+
+// local calendar date (YYYY-MM-DD) of a unix timestamp at the crag
+function localDateKey(unixSeconds, timeZone) {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: timeZone, year: 'numeric', month: '2-digit', day: '2-digit' })
+        .format(new Date(unixSeconds * 1000));
+}
+
+// indexes into the hourly arrays that fall on the same local date as `day`
+function hourIndexesForDay(hourly, day, timeZone) {
+    if (!hourly || !hourly.time || !day) return [];
+    const targetDate = localDateKey(day.time, timeZone);
+    return hourly.time
+        .map((time, index) => index)
+        .filter(index => localDateKey(hourly.time[index], timeZone) === targetDate);
+}
+
+function buildHourCell(hourly, i, timeZone) {
+    const hour = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: timeZone })
+        .format(new Date(hourly.time[i] * 1000));
+    const rainChance = Math.round(hourly.precipProbability[i] * 100);
+    const gustMph = Math.round(hourly.windGust[i] * 2.237);
+    const iconName = hourly.icon[i].replace(/-/g, ' ');
+    return `<div class="wx-hour"
+        title="${hour}: ${iconName}, ${Math.round(hourly.temperature[i])}°C (feels like ${Math.round(hourly.feelsLike[i])}°C), ${rainChance}% chance of ${hourly.precipIntensity[i].toFixed(1)}mm rain, gusts ${gustMph}mph, UV ${Math.round(hourly.uvIndex[i])}">
+        <div class="wx-dow">${hour}</div>
+        <span class="weather ${hourly.icon[i]}"></span>
+        <div class="wx-temp"><strong>${Math.round(hourly.temperature[i])}&#176;</strong></div>
+        <div class="wx-pop">${rainChance}%</div>
+        <div class="wx-mm">${hourly.precipIntensity[i].toFixed(1)}mm</div>
+        <div class="wx-wind"><span class="wx-arrow" style="transform:rotate(${hourly.windBearing[i]}deg);">&#8595;</span>${gustMph}<small>mph</small></div>
+    </div>`;
+}
+
+// BBC-style hour-by-hour panel for one strip day; returns false when the
+// feed has no hourly coverage for that day (or none at all - legacy feed)
+function renderHourlyPanel(climbWeather, dayKey, timeZone) {
+    const panel = document.getElementById('weatherHourly');
+    if (!panel) return false;
+    const day = climbWeather[dayKey];
+    const hours = hourIndexesForDay(climbWeather.hourly, day, timeZone);
+    if (!hours.length) {
+        panel.style.display = 'none';
+        panel.innerHTML = '';
+        return false;
+    }
+    const label = dayKey === 'currently' ? 'today'
+        : new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: timeZone })
+            .format(new Date(day.time * 1000));
+    panel.innerHTML = `<p class="chart-title">Hour by hour &mdash; ${label}</p>
+        <div class="weather-strip wx-hours">`
+        + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('')
+        + '</div>';
+    panel.style.display = 'block';
+    return true;
+}
+
+function buildStripDay(day, key, timeZone, hasHourly) {
+    const isToday = key === 'currently';
+    const isPast = key.startsWith('offsetMinus');
+    const dayLabel = isToday ? 'Today' : new Intl.DateTimeFormat('en-GB',
+        { weekday: 'short', day: 'numeric', timeZone: timeZone }).format(new Date(day.time * 1000));
+    const rainChance = Math.round(day.precipProbability * 100);
+    const rainHeight = Math.min(day.precipIntensity * 5, 95); // 95% bar height = 20mm
+    const gustMph = Math.round(day.windGust * 2.237); // data is m/s
+    const iconName = day.icon.replace(/-/g, ' ');
+    const uv = Math.round(day.uvIndex);
+    const clickable = hasHourly
+        ? ` wx-clickable" data-day="${key}" role="button" tabindex="0" aria-label="Show hourly forecast for ${dayLabel}` : '';
+
+    return `<div class="wx-day${isToday ? ' wx-today' : ''}${isPast ? ' wx-past' : ''}${clickable}"
+        title="${dayLabel}: ${iconName}, ${day.temperatureMin.toFixed(0)} to ${day.temperatureHigh.toFixed(0)}°C, ${rainChance}% chance of ${day.precipIntensity.toFixed(1)}mm rain, gusts ${gustMph}mph, UV ${uv}, ${Math.round(day.cloudCover)}% cloud${day.new_fields && typeof day.new_fields.dewPoint === 'number' ? ', dew point ' + day.new_fields.dewPoint.toFixed(0) + '°C' : ''}">
+        <div class="wx-dow">${dayLabel}</div>
+        <span class="weather ${day.icon}"></span>
+        <div class="wx-temp"><strong>${Math.round(day.temperatureHigh)}&#176;</strong><span>${Math.round(day.temperatureMin)}&#176;</span></div>
+        <div class="wx-rain"><div class="wx-rain-bar" style="height:${rainHeight}%;"></div></div>
+        <div class="wx-pop">${rainChance}%</div>
+        <div class="wx-mm">${day.precipIntensity.toFixed(1)}mm</div>
+        <div class="wx-wind"><span class="wx-arrow" style="transform:rotate(${day.windBearing}deg);">&#8595;</span>${gustMph}<small>mph</small></div>
+    </div>`;
+}
+
+// Live clock showing the time at the crag right now
+function startCragClock(timeZone) {
+    const clockElement = document.getElementById('cragLocalTime');
+    const zoneElement = document.getElementById('cragTimeZone');
+    if (!clockElement) return;
+    const tick = () => {
+        clockElement.innerText = new Intl.DateTimeFormat('en-GB',
+            { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: timeZone }).format(new Date());
+    };
+    tick();
+    if (zoneElement) zoneElement.innerText = '(' + timeZone.replace(/_/g, ' ') + ')';
+    clearInterval(window.cragClockInterval);
+    window.cragClockInterval = setInterval(tick, 30000);
+}
+
 export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
+    const strip = document.getElementById('weatherStrip');
+    if (!strip) return; // stale cached page with the pre-strip markup
+    // the weather feed knows the crag's real timezone; static climb data is the fallback
+    const timeZone = climbWeather.timezone || climbTimeZone;
+
     document.getElementById("currentWeather").style.display = "block";
-    document.getElementById("seasonalWeather").classList.add("col-lg-6");
     document.getElementById("wIcon").classList.add(climbWeather.currently.icon);
     document.getElementById("wIcon").title = climbWeather.currently.icon.replace(/-/g, " ");
     document.getElementById("weatheName").innerText = climbWeather.currently.icon.replace(/-/g, " ");
-    document.getElementById("highT").innerText = climbWeather.currently.temperatureHigh.toFixed(1);
-    document.getElementById("lowT").innerText = climbWeather.currently.temperatureMin.toFixed(1);
-    const options = {timeZone : climbTimeZone, hour: '2-digit', minute: '2-digit', hour12: false};
-    
+    const options = {timeZone : timeZone, hour: '2-digit', minute: '2-digit', hour12: false};
+
     if(climbWeather.currently.sunriseTime){
         document.getElementById("sunrise").innerText = convertTime(climbWeather.currently.sunriseTime, options);
         document.getElementById("sunset").innerText = convertTime(climbWeather.currently.sunsetTime, options);
@@ -54,45 +162,63 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
             document.getElementById('sunMovement').innerHTML = '<span class="weather moon"></span> 24h Darkness! No sunrise here today.';
         }
     }
-    document.getElementById('lastDate').innerHTML = '<br />Updated:' + new Date(climbWeather.currently.time * 1000).toString().substring(0,15);
-    document.getElementById('precip_pos').innerText = Math.round(climbWeather.currently.precipProbability * 100);
-    document.getElementById('precip_intense').innerText = climbWeather.currently.precipIntensity.toFixed(1);
-    document.getElementById('wind_speed').innerText = climbWeather.currently.windGust.toFixed(1);
-    document.getElementById('uv_index').innerText = climbWeather.currently.uvIndex;
-    document.getElementById('cloud_cover').innerText = Math.round(climbWeather.currently.cloudCover);
-    document.getElementById('bearing').style  = 'transform: rotate(' + climbWeather.currently.windBearing + 'deg);display:inline-block;';
-    let bars = document.getElementById('currentRain').children;
-    for (let i = 0; i < bars.length; i++) {
-        let id = bars[i].id;
-        let day = new Date(climbWeather[id].time * 1000);
-        day = day.toDateString().substring(0, 10);
-        document.querySelector(`#${id} span`).setAttribute('title', day);
-        let rainAmount = climbWeather[id].precipIntensity * 5;
-        rainAmount > 95 ? rainAmount = 95 : rainAmount; // max 95% height = 20mm
-        bars[i].children[0].style.height = rainAmount + '%';
-        bars[i].prepend(Math.round(climbWeather[id].precipIntensity) + 'mm');
-    }
+    document.getElementById('lastDate').innerHTML = 'Updated: ' + new Date(climbWeather.currently.time * 1000).toString().substring(0,15);
+    startCragClock(timeZone);
+
+    strip.innerHTML = STRIP_DAYS
+        .filter(key => climbWeather[key])
+        .map(key => buildStripDay(climbWeather[key], key, timeZone,
+            hourIndexesForDay(climbWeather.hourly, climbWeather[key], timeZone).length > 0))
+        .join('');
+    // start the strip scrolled so today is in view on narrow screens
+    const today = strip.querySelector('.wx-today');
+    if (today) strip.scrollLeft = Math.max(0, today.offsetLeft - strip.clientWidth / 3);
+
+    const selectDay = (dayKey) => {
+        if (renderHourlyPanel(climbWeather, dayKey, timeZone)) {
+            strip.querySelectorAll('.wx-selected').forEach(el => el.classList.remove('wx-selected'));
+            const dayElement = strip.querySelector(`.wx-day[data-day="${dayKey}"]`);
+            if (dayElement) dayElement.classList.add('wx-selected');
+        }
+    };
+    strip.onclick = (event) => {
+        const dayElement = event.target.closest('.wx-day[data-day]');
+        if (dayElement) selectDay(dayElement.dataset.day);
+    };
+    strip.onkeydown = (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const dayElement = event.target.closest('.wx-day[data-day]');
+        if (dayElement) {
+            event.preventDefault();
+            selectDay(dayElement.dataset.day);
+        }
+    };
+    selectDay('currently'); // BBC-style default: today's hour by hour
 }
 
-export function updateWeatherOnHP(weatherData){
+export function updateWeatherOnHP(weatherData, dayKey = 'currently'){
     document.querySelectorAll('.card').forEach(element => {
         let id = parseInt(element.id);
         try {
             const climbWeatherData = weatherData.find(data => data.climbId === id);
+            const day = climbWeatherData[dayKey];
             const iconWeather = document.getElementById(`weather-${id}`);
             const toggleWeather = document.getElementById(`toggle-weather-${id}`);
             const tempValues = document.getElementById(`temp-${id}`);
-            iconWeather.classList.add(climbWeatherData.currently.icon);
-            iconWeather.title = climbWeatherData.currently.icon.replace(/-/g, " ");
-            tempValues.innerHTML = Math.round(climbWeatherData.currently.temperatureMin) + ' to ' + Math.round(climbWeatherData.currently.temperatureHigh) + "&#176; C";
+            iconWeather.className = 'weather ' + day.icon; // replace, don't add: the icon changes when re-sorting by another date
+            iconWeather.title = day.icon.replace(/-/g, " ");
+            tempValues.innerHTML = Math.round(day.temperatureMin) + ' to ' + Math.round(day.temperatureHigh) + "&#176; C";
             toggleWeather.classList.remove("toggle-weather-off");
         } catch (e) {
               console.log("No weather found -> " + id + ". Error -> " + e);
         }
-    }); 
+    });
 }
 
-export function generateWeatherScore(weatherData){
+// dayKey lets the homepage score any day in the feed ('currently',
+// 'offsetPlus1'..'offsetPlus15') so climbs can be sorted by the weather
+// on a chosen date, not just right now
+export function generateWeatherScore(weatherData, dayKey = 'currently'){
 
     const weatherType = {
         "partly-cloudy-day": 0.80, 
@@ -146,16 +272,18 @@ export function generateWeatherScore(weatherData){
         return {"climb" : id, "weather" : weather, "temp" : temp, "score" : score};
     }
     weatherData.forEach(data => {
-        const scoreWeatherType = weatherType[data.currently.icon];
-        const scoreTemperature = temperatureScoreFn(data.currently.temperatureHigh, data.currently.temperatureMin);
-        const scoreRain = rainScoreFn(data.currently.precipProbability, data.currently.precipIntensity);
+        const day = data[dayKey];
+        if (!day) { return; } // climb failed its fetch, or the feed doesn't reach that day
+        const scoreWeatherType = weatherType[day.icon];
+        const scoreTemperature = temperatureScoreFn(day.temperatureHigh, day.temperatureMin);
+        const scoreRain = rainScoreFn(day.precipProbability, day.precipIntensity);
         const currentlyScore = ((scoreWeatherType + scoreRain + scoreTemperature)/3).toFixed(3); // to 3 decimal places
 
         weather.push(
             craftArry(
-                data.climbId, 
-                data.currently.icon,
-                Math.round(data.currently.temperatureMin) + '-' + Math.round(data.currently.temperatureHigh) + "&#176;C",
+                data.climbId,
+                day.icon,
+                Math.round(day.temperatureMin) + '-' + Math.round(day.temperatureHigh) + "&#176;C",
                 currentlyScore
             )
         );
