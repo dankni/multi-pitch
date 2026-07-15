@@ -85,7 +85,6 @@ describe('Weather forecast strip', function () {
 
         // BBC-style default: today's hourly panel is open and today is highlighted
         cy.get('#weatherHourly').should('be.visible');
-        cy.get('#weatherHourly .chart-title').should('contain', 'today');
         cy.get('#weatherHourly .wx-hour').should('have.length.within', 1, 24);
         cy.get('#weatherStrip .wx-today').should('have.class', 'wx-selected');
 
@@ -94,10 +93,10 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherHourly .wx-hour .weather').should('exist');
         cy.get('#weatherHourly .wx-pop').first().invoke('text').should('match', /^\d+%$/);
 
-        // clicking tomorrow moves the selection and fills a full 24h row
+        // clicking tomorrow moves the selection and fills a full 24h row from midnight
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').click();
-        cy.get('#weatherHourly .chart-title').should('not.contain', 'today');
         cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+        cy.get('#weatherHourly .wx-hour .wx-dow').first().should('have.text', '00:00');
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').should('have.class', 'wx-selected');
         cy.get('#weatherStrip .wx-today').should('not.have.class', 'wx-selected');
     });

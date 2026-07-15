@@ -100,10 +100,8 @@ function renderHourlyPanel(climbWeather, dayKey, timeZone, hoursByDate) {
         panel.innerHTML = '';
         return false;
     }
-    const label = dayKey === 'currently' ? 'today'
-        : getFormatter(timeZone, { weekday: 'long', day: 'numeric', month: 'long' })
-            .format(new Date(day.time * 1000));
-    panel.innerHTML = `<p class="chart-title">Hour by hour &mdash; ${label}</p>
+    // no day name in the heading: the selected day in the strip already says it
+    panel.innerHTML = `<p class="chart-title">Hour by hour</p>
         <div class="weather-strip wx-hours">`
         + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('')
         + '</div>';

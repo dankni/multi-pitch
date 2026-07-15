@@ -2118,8 +2118,8 @@ html[data-theme="dark"] .warning{
 .wx-past{
   opacity: 0.55;
 }
-.wx-today{
-  background: #e2edfa; /* identity only - the selection ring belongs to .wx-selected */
+.wx-today .wx-dow{
+  color: #0055b8; /* the "Today" label is the identity - only selection gets a tint */
 }
 .wx-dow{
   font-size: 0.72rem;
@@ -2766,8 +2766,8 @@ html[data-theme="dark"] #climbCardDetails {
 }html[data-theme="dark"] .wx-day {
   background-color: var(--dm-surface);
 }
-html[data-theme="dark"] .wx-today {
-  background-color: var(--dm-surface-2); /* identity only - the ring belongs to .wx-selected */
+html[data-theme="dark"] .wx-today .wx-dow {
+  color: var(--dm-link);
 }
 html[data-theme="dark"] .wx-temp span,
 html[data-theme="dark"] .wx-mm {
