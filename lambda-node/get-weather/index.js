@@ -1,4 +1,4 @@
-const { getWeather } = require('./getWeatherOW.js');
+const { getWeather } = require('./getWeatherOM.js');
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3();
 
