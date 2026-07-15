@@ -2211,44 +2211,96 @@ html[data-theme="dark"] .warning{
 .wx-hour .wx-temp strong{
   font-size: 0.9rem;
 }
-/* day chips for sorting climbs by the weather on a chosen day:
-   one scrollable row, same interaction as the forecast strip */
-.wx-daypicker{
-  display: flex;
-  gap: 6px;
-  margin-top: 0.75rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  padding-bottom: 6px;
+/* day scrubber for sorting climbs by the weather on a chosen day -
+   a discrete slider matching the grade slider above it; drag previews
+   the day, release sorts. Weekend ticks are emphasised. */
+.wx-dayslider{
+  margin-top: 2rem;
+  max-width: 420px;
 }
-.wx-chip{
-  flex: 0 0 auto;
+.wx-track{
+  position: relative;
 }
-.wx-chip{
-  border: 1px solid #c6cfda;
-  border-radius: 999px;
-  background: #f2f5f9;
-  color: inherit;
-  font-size: 0.8rem;
-  padding: 4px 12px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.wx-chip:hover,
-.wx-chip:focus-visible{
-  background: #e8eef7;
-  border-color: #7a9cc6;
-}
-.wx-chip-weekend{
+.wx-dayvalue{
+  position: absolute;
+  top: -1.3rem;
+  transform: translateX(-50%);
+  font-size: 0.85rem;
   font-weight: 700;
-  border-color: #7a9cc6;
+  color: #0055b8;
+  white-space: nowrap;
+  pointer-events: none;
 }
-.wx-chip-selected,
-.wx-chip-selected:hover{
+.wx-ticks{
+  position: absolute;
+  left: 11px;   /* align with the thumb's travel (thumb is 22px wide) */
+  right: 11px;
+  top: 50%;
+  height: 0;
+  pointer-events: none;
+}
+.wx-tick{
+  position: absolute;
+  top: -6px;
+  width: 2px;
+  height: 12px;
+  background: #c6cfda;
+  transform: translateX(-1px);
+}
+.wx-tick-weekend{
+  width: 4px;
+  height: 16px;
+  top: -8px;
   background: #0055b8;
-  border-color: #0055b8;
-  color: #fff;
+  border-radius: 2px;
+  transform: translateX(-2px);
+}
+.wx-dayslider input[type="range"]{
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.wx-dayslider input[type="range"]::-webkit-slider-runnable-track{
+  height: 6px;
+  border-radius: 3px;
+  background: #dbe3ec;
+}
+.wx-dayslider input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: #0055b8;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+.wx-dayslider input[type="range"]::-moz-range-track{
+  height: 6px;
+  border-radius: 3px;
+  background: #dbe3ec;
+}
+.wx-dayslider input[type="range"]::-moz-range-thumb{
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0055b8;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+.wx-dayends{
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #767676;
+  margin-top: 2px;
 }
 details{
   margin:10px 0;
@@ -2682,20 +2734,27 @@ html[data-theme="dark"] .wx-clickable::after {
 html[data-theme="dark"] .wx-selected.wx-clickable::after {
   color: var(--dm-link);
 }
-html[data-theme="dark"] .wx-chip {
-  background-color: var(--dm-surface);
-  border-color: var(--dm-border);
+html[data-theme="dark"] .wx-dayvalue {
+  color: var(--dm-link);
 }
-html[data-theme="dark"] .wx-chip:hover,
-html[data-theme="dark"] .wx-chip:focus-visible {
+html[data-theme="dark"] .wx-tick {
+  background-color: var(--dm-border);
+}
+html[data-theme="dark"] .wx-tick-weekend {
+  background-color: var(--dm-link);
+}
+html[data-theme="dark"] .wx-dayslider input[type="range"]::-webkit-slider-runnable-track {
   background-color: var(--dm-surface-2);
 }
-html[data-theme="dark"] .wx-chip-weekend {
-  border-color: var(--dm-link);
+html[data-theme="dark"] .wx-dayslider input[type="range"]::-moz-range-track {
+  background-color: var(--dm-surface-2);
 }
-html[data-theme="dark"] .wx-chip-selected,
-html[data-theme="dark"] .wx-chip-selected:hover {
-  background-color: #2d4a75;
-  border-color: var(--dm-link);
-  color: var(--dm-text);
+html[data-theme="dark"] .wx-dayslider input[type="range"]::-webkit-slider-thumb {
+  border-color: var(--dm-bg);
+}
+html[data-theme="dark"] .wx-dayslider input[type="range"]::-moz-range-thumb {
+  border-color: var(--dm-bg);
+}
+html[data-theme="dark"] .wx-dayends {
+  color: var(--dm-text-muted);
 }

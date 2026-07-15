@@ -646,24 +646,42 @@ window.sortCards = function(sortBy, direction) {
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
     }
     const dayPicker = document.getElementById('weatherDayPicker');
-    if (dayPicker) { // day chips appear only while sorting by weather
-        dayPicker.style.display = (sortBy === 'weatherScore') ? 'flex' : 'none';
-        const chipsBuiltFor = new Date().toDateString(); // rebuild when a tab lives past midnight
-        if (sortBy === 'weatherScore' && dayPicker.dataset.builtFor !== chipsBuiltFor) {
-            dayPicker.dataset.builtFor = chipsBuiltFor;
-            // one chip per day the feed can score (today + offsetPlus1..15);
-            // weekends stand out because that's when most trips happen
-            let chips = '';
+    if (dayPicker) { // day scrubber appears only while sorting by weather
+        dayPicker.style.display = (sortBy === 'weatherScore') ? 'block' : 'none';
+        const builtFor = new Date().toDateString(); // rebuild when a tab lives past midnight
+        if (sortBy === 'weatherScore' && dayPicker.dataset.builtFor !== builtFor) {
+            dayPicker.dataset.builtFor = builtFor;
+            // a discrete slider over the 16 days the feed can score, matching the
+            // grade slider vocabulary above it; weekend ticks stand out because
+            // that's when most trips happen
+            const formatDay = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' });
+            const dayName = offset => offset === 0 ? 'Today'
+                : formatDay.format(new Date(Date.now() + offset * 86400000));
+            let ticks = '';
             for (let offset = 0; offset <= 15; offset++) {
                 const day = new Date(Date.now() + offset * 86400000);
-                const weekend = (day.getDay() === 0 || day.getDay() === 6) ? ' wx-chip-weekend' : '';
-                const selected = offset === 0 ? ' wx-chip-selected' : '';
-                const label = offset === 0 ? 'Today' // same day vocabulary as the forecast strip: "Sat 18"
-                    : new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' }).format(day);
-                chips += `<button type="button" class="wx-chip${weekend}${selected}" data-offset="${offset}"
-                    aria-pressed="${offset === 0}" onclick="sortByWeatherDay(${offset})">${label}</button>`;
+                const weekend = (day.getDay() === 0 || day.getDay() === 6) ? ' wx-tick-weekend' : '';
+                ticks += `<span class="wx-tick${weekend}" style="left:${(offset / 15 * 100).toFixed(2)}%"></span>`;
             }
-            dayPicker.innerHTML = chips;
+            dayPicker.innerHTML = `
+                <div class="wx-track">
+                    <output id="weatherDayValue" class="wx-dayvalue" for="weatherDayRange">Today</output>
+                    <div class="wx-ticks">${ticks}</div>
+                    <input type="range" id="weatherDayRange" min="0" max="15" step="1" value="0"
+                           aria-label="Day to sort good weather by" aria-valuetext="Today" />
+                </div>
+                <div class="wx-dayends"><span>Today</span><span>${dayName(15)}</span></div>`;
+            const range = document.getElementById('weatherDayRange');
+            const valueLabel = document.getElementById('weatherDayValue');
+            const showValue = () => { // label follows the thumb; drag previews, release sorts
+                const offset = parseInt(range.value);
+                valueLabel.innerText = dayName(offset);
+                range.setAttribute('aria-valuetext', dayName(offset));
+                valueLabel.style.left = `calc(11px + (100% - 22px) * ${(offset / 15).toFixed(4)})`;
+            };
+            range.addEventListener('input', showValue);
+            range.addEventListener('change', () => sortByWeatherDay(parseInt(range.value)));
+            showValue();
         }
     }
     if (sortBy === 'weatherScore') {
@@ -1285,11 +1303,6 @@ window.sortByWeatherDay = function(offset) {
     generateWeatherScore(window.weatherData, dayKey);
     sortCards('weatherScore', 'DESC'); // re-applies each card's icon/temp/score from the recomputed data
     filterCards();
-    document.querySelectorAll('#weatherDayPicker .wx-chip').forEach(chip => {
-        const active = parseInt(chip.dataset.offset) === offset;
-        chip.classList.toggle('wx-chip-selected', active);
-        chip.setAttribute('aria-pressed', active);
-    });
     trackGA('sort-and-filter', 'sort', 'weatherScore-day-' + dayKey, 0);
 }
 

@@ -154,23 +154,24 @@ describe('Weather forecast strip', function () {
         cy.visit(appUrl);
         cy.get('#weather-1').should('have.attr', 'class').and('contain', 'weather '); // hydration done
 
-        // picking the weather sort reveals one chip per day, Today preselected,
-        // weekends emphasised (that's when trips happen)
+        // picking the weather sort reveals the day scrubber: one tick per day,
+        // weekends emphasised (that's when trips happen), primed to Today
         cy.get('.filter-toggle').click(); // sort controls live in the filter panel
         cy.get('#sortOrder').select('Good Weather');
         cy.get('#weatherDayPicker').should('be.visible');
-        cy.get('#weatherDayPicker .wx-chip').should('have.length', 16); // today + offsetPlus1..15
-        cy.get('#weatherDayPicker .wx-chip').first().should('contain', 'Today').and('have.class', 'wx-chip-selected');
-        cy.get('#weatherDayPicker .wx-chip-weekend').should('have.length.within', 4, 6);
+        cy.get('#weatherDayPicker .wx-tick').should('have.length', 16); // today + offsetPlus1..15
+        cy.get('#weatherDayPicker .wx-tick-weekend').should('have.length.within', 4, 6);
+        cy.get('#weatherDayValue').should('contain', 'Today');
+        cy.get('#weatherDayRange').should('have.value', '0');
 
-        // choose the day after tomorrow and expect climb 1's card to show that day's weather
+        // scrub to the day after tomorrow and expect climb 1's card to show that day's weather
         cy.fixture('weather.json').then((weather) => {
             const climbOne = weather.find(w => w.climbId === 1);
             const target = climbOne.offsetPlus2;
 
-            cy.get('#weatherDayPicker .wx-chip[data-offset="2"]').click();
-            cy.get('#weatherDayPicker .wx-chip[data-offset="2"]').should('have.class', 'wx-chip-selected');
-            cy.get('#weatherDayPicker .wx-chip[data-offset="0"]').should('not.have.class', 'wx-chip-selected');
+            cy.get('#weatherDayRange').invoke('val', 2).trigger('input').trigger('change');
+            cy.get('#weatherDayValue').should('not.contain', 'Today'); // live label follows the thumb
+            cy.get('#weatherDayValue').invoke('text').should('match', /^\w{3} \d{1,2}$/);
 
             cy.get('#weather-1').should('have.class', target.icon);
             cy.get('#temp-1').should('contain',
