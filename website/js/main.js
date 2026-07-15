@@ -645,14 +645,25 @@ window.sortCards = function(sortBy, direction) {
     if(sortBy !== 'distance' && sortBy !== 'weatherScore') { // avoid the geo-location call or weather being the default
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
     }
-    const weatherDate = document.getElementById('weatherDate');
-    if (weatherDate) { // date picker appears only while sorting by weather
-        weatherDate.style.display = (sortBy === 'weatherScore') ? 'inline-block' : 'none';
-        if (sortBy === 'weatherScore' && !weatherDate.value) {
-            const iso = date => date.toISOString().split('T')[0];
-            weatherDate.value = iso(new Date());
-            weatherDate.min = iso(new Date());
-            weatherDate.max = iso(new Date(Date.now() + 15 * 86400000)); // the feed carries offsetPlus1..15
+    const dayPicker = document.getElementById('weatherDayPicker');
+    if (dayPicker) { // day chips appear only while sorting by weather
+        dayPicker.style.display = (sortBy === 'weatherScore') ? 'flex' : 'none';
+        const chipsBuiltFor = new Date().toDateString(); // rebuild when a tab lives past midnight
+        if (sortBy === 'weatherScore' && dayPicker.dataset.builtFor !== chipsBuiltFor) {
+            dayPicker.dataset.builtFor = chipsBuiltFor;
+            // one chip per day the feed can score (today + offsetPlus1..15);
+            // weekends stand out because that's when most trips happen
+            let chips = '';
+            for (let offset = 0; offset <= 15; offset++) {
+                const day = new Date(Date.now() + offset * 86400000);
+                const weekend = (day.getDay() === 0 || day.getDay() === 6) ? ' wx-chip-weekend' : '';
+                const selected = offset === 0 ? ' wx-chip-selected' : '';
+                const label = offset === 0 ? 'Today' // same day vocabulary as the forecast strip: "Sat 18"
+                    : new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' }).format(day);
+                chips += `<button type="button" class="wx-chip${weekend}${selected}" data-offset="${offset}"
+                    aria-pressed="${offset === 0}" onclick="sortByWeatherDay(${offset})">${label}</button>`;
+            }
+            dayPicker.innerHTML = chips;
         }
     }
     if (sortBy === 'weatherScore') {
@@ -1258,19 +1269,28 @@ window.loadCurrentWeatherModule = function(){
 window.weatherBars = function() {};
 
 /**
- SORT CLIMBS BY THE WEATHER ON A CHOSEN DATE (today .. +15 days)
+ SORT CLIMBS BY THE WEATHER ON A CHOSEN DAY (today .. +15 days)
  **/
-window.sortByWeatherDate = function(dateString) {
-    if (!window.weatherData || !dateString) { return; }
-    const chosen = new Date(dateString + 'T12:00:00');
-    const today = new Date();
-    today.setHours(12, 0, 0, 0);
-    const offset = Math.round((chosen - today) / 86400000);
-    const dayKey = offset <= 0 ? 'currently' : 'offsetPlus' + Math.min(offset, 15);
+window.sortByWeatherDay = function(offset) {
+    if (!window.weatherData) { return; }
+    // anchor on the feed's own today: the freshness check accepts a feed up to
+    // 24h old, and then the browser's "tomorrow" is the feed's offsetPlus2
+    const reference = window.weatherData.find(data => data.currently);
+    if (!reference) { return; }
+    const browserNoon = new Date();
+    browserNoon.setHours(12, 0, 0, 0);
+    const feedLag = Math.max(0, Math.round((browserNoon.getTime() / 1000 - reference.currently.time) / 86400));
+    const dayIndex = Math.min(offset + feedLag, 15);
+    const dayKey = dayIndex <= 0 ? 'currently' : 'offsetPlus' + dayIndex;
     generateWeatherScore(window.weatherData, dayKey);
     sortCards('weatherScore', 'DESC'); // re-applies each card's icon/temp/score from the recomputed data
     filterCards();
-    trackGA('sort-and-filter', 'sort', 'weatherScore-date-' + dayKey, 0);
+    document.querySelectorAll('#weatherDayPicker .wx-chip').forEach(chip => {
+        const active = parseInt(chip.dataset.offset) === offset;
+        chip.classList.toggle('wx-chip-selected', active);
+        chip.setAttribute('aria-pressed', active);
+    });
+    trackGA('sort-and-filter', 'sort', 'weatherScore-day-' + dayKey, 0);
 }
 
 /**

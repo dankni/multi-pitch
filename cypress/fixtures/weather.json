@@ -5,7 +5,6 @@
   "utcOffsetSeconds": 3600,
   "hourly": {
    "time": [
-    1784138400,
     1784142000,
     1784145600,
     1784149200,
@@ -76,10 +75,10 @@
     1784383200,
     1784386800,
     1784390400,
-    1784394000
+    1784394000,
+    1784397600
    ],
    "icon": [
-    "clear-day",
     "partly-cloudy-day",
     "clear-day",
     "clear-night",
@@ -149,11 +148,11 @@
     "partly-cloudy-day",
     "cloudy",
     "cloudy",
+    "partly-cloudy-day",
     "partly-cloudy-day",
     "partly-cloudy-day"
    ],
    "temperature": [
-    24.1,
     24.7,
     22,
     21.3,
@@ -224,10 +223,10 @@
     23.3,
     23.1,
     23.4,
+    23.9,
     23.9
    ],
    "feelsLike": [
-    26.3,
     27.5,
     22.8,
     21.3,
@@ -298,7 +297,8 @@
     23,
     22.7,
     22.7,
-    22.7
+    22.7,
+    22.4
    ],
    "precipIntensity": [
     0,
@@ -375,7 +375,6 @@
     0
    ],
    "precipProbability": [
-    0,
     0,
     0,
     0,
@@ -446,10 +445,10 @@
     0.21,
     0.27,
     0.23,
-    0.14
+    0.14,
+    0.06
    ],
    "windSpeed": [
-    0.4,
     0.8,
     2.1,
     2.8,
@@ -520,10 +519,10 @@
     3.4,
     3.9,
     4.3,
-    4.7
+    4.7,
+    4.9
    ],
    "windGust": [
-    1.2,
     1.9,
     4,
     5.6,
@@ -594,10 +593,10 @@
     7.4,
     8,
     8.7,
-    9.3
+    9.3,
+    9.5
    ],
    "windBearing": [
-    198,
     28,
     24,
     28,
@@ -668,10 +667,10 @@
     263,
     272,
     295,
-    319
+    319,
+    342
    ],
    "uvIndex": [
-    0.4,
     0,
     0,
     0,
@@ -742,7 +741,8 @@
     6.5,
     5.75,
     4.55,
-    3.4
+    3.4,
+    2.1
    ]
   },
   "currently": {
@@ -764,7 +764,6 @@
    "sunsetTime": 1784147362,
    "new_fields": {
     "moonPhase": 0.02,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 14.4,
     "temperature": {
      "min": 14.7,
@@ -802,7 +801,6 @@
    "sunsetTime": 1784233701,
    "new_fields": {
     "moonPhase": 0.06,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 14.1,
     "temperature": {
      "min": 17.3,
@@ -839,7 +837,6 @@
    "sunsetTime": 1784320038,
    "new_fields": {
     "moonPhase": 0.09,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.8,
     "temperature": {
      "min": 16.8,
@@ -876,7 +873,6 @@
    "sunsetTime": 1784406372,
    "new_fields": {
     "moonPhase": 0.12,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 13.3,
     "temperature": {
      "min": 17.6,
@@ -913,7 +909,6 @@
    "sunsetTime": 1784492703,
    "new_fields": {
     "moonPhase": 0.16,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.3,
     "temperature": {
      "min": 17.5,
@@ -950,7 +945,6 @@
    "sunsetTime": 1784579032,
    "new_fields": {
     "moonPhase": 0.19,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.6,
     "temperature": {
      "min": 15.6,
@@ -987,7 +981,6 @@
    "sunsetTime": 1784665359,
    "new_fields": {
     "moonPhase": 0.23,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.4,
     "temperature": {
      "min": 17.2,
@@ -1024,7 +1017,6 @@
    "sunsetTime": 1784751683,
    "new_fields": {
     "moonPhase": 0.26,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12,
     "temperature": {
      "min": 16.2,
@@ -1061,7 +1053,6 @@
    "sunsetTime": 1784838004,
    "new_fields": {
     "moonPhase": 0.29,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11,
     "temperature": {
      "min": 14.4,
@@ -1098,7 +1089,6 @@
    "sunsetTime": 1784924322,
    "new_fields": {
     "moonPhase": 0.33,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.6,
     "temperature": {
      "min": 15.2,
@@ -1135,7 +1125,6 @@
    "sunsetTime": 1785010638,
    "new_fields": {
     "moonPhase": 0.36,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.5,
     "temperature": {
      "min": 15.1,
@@ -1172,7 +1161,6 @@
    "sunsetTime": 1785096952,
    "new_fields": {
     "moonPhase": 0.4,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 9.1,
     "temperature": {
      "min": 14,
@@ -1209,7 +1197,6 @@
    "sunsetTime": 1785183263,
    "new_fields": {
     "moonPhase": 0.43,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.8,
     "temperature": {
      "min": 13.2,
@@ -1246,7 +1233,6 @@
    "sunsetTime": 1785269572,
    "new_fields": {
     "moonPhase": 0.46,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.3,
     "temperature": {
      "min": 14.2,
@@ -1283,7 +1269,6 @@
    "sunsetTime": 1785355878,
    "new_fields": {
     "moonPhase": 0.5,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.4,
     "temperature": {
      "min": 12,
@@ -1320,7 +1305,6 @@
    "sunsetTime": 1785442183,
    "new_fields": {
     "moonPhase": 0.53,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 0,
     "temperature": {
      "min": 0,
@@ -1357,7 +1341,6 @@
    "sunsetTime": 1784061021,
    "new_fields": {
     "moonPhase": 0.99,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 14.2,
     "temperature": {
      "min": 16.2,
@@ -1394,7 +1377,6 @@
    "sunsetTime": 1783974677,
    "new_fields": {
     "moonPhase": 0.95,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.3,
     "temperature": {
      "min": 17.4,
@@ -1431,7 +1413,6 @@
    "sunsetTime": 1783888330,
    "new_fields": {
     "moonPhase": 0.92,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 13.9,
     "temperature": {
      "min": 16.7,
@@ -1468,7 +1449,6 @@
    "sunsetTime": 1783801981,
    "new_fields": {
     "moonPhase": 0.89,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 15.2,
     "temperature": {
      "min": 18.9,
@@ -1493,7 +1473,6 @@
   "utcOffsetSeconds": 3600,
   "hourly": {
    "time": [
-    1784138400,
     1784142000,
     1784145600,
     1784149200,
@@ -1564,13 +1543,13 @@
     1784383200,
     1784386800,
     1784390400,
-    1784394000
+    1784394000,
+    1784397600
    ],
    "icon": [
     "clear-day",
     "clear-day",
     "clear-day",
-    "clear-day",
     "clear-night",
     "clear-night",
     "clear-night",
@@ -1637,11 +1616,11 @@
     "partly-cloudy-day",
     "clear-day",
     "clear-day",
+    "partly-cloudy-day",
     "partly-cloudy-day",
     "partly-cloudy-day"
    ],
    "temperature": [
-    17.9,
     16.9,
     15.2,
     13.4,
@@ -1712,10 +1691,10 @@
     15.1,
     14.9,
     14.7,
-    14.4
+    14.4,
+    13.8
    ],
    "feelsLike": [
-    18.2,
     17.3,
     14.5,
     12.9,
@@ -1786,7 +1765,8 @@
     11,
     10.9,
     10.8,
-    10.7
+    10.7,
+    10.5
    ],
    "precipIntensity": [
     0,
@@ -1843,13 +1823,13 @@
     0,
     0,
     0,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
     0,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
     0,
     0,
     0,
@@ -1863,7 +1843,6 @@
     0
    ],
    "precipProbability": [
-    0,
     0,
     0,
     0,
@@ -1934,10 +1913,10 @@
     0.12,
     0.08,
     0.05,
-    0.02
+    0.02,
+    0
    ],
    "windSpeed": [
-    1.1,
     0.5,
     2.3,
     1.4,
@@ -2008,10 +1987,10 @@
     6.6,
     6.5,
     6.1,
-    5.7
+    5.7,
+    5.1
    ],
    "windGust": [
-    2.5,
     2.4,
     4.5,
     3.7,
@@ -2082,10 +2061,10 @@
     11.7,
     11.4,
     10.7,
-    9.8
+    9.8,
+    8.8
    ],
    "windBearing": [
-    182,
     184,
     332,
     300,
@@ -2156,10 +2135,10 @@
     352,
     352,
     352,
+    352,
     352
    ],
    "uvIndex": [
-    0.4,
     0.15,
     0,
     0,
@@ -2230,7 +2209,8 @@
     4.3,
     5.15,
     4.25,
-    3.2
+    3.2,
+    2.15
    ]
   },
   "currently": {
@@ -2252,7 +2232,6 @@
    "sunsetTime": 1784149908,
    "new_fields": {
     "moonPhase": 0.02,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.3,
     "temperature": {
      "min": 10.5,
@@ -2290,7 +2269,6 @@
    "sunsetTime": 1784236212,
    "new_fields": {
     "moonPhase": 0.06,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.1,
     "temperature": {
      "min": 9.7,
@@ -2327,7 +2305,6 @@
    "sunsetTime": 1784322512,
    "new_fields": {
     "moonPhase": 0.09,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.1,
     "temperature": {
      "min": 11.9,
@@ -2364,7 +2341,6 @@
    "sunsetTime": 1784408809,
    "new_fields": {
     "moonPhase": 0.12,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 9.1,
     "temperature": {
      "min": 10.7,
@@ -2401,7 +2377,6 @@
    "sunsetTime": 1784495104,
    "new_fields": {
     "moonPhase": 0.16,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.2,
     "temperature": {
      "min": 11.2,
@@ -2438,7 +2413,6 @@
    "sunsetTime": 1784581396,
    "new_fields": {
     "moonPhase": 0.19,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.5,
     "temperature": {
      "min": 11.8,
@@ -2475,7 +2449,6 @@
    "sunsetTime": 1784667684,
    "new_fields": {
     "moonPhase": 0.23,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.4,
     "temperature": {
      "min": 11.2,
@@ -2512,7 +2485,6 @@
    "sunsetTime": 1784753970,
    "new_fields": {
     "moonPhase": 0.26,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.1,
     "temperature": {
      "min": 12.8,
@@ -2549,7 +2521,6 @@
    "sunsetTime": 1784840252,
    "new_fields": {
     "moonPhase": 0.29,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 13.2,
     "temperature": {
      "min": 13.8,
@@ -2586,7 +2557,6 @@
    "sunsetTime": 1784926531,
    "new_fields": {
     "moonPhase": 0.33,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.1,
     "temperature": {
      "min": 12.3,
@@ -2623,7 +2593,6 @@
    "sunsetTime": 1785012806,
    "new_fields": {
     "moonPhase": 0.36,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.9,
     "temperature": {
      "min": 11.8,
@@ -2660,7 +2629,6 @@
    "sunsetTime": 1785099079,
    "new_fields": {
     "moonPhase": 0.4,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.3,
     "temperature": {
      "min": 11.8,
@@ -2697,7 +2665,6 @@
    "sunsetTime": 1785185349,
    "new_fields": {
     "moonPhase": 0.43,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.4,
     "temperature": {
      "min": 12.1,
@@ -2734,7 +2701,6 @@
    "sunsetTime": 1785271617,
    "new_fields": {
     "moonPhase": 0.46,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 9.2,
     "temperature": {
      "min": 11.4,
@@ -2771,7 +2737,6 @@
    "sunsetTime": 1785357882,
    "new_fields": {
     "moonPhase": 0.5,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 8.9,
     "temperature": {
      "min": 10.6,
@@ -2808,7 +2773,6 @@
    "sunsetTime": 1785444145,
    "new_fields": {
     "moonPhase": 0.53,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 0,
     "temperature": {
      "min": 0,
@@ -2845,7 +2809,6 @@
    "sunsetTime": 1784063602,
    "new_fields": {
     "moonPhase": 0.99,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.3,
     "temperature": {
      "min": 10.1,
@@ -2882,7 +2845,6 @@
    "sunsetTime": 1783977292,
    "new_fields": {
     "moonPhase": 0.95,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 9.9,
     "temperature": {
      "min": 10.4,
@@ -2919,7 +2881,6 @@
    "sunsetTime": 1783890979,
    "new_fields": {
     "moonPhase": 0.92,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.2,
     "temperature": {
      "min": 11.5,
@@ -2956,7 +2917,6 @@
    "sunsetTime": 1783804662,
    "new_fields": {
     "moonPhase": 0.89,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.2,
     "temperature": {
      "min": 12.2,
@@ -2981,7 +2941,6 @@
   "utcOffsetSeconds": 3600,
   "hourly": {
    "time": [
-    1784138400,
     1784142000,
     1784145600,
     1784149200,
@@ -3052,13 +3011,13 @@
     1784383200,
     1784386800,
     1784390400,
-    1784394000
+    1784394000,
+    1784397600
    ],
    "icon": [
     "clear-day",
     "clear-day",
     "clear-day",
-    "clear-day",
     "clear-night",
     "clear-night",
     "partly-cloudy-night",
@@ -3124,12 +3083,12 @@
     "partly-cloudy-day",
     "partly-cloudy-day",
     "partly-cloudy-day",
+    "cloudy",
     "cloudy",
     "cloudy",
     "cloudy"
    ],
    "temperature": [
-    18.5,
     18,
     17.1,
     15.5,
@@ -3200,10 +3159,10 @@
     16.4,
     16.5,
     16.3,
-    15.9
+    15.9,
+    15.3
    ],
    "feelsLike": [
-    17.8,
     17.4,
     17,
     15.5,
@@ -3274,7 +3233,8 @@
     12.7,
     12.5,
     12.5,
-    12.5
+    12.5,
+    12.6
    ],
    "precipIntensity": [
     0,
@@ -3331,13 +3291,13 @@
     0,
     0,
     0,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
     0,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
     0,
     0,
     0,
@@ -3351,7 +3311,6 @@
     0
    ],
    "precipProbability": [
-    0,
     0,
     0,
     0,
@@ -3422,10 +3381,10 @@
     0.01,
     0,
     0,
+    0,
     0
    ],
    "windSpeed": [
-    3.6,
     3.4,
     2.6,
     2.3,
@@ -3496,10 +3455,10 @@
     5.9,
     6.1,
     5.6,
-    4.7
+    4.7,
+    3.8
    ],
    "windGust": [
-    6.4,
     6.1,
     4.9,
     4.3,
@@ -3570,10 +3529,10 @@
     10.6,
     10.8,
     9.8,
-    8.2
+    8.2,
+    6.5
    ],
    "windBearing": [
-    14,
     6,
     26,
     18,
@@ -3644,10 +3603,10 @@
     354,
     357,
     358,
-    360
+    360,
+    1
    ],
    "uvIndex": [
-    0.4,
     0.15,
     0,
     0,
@@ -3718,7 +3677,8 @@
     5.85,
     5.3,
     4.4,
-    3.35
+    3.35,
+    2.3
    ]
   },
   "currently": {
@@ -3740,7 +3700,6 @@
    "sunsetTime": 1784150022,
    "new_fields": {
     "moonPhase": 0.02,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.5,
     "temperature": {
      "min": 12.4,
@@ -3778,7 +3737,6 @@
    "sunsetTime": 1784236331,
    "new_fields": {
     "moonPhase": 0.06,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.9,
     "temperature": {
      "min": 12.8,
@@ -3815,7 +3773,6 @@
    "sunsetTime": 1784322636,
    "new_fields": {
     "moonPhase": 0.09,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11,
     "temperature": {
      "min": 12.2,
@@ -3852,7 +3809,6 @@
    "sunsetTime": 1784408939,
    "new_fields": {
     "moonPhase": 0.12,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.3,
     "temperature": {
      "min": 11.2,
@@ -3889,7 +3845,6 @@
    "sunsetTime": 1784495239,
    "new_fields": {
     "moonPhase": 0.16,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.1,
     "temperature": {
      "min": 7.9,
@@ -3926,7 +3881,6 @@
    "sunsetTime": 1784581536,
    "new_fields": {
     "moonPhase": 0.19,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.3,
     "temperature": {
      "min": 12.1,
@@ -3963,7 +3917,6 @@
    "sunsetTime": 1784667831,
    "new_fields": {
     "moonPhase": 0.23,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.1,
     "temperature": {
      "min": 12.6,
@@ -4000,7 +3953,6 @@
    "sunsetTime": 1784754122,
    "new_fields": {
     "moonPhase": 0.26,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.8,
     "temperature": {
      "min": 12.9,
@@ -4037,7 +3989,6 @@
    "sunsetTime": 1784840409,
    "new_fields": {
     "moonPhase": 0.29,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 13.5,
     "temperature": {
      "min": 13.4,
@@ -4074,7 +4025,6 @@
    "sunsetTime": 1784926694,
    "new_fields": {
     "moonPhase": 0.33,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.9,
     "temperature": {
      "min": 12.6,
@@ -4111,7 +4061,6 @@
    "sunsetTime": 1785012975,
    "new_fields": {
     "moonPhase": 0.36,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10,
     "temperature": {
      "min": 12.2,
@@ -4148,7 +4097,6 @@
    "sunsetTime": 1785099254,
    "new_fields": {
     "moonPhase": 0.4,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.1,
     "temperature": {
      "min": 12.1,
@@ -4185,7 +4133,6 @@
    "sunsetTime": 1785185530,
    "new_fields": {
     "moonPhase": 0.43,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12,
     "temperature": {
      "min": 12.7,
@@ -4222,7 +4169,6 @@
    "sunsetTime": 1785271803,
    "new_fields": {
     "moonPhase": 0.46,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 9.9,
     "temperature": {
      "min": 11.6,
@@ -4259,7 +4205,6 @@
    "sunsetTime": 1785358074,
    "new_fields": {
     "moonPhase": 0.5,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 8.6,
     "temperature": {
      "min": 10.9,
@@ -4296,7 +4241,6 @@
    "sunsetTime": 1785444343,
    "new_fields": {
     "moonPhase": 0.53,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 0,
     "temperature": {
      "min": 0,
@@ -4333,7 +4277,6 @@
    "sunsetTime": 1784063710,
    "new_fields": {
     "moonPhase": 0.99,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 10.9,
     "temperature": {
      "min": 10.6,
@@ -4370,7 +4313,6 @@
    "sunsetTime": 1783977395,
    "new_fields": {
     "moonPhase": 0.95,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.6,
     "temperature": {
      "min": 9.4,
@@ -4407,7 +4349,6 @@
    "sunsetTime": 1783891077,
    "new_fields": {
     "moonPhase": 0.92,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 12.8,
     "temperature": {
      "min": 12.3,
@@ -4444,7 +4385,6 @@
    "sunsetTime": 1783804755,
    "new_fields": {
     "moonPhase": 0.89,
-    "moonPhaseDescription": "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
     "dewPoint": 11.7,
     "temperature": {
      "min": 12.7,

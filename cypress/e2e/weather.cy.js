@@ -72,7 +72,10 @@ describe('Weather forecast strip', function () {
         // every day carries an icon, temps, rain and wind
         cy.get('#weatherStrip .wx-day .weather').should('have.length', 20);
         cy.get('#weatherStrip .wx-day .wx-temp strong').first().invoke('text').should('match', /^-?\d+°$/);
-        cy.get('#weatherStrip .wx-pop').first().invoke('text').should('match', /^\d+%$/);
+        cy.get('#weatherStrip .wx-today .wx-pop').invoke('text').should('match', /^\d+%$/);
+        // past days report what fell (mm), not a chance-of-rain percentage
+        cy.get('#weatherStrip .wx-past .wx-pop').first().invoke('text').should('match', /^\s*$/);
+        cy.get('#weatherStrip .wx-past .wx-mm').first().invoke('text').should('match', /^\d+(\.\d+)?mm$/);
         cy.get('#weatherStrip .wx-wind').first().should('contain', 'mph');
     });
 
@@ -146,24 +149,28 @@ describe('Weather forecast strip', function () {
             .then(parseFloat).should('be.within', 0, 1);
     });
 
-    it('sorts climbs by the weather on a chosen date', () => {
+    it('sorts climbs by the weather on a chosen day', () => {
         stubWeatherFeed();
         cy.visit(appUrl);
         cy.get('#weather-1').should('have.attr', 'class').and('contain', 'weather '); // hydration done
 
-        // picking the weather sort reveals the date picker, primed to today
+        // picking the weather sort reveals one chip per day, Today preselected,
+        // weekends emphasised (that's when trips happen)
         cy.get('.filter-toggle').click(); // sort controls live in the filter panel
         cy.get('#sortOrder').select('Good Weather');
-        cy.get('#weatherDate').should('be.visible');
-        cy.get('#weatherDate').invoke('val').should('match', /^\d{4}-\d{2}-\d{2}$/);
+        cy.get('#weatherDayPicker').should('be.visible');
+        cy.get('#weatherDayPicker .wx-chip').should('have.length', 16); // today + offsetPlus1..15
+        cy.get('#weatherDayPicker .wx-chip').first().should('contain', 'Today').and('have.class', 'wx-chip-selected');
+        cy.get('#weatherDayPicker .wx-chip-weekend').should('have.length.within', 4, 6);
 
         // choose the day after tomorrow and expect climb 1's card to show that day's weather
         cy.fixture('weather.json').then((weather) => {
             const climbOne = weather.find(w => w.climbId === 1);
             const target = climbOne.offsetPlus2;
-            const targetDate = new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0];
 
-            cy.get('#weatherDate').invoke('val', targetDate).trigger('change');
+            cy.get('#weatherDayPicker .wx-chip[data-offset="2"]').click();
+            cy.get('#weatherDayPicker .wx-chip[data-offset="2"]').should('have.class', 'wx-chip-selected');
+            cy.get('#weatherDayPicker .wx-chip[data-offset="0"]').should('not.have.class', 'wx-chip-selected');
 
             cy.get('#weather-1').should('have.class', target.icon);
             cy.get('#temp-1').should('contain',
@@ -176,7 +183,7 @@ describe('Weather forecast strip', function () {
                 expect(['1', '34', '40']).to.include(id); // only fixture climbs have scores
             });
 
-            // PR prototype: date picker + deck sorted by that day's weather
+            // PR prototype: day chips + deck sorted by that day's weather
             cy.get('#sortOrder').scrollIntoView({ offset: { top: -150, left: 0 } });
             cy.screenshot('weather-sort-by-date', { capture: 'viewport', overwrite: true });
         });

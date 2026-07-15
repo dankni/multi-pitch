@@ -43,23 +43,36 @@ export function fullWeatherForOneClimb(weatherData, climbIdToFind){
 const STRIP_DAYS = ['offsetMinus4', 'offsetMinus3', 'offsetMinus2', 'offsetMinus1', 'currently']
     .concat(Array.from({ length: 15 }, (_, i) => 'offsetPlus' + (i + 1)));
 
+// Intl formatters are expensive to construct, and the strip needs thousands
+// of format() calls per render - cache one formatter per timezone + shape
+const formatterCache = {};
+function getFormatter(timeZone, options, locale = 'en-GB') {
+    const key = locale + '|' + timeZone + '|' + JSON.stringify(options);
+    if (!formatterCache[key]) {
+        formatterCache[key] = new Intl.DateTimeFormat(locale, Object.assign({ timeZone: timeZone }, options));
+    }
+    return formatterCache[key];
+}
+
 // local calendar date (YYYY-MM-DD) of a unix timestamp at the crag
 function localDateKey(unixSeconds, timeZone) {
-    return new Intl.DateTimeFormat('en-CA', { timeZone: timeZone, year: 'numeric', month: '2-digit', day: '2-digit' })
+    return getFormatter(timeZone, { year: 'numeric', month: '2-digit', day: '2-digit' }, 'en-CA')
         .format(new Date(unixSeconds * 1000));
 }
 
-// indexes into the hourly arrays that fall on the same local date as `day`
-function hourIndexesForDay(hourly, day, timeZone) {
-    if (!hourly || !hourly.time || !day) return [];
-    const targetDate = localDateKey(day.time, timeZone);
-    return hourly.time
-        .map((time, index) => index)
-        .filter(index => localDateKey(hourly.time[index], timeZone) === targetDate);
+// one pass over the hourly arrays: local date -> [hour indexes]
+function groupHourlyByDate(hourly, timeZone) {
+    const groups = {};
+    if (!hourly || !hourly.time) return groups;
+    hourly.time.forEach((time, index) => {
+        const key = localDateKey(time, timeZone);
+        (groups[key] = groups[key] || []).push(index);
+    });
+    return groups;
 }
 
 function buildHourCell(hourly, i, timeZone) {
-    const hour = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: timeZone })
+    const hour = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false })
         .format(new Date(hourly.time[i] * 1000));
     const rainChance = Math.round(hourly.precipProbability[i] * 100);
     const gustMph = Math.round(hourly.windGust[i] * 2.237);
@@ -77,18 +90,18 @@ function buildHourCell(hourly, i, timeZone) {
 
 // BBC-style hour-by-hour panel for one strip day; returns false when the
 // feed has no hourly coverage for that day (or none at all - legacy feed)
-function renderHourlyPanel(climbWeather, dayKey, timeZone) {
+function renderHourlyPanel(climbWeather, dayKey, timeZone, hoursByDate) {
     const panel = document.getElementById('weatherHourly');
     if (!panel) return false;
     const day = climbWeather[dayKey];
-    const hours = hourIndexesForDay(climbWeather.hourly, day, timeZone);
+    const hours = (day && hoursByDate[localDateKey(day.time, timeZone)]) || [];
     if (!hours.length) {
         panel.style.display = 'none';
         panel.innerHTML = '';
         return false;
     }
     const label = dayKey === 'currently' ? 'today'
-        : new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: timeZone })
+        : getFormatter(timeZone, { weekday: 'long', day: 'numeric', month: 'long' })
             .format(new Date(day.time * 1000));
     panel.innerHTML = `<p class="chart-title">Hour by hour &mdash; ${label}</p>
         <div class="weather-strip wx-hours">`
@@ -101,23 +114,33 @@ function renderHourlyPanel(climbWeather, dayKey, timeZone) {
 function buildStripDay(day, key, timeZone, hasHourly) {
     const isToday = key === 'currently';
     const isPast = key.startsWith('offsetMinus');
-    const dayLabel = isToday ? 'Today' : new Intl.DateTimeFormat('en-GB',
-        { weekday: 'short', day: 'numeric', timeZone: timeZone }).format(new Date(day.time * 1000));
+    const dayLabel = isToday ? 'Today'
+        : getFormatter(timeZone, { weekday: 'short', day: 'numeric' }).format(new Date(day.time * 1000));
     const rainChance = Math.round(day.precipProbability * 100);
     const rainHeight = Math.min(day.precipIntensity * 5, 95); // 95% bar height = 20mm
     const gustMph = Math.round(day.windGust * 2.237); // data is m/s
     const iconName = day.icon.replace(/-/g, ' ');
     const uv = Math.round(day.uvIndex);
-    const clickable = hasHourly
-        ? ` wx-clickable" data-day="${key}" role="button" tabindex="0" aria-label="Show hourly forecast for ${dayLabel}` : '';
 
-    return `<div class="wx-day${isToday ? ' wx-today' : ''}${isPast ? ' wx-past' : ''}${clickable}"
-        title="${dayLabel}: ${iconName}, ${day.temperatureMin.toFixed(0)} to ${day.temperatureHigh.toFixed(0)}°C, ${rainChance}% chance of ${day.precipIntensity.toFixed(1)}mm rain, gusts ${gustMph}mph, UV ${uv}, ${Math.round(day.cloudCover)}% cloud${day.new_fields && typeof day.new_fields.dewPoint === 'number' ? ', dew point ' + day.new_fields.dewPoint.toFixed(0) + '°C' : ''}">
+    const classes = ['wx-day', isToday && 'wx-today', isPast && 'wx-past', hasHourly && 'wx-clickable']
+        .filter(Boolean).join(' ');
+    const clickableAttrs = hasHourly
+        ? ` data-day="${key}" role="button" tabindex="0" aria-label="Show hourly forecast for ${dayLabel}"` : '';
+    // past days report what fell; chance-of-rain only makes sense for the forecast
+    // (the API returns no probability for past days)
+    const rainSummary = isPast
+        ? `${day.precipIntensity.toFixed(1)}mm rain fell`
+        : `${rainChance}% chance of ${day.precipIntensity.toFixed(1)}mm rain`;
+    const dewPoint = day.new_fields && typeof day.new_fields.dewPoint === 'number'
+        ? ', dew point ' + day.new_fields.dewPoint.toFixed(0) + '°C' : '';
+
+    return `<div class="${classes}"${clickableAttrs}
+        title="${dayLabel}: ${iconName}, ${day.temperatureMin.toFixed(0)} to ${day.temperatureHigh.toFixed(0)}°C, ${rainSummary}, gusts ${gustMph}mph, UV ${uv}, ${Math.round(day.cloudCover)}% cloud${dewPoint}">
         <div class="wx-dow">${dayLabel}</div>
         <span class="weather ${day.icon}"></span>
         <div class="wx-temp"><strong>${Math.round(day.temperatureHigh)}&#176;</strong><span>${Math.round(day.temperatureMin)}&#176;</span></div>
         <div class="wx-rain"><div class="wx-rain-bar" style="height:${rainHeight}%;"></div></div>
-        <div class="wx-pop">${rainChance}%</div>
+        <div class="wx-pop">${isPast ? '&nbsp;' : rainChance + '%'}</div>
         <div class="wx-mm">${day.precipIntensity.toFixed(1)}mm</div>
         <div class="wx-wind"><span class="wx-arrow" style="transform:rotate(${day.windBearing}deg);">&#8595;</span>${gustMph}<small>mph</small></div>
     </div>`;
@@ -128,9 +151,9 @@ function startCragClock(timeZone) {
     const clockElement = document.getElementById('cragLocalTime');
     const zoneElement = document.getElementById('cragTimeZone');
     if (!clockElement) return;
+    const clockFormatter = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false });
     const tick = () => {
-        clockElement.innerText = new Intl.DateTimeFormat('en-GB',
-            { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: timeZone }).format(new Date());
+        clockElement.innerText = clockFormatter.format(new Date());
     };
     tick();
     if (zoneElement) zoneElement.innerText = '(' + timeZone.replace(/_/g, ' ') + ')';
@@ -165,17 +188,18 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
     document.getElementById('lastDate').innerHTML = 'Updated: ' + new Date(climbWeather.currently.time * 1000).toString().substring(0,15);
     startCragClock(timeZone);
 
+    const hoursByDate = groupHourlyByDate(climbWeather.hourly, timeZone); // computed once per render
     strip.innerHTML = STRIP_DAYS
         .filter(key => climbWeather[key])
         .map(key => buildStripDay(climbWeather[key], key, timeZone,
-            hourIndexesForDay(climbWeather.hourly, climbWeather[key], timeZone).length > 0))
+            !!hoursByDate[localDateKey(climbWeather[key].time, timeZone)]))
         .join('');
     // start the strip scrolled so today is in view on narrow screens
     const today = strip.querySelector('.wx-today');
     if (today) strip.scrollLeft = Math.max(0, today.offsetLeft - strip.clientWidth / 3);
 
     const selectDay = (dayKey) => {
-        if (renderHourlyPanel(climbWeather, dayKey, timeZone)) {
+        if (renderHourlyPanel(climbWeather, dayKey, timeZone, hoursByDate)) {
             strip.querySelectorAll('.wx-selected').forEach(el => el.classList.remove('wx-selected'));
             const dayElement = strip.querySelector(`.wx-day[data-day="${dayKey}"]`);
             if (dayElement) dayElement.classList.add('wx-selected');

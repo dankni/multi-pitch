@@ -2171,6 +2171,23 @@ html[data-theme="dark"] .warning{
 }
 .wx-clickable{
   cursor: pointer;
+  position: relative;
+  padding-bottom: 16px;
+}
+/* tappable days advertise the hourly panel with a small caret */
+.wx-clickable::after{
+  content: "\2304"; /* ⌄ */
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: #7a9cc6;
+}
+.wx-selected.wx-clickable::after{
+  content: "\2303"; /* ⌃ the panel below is showing this day */
+  color: #003d85;
 }
 .wx-clickable:hover,
 .wx-clickable:focus-visible{
@@ -2194,6 +2211,38 @@ html[data-theme="dark"] .warning{
 }
 .wx-hour .wx-temp strong{
   font-size: 0.9rem;
+}
+/* day chips for sorting climbs by the weather on a chosen day */
+.wx-daypicker{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.75rem;
+}
+.wx-chip{
+  border: 1px solid #c6cfda;
+  border-radius: 999px;
+  background: #f2f5f9;
+  color: inherit;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.wx-chip:hover,
+.wx-chip:focus-visible{
+  background: #e8eef7;
+  border-color: #7a9cc6;
+}
+.wx-chip-weekend{
+  font-weight: 700;
+  border-color: #7a9cc6;
+}
+.wx-chip-selected,
+.wx-chip-selected:hover{
+  background: #0055b8;
+  border-color: #0055b8;
+  color: #fff;
 }
 details{
   margin:10px 0;
@@ -2621,4 +2670,27 @@ html[data-theme="dark"] .wx-selected,
 html[data-theme="dark"] .wx-today.wx-selected {
   background-color: #2d4a75;
   box-shadow: inset 0 0 0 2px var(--dm-link);
+}
+html[data-theme="dark"] .wx-clickable::after {
+  color: var(--dm-text-muted);
+}
+html[data-theme="dark"] .wx-selected.wx-clickable::after {
+  color: var(--dm-link);
+}
+html[data-theme="dark"] .wx-chip {
+  background-color: var(--dm-surface);
+  border-color: var(--dm-border);
+}
+html[data-theme="dark"] .wx-chip:hover,
+html[data-theme="dark"] .wx-chip:focus-visible {
+  background-color: var(--dm-surface-2);
+}
+html[data-theme="dark"] .wx-chip-weekend {
+  border-color: var(--dm-link);
+}
+html[data-theme="dark"] .wx-chip-selected,
+html[data-theme="dark"] .wx-chip-selected:hover {
+  background-color: #2d4a75;
+  border-color: var(--dm-link);
+  color: var(--dm-text);
 }

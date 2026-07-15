@@ -211,7 +211,7 @@ function getWeather(climb) {
             </span>
           </p>
           <p class="chart-title">
-            Last 4 days & 16 day forecast
+            Recent rain & 16 day forecast
           </p>
           <div id="weatherStrip" class="weather-strip" aria-label="Twenty day weather overview"></div>
           <div id="weatherHourly" style="display:none;"></div>

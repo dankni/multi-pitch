@@ -126,8 +126,7 @@ function mapDayToMultipitcherDomain(daily, i) {
         sunriseTime: polar ? 0 : num(daily.sunrise[i], 0),
         sunsetTime: polar ? 0 : num(daily.sunset[i], 0),
         new_fields: {
-            moonPhase: moonPhase(noon),
-            moonPhaseDescription: "Moon phase. 0 and 1 are 'new moon', 0.25 is 'first quarter moon', 0.5 is 'full moon' and 0.75 is 'last quarter moon'. The periods in between are called 'waxing crescent', 'waxing gibous', 'waning gibous', and 'waning crescent', respectively.",
+            moonPhase: moonPhase(noon), // 0/1 new moon, 0.5 full - see README
             dewPoint: num(daily.dew_point_2m_mean[i], 0),
             temperature: {
                 min: num(daily.temperature_2m_min[i], 0),
@@ -210,7 +209,8 @@ function getWeather(climbsData) {
             );
             console.log("going to call Open-Meteo for climb " + climb.id, url);
 
-            return axios.get(url)
+            // a timeout keeps one hung request from stalling the whole daily run
+            return axios.get(url, { timeout: 10000 })
                 .then(response => {
                     return {
                         climbId: climb.id,
@@ -227,7 +227,7 @@ function getWeather(climbsData) {
                 });
         });
 
-    return axios.all(requests);
+    return Promise.all(requests);
 }
 
 module.exports = { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, moonPhase };

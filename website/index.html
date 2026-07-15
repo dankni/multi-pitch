@@ -243,9 +243,8 @@
                                             <option id="distance" style="display: none;" value="distance,ASC">Closest Climbs First</option>
                                             <option id="goodWeather" value="weatherScore,DESC">Good Weather</option>
                                         </select>
-                                        <input type="date" id="weatherDate" style="display:none;margin-top:0.5rem;"
-                                               aria-label="Date to sort good weather by"
-                                               onChange="sortByWeatherDate(this.value)" />
+                                        <div id="weatherDayPicker" class="wx-daypicker" style="display:none;"
+                                             role="group" aria-label="Day to sort good weather by"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 ">
