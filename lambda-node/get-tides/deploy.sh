@@ -3,7 +3,7 @@
 npm install
 
 # run the test
-./node_modules/mocha/bin/mocha
+npx mocha
 [[ $? -eq 0 ]] || exit 1 #if test failed $? will be 1 and so we are exiting :)
 
 

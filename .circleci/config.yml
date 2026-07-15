@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cypress/base:22.18.0
+      - image: cypress/base:22.21.0 # Node 22, matching the lambdas' nodejs22.x runtime
     working_directory: /tmp/multipitch
     steps:
       - checkout
@@ -35,6 +35,13 @@ jobs:
       - run:
           name: Run Tests
           command: npm run test
+      # Lambda suites run on the same Node 22 the lambdas use in AWS (nodejs22.x)
+      - run:
+          name: Weather lambda tests
+          command: cd lambda-node/get-weather && npm ci && npm test
+      - run:
+          name: Tides lambda tests
+          command: cd lambda-node/get-tides && npm ci && npm test
       - store_artifacts:
           path: /tmp/multipitch/cypress/videos
           destination: artifact-file

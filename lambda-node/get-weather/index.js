@@ -1,38 +1,28 @@
 const { getWeather } = require('./getWeatherOM.js');
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3();
+// AWS SDK v3 is bundled in the nodejs18.x+ Lambda runtimes - not packaged in the zip
+const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+const s3 = new S3Client({});
 
 const BUCKET = "www.multi-pitch.com";
 const BUCKET_OUT = "multi-pitch.data";
 const KEY_CLIMBING_DATA = "data/data.json";
 const KEY_CLIMBING_DATA_EXTENDED_WEATHER = "climbing-data-extended-weather.json";
 
-exports.handler = (event, context, callback) =>
-    s3.getObject({
+exports.handler = async () => {
+    const object = await s3.send(new GetObjectCommand({
         Bucket: BUCKET,
         Key: KEY_CLIMBING_DATA
-    }, (err, data) => {
-        if (err) {
-            callback(err, '');
-            return;
-        }
-        const climbsData = data.Body.toString();
+    }));
+    const climbsData = await object.Body.transformToString();
 
-        getWeather(JSON.parse(climbsData))
-            .then(resp => s3.putObject({
-                    Bucket: BUCKET_OUT,
-                    Key: KEY_CLIMBING_DATA_EXTENDED_WEATHER,
-                    Body: JSON.stringify(resp),
-                    ACL: 'public-read',
-                    ContentType: "application/json"
-                }, (err, data) => {
+    const weather = await getWeather(JSON.parse(climbsData));
 
-                    if (err) {
-                        callback(err, '');
-                    } else {
-                        callback(null, 'done all good!');
-                    }
-                })
-            )
-            .catch(err => callback(err, ""));
-    });
+    await s3.send(new PutObjectCommand({
+        Bucket: BUCKET_OUT,
+        Key: KEY_CLIMBING_DATA_EXTENDED_WEATHER,
+        Body: JSON.stringify(weather),
+        ACL: 'public-read',
+        ContentType: "application/json"
+    }));
+    return 'done all good!';
+};
