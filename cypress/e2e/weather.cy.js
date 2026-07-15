@@ -53,6 +53,7 @@ describe('Weather forecast strip', function () {
         cy.get('#currentWeather').should('be.visible');
         cy.get('nav').invoke('css', 'display', 'none');
         cy.get('#weatherStrip').invoke('prop', 'scrollLeft', 0);
+        cy.document().then(doc => doc.activeElement && doc.activeElement.blur()); // clear the focus ring so shots show the resting state
         cy.get('#currentWeather').screenshot(name, { overwrite: true, padding: 8 });
         cy.get('nav').invoke('css', 'display', '');
     };

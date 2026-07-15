@@ -213,7 +213,13 @@ function getWeather(climb) {
           <p class="chart-title">
             Recent rain & 16 day forecast
           </p>
-          <div id="weatherStrip" class="weather-strip" aria-label="Twenty day weather overview"></div>
+          <div class="wx-strip-wrap">
+            <button type="button" class="wx-scroll wx-scroll-left" aria-label="Earlier days"
+                    onclick="document.getElementById('weatherStrip').scrollBy({left:-280,behavior:'smooth'})">&#8249;</button>
+            <div id="weatherStrip" class="weather-strip" aria-label="Twenty day weather overview"></div>
+            <button type="button" class="wx-scroll wx-scroll-right" aria-label="Later days"
+                    onclick="document.getElementById('weatherStrip').scrollBy({left:280,behavior:'smooth'})">&#8250;</button>
+          </div>
           <div id="weatherHourly" style="display:none;"></div>
           <p class="credit" style="margin-top:15px;">Weather data from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
           ${tideInfoBox}
