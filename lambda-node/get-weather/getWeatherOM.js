@@ -28,9 +28,10 @@ const DAILY_FIELDS = [
     'daylight_duration'
 ].join(',');
 
-// Hourly detail for the near-term forecast (BBC-weather style breakdown).
-// 72 hours from now keeps the feed small while covering today + ~3 days.
-const HOURLY_HOURS = 72;
+// Hourly detail (BBC-weather style breakdown) for the FULL window: the 4
+// past days + all 16 forecast days = 480 hours per climb. That is too big
+// for the shared daily feed, so index.js splits it into one small S3 object
+// per climb (climbing-weather-hourly/{id}.json) fetched lazily by the site.
 const HOURLY_FIELDS = [
     'weather_code',
     'temperature_2m',
@@ -74,7 +75,7 @@ function buildOpenMeteoUrl(lat, lon) {
     return 'https://api.open-meteo.com/v1/forecast'
         + `?latitude=${lat}&longitude=${lon}`
         + `&daily=${DAILY_FIELDS}`
-        + `&hourly=${HOURLY_FIELDS}&forecast_hours=${HOURLY_HOURS}`
+        + `&hourly=${HOURLY_FIELDS}`
         + `&past_days=${PAST_DAYS}&forecast_days=${FORECAST_DAYS}`
         + '&timezone=auto&timeformat=unixtime&wind_speed_unit=ms';
 }

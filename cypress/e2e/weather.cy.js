@@ -83,9 +83,10 @@ describe('Weather forecast strip', function () {
     it('opens today hour-by-hour by default and switches day on click', () => {
         visitClimbWithWeather('light');
 
-        // BBC-style default: today's hourly panel is open and today is highlighted
+        // BBC-style default: the always-on detail panel opens on today
         cy.get('#weatherHourly').should('be.visible');
-        cy.get('#weatherHourly .wx-hour').should('have.length.within', 1, 24);
+        cy.get('#weatherHourly .wx-day-summary').should('exist');
+        cy.get('#weatherHourly .wx-hour').should('have.length', 24);
         cy.get('#weatherStrip .wx-today').should('have.class', 'wx-selected');
 
         // hour cells carry local time, icon, temp, rain and wind
@@ -93,19 +94,30 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherHourly .wx-hour .weather').should('exist');
         cy.get('#weatherHourly .wx-pop').first().invoke('text').should('match', /^\d+%$/);
 
-        // clicking tomorrow moves the selection and fills a full 24h row from midnight
-        cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').click();
+        // hovering tomorrow is enough to move the selection (no click needed)
+        cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').trigger('mouseover');
         cy.get('#weatherHourly .wx-hour').should('have.length', 24);
         cy.get('#weatherHourly .wx-hour .wx-dow').first().should('have.text', '00:00');
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').should('have.class', 'wx-selected');
         cy.get('#weatherStrip .wx-today').should('not.have.class', 'wx-selected');
+
+        // tapping still works too (touch devices have no hover)
+        cy.get('#weatherStrip .wx-day[data-day="offsetPlus3"]').click();
+        cy.get('#weatherStrip .wx-day[data-day="offsetPlus3"]').should('have.class', 'wx-selected');
     });
 
-    it('only days inside the 72h hourly window are clickable', () => {
+    it('every day is interactive and carries a full hourly breakdown', () => {
         visitClimbWithWeather('light');
 
-        cy.get('#weatherStrip .wx-clickable').should('have.length.within', 3, 5);
-        cy.get('#weatherStrip .wx-day[data-day="offsetPlus10"]').should('not.exist');
+        cy.get('#weatherStrip .wx-day[data-day]').should('have.length', 20); // all days respond to hover/tap
+        cy.get('#weatherStrip .wx-hours-day').should('have.length', 20); // 480h feed covers every day
+
+        // even a far-out day and a past day show their detail on hover
+        cy.get('#weatherStrip .wx-day[data-day="offsetPlus10"]').trigger('mouseover');
+        cy.get('#weatherHourly .wx-day-summary').should('exist');
+        cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+        cy.get('#weatherStrip .wx-day[data-day="offsetMinus2"]').trigger('mouseover');
+        cy.get('#weatherHourly .wx-day-summary').should('contain', 'rain fell');
     });
 
     it('auto-scrolls today into view on a phone viewport', () => {
@@ -117,6 +129,9 @@ describe('Weather forecast strip', function () {
     });
 
     it('still renders a feed without hourly or 16 day fields (old 7 day schema)', () => {
+        // no embedded hourly and no per-climb hourly file either
+        cy.intercept('GET', 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-weather-hourly/*',
+            { statusCode: 404, body: '' });
         visitClimbWithWeather('light', (weather) => {
             weather.forEach(w => {
                 delete w.hourly; // legacy feed shape
@@ -125,8 +140,35 @@ describe('Weather forecast strip', function () {
         });
 
         cy.get('#weatherStrip .wx-day').should('have.length', 12); // 4 past + today + 7
-        cy.get('#weatherHourly').should('not.be.visible');
-        cy.get('#weatherStrip .wx-clickable').should('not.exist');
+        // the day summary still shows for every day; only the hour rows are absent
+        cy.get('#weatherHourly').should('be.visible');
+        cy.get('#weatherHourly .wx-day-summary').should('exist');
+        cy.get('#weatherHourly .wx-hour').should('not.exist');
+        cy.get('#weatherStrip .wx-hours-day').should('not.exist');
+        cy.get('#weatherStrip .wx-day[data-day="offsetPlus5"]').trigger('mouseover');
+        cy.get('#weatherHourly .wx-day-summary').should('exist');
+    });
+
+    it('fetches the per-climb hourly file when the feed has no embedded hourly', () => {
+        cy.fixture('weather.json').then((weather) => {
+            rebaseFixture(weather);
+            const climbOne = weather.find(w => w.climbId === 1);
+            const hourlyBody = { climbId: 1, timezone: climbOne.timezone, hourly: climbOne.hourly };
+            weather.forEach(w => { delete w.hourly; }); // production feed shape after the split
+            cy.intercept('GET', 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-data-extended-weather.json',
+                { body: weather });
+            cy.intercept('GET', 'https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-weather-hourly/1.json',
+                { body: hourlyBody }).as('hourlyFile');
+        });
+        cy.readFile('website/data/climbs/1.json').then((climbFile) => {
+            cy.visit(appUrl + climbSlug, {
+                onBeforeLoad(win) { win.localStorage.setItem('climb1', JSON.stringify(climbFile)); }
+            });
+        });
+
+        cy.wait('@hourlyFile');
+        cy.get('#weatherHourly .wx-hour').should('have.length', 24); // hour rows appear once the file lands
+        cy.get('#weatherStrip .wx-hours-day').should('have.length', 20);
     });
 
     it('stays hidden when the feed is stale', () => {

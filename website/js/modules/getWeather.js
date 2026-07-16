@@ -124,23 +124,32 @@ function buildHourCell(hourly, i, timeZone) {
     </div>`;
 }
 
-// BBC-style hour-by-hour panel for one strip day; returns false when the
-// feed has no hourly coverage for that day (or none at all - legacy feed)
-function renderHourlyPanel(climbWeather, dayKey, timeZone, hoursByDate) {
+// Always-visible detail panel for the hovered/selected strip day: a
+// plain-language summary for every day, plus the BBC-style hour-by-hour
+// row for days inside the feed's 72h hourly window
+function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
     const panel = document.getElementById('weatherHourly');
     if (!panel) return false;
     const day = climbWeather[dayKey];
-    const hours = (day && hoursByDate[localDateKey(day.time, timeZone)]) || [];
-    if (!hours.length) {
-        panel.style.display = 'none';
-        panel.innerHTML = '';
-        return false;
-    }
+    if (!day) return false;
+    const isPast = dayKey.startsWith('offsetMinus');
+    const rainSummary = isPast
+        ? `${day.precipIntensity.toFixed(1)}mm rain fell`
+        : `${Math.round(day.precipProbability * 100)}% chance of ${day.precipIntensity.toFixed(1)}mm rain`;
+    const dewPoint = day.new_fields && typeof day.new_fields.dewPoint === 'number'
+        ? ` &middot; dew point ${day.new_fields.dewPoint.toFixed(0)}&#176;` : '';
+    const summary = `<p class="wx-day-summary"><span class="weather ${day.icon}"></span>
+        <span><strong>${day.icon.replace(/-/g, ' ')}</strong>, ${Math.round(day.temperatureMin)} to ${Math.round(day.temperatureHigh)}&#176;C
+        &middot; ${rainSummary} &middot; gusts ${Math.round(day.windGust * MS_TO_MPH)}mph
+        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}</span></p>`;
+
+    const hours = hoursByDate[localDateKey(day.time, timeZone)] || [];
     // no day name in the heading: the selected day in the strip already says it
-    panel.innerHTML = `<p class="chart-title">Hour by hour</p>
-        <div class="weather-strip">`
-        + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('')
-        + '</div>';
+    const hoursHtml = hours.length
+        ? `<p class="chart-title">Hour by hour</p>
+           <div class="weather-strip">` + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('') + '</div>'
+        : '';
+    panel.innerHTML = summary + hoursHtml;
     panel.style.display = 'block';
     return true;
 }
@@ -155,10 +164,11 @@ function buildStripDay(day, key, timeZone, hasHourly, isToday) {
     const iconName = day.icon.replace(/-/g, ' ');
     const uv = Math.round(day.uvIndex);
 
-    const classes = ['wx-day', isToday && 'wx-today', isPast && 'wx-past', hasHourly && 'wx-clickable']
+    // every day is interactive (hover/tap shows its detail panel);
+    // wx-hours-day additionally marks the days that carry an hourly breakdown
+    const classes = ['wx-day', 'wx-clickable', isToday && 'wx-today', isPast && 'wx-past', hasHourly && 'wx-hours-day']
         .filter(Boolean).join(' ');
-    const clickableAttrs = hasHourly
-        ? ` data-day="${key}" role="button" tabindex="0" aria-label="Show hourly forecast for ${dayLabel}"` : '';
+    const clickableAttrs = ` data-day="${key}" role="button" tabindex="0" aria-label="Show details for ${dayLabel}"`;
     // past days report what fell; chance-of-rain only makes sense for the forecast
     // (the API returns no probability for past days)
     const rainSummary = isPast
@@ -234,37 +244,70 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
     document.getElementById('lastDate').innerHTML = 'Updated: ' + new Date(climbWeather.currently.time * 1000).toString().substring(0,15);
     startCragClock(timeZone);
 
-    const hoursByDate = groupHourlyByDate(climbWeather.hourly, timeZone); // computed once per render
-    strip.innerHTML = STRIP_DAYS
-        .filter(key => climbWeather[key])
-        .map(key => buildStripDay(climbWeather[key], key, timeZone,
-            !!hoursByDate[localDateKey(climbWeather[key].time, timeZone)],
-            key === todayKey))
-        .join('');
-    // start the strip scrolled so today is in view on narrow screens
-    const todayElement = strip.querySelector('.wx-today');
-    if (todayElement) strip.scrollLeft = Math.max(0, todayElement.offsetLeft - strip.clientWidth / 3);
+    let currentDayKey = null;
+    const renderStripAndPanel = () => {
+        const hoursByDate = groupHourlyByDate(climbWeather.hourly, timeZone); // computed once per render
+        strip.innerHTML = STRIP_DAYS
+            .filter(key => climbWeather[key])
+            .map(key => buildStripDay(climbWeather[key], key, timeZone,
+                !!hoursByDate[localDateKey(climbWeather[key].time, timeZone)],
+                key === todayKey))
+            .join('');
+        // start the strip scrolled so today is in view on narrow screens
+        const todayElement = strip.querySelector('.wx-today');
+        if (todayElement) strip.scrollLeft = Math.max(0, todayElement.offsetLeft - strip.clientWidth / 3);
 
-    const selectDay = (dayKey) => {
-        if (renderHourlyPanel(climbWeather, dayKey, timeZone, hoursByDate)) {
-            strip.querySelectorAll('.wx-selected').forEach(el => el.classList.remove('wx-selected'));
-            const dayElement = strip.querySelector(`.wx-day[data-day="${dayKey}"]`);
-            if (dayElement) dayElement.classList.add('wx-selected');
-        }
-    };
-    strip.onclick = (event) => {
-        const dayElement = event.target.closest('.wx-day[data-day]');
-        if (dayElement) selectDay(dayElement.dataset.day);
-    };
-    strip.onkeydown = (event) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        const dayElement = event.target.closest('.wx-day[data-day]');
-        if (dayElement) {
+        const selectDay = (dayKey) => {
+            if (dayKey === currentDayKey) return; // hovering within the same day
+            if (renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate)) {
+                currentDayKey = dayKey;
+                strip.querySelectorAll('.wx-selected').forEach(el => el.classList.remove('wx-selected'));
+                const dayElement = strip.querySelector(`.wx-day[data-day="${dayKey}"]`);
+                if (dayElement) dayElement.classList.add('wx-selected');
+            }
+        };
+        // hovering a day is enough to show its detail (tap and keyboard also work)
+        const selectFromEvent = (event) => {
+            const dayElement = event.target.closest('.wx-day[data-day]');
+            if (dayElement) selectDay(dayElement.dataset.day);
+        };
+        strip.onmouseover = selectFromEvent;
+        strip.onclick = selectFromEvent;
+        strip.onfocusin = selectFromEvent;
+        strip.onkeydown = (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();
-            selectDay(dayElement.dataset.day);
-        }
+            selectFromEvent(event);
+        };
+        const restoreKey = currentDayKey; // keep the hovered day across the hourly re-render
+        currentDayKey = null;
+        selectDay(restoreKey && climbWeather[restoreKey] ? restoreKey : todayKey);
     };
-    selectDay(todayKey); // BBC-style default: today's hour by hour
+    renderStripAndPanel();
+
+    // hourly detail lives in a per-climb file so the shared feed stays small;
+    // the strip renders instantly from daily data and gains its hour rows here
+    // (transitional feeds still embed a 72h `hourly` block - used as-is above)
+    if (!climbWeather.hourly) {
+        loadHourlyForClimb(climbWeather).then(hourly => {
+            if (!hourly) return;
+            climbWeather.hourly = hourly;
+            renderStripAndPanel();
+        });
+    }
+}
+
+// full-range hour-by-hour data (up to 20 days) fetched lazily per climb
+async function loadHourlyForClimb(climbWeather) {
+    if (!climbWeather.climbId) return null;
+    try {
+        const response = await fetch(`https://s3-eu-west-1.amazonaws.com/multi-pitch.data/climbing-weather-hourly/${climbWeather.climbId}.json`);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.hourly || null;
+    } catch (error) {
+        return null; // offline or not yet generated: daily summaries still work
+    }
 }
 
 export function updateWeatherOnHP(weatherData, dayKey = 'currently'){

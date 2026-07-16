@@ -183,17 +183,17 @@ describe('mapOpenMeteoToMultipitcherDomain', () => {
 describe('hourly forecast (BBC-style breakdown)', () => {
     const result = mapOpenMeteoToMultipitcherDomain(fixtureOpenMeteo);
 
-    it('exposes 72 hours of parallel arrays', () => {
-        expect(result.hourly.time).to.have.length(72);
+    it('exposes the full window (4 past + 16 forecast days) of parallel arrays', () => {
+        expect(result.hourly.time).to.have.length(480);
         ['icon', 'temperature', 'feelsLike', 'precipIntensity', 'precipProbability',
          'windGust', 'windBearing', 'uvIndex'].forEach(key => {
-            expect(result.hourly[key], key).to.have.length(72);
+            expect(result.hourly[key], key).to.have.length(480);
         });
     });
 
     it('hourly timestamps are hour-aligned and sequential', () => {
         expect(result.hourly.time[1] - result.hourly.time[0]).to.eql(3600);
-        expect(result.hourly.time[71] - result.hourly.time[0]).to.eql(71 * 3600);
+        expect(result.hourly.time[479] - result.hourly.time[0]).to.eql(479 * 3600);
     });
 
     it('hourly probability is 0..1 like the daily fields', () => {
