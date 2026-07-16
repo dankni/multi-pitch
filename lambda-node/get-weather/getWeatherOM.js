@@ -37,7 +37,6 @@ const HOURLY_FIELDS = [
     'apparent_temperature',
     'precipitation',
     'precipitation_probability',
-    'wind_speed_10m',
     'wind_gusts_10m',
     'wind_direction_10m',
     'uv_index',
@@ -160,7 +159,6 @@ function mapHourlyToMultipitcherDomain(hourly) {
         feelsLike: hourly.apparent_temperature.map(v => num(v, 0)),
         precipIntensity: hourly.precipitation.map(v => num(v, 0)),
         precipProbability: hourly.precipitation_probability.map(v => num(v, 0) / 100),
-        windSpeed: hourly.wind_speed_10m.map(v => num(v, 0)),
         windGust: hourly.wind_gusts_10m.map(v => num(v, 0)),
         windBearing: hourly.wind_direction_10m.map(v => num(v, 0)),
         uvIndex: hourly.uv_index.map(v => num(v, 0))

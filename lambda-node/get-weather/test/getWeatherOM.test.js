@@ -86,6 +86,18 @@ describe('mapWmoIcon', () => {
         expect(mapWmoIcon(85)).to.eql('snow');
     });
 
+    it('every emittable icon name is scoreable and styleable by the frontend', () => {
+        // keep in sync with weatherType in website/js/modules/getWeather.js
+        // and the .weather sprite classes in website/css/style.css - an icon
+        // outside this list produces NaN weather scores and a blank sprite
+        const FRONTEND_ICONS = ['clear-day', 'clear-night', 'partly-cloudy-day', 'partly-cloudy-night',
+            'cloudy', 'fog', 'wind', 'rain', 'sleet', 'snow'];
+        for (let code = 0; code <= 99; code++) {
+            expect(FRONTEND_ICONS, `wmo ${code} daily`).to.include(mapWmoIcon(code));
+            expect(FRONTEND_ICONS, `wmo ${code} night`).to.include(mapHourlyIcon(code, 0));
+        }
+    });
+
     it('falls back to a name the frontend can score for unknown codes', () => {
         // regression: the OWM version defaulted to the raw code "03", which
         // produced NaN weather scores on the homepage
@@ -174,7 +186,7 @@ describe('hourly forecast (BBC-style breakdown)', () => {
     it('exposes 72 hours of parallel arrays', () => {
         expect(result.hourly.time).to.have.length(72);
         ['icon', 'temperature', 'feelsLike', 'precipIntensity', 'precipProbability',
-         'windSpeed', 'windGust', 'windBearing', 'uvIndex'].forEach(key => {
+         'windGust', 'windBearing', 'uvIndex'].forEach(key => {
             expect(result.hourly[key], key).to.have.length(72);
         });
     });

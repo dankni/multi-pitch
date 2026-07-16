@@ -1,5 +1,6 @@
 // Post-deploy smoke check: does the frontend on production render the weather
 // widget against the live feed? No intercepts - real site, real feed.
+// Asserts the redesigned strip markup, so run it AFTER the frontend deploys.
 // Hits the internet: opt in with CYPRESS_PROD_COMPARE=1
 describe('Production live weather check', function () {
     beforeEach(function () {
@@ -17,13 +18,10 @@ describe('Production live weather check', function () {
         });
 
         cy.get('#currentWeather', { timeout: 15000 }).should('be.visible');
-        cy.get('#highT').invoke('text').should('match', /^-?\d+(\.\d+)?$/);
-        cy.get('#lowT').invoke('text').should('match', /^-?\d+(\.\d+)?$/);
-        cy.get('#precip_pos').invoke('text').should('match', /^\d+$/);
-        cy.get('#wind_speed').invoke('text').should('match', /^\d+(\.\d+)?$/);
-        cy.get('#sunrise').invoke('text').should('match', /^\d{2}:\d{2}$/);
-        // the 11 rain bars read offsetMinus3..offsetPlus7 from the feed
-        cy.get('#currentRain li').should('have.length', 11);
+        cy.get('#weatherStrip .wx-day').should('have.length.within', 12, 20); // legacy 7-day or full 16-day feed
+        cy.get('#weatherStrip .wx-today').should('have.length', 1);
+        cy.get('#cragLocalTime').invoke('text').should('match', /^\d{2}:\d{2}$/);
+        cy.get('#weatherStrip .wx-day .wx-temp strong').first().invoke('text').should('match', /^-?\d+°$/);
 
         cy.get('nav').invoke('css', 'display', 'none');
         cy.get('#weather').scrollIntoView();
