@@ -209,6 +209,9 @@ function getWeather(climb) {
                 <span class="weather sunrise"></span> <strong id="light_hours"></strong> Daylight hours today between
                 <strong id="sunrise"></strong> & <strong id="sunset"></strong>.
             </span>
+            <br />          
+            <span class="weather clear-day"></span> Todays
+            <abbr title="Ultraviolet">UV</abbr> Index is <strong id="uv_index"></strong> which is considered <span id="uv_description"></span>
           </p>
           <p class="chart-title">
             Recent rain & 16 day forecast
