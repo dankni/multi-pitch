@@ -214,7 +214,7 @@ function getWeather(climb) {
             <abbr title="Ultraviolet">UV</abbr> Index is <strong id="uv_index"></strong> which is considered <span id="uv_description"></span>
           </p>
           <p class="chart-title">
-            Recent rain & 16 day forecast
+            Recent rain & 14 day forecast
           </p>
           <div class="wx-strip-wrap">
             <button type="button" class="wx-scroll wx-scroll-left" aria-label="Earlier days"
