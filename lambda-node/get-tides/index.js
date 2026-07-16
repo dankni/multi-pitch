@@ -1,37 +1,28 @@
 const getTides = require('./getTides.js');
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3();
+// AWS SDK v3 is bundled in the nodejs18.x+ Lambda runtimes - not packaged in the zip
+const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+const s3 = new S3Client({});
 
 const BUCKET = "www.multi-pitch.com";
 const BUCKET_OUT = "multi-pitch.data";
 const KEY_CLIMBING_DATA = "data/data.json";
 const KEY_CLIMBING_DATA_EXTENDED_TIDES = "climbing-data-extended-tides.json";
 
-exports.handler = (event, context, callback) =>
-    s3.getObject({
+exports.handler = async () => {
+    const object = await s3.send(new GetObjectCommand({
         Bucket: BUCKET,
         Key: KEY_CLIMBING_DATA
-    }, (err, data) => {
-        if (err) {
-            callback(err, '');
-            return;
-        }
-        const climbsData = data.Body.toString();
+    }));
+    const climbsData = await object.Body.transformToString();
 
-        getTides(JSON.parse(climbsData))
-            .then(resp => s3.putObject({
-                    Bucket: BUCKET_OUT,
-                    Key: KEY_CLIMBING_DATA_EXTENDED_TIDES,
-                    Body: JSON.stringify(resp),
-                    ACL: 'public-read',
-                    ContentType: "application/json"
-                }, (err, data) => {
-                    if (err) {
-                        callback(err, '');
-                    } else {
-                        callback(null, 'All tides saved!');
-                    }
-                })
-            )
-            .catch(err => callback(err, ""));
-    });
+    const tides = await getTides(JSON.parse(climbsData));
+
+    await s3.send(new PutObjectCommand({
+        Bucket: BUCKET_OUT,
+        Key: KEY_CLIMBING_DATA_EXTENDED_TIDES,
+        Body: JSON.stringify(tides),
+        ACL: 'public-read',
+        ContentType: "application/json"
+    }));
+    return 'All tides saved!';
+};

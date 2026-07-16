@@ -4,7 +4,7 @@ window.performance.mark('start-js-read');
 /**
  IMPORTS
  **/
-import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather } from "./modules/getWeather.js";
+import { loadWeather, weatherUpToDateCheck, updateWeatherOnHP, generateWeatherScore, fullWeatherForOneClimb, updateSpecificClimbCurrentWeather, dayKeyForOffset, FORECAST_DAY_OFFSETS } from "./modules/getWeather.js";
 import { climbCard, getRouteTopo } from "/components/climbCard.js";
 import { returnClimbURL } from "./modules/convertNameToURL.js";
 import { openLightBox } from "./modules/lightbox.js";
@@ -641,16 +641,68 @@ window.cycleStatus = function(id){
 /**
  REMOVES ALL THE CARDS THEN SORTS THE ARRAY AND PUBLISHES IT
  **/
+/**
+ BUILDS THE DAY SCRUBBER FOR SORTING BY WEATHER ON A CHOSEN DAY
+ A discrete slider over the days the feed can score, matching the grade
+ slider vocabulary above it; weekend ticks stand out because that's when
+ most trips happen.
+ **/
+function buildWeatherDayPicker(dayPicker) {
+    const lastDay = FORECAST_DAY_OFFSETS;
+    const formatDay = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' });
+    const dayName = offset => offset === 0 ? 'Today'
+        : formatDay.format(new Date(Date.now() + offset * 86400000));
+    let ticks = '';
+    for (let offset = 0; offset <= lastDay; offset++) {
+        const day = new Date(Date.now() + offset * 86400000);
+        const weekend = (day.getDay() === 0 || day.getDay() === 6) ? ' wx-tick-weekend' : '';
+        ticks += `<span class="wx-tick${weekend}" style="left:${(offset / lastDay * 100).toFixed(2)}%"></span>`;
+    }
+    dayPicker.innerHTML = `
+        <div class="wx-track">
+            <output id="weatherDayValue" class="wx-dayvalue" for="weatherDayRange">Today</output>
+            <div class="wx-ticks">${ticks}</div>
+            <input type="range" id="weatherDayRange" min="0" max="${lastDay}" step="1" value="0"
+                   aria-label="Day to sort good weather by" aria-valuetext="Today" />
+        </div>
+        <div class="wx-dayends"><span>Today</span><span>${dayName(lastDay)}</span></div>`;
+    const range = document.getElementById('weatherDayRange');
+    const valueLabel = document.getElementById('weatherDayValue');
+    const showValue = () => { // label follows the thumb; drag previews, release sorts
+        const offset = parseInt(range.value);
+        valueLabel.innerText = dayName(offset);
+        range.setAttribute('aria-valuetext', dayName(offset));
+        valueLabel.style.left = `calc(11px + (100% - 22px) * ${(offset / lastDay).toFixed(4)})`;
+    };
+    range.addEventListener('input', showValue);
+    range.addEventListener('change', () => sortByWeatherDay(parseInt(range.value)));
+    showValue();
+}
+
 window.sortCards = function(sortBy, direction) {
     if(sortBy !== 'distance' && sortBy !== 'weatherScore') { // avoid the geo-location call or weather being the default
         localStorage.setItem('sortOrder', sortBy + ',' + direction);
+    }
+    const dayPicker = document.getElementById('weatherDayPicker');
+    if (dayPicker) { // day scrubber appears only while sorting by weather
+        dayPicker.style.display = (sortBy === 'weatherScore') ? 'block' : 'none';
+        const builtFor = new Date().toDateString(); // rebuild when a tab lives past midnight
+        if (sortBy === 'weatherScore' && dayPicker.dataset.builtFor !== builtFor) {
+            dayPicker.dataset.builtFor = builtFor;
+            buildWeatherDayPicker(dayPicker);
+        }
+    }
+    if (sortBy !== 'weatherScore' && window.weatherData) {
+        // scores/icons may still be scoped to a day the user scrubbed to;
+        // outside the weather sort, cards must show today's weather again
+        generateWeatherScore(window.weatherData, dayKeyForOffset(window.weatherData, 0));
     }
     if (sortBy === 'weatherScore') {
         for (let i = 0; i < climbsData.climbs.length; i++) {
             if (climbsData.climbs[i].status === "publish") { // ensures unpublished climbs are not processed
                 let climb = climbsData.climbs[i];
                 let weatherScore = document.getElementById(climb.id).dataset.weatherScore;
-                climbsData.climbs[i].weatherScore = weatherScore; // add weather score to the js climb data
+                climbsData.climbs[i].weatherScore = weatherScore || '0'; // climbs without weather data sort last, not crash
             } else {
                 climbsData.climbs[i].weatherScore = 0; 
             }
@@ -677,7 +729,7 @@ window.sortCards = function(sortBy, direction) {
             const iconWeather = document.getElementById(`weather-${id}`);
             const toggleWeather = document.getElementById(`toggle-weather-${id}`);
             const tempValues = document.getElementById(`temp-${id}`);
-            iconWeather.classList.add(climbWeatherData.weather);
+            iconWeather.className = 'weather ' + climbWeatherData.weather; // replace, don't add: the icon changes when sorting by another date
             iconWeather.title = climbWeatherData.weather.replace(/-/g, " ");
             tempValues.innerHTML = climbWeatherData.temp;
             document.getElementById(id).dataset.weatherScore = climbWeatherData.score;
@@ -1243,32 +1295,21 @@ window.loadCurrentWeatherModule = function(){
     }
 }
 
+// weatherBars() (per-day chevron navigation) was removed with the old rain bar
+// chart; cached pages that still carry the chevrons must not throw on click
+window.weatherBars = function() {};
+
 /**
- ALLOWS USER TO NAVIGATE THE WEATHER PER DAY
+ SORT CLIMBS BY THE WEATHER ON A CHOSEN DAY (today .. +15 days)
  **/
-window.weatherBars = function(direction) {
-    let state = parseInt(document.getElementById('currentRain').dataset.state);
-    state = (direction === 'forward') ? parseInt(state + 1) : parseInt(state -1);
-    document.getElementById('currentRain').dataset.state = state;
-
-    if (direction === 'forward') {
-        document.querySelector('.bar' + parseInt(state - 4)).setAttribute('style', 'display:none;');
-        document.querySelector('.bar' + parseInt(state + 3)).setAttribute('style', '');
-
-    } else {
-        document.querySelector('.bar' + parseInt(state - 3)).setAttribute('style', '');
-        document.querySelector('.bar' + parseInt(state + 4)).setAttribute('style', 'display:none;');
-    }
-
-    const toggle = function(element, disable){
-        let secondClass = (disable === true) ? 'inactiveChev' : '';
-        let pointerEvent = (disable === true) ? 'none' : 'auto';
-        document.getElementById(element).classList = 'weatherChev ' + secondClass;
-        document.getElementById(element).style.pointerEvents = pointerEvent;
-    } 
-    
-    state <= 3 ? toggle('backChev', true) : toggle('backChev', false);
-    state >= 7 ? toggle('forwardChev', true) : toggle('forwardChev', false);
+window.sortByWeatherDay = function(offset) {
+    if (!window.weatherData) { return; }
+    // dayKeyForOffset anchors the offset on the crag's calendar (the feed can
+    // be a day old) and clamps to the days the feed actually carries
+    const dayKey = dayKeyForOffset(window.weatherData, offset);
+    generateWeatherScore(window.weatherData, dayKey);
+    sortCards('weatherScore', 'DESC'); // re-applies each card's icon/temp/score from the recomputed data, then filters
+    trackGA('sort-and-filter', 'sort', 'weatherScore-day-' + dayKey, 0);
 }
 
 /**
@@ -1422,15 +1463,18 @@ window.addEventListener('load', (event) => {
     if (hp === true){
         if (window.weatherData) {
             if(weatherUpToDateCheck(window.weatherData)){
-                // the loaded weather data is up to date, so we can use it
-                updateWeatherOnHP(response);
-                generateWeatherScore(response);
+                // the loaded weather data is up to date; anchor on the visitor's
+                // actual today (the feed itself can be up to a day old)
+                const dayKey = dayKeyForOffset(window.weatherData, 0);
+                updateWeatherOnHP(window.weatherData, dayKey);
+                generateWeatherScore(window.weatherData, dayKey);
             }
         } else {
             loadWeather().then(response => {
                 if(weatherUpToDateCheck(response)){
-                    updateWeatherOnHP(response);
-                    generateWeatherScore(response);
+                    const dayKey = dayKeyForOffset(response, 0);
+                    updateWeatherOnHP(response, dayKey);
+                    generateWeatherScore(response, dayKey);
                 };
             });
         }
