@@ -44,12 +44,12 @@ export function fullWeatherForOneClimb(weatherData, climbIdToFind){
 
 // how many offsetPlus days the feed carries (lambda FORECAST_DAYS - 1);
 // the day picker, the strip and the anchoring helpers all derive from this
-export const FORECAST_DAY_OFFSETS = 15;
+export const FORECAST_DAY_OFFSETS = 14;
 
 // Days rendered in the forecast strip, oldest first. `currently` is the
 // feed's day zero. Days missing from the feed are skipped, so this also
 // renders the old 7-day feed correctly.
-const STRIP_DAYS = ['offsetMinus4', 'offsetMinus3', 'offsetMinus2', 'offsetMinus1', 'currently']
+const STRIP_DAYS = ['offsetMinus3', 'offsetMinus2', 'offsetMinus1', 'currently']
     .concat(Array.from({ length: FORECAST_DAY_OFFSETS }, (_, i) => 'offsetPlus' + (i + 1)));
 
 // Intl formatters are expensive to construct, and the strip needs thousands
@@ -138,18 +138,24 @@ function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
         : `${Math.round(day.precipProbability * 100)}% chance of ${day.precipIntensity.toFixed(1)}mm rain`;
     const dewPoint = day.new_fields && typeof day.new_fields.dewPoint === 'number'
         ? ` &middot; dew point ${day.new_fields.dewPoint.toFixed(0)}&#176;` : '';
+    const hourFormatter = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false });
+    const sun = day.sunriseTime
+        ? ` &middot; sun ${hourFormatter.format(new Date(day.sunriseTime * 1000))}&ndash;${hourFormatter.format(new Date(day.sunsetTime * 1000))}` : '';
+    const lowTide = day.lowTides && day.lowTides.length
+        ? ` &middot; low tide ${day.lowTides.map(low => hourFormatter.format(new Date(low.time * 1000))).join(' &amp; ')}` : '';
     const summary = `<p class="wx-day-summary"><span class="weather ${day.icon}"></span>
         <span><strong>${day.icon.replace(/-/g, ' ')}</strong>, ${Math.round(day.temperatureMin)} to ${Math.round(day.temperatureHigh)}&#176;C
         &middot; ${rainSummary} &middot; gusts ${Math.round(day.windGust * MS_TO_MPH)}mph
-        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}</span></p>`;
+        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}${sun}${lowTide}</span></p>`;
 
     const hours = hoursByDate[localDateKey(day.time, timeZone)] || [];
-    // no day name in the heading: the selected day in the strip already says it
+    // no heading: the day and hour cells share one visual language, so the
+    // hours read as a continuation of the selected day; the plain-language
+    // summary sits below the row, like the climbing-agent widget
     const hoursHtml = hours.length
-        ? `<p class="chart-title">Hour by hour</p>
-           <div class="weather-strip">` + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('') + '</div>'
+        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('') + '</div>'
         : '';
-    panel.innerHTML = summary + hoursHtml;
+    panel.innerHTML = hoursHtml + summary;
     panel.style.display = 'block';
     return true;
 }
@@ -228,10 +234,14 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
     document.getElementById("wIcon").title = today.icon.replace(/-/g, " ");
     document.getElementById("weatheName").innerText = today.icon.replace(/-/g, " ");
     const options = {timeZone : timeZone, hour: '2-digit', minute: '2-digit', hour12: false};
-    if(today.uvIndex) {
+    const uvElement = document.getElementById("uv_index");
+    const uvDescriptionElement = document.getElementById("uv_description");
+    // element guards: cached pages older than the UV line must not throw;
+    // != null (not truthy) so a genuine UV of 0 still reads "low"
+    if(today.uvIndex != null && uvElement && uvDescriptionElement) {
         const uv = parseInt(Math.round(today.uvIndex));
         let description = '';
-        document.getElementById("uv_index").innerText = uv;
+        uvElement.innerText = uv;
         if (uv <= 2) {
                 description = 'low';
         } else if (uv <= 5) {
@@ -243,8 +253,8 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
         } else {
                 description = 'extreme';
         }
-        document.getElementById("uv_description").innerText = description;
-        document.getElementById("uv_description").className = description.replace(" ", "-") + "UV";
+        uvDescriptionElement.innerText = description;
+        uvDescriptionElement.className = description.replace(" ", "-") + "UV";
     }
     if(today.sunriseTime){
         document.getElementById("sunrise").innerText = convertTime(today.sunriseTime, options);

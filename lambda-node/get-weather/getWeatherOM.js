@@ -3,8 +3,8 @@ const axios = require('axios');
 // Open-Meteo (https://open-meteo.com) — free for non-commercial use, no API key.
 // One call per climb returns the 4 past days + today + 7 forecast days,
 // replacing the 5 OpenWeatherMap One Call 3.0 requests per climb.
-const PAST_DAYS = 4;
-const FORECAST_DAYS = 16; // today + offsetPlus1..15 (the old OWM feed stopped at offsetPlus7)
+const PAST_DAYS = 3; // enough to answer "is the rock dry?"
+const FORECAST_DAYS = 15; // today + offsetPlus1..14 - the model's last day is null anyway
 const TODAY_INDEX = PAST_DAYS;
 
 const DAILY_FIELDS = [
@@ -84,6 +84,42 @@ function num(value, fallback) {
     return (value === null || value === undefined || isNaN(value)) ? fallback : value;
 }
 
+// Open-Meteo Marine (keyless, like the weather API) supplies hourly sea level
+// for tidal crags; the same approach climbing-agent uses for tides.
+function buildMarineUrl(lat, lon) {
+    return 'https://marine-api.open-meteo.com/v1/marine'
+        + `?latitude=${lat}&longitude=${lon}`
+        + '&hourly=sea_level_height_msl'
+        + `&past_days=${PAST_DAYS}&forecast_days=${FORECAST_DAYS}`
+        + '&timezone=auto&timeformat=unixtime';
+}
+
+// local minima of the sea-level curve = low-water times (up to 2 per day)
+function findLowTides(times, heights) {
+    const lows = [];
+    for (let i = 1; i < heights.length - 1; i++) {
+        if (heights[i] === null || heights[i - 1] === null || heights[i + 1] === null) continue;
+        if (heights[i] < heights[i - 1] && heights[i] <= heights[i + 1]) {
+            lows.push({ time: times[i], height: Math.round(heights[i] * 10) / 10 });
+        }
+    }
+    return lows;
+}
+
+// attach each low tide to the day (local midnight window) it falls in
+function attachLowTides(result, lows) {
+    const dayKeys = ['currently'];
+    for (let plus = 1; plus < FORECAST_DAYS; plus++) dayKeys.push(`offsetPlus${plus}`);
+    for (let minus = 1; minus <= PAST_DAYS; minus++) dayKeys.push(`offsetMinus${minus}`);
+    dayKeys.forEach(key => {
+        const day = result[key];
+        if (!day) return;
+        const dayStart = day.time - 43200; // day.time is local noon
+        const dayLows = lows.filter(low => low.time >= dayStart && low.time < dayStart + 86400);
+        if (dayLows.length) day.lowTides = dayLows;
+    });
+}
+
 // Open-Meteo has no moon data, so compute the phase from the lunar cycle:
 // fraction of the synodic month elapsed since a reference new moon
 // (2000-01-06 18:14 UTC). 0 and 1 = new moon, 0.5 = full moon.
@@ -153,16 +189,24 @@ function mapHourlyIcon(wmoCode, isDay) {
 // Compact parallel arrays (not one object per hour) to keep the feed small.
 function mapHourlyToMultipitcherDomain(hourly) {
     if (!hourly || !hourly.time) return null;
+    // the model leaves the last few hours of its range null - trim them
+    // rather than emit ghost 0-degree hours
+    let end = hourly.time.length;
+    while (end > 0 && (hourly.temperature_2m[end - 1] === null || hourly.temperature_2m[end - 1] === undefined)) {
+        end--;
+    }
+    if (end === 0) return null;
+    const slot = array => array.slice(0, end);
     return {
-        time: hourly.time,
-        icon: hourly.time.map((_, i) => mapHourlyIcon(num(hourly.weather_code[i], 3), num(hourly.is_day[i], 1))),
-        temperature: hourly.temperature_2m.map(v => num(v, 0)),
-        feelsLike: hourly.apparent_temperature.map(v => num(v, 0)),
-        precipIntensity: hourly.precipitation.map(v => num(v, 0)),
-        precipProbability: hourly.precipitation_probability.map(v => num(v, 0) / 100),
-        windGust: hourly.wind_gusts_10m.map(v => num(v, 0)),
-        windBearing: hourly.wind_direction_10m.map(v => num(v, 0)),
-        uvIndex: hourly.uv_index.map(v => num(v, 0))
+        time: slot(hourly.time),
+        icon: slot(hourly.time).map((_, i) => mapHourlyIcon(num(hourly.weather_code[i], 3), num(hourly.is_day[i], 1))),
+        temperature: slot(hourly.temperature_2m).map(v => num(v, 0)),
+        feelsLike: slot(hourly.apparent_temperature).map(v => num(v, 0)),
+        precipIntensity: slot(hourly.precipitation).map(v => num(v, 0)),
+        precipProbability: slot(hourly.precipitation_probability).map(v => num(v, 0) / 100),
+        windGust: slot(hourly.wind_gusts_10m).map(v => num(v, 0)),
+        windBearing: slot(hourly.wind_direction_10m).map(v => num(v, 0)),
+        uvIndex: slot(hourly.uv_index).map(v => num(v, 0))
     };
 }
 
@@ -180,7 +224,13 @@ function mapOpenMeteoToMultipitcherDomain(omResponse) {
     result.currently.alerts = []; // Open-Meteo has no weather alerts; kept for schema compatibility
 
     for (let plus = 1; plus < FORECAST_DAYS; plus++) {
-        result[`offsetPlus${plus}`] = mapDayToMultipitcherDomain(daily, TODAY_INDEX + plus);
+        const i = TODAY_INDEX + plus;
+        // the model leaves its last day(s) null - stop rather than emit a
+        // ghost 0-degree day (consumers already tolerate missing offset days)
+        if (daily.temperature_2m_max[i] === null || daily.temperature_2m_max[i] === undefined) {
+            break;
+        }
+        result[`offsetPlus${plus}`] = mapDayToMultipitcherDomain(daily, i);
     }
     for (let minus = 1; minus <= PAST_DAYS; minus++) {
         result[`offsetMinus${minus}`] = mapDayToMultipitcherDomain(daily, TODAY_INDEX - minus);
@@ -208,13 +258,28 @@ function getWeather(climbsData) {
             );
             console.log("going to call Open-Meteo for climb " + climb.id, url);
 
+            // tidal crags also get sea-level data; a marine failure only
+            // costs the tide times, never the weather
+            const marinePromise = climb.tidal >= 1
+                ? axios.get(buildMarineUrl(encodeURIComponent(lat_raw.trim()), encodeURIComponent(lon_raw.trim())), { timeout: 10000 })
+                    .then(response => response.data)
+                    .catch(err => {
+                        console.error(`marine fetch failed for climb ${climb.id}:`, err.message);
+                        return null;
+                    })
+                : Promise.resolve(null);
+
             // a timeout keeps one hung request from stalling the whole daily run
-            return axios.get(url, { timeout: 10000 })
-                .then(response => {
-                    return {
+            return Promise.all([axios.get(url, { timeout: 10000 }), marinePromise])
+                .then(([response, marine]) => {
+                    const entry = {
                         climbId: climb.id,
                         ...mapOpenMeteoToMultipitcherDomain(response.data)
                     };
+                    if (marine && marine.hourly && marine.hourly.sea_level_height_msl) {
+                        attachLowTides(entry, findLowTides(marine.hourly.time, marine.hourly.sea_level_height_msl));
+                    }
+                    return entry;
                 })
                 .catch(err => {
                     console.error(`weather fetch failed for climb ${climb.id}:`, err.message);
@@ -229,4 +294,4 @@ function getWeather(climbsData) {
     return Promise.all(requests);
 }
 
-module.exports = { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, moonPhase };
+module.exports = { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, buildMarineUrl, findLowTides, moonPhase };
