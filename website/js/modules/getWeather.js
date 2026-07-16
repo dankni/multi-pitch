@@ -218,7 +218,24 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
     document.getElementById("wIcon").title = today.icon.replace(/-/g, " ");
     document.getElementById("weatheName").innerText = today.icon.replace(/-/g, " ");
     const options = {timeZone : timeZone, hour: '2-digit', minute: '2-digit', hour12: false};
-
+    if(today.uvIndex) {
+        const uv = parseInt(Math.round(today.uvIndex));
+        let description = '';
+        document.getElementById("uv_index").innerText = uv;
+        if (uv <= 2) {
+                description = 'low';
+        } else if (uv <= 5) {
+                description = 'moderate';
+        } else if (uv <= 7) {
+                description = 'high';
+        } else if (uv <= 10) {
+                description = 'very high';
+        } else {
+                description = 'extreme';
+        }
+        document.getElementById("uv_description").innerText = description;
+        document.getElementById("uv_description").className = description.replace(" ", "-") + "UV";
+    }
     if(today.sunriseTime){
         document.getElementById("sunrise").innerText = convertTime(today.sunriseTime, options);
         document.getElementById("sunset").innerText = convertTime(today.sunsetTime, options);

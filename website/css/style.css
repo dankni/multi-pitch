@@ -2136,7 +2136,8 @@ html[data-theme="dark"] .warning{
 }
 .wx-mm{
   font-size: 0.68rem;
-  color: #767676;
+  color: #454545;
+  font-weight: 400;
 }
 .wx-wind{
   font-size: 0.72rem;
@@ -2145,7 +2146,7 @@ html[data-theme="dark"] .warning{
 }
 .wx-arrow{
   display: inline-block;
-  margin-right: 1px;
+  margin: 0 6px;
   font-weight: 700;
 }
 /* every day answers a hover, even outside the hourly window */
@@ -2157,7 +2158,7 @@ html[data-theme="dark"] .warning{
    read as one continuous component (BBC-style) */
 .wx-clickable{
   cursor: pointer;
-  box-shadow: inset 0 -3px 0 #9db8d8;
+  box-shadow: inset 0 -5px 0 #9db8d8;
   border-radius: 8px 8px 0 0;
 }
 .wx-clickable:hover,
@@ -2760,7 +2761,7 @@ html[data-theme="dark"] .wx-hour {
   background-color: var(--dm-surface);
 }
 html[data-theme="dark"] .wx-clickable {
-  box-shadow: inset 0 -3px 0 var(--dm-border);
+  box-shadow: inset 0 -5px 0 var(--dm-border);
 }
 html[data-theme="dark"] .wx-clickable:hover,
 html[data-theme="dark"] .wx-clickable:focus-visible {
@@ -2799,4 +2800,22 @@ html[data-theme="dark"] .wx-dayslider input[type="range"]::-moz-range-thumb {
 }
 html[data-theme="dark"] .wx-dayends {
   color: var(--dm-text-muted);
+}
+#uv_index {
+  text-transform: capitalize
+}
+.lowUV {
+  color: #299501
+}
+.moderateUV {
+  color: #f7e401
+}
+.highUV {
+  color: #f95901
+}
+.very-highUV {
+  color: #d80010
+}
+.extremeUV {
+  color: #6c49c9
 }
