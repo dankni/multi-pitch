@@ -2153,18 +2153,23 @@ html[data-theme="dark"] .warning{
 .wx-day:hover{
   background: #e8eef7;
 }
-/* days inside the hourly window are tabs: a bottom bar advertises them,
-   and the selected one shares the panel's background so day and hours
-   read as one continuous component (BBC-style) */
+/* every day answers a hover by filling the detail panel below; days with
+   an hourly breakdown carry a bottom bar, and the selected one shares the
+   panel's background so day and hours read as one continuous component */
 .wx-clickable{
   cursor: pointer;
-  box-shadow: inset 0 -5px 0 #9db8d8;
   border-radius: 8px 8px 0 0;
+}
+.wx-hours-day{
+  box-shadow: inset 0 -5px 0 #9db8d8;
 }
 .wx-clickable:hover,
 .wx-clickable:focus-visible{
   background: #e8eef7;
-  box-shadow: inset 0 -3px 0 #0055b8;
+}
+.wx-hours-day:hover,
+.wx-hours-day:focus-visible{
+  box-shadow: inset 0 -5px 0 #0055b8;
 }
 .wx-clickable:focus-visible{
   outline: 2px solid #0055b8;
@@ -2229,7 +2234,21 @@ html[data-theme="dark"] .warning{
 }
 #weatherHourly .chart-title{
   text-align: left;
-  margin: 0 0 6px 2px;
+  margin: 8px 0 6px 2px;
+}
+.wx-day-summary{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.wx-day-summary .weather{
+  flex: 0 0 auto;
+  margin: 0;
+}
+.wx-day-summary strong{
+  text-transform: capitalize;
 }
 #weatherHourly .weather-strip{
   padding: 0;
@@ -2760,13 +2779,16 @@ html[data-theme="dark"] .wx-day:hover {
 html[data-theme="dark"] .wx-hour {
   background-color: var(--dm-surface);
 }
-html[data-theme="dark"] .wx-clickable {
+html[data-theme="dark"] .wx-hours-day {
   box-shadow: inset 0 -5px 0 var(--dm-border);
 }
 html[data-theme="dark"] .wx-clickable:hover,
 html[data-theme="dark"] .wx-clickable:focus-visible {
   background-color: var(--dm-surface-2);
-  box-shadow: inset 0 -3px 0 var(--dm-link);
+}
+html[data-theme="dark"] .wx-hours-day:hover,
+html[data-theme="dark"] .wx-hours-day:focus-visible {
+  box-shadow: inset 0 -5px 0 var(--dm-link);
 }
 html[data-theme="dark"] .wx-selected,
 html[data-theme="dark"] .wx-selected:hover,
