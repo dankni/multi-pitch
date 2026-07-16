@@ -58,20 +58,20 @@ describe('Weather forecast strip', function () {
         cy.get('nav').invoke('css', 'display', '');
     };
 
-    it('renders the 20 day strip with local crag time', () => {
+    it('renders the 18 day strip with local crag time', () => {
         visitClimbWithWeather('light');
 
         cy.get('#currentWeather').should('be.visible');
-        cy.get('#weatherStrip .wx-day').should('have.length', 20); // 4 past + today + 15 forecast
+        cy.get('#weatherStrip .wx-day').should('have.length', 18); // 3 past + today + 14 forecast
         cy.get('#weatherStrip .wx-today').should('have.length', 1).and('contain', 'Today');
-        cy.get('#weatherStrip .wx-past').should('have.length', 4);
+        cy.get('#weatherStrip .wx-past').should('have.length', 3);
 
         // local time at the crag, from the feed's IANA timezone
         cy.get('#cragLocalTime').invoke('text').should('match', /^\d{2}:\d{2}$/);
         cy.get('#cragTimeZone').should('contain', 'Europe/London');
 
         // every day carries an icon, temps, rain and wind
-        cy.get('#weatherStrip .wx-day .weather').should('have.length', 20);
+        cy.get('#weatherStrip .wx-day .weather').should('have.length', 18);
         cy.get('#weatherStrip .wx-day .wx-temp strong').first().invoke('text').should('match', /^-?\d+°$/);
         cy.get('#weatherStrip .wx-today .wx-pop').invoke('text').should('match', /^\d+%$/);
         // past days report what fell (mm), not a chance-of-rain percentage
@@ -85,7 +85,9 @@ describe('Weather forecast strip', function () {
 
         // BBC-style default: the always-on detail panel opens on today
         cy.get('#weatherHourly').should('be.visible');
-        cy.get('#weatherHourly .wx-day-summary').should('exist');
+        cy.get('#weatherHourly .wx-day-summary').should('exist')
+            .and('contain', 'sun ')          // per-day sunrise-sunset
+            .and('contain', 'low tide');     // climb 1 is a tidal sea stack
         cy.get('#weatherHourly .wx-hour').should('have.length', 24);
         cy.get('#weatherStrip .wx-today').should('have.class', 'wx-selected');
 
@@ -109,8 +111,8 @@ describe('Weather forecast strip', function () {
     it('every day is interactive and carries a full hourly breakdown', () => {
         visitClimbWithWeather('light');
 
-        cy.get('#weatherStrip .wx-day[data-day]').should('have.length', 20); // all days respond to hover/tap
-        cy.get('#weatherStrip .wx-hours-day').should('have.length', 20); // 480h feed covers every day
+        cy.get('#weatherStrip .wx-day[data-day]').should('have.length', 18); // all days respond to hover/tap
+        cy.get('#weatherStrip .wx-hours-day').should('have.length', 18); // full-window hourly covers every day
 
         // even a far-out day and a past day show their detail on hover
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus10"]').trigger('mouseover');
@@ -124,7 +126,7 @@ describe('Weather forecast strip', function () {
         cy.viewport('iphone-x');
         visitClimbWithWeather('light');
 
-        cy.get('#weatherStrip .wx-day').should('have.length', 20);
+        cy.get('#weatherStrip .wx-day').should('have.length', 18);
         cy.get('#weatherStrip').invoke('prop', 'scrollLeft').should('be.greaterThan', 0);
     });
 
@@ -139,7 +141,7 @@ describe('Weather forecast strip', function () {
             });
         });
 
-        cy.get('#weatherStrip .wx-day').should('have.length', 12); // 4 past + today + 7
+        cy.get('#weatherStrip .wx-day').should('have.length', 11); // 3 past + today + 7
         // the day summary still shows for every day; only the hour rows are absent
         cy.get('#weatherHourly').should('be.visible');
         cy.get('#weatherHourly .wx-day-summary').should('exist');
@@ -168,7 +170,7 @@ describe('Weather forecast strip', function () {
 
         cy.wait('@hourlyFile');
         cy.get('#weatherHourly .wx-hour').should('have.length', 24); // hour rows appear once the file lands
-        cy.get('#weatherStrip .wx-hours-day').should('have.length', 20);
+        cy.get('#weatherStrip .wx-hours-day').should('have.length', 18);
     });
 
     it('stays hidden when the feed is stale', () => {
@@ -201,7 +203,7 @@ describe('Weather forecast strip', function () {
         cy.get('.filter-toggle').click(); // sort controls live in the filter panel
         cy.get('#sortOrder').select('Good Weather');
         cy.get('#weatherDayPicker').should('be.visible');
-        cy.get('#weatherDayPicker .wx-tick').should('have.length', 16); // today + offsetPlus1..15
+        cy.get('#weatherDayPicker .wx-tick').should('have.length', 15); // today + offsetPlus1..14
         cy.get('#weatherDayPicker .wx-tick-weekend').should('have.length.within', 4, 6);
         cy.get('#weatherDayValue').should('contain', 'Today');
         cy.get('#weatherDayRange').should('have.value', '0');

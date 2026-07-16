@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const climbData = require('./climbing-data.json');
 const fixtureOpenMeteo = require('./openMeteoResponse.json'); // real response, Old Man of Stoer coords
 
-const { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, moonPhase } = require("../getWeatherOM.js");
+const { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, buildMarineUrl, findLowTides, moonPhase } = require("../getWeatherOM.js");
 
 // builds a minimal synthetic Open-Meteo response (20 days) so edge cases
 // can be tested without hand-editing the recorded fixture
@@ -58,8 +58,8 @@ describe('buildOpenMeteoUrl', () => {
         const url = buildOpenMeteoUrl('58.26094', '-5.38266');
         expect(url).to.contain('latitude=58.26094');
         expect(url).to.contain('longitude=-5.38266');
-        expect(url).to.contain('past_days=4');
-        expect(url).to.contain('forecast_days=16');
+        expect(url).to.contain('past_days=3');
+        expect(url).to.contain('forecast_days=15');
         expect(url).to.contain('timeformat=unixtime');
         expect(url).to.contain('wind_speed_unit=ms');
         expect(url).to.contain('timezone=auto');
@@ -106,6 +106,60 @@ describe('mapWmoIcon', () => {
     });
 });
 
+describe('tides (Open-Meteo Marine)', () => {
+    it('marine url covers the same window as the weather call', () => {
+        const url = buildMarineUrl('54.1', '-6.1');
+        expect(url).to.contain('marine-api.open-meteo.com');
+        expect(url).to.contain('sea_level_height_msl');
+        expect(url).to.contain('past_days=3');
+        expect(url).to.contain('forecast_days=15');
+    });
+
+    it('finds low-water times as local minima of the sea level curve', () => {
+        // two tide cycles: minima at hours 3 and 15
+        const heights = [1.2, 0.6, 0.1, -0.4, 0.0, 0.7, 1.3, 1.6, 1.3, 0.8, 0.3, -0.1, -0.5, -0.2, 0.4, -0.6, 0.2, 0.9];
+        const times = heights.map((_, i) => 1000000 + i * 3600);
+        const lows = findLowTides(times, heights);
+        expect(lows.map(low => (low.time - 1000000) / 3600)).to.eql([3, 12, 15]);
+        expect(lows[0].height).to.eql(-0.4);
+    });
+
+    it('skips null gaps without crashing', () => {
+        const heights = [1.0, null, 0.2, 0.5, 0.1, 0.4];
+        const times = heights.map((_, i) => i * 3600);
+        expect(findLowTides(times, heights).map(l => l.time / 3600)).to.eql([4]);
+    });
+
+    it('attaches low tides to tidal climbs and never fails the weather on marine errors', async () => {
+        mockAxios.get = (url) => url.includes('marine-api')
+            ? Promise.resolve({ data: { hourly: {
+                time: Array.from({ length: 48 }, (_, i) => fixtureOpenMeteo.daily.time[3] + i * 3600),
+                sea_level_height_msl: Array.from({ length: 48 }, (_, i) => Math.sin(i / 2))
+              } } })
+            : Promise.resolve(okResponse);
+        const [tidal] = await getWeather({ climbs: [
+            { id: 9, status: 'publish', geoLocation: '54.1,-6.1', tidal: 1 }
+        ]});
+        expect(tidal.currently.lowTides).to.be.an('array').with.length.greaterThan(0);
+
+        mockAxios.get = (url) => url.includes('marine-api')
+            ? Promise.reject(new Error('marine down'))
+            : Promise.resolve(okResponse);
+        const [degraded] = await getWeather({ climbs: [
+            { id: 9, status: 'publish', geoLocation: '54.1,-6.1', tidal: 1 }
+        ]});
+        expect(degraded.climbId).to.eql(9); // weather survives
+        expect(degraded.currently.lowTides).to.be.undefined;
+    });
+
+    it('non-tidal climbs never call the marine api', async () => {
+        const urls = [];
+        mockAxios.get = (url) => { urls.push(url); return Promise.resolve(okResponse); };
+        await getWeather({ climbs: [{ id: 2, status: 'publish', geoLocation: '46.5,11.8' }] });
+        expect(urls.some(u => u.includes('marine-api'))).to.eql(false);
+    });
+});
+
 describe('moonPhase', () => {
     it('anchors on the reference new moon and wraps correctly', () => {
         const referenceNewMoon = 947182440; // 2000-01-06 18:14 UTC
@@ -124,16 +178,17 @@ describe('moonPhase', () => {
 describe('mapOpenMeteoToMultipitcherDomain', () => {
     const result = mapOpenMeteoToMultipitcherDomain(fixtureOpenMeteo);
 
-    it('produces currently + offsetPlus1..15 + offsetMinus1..4', () => {
+    it('produces currently + offsetPlus1..14+ + offsetMinus1..4', () => {
         expect(result).to.have.property('currently');
-        for (let i = 1; i <= 15; i++) expect(result).to.have.property(`offsetPlus${i}`);
-        for (let i = 1; i <= 4; i++) expect(result).to.have.property(`offsetMinus${i}`);
+        // the final day (offsetPlus14) is dropped when the model nulls it
+        for (let i = 1; i <= 13; i++) expect(result).to.have.property(`offsetPlus${i}`);
+        for (let i = 1; i <= 3; i++) expect(result).to.have.property(`offsetMinus${i}`);
     });
 
     it('every day carries all fields the website consumes', () => {
         const days = [result.currently,
-            result.offsetPlus1, result.offsetPlus7, result.offsetPlus15,
-            result.offsetMinus1, result.offsetMinus4];
+            result.offsetPlus1, result.offsetPlus7, result.offsetPlus13,
+            result.offsetMinus1, result.offsetMinus3];
         days.forEach(day => CONSUMED_FIELDS.forEach(field => {
             expect(day, `missing ${field}`).to.have.property(field);
             expect(day[field], `${field} is undefined/null`).to.not.be.undefined;
@@ -184,16 +239,19 @@ describe('hourly forecast (BBC-style breakdown)', () => {
     const result = mapOpenMeteoToMultipitcherDomain(fixtureOpenMeteo);
 
     it('exposes the full window (4 past + 16 forecast days) of parallel arrays', () => {
-        expect(result.hourly.time).to.have.length(480);
+        // up to 480 hours; the model's trailing null hours are trimmed
+        const hours = result.hourly.time.length;
+        expect(hours).to.be.within(350, 432);
         ['icon', 'temperature', 'feelsLike', 'precipIntensity', 'precipProbability',
          'windGust', 'windBearing', 'uvIndex'].forEach(key => {
-            expect(result.hourly[key], key).to.have.length(480);
+            expect(result.hourly[key], key).to.have.length(hours);
         });
     });
 
     it('hourly timestamps are hour-aligned and sequential', () => {
+        const last = result.hourly.time.length - 1;
         expect(result.hourly.time[1] - result.hourly.time[0]).to.eql(3600);
-        expect(result.hourly.time[479] - result.hourly.time[0]).to.eql(479 * 3600);
+        expect(result.hourly.time[last] - result.hourly.time[0]).to.eql(last * 3600);
     });
 
     it('hourly probability is 0..1 like the daily fields', () => {
@@ -217,7 +275,7 @@ describe('mapOpenMeteoToMultipitcherDomain edge cases', () => {
     it('shifts each day stamp to local noon so date labels survive timezone shifts', () => {
         const response = syntheticResponse();
         const result = mapOpenMeteoToMultipitcherDomain(response);
-        expect(result.currently.time).to.eql(response.daily.time[4] + 43200);
+        expect(result.currently.time).to.eql(response.daily.time[3] + 43200);
     });
 
     it('signals polar day with falsy sun times (frontend shows "24h Sun")', () => {
@@ -232,6 +290,36 @@ describe('mapOpenMeteoToMultipitcherDomain edge cases', () => {
             syntheticResponse({ daylight_duration: new Array(20).fill(0) }));
         expect(result.currently.sunriseTime).to.eql(0);
         expect(result.currently.sunsetTime).to.eql(0);
+    });
+
+    it('drops trailing days the model left null instead of emitting ghost 0-degree days', () => {
+        const temps = new Array(20).fill(15);
+        temps[17] = null; // Open-Meteo nulls its final day(s)
+        temps[18] = null;
+        temps[19] = null;
+        const result = mapOpenMeteoToMultipitcherDomain(
+            syntheticResponse({ temperature_2m_max: temps }));
+        expect(result.offsetPlus13).to.be.an('object');
+        expect(result).to.not.have.property('offsetPlus14');
+    });
+
+    it('trims trailing null hours from the hourly arrays', () => {
+        const hours = 432;
+        const midnight = 1783810800;
+        const fill = value => new Array(hours).fill(value);
+        const temperatures = fill(14);
+        for (let i = 424; i < hours; i++) temperatures[i] = null; // last 8 hours unfilled
+        const response = syntheticResponse();
+        response.hourly = {
+            time: Array.from({ length: hours }, (_, i) => midnight + i * 3600),
+            weather_code: fill(3), temperature_2m: temperatures, apparent_temperature: fill(13),
+            precipitation: fill(0), precipitation_probability: fill(10),
+            wind_gusts_10m: fill(8), wind_direction_10m: fill(200), uv_index: fill(2), is_day: fill(1)
+        };
+        const result = mapOpenMeteoToMultipitcherDomain(response);
+        expect(result.hourly.time).to.have.length(424);
+        expect(result.hourly.temperature).to.have.length(424);
+        expect(result.hourly.temperature[423]).to.eql(14);
     });
 
     it('defaults nulls the API can return (e.g. rain probability on past days)', () => {
