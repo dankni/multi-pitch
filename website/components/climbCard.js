@@ -194,9 +194,9 @@ function getWeather(climb) {
           ${seepage}
           <aside style="margin-bottom:2.5rem;">
             <small>
-            Please Note: <em>The weather data is based off the closest weather station we could find to the crag. 
-            This could be quite far away and at a darmatically different elevation. 
-            This means it could be considerably colder or wetter on some mountain climbs.</em>
+            Please Note: <em>This forecast is calculated for the crag's exact coordinates and altitude,
+            not the nearest town. On mountain routes it can read much colder and windier than a valley
+            forecast &mdash; that difference is real, and it is the weather you will climb in.</em>
             </small>
           </aside>
         </div>
