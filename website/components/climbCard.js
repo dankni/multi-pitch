@@ -194,8 +194,8 @@ function getWeather(climb) {
           ${seepage}
           <aside style="margin-bottom:2.5rem;">
             <small>
-            Please Note: <em>This forecast is calculated for the climb's coordinates. Not all routes have weather stations nearby. 
-            For more remote mountain routes it may be noticeably different. Don't take the forecast for granted.</em>
+            Please Note: <em>This forecast comes from a weather model calculated for the climb's coordinates.
+            Never take a forecast for granted.</em>
             </small>
           </aside>
         </div>
