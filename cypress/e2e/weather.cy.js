@@ -173,24 +173,17 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherStrip .wx-hours-day').should('have.length', 18);
     });
 
-    it('long routes show model top-out conditions, medium routes an estimate', () => {
-        // model-driven: Fedele (555m, vertical) carries per-day topOut in the feed
+    it('long routes carry an honest upper-bound note; traverses none', () => {
+        // Fedele (555m, vertical): lapse x length is an upper bound -> "up to"
         stubWeatherFeed();
         cy.readFile('website/data/climbs/6.json').then((climbFile) => {
             cy.visit(appUrl + '/climbs/fedele-on-sass-pordoi/', {
                 onBeforeLoad(win) { win.localStorage.setItem('climb6', JSON.stringify(climbFile)); }
             });
         });
-        cy.get('#weatherHourly .wx-day-summary').should('contain', 'base ')
-            .and('contain', 'top of route')
-            .and('contain', '(555m higher)');
-        cy.get('#weatherHourly .wx-day-summary').invoke('text')
-            .should('match', /top of route -?\d+ to -?\d+°C/); // real model numbers, not a delta
-
-        // the summit mark: every day cell and hour cell carries the top-of-route temp
-        cy.get('#weatherStrip .wx-day .wx-top').should('have.length', 18);
-        cy.get('#weatherStrip .wx-top').first().invoke('text').should('match', /^▲≈?-?\d+°$/);
-        cy.get('#weatherHourly .wx-hour .wx-top').should('have.length', 24);
+        cy.get('#weatherHourly .wx-day-summary').should('contain', 'could be up to')
+            .and('contain', 'colder').and('contain', '555m route').and('contain', 'rough estimate');
+        cy.get('#weatherStrip .wx-top').should('not.exist'); // no per-cell marks any more
 
         // the dew point "?" opens and closes an explainer
         cy.get('#weatherHourly .wx-help').click();
@@ -198,28 +191,14 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherHourly .wx-help').click();
         cy.get('#weatherHourly .wx-help-pop').should('not.be.visible');
 
-        // traverse routes get NO summit marks: their length covers distance, not height
+        // traverse routes get NO note: their length covers distance, not height
         stubWeatherFeed();
         cy.readFile('website/data/climbs/42.json').then((climbFile) => {
             cy.visit(appUrl + '/climbs/via-maria-on-sass-pordoi-south-face/', {
                 onBeforeLoad(win) { win.localStorage.setItem('climb42', JSON.stringify(climbFile)); }
             });
         });
-        cy.get('#weatherHourly .wx-day-summary').should('exist').and('not.contain', 'top of route');
-        cy.get('#weatherStrip .wx-top').should('not.exist');
-
-        // estimate fallback: no topOut in the feed but a route long enough to matter
-        stubWeatherFeed((weather) => {
-            const one = weather.find(w => w.climbId === 1);
-            one.routeLength = 200; // pretend Stoer were 200m
-        });
-        cy.readFile('website/data/climbs/1.json').then((climbFile) => {
-            cy.visit(appUrl + climbSlug, {
-                onBeforeLoad(win) { win.localStorage.setItem('climb1', JSON.stringify(climbFile)); }
-            });
-        });
-        cy.get('#weatherHourly .wx-day-summary').should('contain', 'top of route ≈').and('contain', '(est., 200m higher)');
-        cy.get('#weatherStrip .wx-day .wx-top').first().invoke('text').should('match', /^▲≈-?\d+°$/); // estimate carries the approx sign
+        cy.get('#weatherHourly .wx-day-summary').should('exist').and('not.contain', 'could be up to');
     });
 
     it('stays hidden when the feed is stale', () => {

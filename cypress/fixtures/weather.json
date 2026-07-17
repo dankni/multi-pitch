@@ -17888,12 +17888,7 @@
      }
     ]
    },
-   "alerts": [],
-   "topOut": {
-    "temperatureHigh": 11.9,
-    "temperatureMin": 7.2,
-    "windGust": 13.9
-   }
+   "alerts": []
   },
   "offsetPlus1": {
    "time": 1784368800,
@@ -17929,11 +17924,6 @@
       "main": "slight rain showers"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 11.3,
-    "temperatureMin": 6.1,
-    "windGust": 10
    }
   },
   "offsetPlus2": {
@@ -17970,11 +17960,6 @@
       "main": "overcast"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 11,
-    "temperatureMin": 5.6,
-    "windGust": 14.63
    }
   },
   "offsetPlus3": {
@@ -18011,11 +17996,6 @@
       "main": "thunderstorm"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 12.5,
-    "temperatureMin": 3.1,
-    "windGust": 13.1
    }
   },
   "offsetPlus4": {
@@ -18052,11 +18032,6 @@
       "main": "overcast"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 9,
-    "temperatureMin": 1.7,
-    "windGust": 12.5
    }
   },
   "offsetPlus5": {
@@ -18093,11 +18068,6 @@
       "main": "overcast"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 7.9,
-    "temperatureMin": -0.4,
-    "windGust": 10.4
    }
   },
   "offsetPlus6": {
@@ -18134,11 +18104,6 @@
       "main": "slight rain showers"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 4,
-    "temperatureMin": -0.2,
-    "windGust": 9.8
    }
   },
   "offsetPlus7": {
@@ -18175,11 +18140,6 @@
       "main": "overcast"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 7.9,
-    "temperatureMin": -1.7,
-    "windGust": 11
    }
   },
   "offsetPlus8": {
@@ -18216,11 +18176,6 @@
       "main": "overcast"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 11,
-    "temperatureMin": 0.6,
-    "windGust": 9.8
    }
   },
   "offsetPlus9": {
@@ -18257,11 +18212,6 @@
       "main": "dense drizzle"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 6.2,
-    "temperatureMin": 2.6,
-    "windGust": 7.7
    }
   },
   "offsetPlus10": {
@@ -18298,11 +18248,6 @@
       "main": "thunderstorm"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 6.9,
-    "temperatureMin": 1.5,
-    "windGust": 7.4
    }
   },
   "offsetPlus11": {
@@ -18339,11 +18284,6 @@
       "main": "dense drizzle"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 5.9,
-    "temperatureMin": 3.2,
-    "windGust": 9.8
    }
   },
   "offsetPlus12": {
@@ -18380,11 +18320,6 @@
       "main": "partly cloudy"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 11.5,
-    "temperatureMin": 1.2,
-    "windGust": 9.9
    }
   },
   "offsetPlus13": {
@@ -18421,11 +18356,6 @@
       "main": "light drizzle"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 12.1,
-    "temperatureMin": 3.3,
-    "windGust": 6.1
    }
   },
   "offsetPlus14": {
@@ -18462,11 +18392,6 @@
       "main": "dense drizzle"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 10,
-    "temperatureMin": 5.9,
-    "windGust": 7.8
    }
   },
   "offsetMinus1": {
@@ -18503,11 +18428,6 @@
       "main": "overcast"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 13.2,
-    "temperatureMin": 6.7,
-    "windGust": 9.5
    }
   },
   "offsetMinus2": {
@@ -18544,11 +18464,6 @@
       "main": "thunderstorm"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 11.4,
-    "temperatureMin": 7,
-    "windGust": 10.5
    }
   },
   "offsetMinus3": {
@@ -18585,11 +18500,6 @@
       "main": "thunderstorm with slight hail"
      }
     ]
-   },
-   "topOut": {
-    "temperatureHigh": 11.6,
-    "temperatureMin": 6.7,
-    "windGust": 15.9
    }
   }
  },

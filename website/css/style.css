@@ -2272,12 +2272,6 @@ html[data-theme="dark"] .warning{
 .wx-hour .wx-temp strong{
   font-size: 1.05rem;
 }
-/* the summit mark: top-of-route temperature on long routes */
-.wx-top{
-  font-size: 0.72rem;
-  color: #767676;
-  white-space: nowrap;
-}
 /* "?" helper for terms like dew point */
 .wx-help-wrap{
   position: relative;
@@ -2823,9 +2817,6 @@ html[data-theme="dark"] .wx-day:hover {
 }
 html[data-theme="dark"] .wx-hour {
   background-color: var(--dm-surface);
-}
-html[data-theme="dark"] .wx-top {
-  color: var(--dm-text-muted);
 }
 html[data-theme="dark"] .wx-help {
   border-color: var(--dm-link);

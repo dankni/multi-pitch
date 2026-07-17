@@ -108,28 +108,7 @@ function groupHourlyByDate(hourly, timeZone) {
 const MS_TO_MPH = 2.237; // feed wind speeds are m/s
 const LAPSE_PER_METER = 0.0065; // temperature falls ~0.65C per 100m of height
 
-// How much colder the top of the route is than the base on a given day:
-// model-driven when the feed carries topOut, lapse-rate estimate otherwise.
-// null when the route is too short for the spread to round to a degree.
-function topOutDelta(climbWeather, day) {
-    if (day && day.topOut) {
-        const delta = day.temperatureHigh - day.topOut.temperatureHigh;
-        return Math.round(delta) >= 1 ? { degrees: delta, estimated: false } : null;
-    }
-    if (climbWeather.routeLength && Math.round(climbWeather.routeLength * LAPSE_PER_METER) >= 1) {
-        return { degrees: climbWeather.routeLength * LAPSE_PER_METER, estimated: true };
-    }
-    return null;
-}
-
-// the summit mark: a muted extra row showing the top-of-route temperature
-function topRowHtml(temperature, delta, routeLength) {
-    if (!delta) return '';
-    const approx = delta.estimated ? '&#8776;' : '';
-    return `<div class="wx-top" title="top of the route, ${routeLength}m higher${delta.estimated ? ' (estimated)' : ''}">&#9650;${approx}${Math.round(temperature - delta.degrees)}&#176;</div>`;
-}
-
-function buildHourCell(hourly, i, timeZone, delta, routeLength) {
+function buildHourCell(hourly, i, timeZone) {
     const hour = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false })
         .format(new Date(hourly.time[i] * 1000));
     const rainChance = Math.round(hourly.precipProbability[i] * 100);
@@ -140,7 +119,6 @@ function buildHourCell(hourly, i, timeZone, delta, routeLength) {
         <div class="wx-dow">${hour}</div>
         <span class="weather ${hourly.icon[i]}"></span>
         <div class="wx-temp"><strong>${Math.round(hourly.temperature[i])}&#176;</strong></div>
-        ${topRowHtml(hourly.temperature[i], delta, routeLength)}
         <div class="wx-pop">${rainChance}%</div>
         <div class="wx-mm">${hourly.precipIntensity[i].toFixed(1)}mm</div>
         <div class="wx-wind"><span class="wx-arrow" style="transform:rotate(${hourly.windBearing[i]}deg);">&#8595;</span>${gustMph}<small>mph</small></div>
@@ -170,41 +148,32 @@ function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
         ? ` &middot; sun ${hourFormatter.format(new Date(day.sunriseTime * 1000))}&ndash;${hourFormatter.format(new Date(day.sunsetTime * 1000))}` : '';
     const lowTide = day.lowTides && day.lowTides.length
         ? ` &middot; low tide ${day.lowTides.map(low => hourFormatter.format(new Date(low.time * 1000))).join(' &amp; ')}` : '';
-    // Long routes climb into different weather, so show BOTH figures with a
-    // plain explanation: the base numbers and the top-of-route numbers
-    // (model-driven when the feed carries topOut, lapse-rate estimate
-    // otherwise; single figure when the route is too short to matter).
-    const baseGustMph = Math.round(day.windGust * MS_TO_MPH);
-    let tempPart = `${Math.round(day.temperatureMin)} to ${Math.round(day.temperatureHigh)}&#176;C`;
-    let gustPart = `gusts ${baseGustMph}mph`;
-    const routeLength = climbWeather.routeLength;
-    if (day.topOut) {
-        tempPart = `base ${tempPart} &middot; top of route ${Math.round(day.topOut.temperatureMin)} to ${Math.round(day.topOut.temperatureHigh)}&#176;C (${routeLength}m higher)`;
-        const topGustMph = Math.round(day.topOut.windGust * MS_TO_MPH);
-        // only mention the top gust when it differs enough to change a decision
-        if (topGustMph - baseGustMph >= 3) gustPart = `gusts ${baseGustMph}mph (${topGustMph} at the top)`;
-    } else if (routeLength && Math.round(routeLength * 0.0065) >= 1) {
-        const drop = routeLength * 0.0065;
-        tempPart = `base ${tempPart} &middot; top of route &#8776;${Math.round(day.temperatureMin - drop)} to ${Math.round(day.temperatureHigh - drop)}&#176;C (est., ${routeLength}m higher)`;
-    }
+    // Length is climbed distance, not height gain, so lapse x length is a
+    // strict UPPER BOUND on how much colder the top can be - the one claim
+    // route length supports honestly (traverse routes carry routeLength 0)
+    const tempPart = `${Math.round(day.temperatureMin)} to ${Math.round(day.temperatureHigh)}&#176;C`;
+    const gustPart = `gusts ${Math.round(day.windGust * MS_TO_MPH)}mph`;
+    const topDrop = climbWeather.routeLength ? Math.round(climbWeather.routeLength * LAPSE_PER_METER) : 0;
+    const topNote = topDrop >= 2
+        ? ` &middot; the top of this ${climbWeather.routeLength}m route could be up to &#8776;${topDrop}&#176; colder (rough estimate)` : '';
     const summary = `<p class="wx-day-summary"><span class="weather ${day.icon}"></span>
         <span><strong>${day.icon.replace(/-/g, ' ')}</strong>, ${tempPart}
         &middot; ${rainSummary} &middot; ${gustPart}
-        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}${sun}${lowTide}</span></p>`;
+        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}${sun}${lowTide}${topNote}</span></p>`;
 
     const hours = hoursByDate[localDateKey(day.time, timeZone)] || [];
     // no heading: the day and hour cells share one visual language, so the
     // hours read as a continuation of the selected day; the plain-language
     // summary sits below the row, like the climbing-agent widget
     const hoursHtml = hours.length
-        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone, topOutDelta(climbWeather, day), climbWeather.routeLength)).join('') + '</div>'
+        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('') + '</div>'
         : '';
     panel.innerHTML = hoursHtml + summary;
     panel.style.display = 'block';
     return true;
 }
 
-function buildStripDay(day, key, timeZone, hasHourly, isToday, delta, routeLength) {
+function buildStripDay(day, key, timeZone, hasHourly, isToday) {
     const isPast = key.startsWith('offsetMinus');
     const dayLabel = isToday ? 'Today'
         : getFormatter(timeZone, { weekday: 'short', day: 'numeric' }).format(new Date(day.time * 1000));
@@ -232,7 +201,6 @@ function buildStripDay(day, key, timeZone, hasHourly, isToday, delta, routeLengt
         <div class="wx-dow">${dayLabel}</div>
         <span class="weather ${day.icon}"></span>
         <div class="wx-temp"><strong>${Math.round(day.temperatureHigh)}&#176;</strong><span>${Math.round(day.temperatureMin)}&#176;</span></div>
-        ${topRowHtml(day.temperatureHigh, delta, routeLength)}
         <div class="wx-rain"><div class="wx-rain-bar" style="height:${rainHeight}%;"></div></div>
         <div class="wx-pop">${isPast ? '&nbsp;' : rainChance + '%'}</div>
         <div class="wx-mm">${day.precipIntensity.toFixed(1)}mm</div>
@@ -323,8 +291,7 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
             .filter(key => climbWeather[key])
             .map(key => buildStripDay(climbWeather[key], key, timeZone,
                 !!hoursByDate[localDateKey(climbWeather[key].time, timeZone)],
-                key === todayKey,
-                topOutDelta(climbWeather, climbWeather[key]), climbWeather.routeLength))
+                key === todayKey))
             .join('');
         // start the strip scrolled so today is in view on narrow screens
         const todayElement = strip.querySelector('.wx-today');

@@ -84,40 +84,6 @@ function num(value, fallback) {
     return (value === null || value === undefined || isNaN(value)) ? fallback : value;
 }
 
-// Routes at least this long get a second, model-driven forecast for the
-// top-out: their base-to-top spread (lapse ~0.65C/100m) exceeds ~2C.
-// Shorter routes get a client-side lapse estimate instead.
-const TOP_OUT_MIN_METERS = 300;
-
-// The top-out forecast reuses the crag's own DEM elevation plus the route
-// length - a RELATIVE offset, so it does not depend on knowing whether the
-// DEM point sits at the base or the top of the cliff.
-function buildTopOutUrl(lat, lon, elevation) {
-    return 'https://api.open-meteo.com/v1/forecast'
-        + `?latitude=${lat}&longitude=${lon}`
-        + '&daily=temperature_2m_max,temperature_2m_min,wind_gusts_10m_max'
-        + `&elevation=${Math.round(elevation)}`
-        + `&past_days=${PAST_DAYS}&forecast_days=${FORECAST_DAYS}`
-        + '&timezone=auto&timeformat=unixtime&wind_speed_unit=ms';
-}
-
-// attach per-day top-out conditions (same day-key layout as the main mapper)
-function attachTopOut(entry, topOutDaily) {
-    const dayKeys = [['currently', TODAY_INDEX]];
-    for (let plus = 1; plus < FORECAST_DAYS; plus++) dayKeys.push([`offsetPlus${plus}`, TODAY_INDEX + plus]);
-    for (let minus = 1; minus <= PAST_DAYS; minus++) dayKeys.push([`offsetMinus${minus}`, TODAY_INDEX - minus]);
-    dayKeys.forEach(([key, i]) => {
-        const day = entry[key];
-        if (!day) return;
-        if (topOutDaily.temperature_2m_max[i] === null || topOutDaily.temperature_2m_max[i] === undefined) return;
-        day.topOut = {
-            temperatureHigh: topOutDaily.temperature_2m_max[i],
-            temperatureMin: topOutDaily.temperature_2m_min[i],
-            windGust: num(topOutDaily.wind_gusts_10m_max[i], 0)
-        };
-    });
-}
-
 // Open-Meteo Marine (keyless, like the weather API) supplies hourly sea level
 // for tidal crags; the same approach climbing-agent uses for tides.
 function buildMarineUrl(lat, lon) {
@@ -318,26 +284,6 @@ function getWeather(climbsData) {
                     if (marine && marine.hourly && marine.hourly.sea_level_height_msl) {
                         attachLowTides(entry, findLowTides(marine.hourly.time, marine.hourly.sea_level_height_msl));
                     }
-                    // long routes climb into different weather: fetch a second,
-                    // model-driven forecast at the top-out elevation; a failure
-                    // only costs the top-out detail (the widget falls back to a
-                    // lapse-rate estimate)
-                    const length = climbsVertically ? (parseInt(climb.length) || 0) : 0;
-                    if (length >= TOP_OUT_MIN_METERS && response.data.elevation !== undefined) {
-                        const topOutUrl = buildTopOutUrl(
-                            encodeURIComponent(lat_raw.trim()),
-                            encodeURIComponent(lon_raw.trim()),
-                            response.data.elevation + length);
-                        return axios.get(topOutUrl, { timeout: 10000 })
-                            .then(topOutResponse => {
-                                attachTopOut(entry, topOutResponse.data.daily);
-                                return entry;
-                            })
-                            .catch(err => {
-                                console.error(`top-out fetch failed for climb ${climb.id}:`, err.message);
-                                return entry;
-                            });
-                    }
                     return entry;
                 })
                 .catch(err => {
@@ -353,4 +299,4 @@ function getWeather(climbsData) {
     return Promise.all(requests);
 }
 
-module.exports = { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, buildMarineUrl, buildTopOutUrl, findLowTides, moonPhase };
+module.exports = { getWeather, mapOpenMeteoToMultipitcherDomain, mapWmoIcon, mapHourlyIcon, buildOpenMeteoUrl, buildMarineUrl, findLowTides, moonPhase };
