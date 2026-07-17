@@ -1,0 +1,95 @@
+describe('Topo overlay attribute toggles', function () {
+    const appUrl = 'localhost:9000';
+
+    // climb 7 has every overlay attribute: route, 4 pitches (belays + labels),
+    // 2 descent entries and 4 alternative routes
+    function openTopo(climbId) {
+        cy.visit(appUrl);
+        cy.get(`div[data-climb-id="${climbId}"] a.open-tile`).click();
+        // toggling any control swaps the static image for the drawn canvas
+        cy.get('label[for="c1"]').click({ force: true });
+        cy.get('#canvas[data-success="true"]');
+        cy.get('label[for="c1"]').click({ force: true });
+        cy.get('#canvas[data-success="true"]');
+    }
+
+    // records the colours/labels each draw helper is called with so tests can
+    // assert what ended up on the canvas without reading pixels back
+    function spyDrawHelpers(win) {
+        win.__lines = [];
+        win.__belays = [];
+        win.__labels = [];
+        const origLine = win.drawLine;
+        const origBelay = win.drawBelay;
+        const origAnnotate = win.annotate;
+        win.drawLine = function (ctx, arr, dashed, arrow, color) { win.__lines.push(String(color)); return origLine.apply(this, arguments); };
+        win.drawBelay = function (ctx, x, y, line, fill) { win.__belays.push(String(line)); return origBelay.apply(this, arguments); };
+        win.annotate = function (ctx, msg, x, y, color) { win.__labels.push(String(msg)); return origAnnotate.apply(this, arguments); };
+    }
+
+    const ALTERNATIVE_YELLOW = '255, 239, 101';
+    const DESCENT_BLUE = '1, 70, 181';
+    const ROUTE_RED = '204,25,29';
+
+    it('draws the alternatives overlay when the main route line is toggled off', () => {
+        openTopo(7);
+        cy.window().then(spyDrawHelpers);
+        cy.get('label[for="c2"]').click({ force: true }); // uncheck Route
+        cy.get('#c2').should('not.be.checked');
+        cy.get('#c6').should('be.checked');
+        cy.window().then((win) => {
+            expect(win.__lines.filter((c) => c.includes(ALTERNATIVE_YELLOW)),
+                'alternative route lines drawn while route is off').to.have.length.greaterThan(0);
+            expect(win.__lines.filter((c) => c.includes(ROUTE_RED)),
+                'main route line not drawn while unchecked').to.have.length(0);
+        });
+    });
+
+    it('hides only the alternatives when their checkbox is toggled off', () => {
+        openTopo(7);
+        cy.window().then(spyDrawHelpers);
+        cy.get('label[for="c6"]').click({ force: true }); // uncheck Alternatives
+        cy.window().then((win) => {
+            expect(win.__lines.filter((c) => c.includes(ALTERNATIVE_YELLOW)),
+                'no alternative lines while unchecked').to.have.length(0);
+            expect(win.__lines.filter((c) => c.includes(ROUTE_RED)),
+                'main route still drawn').to.have.length.greaterThan(0);
+        });
+    });
+
+    it('draws the descent overlay when belay points are toggled off', () => {
+        openTopo(7);
+        cy.window().then(spyDrawHelpers);
+        cy.get('label[for="c3"]').click({ force: true }); // uncheck Belay Points
+        cy.get('#c4').should('be.checked');
+        cy.window().then((win) => {
+            expect(win.__lines.filter((c) => c.includes(DESCENT_BLUE)),
+                'descent lines drawn while belays are off').to.have.length.greaterThan(0);
+        });
+    });
+
+    it('re-draws without error when each attribute is toggled off and on', () => {
+        openTopo(7);
+        ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'].forEach((id) => {
+            cy.get(`label[for="${id}"]`).click({ force: true });
+            cy.get('#canvas[data-success="true"]');
+            cy.get(`label[for="${id}"]`).click({ force: true });
+            cy.get('#canvas[data-success="true"]');
+        });
+    });
+
+    it('disables the controls whose overlay data the climb does not have', () => {
+        // climb 4 has an interactive topo but no pitch, descent or alternative data
+        cy.visit(appUrl);
+        cy.get('div[data-climb-id="4"] a.open-tile').click();
+        cy.get('#c1').should('be.checked');
+        cy.get('#c2').should('be.checked');
+        cy.get('#c3').should('be.disabled');
+        cy.get('#c4').should('be.disabled');
+        cy.get('#c5').should('be.disabled');
+        cy.get('#c6').should('be.disabled');
+        // the remaining controls still render the canvas fine
+        cy.get('label[for="c1"]').click({ force: true });
+        cy.get('#canvas[data-success="true"]');
+    });
+});

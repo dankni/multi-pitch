@@ -1065,19 +1065,19 @@ window.draw = function() {
     }
 
     // Add the Topo Line
-    if (routeLine === true) {
-        if (topoData.route.length > 1) {
-            drawLine(ctx, topoData.route, true, false, lineColor);
-        }    
-        if (topoData.alternatives && alternatives === true){
-            for(let i = 0; i < topoData.alternatives.length; i++){
-                drawLine(ctx, topoData.alternatives[i].route, true, false, "rgba(255, 239, 101, 0.85)");
-                drawBelay(ctx, topoData.alternatives[i].route[0][0], topoData.alternatives[i].route[0][1], "rgba(255, 239, 101, 0.95)", "rgba(255, 239, 101, .95)");
-                annotate(ctx, topoData.alternatives[i].reference,
-                    sThis(topoData.alternatives[i].route[0][0] - 12),
-                    sThis(topoData.alternatives[i].route[0][1] + 12),
-                    "rgb(0,0,0)");
-            }
+    if (routeLine === true && topoData.route.length > 1) {
+        drawLine(ctx, topoData.route, true, false, lineColor);
+    }
+
+    // Alternatives have their own checkbox so they must draw independently of the main route line
+    if (topoData.alternatives && alternatives === true){
+        for(let i = 0; i < topoData.alternatives.length; i++){
+            drawLine(ctx, topoData.alternatives[i].route, true, false, "rgba(255, 239, 101, 0.85)");
+            drawBelay(ctx, topoData.alternatives[i].route[0][0], topoData.alternatives[i].route[0][1], "rgba(255, 239, 101, 0.95)", "rgba(255, 239, 101, .95)");
+            annotate(ctx, topoData.alternatives[i].reference,
+                sThis(topoData.alternatives[i].route[0][0] - 12),
+                sThis(topoData.alternatives[i].route[0][1] + 12),
+                "rgb(0,0,0)");
         }
     }
 
