@@ -173,6 +173,31 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherStrip .wx-hours-day').should('have.length', 18);
     });
 
+    it('long routes show model top-out conditions, medium routes an estimate', () => {
+        // model-driven: Via Maria (370m) carries per-day topOut in the feed
+        stubWeatherFeed();
+        cy.readFile('website/data/climbs/42.json').then((climbFile) => {
+            cy.visit(appUrl + '/climbs/via-maria-on-sass-pordoi-south-face/', {
+                onBeforeLoad(win) { win.localStorage.setItem('climb42', JSON.stringify(climbFile)); }
+            });
+        });
+        cy.get('#weatherHourly .wx-day-summary').should('contain', 'top-out ≈')
+            .and('contain', 'colder');
+        cy.get('#weatherHourly .wx-day-summary').invoke('text').should('match', /gusts ≈\d+mph/);
+
+        // estimate fallback: no topOut in the feed but a route long enough to matter
+        stubWeatherFeed((weather) => {
+            const one = weather.find(w => w.climbId === 1);
+            one.routeLength = 200; // pretend Stoer were 200m
+        });
+        cy.readFile('website/data/climbs/1.json').then((climbFile) => {
+            cy.visit(appUrl + climbSlug, {
+                onBeforeLoad(win) { win.localStorage.setItem('climb1', JSON.stringify(climbFile)); }
+            });
+        });
+        cy.get('#weatherHourly .wx-day-summary').should('contain', '(est.)');
+    });
+
     it('stays hidden when the feed is stale', () => {
         visitClimbWithWeather('light', (weather) => {
             weather.forEach(w => { if (w.currently) w.currently.time = Math.floor(Date.now() / 1000) - 3 * 86400; });

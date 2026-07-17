@@ -160,6 +160,64 @@ describe('tides (Open-Meteo Marine)', () => {
     });
 });
 
+describe('top-out conditions (long routes)', () => {
+    const { buildTopOutUrl } = require('../getWeatherOM.js');
+
+    it('top-out url reuses the coordinates with a relative elevation offset', () => {
+        const url = buildTopOutUrl('46.499111', '11.808021', 2709 + 370);
+        expect(url).to.contain('elevation=3079');
+        expect(url).to.contain('temperature_2m_max');
+        expect(url).to.contain('wind_gusts_10m_max');
+    });
+
+    it('routes >= 300m get model top-out numbers on every day', async () => {
+        const urls = [];
+        mockAxios.get = (url) => {
+            urls.push(url);
+            if (url.includes('elevation=')) {
+                const daily = fixtureOpenMeteo.daily;
+                return Promise.resolve({ data: { daily: {
+                    time: daily.time,
+                    temperature_2m_max: daily.temperature_2m_max.map(v => v === null ? null : v - 4),
+                    temperature_2m_min: daily.temperature_2m_min.map(v => v === null ? null : v - 4),
+                    wind_gusts_10m_max: daily.wind_gusts_10m_max.map(v => v === null ? null : v * 2)
+                } } });
+            }
+            return Promise.resolve(okResponse);
+        };
+        const [entry] = await getWeather({ climbs: [
+            { id: 42, status: 'publish', geoLocation: '46.499111,11.808021', length: 370 }
+        ]});
+        expect(urls.filter(u => u.includes('elevation=')).length).to.eql(1);
+        expect(entry.routeLength).to.eql(370);
+        expect(entry.currently.topOut.temperatureHigh).to.be.closeTo(entry.currently.temperatureHigh - 4, 0.01);
+        expect(entry.offsetPlus7.topOut.windGust).to.be.a('number');
+    });
+
+    it('short routes make no extra call and still carry routeLength for the estimate', async () => {
+        const urls = [];
+        mockAxios.get = (url) => { urls.push(url); return Promise.resolve(okResponse); };
+        const [entry] = await getWeather({ climbs: [
+            { id: 1, status: 'publish', geoLocation: '58.26094,-5.38266', length: 67 }
+        ]});
+        expect(urls.some(u => u.includes('elevation='))).to.eql(false);
+        expect(entry.routeLength).to.eql(67);
+        expect(entry.currently.topOut).to.be.undefined;
+    });
+
+    it('a failed top-out fetch never loses the climb', async () => {
+        mockAxios.get = (url) => url.includes('elevation=')
+            ? Promise.reject(new Error('boom'))
+            : Promise.resolve(okResponse);
+        const [entry] = await getWeather({ climbs: [
+            { id: 42, status: 'publish', geoLocation: '46.499111,11.808021', length: 370 }
+        ]});
+        expect(entry.climbId).to.eql(42);
+        expect(entry.currently).to.be.an('object');
+        expect(entry.currently.topOut).to.be.undefined;
+    });
+});
+
 describe('moonPhase', () => {
     it('anchors on the reference new moon and wraps correctly', () => {
         const referenceNewMoon = 947182440; // 2000-01-06 18:14 UTC

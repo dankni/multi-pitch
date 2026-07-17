@@ -143,10 +143,21 @@ function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
         ? ` &middot; sun ${hourFormatter.format(new Date(day.sunriseTime * 1000))}&ndash;${hourFormatter.format(new Date(day.sunsetTime * 1000))}` : '';
     const lowTide = day.lowTides && day.lowTides.length
         ? ` &middot; low tide ${day.lowTides.map(low => hourFormatter.format(new Date(low.time * 1000))).join(' &amp; ')}` : '';
+    // long routes climb into different weather: model-driven top-out numbers
+    // when the feed carries them, a lapse-rate estimate (~0.65C/100m) otherwise;
+    // hidden when the route is too short for the spread to round to a degree
+    let topOut = '';
+    if (day.topOut) {
+        const colder = Math.round(day.temperatureHigh - day.topOut.temperatureHigh);
+        if (colder >= 1) topOut = ` &middot; top-out &#8776;${colder}&#176; colder, gusts &#8776;${Math.round(day.topOut.windGust * MS_TO_MPH)}mph`;
+    } else if (climbWeather.routeLength) {
+        const colder = Math.round(climbWeather.routeLength * 0.0065);
+        if (colder >= 1) topOut = ` &middot; top-out &#8776;${colder}&#176; colder (est.)`;
+    }
     const summary = `<p class="wx-day-summary"><span class="weather ${day.icon}"></span>
         <span><strong>${day.icon.replace(/-/g, ' ')}</strong>, ${Math.round(day.temperatureMin)} to ${Math.round(day.temperatureHigh)}&#176;C
         &middot; ${rainSummary} &middot; gusts ${Math.round(day.windGust * MS_TO_MPH)}mph
-        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}${sun}${lowTide}</span></p>`;
+        &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}${sun}${lowTide}${topOut}</span></p>`;
 
     const hours = hoursByDate[localDateKey(day.time, timeZone)] || [];
     // no heading: the day and hour cells share one visual language, so the
