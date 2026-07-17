@@ -306,9 +306,13 @@ function getWeather(climbsData) {
             // a timeout keeps one hung request from stalling the whole daily run
             return Promise.all([axios.get(url, { timeout: 10000 }), marinePromise])
                 .then(([response, marine]) => {
+                    // route length only approximates height gain on broadly
+                    // vertical lines: girdle/traverse routes cover distance,
+                    // not height, so they get no top-out figures at all
+                    const climbsVertically = !(climb.traverse >= 1);
                     const entry = {
                         climbId: climb.id,
-                        routeLength: parseInt(climb.length) || 0, // lets the widget estimate the base-to-top spread
+                        routeLength: climbsVertically ? (parseInt(climb.length) || 0) : 0, // lets the widget estimate the base-to-top spread
                         ...mapOpenMeteoToMultipitcherDomain(response.data)
                     };
                     if (marine && marine.hourly && marine.hourly.sea_level_height_msl) {
@@ -318,7 +322,7 @@ function getWeather(climbsData) {
                     // model-driven forecast at the top-out elevation; a failure
                     // only costs the top-out detail (the widget falls back to a
                     // lapse-rate estimate)
-                    const length = parseInt(climb.length) || 0;
+                    const length = climbsVertically ? (parseInt(climb.length) || 0) : 0;
                     if (length >= TOP_OUT_MIN_METERS && response.data.elevation !== undefined) {
                         const topOutUrl = buildTopOutUrl(
                             encodeURIComponent(lat_raw.trim()),

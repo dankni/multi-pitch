@@ -174,16 +174,16 @@ describe('Weather forecast strip', function () {
     });
 
     it('long routes show model top-out conditions, medium routes an estimate', () => {
-        // model-driven: Via Maria (370m) carries per-day topOut in the feed
+        // model-driven: Fedele (555m, vertical) carries per-day topOut in the feed
         stubWeatherFeed();
-        cy.readFile('website/data/climbs/42.json').then((climbFile) => {
-            cy.visit(appUrl + '/climbs/via-maria-on-sass-pordoi-south-face/', {
-                onBeforeLoad(win) { win.localStorage.setItem('climb42', JSON.stringify(climbFile)); }
+        cy.readFile('website/data/climbs/6.json').then((climbFile) => {
+            cy.visit(appUrl + '/climbs/fedele-on-sass-pordoi/', {
+                onBeforeLoad(win) { win.localStorage.setItem('climb6', JSON.stringify(climbFile)); }
             });
         });
         cy.get('#weatherHourly .wx-day-summary').should('contain', 'base ')
             .and('contain', 'top of route')
-            .and('contain', '(370m higher)');
+            .and('contain', '(555m higher)');
         cy.get('#weatherHourly .wx-day-summary').invoke('text')
             .should('match', /top of route -?\d+ to -?\d+°C/); // real model numbers, not a delta
 
@@ -197,6 +197,16 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherHourly .wx-help-pop').should('be.visible').and('contain', 'friction');
         cy.get('#weatherHourly .wx-help').click();
         cy.get('#weatherHourly .wx-help-pop').should('not.be.visible');
+
+        // traverse routes get NO summit marks: their length covers distance, not height
+        stubWeatherFeed();
+        cy.readFile('website/data/climbs/42.json').then((climbFile) => {
+            cy.visit(appUrl + '/climbs/via-maria-on-sass-pordoi-south-face/', {
+                onBeforeLoad(win) { win.localStorage.setItem('climb42', JSON.stringify(climbFile)); }
+            });
+        });
+        cy.get('#weatherHourly .wx-day-summary').should('exist').and('not.contain', 'top of route');
+        cy.get('#weatherStrip .wx-top').should('not.exist');
 
         // estimate fallback: no topOut in the feed but a route long enough to matter
         stubWeatherFeed((weather) => {

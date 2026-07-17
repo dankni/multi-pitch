@@ -205,6 +205,17 @@ describe('top-out conditions (long routes)', () => {
         expect(entry.currently.topOut).to.be.undefined;
     });
 
+    it('traverse routes get no top-out: length covers distance, not height', async () => {
+        const urls = [];
+        mockAxios.get = (url) => { urls.push(url); return Promise.resolve(okResponse); };
+        const [entry] = await getWeather({ climbs: [
+            { id: 42, status: 'publish', geoLocation: '46.499111,11.808021', length: 370, traverse: 1 }
+        ]});
+        expect(urls.some(u => u.includes('elevation='))).to.eql(false);
+        expect(entry.routeLength).to.eql(0); // suppresses the widget's estimate too
+        expect(entry.currently.topOut).to.be.undefined;
+    });
+
     it('a failed top-out fetch never loses the climb', async () => {
         mockAxios.get = (url) => url.includes('elevation=')
             ? Promise.reject(new Error('boom'))
