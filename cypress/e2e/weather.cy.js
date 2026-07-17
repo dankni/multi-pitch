@@ -181,9 +181,11 @@ describe('Weather forecast strip', function () {
                 onBeforeLoad(win) { win.localStorage.setItem('climb42', JSON.stringify(climbFile)); }
             });
         });
-        cy.get('#weatherHourly .wx-day-summary').should('contain', 'top-out ≈')
-            .and('contain', 'colder');
-        cy.get('#weatherHourly .wx-day-summary').invoke('text').should('match', /gusts ≈\d+mph/);
+        cy.get('#weatherHourly .wx-day-summary').should('contain', 'base ')
+            .and('contain', 'top of route')
+            .and('contain', '(370m higher)');
+        cy.get('#weatherHourly .wx-day-summary').invoke('text')
+            .should('match', /top of route -?\d+ to -?\d+°C/); // real model numbers, not a delta
 
         // estimate fallback: no topOut in the feed but a route long enough to matter
         stubWeatherFeed((weather) => {
@@ -195,7 +197,7 @@ describe('Weather forecast strip', function () {
                 onBeforeLoad(win) { win.localStorage.setItem('climb1', JSON.stringify(climbFile)); }
             });
         });
-        cy.get('#weatherHourly .wx-day-summary').should('contain', '(est.)');
+        cy.get('#weatherHourly .wx-day-summary').should('contain', 'top of route ≈').and('contain', '(est., 200m higher)');
     });
 
     it('stays hidden when the feed is stale', () => {
