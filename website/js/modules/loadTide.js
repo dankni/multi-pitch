@@ -34,7 +34,14 @@ export function fullTideDataForOneClimb(tideData, climbId){
 }
 
 export function updateSpecificClimbTideInfo(climbTideInfo, climbTimeZone) {
-    
+    // never render a stale feed as if it were today: the chart highlights the
+    // current hour, so old data reads as live (the feed once froze for two weeks)
+    const newest = Math.max(...climbTideInfo.filter(item => item.timestamp).map(item => item.timestamp));
+    if (Date.now() / 1000 - newest > 36 * 3600) {
+        console.warn('Tide feed is stale, skipping the chart');
+        return;
+    }
+
     const options = {timeZone : climbTimeZone, weekday: 'short', day: "numeric", month: 'short'};
     const base = climbTideInfo.find(item => item.hasOwnProperty('base')).base;
     let localDay = convertTime(climbTideInfo[0].timestamp, options);
