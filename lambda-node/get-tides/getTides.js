@@ -1,74 +1,59 @@
 const axios = require('axios');
-const querystring = require('querystring');
 
-const tidesHoodKey  = process.env.TIDES_HOOD_KEY;
-
-// TIDES_HOOD_KEY=your-key-from-rapid-api node test/getTidesTest.js
+// Open-Meteo Marine (https://open-meteo.com) - free for non-commercial use,
+// no API key. Replaced the RapidAPI tides endpoint that died behind its
+// quota in July 2026; same provider family as the weather lambda.
+function buildMarineUrl(lat, lon) {
+    return 'https://marine-api.open-meteo.com/v1/marine'
+        + `?latitude=${encodeURIComponent(lat.trim())}&longitude=${encodeURIComponent(lon.trim())}`
+        + '&hourly=sea_level_height_msl'
+        + '&forecast_days=2&timezone=auto&timeformat=unixtime';
+}
 
 function isValidGeo(geoLocation) {
-    const [lat, lon] = geoLocation.split(",");
-    return lat && lon && lat.length != 0 && lon.length != 0
+    const [lat, lon] = (geoLocation || "").split(",");
+    return !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon));
 }
 
-const tideApiUrl = "https://tides.p.rapidapi.com/tides"
-
-function callTideApi(climb){
-    const [lat, lon] = climb.geoLocation.split(",");
-    queryParam = querystring.stringify({
-	"interval": "60",
-	"duration": "1440",
-	"latitude": lat,
-	"longitude": lon
-    });
-    console.log("climbid: " + climb.id + ", with wuery param: " + queryParam)
-    headers = {
-	"x-rapidapi-host": "tides.p.rapidapi.com",
-	"x-rapidapi-key": tidesHoodKey,
-	"useQueryString": true
-    };
-    return new Promise((resolve, reject) => {
-
-	axios.get(tideApiUrl + "?" + queryParam, {headers})
-	    .then(resp => resp.data)
-            .then(tideApiResponse => mapTideApiToMultipitchClimb(tideApiResponse, climb))
-	    .then(resolve)
-            .catch(err => { console.error("tide API request failed:", err.message, err.response && err.response.status); reject({"error_message": "tide API request failed"}); })
-    })
-    
-    
-}
-
-function mapTideApiToMultipitchClimb(tideApiResponse, climb){
-    return {
-	climbId: climb.id,
-	extremes: tideApiResponse.extremes,
-	heights: tideApiResponse.heights
+// 24 hourly points covering today at the crag - the shape the tide chart
+// consumes ({timestamp, height}); the feed regenerates daily
+function mapMarineToMultipitchClimb(marine, climb) {
+    const times = marine.hourly.time;
+    const seaLevels = marine.hourly.sea_level_height_msl;
+    const heights = [];
+    for (let i = 0; i < times.length && heights.length < 24; i++) {
+        if (seaLevels[i] === null || seaLevels[i] === undefined) continue;
+        heights.push({
+            timestamp: times[i],
+            height: Math.round(seaLevels[i] * 100) / 100
+        });
     }
+    return {
+        climbId: climb.id,
+        heights: heights
+    };
 }
 
-function delay(t, v) {
-    return new Promise(function(resolve) {
-       setTimeout(resolve.bind(null, v), t)
-   });
+function getTides(climbsData) {
+    const requests = climbsData.climbs
+        .filter(climb => climb.tidal == 1 && isValidGeo(climb.geoLocation))
+        .map(climb => {
+            const [lat, lon] = climb.geoLocation.split(",");
+            const url = buildMarineUrl(lat, lon);
+            console.log("going to call Open-Meteo Marine for climb " + climb.id, url);
+            // a timeout keeps one hung request from stalling the daily run;
+            // one climb's failure only costs that climb its chart
+            return axios.get(url, { timeout: 10000 })
+                .then(response => mapMarineToMultipitchClimb(response.data, climb))
+                .catch(err => {
+                    console.error(`marine fetch failed for climb ${climb.id}:`, err.message);
+                    return null;
+                });
+        });
+
+    return Promise.all(requests).then(results => results.filter(Boolean));
 }
-
-function getTide(climb){
-    return callTideApi(climb)
-}
-
-function getTides(climbsData){
-    var tidalClimb = climbsData.climbs.filter(c => c.tidal == 1);
-
-    return tidalClimb.reduce((p, climb) =>
-			       p.then(all_result => {
-				   return getTide(climb)
-				       .then(tide => delay(1500, tide))
-				       .then(result => {
-					   all_result.push(result)
-					   return all_result
-				       })
-			       }),Promise.resolve([]))
-}
-
 
 module.exports = getTides;
+module.exports.buildMarineUrl = buildMarineUrl;
+module.exports.mapMarineToMultipitchClimb = mapMarineToMultipitchClimb;
