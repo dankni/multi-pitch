@@ -194,9 +194,10 @@ function getWeather(climb) {
           ${seepage}
           <aside style="margin-bottom:2.5rem;">
             <small>
-            Please Note: <em>This forecast comes from a weather model calculated for the climb's coordinates and elevation
-            &mdash; there is no weather station on the crag. Mountain routes often read colder and windier than the
-            village forecast, but a model can still miss local conditions. Don't take the forecast for granted.</em>
+            Please Note: <em>This forecast is a weather model run for the climb's coordinates and elevation.
+            A multi-pitch route climbs through its own weather &mdash; the top-out can be several degrees colder
+            and windier than the base &mdash; and models are least accurate in remote mountains.
+            Don't take the forecast for granted.</em>
             </small>
           </aside>
         </div>
