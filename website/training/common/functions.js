@@ -87,12 +87,12 @@ function loadNonEssential(type, url){
 }
 function loadAnalytics(){
     window.performance.mark('gta-start');
-    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1");
+    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE");
     setTimeout(function(){
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'UA-123782847-1');
+        gtag('config', 'G-XR0EG1VTTE');
         window.performance.mark('gta-end');
     }, 1000);
 

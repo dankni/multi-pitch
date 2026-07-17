@@ -154,7 +154,9 @@ GA TRACKING HELPER
 **/
 window.trackGA = function(category, action, label, value = 0) {
     try{
-        ga('gtag_UA_123782847_1' + '.send', 'event', category, action, label, value);
+        // gtag (GA4) - the old ga()/analytics.js API was never loaded, so
+        // event tracking had been silently dead for years
+        gtag('event', action, { event_category: category, event_label: label, value: value });
     }
     catch (e) {
         // console.log("failed to track event" + e);
@@ -1228,12 +1230,13 @@ function loadNonEssential(type, url, mod = false){
  **/
 function LoadAnalytics(){
     window.performance.mark('gta-start');
-    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=UA-123782847-1");
+    loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE");
     setTimeout(function(){
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        window.gtag = function() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'UA-123782847-1');
+        // GA4 directly - no longer relying on Google's UA connected-tag redirect
+        gtag('config', 'G-XR0EG1VTTE');
         window.performance.mark('gta-end');
     }, 1000);
 
