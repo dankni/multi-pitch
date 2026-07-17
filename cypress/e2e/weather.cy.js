@@ -187,6 +187,17 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherHourly .wx-day-summary').invoke('text')
             .should('match', /top of route -?\d+ to -?\d+°C/); // real model numbers, not a delta
 
+        // the summit mark: every day cell and hour cell carries the top-of-route temp
+        cy.get('#weatherStrip .wx-day .wx-top').should('have.length', 18);
+        cy.get('#weatherStrip .wx-top').first().invoke('text').should('match', /^▲≈?-?\d+°$/);
+        cy.get('#weatherHourly .wx-hour .wx-top').should('have.length', 24);
+
+        // the dew point "?" opens and closes an explainer
+        cy.get('#weatherHourly .wx-help').click();
+        cy.get('#weatherHourly .wx-help-pop').should('be.visible').and('contain', 'friction');
+        cy.get('#weatherHourly .wx-help').click();
+        cy.get('#weatherHourly .wx-help-pop').should('not.be.visible');
+
         // estimate fallback: no topOut in the feed but a route long enough to matter
         stubWeatherFeed((weather) => {
             const one = weather.find(w => w.climbId === 1);
@@ -198,6 +209,7 @@ describe('Weather forecast strip', function () {
             });
         });
         cy.get('#weatherHourly .wx-day-summary').should('contain', 'top of route ≈').and('contain', '(est., 200m higher)');
+        cy.get('#weatherStrip .wx-day .wx-top').first().invoke('text').should('match', /^▲≈-?\d+°$/); // estimate carries the approx sign
     });
 
     it('stays hidden when the feed is stale', () => {

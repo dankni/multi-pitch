@@ -106,8 +106,30 @@ function groupHourlyByDate(hourly, timeZone) {
 }
 
 const MS_TO_MPH = 2.237; // feed wind speeds are m/s
+const LAPSE_PER_METER = 0.0065; // temperature falls ~0.65C per 100m of height
 
-function buildHourCell(hourly, i, timeZone) {
+// How much colder the top of the route is than the base on a given day:
+// model-driven when the feed carries topOut, lapse-rate estimate otherwise.
+// null when the route is too short for the spread to round to a degree.
+function topOutDelta(climbWeather, day) {
+    if (day && day.topOut) {
+        const delta = day.temperatureHigh - day.topOut.temperatureHigh;
+        return Math.round(delta) >= 1 ? { degrees: delta, estimated: false } : null;
+    }
+    if (climbWeather.routeLength && Math.round(climbWeather.routeLength * LAPSE_PER_METER) >= 1) {
+        return { degrees: climbWeather.routeLength * LAPSE_PER_METER, estimated: true };
+    }
+    return null;
+}
+
+// the summit mark: a muted extra row showing the top-of-route temperature
+function topRowHtml(temperature, delta, routeLength) {
+    if (!delta) return '';
+    const approx = delta.estimated ? '&#8776;' : '';
+    return `<div class="wx-top" title="top of the route, ${routeLength}m higher${delta.estimated ? ' (estimated)' : ''}">&#9650;${approx}${Math.round(temperature - delta.degrees)}&#176;</div>`;
+}
+
+function buildHourCell(hourly, i, timeZone, delta, routeLength) {
     const hour = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false })
         .format(new Date(hourly.time[i] * 1000));
     const rainChance = Math.round(hourly.precipProbability[i] * 100);
@@ -118,6 +140,7 @@ function buildHourCell(hourly, i, timeZone) {
         <div class="wx-dow">${hour}</div>
         <span class="weather ${hourly.icon[i]}"></span>
         <div class="wx-temp"><strong>${Math.round(hourly.temperature[i])}&#176;</strong></div>
+        ${topRowHtml(hourly.temperature[i], delta, routeLength)}
         <div class="wx-pop">${rainChance}%</div>
         <div class="wx-mm">${hourly.precipIntensity[i].toFixed(1)}mm</div>
         <div class="wx-wind"><span class="wx-arrow" style="transform:rotate(${hourly.windBearing[i]}deg);">&#8595;</span>${gustMph}<small>mph</small></div>
@@ -137,7 +160,11 @@ function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
         ? `${day.precipIntensity.toFixed(1)}mm rain fell`
         : `${Math.round(day.precipProbability * 100)}% chance of ${day.precipIntensity.toFixed(1)}mm rain`;
     const dewPoint = day.new_fields && typeof day.new_fields.dewPoint === 'number'
-        ? ` &middot; dew point ${day.new_fields.dewPoint.toFixed(0)}&#176;` : '';
+        ? ` &middot; dew point ${day.new_fields.dewPoint.toFixed(0)}&#176;`
+          + `<span class="wx-help-wrap"><button type="button" class="wx-help" aria-expanded="false" aria-label="What is dew point?"`
+          + ` onclick="this.nextElementSibling.classList.toggle('wx-show');this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') !== 'true');">?</button>`
+          + `<span class="wx-help-pop" role="note">Dew point is the temperature at which moisture in the air condenses.`
+          + ` When the rock is close to the dew point, holds turn damp and greasy; a wide gap means dry air and better friction.</span></span>` : '';
     const hourFormatter = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false });
     const sun = day.sunriseTime
         ? ` &middot; sun ${hourFormatter.format(new Date(day.sunriseTime * 1000))}&ndash;${hourFormatter.format(new Date(day.sunsetTime * 1000))}` : '';
@@ -170,14 +197,14 @@ function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
     // hours read as a continuation of the selected day; the plain-language
     // summary sits below the row, like the climbing-agent widget
     const hoursHtml = hours.length
-        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('') + '</div>'
+        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone, topOutDelta(climbWeather, day), climbWeather.routeLength)).join('') + '</div>'
         : '';
     panel.innerHTML = hoursHtml + summary;
     panel.style.display = 'block';
     return true;
 }
 
-function buildStripDay(day, key, timeZone, hasHourly, isToday) {
+function buildStripDay(day, key, timeZone, hasHourly, isToday, delta, routeLength) {
     const isPast = key.startsWith('offsetMinus');
     const dayLabel = isToday ? 'Today'
         : getFormatter(timeZone, { weekday: 'short', day: 'numeric' }).format(new Date(day.time * 1000));
@@ -205,6 +232,7 @@ function buildStripDay(day, key, timeZone, hasHourly, isToday) {
         <div class="wx-dow">${dayLabel}</div>
         <span class="weather ${day.icon}"></span>
         <div class="wx-temp"><strong>${Math.round(day.temperatureHigh)}&#176;</strong><span>${Math.round(day.temperatureMin)}&#176;</span></div>
+        ${topRowHtml(day.temperatureHigh, delta, routeLength)}
         <div class="wx-rain"><div class="wx-rain-bar" style="height:${rainHeight}%;"></div></div>
         <div class="wx-pop">${isPast ? '&nbsp;' : rainChance + '%'}</div>
         <div class="wx-mm">${day.precipIntensity.toFixed(1)}mm</div>
@@ -295,7 +323,8 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
             .filter(key => climbWeather[key])
             .map(key => buildStripDay(climbWeather[key], key, timeZone,
                 !!hoursByDate[localDateKey(climbWeather[key].time, timeZone)],
-                key === todayKey))
+                key === todayKey,
+                topOutDelta(climbWeather, climbWeather[key]), climbWeather.routeLength))
             .join('');
         // start the strip scrolled so today is in view on narrow screens
         const todayElement = strip.querySelector('.wx-today');
