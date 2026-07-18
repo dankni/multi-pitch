@@ -121,9 +121,15 @@ describe('Topo overlay attribute toggles', function () {
                     cy.get(`#climbIdMeta[content="${id}"]`, { timeout: 15000 });
                     cy.get('label[for="c1"]').click({ force: true });
                     // some topo images are 3-6MB; CI needs time to fetch and draw them
-                    cy.get('#canvas[data-success="true"]', { timeout: 30000 });
+                    cy.get('#canvas', { timeout: 30000 }).should(($c) => {
+                        expect($c.attr('data-success'), `topo canvas drawn for climb ${id}`).to.equal('true');
+                    });
                     cy.get('body').type('{esc}'); // close the card and return to the grid
-                    cy.get('#overlay').should('not.be.visible');
+                    cy.get('#overlay').should('not.be.visible').then(($o) => {
+                        // drop the closed card's DOM so 35 decoded multi-MB topo
+                        // images don't pile up in one tab and starve the CI box
+                        $o[0].innerHTML = '';
+                    });
                 });
             });
         });
