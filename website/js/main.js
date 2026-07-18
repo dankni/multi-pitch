@@ -15,6 +15,7 @@ import { openLightBox } from "./modules/lightbox.js";
 const rootProject = '/'; // adjust per enviroment 
 var climbsData;
 let topoData = null;
+let topoClimbId = null; // which climb topoData belongs to, so card changes force a reload
 export function setTopoData(d) { topoData = d; }
 export function getTopoData() { return topoData; }
 
@@ -930,19 +931,16 @@ function isScriptLoaded(url) {
 }
 
 window.topoInteraction = function(climbId, name, cliff){
-    if(topoData === null){
-        // landing direct and no local data
-        toggleTopo();
-        tryLoadTopo(climbId); 
-    } else {
+    toggleTopo();
+    if(topoData === null || topoClimbId != climbId){
+        // no data yet, or the data belongs to a card viewed earlier in the session
+        tryLoadTopo(climbId);
+    } else if(document.getElementById("staticTopo").style.display !== "none"){
         // local data but not loaded
-        toggleTopo();
-        if(document.getElementById("staticTopo").style.display !== "none"){
-            initTopo(climbId);
-        } else {
-            // loaded
-            draw();
-        }
+        initTopo(climbId);
+    } else {
+        // loaded
+        draw();
     }
     trackGA('topo', 'infoBox', 'ID = ' + climbId + ' | N = ' + name + ' on  ' + cliff, 0);
 };
@@ -951,6 +949,7 @@ window.topoInteraction = function(climbId, name, cliff){
  **/
 window.tryLoadTopo = function (climbId, enviroment = '') {
     enviroment = (typeof enviroment === 'undefined') ? '' : enviroment; //makes this optional
+    topoClimbId = climbId;
     topoData = (localStorage.getItem('climb' + climbId)) ? JSON.parse(localStorage.getItem('climb' + climbId)).topoData : null ;
     if (topoData === null) {
         // page was direct load so add data to local storage;

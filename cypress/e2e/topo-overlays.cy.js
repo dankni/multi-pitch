@@ -6,6 +6,9 @@ describe('Topo overlay attribute toggles', function () {
     function openTopo(climbId) {
         cy.visit(appUrl);
         cy.get(`div[data-climb-id="${climbId}"] a.open-tile`).click();
+        // wait for this climb's card to render: clicking earlier would hit the
+        // previous card's (hidden) controls while the climb JSON is in flight
+        cy.get(`#climbIdMeta[content="${climbId}"]`);
         // toggling any control swaps the static image for the drawn canvas
         cy.get('label[for="c1"]').click({ force: true });
         cy.get('#canvas[data-success="true"]');
@@ -75,6 +78,53 @@ describe('Topo overlay attribute toggles', function () {
             cy.get('#canvas[data-success="true"]');
             cy.get(`label[for="${id}"]`).click({ force: true });
             cy.get('#canvas[data-success="true"]');
+        });
+    });
+
+    it('draws the topo of the climb being viewed, not the one viewed before it', () => {
+        // climb 16 has no alternatives; climb 7 has four. If the second card
+        // re-uses the first card's topoData the yellow lines never appear.
+        cy.visit(appUrl);
+        cy.get('div[data-climb-id="16"] a.open-tile').click();
+        cy.get('#climbIdMeta[content="16"]');
+        cy.get('label[for="c1"]').click({ force: true });
+        cy.get('#canvas[data-success="true"]');
+        cy.get('body').type('{esc}');
+        cy.get('div[data-climb-id="7"] a.open-tile').click();
+        cy.get('#climbIdMeta[content="7"]');
+        cy.window().then(spyDrawHelpers);
+        cy.get('label[for="c1"]').click({ force: true });
+        cy.get('#canvas[data-success="true"]');
+        cy.window().then((win) => {
+            expect(win.__lines.filter((c) => c.includes(ALTERNATIVE_YELLOW)),
+                'climb 7 alternatives drawn after viewing climb 16').to.have.length.greaterThan(0);
+        });
+    });
+
+    it('renders the drawn topo for every published climb with an interactive topo', { defaultCommandTimeout: 10000 }, () => {
+        cy.readFile('website/data/data.json').then((data) => {
+            const published = data.climbs.filter((c) => c.status === 'publish');
+            const interactive = [];
+            published.forEach((climb) => {
+                cy.readFile(`website/data/climbs/${climb.id}.json`).then((fileData) => {
+                    if (((fileData.climbData.topo || {}).dataFile || 0) > 1) {
+                        interactive.push(climb.id);
+                    }
+                });
+            });
+            cy.then(() => {
+                expect(interactive.length, 'interactive topo climbs found').to.be.greaterThan(0);
+                cy.visit(appUrl);
+                interactive.forEach((id) => {
+                    cy.get(`div[data-climb-id="${id}"] a.open-tile`).click();
+                    // wait for this climb's card before touching the controls
+                    cy.get(`#climbIdMeta[content="${id}"]`, { timeout: 10000 });
+                    cy.get('label[for="c1"]').click({ force: true });
+                    cy.get('#canvas[data-success="true"]', { timeout: 10000 });
+                    cy.get('body').type('{esc}'); // close the card and return to the grid
+                    cy.get('#overlay').should('not.be.visible');
+                });
+            });
         });
     });
 
