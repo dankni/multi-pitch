@@ -114,8 +114,12 @@ describe('Topo overlay attribute toggles', function () {
             });
             cy.then(() => {
                 expect(interactive.length, 'interactive topo climbs found').to.be.greaterThan(0);
-                cy.visit(appUrl);
-                interactive.forEach((id) => {
+                interactive.forEach((id, idx) => {
+                    if (idx % 10 === 0) {
+                        // reload every 10 climbs: one long-lived page accumulates
+                        // enough decoded topo images to stall draws on the CI box
+                        cy.visit(appUrl);
+                    }
                     cy.get(`div[data-climb-id="${id}"] a.open-tile`).click();
                     // wait for this climb's card before touching the controls
                     cy.get(`#climbIdMeta[content="${id}"]`, { timeout: 15000 });
