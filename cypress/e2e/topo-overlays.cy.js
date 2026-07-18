@@ -118,9 +118,10 @@ describe('Topo overlay attribute toggles', function () {
                 interactive.forEach((id) => {
                     cy.get(`div[data-climb-id="${id}"] a.open-tile`).click();
                     // wait for this climb's card before touching the controls
-                    cy.get(`#climbIdMeta[content="${id}"]`, { timeout: 10000 });
+                    cy.get(`#climbIdMeta[content="${id}"]`, { timeout: 15000 });
                     cy.get('label[for="c1"]').click({ force: true });
-                    cy.get('#canvas[data-success="true"]', { timeout: 10000 });
+                    // some topo images are 3-6MB; CI needs time to fetch and draw them
+                    cy.get('#canvas[data-success="true"]', { timeout: 30000 });
                     cy.get('body').type('{esc}'); // close the card and return to the grid
                     cy.get('#overlay').should('not.be.visible');
                 });
