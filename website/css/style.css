@@ -2275,6 +2275,11 @@ html[data-theme="dark"] .warning{
 .wx-hour .wx-pop{
   font-size: 0.8rem;
 }
+/* the current hour: the row opens scrolled here, so mark it clearly */
+.wx-hour-now{
+  background: #e2ecf7;
+  box-shadow: inset 0 0 0 2px #0055b8;
+}
 /* day scrubber for sorting climbs by the weather on a chosen day -
    a discrete slider matching the grade slider above it; drag previews
    the day, release sorts. Weekend ticks are emphasised. */
@@ -2778,6 +2783,10 @@ html[data-theme="dark"] .wx-day:hover {
 }
 html[data-theme="dark"] .wx-hour {
   background-color: var(--dm-surface);
+}
+html[data-theme="dark"] .wx-hour-now {
+  background-color: #2d4a75;
+  box-shadow: inset 0 0 0 2px var(--dm-link);
 }
 html[data-theme="dark"] .wx-hours-day {
   box-shadow: inset 0 -5px 0 var(--dm-border);

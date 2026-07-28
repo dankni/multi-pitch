@@ -107,13 +107,76 @@ function groupHourlyByDate(hourly, timeZone) {
 
 const MS_TO_MPH = 2.237; // feed wind speeds are m/s
 
-function buildHourCell(hourly, i, timeZone) {
+// WMO code -> plain-language phrase, mirroring the lambda's table so the
+// "looks like" line can show the finer word (overcast, light drizzle) when
+// the hourly feed carries per-hour `code`s. Older feeds without codes fall
+// back to the coarse icon word.
+const WMO_DESCRIPTIONS = {
+    0: 'clear sky', 1: 'mainly clear', 2: 'partly cloudy', 3: 'overcast',
+    45: 'fog', 48: 'depositing rime fog',
+    51: 'light drizzle', 53: 'moderate drizzle', 55: 'dense drizzle',
+    56: 'light freezing drizzle', 57: 'dense freezing drizzle',
+    61: 'slight rain', 63: 'moderate rain', 65: 'heavy rain',
+    66: 'light freezing rain', 67: 'heavy freezing rain',
+    71: 'slight snow', 73: 'moderate snow', 75: 'heavy snow', 77: 'snow grains',
+    80: 'slight rain showers', 81: 'moderate rain showers', 82: 'violent rain showers',
+    85: 'slight snow showers', 86: 'heavy snow showers',
+    95: 'thunderstorm', 96: 'thunderstorm with slight hail', 99: 'thunderstorm with heavy hail'
+};
+
+// icon slug -> readable words, dropping the day/night suffix so a "clear-night"
+// current condition reads as "clear", not "clear night"
+function iconWords(icon) {
+    return icon.replace(/-(day|night)$/, '').replace(/-/g, ' ');
+}
+
+// Index of the hour bucket the visitor is currently in: the latest hour whose
+// start is <= now (so 15:41 is the 15:00 hour, not 16:00). Returns -1 when
+// there is no hourly block or now sits outside it (a very stale feed). The
+// hourly window spans several past days + the full forecast, so a fresh feed
+// always holds the current hour; the 90-minute guard past the last hour stops
+// a broken feed from labelling a distant hour as "now". Times are absolute
+// unix seconds, so this is correct whatever the browser's own timezone.
+function currentHourIndex(hourly, nowSeconds) {
+    if (!hourly || !hourly.time || !hourly.time.length) return -1;
+    let idx = -1;
+    for (let i = 0; i < hourly.time.length && hourly.time[i] <= nowSeconds; i++) {
+        idx = i;
+    }
+    if (idx < 0) return -1; // now is before the feed's first hour
+    return nowSeconds - hourly.time[idx] <= 5400 ? idx : -1;
+}
+
+// The "Current Weather" headline reflects the actual current hour, not the
+// whole-day summary. The daily object collapses a day to its worst code, so a
+// dry, overcast afternoon reads as "rain" when drizzle is merely due at dusk -
+// which is the mismatch visitors reported. Runs again when the hourly block
+// loads lazily, so it replaces (not adds) the icon class; until then it falls
+// back to today's daily icon.
+function setCurrentConditions(climbWeather, today) {
+    const wIcon = document.getElementById('wIcon');
+    const nameElement = document.getElementById('weatheName');
+    const hourIndex = currentHourIndex(climbWeather.hourly, Math.floor(Date.now() / 1000));
+    const icon = hourIndex >= 0 ? climbWeather.hourly.icon[hourIndex] : today.icon;
+    const codes = climbWeather.hourly && climbWeather.hourly.code;
+    const description = hourIndex >= 0 && codes && WMO_DESCRIPTIONS[codes[hourIndex]]
+        ? WMO_DESCRIPTIONS[codes[hourIndex]]
+        : iconWords(icon);
+    if (wIcon) {
+        wIcon.className = 'weather wLarge ' + icon; // replace: this can run twice
+        wIcon.title = description;
+    }
+    if (nameElement) nameElement.innerText = description;
+}
+
+function buildHourCell(hourly, i, timeZone, isNow) {
     const hour = getFormatter(timeZone, { hour: '2-digit', minute: '2-digit', hour12: false })
         .format(new Date(hourly.time[i] * 1000));
     const rainChance = Math.round(hourly.precipProbability[i] * 100);
     const gustMph = Math.round(hourly.windGust[i] * MS_TO_MPH);
     const iconName = hourly.icon[i].replace(/-/g, ' ');
-    return `<div class="wx-hour"
+    const nowClass = isNow ? ' wx-hour-now' : '';
+    return `<div class="wx-hour${nowClass}"${isNow ? ' data-now="1"' : ''}
         title="${hour}: ${iconName}, ${Math.round(hourly.temperature[i])}°C (feels like ${Math.round(hourly.feelsLike[i])}°C), ${rainChance}% chance of ${hourly.precipIntensity[i].toFixed(1)}mm rain, gusts ${gustMph}mph, UV ${Math.round(hourly.uvIndex[i])}">
         <div class="wx-dow">${hour}</div>
         <span class="weather ${hourly.icon[i]}"></span>
@@ -149,14 +212,24 @@ function renderDayPanel(climbWeather, dayKey, timeZone, hoursByDate) {
         &middot; UV ${Math.round(day.uvIndex)} &middot; ${Math.round(day.cloudCover)}% cloud${dewPoint}${sun}${lowTide}</span></p>`;
 
     const hours = hoursByDate[localDateKey(day.time, timeZone)] || [];
+    const nowIndex = currentHourIndex(climbWeather.hourly, Math.floor(Date.now() / 1000));
     // no heading: the day and hour cells share one visual language, so the
     // hours read as a continuation of the selected day; the plain-language
     // summary sits below the row, like the climbing-agent widget
     const hoursHtml = hours.length
-        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone)).join('') + '</div>'
+        ? '<div class="weather-strip">' + hours.map(i => buildHourCell(climbWeather.hourly, i, timeZone, i === nowIndex)).join('') + '</div>'
         : '';
     panel.innerHTML = hoursHtml + summary;
     panel.style.display = 'block';
+    // open the hourly row scrolled to the current hour so "now" is what you see
+    // first (only today's row holds it); the user scrolls earlier/later from
+    // there. getBoundingClientRect keeps this correct whatever the offsetParent.
+    const nowCell = panel.querySelector('.wx-hour-now');
+    if (nowCell) {
+        const hourStrip = nowCell.parentElement;
+        const shift = nowCell.getBoundingClientRect().left - hourStrip.getBoundingClientRect().left;
+        hourStrip.scrollLeft += shift - hourStrip.clientWidth / 3;
+    }
     return true;
 }
 
@@ -230,9 +303,6 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
     const today = climbWeather[todayKey];
 
     document.getElementById("currentWeather").style.display = "block";
-    document.getElementById("wIcon").classList.add(today.icon);
-    document.getElementById("wIcon").title = today.icon.replace(/-/g, " ");
-    document.getElementById("weatheName").innerText = today.icon.replace(/-/g, " ");
     const options = {timeZone : timeZone, hour: '2-digit', minute: '2-digit', hour12: false};
     const uvElement = document.getElementById("uv_index");
     const uvDescriptionElement = document.getElementById("uv_description");
@@ -273,6 +343,9 @@ export function updateSpecificClimbCurrentWeather(climbWeather, climbTimeZone) {
 
     let currentDayKey = null;
     const renderStripAndPanel = () => {
+        // headline reflects the current hour once hourly is available, so it
+        // re-runs here (not once up top) - the hourly block loads lazily
+        setCurrentConditions(climbWeather, today);
         const hoursByDate = groupHourlyByDate(climbWeather.hourly, timeZone); // computed once per render
         strip.innerHTML = STRIP_DAYS
             .filter(key => climbWeather[key])
