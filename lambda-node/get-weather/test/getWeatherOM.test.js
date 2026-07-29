@@ -242,9 +242,18 @@ describe('hourly forecast (BBC-style breakdown)', () => {
         // up to 480 hours; the model's trailing null hours are trimmed
         const hours = result.hourly.time.length;
         expect(hours).to.be.within(350, 432);
-        ['icon', 'temperature', 'feelsLike', 'precipIntensity', 'precipProbability',
+        ['icon', 'code', 'temperature', 'feelsLike', 'precipIntensity', 'precipProbability',
          'windGust', 'windBearing', 'uvIndex'].forEach(key => {
             expect(result.hourly[key], key).to.have.length(hours);
+        });
+    });
+
+    it('carries the raw WMO code per hour so the site can name the current condition', () => {
+        // the frontend shows this finer phrase ("overcast") for the current
+        // hour, falling back to the coarse icon word on legacy feeds
+        result.hourly.code.forEach(c => {
+            expect(c, 'wmo code').to.be.a('number');
+            expect(c, 'wmo code range').to.be.within(0, 99);
         });
     });
 

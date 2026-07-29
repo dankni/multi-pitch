@@ -200,6 +200,9 @@ function mapHourlyToMultipitcherDomain(hourly) {
     return {
         time: slot(hourly.time),
         icon: slot(hourly.time).map((_, i) => mapHourlyIcon(num(hourly.weather_code[i], 3), num(hourly.is_day[i], 1))),
+        // raw WMO code per hour, so the site can show the finer current-hour
+        // phrase ("overcast" vs the coarse "cloudy" icon word); compact ints
+        code: slot(hourly.weather_code).map(v => num(v, 3)),
         temperature: slot(hourly.temperature_2m).map(v => num(v, 0)),
         feelsLike: slot(hourly.apparent_temperature).map(v => num(v, 0)),
         precipIntensity: slot(hourly.precipitation).map(v => num(v, 0)),

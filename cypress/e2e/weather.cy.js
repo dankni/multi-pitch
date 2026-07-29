@@ -234,7 +234,82 @@ describe('Weather forecast strip', function () {
         });
     });
 
+    describe('current conditions reflect the current hour, not the day aggregate', () => {
+        it('headline follows the current hour and the hourly row marks "now"', () => {
+            visitClimbWithWeather('light');
+            cy.get('#currentWeather').should('be.visible');
+
+            // the default panel is today, and exactly one hour is flagged "now"
+            cy.get('#weatherStrip .wx-today').should('have.class', 'wx-selected');
+            cy.get('#weatherHourly .wx-hour-now').should('have.length', 1);
+
+            // the headline icon + word come from that current-hour cell, not the
+            // day's worst-case aggregate (fixture climb 1's day icon is "fog")
+            cy.get('#weatherHourly .wx-hour-now .weather').invoke('attr', 'class').then((cls) => {
+                const icon = cls.replace('weather', '').trim();
+                cy.get('#wIcon').should('have.class', icon);
+                cy.get('#weatheName').invoke('text')
+                    .should('eq', icon.replace(/-(day|night)$/, '').replace(/-/g, ' '));
+            });
+        });
+
+        it('marks the current hour bucket, not the next hour (15:41 -> 15:00)', () => {
+            visitClimbWithWeather('light');
+            // wait for the live clock to populate before reading it
+            cy.get('#cragLocalTime').invoke('text').should('match', /^\d{2}:\d{2}$/);
+            cy.get('#weatherHourly .wx-hour-now .wx-dow').invoke('text').should('match', /^\d{2}:\d{2}$/);
+            // the flagged hour started at or before the crag clock, within the hour
+            cy.get('#cragLocalTime').invoke('text').then((clock) => {
+                const nowMin = parseInt(clock.slice(0, 2)) * 60 + parseInt(clock.slice(3, 5));
+                cy.get('#weatherHourly .wx-hour-now .wx-dow').invoke('text').then((cell) => {
+                    const cellMin = parseInt(cell.slice(0, 2)) * 60 + parseInt(cell.slice(3, 5));
+                    expect(nowMin - cellMin, 'minutes since the hour started').to.be.within(0, 59);
+                });
+            });
+        });
+
+        it('opens the hourly row scrolled so "now" is in view', () => {
+            visitClimbWithWeather('light');
+            cy.get('#weatherHourly .wx-hour-now').should('exist');
+            cy.get('#weatherHourly .weather-strip').then(($strip) => {
+                const strip = $strip[0].getBoundingClientRect();
+                const now = $strip.find('.wx-hour-now')[0].getBoundingClientRect();
+                expect(now.left, 'now cell left edge inside strip').to.be.gte(strip.left - 1);
+                expect(now.right, 'now cell right edge inside strip').to.be.lte(strip.right + 1);
+            });
+        });
+
+        it('names the finer condition when the feed carries per-hour WMO codes', () => {
+            // inject overcast (WMO 3) for every hour, exactly as the lambda would:
+            // the coarse icon bucket is "cloudy", but the API's finer word
+            // "overcast" is what the headline should read
+            visitClimbWithWeather('light', (weather) => {
+                weather.forEach((w) => {
+                    if (!w.hourly) return;
+                    w.hourly.code = w.hourly.time.map(() => 3);
+                    w.hourly.icon = w.hourly.time.map(() => 'cloudy');
+                });
+            });
+            cy.get('#weatheName').should('have.text', 'overcast');
+            cy.get('#wIcon').should('have.class', 'cloudy'); // glyph stays the 7-bucket icon
+        });
+    });
+
     describe('PR prototype screenshots (desktop/mobile x light/dark)', () => {
+        // today stays selected so the "now" highlight and scroll-to-now show
+        it('desktop light - current hour', () => {
+            visitClimbWithWeather('light');
+            cy.get('#weatherHourly .wx-hour-now').should('exist');
+            screenshotWidget('weather-now-desktop-light');
+        });
+
+        it('desktop dark - current hour', () => {
+            visitClimbWithWeather('dark');
+            cy.get('html').should('have.attr', 'data-theme', 'dark');
+            cy.get('#weatherHourly .wx-hour-now').should('exist');
+            screenshotWidget('weather-now-desktop-dark');
+        });
+
         // desktop shots select tomorrow: a full 24h hourly row plus the
         // selected-day highlight demonstrates the interaction in the PR
         it('desktop light', () => {
