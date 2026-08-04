@@ -1578,13 +1578,29 @@ hr {
   height: 33px;
   width: 3px;
   background-color: #FFF;
-  top:7px
+  top:7px;
+  cursor:pointer;
 }
 .close:before {
   transform: rotate(45deg);
 }
 .close:after {
   transform: rotate(-45deg);
+}
+/* slightly smaller close button on mobile */
+@media (max-width: 799px) {
+  .close {
+    width: 40px;
+    height: 40px;
+  }
+  .close:before, .close:after {
+    left: 17px;
+    height: 22px;
+    width: 3px;
+  }
+  .lightbox-nav {
+    padding: 0.8rem;
+  }
 }
 .big-card{
   overflow: auto;
@@ -1707,6 +1723,11 @@ html[data-theme="dark"] .warning{
   padding: 1rem;
   cursor: pointer;
   z-index: 15; 
+}
+@media (max-width: 799px) {
+  .lightbox-nav {
+    padding: 0.8rem;
+  }
 }
 .lightbox-nav:hover {
   background: rgba(0, 0, 0, 0.7);
