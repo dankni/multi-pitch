@@ -16,12 +16,19 @@ When the site reaches 100 climbs it will be of comparable size to dedicated guid
 
 ## Content Rules
 ### Descriptions
-* Avoid I or We, instead use “the climber”
+* Avoid I or We, instead use “the climber” unless on the blog
 * Avoid complex mountain terminology, or at least qualify it. Eg, avoid “Follow the col until you see the dihedral before the arete on the left” Instead use “Follow the Gully between the rocks until you see the corner before the exposed edge on the left”.
 * Informal language is fine
 * Interesting facts are important including geology, first or notable ascent and history
 * Referance links should be start with a relevant prefix for usability. Options include
 `Video`, `Travel`, `Article`, `Info`, `Tides` for example: [`Video: Chris Bonington Climbs the Old man of Hoy`](https://www.youtube.com/watch?v=_aIrZnJkIqs)
+
+### Lightbox
+To trigger a lightbox pop up for links use the following: 
+`<a href="{url}" onclick="openLightBox('{url}','{description / caption}');return false" tabindex="0" role="button" aria-label="View: {short-image}" data-lightbox-keys="true">{link-description}</a>`
+
+On the blog to make a lightbox image gallary use:
+`<img loading="lazy" src="{url}" onclick="openLightBox('{url}', '{description / caption}')" alt="{description}" class="blog-img" tabindex="0" role="button" aria-label="View larger image: {short-description}" data-lightbox-keys="true">`
 
 
 ### Images

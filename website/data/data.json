@@ -1050,7 +1050,7 @@
             "approachTime": 70,
             "approachDifficulty": 2,
             "traverse": 1,
-            "lastUpdate": "2021-10-15T01:01:43.339Z",
+            "lastUpdate": "2021-11-15T01:01:43.339Z",
             "tileImage": {
                 "url": "img/tiles/via-maria-climb-in-dolomites-sass-pordoi.jpg",
                 "alt": "Via Maria Climb in the Dolomites on the South Face of Sass Pordoi"
@@ -1287,7 +1287,7 @@
             "geoLocation": "53.115556,-3.994722",
             "approachTime": 65,
             "approachDifficulty": 2,
-            "lastUpdate": "2026-02-02T21:28:45.590Z",
+            "lastUpdate": "2026-02-03T21:28:45.590Z",
             "tileImage": {
                 "url": "img/tiles/tryfan.jpg",
                 "alt": "Grooved Arete Climb on Tryfan",
