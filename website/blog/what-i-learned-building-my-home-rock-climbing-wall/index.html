@@ -1,0 +1,438 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.performance.mark('start');
+    </script>
+    <script src="/js/theme-init.js"></script>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link rel="canonical" href="https://www.multi-pitch.com/blog/what-i-learned-building-my-home-rock-climbing-wall/" />
+    
+    <link rel="preconnect" href="https://s3-eu-west-1.amazonaws.com/" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preload" href="/css/fontello.css" as="style" />
+
+    <title>What I learned building my home rock climbing wall</title>
+    <meta name="description" content="Sharing some thoughts and lessons from building my own extensive bouldering wall." />
+    
+
+    <!-- Styles -->
+    <link href="/css/style.css" rel="stylesheet" />
+
+    <!-- Scripts --> <script src="/js/blog.js" type="module"></script>
+    <script src="/js/main.js" type="module"></script>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Sharing Tags -->
+    <meta property="og:site_name" content="Multi-Pitch" />
+    <meta property="og:title" content="What I learned building my home rock climbing wall" />
+    <meta property="og:description"
+          content="Sharing some thoughts and lessons from building my own extensive bouldering wall." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://www.multi-pitch.com/blog/what-i-learned-building-my-home-rock-climbing-wall/" />
+    <meta property="og:image" content="https://www.multi-pitch.com/img/blog/home-wall/my-loft-home-climbing-wall-2026.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="What I learned building my home rock climbing wall" />
+    <meta name="twitter:description" content="Sharing some thoughts and lessons from building my own extensive bouldering wall." />
+    <meta name="twitter:image" content="https://www.multi-pitch.com/img/blog/home-wall/my-loft-home-climbing-wall-2026.jpg" />
+
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What I learned building my home rock climbing wall","description":"Sharing some thoughts and lessons from building my own extensive bouldering wall.","image":"https://www.multi-pitch.com/img/blog/home-wall/my-loft-home-climbing-wall-2026.jpg","author":{"@type":"Person","name":"Dan Knight"},"publisher":{"@type":"Organization","name":"Multi-Pitch","logo":{"@type":"ImageObject","url":"https://www.multi-pitch.com/img/favicon/android-icon-192x192.png"}},"datePublished":"2026-08-30","dateModified":"2026-08-30","mainEntityOfPage":"https://www.multi-pitch.com/blog/what-i-learned-building-my-home-rock-climbing-wall/"}</script>
+
+</head><body id="bdy">
+<!-- Navbar -->
+<nav>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
+        </a>
+        <ul>
+            <li>
+                <a href="/">Find <span class="not-mobile">A Climb</span></a>
+            </li>
+            <li>
+                <a href="/map/">Map <span class="not-mobile">View</span></a>
+            </li>
+            <li>
+                <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
+            </li>
+            <li>
+                <a href="/blog/" class="last-nav"><span class="not-mobile">Our </span>Blog</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+  <main id="main">
+      <div class="view smaller-intro" id="hero">
+    <picture class="blog-picture">
+        <source media="(max-width: 600px)" type="image/webp" srcset="/img/blog/home-wall/my-loft-home-climbing-wall-2026-phone.webp 1x, 
+                    /img/blog/home-wall/my-loft-home-climbing-wall-2026-phone-high-res.webp 2x">
+        <source media="(max-width: 1200px)" type="image/webp" srcset="/img/blog/home-wall/my-loft-home-climbing-wall-2026-1200.webp,
+                    /img/blog/home-wall/my-loft-home-climbing-wall-2026-2400.webp 2x">
+        <source media="(max-width: 1600px)" type="image/webp" srcset="/img/blog/home-wall/my-loft-home-climbing-wall-2026-1600.webp,
+                    /img/blog/home-wall/my-loft-home-climbing-wall-2026-2400.webp 2x">
+        <source media="(max-width: 2400px)" type="image/webp" srcset="/img/blog/home-wall/my-loft-home-climbing-wall-2026-2400.webp,
+                    /img/blog/home-wall/my-loft-home-climbing-wall-2026.webp 2x">
+        <source media="(min-width: 2400px)" type="image/webp"
+            srcset="/img/blog/home-wall/my-loft-home-climbing-wall-2026.webp">
+        <img src="/img/blog/home-wall/my-loft-home-climbing-wall-2026.jpg" class="hero"
+            alt="A steep home rock climbing wall in a loft space." />
+    </picture>
+    <p class="blog-caption">
+        Photo: My home climbing wall setup in the loft.
+    </p>
+</div>
+
+      <section id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="blog-h1" id="h1">What I learned building my home rock climbing wall</h1>
+                <p>
+                    A few people have asked my advice on building a home rock climbing wall after seeing mine, including where 
+                    I recomend to buy holds from. Here are my thoughts and lessons from the process, including what I might do
+                    differently if I started again.
+                </p>
+
+                <h2>First up, is it worth it?</h2>
+                <p>
+                    The short answer for me is yes, but only just. It depends a lot on what you want to achieve. A home wall is
+                     much more fun for me than a hang board, but falls well short of a proper climbing gym or crag. That said, 
+                     the convenience and ability to train certain moves or techniques is helpful.
+                </p>
+
+                <h2>The key reasons</h2>
+                <p><strong>Ease of training:</strong> This is a key reason. I have a busy job so I don't have loads of time. With the nearest indoor wall around an hour's drive away, a good home training option is worthwhile for me, especially for winter when outdoor crags are too cold and wet to be fun.</p>
+                <p><strong>Cost saving:</strong> Wood, climbing holds and matting are quite expensive. There are ways to save money (make holds, use old mattresses, follow existing structures etc) but any <strong>good</strong> set up is going to cost £1,000+, if not more. Most climbing gyms offer discounted annual membership fees so whilst it's possible to save money with a home gym, it will take years of use to pay off and of course anything you build for a reasonable price is tiny compared to a commercial gym, so I would advise caution if your main motivation is having a cheaper alternative to a commercial gym.</p>
+                <p><strong>Train a weakness</strong> A big advantage of a home wall is the ability to set your own routes to work on your own weaknesses, like crack jamming, slopers or fine footwork for example. Crack climbing in gyms is particularly poorly represented. I also sometimes boulder at home with a trad rack and practice placing gear, a clear violation of health and safety in a normal gym but I'm happy to accept the risks and do it (I do have a much lower wall and thick matting).</p>
+        <hr />
+                <h2>How I built the wall</h2>
+                <p><strong>Pick the space</strong> If I started again I'd probably build something in the garden (because the loft is too steep &amp; small), maybe using the outside wall of the house. That said, making clever use of the space you have available is worthwhile. Also making an outside wall in Ireland would require a lot of weatherproofing, maintenance, and it would still have a shorter lifespan.</p>
+                <p><strong>Build the wall</strong> I didn't have much of a master plan. With a career in the software industry I'm used to building things in increments, testing as I go. Other websites have good advice on planning in advance. I also didn't have to do much structural “stud work” apart from the flat sides and boxing in the water tank.</p>
+                <p>I brought matting from core. It was expensive but was the right fit. I thought it was a waste of money because the wall is not high and I tend to land on my feet, but the one time I fell from the apex of the blue route and I landed head first on the mat (in a sealed loft) I was glad of a proper mat.</p>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/1-how-it-started.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/1-how-it-started.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/1-how-it-started.jpg')" 
+                    alt="Loft with the first layer of extra insulation. Note the wood beams I brought were too thin." class="blog-img" />
+                </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/2-the-first-climbing-holds.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/2-the-first-climbing-holds.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/2-the-first-climbing-holds.jpg')" 
+                    alt="Testing the first climbing holds as I was building the wall."  class="blog-img" />
+                </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/3-starting-to-look-like-a-climbing-wall.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/3-starting-to-look-like-a-climbing-wall.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/3-starting-to-look-like-a-climbing-wall.jpg')" 
+                    alt="At this stage I was starting to use the wall. The red and grey routes have mostly just been extended." class="blog-img"  />
+                </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/4-expansion-with-cheaper-softwood.webp" type="image/webp" /> 
+                    <img loading="lazy" src="/img/blog/home-wall/4-expansion-with-cheaper-softwood.jpg"
+                    onclick="openLightBox('/img/blog/home-wall/4-expansion-with-cheaper-softwood.jpg')" 
+                    alt="I used softer, cheaper, light yellow plywood for the expansion which is now degrading." class="blog-img"  />
+                  </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/5-my-wife-checking-in-on-my-progress.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/5-my-wife-checking-in-on-my-progress.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/5-my-wife-checking-in-on-my-progress.jpg')" 
+                    alt="Orla checking in on my progress / wondering where I had been" class="blog-img"  />
+                  </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/6-first-full-set-of-pannels.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/6-first-full-set-of-pannels.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/6-first-full-set-of-pannels.jpg')" 
+                    alt="The space taking shape with the a full set of pannels" class="blog-img"  />
+                 </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/7-the-climbing-matts-arrived.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/7-the-climbing-matts-arrived.jpg"
+                    onclick="openLightBox('/img/blog/home-wall/7-the-climbing-matts-arrived.jpg')" 
+                    alt="The climbing mats from Core arrived!" class="blog-img"  />
+              </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/8-main-phase-compleated.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/8-main-phase-compleated.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/8-main-phase-compleated.jpg')"
+                    alt="The main phase completed" class="blog-img"  />
+                   </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/9-cave-lighting-added.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/9-cave-lighting-added.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/9-cave-lighting-added.jpg')"
+                alt="Cave lighting added, reusing old strip ligths I found." class="blog-img"  />
+                  </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/10-a-very-full-home-climbing-wall.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/10-a-very-full-home-climbing-wall.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/10-a-very-full-home-climbing-wall.jpg')"
+                    alt="A recent 2026 photo of the very full home climbing wall" class="blog-img"  />
+                  </picture>
+            </div>
+            <div class="col-6 col-md-3">
+                <picture>
+                    <source srcset="/img/blog/home-wall/11-the-view-out-of-the-cave.webp" type="image/webp" />
+                    <img loading="lazy" src="/img/blog/home-wall/11-the-view-out-of-the-cave.jpg" 
+                    onclick="openLightBox('/img/blog/home-wall/11-the-view-out-of-the-cave.jpg')"
+                    alt="A recent 2026 photo of the view out of the cave" class="blog-img"  />
+                </picture>
+            </div>
+        </div>
+                <hr />
+        <div class="row">
+            <div class="col">
+                <h2>My 8 key learnings:</h2>
+                <style> h3 { font-size: 1.5rem; } </style>
+                <h3>1. Don't make it too steep.</h3>
+                <p> I followed the wooden rafters of the roof which was quick, easy and cheap for building the wall. But the wall is now extremely steep. This means warming up is hard and making routes typically requires bigger holds and/or more holds. If it was less steep I could use smaller holds and it would be more realistic training for climbing outside routes. The yellow warm up circuit cost more than £300. A route the same length and difficulty would cost a ¼ of the price on a less steep wall.</p>
+
+                <h3>2. Following natural structures saves time and money.</h3>
+                <p> Attaching wood battens to a solid brick or block wall and screwing ply to this is much cheaper than building your own load bearing structure. For overhangs you may be able to use roof rafters, but make sure they are strong enough. UK law (BS EN 1991) only requires roofs to hold 0.6 kN/m² (a static load of 60Kg per square meter). If you attach ply to multiple rafters the load is spread over more space. I have had zero issues 5 years on (and have solar panels on the other side) but the metal girders in my house gave me confidence it would be fine.</p>
+
+                <h3>3. Screw in T nuts are better.</h3>
+                <p> There are “<a href="https://www.holdz.co.uk/collections/t-nut/products/t-nut" target="_blank">hammer in</a>”
+                    spiked T nuts and “<a href="https://www.holdz.co.uk/collections/t-nut/products/plate-nuts-1" target="_blank">screw in</a>” plate
+                    T nuts. The Hammer in type are cheaper and quicker to install, but if you can't easily get access to the back of the wall, 
+                    go with screw in T nuts. The hammer in ones do pop out or twist off, even if you are careful. If a bolt pushes the nut through or twists it off you end up having to remove the panel or cut the bolt.</p>
+
+                <h3>4. Drill more holes than you think you will need.</h3>
+                <p> 5 years on and I've run out of T nut holes in the key parts of the wall so I have to use screw on holds and 
+                    <a href="https://www.climbingwallservices.com/products/the-lonestar-screw-washer-m5" target="_blank">Lonestar inserts</a>. 
+                    My spacing was 20cm offset but I would recommend 15cm or even 10cm spacing. Offsetting was also more faff than it was worth. A grid would be fine. Having more bolt holes makes it much easier to adjust routes and the position of holds without drilling lots of screw holes in the wall. Rotating a hold a few degrees / half a cm, can change the grade of a route up or down. Screw holes become unusable quickly on 18mm ply.</p>
+
+                <h3>5. Make it a nice space.</h3>
+                <p> Making the wall a fun &amp; nice place to be, will make you more likely to want to train there than a grimy dungeon. I didn't paint my wall (yet) and regret that now, because I don't want to strip the routes and re-do them just to paint it. Also the lighter coloured softwood ply was much cheaper and is degrading fast from smearing feet; I suspect paint would reduce this wear.</p>
+
+                <h3>6. Consider temperature control and ventilation early on.</h3>
+                <p> I've had to retrofit vents and fans into my loft. Having a ventilation set up to the outside, from the start, would have made more sense. In summer it can be too hot to climb and in winter warming up is hard.</p>
+
+                <h3>7. Use thicker and more regular support beams</h3>
+                <p> I used 18mm ply for the walls (which is quite standard), but did not keep the beams as close as I should, and also used some thinner beams than is ideal. Essentially using up spare wood I had. Now the wall flexes when doing more powerful moves. This is not a major problem, but a more solid wall would be more enjoyable. Using offcuts of spare wood for the beams saved money, but the wall is now “springy” in places.</p>
+
+                <h3>8. Use star drive / torx screws.</h3>
+                <p> Cross headed or Philips screws get damaged quite easily. Using a star headed screw and star drive bit is, in my view, worth the slightly higher cost.</p>
+        <hr />
+                <h2>Tool recommendations:</h2>
+
+                <p><strong>Cutting:</strong> A circular saw is highly recommended for cutting straight lines on ply sheets. It's much better for speed and straight edges Vs a jigsaw (although using a guide with Jigsaw is okay). If you can avoid cutting ply (by designing the wall based on full sheets) even better!</p>
+
+                <p><strong>Drill:</strong> Using a good quality 13mm auger drill bit with a powerful drill will make drilling the holes easier.</p>
+        <hr />
+                <h2>Home climbing wall training routines</h2>
+                <h3>Circuits with clips</h3>
+                <p> This is the best training routine I have ever found. I talk about it in the article
+                     <a href="/blog/8-training-routines-to-boost-climbing-performance/" target="_blank">8 training routines to boost climbing performance</a>. 
+                     Essentially pre place 5 or 6 bits of gear evenly then do 
+                     circuits for as long as possible clipping the gear as you go with a short 3m rope tied around your waist.
+                </p>
+
+                <h3>Twister</h3>
+                <p> I built <a href="https://www.multi-pitch.com/training/loft/" target="_blank">a basic voice recognition app</a>
+                     that can call out colours and limbs (left arm to green etc) and I move to 
+                    it and say "next" when done. I also built a version that requests I place trad gear periodically but haven't used 
+                    that in a while.
+                </p>
+
+                <h3>Routes &amp; Score Calculator</h3>
+                <p> There are over a dozen routes in the loft and I have given each a grade and score. 
+                    I then track the score of my sessions.</p>
+                
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col">
+                <h2>Where to buy Holds:</h2>
+                <p>For a home wall the below list, are the only suppliers really worth considering for the UK, in my view.
+                    I tried others like Metolious (their screw ons are okay), HRT (very poor quality volumes), 
+                    Bluestone (too expensive for what you get), Alien (good but out of business now) and a few others.
+                    The below list I'd all buy from again:
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <h4>Eclipse:</h4>
+                <p>
+                    <em><a href="https://eclipsepresas.eu/" target="_blank">https://eclipsepresas.eu/</a></em>
+                </p>
+                <ul>
+                    <li>✅ Great selection</li>
+                    <li>✅ Great price</li>
+                    <li>✅ Very well designed holds</li>
+                    <li>✅ Good mix of pack sizes (even individual holds)</li>
+                    <li>✅ Best options for crack routes</li>
+                    <li>✅ Responsive to questions (delivery to Northern Ireland was possible)</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <h4>Holdz:</h4>
+                <p>
+                    <em><a href="https://www.holdz.co.uk/" target="_blank">https://www.holdz.co.uk/</a></em>
+                </p>
+                <ul>
+                    <li>✅ Great selection</li>
+                    <li>✅ Decent price (although variable)</li>
+                    <li>✅ Good mix of pack sizes</li>
+                    <li>✅ Quick UK delivery</li>
+                    <li>🛑 Website is clunky if you want specific colours</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <h4>Tri-point:</h4>
+                <p>
+                    <em><a href="https://tripoint-holds.com/en/" target="_blank">https://tripoint-holds.com/en/</a></em>
+                </p>
+                <ul>
+                    <li>✅ Great selection</li>
+                    <li>✅ Great price</li>
+                    <li>✅ Very well designed holds</li>
+                    <li>✅ Very well finished holds</li>
+                    <li>✅ Good mix of pack sizes</li>
+                    <li>🛑 Delivery post Brexit is expensive</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <h4>Core:</h4>
+                <p>
+                    <em><a href="https://www.coreclimbing.com/" target="_blank">https://www.coreclimbing.com/</a></em>
+                </p>
+                <ul>
+                    <li>✅ Great selection</li>
+                    <li>✅ Very well designed holds</li>
+                    <li>✅ Very well finished holds</li>
+                    <li>✅ Good choice of colours</li>
+                    <li>🛑 Only sell bigger packs</li>
+                    <li>🛑 A bit expensive per hold</li>
+                </ul>
+                            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <h4>Custom holds:</h4>
+                <p>
+                    <em><a href="https://customholds.com/" target="_blank">https://customholds.com/</a></em>
+                </p>
+                <ul>
+                    <li>✅ Good price</li>
+                    <li>✅ Sell smaller sets &amp; even individuals</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+      
+  </main>
+  <!--Footer-->
+<footer class="page-footer text-center">
+    <section class="footer-image">
+        <div class="footer-image-filter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <h4><label for="mce-EMAIL">Subscribe to Email Updates</label></h4>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
+                         method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="blank">
+                            <input type="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
+                            <input  type="submit" aria-label="subscribe" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>    
+    <section class="grey">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <video autoplay loop muted playsinline class="danger-gif" loading="lazy" aria-hidden="true">
+                        <source src="/img/other/danger/climb-danger.webm" type="video/webm"> 
+                        <source src="/img/other/danger/climb-danger.mp4" type="video/mp4">  
+                    </video>
+                    <h4>Rock Climbing is Dangerous</h4>
+                    <p style="min-height:90px">
+                        <strong>Do not use any information in this website to plan, attempt, or climb a particular route 
+                        unless you are willing to assume personal responsibility for all risks associated. Don't 
+                        treat this site as instruction.</strong> Rock climbing is an activity with a
+                        danger of personal injury or death. Participants should be aware of and accept these risks and be
+                        responsible for their own actions. If in doubt, don't climb.
+                        <a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
+                            <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext" aria-hidden="true"></i>
+                        </a>
+                    </p>
+                </div>
+            
+            </div>
+        </div>
+    </section>
+    <section class="footer-copyright">
+
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2026 Creative Commons</a> - 
+        <a href="/">multi-pitch.com </a> - 
+        <a href="/about/#contact">Contact</a>        
+        <button type="button" class="theme-toggle footer-theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+            <svg class="tt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="tt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        </button>
+    </section>
+
+</footer>
+<div class="overlay" id="overlay"></div>
+<script>
+    window.performance.mark('html-end');
+</script>
+</body>
