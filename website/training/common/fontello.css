@@ -1,0 +1,11 @@
+/* Shared fontello face for the training apps.
+   Paths are relative to this file (website/training/common/). */
+@font-face {
+    font-family: 'fontello';
+    src: url('font/fontello.woff2?22899839') format('woff2'),
+         url('font/fontello.woff?22899839') format('woff'),
+         url('font/fontello.ttf?22899839') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
