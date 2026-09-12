@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2026-10-07T14:26:01.356Z",
+    "lastUpdate": "2026-10-07T14:26:03.356Z",
     "climbs": [
         {
             "cliff": "Great Tor",
@@ -769,7 +769,7 @@
             "abseil": true,
             "traverse": true,
             "loose": true,
-            "lastUpdate": "2021-10-15T01:01:42.339Z",
+            "lastUpdate": "2021-10-15T01:01:32.339Z",
             "tileImage": {
                 "url": "img/tiles/grey-rock-at-montserrat-new.jpg",
                 "alt": "Grey Rock at Montserrat",
@@ -1146,7 +1146,7 @@
             "approachTime": 50,
             "approachDifficulty": 1,
             "polished": true,
-            "lastUpdate": "2024-11-17T21:28:45.590Z",
+            "lastUpdate": "2024-11-17T21:28:46.590Z",
             "tileImage": {
                 "url": "img/tiles/cneifion-arete-in-wales.jpg",
                 "alt": "The Cneifion Arete is a a classic climb with a dramatic ridge"
@@ -1264,7 +1264,7 @@
             "geoLocation": "38.6275318021,-0.1563388592019",
             "approachTime": 10,
             "approachDifficulty": 1,
-            "lastUpdate": "2026-01-31T10:03:51.356Z",
+            "lastUpdate": "2026-04-30T13:26:02.356Z",
             "tileImage": {
                 "url": "img/tiles/rincon-de-placa-climb.jpg",
                 "alt": "Rincon de Placa Climb in the Echo Valley"
@@ -1312,7 +1312,7 @@
             "geoLocation": "38.58914075,-0.2077085118",
             "approachTime": 45,
             "approachDifficulty": 1,
-            "lastUpdate": "2026-02-06T21:28:45.590Z",
+            "lastUpdate": "2026-02-07T13:26:01.356Z",
             "tileImage": {
                 "url": "img/tiles/aristotles-puig-campana.jpg",
                 "alt": "Aristotles Climb on Puig Campana"

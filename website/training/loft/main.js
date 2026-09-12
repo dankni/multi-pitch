@@ -220,32 +220,34 @@ let introRun = false;
 
 function startTimer() {
 
-    if(introRun === false && stoptime === true) { 
-      setTimeout(function(){
-          speak("Three");
-          background("red");
-          setTimeout(function(){
-                speak("Two");
-                background("orange");
-                setTimeout(function(){
-                    speak("One");
-                    background("yellow");
-                    setTimeout(function(){
-                        speak(chooseTask());
-                        recognition.start();
-                        stoptime = false;
-                        timerCycle();
-                        introRun = true;
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }, 1000);
+    if(introRun === false && stoptime === true) {
+        // Nothing to pause until the session is actually running, and the
+        // countdown can't be stopped once the voice is underway, so take the
+        // button out of play until the first task is announced.
+        let button = document.getElementById('primaryButton');
+        button.disabled = true;
+        countdown(function(){ // in common/functions.js, paced by the voice
+            background(""); // default
+            speak(chooseTask());
+            recognition.start();
+            introRun = true;
+            startCycle();
+            button.disabled = false;
+        });
+        return;
     }
     if (introRun === true && stoptime == true) {
-        stoptime = false;
         recognition.start(); // restart listening 
-        timerCycle();
+        startCycle();
     }
+}
+
+// Starts the clock ticking a full second from now, so the display reads 0:00:00
+// for its first second instead of jumping straight to 0:00:01 and staying a
+// second ahead of the session for good.
+function startCycle(){
+    stoptime = false;
+    setTimeout(timerCycle, debug ? 100 : 1000);
 }
 function stopTimer() {
     if (stoptime == false) {
@@ -289,7 +291,7 @@ function timerCycle() {
     }
 
     document.getElementById('elapsed').innerHTML = hr + ':' + min + ':' + sec;
-    debug ? setTimeout("timerCycle()", 100) : setTimeout("timerCycle()", 1000);
+    setTimeout(timerCycle, debug ? 100 : 1000);
     }
 }
 

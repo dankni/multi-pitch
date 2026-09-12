@@ -24,12 +24,27 @@ const blogArticles = JSON.parse(fs.readFileSync('./website/blog/content.json')).
 
 const gradesContent = JSON.parse(fs.readFileSync('./website/climbing-grades/content.json'));
 
+// The training apps are hand written static pages rather than generated from a
+// JSON source, so their dates live here - bump one when you change that app.
+const trainingPages = [
+    { url: '/training/', lastUpdated: '2026-09-12', priority: '0.7' },
+    { url: '/training/loft/', lastUpdated: '2026-09-12', priority: '0.6' },
+    { url: '/training/rings/', lastUpdated: '2026-09-12', priority: '0.6' },
+    { url: '/training/gilford/', lastUpdated: '2026-09-12', priority: '0.6' }
+];
+
 function generate() {
     const blogEntries = blogArticles.map(article => `
         <url>
             <loc>https://www.multi-pitch.com${article.url}</loc>
             <lastmod>${article.lastUpdated.substring(0, 10)}</lastmod>
             <priority>0.80</priority>
+        </url>`);
+    const trainingEntries = trainingPages.map(page => `
+        <url>
+            <loc>https://www.multi-pitch.com${page.url}</loc>
+            <lastmod>${page.lastUpdated}</lastmod>
+            <priority>${page.priority}</priority>
         </url>`);
     const urlsEntry = climbsData.map(climb => {
         const loc = "https://www.multi-pitch.com/climbs/" + returnClimbURL(climb.routeName, climb.cliff);
@@ -73,7 +88,7 @@ function generate() {
             <lastmod>${tipsLastmod(gradesContent.lastUpdated)}</lastmod>
             <priority>0.7</priority>
         </url>
-        ${blogEntries.join('')}${urlsEntry.join('')}
+        ${trainingEntries.join('')}${blogEntries.join('')}${urlsEntry.join('')}
     </urlset>`;
 
     const fileLocation = path.resolve(__dirname, OUTPUT_FOLDER, FILE_NAME);

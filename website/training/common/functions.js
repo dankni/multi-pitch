@@ -41,12 +41,62 @@ function fullscreen(){
     }
 }
 
-// Function that uses uses speech synthesis to say text. 
-function speak(inputTxt){
-    if (sound === true){		  
+// How long to wait for the speech engine to start before carrying on without it
+const speechStartTimeout = 1000;
+
+// Function that uses uses speech synthesis to say text.
+// onStart (optional) fires the moment the audio actually begins, so anything on
+// screen can be timed off the voice instead of off a guessed delay. It also fires
+// when there is no voice at all (sound off, unsupported browser, speech error) and
+// is capped by a safety timeout so a silent engine can never stall the caller.
+function speak(inputTxt, onStart){
+    let fired = false;
+    let fire = function(){
+        if(fired === true){ return; }
+        fired = true;
+        if(onStart){ onStart(); }
+    };
+
+    if (sound === true && 'speechSynthesis' in window){
         var utterThis = new SpeechSynthesisUtterance(inputTxt); // Note: Chrome needs user interaction to work
+        utterThis.onstart = fire;
+        utterThis.onerror = fire;
+        setTimeout(fire, speechStartTimeout); // in case the engine never reports a start
         window.speechSynthesis.speak(utterThis);
+    } else {
+        fire();
     }
+}
+
+// Counts "Three, Two, One" down. Each colour flips when its own word actually
+// starts speaking, and the next step is scheduled from that moment, so the screen
+// and the voice stay locked together however long the engine takes to warm up.
+// onComplete runs one step after "One" has begun.
+function countdown(onComplete){
+    const steps = [
+        { "word" : "Three", "colour" : "red" },
+        { "word" : "Two",   "colour" : "orange" },
+        { "word" : "One",   "colour" : "yellow" }
+    ];
+    const gap = debug ? 300 : 1000;
+
+    // Drop anything still queued from a previous run, otherwise the countdown has
+    // to wait its turn behind it before a single word is heard.
+    if('speechSynthesis' in window && (window.speechSynthesis.speaking || window.speechSynthesis.pending)){
+        window.speechSynthesis.cancel();
+    }
+
+    let runStep = function(index){
+        if(index === steps.length){
+            onComplete();
+            return;
+        }
+        speak(steps[index].word, function(){
+            background(steps[index].colour);
+            setTimeout(function(){ runStep(index + 1); }, gap);
+        });
+    };
+    runStep(0);
 }
 
 // Function to toggle Dark Mode based onChange of checkbox

@@ -81,6 +81,14 @@ button {
 button:hover, button:focus {
     background: #0053ba;
 }
+/* PAUSE is disabled while the countdown runs - there is no session to pause yet */
+button:disabled, button:disabled:hover, button:disabled:focus {
+    background: #9bbde8;
+    cursor: default;
+}
+button:disabled:active {
+    transform: none;
+}
 button:focus {
     outline: 1px solid #fff;
     outline-offset: -4px;
@@ -328,6 +336,12 @@ input[type=checkbox]:checked::before {
 }
 .dark section, .dark aside div {
     background-color: #BFBDBD;
+}
+/* The countdown colours land on a word each, so they can't take the 0.5s fade
+   above - at that speed the screen is still mid-transition when the next word
+   is spoken. The default and green states keep the slower fade. */
+body.red, body.orange, body.yellow {
+    transition: background-color 120ms linear;
 }
 .red {
     background-color: rgba(255,65,54,0.8);

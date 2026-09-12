@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Free climbing training web apps from multi-pitch.com - a voice controlled endurance trainer, the Metolius rock ring workout and the Gilford wall tick list." />
+    <link href="common/style.css" rel="stylesheet" />
+    <link href="common/fontello.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" />
+    <style>
+        /* This page is static - no JavaScript - so dark mode comes from the
+           media query below rather than the .dark class the apps toggle. */
+        .intro {
+            width: 90%;
+            max-width: 560px;
+            margin: 20px auto 30px;
+            line-height: 1.5;
+        }
+        .apps {
+            width: 90%;
+            max-width: 560px;
+            margin: 0 auto 40px;
+            padding: 0;
+            list-style: none;
+        }
+        .app-card {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+            background: #F9F9F9;
+            border-radius: 5px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: transform 150ms ease, box-shadow 150ms ease;
+        }
+        .app-card:hover, .app-card:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+        }
+        .app-card .demo-icon {
+            font-size: 34px;
+            color: #3b94ff;
+            flex: 0 0 auto;
+            margin-right: 16px;
+        }
+        .app-card h2 {
+            margin: 0 0 4px 0;
+            font-size: 20px;
+        }
+        .app-card p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0.85;
+        }
+        .home-link {
+            display: block;
+            margin: 0 auto 40px;
+            font-size: 14px;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #111;
+                color: #E8E8E8;
+            }
+            nav {
+                border-bottom: 1px solid #666;
+            }
+            .app-card {
+                background: #BFBDBD;
+                color: #121212;
+            }
+        }
+    </style>
+    <title>Climbing Training Apps</title>
+  </head>
+  <body>
+    <nav>
+        <h1>Training Apps</h1>
+    </nav>
+
+    <p class="intro">
+        Free climbing training apps. They all run in the browser, work offline once
+        loaded and keep everything on your own device.
+    </p>
+
+    <ul class="apps">
+        <li>
+            <a class="app-card" href="loft/">
+                <i class="demo-icon icon-mic" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Loft Climb Tracker</h2>
+                    <p>
+                        Voice controlled endurance training for a home wall. Say
+                        &quot;next&quot; and it calls out the next limb and hold colour,
+                        with an optional trad mode for placing gear and building belays.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="rings/">
+                <i class="demo-icon icon-star" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Rock Ring Trainer</h2>
+                    <p>
+                        The Metolius ten minute rock ring workout, timed and read out
+                        as you go. Easy, original and hard plans, and a log of past
+                        sessions.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="gilford/">
+                <i class="demo-icon icon-ok" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Gilford Wall Tick List</h2>
+                    <p>
+                        A digital version of the paper tick list for the 24 routes at
+                        the Gilford wall. Tap the climbs you got up and save the session.
+                    </p>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+    <a class="home-link" href="/">&larr; multi-pitch.com</a>
+  </body>
+</html>
