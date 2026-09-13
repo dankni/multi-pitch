@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
-    <meta name="description" content="Free climbing training web apps from multi-pitch.com - a voice controlled endurance trainer, the Metolius rock ring workout and the Gilford wall tick list." />
+    <meta name="description" content="Free climbing training web apps from multi-pitch.com - a voice controlled endurance trainer, the Metolius rock ring workout, a lap timer, the Gilford wall tick list and an endurance circuit builder." />
     <link href="common/style.css" rel="stylesheet" />
     <link href="common/fontello.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -47,6 +47,17 @@
             flex: 0 0 auto;
             margin-right: 16px;
         }
+        /* Two cards use a drawn icon rather than a font glyph, so they are sized
+           and spaced to sit in the same column as the rest. The glyphs carry a
+           .2em left margin of their own, hence the 7px here. */
+        .app-card .app-icon {
+            width: 32px;
+            height: 32px;
+            flex: 0 0 auto;
+            margin-left: 7px;
+            margin-right: 16px;
+            color: #3b94ff;
+        }
         .app-card h2 {
             margin: 0 0 4px 0;
             font-size: 20px;
@@ -57,10 +68,16 @@
             line-height: 1.4;
             opacity: 0.85;
         }
-        .home-link {
+        /* Set the link colour explicitly - the browser default blue is close to
+           invisible on the dark background below and a bit weak on white. */
+        .home-link, .home-link:visited {
             display: block;
             margin: 0 auto 40px;
             font-size: 14px;
+            color: #0b4fbf;
+        }
+        .home-link:hover, .home-link:focus {
+            color: #062f73;
         }
         @media (prefers-color-scheme: dark) {
             body {
@@ -73,6 +90,12 @@
             .app-card {
                 background: #BFBDBD;
                 color: #121212;
+            }
+            .home-link, .home-link:visited {
+                color: #8FC2FF;
+            }
+            .home-link:hover, .home-link:focus {
+                color: #C4DEFF;
             }
         }
     </style>
@@ -90,27 +113,29 @@
 
     <ul class="apps">
         <li>
-            <a class="app-card" href="loft/">
-                <i class="demo-icon icon-mic" aria-hidden="true"></i>
-                <div class="app-text">
-                    <h2>Loft Climb Tracker</h2>
-                    <p>
-                        Voice controlled endurance training for a home wall. Say
-                        &quot;next&quot; and it calls out the next limb and hold colour,
-                        with an optional trad mode for placing gear and building belays.
-                    </p>
-                </div>
-            </a>
-        </li>
-        <li>
             <a class="app-card" href="rings/">
-                <i class="demo-icon icon-star" aria-hidden="true"></i>
+                <!-- AI generated SVG is a bit wonkey but good enough -->
+                <svg class="app-icon" viewBox="0 0 100 126" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" fill-rule="evenodd" d="M11.5,0 C5.5,0.5 1,7 0,19 C0,29 2.2,37 4.5,44 C6.8,52 11,62 13.1,69 C15.2,82 18.6,97 20.9,107 C23,116 33,126 46,126 L54,126 C67,126 77,116 79.1,107 C81.4,97 84.8,82 86.9,69 C89,62 93.2,52 95.5,44 C97.8,37 100,29 100,19 C99,7 94.5,0.5 88.5,0 C85,3.5 81.5,8 78,8 C69,7 61,2.5 50,2.5 C39,2.5 31,7 22,8 C18.5,8 15,3.5 11.5,0 Z M25.5,20 H74.5 A8,8 0 0 1 82.5,28 V38.5 A8,8 0 0 1 74.5,46.5 H25.5 A8,8 0 0 1 17.5,38.5 V28 A8,8 0 0 1 25.5,20 Z M31,60 H69 A7,7 0 0 1 76,67 V75 A7,7 0 0 1 69,82 H31 A7,7 0 0 1 24,75 V67 A7,7 0 0 1 31,60 Z M37,94 H63 A6,6 0 0 1 69,100 V105 A6,6 0 0 1 63,111 H37 A6,6 0 0 1 31,105 V100 A6,6 0 0 1 37,94 Z"/>
+                </svg>
                 <div class="app-text">
                     <h2>Rock Ring Trainer</h2>
                     <p>
                         The Metolius ten minute rock ring workout, timed and read out
                         as you go. Easy, original and hard plans, and a log of past
                         sessions.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="timer/">
+                <i class="demo-icon icon-ccw" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Circuit Timer &amp; Lap Counter</h2>
+                    <p>
+                        A stopwatch with a lap button. Tap it each time you finish a
+                        circuit and it keeps your total time and the number of laps done.
                     </p>
                 </div>
             </a>
@@ -123,6 +148,33 @@
                     <p>
                         A digital version of the paper tick list for the 24 routes at
                         the Gilford wall. Tap the climbs you got up and save the session.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="endurance/">
+                <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <path fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M6,56 H26 L36,28 L52,76 L62,50 L70,56 H94"/>
+                </svg>
+                <div class="app-text">
+                    <h2>Endurance</h2>
+                    <p>
+                        Similar to Stefano Ghisolfi's so called doubles. Endurance or 
+                        Power Endurance options with configuration. 
+                    </p>
+                </div>
+            </a>
+        </li>
+         <li>
+            <a class="app-card" href="loft/">
+                <i class="demo-icon icon-mic" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Climbing Twister</h2>
+                    <p>
+                        Voice controlled endurance training, originally built for my loft 
+                        home wall but can be configured to any spray wall. Say
+                        &quot;next&quot; and it calls out the next limb and hold colour.
                     </p>
                 </div>
             </a>

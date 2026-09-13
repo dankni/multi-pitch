@@ -41,6 +41,57 @@ function fullscreen(){
     }
 }
 
+/* Two tap confirm, shared by any app with a button that throws a session away.
+
+   The first tap only arms the button - it swaps to reading SURE? and nothing is
+   lost until a second tap arrives. If that tap doesn't come the button goes back
+   to its own wording on its own, so a session can't sit one stray touch away from
+   being wiped.
+
+   Apps call confirmReset() from the button's onclick, passing the id of their own
+   button, whether there is anything worth protecting (a session with nothing in
+   it yet just clears on the first tap) and what to actually do on the second. An
+   app that hides the button again - on resume, say - should call disarmReset() so
+   it can't come back still reading SURE?.
+
+   The wording and icon are whatever the app already put in the button - RESET in
+   the Loft and Lap Timer apps, DISCARD in the Gilford one - so they are put back
+   exactly as they were rather than assumed here. */
+let resetArmed = false;
+let resetButtonId = null;
+let resetRestingLabel = null;
+let resetDisarmTimer = null;
+const resetArmedTimeout = 4000;
+
+function confirmReset(buttonId, worthKeeping, onConfirm){
+    if(resetArmed === false && worthKeeping === true){
+        let button = document.getElementById(buttonId);
+        let icon = button.querySelector("i");
+        resetArmed = true;
+        resetButtonId = buttonId;
+        resetRestingLabel = button.innerHTML;
+        button.innerHTML = (icon === null ? "" : icon.outerHTML) + "SURE?";
+        resetDisarmTimer = setTimeout(disarmReset, resetArmedTimeout);
+        return;
+    }
+    disarmReset();
+    onConfirm();
+}
+
+// Safe to call whether or not the button was ever armed - it only touches the
+// page when there is a SURE? on screen to put back
+function disarmReset(){
+    if(resetDisarmTimer !== null){
+        clearTimeout(resetDisarmTimer);
+        resetDisarmTimer = null;
+    }
+    if(resetArmed === true && resetButtonId !== null){
+        document.getElementById(resetButtonId).innerHTML = resetRestingLabel;
+    }
+    resetArmed = false;
+    resetRestingLabel = null;
+}
+
 // How long to wait for the speech engine to start before carrying on without it
 const speechStartTimeout = 1000;
 

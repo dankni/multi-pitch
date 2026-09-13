@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+	<meta name="description" content="A simple climbing lap timer. Start the clock, tap LAP each time you finish a circuit and it keeps a running total of your time and the number of laps done.">
+	<link href="../common/fontello.css" rel="stylesheet" />
+	<link href="../common/style.css" rel="stylesheet" />
+	<link href="style.css" rel="stylesheet" />
+	<script src="../common/functions.js" ></script>
+	<script src="main.js" ></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" />
+    <title>Climbing Lap Timer</title>
+  </head>
+
+  <body>
+	<nav>
+		<div class="left-nav">
+			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
+		</div>
+		<h1>Lap Timer</h1>
+		<div class="right-nav">
+			<i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
+		</div>
+	</nav>
+
+	<button id="primaryButton" onclick="toggleTimer()"><i class="demo-icon icon-play"></i>START</button>
+	<button class="secondary" id="resetButton" onclick="resetTimer()"><i class="demo-icon icon-ccw"></i>RESET</button>
+
+	<div id="data">
+		<div class="box">
+			<h3>Timer: <br /><span id="elapsed">0:00:00</span></h3>
+		</div>
+		<div class="box">
+			<h3>Laps: <br /><span id="lapCount">0</span></h3>
+		</div>
+	</div>
+
+	<div id="actions">
+		<button id="finishButton" onclick="openSavePanel()" disabled>FINISH SESSION</button>
+		<button id="lapButton" class="lap-button" onclick="recordLap()" disabled><i class="demo-icon icon-ok"></i>LAP</button>
+	</div>
+
+	<div id="endingDiv" class="ending">
+		<p class="save-title">Good Session?</p>
+		<div class="star-holder">
+			<i class="demo-icon icon-star" id="star1" role="button" tabindex="0" aria-label="Rate session 1 of 5" onclick="setStar(1);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(1);}"></i>
+			<i class="demo-icon icon-star" id="star2" role="button" tabindex="0" aria-label="Rate session 2 of 5" onclick="setStar(2);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(2);}"></i>
+			<i class="demo-icon icon-star" id="star3" role="button" tabindex="0" aria-label="Rate session 3 of 5" onclick="setStar(3);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(3);}"></i>
+			<i class="demo-icon icon-star" id="star4" role="button" tabindex="0" aria-label="Rate session 4 of 5" onclick="setStar(4);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(4);}"></i>
+			<i class="demo-icon icon-star" id="star5" role="button" tabindex="0" aria-label="Rate session 5 of 5" onclick="setStar(5);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(5);}"></i>
+		</div>
+		<button onclick="saveSession();" id="saveSession" class="save-session-button">SAVE SESSION</button>
+	</div>
+
+	<aside id="about">
+		<h2>About this application</h2>
+		<p>
+			A stopwatch for lap training. Start the clock, then tap LAP every time you
+			finish a circuit, a set on the bouldering wall or a lap on a route. It keeps
+			the total time and the number of laps &ndash; nothing else to fiddle with.
+		</p>
+		<p>
+			Pause and start again as often as you like &ndash; the clock only counts while
+			it is running. Sessions are saved on this device only, nothing is uploaded
+			anywhere. Press the space bar to lap and Escape to pause if you have a keyboard.
+		</p>
+		<p>
+			<a href="/training/">
+				<i class="demo-icon icon-link"></i> All training apps
+			</a>
+			<br />
+			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/timer" target="blank">
+				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
+			</a>
+		</p>
+		<hr />
+		<h2>Settings</h2>
+		<label class="switch-label">
+			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+			</span>
+		</label>
+		<hr />
+		<h2>Activity Log</h2>
+		<p id="stats"></p>
+		<div id="log"></div>
+		<br />
+		<hr />
+		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close about panel"></a>
+	</aside>
+  </body>
+</html>

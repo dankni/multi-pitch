@@ -1,0 +1,309 @@
+/* Set up screen */
+#setup {
+    width: 90%;
+    max-width: 520px;
+    margin: 0 auto;
+}
+.picker {
+    margin: 0 auto 6px;
+}
+.picker label {
+    margin: 0 3px 10px;
+}
+#styleHint {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.8;
+    margin: 6px auto 0;
+    max-width: 420px;
+}
+
+/* The stage bar - which part of the session you are in, and the rest clock */
+#sessionHolder {
+    display: none;
+}
+#stageBar {
+    max-width: 520px;
+    margin: 16px auto 12px;
+    padding: 14px 12px;
+    box-sizing: border-box;
+}
+#stageBar h2 {
+    margin: 0;
+    font-size: 24px;
+}
+#restClock {
+    display: none;
+    font-size: 60px;
+    margin: 6px 0 0;
+    /* Tabular figures stop the clock jittering as the digits change */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+#stageHint {
+    margin: 6px 0 0;
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+/* Climbs to tick. The hold colours match the ones in the Gilford tick list -
+   they are the colours of the holds on the wall itself. */
+#climbs {
+    max-width: 520px;
+    margin: 0 auto;
+}
+.route {
+    --hold: #cccccc;
+    --ink: #111111;
+}
+.hold-yellow { --hold: #ffd400; --ink: #1a1600; }
+.hold-white  { --hold: #e8e8e8; --ink: #222222; }
+.hold-grey   { --hold: #9b9b9b; --ink: #111111; }
+.hold-orange { --hold: #ff851b; --ink: #2a1400; }
+.hold-red    { --hold: #ff4136; --ink: #ffffff; }
+.hold-pink   { --hold: #ff6fcf; --ink: #2c0020; }
+.hold-green  { --hold: #2ecc40; --ink: #06240c; }
+.hold-blue   { --hold: #0074d9; --ink: #ffffff; }
+.hold-black  { --hold: #2b2b2b; --ink: #ffffff; }
+
+.route {
+    position: relative;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 64px;
+    margin: 0 0 8px;
+    padding: 10px 40px 10px 12px;
+    border-left: 10px solid var(--hold);
+    border-radius: 8px;
+    background: #F9F9F9;
+    color: #222;
+    font-family: 'Hind', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+}
+.route:hover, .route:focus {
+    background: #ececec;
+}
+.route:focus {
+    outline: 2px solid #3b94ff;
+    outline-offset: 1px;
+}
+.route.ticked {
+    background: var(--hold);
+    color: var(--ink);
+    border-left-color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
+}
+/* With the Gilford wall switched off there is no hold colour to show, so the
+   swatch down the side goes and a ticked climb uses the app's own blue */
+.route.plain {
+    border-left-color: transparent;
+    padding-left: 22px;
+}
+.route.plain .route-grade {
+    font-size: 24px;
+}
+.route.plain.ticked {
+    background: #3b94ff;
+    color: #ffffff;
+    border-left-color: #0053ba;
+    box-shadow: none;
+}
+.route.ticked:hover, .route.ticked:focus {
+    background: var(--hold);
+}
+.route-colour {
+    font-size: 13px;
+    opacity: 0.75;
+}
+.route-grade {
+    font-size: 22px;
+    line-height: 1.2;
+}
+.route .tick {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 24px;
+    opacity: 0;
+    margin: 0;
+}
+.route.ticked .tick {
+    opacity: 1;
+}
+
+/* Buttons */
+#choice {
+    display: none;
+}
+
+/* Skipping the rest is a quiet, deliberate thing to do, so it is a plain link
+   rather than a button - but it still has to be readable at arm's length on a
+   wall, hence the solid blues rather than a faded grey. */
+#skipRest {
+    display: none;
+    /* shrink wrapped and centred, so it sits on its own line clear of the
+       DISCARD button without turning the whole width into a hit area */
+    width: fit-content;
+    margin: 20px auto 18px;
+    padding: 8px 14px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #0053ba;
+    text-decoration: underline;
+}
+#skipRest:hover, #skipRest:focus {
+    color: #00306e;
+}
+.dark #skipRest {
+    color: #8ec5ff;
+}
+.dark #skipRest:hover, .dark #skipRest:focus {
+    color: #c5e0ff;
+}
+#choice button {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    margin: 12px auto 0;
+}
+#anotherSet {
+    background: #3d83d886;
+}
+#discard {
+    display: none;
+    margin-bottom: 40px;
+}
+.ending {
+    margin-bottom: 40px;
+}
+.save-title {
+    margin-top: 20px;
+}
+
+/* About panel */
+aside div, .dark aside div {
+    background-color: #111;
+}
+#log {
+    max-width: 100%;
+    width: 90%;
+    text-align: left;
+    padding: 4px 12px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+#log p {
+    margin: 12px auto;
+    font-size: 15px;
+    line-height: 1.5;
+}
+/* The about panel sits on near black, so everything in it is white at full
+   strength - nothing dimmed by opacity, since it gets read at arm's length */
+#about, #about .switch-label, #about .label-content, #about .demo-icon {
+    color: #FFFFFF;
+}
+/* common/style.css gives every .icon-ok a 40px right margin, for the spacing of
+   the delete confirm in the log. The tick on the settings toggle wants none of
+   it - the space in the markup is gap enough before the label. */
+#about .switch-label .icon-ok {
+    margin-right: 0;
+}
+#stats {
+    font-size: 14px;
+}
+#log .icon-trash, #log .icon-ok, #log .icon-cancel {
+    cursor: pointer;
+}
+#log .icon-trash {
+    margin-left: 18px;
+}
+#log .icon-ok {
+    margin-right: 24px;
+}
+
+/* Dark mode */
+.dark h2, .dark #styleHint {
+    color: #FFF;
+}
+.dark #stageBar {
+    background: #262626;
+    color: #FFF;
+}
+.dark #restClock {
+    color: #FFF;
+}
+.dark .route {
+    background: #2a2a2a;
+    color: #eee;
+}
+.dark .route:hover, .dark .route:focus {
+    background: #383838;
+}
+.dark .route.ticked {
+    background: var(--hold);
+    color: var(--ink);
+}
+
+/* The rest picker in the settings panel. A fieldset rather than a heading and a
+   div, so the three buttons are announced as the one choice they are. The width
+   is the one the panel's own headings and paragraphs use, so it lines up with
+   the rest of the panel rather than setting its own edges. */
+.setting-group {
+    width: 80%;
+    max-width: 450px;
+    margin: 20px auto 10px;
+    padding: 0;
+    border: 0;
+}
+.setting-group legend {
+    padding: 0 0 8px;
+    font-size: 16px;
+}
+/* Laid out as a flex row rather than inline-blocks: the whitespace between the
+   labels in the markup is inline content of its own, and it left the row of
+   three sitting a few pixels off the middle of the panel. Flex ignores it, and
+   wraps the three onto two lines on a narrow phone without losing the centre. */
+.setting-group .picker {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    /* a div in the info panel is given a filled panel of its own by the shared
+       stylesheet - the switches beside this one carry no such thing, and it only
+       drew a bar wider than the three buttons sitting in it */
+    background: none;
+}
+.setting-group .picker label {
+    margin: 0;
+}
+/* The shared stylesheet hides the real radios off to the left but puts them back
+   to position:relative further down, which leaves them taking part in the layout
+   - as flex items of their own they pushed the row off centre. Scoped here so
+   the pickers on the set up screen keep whatever stacking that rule is for. */
+.setting-group .picker input[type="radio"] {
+    position: absolute;
+}
+
+@media (max-width: 380px) {
+    #restClock {
+        font-size: 48px;
+    }
+    #stageBar h2 {
+        font-size: 20px;
+    }
+    .route {
+        font-size: 14px;
+        min-height: 58px;
+    }
+    .route-grade {
+        font-size: 20px;
+    }
+}

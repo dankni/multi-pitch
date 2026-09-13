@@ -111,6 +111,7 @@ function setStarted(){
         startTimer();
         document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
         document.getElementById('reset').style.display = 'none';
+        disarmReset(); // the button is on its way out, don't leave it reading SURE?
     } else {
         state.aborted = true; // so it stops listening
         state.started === false; // so it can resume on next click
@@ -295,7 +296,12 @@ function timerCycle() {
     }
 }
 
+// confirmReset is in common/functions.js - the first tap only arms the button
 function reset() {
+    confirmReset("reset", state.movesMade > 0 || hr > 0 || min > 0 || sec > 0, clearSession);
+}
+
+function clearSession() {
     hr = 0;
     min = 0;
     sec = 0;

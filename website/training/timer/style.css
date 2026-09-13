@@ -1,0 +1,107 @@
+/* The two boxes - total time in one, lap count in the other - follow the same
+   layout as the counters in the Loft app, spanning the page at any width. */
+.box {
+    display: inline-block;
+    width: 45%;
+    margin: 2%;
+    border-radius: 5px;
+    background: #cfcfcf;
+    height: 120px;
+}
+.dark .box {
+    background: #363636;
+}
+h3 {
+    font-size: 28px;
+    margin: 28px 14px;
+}
+/* Tabular figures stop the clock jittering as the digits change */
+#elapsed, #lapCount {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* A button under each box, on the same 45% grid, so LAP sits under the lap count
+   and FINISH SESSION under the clock. Neither appears until a session is under
+   way, and they come and go together so that neither ever slides into the
+   other's column. Hidden here rather than in script so they can't flash up
+   before the page has drawn itself. */
+#actions button {
+    display: none;
+    width: 45%;
+    margin: 0 2% 40px;
+    padding: 1.1rem 0.4rem;
+    /* FINISH SESSION wraps to two lines on a narrow phone - the min-height keeps
+       both buttons the same size when it does */
+    min-height: 76px;
+    box-sizing: border-box;
+    font-size: 1.1rem;
+    line-height: 1.2;
+    white-space: normal;
+    border-radius: 8px;
+    vertical-align: top;
+}
+.lap-button.flash {
+    background: #2ecc40;
+    transform: scale(0.99);
+}
+.lap-button i {
+    font-size: 1rem;
+}
+
+#resetButton {
+    display: none;
+}
+.ending {
+    margin-bottom: 40px;
+}
+.save-title {
+    margin-top: 20px;
+}
+.dark h2 {
+    color: #FFF;
+}
+
+/* About panel */
+aside div, .dark aside div {
+    background-color: #111;
+}
+#log {
+    max-width: 100%;
+    width: 90%;
+    text-align: left;
+    padding: 4px 12px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+#log p {
+    margin: 12px auto;
+    font-size: 15px;
+}
+#stats {
+    font-size: 14px;
+    opacity: 0.8;
+}
+#log .icon-trash, #log .icon-ok, #log .icon-cancel {
+    cursor: pointer;
+}
+#log .icon-trash {
+    margin-left: 18px;
+}
+#log .icon-ok {
+    margin-right: 24px;
+}
+
+@media (max-width: 380px) {
+    h3 {
+        font-size: 24px;
+        margin: 24px 8px;
+    }
+    .box {
+        height: 110px;
+    }
+    #actions button {
+        padding: 0.9rem 0.3rem;
+        font-size: 1rem;
+    }
+}
