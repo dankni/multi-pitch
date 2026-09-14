@@ -1,6 +1,6 @@
 // Circuit training on the Gilford wall. The session is a warm up, then sets of
-// climbs with a rest between each, picked to sit a set number of grades below
-// whatever the climber says their max is.
+// laps with a rest between each, every set on a single route picked to sit a set
+// number of grades below whatever the climber says their max is.
 //
 // Grades step by letter here - a plus is a shade of its own grade rather than a
 // grade of its own - so one grade below 7b is 7a and two below is 6c. The ladder
@@ -86,10 +86,9 @@ function setPool(maxGrade, style, useWall){
     return poolFor(stepsBelow(maxGrade, style), useWall);
 }
 
-// Sets are drawn fresh each time, so a climb can come round again later in the
-// session. On the wall the same route is never picked twice within one list -
-// off it there is nothing telling two climbs of a grade apart, so a grade can
-// come up more than once.
+// The warm up is a list of different climbs: on the wall the same route is never
+// picked twice within it - off it there is nothing telling two climbs of a grade
+// apart, so a grade can come up more than once.
 function pickClimbs(pool, count, useWall){
     let picked = [];
     if(useWall === true){
@@ -104,6 +103,26 @@ function pickClimbs(pool, count, useWall){
         picked.push({ "route" : null, "grade" : pool[Math.floor(Math.random() * pool.length)], "colour" : null, "section" : null });
     }
     return picked;
+}
+
+/* Sets are laps on one route
+
+   A set is one route climbed over and over, and each set gets a route of its own,
+   picked as the set starts. The route just climbed is left out of that pick, so
+   two sets running are never the same route - unless the grades on offer hold
+   nothing else, in which case it comes round again. The laps are held as separate
+   picks so each one can be ticked off on its own. */
+function pickSetClimb(maxGrade, style, useWall, previous){
+    let pool = setPool(maxGrade, style, useWall);
+    let fresh = useWall === true
+        ? pool.filter(route => previous === null || route.id !== previous.route)
+        : pool.filter(grade => previous === null || grade !== previous.grade);
+    let picked = pickClimbs(fresh.length > 0 ? fresh : pool, 1, useWall);
+    return picked.length === 0 ? null : picked[0];
+}
+
+function repeatClimb(climb, count){
+    return climb === null ? [] : Array.from({ "length" : count }, () => Object.assign({}, climb));
 }
 
 /* Session handling */
@@ -191,7 +210,8 @@ function startSession(){
         "ticked" : [],        // positions in that list which are done
         "logged" : [],        // every climb ticked so far this session
         "restEndsAt" : null,
-        "rating" : 0
+        "rating" : 0,
+        "setClimb" : null    // the route the set on screen repeats, once one starts
     };
     session.climbs = pickClimbs(warmUpPool(session.wall), warmUpSize, session.wall);
     requestWakeLock();
@@ -260,7 +280,10 @@ function endRest(){
     session.stage = "set";
     session.setNumber = session.setNumber + 1;
     session.restEndsAt = null;
-    session.climbs = pickClimbs(setPool(session.maxGrade, session.style, session.wall), sessionTypes[session.style].climbs, session.wall);
+    // a session started before the sets became laps carries no route of its own,
+    // which pickSetClimb reads as nothing to avoid
+    session.setClimb = pickSetClimb(session.maxGrade, session.style, session.wall, session.setClimb || null);
+    session.climbs = repeatClimb(session.setClimb, sessionTypes[session.style].climbs);
     session.ticked = [];
     saveCurrent();
     speak("Set " + session.setNumber);
@@ -365,8 +388,8 @@ function drawStyleHint(){
     let grades = [...new Set(wall ? pool.map(route => route.grade) : pool)]
         .sort((first, second) => gradeOrder.indexOf(first) - gradeOrder.indexOf(second));
     document.getElementById("styleHint").innerText =
-        `${type.climbs} climbs a set, ${setsBeforeChoice} sets, ${selectedRest()} minutes between. `
-        + `${wall ? "Routes at" : "Grades"}: ${grades.join(", ")}.`;
+        `${type.climbs} laps a set, a route of its own each set, ${setsBeforeChoice} sets, ${selectedRest()} minutes between. `
+        + `${wall ? "Picked from routes at" : "Picked from grades"}: ${grades.join(", ")}.`;
 }
 
 function drawAll(){
@@ -417,19 +440,23 @@ function drawRestClock(){
 }
 
 // With the wall on, each climb carries its hold colour and panel. With it off
-// there is only the grade, and the button is drawn plain.
+// there is only the grade, and the button is drawn plain. A set is the same route
+// every time, so its buttons are numbered to tell one lap from the next.
 function drawClimbs(){
     let holder = document.getElementById("climbs");
+    let laps = session.stage === "set";
     holder.innerHTML = session.climbs.map((climb, index) => {
         let ticked = session.ticked.includes(index);
         let onWall = climb.colour !== null;
+        let detail = [laps ? `Lap ${index + 1}` : null, onWall ? `${climb.colour} &middot; panel ${climb.section}` : null]
+            .filter(part => part !== null).join(" &middot; ");
         return `<button type="button"
             id="climb${index}"
             class="route ${onWall ? "hold-" + climb.colour.toLowerCase() : "plain"}${ticked ? " ticked" : ""}"
             aria-pressed="${ticked}"
-            aria-label="${onWall ? `${climb.colour} ${climb.grade}, panel ${climb.section}` : climb.grade}"
+            aria-label="${laps ? `Lap ${index + 1}, ` : ""}${onWall ? `${climb.colour} ${climb.grade}, panel ${climb.section}` : climb.grade}"
             onclick="toggleClimb(${index})">
-            ${onWall ? `<span class="route-colour">${climb.colour} &middot; panel ${climb.section}</span>` : ""}
+            ${detail === "" ? "" : `<span class="route-colour">${detail}</span>`}
             <span class="route-grade">${climb.grade}</span>
             <i class="demo-icon icon-ok tick" aria-hidden="true"></i>
         </button>`;
