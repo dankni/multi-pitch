@@ -1,3 +1,12 @@
+// Where this app keeps its sessions - drawn by the shared log in functions.js
+const logKey = "rockRingsLog";
+
+/* Which plan is on: "original", "hard" or "easy". setDifficulty() keeps this in
+   step with the radio, and it is what a saved session records. Reading it back
+   out of local storage instead used to log a null, because nothing is written
+   there until the difficulty is actually changed - the default never was. */
+let difficulty = "original";
+
 const planEasy = [
     {
         "min" : 1,
@@ -313,17 +322,46 @@ const planHard = [
 let plan;
 let started = false;
 
+/* Sessions used to be saved with no id, deleted by their place in the array and
+   rated in a field called score. The shared log works on ids and ratings like
+   every other app, so anything the old app wrote is brought up to shape once, on
+   load. Nothing is lost - an old session keeps its date and its difficulty. */
+function migrateLog(){
+    let log = getLog(logKey);
+    let changed = false;
+    log.forEach((entry, index) => {
+        if(entry.id === undefined){
+            entry.id = Date.parse(entry.date) + index; // unique, and still in date order
+            changed = true;
+        }
+        if(entry.rating === undefined){
+            entry.rating = entry.score === undefined ? 0 : entry.score;
+            delete entry.score;
+            changed = true;
+        }
+        /* Sessions on the default plan recorded a null difficulty: the app read
+           it back out of local storage, where nothing was written until the
+           difficulty was changed. A null one can only have been the original
+           plan - anything else would have been stored to get there. */
+        if(!entry.difficulty){
+            entry.difficulty = "original";
+            changed = true;
+        }
+    });
+    if(changed){ setLog(logKey, log); }
+}
+
 function setStarted(){
     if(started === false) {
         requestWakeLock();
         started = true;
         startTimer();
-        document.querySelector('button').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
+        document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-pause"></i>PAUSE';
         document.getElementById('reset').style.display = 'none';
     } else {
         started = false;
         stopTimer();
-        document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
+        document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
         document.getElementById('reset').style.display = 'inline-block'
     }
     
@@ -387,7 +425,7 @@ function startTimer() {
         // Nothing to pause until the session is actually running, and the
         // countdown can't be stopped once the voice is underway, so take the
         // button out of play until the first task is shown.
-        let button = document.querySelector('button');
+        let button = document.getElementById('primaryButton');
         button.disabled = true;
         countdown(function(){ // in common/functions.js, paced by the voice
             document.querySelector(".holder").style = "display:block";
@@ -447,13 +485,6 @@ function timerCycle() {
     if (min < 10 || min == 0) {
         min = '0' + min;
     }
-    if (min === 11 && wakeLock != null){
-        //don't force the screen to stay awake anymore 
-        wakeLock.release()
-        .then(() => {
-            wakeLock = null;
-        });
-    }
 
     document.getElementById('elapsed').innerHTML = min + ':' + sec;
     setTimeout(timerCycle, debug ? 100 : 1000);
@@ -461,6 +492,7 @@ function timerCycle() {
 }
 
 function reset() {
+    releaseWakeLock(); // the workout is over, the screen can sleep
     document.getElementById('elapsed').innerHTML = '00:00';
     min = 0;
     sec = 0;
@@ -468,58 +500,41 @@ function reset() {
     document.getElementById("first").style.display = "none";
     document.getElementById("second").style.display = "none";
     document.getElementById("reset").style.display = "none";
-    document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>START';
+    document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>START SESSION';
     introRun = false;
     if(document.getElementById("endingDiv").style.display === "block"){
         document.getElementById("endingDiv").style.display = "none";
     }
 }
 
-function setStar(value){
-    let stars = document.querySelectorAll('.icon-star');
-    for(let i = 0; i < stars.length; i++){
-        if(i < value){
-            if(!stars[i].classList.contains('active')){
-                stars[i].classList.add('active');
-            }
-        } else {
-            if(stars[i].classList.contains('active')){
-                stars[i].classList.remove('active');
-            }  
-        }
-    }
-}
-
 function showEndingDiv() {
     document.getElementById("endingDiv").style.display = "block"
 }
+/* What a rock rings session is called in the log. The table, the stars, the two
+   tap delete and the ordering are drawSessionLog() in common/functions.js - the
+   same list every other app draws. */
+const logView = {
+    "key" : logKey,
+    "describe" : entry => ({ "title" : (entry.difficulty || "original") + " workout" })
+};
+
 function saveSession() {
-    let activeStars = document.querySelectorAll('.icon-star.active');
-    let score = activeStars.length;
-    let date =  new Date().toISOString().slice(0, 10); // today yyyy-mm-dd
-    let difficulty = localStorage.getItem("difficulty");
-
-    let session = new Object();
-    session.difficulty = difficulty;
-    session.score  = score;
-    session.date = date;
-
-    let rockRingsLog;
-    if(localStorage.getItem("rockRingsLog")){
-        rockRingsLog = JSON.parse(localStorage.getItem("rockRingsLog"));
-    } else {
-        rockRingsLog = [];
-    }
-    rockRingsLog.push(session);
-    localStorage.setItem("rockRingsLog", JSON.stringify(rockRingsLog));
+    let log = getLog(logKey);
+    log.push({
+        "id" : Date.now(),
+        "date" : today(),
+        "difficulty" : difficulty,
+        "rating" : sessionRating    // set by setStar() in common/functions.js
+    });
+    setLog(logKey, log);
     document.getElementById("endingDiv").style.display = "none";
-    showSessionLog();
+    setStar(0);
+    drawSessionLog(logView);
 }
 
 function setDifficulty(){
 
-    let difficulty;
-    localStorage.getItem("difficulty") ? difficulty = localStorage.getItem("difficulty") : difficulty = "original";
+    difficulty = localStorage.getItem("difficulty") || "original";
     document.getElementById(difficulty).checked = true;
     // ToDo: Refactor
     if(difficulty === "original"){
@@ -533,56 +548,13 @@ function setDifficulty(){
     }
 }
 function changeDifficulty(){
-    let difficulty = document.querySelector('input[name="mode"]:checked').value;
-    localStorage.setItem("difficulty", difficulty);
+    localStorage.setItem("difficulty", document.querySelector('input[name="mode"]:checked').value);
     setDifficulty();
-}
-
-function showSessionLog(){
-    let sessionLog = localStorage.getItem("rockRingsLog");
-    if(sessionLog){
-        let logHolder = document.getElementById("log");
-        logHolder.innerHTML = '';
-        let sessionCount = 0;
-        sessionLog = JSON.parse(sessionLog);
-        sessionLog.forEach((session, index) => {
-            let singleEntry = `<p>${session.date} - ${session.difficulty} - `;
-            for(let i = 0; i < 5; i++){
-                let active = "";
-                if(i < session.score) {
-                    active = "active";
-                }
-                singleEntry += `<i class="demo-icon icon-star ${active}"></i>`;
-            }
-
-            singleEntry += `<i class="demo-icon icon-trash" onclick="toggleConfirm(${sessionCount})"></i> 
-            <span style="display:none" id="confirm${sessionCount}"> Are you sure? <br /> 
-            <i class="demo-icon icon-ok" onclick="removeLog(${sessionCount})"></i> 
-            <i class="demo-icon icon-cancel" onclick="toggleConfirm(${sessionCount})"></i>
-            </span>
-            </p>`
-            logHolder.innerHTML += singleEntry;
-            sessionCount ++;
-        });
-    }
-}
-
-function toggleConfirm(arrayId){
-    let element = document.getElementById("confirm" + arrayId);
-    element.style.display === "none" ? element.style.display = "block" : element.style.display = "none";
-}
-
-function removeLog(arrayId){
-    let sessionLog = JSON.parse(localStorage.getItem("rockRingsLog"));
-    sessionLog.splice(arrayId,1);
-    console.log(sessionLog);
-    localStorage.setItem("rockRingsLog", JSON.stringify(sessionLog));
-    showSessionLog();
-
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
     setDifficulty();
-    showSessionLog();
+    migrateLog();
+    drawSessionLog(logView);
 });
 

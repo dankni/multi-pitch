@@ -1,0 +1,31 @@
+{
+  "name": "Rock Ring Trainer",
+  "short_name": "Rock Rings",
+  "description": "The Metolius rock ring workout, timed and called out.",
+  "start_url": "/training/rings/",
+  "scope": "/training/rings/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#121212",
+  "background_color": "#111111",
+  "icons": [
+    {
+      "src": "/img/favicon/android-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/favicon/android-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/favicon/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

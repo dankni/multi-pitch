@@ -3,24 +3,9 @@ const currentKey = "gilfordCurrent";
 
 let session = null;      // the session being logged or edited
 
-function today(){
-    return new Date().toISOString().slice(0, 10); // yyyy-mm-dd
-}
-
-function getLog(){
-    let log = localStorage.getItem(logKey);
-    return log ? JSON.parse(log) : [];
-}
-
-function setLog(log){
-    localStorage.setItem(logKey, JSON.stringify(log));
-}
-
-// Sessions are held in local storage while in progress so a reload doesn't lose ticks
-function saveCurrent(){
-    session ? localStorage.setItem(currentKey, JSON.stringify(session)) : localStorage.removeItem(currentKey);
-}
-
+// today(), getLog(), setLog(), saveCurrent() and the session log are shared - see
+// common/functions.js. A session is held in local storage while it is in progress
+// so a reload doesn't lose the ticks.
 function hardestGrade(climbs){
     let hardest = -1;
     climbs.forEach(id => {
@@ -40,7 +25,7 @@ function startSession(){
 }
 
 function editSession(id){
-    let entry = getLog().find(item => item.id === id);
+    let entry = getLog(logKey).find(item => item.id === id);
     if(!entry){ return; }
     session = { "id" : entry.id, "date" : entry.date, "climbs" : entry.climbs.slice(), "rating" : entry.rating, "editing" : true };
     hideAbout();
@@ -50,7 +35,7 @@ function editSession(id){
 // Shared set up for both a new session and an edit of a saved one
 function openSession(){
     requestWakeLock();
-    saveCurrent();
+    saveCurrent(currentKey, session);
     document.getElementById("primaryButton").style.display = "none";
     document.getElementById("discard").style.display = "inline-block";
     document.getElementById("sessionHolder").style.display = "block";
@@ -66,19 +51,17 @@ function openSession(){
 
 function closeSession(){
     session = null;
-    saveCurrent();
+    saveCurrent(currentKey, session);
     document.getElementById("primaryButton").style.display = "inline-block";
     document.getElementById("discard").style.display = "none";
     document.getElementById("sessionHolder").style.display = "none";
-    if(wakeLock != null){
-        wakeLock.release().then(() => { wakeLock = null; });
-    }
+    releaseWakeLock();
 }
 
 function setSessionDate(date){
     if(session && date){
         session.date = date;
-        saveCurrent();
+        saveCurrent(currentKey, session);
     }
 }
 
@@ -89,7 +72,7 @@ function toggleClimb(id){
     let button = document.getElementById("route" + id);
     button.classList.toggle("ticked", position === -1);
     button.setAttribute("aria-pressed", position === -1);
-    saveCurrent();
+    saveCurrent(currentKey, session);
     updateSummary();
 }
 
@@ -99,8 +82,38 @@ function openSavePanel(){
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
 
+// setStar() paints the stars; this is what the tick list does with the number
+function onRatingChange(value){
+    if(session){ session.rating = value; saveCurrent(currentKey, session); }
+}
+
+/* What a tick list session is called in the log, and the wrench that reopens one.
+   The table, the stars, the two tap delete and the stats line are all
+   drawSessionLog() in common/functions.js.
+
+   Sessions here are ordered by the date climbed rather than by id: a session can
+   be dated by hand, so the newest id isn't necessarily the newest session. */
+const logView = {
+    "key" : logKey,
+    "order" : (a, b) => b.date.localeCompare(a.date),
+    "onEdit" : "editSession",
+    "describe" : entry => {
+        let hardest = hardestGrade(entry.climbs);
+        return {
+            "title" : `${entry.climbs.length} climb${entry.climbs.length === 1 ? "" : "s"}`,
+            "detail" : hardest ? `hardest ${hardest}` : ""
+        };
+    },
+    "stats" : log => {
+        let month = today().slice(0, 7);
+        let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
+        let totalClimbs = log.reduce((total, entry) => total + entry.climbs.length, 0);
+        return `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalClimbs} climbs logged`;
+    }
+};
+
 function saveSession(){
-    let log = getLog();
+    let log = getLog(logKey);
     let entry = {
         "id" : session.id,
         "date" : session.date,
@@ -109,9 +122,9 @@ function saveSession(){
     };
     let existing = log.findIndex(item => item.id === entry.id);
     existing === -1 ? log.push(entry) : log[existing] = entry;
-    setLog(log);
+    setLog(logKey, log);
     closeSession();
-    showSessionLog();
+    drawSessionLog(logView);
     openInfoBox();
 }
 
@@ -155,69 +168,9 @@ function updateSummary(){
 }
 
 // Only the stars in the rating panel, the log draws stars of its own
-function setStar(value){
-    let stars = document.querySelectorAll('.star-holder .icon-star');
-    for(let i = 0; i < stars.length; i++){
-        if(i < value){
-            if(!stars[i].classList.contains('active')){
-                stars[i].classList.add('active');
-            }
-        } else {
-            if(stars[i].classList.contains('active')){
-                stars[i].classList.remove('active');
-            }
-        }
-    }
-    if(session){
-        session.rating = value;
-        saveCurrent();
-    }
-}
 
-function showSessionLog(){
-    let log = getLog().sort((a, b) => b.date.localeCompare(a.date));
-    let holder = document.getElementById("log");
-    holder.innerHTML = "";
 
-    if(log.length === 0){
-        holder.innerHTML = "<p>No sessions saved yet.</p>";
-        document.getElementById("stats").innerText = "";
-        return;
-    }
 
-    log.forEach(entry => {
-        let hardest = hardestGrade(entry.climbs);
-        let singleEntry = `<p>${entry.date} &ndash; ${entry.climbs.length} climb${entry.climbs.length === 1 ? "" : "s"}${hardest ? " &ndash; " + hardest : ""}<br />`;
-        for(let i = 0; i < 5; i++){
-            singleEntry += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
-        }
-        singleEntry += `<i class="demo-icon icon-wrench" role="button" tabindex="0" aria-label="Edit session ${entry.date}" onclick="editSession(${entry.id})"></i>
-            <i class="demo-icon icon-trash" role="button" tabindex="0" aria-label="Delete session ${entry.date}" onclick="toggleConfirm(${entry.id})"></i>
-            <span style="display:none" id="confirm${entry.id}"> Are you sure? <br />
-                <i class="demo-icon icon-ok" role="button" tabindex="0" aria-label="Confirm delete" onclick="removeLog(${entry.id})"></i>
-                <i class="demo-icon icon-cancel" role="button" tabindex="0" aria-label="Cancel delete" onclick="toggleConfirm(${entry.id})"></i>
-            </span>
-            </p>`;
-        holder.innerHTML += singleEntry;
-    });
-
-    let month = today().slice(0, 7);
-    let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
-    let totalClimbs = log.reduce((total, entry) => total + entry.climbs.length, 0);
-    document.getElementById("stats").innerText =
-        `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalClimbs} climbs logged`;
-}
-
-function toggleConfirm(id){
-    let element = document.getElementById("confirm" + id);
-    element.style.display === "none" ? element.style.display = "block" : element.style.display = "none";
-}
-
-function removeLog(id){
-    let log = getLog().filter(entry => entry.id !== id);
-    setLog(log);
-    showSessionLog();
-}
 
 window.addEventListener('DOMContentLoaded', (event) => {
     let current = localStorage.getItem(currentKey);
@@ -225,5 +178,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
         session = JSON.parse(current);
         openSession();
     }
-    showSessionLog();
+    drawSessionLog(logView);
 });

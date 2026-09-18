@@ -7,6 +7,9 @@ let state = {
     "anchorJustPlaced" : false,
     "aborted" : false
 };
+// Where saved sessions live - drawn by the shared log in common/functions.js
+const logKey = "loftLog";
+
 // Global Options
 let colours;
 let limb = ["left arm", "right arm", "left leg", "right leg"];
@@ -17,6 +20,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.getElementById('primaryButton').addEventListener('click',setStarted);
     getOrSetColours();
     checkTradMode();
+    drawSessionLog(logView);
     // check browser support
     if(SpeechRecognition || webkitSpeechRecognition) { 
         document.getElementById('browserSupport').remove();
@@ -24,55 +28,87 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
 
 // Get or set the colors
+/* A colour is two things: the word the app calls out, and the colour it paints
+   while it says it. They used to be one string, which works while the word is a
+   CSS colour ("yellow") and not at all once someone picks a shade by hand - so a
+   colour is a { name, colour } pair, and anything stored by an older version is
+   brought up to that shape on load. */
+function asColour(entry){
+    return typeof entry === "string" ? { "name" : entry, "colour" : entry } : entry;
+}
+
 function getOrSetColours(){
-    let defaulColours = ["white", "yellow", "orange", "grey", "red", "pink", "blue", "purple", "black", "green"]
-    if(localStorage.getItem("colours")){
-        colours = JSON.parse(localStorage.getItem("colours"));
-    } else {
-        colours = defaulColours;
-        localStorage.setItem("colours", JSON.stringify(colours));
-    }
-    colours.forEach(colour => {
-        addColorSwitch(colour, "On");
-    });
-    defaulColours.forEach(defaulColour => {
-        if(colours.includes(defaulColour) !== true){
-            addColorSwitch(defaulColour, "Off");
+    let defaultColours = ["white", "yellow", "orange", "grey", "red", "pink", "blue", "purple", "black", "green"];
+    let stored = localStorage.getItem("colours");
+    colours = stored ? JSON.parse(stored).map(asColour) : defaultColours.map(asColour);
+    localStorage.setItem("colours", JSON.stringify(colours));
+
+    colours.forEach(colour => addColorSwitch(colour, "On"));
+    defaultColours.forEach(name => {
+        if(!colours.some(colour => colour.name === name)){
+            addColorSwitch(asColour(name), "Off");
         }
-    })
+    });
 }
 
-function addColorSwitch(colour, status){
-    let coloursHolder = document.getElementById("coloursHolder");
-    let check = '';
-    if (status === 'On') {
-        check = 'checked="checked"';
+/* Black or white, whichever can be read on the colour. Hex is worked out here;
+   a name is handed to the browser to resolve, since it knows what "rebeccapurple"
+   is and this does not. */
+function inkFor(colour){
+    let hex = String(colour).replace("#", "");
+    let rgb = null;
+    if(/^[0-9a-f]{6}$/i.test(hex)){ rgb = [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16)); }
+    else if(/^[0-9a-f]{3}$/i.test(hex)){ rgb = hex.split("").map(c => parseInt(c + c, 16)); }
+    else if(document.body){
+        let probe = document.createElement("span");
+        probe.style.color = colour;
+        document.body.appendChild(probe);
+        let computed = getComputedStyle(probe).color.match(/\d+/g);
+        probe.remove();
+        if(computed){ rgb = computed.slice(0, 3).map(Number); }
     }
-
-    let html = `
-        <label class="switch-label">
-			<input type="checkbox" onchange="updateColors()" class="holds" data-color="${colour}" ${check}/>
-			<span class="label-content">
-				<i style="color:${colour}">&#x25CD;</i> ${colour} <span id="${colour}Status">${status}</span>
-			</span>
-		</label>`;
-    coloursHolder.innerHTML += html;
+    if(rgb === null){ return "#111111"; }
+    return ((0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])) / 255 > 0.55 ? "#111111" : "#FFFFFF";
 }
+
+
+/* A colour is a chip, the same one the grade and difficulty pickers use: filled
+   when it is in play, grey when it is not, and a row of them wraps rather than
+   stacking ten switches down the panel. The dot keeps the colour itself. */
+/* A chip per colour, wearing the colour. No swatch icon beside the word - the
+   chip is the swatch. */
+function addColorSwitch(entry, status){
+    let colour = asColour(entry);
+    let coloursHolder = document.getElementById("coloursHolder");
+    // a name someone typed in could be anything; an id cannot
+    let id = "colour-" + colour.name.replace(/[^a-z0-9]/gi, "").toLowerCase();
+    let check = status === "On" ? ' checked="checked"' : '';
+
+    coloursHolder.innerHTML += `
+			<input type="checkbox" class="nice-radios holds" id="${id}" onchange="updateColors()" data-name="${colour.name}" data-colour="${colour.colour}"${check} />
+			<label for="${id}" class="colour-chip" style="--chip: ${colour.colour}; --chip-ink: ${inkFor(colour.colour)}">${colour.name}</label>`;
+}
+
+/* The add row under the chips: a name to say, and the colour to paint with it. */
+function addColour(){
+    let name = document.getElementById("newColour").value.trim();
+    if(name === ""){ return; }
+    addColorSwitch({ "name" : name, "colour" : document.getElementById("newColourSwatch").value }, "On");
+    document.getElementById("newColour").value = "";
+    updateColors();
+}
+
+
 
 function updateColors(){
-    let allColourSwitches = document.querySelectorAll(".holds"); 
-    let newColours = [];
-    allColourSwitches.forEach(holdSwitch =>{
-        if(holdSwitch.checked === true){
-            document.getElementById(holdSwitch.dataset.color + "Status").textContent = "On";
-            newColours.push(holdSwitch.dataset.color);
-        } else {
-            document.getElementById(holdSwitch.dataset.color + "Status").textContent = "Off";
-        }
-    });
-    colours = newColours; // update global variable 
-    localStorage.setItem("colours", JSON.stringify(newColours)); // update local storage
+    // a chip shows its own state, so there is no word to keep in step
+    colours = [...document.querySelectorAll(".holds")]
+        .filter(chip => chip.checked === true)
+        .map(chip => ({ "name" : chip.dataset.name, "colour" : chip.dataset.colour }));
+    localStorage.setItem("colours", JSON.stringify(colours));
 }
+
+
 
 // Manage Trad climbing mode
 function checkTradMode(){
@@ -113,15 +149,22 @@ function setStarted(){
         document.getElementById('reset').style.display = 'none';
         disarmReset(); // the button is on its way out, don't leave it reading SURE?
     } else {
-        state.aborted = true; // so it stops listening
-        state.started === false; // so it can resume on next click
-        recognition.abort();
-        stopTimer();
-        document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
-        document.getElementById('reset').style.display = 'inline-block'
+        pauseSession();
 
     }
     
+}
+
+/* Stopping the clock without ending the session - what PAUSE does, and the
+   first thing FINISH SESSION does. */
+function pauseSession(){
+    if(stoptime === true){ return; } // the clock is already stopped
+    state.aborted = true; // so it stops listening
+    state.started === false; // so it can resume on next click
+    recognition.abort();
+    stopTimer();
+    document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>RESUME';
+    document.getElementById('reset').style.display = 'inline-block';
 }
 
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -207,9 +250,10 @@ function randomMove(){
     state.justPlaced = false;
     state.anchorJustPlaced = false;
     document.getElementById('moves').innerHTML = state.movesMade;
-    document.getElementById('color').style.backgroundColor = randomColor;
-    document.getElementById('task').innerHTML = randomLimb + " to " + randomColor;
-    return randomLimb + " to " + randomColor;
+    // the swatch is painted, the name is spoken
+    document.getElementById('color').style.backgroundColor = randomColor.colour;
+    document.getElementById('task').innerHTML = randomLimb + " to " + randomColor.name;
+    return randomLimb + " to " + randomColor.name;
 }
 
 // To Count Elapsed time
@@ -234,6 +278,8 @@ function startTimer() {
             introRun = true;
             startCycle();
             button.disabled = false;
+            // there is a session to save from here on
+            document.getElementById('finishButton').style.display = 'inline-block';
         });
         return;
     }
@@ -283,17 +329,64 @@ function timerCycle() {
         min = '0' + min;
     }
 
-    if (min === 60 && wakeLock != null){
-        //don't force the screen to stay awake anymore 
-        wakeLock.release()
-        .then(() => {
-            wakeLock = null;
-        });
-    }
 
     document.getElementById('elapsed').innerHTML = hr + ':' + min + ':' + sec;
     setTimeout(timerCycle, debug ? 100 : 1000);
     }
+}
+
+/* Saving
+
+   A session can be saved whenever there is one, the way the lap timer's can -
+   FINISH SESSION stops the clock and asks for a rating. Only the two numbers on
+   screen are kept: how long it ran and how many moves were called. */
+
+// hr, min and sec are what the clock shows, and carry leading zeros
+function elapsedSeconds(){
+    return (parseInt(hr, 10) * 3600) + (parseInt(min, 10) * 60) + parseInt(sec, 10);
+}
+
+function formatTime(seconds){
+    let whole = Math.max(0, Math.floor(seconds));
+    return `${Math.floor(whole / 3600)}:${String(Math.floor(whole % 3600 / 60)).padStart(2, "0")}:${String(whole % 60).padStart(2, "0")}`;
+}
+
+function openSavePanel(){
+    pauseSession();
+    document.getElementById("endingDiv").style.display = "block";
+    document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
+}
+
+/* What a loft session is called in the log. The table, the stars, the two tap
+   delete and the stats line are drawSessionLog() in common/functions.js. */
+const logView = {
+    "key" : logKey,
+    "describe" : entry => ({
+        "title" : `${entry.moves} move${entry.moves === 1 ? "" : "s"}`,
+        "detail" : `${formatTime(entry.seconds)} on the clock`
+    }),
+    "stats" : log => {
+        let month = today().slice(0, 7);
+        let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
+        let totalMoves = log.reduce((total, entry) => total + entry.moves, 0);
+        let totalTime = log.reduce((total, entry) => total + entry.seconds, 0);
+        return `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalMoves} moves · ${formatTime(totalTime)} on the clock`;
+    }
+};
+
+function saveSession(){
+    let log = getLog(logKey);
+    log.push({
+        "id" : Date.now(),
+        "date" : today(),
+        "seconds" : elapsedSeconds(),
+        "moves" : state.movesMade,
+        "rating" : sessionRating   // set by setStar() in common/functions.js
+    });
+    setLog(logKey, log);
+    clearSession();
+    drawSessionLog(logView);
+    openInfoBox();
 }
 
 // confirmReset is in common/functions.js - the first tap only arms the button
@@ -302,6 +395,10 @@ function reset() {
 }
 
 function clearSession() {
+    releaseWakeLock(); // the session is over, the screen can sleep
+    setStar(0);
+    document.getElementById("endingDiv").style.display = "none";
+    document.getElementById("finishButton").style.display = "none";
     hr = 0;
     min = 0;
     sec = 0;
@@ -309,7 +406,7 @@ function clearSession() {
     document.getElementById('color').style.backgroundColor = '';
     document.getElementById('task').textContent = '';
     document.getElementById("reset").style.display = "none";
-    document.querySelector('button').innerHTML = '<i class="demo-icon icon-play"></i>START';
+    document.getElementById('primaryButton').innerHTML = '<i class="demo-icon icon-play"></i>START SESSION';
     introRun = false;
     state = {  
         "started" : false,

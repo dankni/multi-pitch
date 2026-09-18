@@ -10,6 +10,8 @@ const logKey = "enduranceLog";
 const currentKey = "enduranceCurrent";
 const wallKey = "enduranceWall";
 const restKey = "enduranceRest";
+const gradeKey = "enduranceGrade";
+const styleKey = "enduranceStyle";
 
 const warmUpSize = 4;          // climbs in the warm up
 const warmUpTopStep = 1;       // warm up comes from the 4s and 5s, whatever the max
@@ -31,25 +33,10 @@ const maxGrades = gradeSteps.slice(gradeStep("6a")).map(step => step[0]);
 let session = null;
 let restTicker = null;
 
-function today(){
-    return new Date().toISOString().slice(0, 10); // yyyy-mm-dd
-}
-
-function getLog(){
-    let log = localStorage.getItem(logKey);
-    return log ? JSON.parse(log) : [];
-}
-
-function setLog(log){
-    localStorage.setItem(logKey, JSON.stringify(log));
-}
-
-// The session is held in local storage as it runs, so a reload mid circuit picks
-// up where it left off - rest timers included, as they end at a fixed moment
-function saveCurrent(){
-    session ? localStorage.setItem(currentKey, JSON.stringify(session)) : localStorage.removeItem(currentKey);
-}
-
+// today(), getLog(), setLog(), saveCurrent() and the session log itself are
+// shared - see common/functions.js. The session is held in local storage as it
+// runs, so a reload mid circuit picks up where it left off, rest timers included
+// (they end at a fixed moment rather than counting down seconds).
 /* Picking climbs
 
    With the Gilford wall switched on a list is named routes off that wall, hold
@@ -137,6 +124,25 @@ function selectedStyle(){
     return checked === null ? "endurance" : checked.value;
 }
 
+/* The grade and the style are set up rather than session choices now - they live
+   under the cog with the wall and the rests - so they stick between visits the
+   same way. A session already under way keeps what it started with. */
+function setGrade(){
+    localStorage.setItem(gradeKey, selectedGrade());
+    drawStyleHint();
+}
+
+function setStyle(){
+    localStorage.setItem(styleKey, selectedStyle());
+    drawStyleHint();
+}
+
+function loadStyleSetting(){
+    let saved = localStorage.getItem(styleKey);
+    let radio = saved === null ? null : document.querySelector('input[name="style"][value="' + saved + '"]');
+    if(radio){ radio.checked = true; }
+}
+
 // Whether to build the session out of the Gilford wall's own routes. It lives in
 // the settings panel and sticks between visits - which wall you train on isn't
 // something to pick again every session. A session already under way keeps the
@@ -215,17 +221,15 @@ function startSession(){
     };
     session.climbs = pickClimbs(warmUpPool(session.wall), warmUpSize, session.wall);
     requestWakeLock();
-    saveCurrent();
+    saveCurrent(currentKey, session);
     drawAll();
 }
 
 function closeSession(){
     stopRestTicker();
     session = null;
-    saveCurrent();
-    if(wakeLock != null){
-        wakeLock.release().then(() => { wakeLock = null; });
-    }
+    saveCurrent(currentKey, session);
+    releaseWakeLock();
     setStar(0);
     document.getElementById("endingDiv").style.display = "none";
     drawAll();
@@ -242,7 +246,7 @@ function toggleClimb(index){
     if(session === null || (session.stage !== "warmup" && session.stage !== "set")){ return; }
     let position = session.ticked.indexOf(index);
     position === -1 ? session.ticked.push(index) : session.ticked.splice(position, 1);
-    saveCurrent();
+    saveCurrent(currentKey, session);
     // Finishing the list moves the session on, so redraw everything rather than
     // just the button that was tapped
     session.ticked.length === session.climbs.length ? completeList() : drawAll();
@@ -255,7 +259,7 @@ function completeList(){
         session.stage = "choice";
         session.climbs = [];
         session.ticked = [];
-        saveCurrent();
+        saveCurrent(currentKey, session);
         speak("Set " + session.setNumber + " done");
         drawAll();
         return;
@@ -268,7 +272,7 @@ function startRest(){
     session.climbs = [];
     session.ticked = [];
     session.restEndsAt = Date.now() + (debug ? 5000 : restMinutesOf(session) * 60 * 1000);
-    saveCurrent();
+    saveCurrent(currentKey, session);
     startRestTicker();
     speak("Rest");
     drawAll();
@@ -285,7 +289,7 @@ function endRest(){
     session.setClimb = pickSetClimb(session.maxGrade, session.style, session.wall, session.setClimb || null);
     session.climbs = repeatClimb(session.setClimb, sessionTypes[session.style].climbs);
     session.ticked = [];
-    saveCurrent();
+    saveCurrent(currentKey, session);
     speak("Set " + session.setNumber);
     drawAll();
 }
@@ -325,8 +329,29 @@ function openSavePanel(){
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
 
+// setStar() paints the stars; this is what the endurance app does with the number
+function onRatingChange(value){
+    if(session){ session.rating = value; saveCurrent(currentKey, session); }
+}
+
+/* What an endurance session is called in the log. The table, the stars, the two
+   tap delete and the stats line are all drawSessionLog() in common/functions.js. */
+const logView = {
+    "key" : logKey,
+    "describe" : entry => ({
+        "title" : `${sessionTypes[entry.style] ? sessionTypes[entry.style].name : entry.style} off ${entry.maxGrade}`,
+        "detail" : `${entry.sets} set${entry.sets === 1 ? "" : "s"} · ${entry.climbs} climbs · ${restMinutesOf(entry)} min rests · ${entry.wall === false ? "grades only" : "Gilford wall"}`
+    }),
+    "stats" : log => {
+        let month = today().slice(0, 7);
+        let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
+        let totalClimbs = log.reduce((total, entry) => total + entry.climbs, 0);
+        return `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalClimbs} climbs logged`;
+    }
+};
+
 function saveSession(){
-    let log = getLog();
+    let log = getLog(logKey);
     log.push({
         "id" : session.id,
         "date" : session.date,
@@ -338,31 +363,13 @@ function saveSession(){
         "climbs" : session.logged.length,
         "rating" : session.rating
     });
-    setLog(log);
+    setLog(logKey, log);
     closeSession();
-    showSessionLog();
+    drawSessionLog(logView);
     openInfoBox();
 }
 
 // Only the stars in the rating panel, the log draws stars of its own
-function setStar(value){
-    let stars = document.querySelectorAll('.star-holder .icon-star');
-    for(let i = 0; i < stars.length; i++){
-        if(i < value){
-            if(!stars[i].classList.contains('active')){
-                stars[i].classList.add('active');
-            }
-        } else {
-            if(stars[i].classList.contains('active')){
-                stars[i].classList.remove('active');
-            }
-        }
-    }
-    if(session){
-        session.rating = value;
-        saveCurrent();
-    }
-}
 
 /* Drawing */
 
@@ -372,8 +379,11 @@ function formatRest(milliseconds){
 }
 
 function drawGradePicker(){
+    let saved = localStorage.getItem(gradeKey);
+    // the grade last trained off, or the bottom of the ladder on a first visit
+    let chosen = maxGrades.includes(saved) ? saved : maxGrades[0];
     document.getElementById("gradePicker").innerHTML = maxGrades.map((grade, index) => {
-        return `<input type="radio" name="maxGrade" class="nice-radios" id="grade${index}" value="${grade}"${index === 0 ? " checked" : ""} onchange="drawStyleHint()" />
+        return `<input type="radio" name="maxGrade" class="nice-radios" id="grade${index}" value="${grade}"${grade === chosen ? " checked" : ""} onchange="setGrade()" />
             <label for="grade${index}">${grade}</label>`;
     }).join("");
 }
@@ -387,9 +397,12 @@ function drawStyleHint(){
     let pool = setPool(selectedGrade(), style, wall);
     let grades = [...new Set(wall ? pool.map(route => route.grade) : pool)]
         .sort((first, second) => gradeOrder.indexOf(first) - gradeOrder.indexOf(second));
-    document.getElementById("styleHint").innerText =
+    let line =
         `${type.climbs} laps a set, a route of its own each set, ${setsBeforeChoice} sets, ${selectedRest()} minutes between. `
         + `${wall ? "Picked from routes at" : "Picked from grades"}: ${grades.join(", ")}.`;
+    // once on the set up screen, once inside the settings panel, so a change can
+    // be seen as it is made
+    document.querySelectorAll(".style-hint").forEach(hint => { hint.innerText = line; });
 }
 
 function drawAll(){
@@ -463,55 +476,13 @@ function drawClimbs(){
     }).join("");
 }
 
-function showSessionLog(){
-    let log = getLog().sort((a, b) => b.id - a.id);
-    let holder = document.getElementById("log");
-    holder.innerHTML = "";
 
-    if(log.length === 0){
-        holder.innerHTML = "<p>No sessions saved yet.</p>";
-        document.getElementById("stats").innerText = "";
-        return;
-    }
 
-    log.forEach(entry => {
-        let type = sessionTypes[entry.style] ? sessionTypes[entry.style].name : entry.style;
-        let singleEntry = `<p>${entry.date} &ndash; ${type} off ${entry.maxGrade}<br />
-            ${entry.sets} set${entry.sets === 1 ? "" : "s"}, ${entry.climbs} climbs, ${restMinutesOf(entry)} min rests
-            &ndash; ${entry.wall === false ? "grades only" : "Gilford wall"}<br />`;
-        for(let i = 0; i < 5; i++){
-            singleEntry += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
-        }
-        singleEntry += `<i class="demo-icon icon-trash" role="button" tabindex="0" aria-label="Delete session ${entry.date}" onclick="toggleConfirm(${entry.id})"></i>
-            <span style="display:none" id="confirm${entry.id}"> Are you sure? <br />
-                <i class="demo-icon icon-ok" role="button" tabindex="0" aria-label="Confirm delete" onclick="removeLog(${entry.id})"></i>
-                <i class="demo-icon icon-cancel" role="button" tabindex="0" aria-label="Cancel delete" onclick="toggleConfirm(${entry.id})"></i>
-            </span>
-            </p>`;
-        holder.innerHTML += singleEntry;
-    });
-
-    let month = today().slice(0, 7);
-    let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
-    let totalClimbs = log.reduce((total, entry) => total + entry.climbs, 0);
-    document.getElementById("stats").innerText =
-        `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalClimbs} climbs logged`;
-}
-
-function toggleConfirm(id){
-    let element = document.getElementById("confirm" + id);
-    element.style.display === "none" ? element.style.display = "block" : element.style.display = "none";
-}
-
-function removeLog(id){
-    let log = getLog().filter(entry => entry.id !== id);
-    setLog(log);
-    showSessionLog();
-}
 
 window.addEventListener('DOMContentLoaded', (event) => {
     loadWallSetting();
     loadRestSetting();
+    loadStyleSetting();
     drawGradePicker();
     let current = localStorage.getItem(currentKey);
     if(current){
@@ -523,5 +494,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
         setStar(session.rating);
     }
     drawAll();
-    showSessionLog();
+    drawSessionLog(logView);
 });

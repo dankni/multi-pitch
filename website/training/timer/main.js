@@ -10,24 +10,9 @@ const currentKey = "lapTimerCurrent";
 let session = null;
 let ticker = null;
 
-function today(){
-    return new Date().toISOString().slice(0, 10); // yyyy-mm-dd
-}
-
-function getLog(){
-    let log = localStorage.getItem(logKey);
-    return log ? JSON.parse(log) : [];
-}
-
-function setLog(log){
-    localStorage.setItem(logKey, JSON.stringify(log));
-}
-
-// The session is held in local storage as it runs, so closing the tab by accident
-// doesn't lose the clock - it is still running when the page comes back.
-function saveCurrent(){
-    session ? localStorage.setItem(currentKey, JSON.stringify(session)) : localStorage.removeItem(currentKey);
-}
+// today(), getLog(), setLog(), saveCurrent() and the session log are shared -
+// see common/functions.js. The session is written to local storage on every
+// change, so closing the tab by accident doesn't lose the clock.
 
 function isRunning(){
     return session !== null && session.startedAt !== null;
@@ -59,7 +44,7 @@ function startTimer(){
     }
     session.startedAt = Date.now();
     requestWakeLock();
-    saveCurrent();
+    saveCurrent(currentKey, session);
     disarmReset(); // the button is on its way out, don't leave it reading SURE?
     startTicking();
     drawAll();
@@ -69,7 +54,7 @@ function pauseTimer(){
     if(!isRunning()){ return; }
     session.banked = elapsed();
     session.startedAt = null;
-    saveCurrent();
+    saveCurrent(currentKey, session);
     stopTicking();
     drawAll();
 }
@@ -93,7 +78,7 @@ function stopTicking(){
 function recordLap(){
     if(!isRunning()){ return; }
     session.laps = session.laps + 1;
-    saveCurrent();
+    saveCurrent(currentKey, session);
     let button = document.getElementById("lapButton");
     button.classList.add("flash");
     setTimeout(function(){ button.classList.remove("flash"); }, 250);
@@ -108,10 +93,8 @@ function resetTimer(){
 function clearSession(){
     stopTicking();
     session = null;
-    saveCurrent();
-    if(wakeLock != null){
-        wakeLock.release().then(() => { wakeLock = null; });
-    }
+    saveCurrent(currentKey, session);
+    releaseWakeLock();
     disarmReset();
     setStar(0);
     document.getElementById("endingDiv").style.display = "none";
@@ -127,8 +110,31 @@ function openSavePanel(){
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
 
+// setStar() paints the stars; this is what the lap timer does with the number
+function onRatingChange(value){
+    if(session){ session.rating = value; saveCurrent(currentKey, session); }
+}
+
+/* What a lap timer session is called in the log. Everything else about the list -
+   the table, the stars, the two tap delete, the stats line - is drawSessionLog()
+   in common/functions.js. */
+const logView = {
+    "key" : logKey,
+    "describe" : entry => ({
+        "title" : `${entry.laps} lap${entry.laps === 1 ? "" : "s"}`,
+        "detail" : `${formatTime(entry.total)} on the clock`
+    }),
+    "stats" : log => {
+        let month = today().slice(0, 7);
+        let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
+        let totalLaps = log.reduce((total, entry) => total + entry.laps, 0);
+        let totalTime = log.reduce((total, entry) => total + entry.total, 0);
+        return `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalLaps} laps · ${formatTime(totalTime)} on the clock`;
+    }
+};
+
 function saveSession(){
-    let log = getLog();
+    let log = getLog(logKey);
     log.push({
         "id" : session.id,
         "date" : session.date,
@@ -136,30 +142,10 @@ function saveSession(){
         "laps" : session.laps,
         "rating" : session.rating
     });
-    setLog(log);
+    setLog(logKey, log);
     clearSession();
-    showSessionLog();
+    drawSessionLog(logView);
     openInfoBox();
-}
-
-// Only the stars in the rating panel, the log draws stars of its own
-function setStar(value){
-    let stars = document.querySelectorAll('.star-holder .icon-star');
-    for(let i = 0; i < stars.length; i++){
-        if(i < value){
-            if(!stars[i].classList.contains('active')){
-                stars[i].classList.add('active');
-            }
-        } else {
-            if(stars[i].classList.contains('active')){
-                stars[i].classList.remove('active');
-            }
-        }
-    }
-    if(session){
-        session.rating = value;
-        saveCurrent();
-    }
 }
 
 /* Drawing */
@@ -177,7 +163,7 @@ function drawAll(){
     document.getElementById("lapCount").innerText = started ? session.laps : 0;
     document.getElementById("primaryButton").innerHTML = running
         ? '<i class="demo-icon icon-pause"></i>PAUSE'
-        : `<i class="demo-icon icon-play"></i>${started ? "RESUME" : "START"}`;
+        : `<i class="demo-icon icon-play"></i>${started ? "RESUME" : "START SESSION"}`;
     // RESET is only offered while the clock is stopped, so it can't be hit by
     // mistake reaching for LAP mid session
     document.getElementById("resetButton").style.display = started && !running ? "inline-block" : "none";
@@ -190,49 +176,8 @@ function drawAll(){
     document.getElementById("finishButton").disabled = saving;
 }
 
-function showSessionLog(){
-    let log = getLog().sort((a, b) => b.id - a.id);
-    let holder = document.getElementById("log");
-    holder.innerHTML = "";
 
-    if(log.length === 0){
-        holder.innerHTML = "<p>No sessions saved yet.</p>";
-        document.getElementById("stats").innerText = "";
-        return;
-    }
 
-    log.forEach(entry => {
-        let singleEntry = `<p>${entry.date} &ndash; ${formatTime(entry.total)} &ndash; ${entry.laps} lap${entry.laps === 1 ? "" : "s"}<br />`;
-        for(let i = 0; i < 5; i++){
-            singleEntry += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
-        }
-        singleEntry += `<i class="demo-icon icon-trash" role="button" tabindex="0" aria-label="Delete session ${entry.date}" onclick="toggleConfirm(${entry.id})"></i>
-            <span style="display:none" id="confirm${entry.id}"> Are you sure? <br />
-                <i class="demo-icon icon-ok" role="button" tabindex="0" aria-label="Confirm delete" onclick="removeLog(${entry.id})"></i>
-                <i class="demo-icon icon-cancel" role="button" tabindex="0" aria-label="Cancel delete" onclick="toggleConfirm(${entry.id})"></i>
-            </span>
-            </p>`;
-        holder.innerHTML += singleEntry;
-    });
-
-    let month = today().slice(0, 7);
-    let thisMonth = log.filter(entry => entry.date.slice(0, 7) === month).length;
-    let totalLaps = log.reduce((total, entry) => total + entry.laps, 0);
-    let totalTime = log.reduce((total, entry) => total + entry.total, 0);
-    document.getElementById("stats").innerText =
-        `${log.length} session${log.length === 1 ? "" : "s"} (${thisMonth} this month) · ${totalLaps} laps · ${formatTime(totalTime)} on the clock`;
-}
-
-function toggleConfirm(id){
-    let element = document.getElementById("confirm" + id);
-    element.style.display === "none" ? element.style.display = "block" : element.style.display = "none";
-}
-
-function removeLog(id){
-    let log = getLog().filter(entry => entry.id !== id);
-    setLog(log);
-    showSessionLog();
-}
 
 // Space to lap and Escape to pause, for anyone using this with a keyboard. Keys
 // pressed while a button has focus are left alone so they do that button's job.
@@ -259,5 +204,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
         setStar(session.rating);
     }
     drawAll();
-    showSessionLog();
+    drawSessionLog(logView);
 });

@@ -1,3 +1,34 @@
+/* Hind, served from this repo rather than from Google.
+
+   An app that is meant to work with no signal cannot fetch its own typeface from
+   somewhere else - offline the whole suite fell back to the system sans. Two
+   files, 25KB the pair, taken from the same Google Fonts build the pages used to
+   link (Hind v18, weight 400). The second covers accented Latin; a phone only
+   downloads the one it needs. */
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('font/hind-400-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('font/hind-400-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+    /* The column. Everything these apps draw sits in it: the session, the save
+       panel, both overlays. 90% of a phone, so there is always a gutter down
+       each side, and never wider than this on anything bigger. */
+    --column: 520px;
+}
+
 html, body {
     width: 100%;
     margin: 0;
@@ -28,7 +59,7 @@ hr {
     float: right;
     width: 100px;
 }
-.icon-menu, .icon-info{
+.icon-menu, .icon-info, .icon-cog{
     float: left;
     margin:0;
     padding:12px 6px 0 6px;
@@ -64,7 +95,9 @@ button {
     border: none;
     padding: 1rem 2rem;
     text-decoration: none;
-    background: #3b94ff;
+    /* White label on this is 5.2:1, and the fill still stands off both the white
+       page and the #111 one. The old #3b94ff carried its label at 3.1:1. */
+    background: #0b6ad6;
     color: #ffffff;
     font-family: sans-serif;
     font-size: 1rem;
@@ -112,20 +145,38 @@ button:active {
 .active i{
     color: rgba(46,204,64,1);
 }
+/* The destructive one. Outline and label rather than a red fill, so it never
+   looks like the thing you are meant to press. */
 .secondary {
-    border: 2px solid rgb(165, 3, 3);
-    color: rgb(165, 3, 3);
-    background: #FFF;
+    border: 2px solid #a13333;
+    color: #a13333;
+    /* not quite opaque, so it sits on the page rather than punching a white hole
+       in it. In dark mode that leaves #dbdbdb, where the label still reads at
+       5:1 - any more transparent and it would not. */
+    background: rgba(255, 255, 255, 0.85);
     display: none;
 }
+/* Paler than the pink it was, and opaque: at 85% the dark page bleeds through and
+   drags a pale hover under AA, while opaque it reads at 6.3:1 in either mode -
+   and the jump from the translucent resting state makes the hover plainer. */
 .secondary:hover, .secondary:focus {
-    background: #fcc2c2;
+    background: #fdeeee;
 }
-.holder{
+/* The column, in one rule for everything that holds content. An app's own
+   wrappers join the list rather than setting a width of their own - before this
+   the lap timer's counters ran the full width of a desktop window while the
+   endurance app's stopped at 520, and the two looked like different apps. */
+.holder, .ending, #setup, #data, #actions, .overlay > *:not(.close) {
     width: 90%;
-    padding: 0 5%;
+    max-width: var(--column);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
-section, aside div {
+/* The panel. This rule used to read "section, aside div", which handed a light
+   panel to every div inside an about panel - four apps carried a rule to undo
+   it. The rings preview is the only aside that wants one, so it asks by name. */
+section, #preview div {
     display:inline-block;
     width:100%;
     border-radius:5px;
@@ -167,7 +218,7 @@ aside{
 aside a{
     color: #FFF;
 }
-aside div {
+#preview div {
     flex:50%;
     margin: 5px;
 }
@@ -186,24 +237,137 @@ aside .ring {
 #next{
     display: none;
 }
-#about {
-    position:absolute;
+/* A word about the cog, for someone opening an app for the first time.
+
+   Small, sitting under the icon it is talking about, and gone in a few seconds - a
+   nudge rather than a dialogue box. No arrow: it could only ever point at where
+   the cog happened to be at one screen width. It is never shown again once
+   the settings panel has been opened, which is the moment it has done its job. */
+.hint-pop {
+    position: fixed;
+    top: 40px;
+    left: 12px;
+    z-index: 5;
+    /* a row of two, centred on each other */
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 250px;
+    padding: 8px;
+    border-radius: 6px;
+    background: #262626;
+    color: #E8E8E8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    font-size: 14px;
+    /* tight, for two short lines in a small card - 1.4 left them floating */
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+.hint-pop.shown {
+    opacity: 1;
+    transform: none;
+}
+/* The cog turns, slowly. It is the only thing moving on the screen and it is the
+   thing the card is talking about, which is the whole job of the nudge - eight
+   seconds a revolution, so it reads as a hint rather than a spinner waiting on
+   something. */
+@keyframes cog-turn {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+/* the same size and line as the words beside it */
+.hint-pop .demo-icon {
+    flex: 0 0 auto;
+    width: auto;
+    margin: 0;
+    font-size: inherit;
+    padding: 0 8px;
+    line-height: inherit;
+    animation: cog-turn 8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+    .hint-pop {
+        transition: none;
+    }
+    .hint-pop .demo-icon {
+        animation: none;
+    }
+}
+
+/* An overlay: the info panel behind the i, and the settings panel behind the cog.
+   Both are the same thing - a full screen sheet over the app - so both wear this.
+
+   Fixed, not absolute: an absolute panel is as tall as the document, so the page
+   behind it scrolled out from under it. This one covers the viewport and takes
+   the scrolling itself, and openOverlay() holds the page still behind it. */
+.overlay {
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     background-color: rgba(0,0,0,0.98);
     color:#FFF;
     display: none;
     padding:0;
 }
-#about p, #about h2 {
-    width:80%;
-    max-width: 450px;
-    margin: 20px auto;
+/* Inside an overlay the column applies to each direct child, so a paragraph in a
+   fieldset fills its parent rather than being capped twice. The cross is exempt:
+   it is positioned, not in flow. */
+.overlay p, .overlay h2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
-#about h2{
+.overlay h2{
     margin-top:60px;
+}
+
+/* A group of settings that belong together: a fieldset rather than a heading and
+   a div, so a row of radios is announced as the one choice it is. */
+.setting-group {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 0;
+    border: 0;
+    text-align: center;
+}
+.setting-group legend {
+    margin: 0 auto;
+    padding: 0 0 8px;
+    font-size: 16px;
+}
+/* Laid out as a flex row rather than inline-blocks: the whitespace between the
+   labels in the markup is inline content of its own, and it left a row of three
+   sitting a few pixels off the middle. Flex ignores it, and wraps onto two lines
+   on a narrow phone without losing the centre. */
+.setting-group .picker {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+.setting-group .picker label {
+    margin: 0;
+}
+/* The rule above hides the real radios off to the left but puts them back to
+   position:relative further down, which leaves them taking part in the layout -
+   as flex items of their own they pushed the row off centre. */
+.setting-group .picker input[type="radio"] {
+    position: absolute;
+}
+/* Every overlay reads white at full strength - nothing dimmed with opacity, it
+   gets read at arm's length. The stars are the exception: they are grey until
+   earned and gold after, and this would out-specify both. */
+.overlay, .overlay .switch-label, .overlay .label-content {
+    color: #FFFFFF;
 }
 .demo-icon {
     font-family: "fontello";
@@ -252,8 +416,9 @@ aside .ring {
 .icon-trash:before { content: '\f1f8'; } /* '' */
 
 /* close Icon */
+/* Fixed so it is still there after scrolling down a long settings panel */
 .close {
-    position: absolute;
+    position: fixed;
     right: 32px;
     top: 32px;
     width: 32px;
@@ -290,13 +455,16 @@ label .label-content {
     display: inline-block;
     text-align: left;
 }
-input[type=checkbox] {
+/* the iOS style switch - not the ones wearing .nice-radios, which are chips */
+input[type=checkbox]:not(.nice-radios) {
     position: relative;
     width: 51px;
     height: 31px;
     -webkit-appearance: none;
     -webkit-appearance: none;
-    background: rgba(120, 120, 128, 0.6);
+    /* the same grey as an unchecked radio label. Translucent, it came out at
+       2.3:1 against the black panel these live on */
+    background: #6b6b73;
     outline: none;
     cursor: pointer;
     border-radius: 20px;
@@ -304,7 +472,7 @@ input[type=checkbox] {
     transition: background 300ms linear;
     margin-bottom: -10px;
 }
-input[type=checkbox]::before {
+input[type=checkbox]:not(.nice-radios)::before {
     position: absolute;
     content: "";
     width: 27px;
@@ -316,10 +484,10 @@ input[type=checkbox]::before {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: left 300ms;
 }
-input[type=checkbox]:checked {
-    background: #3b94ff;
+input[type=checkbox]:not(.nice-radios):checked {
+    background: #0b6ad6;
 }
-input[type=checkbox]:checked::before {
+input[type=checkbox]:not(.nice-radios):checked::before {
     left: 22px;
     background-color: #fff;
 }
@@ -327,6 +495,7 @@ input[type=checkbox]:checked::before {
 /* Background colors */
 .dark{
     background:#111;
+    color: #E8E8E8;
 }
 .dark nav{
     border-bottom: 1px solid #666;
@@ -334,8 +503,9 @@ input[type=checkbox]:checked::before {
 .dark h3{ 
     color:#FFF;
 }
-.dark section, .dark aside div {
-    background-color: #BFBDBD;
+.dark section, .dark #preview div {
+    background-color: #262626;
+    color: #E8E8E8;
 }
 /* The countdown colours land on a word each, so they can't take the 0.5s fade
    above - at that speed the screen is still mid-transition when the next word
@@ -368,9 +538,14 @@ body.red, body.orange, body.yellow {
     background-color: #519872;
 }
 
-/* This hides the default radio buttons */
+/* Hide the real control - the label beside it is the chip you actually see.
+
+   Checkboxes as well as radios: a chip is a chip whether the choice is one of
+   several (a grade, a difficulty) or a set of them (which hold colours are in
+   play in the loft app). */
 [type="radio"]:checked,
-[type="radio"]:not(:checked){
+[type="radio"]:not(:checked),
+input[type="checkbox"].nice-radios{
 	position: absolute;
 	left: -9999px;
 	width: 0;
@@ -400,15 +575,51 @@ body.red, body.orange, body.yellow {
   margin-bottom: 10px;
 }
 .nice-radios:checked + label {
-  background-color: #3b94ff;
+  background-color: #0b6ad6;
   border: 0;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 .nice-radios:not(:checked) + label {
-  background-color: rgba(120, 120, 128, 0.6);
+  /* solid, and dark enough for the white label: 5.3:1, where the translucent
+     grey it replaces managed 2.3:1 over a white page */
+  background-color: #6b6b73;
   border: 1px solid transparent;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
+/* A chip standing for one of a set says whether it is in or out, in the same
+   tick and cross the rest of the suite uses.
+
+   A radio chip needs none of this - one of them is filled and the others are not,
+   and that is the whole choice. A checkbox chip has no such pair to compare
+   against, and a colour chip least of all: a dark colour filled in reads much
+   like the grey of one switched off. So it is written on the chip.
+
+   The glyphs come from the icon font rather than an <i> in the markup, so nothing
+   has to be redrawn when a chip is toggled. */
+input[type="checkbox"].nice-radios + label:before {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+    content: '\e813'; /* icon-cancel */
+    margin-right: 0.45em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+input[type="checkbox"].nice-radios:checked + label:before {
+    content: '\e812'; /* icon-ok */
+}
+
+/* A chip that is a colour rather than a word: filled with the colour itself when
+   it is in play, and the plain grey chip when it is not - the cross says which it
+   is, so the off state needs no rim of its own. Both values come from the element:
+   --chip is the colour, and --chip-ink is black or white, whichever can be read
+   on it. */
+.nice-radios:checked + .colour-chip {
+    background-color: var(--chip);
+    color: var(--chip-ink);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), inset 0 0 0 1px var(--chip-ink);
+}
+
 .nice-radios:not(:checked) + label:hover,
 .nice-radios:checked + label:hover,
 [type="radio"]:hover + label {
@@ -416,9 +627,6 @@ body.red, body.orange, body.yellow {
   cursor: pointer;
   -webkit-transition: box-shadow 300ms ease;
   transition: box-shadow 300ms ease;
-}
-.ending{
-   display: none;
 }
 
 /** Star Rating **/
@@ -431,7 +639,7 @@ body.red, body.orange, body.yellow {
   -ms-user-select: none;
 }
 .icon-star { 
-    color:rgba(120, 120, 128, 0.6);
+    color: #6b6b73;
 }
 .icon-star.active { 
     color: #FFD700; 
@@ -451,17 +659,6 @@ body.red, body.orange, body.yellow {
     margin:42px auto 0;
     font-size: 16px;
 }
-#log{
-    background: rgba(0,0,0,0.98);
-    max-width: 300px;
-    margin: 0 auto;
-    display: block;
-}
-#log p{
-    margin: 5px auto;
-    width:100%;
-
-}
 .icon-trash{
     margin-left: 8px;
 }
@@ -471,6 +668,305 @@ body.red, body.orange, body.yellow {
 .icon-ok, .icon-cancel {
     font-size: 16px;
 }
+/* ================= Session furniture =================
+   The next few blocks were copied, rule for rule, into three or four of the app
+   stylesheets before they were brought here. An app only keeps what is genuinely
+   its own: the geometry of its tiles, the size of its clock. */
+
+/* A counter box - two to four across, label above and number below */
+.box {
+    display: inline-block;
+    width: 45%;
+    margin: 2%;
+    border-radius: 5px;
+    background: #cfcfcf;
+    height: 120px;
+}
+.dark .box {
+    background: #363636;
+}
+/* The number inside a box. A bare h3 is 60px - that is a clock, not a counter. */
+.box h3 {
+    font-size: 28px;
+    margin: 28px 14px;
+}
+
+/* Anything that counts up or down: tabular figures, or the digits jitter and the
+   clock appears to dance as it runs */
+.tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* Visually hidden, still read out - a table header over a column of icons */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* The save panel, at the end of a session. It ships hidden; an app shows it when
+   FINISH SESSION is hit. The bottom margin keeps it clear of the footer on a
+   phone, where it lands below the fold. */
+.ending {
+    display: none;
+    margin-bottom: 40px;
+}
+.save-title {
+    margin-top: 20px;
+}
+
+/* The links at the foot of an info panel: back to the app list, out to the repo,
+   and whatever else an app points at.
+
+   One to a line with room around each, because they are hit with a thumb rather
+   than aimed at with a cursor. Block, so the margin applies at all - it does
+   nothing on an inline link - and fitted to the text, so the target is the words
+   and not the width of the panel. */
+.panel-links a {
+    display: block;
+    width: fit-content;
+    margin: 18px auto;
+    padding: 4px 0;
+}
+
+/* The activity log, in the about panel. drawSessionLog() in functions.js draws
+   every app's into #log as a table: a row is a session, and the app only says
+   what its own sessions are called. */
+/* It takes its width from the column with everything else. There used to be a
+   "max-width: 300px" here, from when a log was a short list of lines - an id, so
+   it quietly beat the column rule and squeezed the session table into 300px. */
+#log {
+    background: rgba(0,0,0,0.98);
+    display: block;
+    text-align: left;
+    padding: 4px 12px;
+    border-radius: 5px;
+}
+#log p {
+    margin: 12px auto;
+    font-size: 15px;
+    line-height: 1.5;
+}
+#stats {
+    font-size: 14px;
+    opacity: 0.8;
+}
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+.log-table th {
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+/* no rule between the rows - the stripe separates them */
+.log-table td {
+    padding: 8px 4px;
+    vertical-align: top;
+}
+/* A stripe a row, barely there: 4% white over the near black the log sits on.
+   Enough to follow a row across four columns on a phone, not enough to read as
+   lines drawn on the page. The text is white either way, so nothing it carries
+   gets harder to read. */
+.log-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.log-date {
+    white-space: nowrap;
+}
+/* the year sits under the day it belongs to, and a shade quieter: it is the part
+   that hardly ever changes down the column */
+.log-year {
+    font-size: 12px;
+    opacity: 0.7;
+}
+.log-detail {
+    font-size: 13px;
+    opacity: 0.8;
+}
+.log-rating {
+    white-space: nowrap;
+    font-size: 13px;
+}
+.log-actions {
+    white-space: nowrap;
+    text-align: right;
+    font-size: 13px;
+}
+/* The shared 40px on every .icon-ok is for the gap inside a button - in here it
+   would push the delete confirm off the end of its own cell */
+.log-table .demo-icon {
+    margin: 0 0 0 4px;
+    cursor: pointer;
+}
+.log-table .icon-star {
+    margin: 0;
+    cursor: default;
+}
+
+/* ================= Tick tiles =================
+   A route or a climb you tap once to say you did it. The colours are the holds on
+   the Gilford wall: --hold is the swatch down the edge, --ink the text once the
+   tile is ticked and fills with it. The tick list and the endurance app share
+   everything here; each keeps its own sizing in its own stylesheet. */
+.route {
+    --hold: #cccccc;
+    --ink: #111111;
+}
+.hold-yellow { --hold: #ffd400; --ink: #1a1600; }
+.hold-white  { --hold: #e8e8e8; --ink: #222222; }
+.hold-grey   { --hold: #9b9b9b; --ink: #111111; }
+.hold-orange { --hold: #ff851b; --ink: #2a1400; }
+.hold-red    { --hold: #ff4136; --ink: #ffffff; }
+.hold-pink   { --hold: #ff6fcf; --ink: #2c0020; }
+.hold-green  { --hold: #2ecc40; --ink: #06240c; }
+.hold-blue   { --hold: #0074d9; --ink: #ffffff; }
+.hold-black  { --hold: #2b2b2b; --ink: #ffffff; }
+.route:hover, .route:focus {
+    background: #ececec;
+}
+/* #1a73e8 is the one blue that clears 3:1 on a light tile and a dark one both -
+   the brighter #3b94ff managed only 2.9 against a light tile */
+.route:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 1px;
+}
+.route.ticked {
+    background: var(--hold);
+    color: var(--ink);
+    border-left-color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
+}
+.route.ticked:hover, .route.ticked:focus {
+    background: var(--hold);
+}
+.route-colour {
+    font-size: 13px;
+    opacity: 0.75;
+}
+.route.ticked .tick {
+    opacity: 1;
+}
+.dark .route {
+    background: #2a2a2a;
+    color: #eee;
+}
+.dark .route:hover, .dark .route:focus {
+    background: #383838;
+}
+.dark .route.ticked {
+    background: var(--hold);
+    color: var(--ink);
+}
+
+/* ================= Fields =================
+   A date in the tick list, a colour name in the loft app. They used to be two
+   different shapes; this is both of them. Spacing comes from the row rather than
+   from a margin on the field, so one can be dropped in anywhere. */
+.field {
+    box-sizing: border-box;
+    height: 36px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    font-family: inherit;
+    font-size: 15px;
+}
+.field:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 1px;
+}
+.field::placeholder {
+    color: #767676;
+}
+.dark .field {
+    background: #3a3a3a;
+    border-color: #555;
+    color: #FFF;
+}
+.dark .field::placeholder {
+    color: #b8b8b8;
+}
+/* Fields that are one thing rather than three: a name, the colour to go with it,
+   and the button that adds the pair. Joined edges and a single border round the
+   lot, so it reads as one control and not as a row of unrelated boxes. */
+.field-group {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    margin: 12px auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.field-group .field {
+    height: 36px;
+    border: 0;
+    border-radius: 0;
+}
+/* a hairline between the parts, rather than a gap */
+.field-group .field + .field,
+.field-group button {
+    border-left: 1px solid #ccc;
+}
+.field-group button {
+    height: 36px;
+    margin: 0;
+    padding: 0 1rem;
+    border-radius: 0;
+    font-size: 0.9rem;
+}
+/* a colour input is a swatch, sized for a colour rather than words */
+.field-colour {
+    width: 52px;
+    padding: 2px 4px;
+    cursor: pointer;
+}
+.field-group:focus-within {
+    outline: 2px solid #1a73e8;
+    outline-offset: 1px;
+}
+/* the field's own focus ring would be drawn inside the group, on top of its
+   neighbours - the group takes it instead */
+.field-group .field:focus {
+    outline: none;
+}
+.dark .field-group,
+.dark .field-group .field + .field,
+.dark .field-group button {
+    border-color: #555;
+}
+
+.field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+.field-row button {
+    margin: 0;
+    padding: 0.5rem 1rem;
+}
+
 /* small screen of very zoomed in */
 @media (max-width: 380px) {
     .task {
@@ -503,8 +999,20 @@ body.red, body.orange, body.yellow {
         padding: 0.8rem 1.2rem;
         margin-right: 8px;
     }
-    #about{
+    .overlay{
         font-size: 14px;
+    }
+    .box {
+        height: 110px;
+    }
+    .box h3 {
+        font-size: 24px;
+        margin: 24px 8px;
+    }
+    /* Four columns is one too many on a narrow phone, and the rating is the part
+       that can wait until the screen is bigger */
+    .log-rating {
+        display: none;
     }
   }
   

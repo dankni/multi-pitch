@@ -1,0 +1,31 @@
+{
+  "name": "Endurance Circuits",
+  "short_name": "Endurance",
+  "description": "Power endurance and endurance circuits built around your max grade.",
+  "start_url": "/training/endurance/",
+  "scope": "/training/endurance/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#121212",
+  "background_color": "#111111",
+  "icons": [
+    {
+      "src": "/img/favicon/android-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/favicon/android-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/favicon/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

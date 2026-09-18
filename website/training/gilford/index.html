@@ -5,14 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
 	<meta name="description" content="Digital tick list for the 24 routes at the Gilford wall. Start a session, tick the climbs you did and save it to your phone.">
+	<link rel="manifest" href="manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Tick List">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
 	<link href="../common/fontello.css" rel="stylesheet" />
 	<link href="../common/style.css" rel="stylesheet" />
 	<link href="style.css" rel="stylesheet" />
 	<script src="../common/functions.js" ></script>
 	<script src="../common/gilford-routes.js" ></script>
 	<script src="main.js" ></script>
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" />
     <title>Gilford Wall Tick List</title>
   </head>
 
@@ -20,6 +28,7 @@
 	<nav>
 		<div class="left-nav">
 			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
+			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
 		</div>
 		<h1>Gilford Tick List</h1>
 		<div class="right-nav">
@@ -33,7 +42,7 @@
 	<div class="holder" id="sessionHolder" style="display:none">
 		<div id="sessionBar">
 			<label for="sessionDate">Session date</label>
-			<input type="date" id="sessionDate" onchange="setSessionDate(this.value)" />
+			<input type="date" class="field" id="sessionDate" onchange="setSessionDate(this.value)" />
 			<h3><span id="tickCount">0</span> <span class="of">/ 24</span></h3>
 			<p id="summary">Nothing ticked yet</p>
 		</div>
@@ -44,40 +53,37 @@
 
 		<button id="finishButton" onclick="openSavePanel()"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
 
-		<div id="endingDiv" class="ending">
-			<p class="save-title">Good Session?</p>
-			<div class="star-holder">
-				<i class="demo-icon icon-star" id="star1" role="button" tabindex="0" aria-label="Rate session 1 of 5" onclick="setStar(1);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(1);}"></i>
-				<i class="demo-icon icon-star" id="star2" role="button" tabindex="0" aria-label="Rate session 2 of 5" onclick="setStar(2);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(2);}"></i>
-				<i class="demo-icon icon-star" id="star3" role="button" tabindex="0" aria-label="Rate session 3 of 5" onclick="setStar(3);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(3);}"></i>
-				<i class="demo-icon icon-star" id="star4" role="button" tabindex="0" aria-label="Rate session 4 of 5" onclick="setStar(4);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(4);}"></i>
-				<i class="demo-icon icon-star" id="star5" role="button" tabindex="0" aria-label="Rate session 5 of 5" onclick="setStar(5);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(5);}"></i>
-			</div>
-			<button onclick="saveSession();" id="saveSession" class="save-session-button">SAVE SESSION</button>
-		</div>
+		<div id="endingDiv" class="ending"></div>
 	</div>
 
-	<aside id="about">
+	<aside id="about" class="overlay">
 		<h2>About this application</h2>
 		<p>
 			A digital version of the paper tick list for the 24 routes at the Gilford wall.
 			Start a session, tap the climbs you got up and save it. Everything is stored on
 			this device only &ndash; nothing is uploaded anywhere.
 		</p>
-		<p>
+		<p class="panel-links">
 			<a href="/gilford.pdf" target="blank">
 				Original paper tracker (PDF) <i class="demo-icon icon-link-ext"></i>
 			</a>
-			<br />
 			<a href="/training/">
 				<i class="demo-icon icon-link"></i> All training apps
 			</a>
-			<br />
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/gilford" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
 		</p>
 		<hr />
+		<h2>Activity Log</h2>
+		<p id="stats"></p>
+		<div id="log"></div>
+		<br />
+		<hr />
+		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+	</aside>
+
+	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
 		<label class="switch-label">
 			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
@@ -85,13 +91,7 @@
 				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
 			</span>
 		</label>
-		<hr />
-		<h2>Activity Log</h2>
-		<p id="stats"></p>
-		<div id="log"></div>
-		<br />
-		<hr />
-		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close about panel"></a>
+		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>
 	</aside>
   </body>
 </html>

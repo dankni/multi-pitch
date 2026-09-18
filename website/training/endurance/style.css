@@ -1,16 +1,12 @@
 /* Set up screen */
-#setup {
-    width: 90%;
-    max-width: 520px;
-    margin: 0 auto;
-}
+/* #setup, like every other wrapper, takes its width from the shared column */
 .picker {
     margin: 0 auto 6px;
 }
 .picker label {
     margin: 0 3px 10px;
 }
-#styleHint {
+.style-hint {
     font-size: 14px;
     line-height: 1.5;
     opacity: 0.8;
@@ -23,7 +19,6 @@
     display: none;
 }
 #stageBar {
-    max-width: 520px;
     margin: 16px auto 12px;
     padding: 14px 12px;
     box-sizing: border-box;
@@ -36,9 +31,6 @@
     display: none;
     font-size: 60px;
     margin: 6px 0 0;
-    /* Tabular figures stop the clock jittering as the digits change */
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
 }
 #stageHint {
     margin: 6px 0 0;
@@ -46,26 +38,11 @@
     opacity: 0.8;
 }
 
-/* Climbs to tick. The hold colours match the ones in the Gilford tick list -
-   they are the colours of the holds on the wall itself. */
+/* Climbs to tick. The tile itself - hold colours, ticked state, dark mode - is in
+   common/style.css; this is how big they are here. */
 #climbs {
-    max-width: 520px;
     margin: 0 auto;
 }
-.route {
-    --hold: #cccccc;
-    --ink: #111111;
-}
-.hold-yellow { --hold: #ffd400; --ink: #1a1600; }
-.hold-white  { --hold: #e8e8e8; --ink: #222222; }
-.hold-grey   { --hold: #9b9b9b; --ink: #111111; }
-.hold-orange { --hold: #ff851b; --ink: #2a1400; }
-.hold-red    { --hold: #ff4136; --ink: #ffffff; }
-.hold-pink   { --hold: #ff6fcf; --ink: #2c0020; }
-.hold-green  { --hold: #2ecc40; --ink: #06240c; }
-.hold-blue   { --hold: #0074d9; --ink: #ffffff; }
-.hold-black  { --hold: #2b2b2b; --ink: #ffffff; }
-
 .route {
     position: relative;
     display: flex;
@@ -86,19 +63,6 @@
     text-align: left;
     text-transform: none;
 }
-.route:hover, .route:focus {
-    background: #ececec;
-}
-.route:focus {
-    outline: 2px solid #3b94ff;
-    outline-offset: 1px;
-}
-.route.ticked {
-    background: var(--hold);
-    color: var(--ink);
-    border-left-color: var(--ink);
-    box-shadow: inset 0 0 0 1px var(--ink);
-}
 /* With the Gilford wall switched off there is no hold colour to show, so the
    swatch down the side goes and a ticked climb uses the app's own blue */
 .route.plain {
@@ -109,17 +73,10 @@
     font-size: 24px;
 }
 .route.plain.ticked {
-    background: #3b94ff;
+    background: #0b6ad6;
     color: #ffffff;
-    border-left-color: #0053ba;
+    border-left-color: #00397f;
     box-shadow: none;
-}
-.route.ticked:hover, .route.ticked:focus {
-    background: var(--hold);
-}
-.route-colour {
-    font-size: 13px;
-    opacity: 0.75;
 }
 .route-grade {
     font-size: 22px;
@@ -134,10 +91,6 @@
     opacity: 0;
     margin: 0;
 }
-.route.ticked .tick {
-    opacity: 1;
-}
-
 /* Buttons */
 #choice {
     display: none;
@@ -170,66 +123,61 @@
 #choice button {
     display: block;
     width: 100%;
-    max-width: 520px;
     margin: 12px auto 0;
 }
+/* The quiet one of the two choices: a pale tint with the blue as ink rather than
+   a fill, so FINISH SESSION beside it is plainly the louder of the two. The
+   label sits at 6.2:1 on it.
+
+   The border is doing real work - #e8f0fe against a white page is 1.15:1, so
+   without it the button has no edge at all. */
 #anotherSet {
-    background: #3d83d886;
+    background: #e8f0fe;
+    color: #0053ba;
+    border: 1px solid #1a73e8;
+}
+/* the shared button:hover fills with #0053ba, which would turn this one solid -
+   a tint one step deeper keeps it the quiet option while still answering a tap */
+#anotherSet:hover, #anotherSet:focus {
+    background: #d2e3fc;
+    color: #0053ba;
+}
+/* the shared focus ring is white, which is invisible on a pale fill */
+#anotherSet:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 1px;
+}
+
+/* Dark mode wants the same idea the other way up. The light tint on a #111 page
+   comes out at 16:1, which would make the quiet button the brightest thing on
+   the screen - louder than the primary it is meant to sit behind. */
+/* White rather than the pale blue ink the light version mirrors: on this fill it
+   reads at 14.5:1 against the blue's 8:1, and the button is still the quiet one
+   because the fill barely lifts off the page - not because its label is dim. */
+.dark #anotherSet {
+    background: #16294a;
+    color: #FFFFFF;
+}
+.dark #anotherSet:hover, .dark #anotherSet:focus {
+    background: #203a66;
+    color: #FFFFFF;
 }
 #discard {
     display: none;
     margin-bottom: 40px;
 }
-.ending {
-    margin-bottom: 40px;
-}
-.save-title {
-    margin-top: 20px;
-}
 
 /* About panel */
-aside div, .dark aside div {
-    background-color: #111;
-}
-#log {
-    max-width: 100%;
-    width: 90%;
-    text-align: left;
-    padding: 4px 12px;
-    box-sizing: border-box;
-    border-radius: 5px;
-}
-#log p {
-    margin: 12px auto;
-    font-size: 15px;
-    line-height: 1.5;
-}
 /* The about panel sits on near black, so everything in it is white at full
    strength - nothing dimmed by opacity, since it gets read at arm's length */
-#about, #about .switch-label, #about .label-content, #about .demo-icon {
-    color: #FFFFFF;
-}
 /* common/style.css gives every .icon-ok a 40px right margin, for the spacing of
    the delete confirm in the log. The tick on the settings toggle wants none of
    it - the space in the markup is gap enough before the label. */
-#about .switch-label .icon-ok {
+.overlay .switch-label .icon-ok {
     margin-right: 0;
 }
-#stats {
-    font-size: 14px;
-}
-#log .icon-trash, #log .icon-ok, #log .icon-cancel {
-    cursor: pointer;
-}
-#log .icon-trash {
-    margin-left: 18px;
-}
-#log .icon-ok {
-    margin-right: 24px;
-}
-
 /* Dark mode */
-.dark h2, .dark #styleHint {
+.dark h2, .dark .style-hint {
     color: #FFF;
 }
 .dark #stageBar {
@@ -239,58 +187,7 @@ aside div, .dark aside div {
 .dark #restClock {
     color: #FFF;
 }
-.dark .route {
-    background: #2a2a2a;
-    color: #eee;
-}
-.dark .route:hover, .dark .route:focus {
-    background: #383838;
-}
-.dark .route.ticked {
-    background: var(--hold);
-    color: var(--ink);
-}
-
-/* The rest picker in the settings panel. A fieldset rather than a heading and a
-   div, so the three buttons are announced as the one choice they are. The width
-   is the one the panel's own headings and paragraphs use, so it lines up with
-   the rest of the panel rather than setting its own edges. */
-.setting-group {
-    width: 80%;
-    max-width: 450px;
-    margin: 20px auto 10px;
-    padding: 0;
-    border: 0;
-}
-.setting-group legend {
-    padding: 0 0 8px;
-    font-size: 16px;
-}
-/* Laid out as a flex row rather than inline-blocks: the whitespace between the
-   labels in the markup is inline content of its own, and it left the row of
-   three sitting a few pixels off the middle of the panel. Flex ignores it, and
-   wraps the three onto two lines on a narrow phone without losing the centre. */
-.setting-group .picker {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    /* a div in the info panel is given a filled panel of its own by the shared
-       stylesheet - the switches beside this one carry no such thing, and it only
-       drew a bar wider than the three buttons sitting in it */
-    background: none;
-}
-.setting-group .picker label {
-    margin: 0;
-}
-/* The shared stylesheet hides the real radios off to the left but puts them back
-   to position:relative further down, which leaves them taking part in the layout
-   - as flex items of their own they pushed the row off centre. Scoped here so
-   the pickers on the set up screen keep whatever stacking that rule is for. */
-.setting-group .picker input[type="radio"] {
-    position: absolute;
-}
+/* The setting groups these panels are built from are in common/style.css */
 
 @media (max-width: 380px) {
     #restClock {

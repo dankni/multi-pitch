@@ -5,14 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
 	<meta name="description" content="Power endurance and endurance circuits for the Gilford wall. Pick your max grade and the app builds the warm up, the sets and the rests around it.">
+	<link rel="manifest" href="manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Endurance">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
 	<link href="../common/fontello.css" rel="stylesheet" />
 	<link href="../common/style.css" rel="stylesheet" />
 	<link href="style.css" rel="stylesheet" />
 	<script src="../common/functions.js" ></script>
 	<script src="../common/gilford-routes.js" ></script>
 	<script src="main.js" ></script>
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" />
     <title>Endurance Circuits</title>
 	<style>legend { margin: 0 auto; }</style>
   </head>
@@ -21,6 +29,7 @@
 	<nav>
 		<div class="left-nav">
 			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
+			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
 		</div>
 		<h1>Endurance</h1>
 		<div class="right-nav">
@@ -30,27 +39,17 @@
 	</nav>
 
 	<div id="setup">
-		<h2>Your max grade</h2>
-		<div class="picker" id="gradePicker">
-			<!-- JavaScript will populate this -->
-		</div>
+		<!-- The grade and the style live under the cog with the rest of the set up.
+		     This is what they add up to, so the session is no surprise. -->
+		<p class="style-hint"></p>
 
-		<h2>Session type</h2>
-		<div class="picker" id="stylePicker">
-			<input type="radio" name="style" class="nice-radios" id="styleEndurance" value="endurance" onchange="drawStyleHint()" checked />
-			<label for="styleEndurance">Endurance</label>
-			<input type="radio" name="style" class="nice-radios" id="stylePower" value="power" onchange="drawStyleHint()" />
-			<label for="stylePower">Power Endurance</label>
-		</div>
-		<p id="styleHint"></p>
-
-		<button id="startButton" onclick="startSession()"><i class="demo-icon icon-play"></i>START</button>
+		<button id="primaryButton" onclick="startSession()"><i class="demo-icon icon-play"></i>START SESSION</button>
 	</div>
 
 	<div class="holder" id="sessionHolder">
 		<section id="stageBar">
 			<h2 id="stageTitle">Warm up</h2>
-			<h3 id="restClock">5:00</h3>
+			<h3 id="restClock" class="tabular">5:00</h3>
 			<p id="stageHint"></p>
 		</section>
 
@@ -67,20 +66,10 @@
 
 		<button class="secondary" id="discard" onclick="discardSession()"><i class="demo-icon icon-cancel"></i>DISCARD</button>
 
-		<div id="endingDiv" class="ending">
-			<p class="save-title">Good Session?</p>
-			<div class="star-holder">
-				<i class="demo-icon icon-star" id="star1" role="button" tabindex="0" aria-label="Rate session 1 of 5" onclick="setStar(1);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(1);}"></i>
-				<i class="demo-icon icon-star" id="star2" role="button" tabindex="0" aria-label="Rate session 2 of 5" onclick="setStar(2);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(2);}"></i>
-				<i class="demo-icon icon-star" id="star3" role="button" tabindex="0" aria-label="Rate session 3 of 5" onclick="setStar(3);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(3);}"></i>
-				<i class="demo-icon icon-star" id="star4" role="button" tabindex="0" aria-label="Rate session 4 of 5" onclick="setStar(4);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(4);}"></i>
-				<i class="demo-icon icon-star" id="star5" role="button" tabindex="0" aria-label="Rate session 5 of 5" onclick="setStar(5);" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();setStar(5);}"></i>
-			</div>
-			<button onclick="saveSession();" id="saveSession" class="save-session-button">SAVE SESSION</button>
-		</div>
+		<div id="endingDiv" class="ending"></div>
 	</div>
 
-	<aside id="about">
+	<aside id="about" class="overlay">
 		<h2>About this application</h2>
 		<p>
 			Similar to <a href="/blog/8-training-routines-to-boost-climbing-performance/">Stefano
@@ -103,18 +92,40 @@
 		</p>
 			Everything is stored on this device only &ndash; nothing is uploaded anywhere.
 		</p>
-		<p>
-			<br />
+		<p class="panel-links">
 			<a href="/training/">
 				<i class="demo-icon icon-link"></i> All training apps
 			</a>
-			<br />
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/endurance" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
 		</p>
 		<hr />
+		<h2>Activity Log</h2>
+		<p id="stats"></p>
+		<div id="log"></div>
+		<br />
+		<hr />
+		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+	</aside>
+
+	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
+		<fieldset class="setting-group">
+			<legend>Your max grade</legend>
+			<div class="picker" id="gradePicker">
+				<!-- JavaScript will populate this -->
+			</div>
+		</fieldset>
+		<fieldset class="setting-group">
+			<legend>Session type</legend>
+			<div class="picker" id="stylePicker">
+				<input type="radio" name="style" class="nice-radios" id="styleEndurance" value="endurance" onchange="setStyle()" checked />
+				<label for="styleEndurance">Endurance</label>
+				<input type="radio" name="style" class="nice-radios" id="stylePower" value="power" onchange="setStyle()" />
+				<label for="stylePower">Power Endurance</label>
+			</div>
+		</fieldset>
 		<fieldset class="setting-group">
 			<legend><i class="demo-icon icon-pause"></i> Rest between sets</legend>
 			<div class="picker" id="restPicker">
@@ -138,13 +149,8 @@
 				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
 			</span>
 		</label>
-		<hr />
-		<h2>Activity Log</h2>
-		<p id="stats"></p>
-		<div id="log"></div>
-		<br />
-		<hr />
-		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close about panel"></a>
+		<p class="style-hint"></p>
+		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>
 	</aside>
   </body>
 </html>

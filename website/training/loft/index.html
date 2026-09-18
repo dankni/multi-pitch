@@ -4,12 +4,20 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
+	<link rel="manifest" href="manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Trainer">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
 	<link href="../common/style.css" rel="stylesheet" />
 	<script src="../common/functions.js" ></script>
 	<script src="main.js" ></script>
 	<link href="style.css" rel="stylesheet" />
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet" /> 
 	<style>
 		@font-face {
 			font-family: 'fontello';
@@ -31,6 +39,7 @@
 	<nav>
 		<div class="left-nav">
 			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
+			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
 		</div>
 		<h1>Climbing Trainer</h1>
 		<div class="right-nav">
@@ -38,13 +47,13 @@
 			<i id="sound" class="demo-icon icon-volume-high" role="button" tabindex="0" aria-label="Toggle sound" onclick="toggleSound()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();toggleSound();}"></i>
 		</div>
 	</nav> 
-	<button id="primaryButton"><i class="demo-icon icon-play"></i>START</button>
+	<button id="primaryButton"><i class="demo-icon icon-play"></i>START SESSION</button>
 	<button class="secondary" id="reset" onClick="reset()"><i class="demo-icon icon-ccw"></i>RESET</button>
 	<h2 id="task"></h2>
 	<div id="color"></div>
 	<div id="data">
 		<div class="box">
-			<h3>Timer:<br /><span id="elapsed">0:00:00</span>
+			<h3>Timer:<br /><span id="elapsed" class="tabular">0:00:00</span>
 		</div>
 		<div class="box">
 			<h3>Move: <br /><span id="moves">0</span>
@@ -56,45 +65,46 @@
 			<h3>Belays: <br /><span id="belays">0</span>
 		</div>
 	</div>
-	<aside id="about">
+
+	<button id="finishButton" onclick="openSavePanel()"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
+
+	<div id="endingDiv" class="ending"></div>
+	<aside id="about" class="overlay">
 		<h2>About this application</h2>
 		<p>
 			Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move. Settings below can be used to customise the colors availible. Feedback welcome: <a href="mailto:admin@multi-pitch.com">admin@multi-pitch.com</a>.
 		</p>
-		<p>
+		<p class="panel-links">
 			<a href="/training/">
 				<i class="demo-icon icon-link"></i> All training apps
 			</a>
-			<br />
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/loft" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
 		</p>
-		<details>
-			<summary>Adjust Availible Colours</summary>
-			<p>
-				Set availible colours or add a colour below.
-				
-			</p>
-			<div id="coloursHolder">
+		<hr />
+		<h2>Activity Log</h2>
+		<p id="stats"></p>
+		<div id="log"></div>
+		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+	</aside>
+
+	<aside id="settings" class="overlay">
+		<h2>Settings</h2>
+		<fieldset class="setting-group">
+			<legend>Available colours</legend>
+			<p>Set the colours this app calls out, or add one below.</p>
+			<div id="coloursHolder" class="picker">
 				<!-- JavaScript will populate this -->
 			</div>
-			<input type="text" placeholder="new-colour" id="newColour" /> 
-			<button class="small" id="addColourButton" onclick="addColorSwitch(document.getElementById('newColour').value, 'On')"> 
-				<span id="newColorName"></span> &#43; 
-			</button>
-		</details>
-		<details>
-			<summary>Dark Mode</summary>
-			<label class="switch-label">
-				<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
-				<span class="label-content">
-					<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
-				</span>
-			</label>
-		</details>
-		<details>
-			<summary>Trad Climbing Mode</summary>	
+			<div class="field-group">
+				<input type="text" placeholder="colour name" id="newColour" class="field" aria-label="Name of the new colour" />
+				<input type="color" id="newColourSwatch" class="field field-colour" value="#ff8800" aria-label="Colour of the new colour" />
+				<button id="addColourButton" onclick="addColour()">&#43; ADD</button>
+			</div>
+		</fieldset>
+		<fieldset class="setting-group">
+			<legend>Trad climbing mode</legend>
 			<p>
 				<strong>Warning:</strong> this mode is not intended for public use. Bouldering with trad gear is a bad idea!
 			</p>
@@ -104,17 +114,14 @@
 					<!-- cam icon? --> Trad Mode <span id="tradStatus">Off</span>
 				</span>
 			</label>
-		</details>
-		<details>
-			<summary>Activity Log</summary>	
-			<p>Tracking coming soon.</p>
-				<!--
-		<p>Sessions This Month:</p>
-		<p>Monthly Dificulty Mix:</p>
-		<p> Year To Date:</p>-->
-		<div id="log"></div>
-		</details>
-		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close about panel"></a>
+		</fieldset>
+		<label class="switch-label">
+			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+			</span>
+		</label>
+		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>
 	</aside>
 	<footer id="browserSupport">
 		<p>Browser or device doesn't <a href="https://caniuse.com/speech-recognition" target="blank">support voice recognition</a>. Try Chome on Android. </p>
