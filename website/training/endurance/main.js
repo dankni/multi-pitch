@@ -230,7 +230,7 @@ function closeSession(){
     session = null;
     saveCurrent(currentKey, session);
     releaseWakeLock();
-    setStar(0);
+    resetSavePanel();   // stars and note, ready for the next session
     document.getElementById("endingDiv").style.display = "none";
     drawAll();
 }
@@ -361,7 +361,8 @@ function saveSession(){
         "rest" : restMinutesOf(session),
         "sets" : session.setNumber,
         "climbs" : session.logged.length,
-        "rating" : session.rating
+        "rating" : session.rating,
+        "comment" : sessionComment
     });
     setLog(logKey, log);
     closeSession();

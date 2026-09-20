@@ -96,7 +96,7 @@ function clearSession(){
     saveCurrent(currentKey, session);
     releaseWakeLock();
     disarmReset();
-    setStar(0);
+    resetSavePanel();   // stars and note, ready for the next session
     document.getElementById("endingDiv").style.display = "none";
     drawAll();
 }
@@ -140,7 +140,8 @@ function saveSession(){
         "date" : session.date,
         "total" : elapsed(),
         "laps" : session.laps,
-        "rating" : session.rating
+        "rating" : session.rating,
+        "comment" : sessionComment
     });
     setLog(logKey, log);
     clearSession();

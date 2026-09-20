@@ -1,0 +1,31 @@
+{
+  "name": "Bouldering Session",
+  "short_name": "Bouldering",
+  "description": "Count the boulders you climb at the wall and keep a log of your sessions.",
+  "start_url": "/training/boulder/",
+  "scope": "/training/boulder/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#121212",
+  "background_color": "#111111",
+  "icons": [
+    {
+      "src": "/img/favicon/android-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/favicon/android-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/favicon/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

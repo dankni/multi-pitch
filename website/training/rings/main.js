@@ -524,11 +524,12 @@ function saveSession() {
         "id" : Date.now(),
         "date" : today(),
         "difficulty" : difficulty,
-        "rating" : sessionRating    // set by setStar() in common/functions.js
+        "rating" : sessionRating,   // set by setStar() in common/functions.js
+        "comment" : sessionComment
     });
     setLog(logKey, log);
     document.getElementById("endingDiv").style.display = "none";
-    setStar(0);
+    resetSavePanel();   // stars and note, ready for the next session
     drawSessionLog(logView);
 }
 

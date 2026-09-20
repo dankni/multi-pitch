@@ -381,7 +381,8 @@ function saveSession(){
         "date" : today(),
         "seconds" : elapsedSeconds(),
         "moves" : state.movesMade,
-        "rating" : sessionRating   // set by setStar() in common/functions.js
+        "rating" : sessionRating,  // set by setStar() in common/functions.js
+        "comment" : sessionComment
     });
     setLog(logKey, log);
     clearSession();
@@ -396,7 +397,7 @@ function reset() {
 
 function clearSession() {
     releaseWakeLock(); // the session is over, the screen can sleep
-    setStar(0);
+    resetSavePanel();   // stars and note, ready for the next session
     document.getElementById("endingDiv").style.display = "none";
     document.getElementById("finishButton").style.display = "none";
     hr = 0;

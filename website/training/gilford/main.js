@@ -28,6 +28,8 @@ function editSession(id){
     let entry = getLog(logKey).find(item => item.id === id);
     if(!entry){ return; }
     session = { "id" : entry.id, "date" : entry.date, "climbs" : entry.climbs.slice(), "rating" : entry.rating, "editing" : true };
+    // the note comes back with it, or saving again would wipe what it said
+    setSessionComment(entry.comment);
     hideAbout();
     openSession();
 }
@@ -51,6 +53,7 @@ function openSession(){
 
 function closeSession(){
     session = null;
+    resetSavePanel();   // stars and note, ready for the next session
     saveCurrent(currentKey, session);
     document.getElementById("primaryButton").style.display = "inline-block";
     document.getElementById("discard").style.display = "none";
@@ -118,7 +121,8 @@ function saveSession(){
         "id" : session.id,
         "date" : session.date,
         "climbs" : session.climbs.slice(),
-        "rating" : session.rating
+        "rating" : session.rating,
+        "comment" : sessionComment
     };
     let existing = log.findIndex(item => item.id === entry.id);
     existing === -1 ? log.push(entry) : log[existing] = entry;

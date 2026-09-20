@@ -67,11 +67,11 @@
 			anywhere. Press the space bar to lap and Escape to pause if you have a keyboard.
 		</p>
 		<p class="panel-links">
-			<a href="/training/">
-				<i class="demo-icon icon-link"></i> All training apps
-			</a>
 			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/timer" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
+			</a>
+			<a href="/training/" class="quiet">
+				<i class="demo-icon icon-menu"></i> All training apps
 			</a>
 		</p>
 		<hr />
@@ -89,6 +89,12 @@
 			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
 			<span class="label-content">
 				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" onchange="togglePreventSleep()" id="preventSleep" checked />
+			<span class="label-content">
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span id="preventSleepStatus">On</span>
 			</span>
 		</label>
 		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>

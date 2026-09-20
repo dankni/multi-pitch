@@ -1,0 +1,147 @@
+/* Session bar - the same block the tick list carries, counting boulders instead
+   of routes */
+#sessionBar {
+    display: block;
+    width: 100%;
+    margin: 16px auto 12px;
+    padding: 12px;
+    box-sizing: border-box;
+    background: #F9F9F9;
+    border-radius: 5px;
+}
+#sessionBar label {
+    font-size: 14px;
+    margin-right: 8px;
+}
+#sessionBar h3 {
+    font-size: 44px;
+    margin: 10px 0 0;
+}
+#sessionBar .of {
+    font-size: 20px;
+    opacity: 0.6;
+}
+#summary {
+    margin: 4px 0 0;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* The ladder. Two columns, so thirteen grades are one screen rather than a scroll
+   - the tile you are reaching for should already be on it.
+
+   Each cell is a grade: a tile you tap to add a boulder, and a quiet minus to take
+   one back. Two buttons rather than one tile with a control inside it - a button
+   cannot contain a button, and the minus has to be a button of its own to be
+   reachable from a keyboard. */
+#grades {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.grade-row {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    margin: 0;
+}
+/* The tile's colours, hover, focus ring and dark mode are .route in
+   common/style.css; this is how big it is here and how the count sits on it. */
+.grade-add {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 56px;
+    margin: 0;
+    padding: 6px 42px 6px 9px;
+    border-left: 8px solid transparent;
+    border-radius: 8px;
+    background: #F9F9F9;
+    color: #222;
+    font-family: 'Hind', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+}
+.grade-row .route-grade {
+    font-size: 20px;
+    line-height: 1.1;
+}
+/* Anything climbed gets the blue edge, so the tally reads down the page at a
+   glance rather than only in the numbers */
+.grade-row.done .grade-add {
+    border-left-color: #0b6ad6;
+}
+.grade-count {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+    transform: translateY(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+}
+/* Still wide enough for a thumb at half the page width, and the same height as
+   the tile beside it */
+.grade-minus {
+    flex: 0 0 auto;
+    width: 42px;
+    margin: 0;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 22px;
+    line-height: 1;
+}
+/* HARDER takes the cell after the last grade, so it is always the next thing
+   under the thumb rather than something to go looking for below the ladder. */
+.grade-harder {
+    min-height: 56px;
+    margin: 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 15px;
+}
+#finishButton {
+    margin-bottom: 40px;
+}
+
+/* Dark mode - the tile itself is handled by .route */
+.dark #sessionBar {
+    background: #262626;
+    color: #FFF;
+}
+.dark #sessionBar label, .dark #summary {
+    color: #FFF;
+}
+@media (max-width: 380px) {
+    #grades {
+        gap: 6px;
+    }
+    .grade-add {
+        font-size: 14px;
+        padding: 6px 32px 6px 7px;
+        border-left-width: 6px;
+    }
+    .grade-row .route-grade {
+        font-size: 18px;
+    }
+    .route-colour {
+        font-size: 11px;
+    }
+    .grade-minus {
+        width: 36px;
+        font-size: 20px;
+    }
+    .grade-count {
+        right: 7px;
+        font-size: 20px;
+    }
+    .grade-harder {
+        font-size: 14px;
+        padding: 6px 4px;
+    }
+}

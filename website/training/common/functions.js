@@ -7,6 +7,12 @@ let wakeLock = null;
    this remembers whether to ask again when the page comes back, which it does in
    the visibilitychange listener at the bottom of this file. */
 let wakeLockWanted = false;
+/* Whether the climber wants the screen held awake at all. On by default, since
+   that is what these apps did before it was a choice, and under the cog with the
+   other set up - a phone that never sleeps on a wall is the point, but it is
+   still a phone, and some would rather it behaved like one. */
+let preventSleep = true;
+const preventSleepKey = "preventSleep";
 let sound = true;
 let darkMode = false;
 let debug = false;
@@ -14,7 +20,10 @@ let debug = false;
 // Asks the screen to stay awake, and says that it should stay that way until the
 // session ends - call it when one starts.
 const requestWakeLock = async () => {
+    // the session wants it either way; whether it gets it is the setting's call,
+    // so that switching the setting back on mid session can act on it
     wakeLockWanted = true;
+    if (preventSleep === false) { return; }
     if (!('wakeLock' in navigator)) {
         console.log(`Wakelock unsupported by browser`);
         return;
@@ -33,19 +42,54 @@ const requestWakeLock = async () => {
     }
 };
 
-// The session is over - let the screen sleep again
-function releaseWakeLock(){
-    wakeLockWanted = false;
+// Let go of the lock without giving up on it: the setting going off mid session,
+// say, where the session still wants the screen awake if it comes back on
+function dropWakeLock(){
     if (wakeLock !== null) {
         wakeLock.release();
         wakeLock = null;
     }
 }
 
+// The session is over - let the screen sleep again
+function releaseWakeLock(){
+    wakeLockWanted = false;
+    dropWakeLock();
+}
+
+/* The Prevent Screen Sleep switch, under the cog beside dark mode. It takes
+   effect at once rather than at the next session: turned off with a session
+   running the lock is dropped, turned back on it is asked for again. */
+function togglePreventSleep(){
+    let box = document.getElementById("preventSleep");
+    preventSleep = box === null ? true : box.checked;
+    localStorage.setItem(preventSleepKey, JSON.stringify(preventSleep));
+    drawPreventSleepStatus();
+
+    if (preventSleep === false) {
+        dropWakeLock();
+    } else if (wakeLockWanted === true) {
+        requestWakeLock();
+    }
+}
+
+function drawPreventSleepStatus(){
+    let status = document.getElementById("preventSleepStatus");
+    if (status !== null) { status.innerText = preventSleep ? "On" : "Off"; }
+}
+
+function loadPreventSleepSetting(){
+    let saved = localStorage.getItem(preventSleepKey);
+    preventSleep = saved === null ? true : JSON.parse(saved);
+    let box = document.getElementById("preventSleep");
+    if (box !== null) { box.checked = preventSleep; }
+    drawPreventSleepStatus();
+}
+
 // Back on screen with a session still running: the lock the browser took away
 // when the page was hidden has to be asked for again
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && wakeLockWanted === true && wakeLock === null) {
+    if (document.visibilityState === 'visible' && wakeLockWanted === true && wakeLock === null && preventSleep === true) {
         requestWakeLock();
     }
 });
@@ -153,6 +197,13 @@ function saveCurrent(key, session){
    rating - typically to write it into the session in progress. */
 let sessionRating = 0;
 
+/* A note to go with the session - how it felt, what went wrong, which route was
+   the one. Three hundred characters: enough for a sentence or two typed on a
+   phone with cold hands, short enough that a log stays a list rather than a
+   diary. It is saved with the session by the app, the way the rating is. */
+let sessionComment = "";
+const commentLimit = 300;
+
 function setStar(value){
     let stars = document.querySelectorAll('.star-holder .icon-star');
     for(let i = 0; i < stars.length; i++){
@@ -184,6 +235,9 @@ function drawSavePanel(){
     }
     panel.innerHTML = `<p class="save-title">Good Session?</p>
         <div class="star-holder">${stars}</div>
+        <textarea id="sessionComment" class="comment-field" rows="2" maxlength="${commentLimit}"
+            placeholder="Anything worth remembering?" aria-label="A note about this session"></textarea>
+        <p class="comment-count"><span id="commentCount">0</span>/${commentLimit}</p>
         <button id="saveSession" class="save-session-button">SAVE SESSION</button>`;
 
     for(let i = 1; i <= 5; i++){
@@ -196,10 +250,36 @@ function drawSavePanel(){
             }
         });
     }
+    let comment = document.getElementById("sessionComment");
+    comment.addEventListener("input", () => {
+        // maxlength stops the typing; this is what the app will save
+        sessionComment = comment.value.slice(0, commentLimit);
+        document.getElementById("commentCount").innerText = sessionComment.length;
+    });
+
     // saveSession() is the app's own - what a session is worth keeping differs
     document.getElementById("saveSession").addEventListener("click", () => {
         if(typeof saveSession === "function"){ saveSession(); }
     });
+}
+
+/* Put a note in the box. An app that reopens a saved session to edit it has to
+   hand its note back, or saving again would write over it with an empty one. */
+function setSessionComment(text){
+    sessionComment = String(text === undefined || text === null ? "" : text).slice(0, commentLimit);
+    let comment = document.getElementById("sessionComment");
+    if(comment !== null){
+        comment.value = sessionComment;
+        document.getElementById("commentCount").innerText = sessionComment.length;
+    }
+}
+
+/* The panel, back to empty. Apps call this where they used to call setStar(0):
+   a session that has been saved or thrown away should not leave its stars or its
+   note behind for the next one. */
+function resetSavePanel(){
+    setStar(0);
+    setSessionComment("");
 }
 
 /* The activity log.
@@ -296,12 +376,16 @@ function sessionLogRow(entry){
     let edit = sessionLogView.onEdit
         ? `<i class="demo-icon icon-wrench" role="button" tabindex="0" aria-label="Edit session ${logDate(entry.date)}" onclick="${sessionLogView.onEdit}(${entry.id})"></i>`
         : "";
+    // only where there is something to read
+    let note = entry.comment
+        ? `<i class="demo-icon icon-mail-alt" role="button" tabindex="0" aria-label="Read the note from ${logDate(entry.date)}" onclick="showSessionNote(event, ${entry.id})"></i>`
+        : "";
 
     return `<tr>
         <td class="log-date">${when.day}${when.year === "" ? "" : `<br /><span class="log-year">${when.year}</span>`}</td>
         <td>${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
         <td class="log-rating">${stars}</td>
-        <td class="log-actions">${edit}
+        <td class="log-actions">${note}${edit}
             <i class="demo-icon icon-trash" id="delete${entry.id}" role="button" tabindex="0" aria-label="Delete session ${logDate(entry.date)}" onclick="toggleConfirm(${entry.id})"></i>
             <span style="display:none" id="confirm${entry.id}">Sure?
                 <i class="demo-icon icon-ok" role="button" tabindex="0" aria-label="Confirm delete" onclick="removeLog(${entry.id})"></i>
@@ -310,6 +394,65 @@ function sessionLogRow(entry){
         </td>
     </tr>`;
 }
+
+/* The note a session was saved with, read back.
+
+   A small card by the icon that opened it, holding the stars and the words. It
+   closes on a tap anywhere else, on Escape, or on the icon that opened it - a
+   note is a thing to glance at, not a panel to manage. */
+function showSessionNote(event, id){
+    event.stopPropagation();   // the document listener below would close it again
+    let open = document.getElementById("sessionNote");
+    let sameOne = open !== null && String(open.dataset.id) === String(id);
+    hideSessionNote();
+    if(sameOne){ return; }
+
+    let entry = getLog(sessionLogView.key).find(item => String(item.id) === String(id));
+    if(entry === undefined || !entry.comment){ return; }
+
+    let stars = "";
+    for(let i = 0; i < 5; i++){
+        stars += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
+    }
+
+    let note = document.createElement("div");
+    note.id = "sessionNote";
+    note.className = "comment-pop";
+    note.dataset.id = id;
+    note.setAttribute("role", "dialog");
+    note.setAttribute("aria-label", "Note from " + logDate(entry.date));
+    note.innerHTML = `<p class="comment-pop-stars">${stars}</p><p class="comment-pop-text"></p>`;
+    // as text, not markup: a note is whatever was typed into it
+    note.querySelector(".comment-pop-text").innerText = entry.comment;
+    document.body.appendChild(note);
+
+    // by the icon that opened it, and never off the side of the screen
+    let icon = event.target.getBoundingClientRect();
+    let width = note.offsetWidth;
+    let left = Math.min(Math.max(8, icon.left + (icon.width / 2) - (width / 2)), window.innerWidth - width - 8);
+    note.style.left = left + "px";
+    note.style.top = (icon.bottom + 8) + "px";
+    // if there is no room below, put it above instead
+    if(icon.bottom + 8 + note.offsetHeight > window.innerHeight){
+        note.style.top = Math.max(8, icon.top - 8 - note.offsetHeight) + "px";
+    }
+    note.classList.add("shown");
+}
+
+function hideSessionNote(){
+    let note = document.getElementById("sessionNote");
+    if(note !== null){ note.remove(); }
+}
+
+// a tap anywhere else, or Escape, and the note is gone - but a tap inside it is
+// someone reading it, or selecting a line of it
+document.addEventListener("click", event => {
+    if(event.target.closest && event.target.closest(".comment-pop")){ return; }
+    hideSessionNote();
+});
+document.addEventListener("keydown", event => {
+    if(event.code === "Escape"){ hideSessionNote(); }
+});
 
 // Deleting a session takes two taps like everything else destructive: the bin
 // gives way to a tick and a cross, and nothing is lost until the tick is hit
@@ -477,6 +620,39 @@ function hideCogHint(){
     setTimeout(() => hint.remove(), 300);
 }
 
+/* A toast: one line along the bottom, gone on its own a few seconds later.
+
+   It tells you something and asks nothing back - anything that needs an answer is
+   a panel or a confirm, not this. A second toast replaces the first rather than
+   queueing behind it, since the newer one is the one that matters.
+
+   role="status" so it is announced without stealing focus, and pointer-events are
+   off so it can never swallow a tap meant for the app underneath. */
+const toastLife = 3200;
+let toastTimer = null;
+
+function toast(message){
+    let box = document.getElementById("toast");
+    if(box === null){
+        box = document.createElement("div");
+        box.id = "toast";
+        box.className = "toast";
+        box.setAttribute("role", "status");
+        document.body.appendChild(box);
+    }
+    box.innerText = message;
+    clearTimeout(toastTimer);
+    // a frame before the class, or a toast built this instant has nothing to
+    // animate from and simply appears
+    setTimeout(() => box.classList.add("shown"), 20);
+    toastTimer = setTimeout(hideToast, toastLife);
+}
+
+function hideToast(){
+    let box = document.getElementById("toast");
+    if(box !== null){ box.classList.remove("shown"); }
+}
+
 /* The two overlays.
 
    Info, behind the i: what the app is, where to find it, and the sessions
@@ -557,6 +733,7 @@ function registerServiceWorker(){
 // Events to show or hide icons based on browser support
 document.addEventListener('DOMContentLoaded', (event) => {
     drawSavePanel();
+    loadPreventSleepSetting();
     registerServiceWorker();
     showCogHint();
     if (document.documentElement.requestFullscreen && document.getElementById("fullscreen")) {

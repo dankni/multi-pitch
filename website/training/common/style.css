@@ -59,7 +59,9 @@ hr {
     float: right;
     width: 100px;
 }
-.icon-menu, .icon-info, .icon-cog{
+/* The nav bar’s own icons. Scoped to the nav: the burger is a panel link as
+   well now, and a floated icon with 12px above it is nav furniture, not an icon. */
+nav .icon-menu, nav .icon-info, nav .icon-cog{
     float: left;
     margin:0;
     padding:12px 6px 0 6px;
@@ -161,6 +163,71 @@ button:active {
    and the jump from the translucent resting state makes the hover plainer. */
 .secondary:hover, .secondary:focus {
     background: #fdeeee;
+}
+/* The quiet one of two choices: a pale tint with the blue as ink rather than a
+   fill, so the primary button beside it is plainly the louder of the two. The
+   label sits at 6.2:1 on it. ANOTHER SET in the endurance app, and the minus
+   beside a grade in the bouldering app.
+
+   The border is doing real work - #e8f0fe against a white page is 1.15:1, so
+   without it the button has no edge at all. */
+.quiet {
+    background: #e8f0fe;
+    color: #0053ba;
+    border: 1px solid #1a73e8;
+}
+/* the shared button:hover fills with #0053ba, which would turn this one solid -
+   a tint one step deeper keeps it the quiet option while still answering a tap */
+.quiet:hover, .quiet:focus {
+    background: #d2e3fc;
+    color: #0053ba;
+}
+/* the shared focus ring is white, which is invisible on a pale fill */
+.quiet:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 1px;
+}
+/* Dark mode wants the same idea the other way up. The light tint on a #111 page
+   comes out at 16:1, which would make the quiet button the brightest thing on
+   the screen - louder than the primary it is meant to sit behind.
+
+   White rather than the pale blue ink the light version mirrors: on this fill it
+   reads at 14.5:1 against the blue's 8:1, and the button is still the quiet one
+   because the fill barely lifts off the page - not because its label is dim. */
+.dark .quiet {
+    background: #16294a;
+    color: #FFFFFF;
+}
+.dark .quiet:hover, .dark .quiet:focus {
+    background: #203a66;
+    color: #FFFFFF;
+}
+.quiet:disabled, .quiet:disabled:hover, .quiet:disabled:focus,
+.dark .quiet:disabled, .dark .quiet:disabled:hover, .dark .quiet:disabled:focus {
+    background: transparent;
+    border-color: #c9c9c9;
+    color: #9b9b9b;
+}
+/* An overlay is a black panel whatever the page behind it is doing, so a quiet
+   button on one always takes the dark treatment - the pale tint would be the
+   loudest thing on the panel in light mode, which is the opposite of the point. */
+.overlay .quiet {
+    background: #16294a;
+    color: #FFFFFF;
+}
+.overlay .quiet:hover, .overlay .quiet:focus {
+    background: #203a66;
+    color: #FFFFFF;
+}
+
+/* The way back to the app list. It is the last link in the panel and the only one
+   that is not about this app, so it reads as the quiet action rather than as one
+   more line of the list - a button shape, set apart by the space above it. */
+.panel-links a.quiet {
+    margin-top: 30px;
+    padding: 10px 18px;
+    border-radius: 4px;
+    text-decoration: none;
 }
 /* The column, in one rule for everything that holds content. An app's own
    wrappers join the list rather than setting a width of their own - before this
@@ -295,6 +362,40 @@ aside .ring {
     }
     .hint-pop .demo-icon {
         animation: none;
+    }
+}
+
+/* The toast. Bottom of the screen rather than the top, where the cog hint lives,
+   and dark in both themes like the overlays - it is a thing on top of the app,
+   not part of it. */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 6;
+    box-sizing: border-box;
+    max-width: min(90%, var(--column));
+    padding: 12px 18px;
+    border-radius: 6px;
+    background: #16294a;
+    border: 1px solid #1a73e8;
+    color: #FFFFFF;
+    font-size: 16px;
+    line-height: 1.35;
+    text-align: center;
+    /* the nudge up it arrives on, folded into the centring */
+    transform: translate(-50%, 10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+.toast.shown {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .toast {
+        transition: none;
     }
 }
 
@@ -736,6 +837,72 @@ input[type="checkbox"].nice-radios:checked + label:before {
     padding: 4px 0;
 }
 
+/* The note that goes with a session, on the save panel. Two lines to start with,
+   growable, and the count underneath so the limit is visible before it bites. */
+.comment-field {
+    display: block;
+    width: 100%;
+    max-width: var(--column);
+    margin: 12px auto 0;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.4;
+    resize: vertical;
+}
+.comment-field:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 1px;
+}
+.comment-field::placeholder {
+    color: #767676;
+}
+.dark .comment-field {
+    background: #3a3a3a;
+    border-color: #555;
+    color: #FFF;
+}
+.dark .comment-field::placeholder {
+    color: #b8b8b8;
+}
+.comment-count {
+    margin: 4px auto 0;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* And the note read back: a card by the icon that opened it, holding the stars
+   the session was given and the words that went with it. */
+.comment-pop {
+    position: fixed;
+    z-index: 10;
+    max-width: 260px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #262626;
+    color: #E8E8E8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    font-size: 14px;
+    line-height: 1.35;
+    text-align: left;
+}
+.comment-pop-stars {
+    margin: 0 0 6px;
+    font-size: 13px;
+}
+.comment-pop-text {
+    margin: 0;
+    /* a note is typed by hand: keep the line breaks, and break a long word rather
+       than let it push the card off the screen */
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
 /* The activity log, in the about panel. drawSessionLog() in functions.js draws
    every app's into #log as a table: a row is a session, and the app only says
    what its own sessions are called. */
@@ -782,7 +949,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
    lines drawn on the page. The text is white either way, so nothing it carries
    gets harder to read. */
 .log-table tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .log-date {

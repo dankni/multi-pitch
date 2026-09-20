@@ -125,43 +125,6 @@
     width: 100%;
     margin: 12px auto 0;
 }
-/* The quiet one of the two choices: a pale tint with the blue as ink rather than
-   a fill, so FINISH SESSION beside it is plainly the louder of the two. The
-   label sits at 6.2:1 on it.
-
-   The border is doing real work - #e8f0fe against a white page is 1.15:1, so
-   without it the button has no edge at all. */
-#anotherSet {
-    background: #e8f0fe;
-    color: #0053ba;
-    border: 1px solid #1a73e8;
-}
-/* the shared button:hover fills with #0053ba, which would turn this one solid -
-   a tint one step deeper keeps it the quiet option while still answering a tap */
-#anotherSet:hover, #anotherSet:focus {
-    background: #d2e3fc;
-    color: #0053ba;
-}
-/* the shared focus ring is white, which is invisible on a pale fill */
-#anotherSet:focus {
-    outline: 2px solid #1a73e8;
-    outline-offset: 1px;
-}
-
-/* Dark mode wants the same idea the other way up. The light tint on a #111 page
-   comes out at 16:1, which would make the quiet button the brightest thing on
-   the screen - louder than the primary it is meant to sit behind. */
-/* White rather than the pale blue ink the light version mirrors: on this fill it
-   reads at 14.5:1 against the blue's 8:1, and the button is still the quiet one
-   because the fill barely lifts off the page - not because its label is dim. */
-.dark #anotherSet {
-    background: #16294a;
-    color: #FFFFFF;
-}
-.dark #anotherSet:hover, .dark #anotherSet:focus {
-    background: #203a66;
-    color: #FFFFFF;
-}
 #discard {
     display: none;
     margin-bottom: 40px;
