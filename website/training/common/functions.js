@@ -378,7 +378,7 @@ function sessionLogRow(entry){
         : "";
     // only where there is something to read
     let note = entry.comment
-        ? `<i class="demo-icon icon-mail-alt" role="button" tabindex="0" aria-label="Read the note from ${logDate(entry.date)}" onclick="showSessionNote(event, ${entry.id})"></i>`
+        ? `<i class="demo-icon icon-note" role="button" tabindex="0" aria-label="Read the note from ${logDate(entry.date)}" onclick="showSessionNote(event, ${entry.id})"></i>`
         : "";
 
     return `<tr>
@@ -628,7 +628,7 @@ function hideCogHint(){
 
    role="status" so it is announced without stealing focus, and pointer-events are
    off so it can never swallow a tap meant for the app underneath. */
-const toastLife = 3200;
+const toastLife = 5200;
 let toastTimer = null;
 
 function toast(message){
@@ -640,7 +640,13 @@ function toast(message){
         box.setAttribute("role", "status");
         document.body.appendChild(box);
     }
-    box.innerText = message;
+    // as text, not markup: a message is a message
+    box.innerHTML = '<span class="toast-face" aria-hidden="true">\u263A</span>'
+        + '<span class="toast-text"></span>'
+        + '<button type="button" class="toast-close" aria-label="Close">\u00D7</button>';
+    box.querySelector(".toast-text").innerText = message;
+    box.querySelector(".toast-close").addEventListener("click", hideToast);
+
     clearTimeout(toastTimer);
     // a frame before the class, or a toast built this instant has nothing to
     // animate from and simply appears

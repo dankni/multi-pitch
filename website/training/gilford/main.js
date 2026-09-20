@@ -70,6 +70,10 @@ function setSessionDate(date){
 
 function toggleClimb(id){
     if(!session){ return; }
+    // what was already true before this tap, so the cheer only fires on the tick
+    // that completes a set and not on every one after it
+    let before = { "sevens" : allTicked(sevens), "wall" : allTicked(everything),
+        "count" : session.climbs.length };
     let position = session.climbs.indexOf(id);
     position === -1 ? session.climbs.push(id) : session.climbs.splice(position, 1);
     let button = document.getElementById("route" + id);
@@ -77,6 +81,39 @@ function toggleClimb(id){
     button.setAttribute("aria-pressed", position === -1);
     saveCurrent(currentKey, session);
     updateSummary();
+    cheer(before);
+}
+
+/* Three things worth saying something about: half the wall, the three sevens -
+   the hard ones on it - and the whole 24, which is what the paper tracker was for.
+
+   All three are read off the routes rather than written down here, so a re-set
+   wall with four sevens or thirty routes on it still says the right thing. */
+const sevens = routes.filter(route => route.grade.startsWith("7")).map(route => route.id);
+const everything = routes.map(route => route.id);
+const halfway = Math.ceil(routes.length / 2);
+
+function allTicked(ids){
+    return ids.length > 0 && ids.every(id => session.climbs.indexOf(id) !== -1);
+}
+
+/* Said once, as the tick that completes the set goes on - never on the way back
+   down when one comes off, and never twice for the same set.
+
+   One tick can finish more than one of them, and only one thing can be said: the
+   whole wall beats the sevens, and the sevens beat the half, hardest first. */
+function cheer(before){
+    if(allTicked(everything)){
+        if(!before.wall){ toast("Amazing! you ticked them all, that's the goal this app was made for"); }
+        return;
+    }
+    if(allTicked(sevens) && !before.sevens){
+        toast("Nice work ticking the 7's");
+        return;
+    }
+    if(session.climbs.length === halfway && before.count < halfway){
+        toast("Half the routes on the wall ticked, nice one!");
+    }
 }
 
 function openSavePanel(){

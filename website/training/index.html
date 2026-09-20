@@ -60,7 +60,7 @@
         }
         .app-card h2 {
             margin: 0 0 4px 0;
-            font-size: 20px;
+            font-size: 18px;
         }
         .app-card p {
             margin: 0;
@@ -79,6 +79,46 @@
         .home-link:hover, .home-link:focus {
             color: #062f73;
         }
+        /* Every app's log on one page. The table itself is .log-table from
+           common/style.css, but an app only ever draws one inside a black overlay
+           - out here it is on the page, so the stripe has to be the other way up:
+           black over white, and white over black in dark mode. */
+        .sessions {
+            width: 90%;
+            max-width: var(--column);
+            margin: 0 auto 40px;
+            background: none;
+            border-radius: 0;
+        }
+        .sessions h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+        }
+        .sessions-note {
+            margin: 0 0 12px;
+            font-size: 13px;
+            line-height: 1.4;
+            opacity: 0.75;
+        }
+        .sessions .log-table tbody tr:nth-child(even) {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        /* The gold an earned star wears inside an app is 1.4:1 on a white page -
+           on the dark panel it lives on there it is the brightest thing in the
+           row. Out here it needs taking down to something that reads. */
+        .sessions .icon-star.active {
+            color: #a97c00;
+        }
+        .log-app {
+            white-space: nowrap;
+        }
+        .log-app a {
+            color: #0b4fbf;
+            text-decoration: none;
+        }
+        .log-app a:hover, .log-app a:focus {
+            text-decoration: underline;
+        }
         @media (prefers-color-scheme: dark) {
             body {
                 background: #111;
@@ -96,6 +136,17 @@
             }
             .home-link:hover, .home-link:focus {
                 color: #C4DEFF;
+            }
+            /* the stripe the log wears inside an app, now that the page behind it
+               is the dark one */
+            .sessions .log-table tbody tr:nth-child(even) {
+                background: rgba(255, 255, 255, 0.08);
+            }
+            .log-app a {
+                color: #8FC2FF;
+            }
+            .sessions .icon-star.active {
+                color: #FFD700;
             }
         }
     </style>
@@ -200,6 +251,236 @@
         </li>
     </ul>
 
+    <!-- Filled in by the script at the foot of the page, and hidden until there is
+         something to put in it - with no JavaScript, or on a device that has never
+         opened an app, the page is the list of apps and nothing else. -->
+    <section class="sessions" id="sessions" hidden>
+        <h2>Your sessions</h2>
+        <p class="sessions-note" id="sessionsStats"></p>
+        <div id="allLogs"></div>
+        <p class="sessions-note" id="sessionsFoot">
+            Read off this device only &ndash; the apps never upload anything. Open an app to
+            add to, edit or delete one of its sessions.
+        </p>
+    </section>
+
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
+
+    <script>
+    /* Every app's sessions, newest first.
+
+       The apps are six pages on one origin, each keeping its log in localStorage
+       under a key of its own, so the overview is a read of six keys rather than
+       anything the apps have to publish. Nothing here writes: a session is edited
+       or deleted in the app that recorded it, which is the only place that knows
+       what its fields mean.
+
+       Each app is described in one line below. That is a second copy of wording
+       the app already has, kept deliberately short - the app's own log says the
+       whole of it, and this one only has to say which night was which. */
+    (function(){
+        const showAtMost = 25;
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        function plural(count, word){
+            return count + " " + word + (count === 1 ? "" : "s");
+        }
+
+        function clock(seconds){
+            let whole = Math.max(0, Math.floor(seconds));
+            return Math.floor(whole / 3600) + ":"
+                + String(Math.floor(whole % 3600 / 60)).padStart(2, "0") + ":"
+                + String(whole % 60).padStart(2, "0");
+        }
+
+        // V grades sort by their number, not as text: V9 is above V10 as a string
+        function hardestV(climbs){
+            let hardest = -1;
+            climbs.forEach(name => {
+                let rung = Number(String(name).replace("V", ""));
+                if(!isNaN(rung) && rung > hardest){ hardest = rung; }
+            });
+            return hardest === -1 ? "" : "hardest V" + hardest;
+        }
+
+        const styleNames = { "endurance" : "Endurance", "power" : "Power Endurance" };
+
+        // a field that is not there counts as nothing rather than as "undefined"
+        function count(value){
+            return typeof value === "number" && isFinite(value) ? value : 0;
+        }
+        function list(value){
+            return Array.isArray(value) ? value : [];
+        }
+
+        const apps = [
+            { "key" : "boulderLog", "name" : "Bouldering", "href" : "boulder/",
+              "line" : entry => ({ "title" : plural(list(entry.climbs).length, "boulder"),
+                                   "detail" : hardestV(list(entry.climbs)) }) },
+            { "key" : "gilfordLog", "name" : "Tick List", "href" : "gilford/",
+              "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : "" }) },
+            { "key" : "enduranceLog", "name" : "Endurance", "href" : "endurance/",
+              "line" : entry => ({ "title" : (styleNames[entry.style] || entry.style || "Endurance")
+                                       + (entry.maxGrade ? " off " + entry.maxGrade : ""),
+                                   "detail" : plural(count(entry.sets), "set") + " · "
+                                       + count(entry.climbs) + " climbs" }) },
+            { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "timer/",
+              "line" : entry => ({ "title" : plural(count(entry.laps), "lap"),
+                                   "detail" : clock(count(entry.total) / 1000) + " on the clock" }) },
+            { "key" : "loftLog", "name" : "Twister", "href" : "loft/",
+              "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
+                                   "detail" : clock(count(entry.seconds)) + " on the clock" }) },
+            { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "rings/",
+              "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) }
+        ];
+
+        function readLog(app){
+            let saved;
+            try {
+                saved = JSON.parse(localStorage.getItem(app.key));
+            } catch(err){
+                return [];   // a key someone has hand-edited is not worth a broken page
+            }
+            if(!Array.isArray(saved)){ return []; }
+            return saved.filter(entry => entry && entry.date).map(entry => {
+                let described;
+                try {
+                    described = app.line(entry);
+                } catch(err){
+                    described = { "title" : "session", "detail" : "" };
+                }
+                return {
+                    "date" : entry.date,
+                    "id" : entry.id || 0,
+                    "app" : app,
+                    "comment" : typeof entry.comment === "string" ? entry.comment : "",
+                    "rating" : count(entry.rating) || count(entry.score),
+                    "title" : described.title,
+                    "detail" : described.detail
+                };
+            });
+        }
+
+        function escape(text){
+            return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function row(session, place){
+            let parts = String(session.date).split("-");
+            let month = months[Number(parts[1]) - 1];
+            let day = parts.length === 3 && month ? Number(parts[2]) + " " + month : session.date;
+            let year = parts.length === 3 && month ? parts[0] : "";
+
+            let stars = "";
+            for(let i = 0; i < 5; i++){
+                stars += '<i class="demo-icon icon-star ' + (i < session.rating ? "active" : "") + '"></i>';
+            }
+
+            return '<tr><td class="log-date">' + escape(day)
+                + (year === "" ? "" : '<br /><span class="log-year">' + escape(year) + '</span>')
+                + '</td><td class="log-app"><a href="' + session.app.href + '">' + escape(session.app.name) + '</a></td>'
+                + '<td>' + escape(session.title)
+                + (session.detail ? '<br /><span class="log-detail">' + escape(session.detail) + '</span>' : "")
+                + '</td><td class="log-rating">' + stars + '</td>'
+                + '<td class="log-actions">' + (session.comment
+                    ? '<i class="demo-icon icon-note" role="button" tabindex="0" data-note="' + place
+                        + '" aria-label="Read the note from ' + escape(day) + '"></i>'
+                    : "") + '</td></tr>';
+        }
+
+        let sessions = [];
+        apps.forEach(app => { sessions = sessions.concat(readLog(app)); });
+        if(sessions.length === 0){ return; }
+
+        // by the night climbed, and by when it was saved where two share a date
+        sessions.sort((a, b) => a.date === b.date ? b.id - a.id : b.date.localeCompare(a.date));
+        let shown = sessions.slice(0, showAtMost);
+
+        document.getElementById("allLogs").innerHTML = '<table class="log-table">'
+            + '<thead><tr><th>Date</th><th>App</th><th>Session</th><th class="log-rating">Rating</th>'
+            + '<th><span class="sr-only">Note</span></th></tr></thead>'
+            + '<tbody>' + shown.map(row).join("") + '</tbody></table>';
+
+        /* The note behind the speech icon, as showSessionNote() does it in
+           common/functions.js - the same card, the same placing, closing on a tap
+           outside it or on Escape. The handler is on the table rather than on each
+           icon, since the rows are written as a string. */
+        function hideNote(){
+            let open = document.getElementById("sessionNote");
+            if(open !== null){ open.remove(); }
+        }
+
+        function showNote(icon, session){
+            let open = document.getElementById("sessionNote");
+            let sameOne = open !== null && open.dataset.place === icon.dataset.note;
+            hideNote();
+            if(sameOne || !session || !session.comment){ return; }
+
+            let stars = "";
+            for(let i = 0; i < 5; i++){
+                stars += '<i class="demo-icon icon-star ' + (i < session.rating ? "active" : "") + '"></i>';
+            }
+
+            let note = document.createElement("div");
+            note.id = "sessionNote";
+            note.className = "comment-pop";
+            note.dataset.place = icon.dataset.note;
+            note.setAttribute("role", "dialog");
+            note.setAttribute("aria-label", "Note from " + session.date);
+            note.innerHTML = '<p class="comment-pop-stars">' + stars + '</p><p class="comment-pop-text"></p>';
+            // as text, not markup: a note is whatever was typed into it
+            note.querySelector(".comment-pop-text").innerText = session.comment;
+            document.body.appendChild(note);
+
+            // by the icon that opened it, and never off the side of the screen
+            let box = icon.getBoundingClientRect();
+            let width = note.offsetWidth;
+            note.style.left = Math.min(Math.max(8, box.left + (box.width / 2) - (width / 2)),
+                window.innerWidth - width - 8) + "px";
+            note.style.top = (box.bottom + 8) + "px";
+            if(box.bottom + 8 + note.offsetHeight > window.innerHeight){
+                note.style.top = Math.max(8, box.top - 8 - note.offsetHeight) + "px";
+            }
+            note.classList.add("shown");
+        }
+
+        document.getElementById("allLogs").addEventListener("click", event => {
+            let icon = event.target.closest("[data-note]");
+            if(icon === null){ return; }
+            event.stopPropagation();   // the document listener would close it again
+            showNote(icon, shown[Number(icon.dataset.note)]);
+        });
+        document.getElementById("allLogs").addEventListener("keydown", event => {
+            let icon = event.target.closest("[data-note]");
+            if(icon === null || (event.code !== "Enter" && event.code !== "Space")){ return; }
+            event.preventDefault();
+            icon.click();
+        });
+        document.addEventListener("click", event => {
+            if(event.target.closest && event.target.closest(".comment-pop")){ return; }
+            hideNote();
+        });
+        document.addEventListener("keydown", event => {
+            if(event.code === "Escape"){ hideNote(); }
+        });
+
+        let month = new Date().toISOString().slice(0, 7);
+        let thisMonth = sessions.filter(session => session.date.slice(0, 7) === month).length;
+        let used = new Set(sessions.map(session => session.app.name)).size;
+        document.getElementById("sessionsStats").innerText =
+            plural(sessions.length, "session") + " · " + thisMonth + " this month · across "
+            + plural(used, "app");
+
+        if(sessions.length > shown.length){
+            document.getElementById("sessionsFoot").innerHTML =
+                "The last " + shown.length + " of " + sessions.length
+                + ". The rest are in each app, under the i. "
+                + document.getElementById("sessionsFoot").innerHTML;
+        }
+
+        document.getElementById("sessions").hidden = false;
+    })();
+    </script>
   </body>
 </html>

@@ -80,7 +80,7 @@ h1{
 }
 h2{
     text-transform: capitalize;
-    margin-bottom:20px;
+    margin-bottom:18px;
     display: block;
     margin: 20px 0 0 0;
 }
@@ -365,24 +365,44 @@ aside .ring {
     }
 }
 
-/* The toast. Bottom of the screen rather than the top, where the cog hint lives,
-   and dark in both themes like the overlays - it is a thing on top of the app,
-   not part of it. */
+/* The toast: a face, the message, and a cross to be rid of it early.
+
+   The card is the same #262626 the note pop-up wears, for the same reason - it is
+   a thing on top of the app rather than part of it, and one grey has to sit on a
+   white page and a #111 one both. It manages that by having an edge rather than by
+   being lighter or darker than either: the green rule along the top, and a hairline
+   of white at 18% which is invisible over a light page and draws the card out of a
+   dark one. It is 15:1 against white and 1.25:1 against #111 - without that edge it
+   would be a grey rectangle lost in the dark page.
+
+   Green from the palette: #17812a, the confirmation green. A toast is the app
+   answering you, so it wears the same colour as a tap that worked. */
 .toast {
     position: fixed;
     left: 50%;
     bottom: 24px;
     z-index: 6;
     box-sizing: border-box;
-    max-width: min(90%, var(--column));
-    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* room enough that a single line still reads as a card rather than as a
+       strip - a two line message grows past it on its own */
+    min-height: 70px;
+    /* nearly the full width of a phone - 10px of page either side - and the
+       house column on anything wider */
+    width: calc(100% - 20px);
+    max-width: var(--column);
+    padding: 11px 10px 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-top: 3px solid #17812a;
     border-radius: 6px;
-    background: #16294a;
-    border: 1px solid #1a73e8;
-    color: #FFFFFF;
+    background: #262626;
+    color: #E8E8E8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
     font-size: 16px;
     line-height: 1.35;
-    text-align: center;
+    text-align: left;
     /* the nudge up it arrives on, folded into the centring */
     transform: translate(-50%, 10px);
     opacity: 0;
@@ -390,8 +410,54 @@ aside .ring {
     transition: opacity 250ms ease, transform 250ms ease;
 }
 .toast.shown {
-    opacity: 1;
+    /* not quite solid: enough of the app shows through to say the toast is over
+       it rather than part of it. What bleeds through takes the label from 12:1 on
+       the solid card to 11.7:1 over a white page and 11.9:1 over a dark one, and
+       the face and the cross stay above 6.8:1 either way. The card itself is 1.2:1
+       against a dark page even solid - the hairline border is what draws its edge
+       there, and a couple of percent of the page coming through does not change
+       that. */
+    opacity: 0.98;
     transform: translate(-50%, 0);
+    /* only once it is up: a toast on its way out must not eat a tap meant for the
+       app underneath, but the cross has to be tappable while it is there */
+    pointer-events: auto;
+}
+/* U+263A, the smiling face, rather than a glyph added to the icon font for one
+   use. #17812a on this card is 3:1 - enough for the 3px rule above, muddy for a
+   face, so the face takes the palette's other green at 7:1. */
+.toast-face {
+    flex: 0 0 auto;
+    color: #2ecc40;
+    font-size: 20px;
+    line-height: 1.2;
+}
+.toast-text {
+    flex: 1 1 auto;
+}
+/* Quiet: the toast goes on its own in a few seconds, and this is only for
+   someone who wants it gone now. */
+.toast-close {
+    flex: 0 0 auto;
+    margin: -2px 0 0;
+    padding: 0 4px;
+    border: 0;
+    border-radius: 4px;
+    background: none;
+    color: #b9b9b9;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-transform: none;
+}
+.toast-close:hover, .toast-close:focus {
+    background: none;
+    color: #FFFFFF;
+}
+/* the shared focus ring is white at -4px, which lands inside a button this small */
+.toast-close:focus {
+    outline: 1px solid #b9b9b9;
+    outline-offset: 1px;
 }
 @media (prefers-reduced-motion: reduce) {
     .toast {
@@ -515,6 +581,24 @@ aside .ring {
 .icon-bug:before { content: '\f188'; } /* '' */
 .icon-share:before { content: '\f1e0'; } /* '' */
 .icon-trash:before { content: '\f1f8'; } /* '' */
+
+/* The note behind a row in the log. The icon font has no speech bubble in it, and
+   regenerating the font is a bigger job than one shape is worth, so this one is
+   drawn: a mask filled with currentColor, which is what a glyph does anyway. It
+   sits in the same 1em box as the rest and answers a tap the same way.
+
+   An envelope did this job first, which read as mail rather than as something
+   someone wrote down after a session. */
+.icon-note {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.13em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 3H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 17h2v3.2a.8.8 0 0 0 1.3.6L11.6 17H20a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 3z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 3H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 17h2v3.2a.8.8 0 0 0 1.3.6L11.6 17H20a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 3z'/%3E%3C/svg%3E") center / contain no-repeat;
+    cursor: pointer;
+}
 
 /* close Icon */
 /* Fixed so it is still there after scrolling down a long settings panel */
