@@ -1004,14 +1004,55 @@ window.toggleTopo = function() {
     document.getElementById("canvas").style.display = "block";
 }
 
-window.updateScale = function() {
+// Opens the hero in the zoomable lightbox: the original photo, or the topo redrawn at the photo's full size
+let heroBlobUrl = null;
+window.openHeroZoom = function(event) {
+    event?.preventDefault();
+    const staticImg = document.querySelector('#staticTopo img');
+    const alt = staticImg ? staticImg.alt : '';
+    if (canvas && canvas.style.display === 'block' && img && img.complete) {
+        const big = document.createElement('canvas');
+        draw(big, true);
+        big.toBlob((blob) => {
+            if (heroBlobUrl) URL.revokeObjectURL(heroBlobUrl);
+            heroBlobUrl = URL.createObjectURL(blob);
+            openLightBox(heroBlobUrl, alt);
+        }, 'image/jpeg', 0.9);
+    } else if (staticImg) {
+        openLightBox(staticImg.getAttribute('src'), alt);
+    }
+}
+
+// A two-finger spread on the hero opens the zoom viewer
+let pinchStart = null;
+window.heroPinch = function(event) {
+    if (event.touches.length !== 2) { pinchStart = null; return; }
+    const [a, b] = event.touches;
+    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    if (event.type === 'touchstart' || pinchStart === null) {
+        pinchStart = d;
+    } else if (pinchStart > 0 && d > pinchStart * 1.15) {
+        pinchStart = -1; // once per gesture
+        openHeroZoom(event);
+    }
+}
+
+window.updateScale = function(fullSize = false) {
+    if (fullSize) {
+        scale = 1;
+        setDrawSizes();
+        return;
+    }
     let vh90 = window.innerHeight * 0.9;
     let topoHolder = document.getElementById("topoHolder");
     let scaleVsVh, scaleVsHolder;
     vh90 < img.height ? scaleVsVh = vh90 / img.height : scaleVsVh = 1;
     topoHolder.offsetWidth ? scaleVsHolder = topoHolder.offsetWidth / img.width : scaleVsHolder = 1;
     scaleVsVh > scaleVsHolder ? scale = scaleVsHolder : scale = scaleVsVh;
+    setDrawSizes();
+}
 
+function setDrawSizes() {
     topoData.belaySize ? belaySize = sThis(topoData.belaySize) : belaySize = sThis(24);
     belayScale = belaySize / sThis(24);
     lineWidth = sThis(6) * belayScale;
@@ -1022,9 +1063,11 @@ window.updateScale = function() {
 }
 
 // Draws the topo on the canvas based on the current data
-window.draw = function() {
-    
-    updateScale();
+// fullSize draws onto target at the photo's native resolution (for the zoom viewer)
+window.draw = function(target = canvas, fullSize = false) {
+
+    updateScale(fullSize);
+    const density = fullSize ? 1 : pd;
     /** DEFINE THE DERIVED DRAWING VARIABLES */
     let infoBox = document.getElementById('c1').checked;
     let routeLine = document.getElementById('c2').checked;
@@ -1032,7 +1075,7 @@ window.draw = function() {
     let abseilPoints = document.getElementById('c4').checked;
     let pitchLabels = document.getElementById('c5').checked;
     let alternatives = document.getElementById('c6').checked;
-    var ctx = document.getElementById('canvas').getContext('2d');
+    var ctx = target.getContext('2d');
 
     const imgWidth = sThis(img.width);
     const imgHeight = sThis(img.height);
@@ -1041,13 +1084,13 @@ window.draw = function() {
     const flagHeight = flagWidth * (flag.height / flag.width);
     const boxHeight = sThis(100);
     // this deals with high pixel density devices
-    canvas.style.width = imgWidth + "px";
-    canvas.style.height = imgHeight + "px";
-    canvas.width = imgWidth * pd;
-    canvas.height = imgHeight * pd;
+    target.style.width = imgWidth + "px";
+    target.style.height = imgHeight + "px";
+    target.width = imgWidth * density;
+    target.height = imgHeight * density;
 
     // Adds the main Crag image
-    ctx.scale(pd, pd);
+    ctx.scale(density, density);
     ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
 
     // Ads the box at the bottom
@@ -1129,7 +1172,7 @@ window.draw = function() {
             }            
         }
     }
-    document.getElementById('canvas').dataset.success = 'true'; // for automated testing
+    target.dataset.success = 'true'; // for automated testing
 }
 
 // A set of helper functions 

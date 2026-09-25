@@ -153,4 +153,37 @@ describe('Topo overlay attribute toggles', function () {
         cy.get('label[for="c1"]').click({ force: true });
         cy.get('#canvas[data-success="true"]');
     });
+
+    it('opens the original hero photo in the zoom viewer', () => {
+        cy.visit(appUrl);
+        cy.get('div[data-climb-id="7"] a.open-tile').click();
+        cy.get('#climbIdMeta[content="7"]');
+        cy.get('#staticTopo img').invoke('attr', 'src').then((src) => {
+            cy.get('#topoHolder a').click();
+            cy.get('#lightbox-overlay').should('be.visible');
+            cy.get('#lightbox-overlay .lightbox-img').should('have.attr', 'src', src);
+        });
+        cy.get('#lightbox-overlay .lightbox-img').trigger('dblclick', { clientX: 200, clientY: 200 })
+            .should('have.attr', 'style').and('contain', 'scale(2.5)');
+        cy.get('#lightbox-close').click();
+        cy.get('#lightbox-overlay').should('not.be.visible');
+    });
+
+    it('opens the drawn topo at the photo\'s full resolution in the zoom viewer', () => {
+        openTopo(7);
+        cy.get('#topoHolder a').click();
+        cy.get('#lightbox-overlay .lightbox-img')
+            .should('have.attr', 'src').and('match', /^blob:/);
+        cy.readFile('website/data/climbs/7.json').then((data) => {
+            cy.window().then((win) => new Promise((resolve) => {
+                const source = new win.Image();
+                source.onload = () => resolve(source.naturalWidth);
+                source.src = data.topoData.image;
+            })).then((sourceWidth) => {
+                cy.get('#lightbox-overlay .lightbox-img').should(($img) => {
+                    expect($img[0].naturalWidth, 'zoom image is the topo photo\'s full width').to.equal(sourceWidth);
+                });
+            });
+        });
+    });
 });

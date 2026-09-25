@@ -1385,6 +1385,10 @@ blockquote:before {
   max-height:90vh;
   display:block;
   margin: auto;
+  touch-action: none; /* pinch/drag zooms the image, not the page (see lightbox.js) */
+  transform-origin: 0 0;
+  cursor: zoom-in;
+  user-select: none;
 }
 .open-tile, .primary-link {
   text-align: center;
@@ -1969,7 +1973,8 @@ html[data-theme="dark"] .warning{
   min-width: 180px;
   background-image: url('/img/logo/loading.gif');
   background-repeat: no-repeat;
-  background-position: center; 
+  background-position: center;
+  touch-action: pan-x pan-y; /* a pinch here opens the zoom viewer instead of zooming the page */
 }
 /**************/
 /** HP HERO **/

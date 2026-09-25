@@ -283,8 +283,8 @@ function getRouteTopo(climb, topoData) {
         </aside>`;
     }
     routeTopo += `
-        <div class="img-contaner" id="topoHolder">
-            <a href="/${climb.topo.url}" target="blank" class="card-img-anch" onClick="trackGA('topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0);" >
+        <div class="img-contaner" id="topoHolder" ontouchstart="heroPinch(event)" ontouchmove="heroPinch(event)">
+            <a href="/${climb.topo.url}" target="blank" class="card-img-anch" aria-label="View larger image" onClick="trackGA('topo', 'openFullTopoImg', 'ID = ${climb.id} | N = ${climb.routeName} on ${climb.cliff}', 0); openHeroZoom(event);" >
                 <picture class="big-card-map" id="staticTopo">`;
                 let url = climb.topo.url.replace('.jpg','');
                 // dealing mostly with pixel density below

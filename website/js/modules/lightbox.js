@@ -64,6 +64,68 @@ function buildGalleryItems() {
 let currentGallery = [];
 let currentIndex = 0;
 
+// Pinch / drag / wheel / double-click zoom for the enlarged image, via a CSS transform.
+// The browser rasterises the scaled image from its full-size source, so detail is kept.
+function makeZoomable(img) {
+    let s = 1, x = 0, y = 0;
+    let start = null; // gesture start: pinch distance/midpoint or drag point, plus the state then
+    const pointers = new Map();
+
+    const maxScale = () => Math.max(4, img.naturalWidth / img.offsetWidth);
+    const apply = () => {
+        if (s <= 1) { s = 1; x = 0; y = 0; }
+        img.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+        img.style.cursor = s > 1 ? 'grab' : 'zoom-in';
+    };
+    // zoom to newScale keeping the screen point (cx, cy) fixed under the finger/cursor
+    const zoomAt = (newScale, cx, cy, from = { s, x, y }) => {
+        newScale = Math.min(Math.max(newScale, 1), maxScale());
+        const rect = img.getBoundingClientRect();
+        const left = rect.left - x, top = rect.top - y; // untransformed position
+        x = cx - left - (cx - left - from.x) * newScale / from.s;
+        y = cy - top - (cy - top - from.y) * newScale / from.s;
+        s = newScale;
+        apply();
+    };
+    const pinch = () => {
+        const [a, b] = [...pointers.values()];
+        return { d: Math.hypot(a.x - b.x, a.y - b.y), cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
+    };
+    const begin = () => {
+        const state = { s, x, y };
+        start = pointers.size === 2 ? { ...pinch(), state } : { ...[...pointers.values()][0], state };
+    };
+
+    img.addEventListener('pointerdown', (e) => {
+        img.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        begin();
+    });
+    img.addEventListener('pointermove', (e) => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.size === 2) {
+            const p = pinch();
+            zoomAt(start.state.s * p.d / start.d, p.cx, p.cy, start.state);
+        } else if (pointers.size === 1 && s > 1) {
+            x = start.state.x + e.clientX - start.x;
+            y = start.state.y + e.clientY - start.y;
+            apply();
+        }
+    });
+    const end = (e) => {
+        pointers.delete(e.pointerId);
+        if (pointers.size) begin(); // carry on panning with the remaining finger
+    };
+    img.addEventListener('pointerup', end);
+    img.addEventListener('pointercancel', end);
+    img.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        zoomAt(s * (e.deltaY < 0 ? 1.2 : 1 / 1.2), e.clientX, e.clientY);
+    }, { passive: false });
+    img.addEventListener('dblclick', (e) => zoomAt(s > 1 ? 1 : 2.5, e.clientX, e.clientY));
+}
+
 function showImage(index, focusTarget) {
     const item = currentGallery[index];
     const overlay = getLightboxOverlay();
@@ -75,12 +137,13 @@ function showImage(index, focusTarget) {
     // the caption carries the description, so the enlarged image is decorative
     overlay.innerHTML = `
         <button id="prevBtn" class="lightbox-nav" aria-label="Previous image" ${index === 0 ? 'style="display:none;"' : ''}>&lt;</button>
-        <img src="${item.src}" alt="" id="modalStart" tabindex="-1" class="lightbox-img" />
+        <img src="${item.src}" alt="" id="modalStart" tabindex="-1" class="lightbox-img" draggable="false" />
         <button id="nextBtn" class="lightbox-nav" aria-label="Next image" ${index === currentGallery.length - 1 ? 'style="display:none;"' : ''}>&gt;</button>
         <p class="modal-caption">Photo: ${item.alt || 'Image'}</p>
     `;
     getLightboxCloseButton(); // re-attach the close button after innerHTML wipe
     overlay.appendChild(closeButtonElement);
+    makeZoomable(document.getElementById('modalStart'));
 
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -149,7 +212,10 @@ function openLightBox(img, alt) {
     }
 
     const targetIndex = currentGallery.findIndex((item) => item.src === img);
-    currentIndex = targetIndex === -1 ? 0 : targetIndex;
+    if (targetIndex === -1) {
+        currentGallery = [{ src: img, alt: alt || '' }]; // e.g. a climb hero, not part of the page gallery
+    }
+    currentIndex = Math.max(targetIndex, 0);
 
     if (!overlayElement || overlayElement.style.display === 'none' || !overlayElement.style.display) {
         triggerElement = document.activeElement; // only on first open, not re-entrant calls
