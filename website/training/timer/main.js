@@ -43,6 +43,7 @@ function startTimer(){
         session = { "id" : Date.now(), "date" : today(), "banked" : 0, "startedAt" : null, "laps" : 0, "rating" : 0 };
     }
     session.startedAt = Date.now();
+    delete session.missing; // clocked from here on, so no longer typed in
     requestWakeLock();
     saveCurrent(currentKey, session);
     disarmReset(); // the button is on its way out, don't leave it reading SURE?
@@ -98,6 +99,39 @@ function clearSession(){
     disarmReset();
     resetSavePanel();   // stars and note, ready for the next session
     document.getElementById("endingDiv").style.display = "none";
+    drawAll();  // and the missing session fields go with it
+}
+
+/* A missing session - one that happened but never went through the timer. It is
+   an ordinary paused session with the clock and lap count typed in rather than
+   run up, so the save panel, the stars and the note all work as they always do. */
+
+function addMissingSession(){
+    if(session !== null){ return; }
+    session = { "id" : Date.now(), "date" : today(), "banked" : 0, "startedAt" : null, "laps" : 0, "rating" : 0, "missing" : true };
+    saveCurrent(currentKey, session);
+    drawMissingFields();
+    hideAbout();
+    openSavePanel();
+}
+
+function drawMissingFields(){
+    let whole = Math.floor(session.banked / 1000);
+    document.getElementById("missingDate").value = session.date;
+    document.getElementById("missingDate").max = today();
+    document.getElementById("missingMinutes").value = Math.floor(whole / 60);
+    document.getElementById("missingLaps").value = session.laps;
+}
+
+function setMissing(){
+    if(session === null || !session.missing){ return; }
+    let number = id => Math.max(0, Math.floor(Number(document.getElementById(id).value) || 0));
+    let date = document.getElementById("missingDate").value;
+    if(date){ session.date = date; }
+    // minutes only - an hour long session is rare enough to be typed as 65
+    session.banked = number("missingMinutes") * 60 * 1000;
+    session.laps = number("missingLaps");
+    saveCurrent(currentKey, session);
     drawAll();
 }
 
@@ -136,7 +170,9 @@ const logView = {
 function saveSession(){
     let log = getLog(logKey);
     log.push({
-        "id" : session.id,
+        // the log is sorted by id, so a missing session takes its place by the day
+        // it was done rather than the day it was typed in
+        "id" : session.missing ? Date.parse(session.date) + Date.now() % 86400000 : session.id,
         "date" : session.date,
         "total" : elapsed(),
         "laps" : session.laps,
@@ -175,6 +211,9 @@ function drawAll(){
     document.getElementById("lapButton").disabled = !running;
     document.getElementById("finishButton").style.display = started ? "inline-block" : "none";
     document.getElementById("finishButton").disabled = saving;
+    // one session at a time - a missing one waits until this one is done with
+    document.getElementById("addMissingLink").style.display = started ? "none" : "inline";
+    document.getElementById("missingDiv").style.display = started && session.missing ? "block" : "none";
 }
 
 
@@ -203,6 +242,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
             startTicking();
         }
         setStar(session.rating);
+        if(session.missing){
+            drawMissingFields();
+            openSavePanel();
+        }
     }
     drawAll();
     drawSessionLog(logView);

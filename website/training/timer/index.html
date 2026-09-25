@@ -52,6 +52,19 @@
 		<button id="lapButton" class="lap-button" onclick="recordLap()" disabled><i class="demo-icon icon-ok"></i>LAP</button>
 	</div>
 
+	<!-- A session that never went through the timer: the date, time and laps are
+	     typed in, and it is saved with the same panel as any other -->
+	<div id="missingDiv" class="ending">
+		<p class="save-title">Add a missing session</p>
+		<div class="field-row">
+			<input type="date" class="field" id="missingDate" onchange="setMissing()" aria-label="Date of the session" />
+		</div>
+		<div class="field-row missing-numbers">
+			<label><input type="number" class="field" id="missingMinutes" min="0" inputmode="numeric" oninput="setMissing()" /> min</label>
+			<label><input type="number" class="field" id="missingLaps" min="0" inputmode="numeric" oninput="setMissing()" /> laps</label>
+		</div>
+	</div>
+
 	<div id="endingDiv" class="ending"></div>
 
 	<aside id="about" class="overlay">
@@ -77,6 +90,7 @@
 		<hr />
 		<h2>Activity Log</h2>
 		<p id="stats"></p>
+		<p><a href="#" id="addMissingLink" onclick="addMissingSession();return false;">Add a missing session</a></p>
 		<div id="log"></div>
 		<br />
 		<hr />

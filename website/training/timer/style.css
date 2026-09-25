@@ -30,6 +30,14 @@
     font-size: 1rem;
 }
 
+.missing-numbers {
+    margin-top: 10px;
+}
+.missing-numbers .field {
+    width: 72px;
+    text-align: center;
+}
+
 #resetButton {
     display: none;
 }
