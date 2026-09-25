@@ -31,7 +31,7 @@
         "loose": false,
         "seepage": false,
         "grassLegdes": false,
-        "lastUpdate": "2026-05-09T14:26:04.356Z",
+        "lastUpdate": "2026-05-09T14:26:05.356Z",
         "mapImg": {
             "url": "img/topos/lamagan/maps/",
             "alt": "Slieve Lamagan In the Mourne Mountains"
@@ -478,7 +478,7 @@
                 "reference": "B",
                 "grade": "S 4a",
                 "length": "40m",
-                "description": "This slight variation finish of FM has the best climbing. It is a slightly harder grade, alough probubly comparible to the curx earlier in the route. This pitch leads up to the obvious corner crack in the headwall. An optional belay can be made at the base of the corner crack. From here climb the crack on good hold to a ledge (also optional belay) and then continue up easier ground to a larger block belay at the top. The protection is pretty good but takes medium to larger gear. A recomended finish.",
+                "description": "This slight variation finish of FM has the best climbing. It is a slightly harder grade, although probably comparable to the crux earlier in the route. This pitch leads up to the obvious corner crack in the headwall. An optional belay can be made at the base of the corner crack. From here climb the crack on good hold to a ledge (also optional belay) and then continue up easier ground to a larger block belay at the top. The protection is pretty good but takes medium to larger gear. A recommended finish. ",
                 "route" :  [
                     [1995.0, 1777.7],[1976.0, 1743.7],[1933.0, 1709.7],[1861.0, 1675.7],[1835.0, 1644.7],[1817.0, 1587.7],[1787.0, 1508.7],[1773.0, 1477.7],[1795.0, 1379.7],[1801.0, 1313.7],[1828.0, 1264.7],[1848.0, 1180.7] 
                 ]
