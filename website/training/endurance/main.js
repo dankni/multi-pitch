@@ -361,6 +361,7 @@ function saveSession(){
         "rest" : restMinutesOf(session),
         "sets" : session.setNumber,
         "climbs" : session.logged.length,
+        "grades" : session.logged.map(climb => climb.grade),   // for the overview charts
         "rating" : session.rating,
         "comment" : sessionComment
     });

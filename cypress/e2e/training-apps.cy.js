@@ -466,12 +466,147 @@ describe('Training apps', function () {
             cy.get('#sessionComment').type('Slabby.');
             cy.get('#saveSession').click();
             cy.get('#log').should('contain', '1 boulder').and('contain', 'hardest V2');
+            // big enough to hit with a thumb, not just the 13px glyph
+            ['.icon-note', '.icon-wrench', '.icon-trash'].forEach((icon) => {
+                cy.get('#log ' + icon).then(($icon) => {
+                    const box = $icon[0].getBoundingClientRect();
+                    expect(box.width).to.be.at.least(30);
+                    expect(box.height).to.be.at.least(36);
+                });
+            });
             cy.get('#log .icon-note').click();
             cy.get('.comment-pop').should('contain', 'Slabby.');
             cy.get('#log .icon-wrench').click();
             cy.get('#climbCount').should('have.text', '1');
             cy.get('#sessionComment').should('have.value', 'Slabby.');
             cy.get('#saveSession').should('have.text', 'UPDATE SESSION');
+        });
+    });
+
+    describe('Endurance', function () {
+        const enduranceUrl = appUrl + '/training/endurance/';
+
+        // tap every climb on screen; the list redraws on each tap, so by position
+        function tickAll(count) {
+            for (let i = 0; i < count; i++) {
+                cy.get('#climbs button').eq(i).click();
+            }
+        }
+
+        it('saves the grade of every climb for the overview charts', () => {
+            cy.visit(enduranceUrl);
+            cy.get('#primaryButton').click();
+            tickAll(4);                          // the warm up
+            for (let set = 0; set < 3; set++) {
+                cy.get('#skipRest').click();
+                tickAll(4);                      // an endurance set is four laps
+            }
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.window().then((win) => {
+                const saved = JSON.parse(win.localStorage.getItem('enduranceLog'))[0];
+                expect(saved.climbs).to.equal(16);
+                expect(saved.grades).to.have.length(16);
+                saved.grades.forEach((grade) => expect(grade).to.match(/^[4-7][abc]?\+?$/));
+            });
+        });
+    });
+
+    describe('Overview charts', function () {
+        const overviewUrl = appUrl + '/training/';
+
+        // The clock is frozen at 13 Sep 2026, so the last 7 days are 7-13 Sep and
+        // the 7 before are 31 Aug - 6 Sep.
+        const logs = {
+            boulderLog: [
+                { id: 1, date: '2026-09-13', climbs: ['V2', 'V5', 'V10'], rating: 3 },
+                { id: 2, date: '2026-09-03', climbs: ['V3'], rating: 2 },
+                { id: 3, date: '2026-07-01', climbs: ['V1'], rating: 1 }
+            ],
+            gilfordLog: [
+                { id: 4, date: '2026-09-12', climbs: [1, 3, 12], rating: 4 }      // 4, 6b, 7a
+            ],
+            enduranceLog: [
+                { id: 5, date: '2026-09-10', style: 'endurance', maxGrade: '7a', sets: 1, climbs: 3,
+                  grades: ['6a', '6b', '8a'], rating: 3 },
+                { id: 6, date: '2026-08-01', style: 'power', maxGrade: '7a', sets: 3, climbs: 10, rating: 3 }
+            ]
+        };
+
+        function visitWith(seed) {
+            cy.visit(overviewUrl, {
+                onBeforeLoad(win) {
+                    Object.keys(seed).forEach((key) => win.localStorage.setItem(key, JSON.stringify(seed[key])));
+                }
+            });
+        }
+
+        function labels(chart) {
+            return cy.get(chart + ' .label').then(($labels) => [...$labels].map((label) => label.textContent));
+        }
+
+        it('stays hidden with nothing logged', () => {
+            cy.visit(overviewUrl);
+            cy.get('#performance').should('not.be.visible');
+        });
+
+        it('stays hidden when nothing graded has been logged', () => {
+            visitWith({ lapTimerLog: [{ id: 1, date: '2026-09-13', laps: 4, total: 60000, rating: 0 }] });
+            cy.get('#sessions').should('be.visible');
+            cy.get('#performance').should('not.be.visible');
+        });
+
+        it('draws both grade charts over all time by default', () => {
+            visitWith(logs);
+            cy.get('#performance').should('be.visible');
+            cy.get('#range-all').should('be.checked');
+            cy.get('#performance svg').should('have.length', 2);
+            cy.get('#performance line.before').should('not.exist');
+            // the grade colours need no key - the grade is under every column
+            cy.get('#boulderChart .legend').should('not.exist');
+            cy.get('#sportChart .legend').should('not.exist');
+        });
+
+        it('always shows V0 to V8 and carries on up to the hardest boulder', () => {
+            visitWith(logs);
+            labels('#boulderChart').should('deep.equal',
+                ['V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10']);
+            cy.get('#boulderTotal').should('have.text', '5 boulders in all');
+        });
+
+        it('stops the boulder chart at V8 when nothing harder is logged', () => {
+            visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: ['V1', 'V4'], rating: 0 }] });
+            labels('#boulderChart').should('deep.equal',
+                ['V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8']);
+            cy.get('#sportChart').should('contain', 'No climbs logged yet');
+        });
+
+        it('adds sport grades outside 5 to 7b only once they are climbed', () => {
+            visitWith(logs);
+            labels('#sportChart').should('deep.equal',
+                ['4', '5', '5+', '6a', '6a+', '6b', '6c', '7a', '7a+', '7b', '8a']);
+            // the endurance session saved before grades were kept adds nothing
+            cy.get('#sportTotal').should('have.text', '6 climbs in all');
+        });
+
+        it('compares the last 7 days with the 7 before', () => {
+            visitWith(logs);
+            cy.get('label[for="range-7"]').click();
+            cy.get('#boulderTotal').should('have.text', '3 boulders in the last 7 days, 1 in the 7 days before');
+            // the 7 days before is a line on each bar, not a bar of its own
+            cy.get('#boulderChart .bar').should('have.length', 3);
+            cy.get('#boulderChart line.before').should('have.length', 1);
+            cy.get('#boulderChart .legend').should('have.text', 'The 7 days before');
+            cy.get('#boulderChart title').first().should('contain', 'V0');
+        });
+
+        it('keeps the range it was left on', () => {
+            visitWith(logs);
+            cy.get('label[for="range-30"]').click();
+            cy.get('#boulderTotal').should('have.text', '4 boulders in the last 30 days, 0 in the 30 days before');
+            cy.reload();
+            cy.get('#range-30').should('be.checked');
+            cy.get('#boulderTotal').should('have.text', '4 boulders in the last 30 days, 0 in the 30 days before');
         });
     });
 });

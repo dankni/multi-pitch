@@ -1068,6 +1068,22 @@ input[type="checkbox"].nice-radios:checked + label:before {
     margin: 0;
     cursor: default;
 }
+/* The note, edit, delete and confirm icons are 13px glyphs, far too small a target
+   for a thumb. Padding makes each one about 40px square to tap, and the matching
+   negative margin keeps the row the height it was, so the list doesn't spread out. */
+.log-actions .demo-icon {
+    display: inline-block;
+    padding: 12px 9px;
+    margin: -12px 0;
+}
+/* the note is a mask over its own box rather than a font glyph - held to the
+   content box, or the padding would scale the bubble up with it */
+.log-actions .icon-note {
+    -webkit-mask-origin: content-box;
+    mask-origin: content-box;
+    -webkit-mask-clip: content-box;
+    mask-clip: content-box;
+}
 
 /* ================= Tick tiles =================
    A route or a climb you tap once to say you did it. The colours are the holds on

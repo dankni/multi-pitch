@@ -16,23 +16,42 @@
             margin: 20px auto 30px;
             line-height: 1.5;
         }
+        /* Two columns of cards, wider than the rest of the page: squeezed into the
+           520px text column, each card would be half as wide and three times as
+           tall. On a narrow phone that is still the case, so they stack there.
+           --wide is two text columns and the gap between them, so on a desktop the
+           cards line up with progress and sessions side by side below them. */
+        :root {
+            --wide: 1080px;
+        }
         .apps {
             width: 90%;
-            max-width: var(--column);
+            max-width: var(--wide);
             margin: 0 auto 40px;
             padding: 0;
             list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            /* every row as tall as the tallest card, so the cards all match */
+            grid-auto-rows: 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 600px) {
+            .apps {
+                grid-template-columns: minmax(0, 1fr);
+            }
         }
         .app-card {
             display: flex;
             align-items: center;
+            box-sizing: border-box;
+            height: 100%;   /* the two cards in a row match, whatever their text */
             text-align: left;
             text-decoration: none;
             color: inherit;
             background: #F9F9F9;
             border-radius: 5px;
             padding: 18px 20px;
-            margin-bottom: 12px;
             transition: transform 150ms ease, box-shadow 150ms ease;
         }
         .app-card:hover, .app-card:focus {
@@ -57,6 +76,27 @@
             margin-left: 7px;
             margin-right: 16px;
             color: #0053ba;
+        }
+        /* The icons fade in one card after another as the page opens. It's only
+           the icons, so the cards and their words are there to read and tap from
+           the first frame. */
+        @keyframes icon-in {
+            from { opacity: 0; transform: scale(0.8); }
+            to   { opacity: 1; transform: none; }
+        }
+        .app-card .demo-icon, .app-card .app-icon {
+            animation: icon-in 450ms ease-out both;
+            animation-delay: calc(150ms + var(--order, 0) * 90ms);
+        }
+        .apps li:nth-child(2) { --order: 1; }
+        .apps li:nth-child(3) { --order: 2; }
+        .apps li:nth-child(4) { --order: 3; }
+        .apps li:nth-child(5) { --order: 4; }
+        .apps li:nth-child(6) { --order: 5; }
+        @media (prefers-reduced-motion: reduce) {
+            .app-card .demo-icon, .app-card .app-icon {
+                animation: none;
+            }
         }
         .app-card h2 {
             margin: 0 0 4px 0;
@@ -119,6 +159,159 @@
         .log-app a:hover, .log-app a:focus {
             text-decoration: underline;
         }
+        /* The charts. Every colour is a custom property so dark mode swaps them in
+           one place below. Each bar takes its colour from --c, which its
+           class sets by how hard the grade is. The period before is a thin line in the
+           page ink across each bar - it has to show over every bar colour and
+           over the page, and stay quieter than the bars themselves. */
+        .performance {
+            --ink-muted: #5c5c63;
+            --grid: rgba(0, 0, 0, 0.1);
+            --band-easy: #2a9d4a;
+            --band-medium: #eda100;
+            --band-hard: #e34948;
+            --band-vhard: #7b3fc4;
+            --before: #2b2b30;
+            width: 90%;
+            max-width: var(--column);
+            margin: 0 auto 30px;
+            background: none;
+            border-radius: 0;
+        }
+        /* common/style.css makes every section an inline-block panel, which
+           outranks the hidden attribute - both sections here rely on it */
+        section[hidden] {
+            display: none;
+        }
+        .performance h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+        }
+        /* Progress and sessions: one above the other in the text column, or side
+           by side on a screen wide enough for two, top aligned so the two headings
+           sit on one line. The two columns match the two columns of cards above. */
+        @media (min-width: 1024px) {
+            .dashboard {
+                display: flex;
+                align-items: flex-start;
+                gap: 40px;
+                width: 90%;
+                max-width: var(--wide);
+                margin: 0 auto 40px;
+            }
+            .dashboard > section {
+                flex: 1 1 0;
+                min-width: 0;
+                width: auto;
+                max-width: none;
+                margin: 0;
+            }
+            /* with nothing graded logged there is no progress beside it - the
+               sessions go back to the middle at the width they have on a phone */
+            .performance[hidden] + .sessions {
+                flex: 0 1 var(--column);
+                margin: 0 auto;
+            }
+        }
+        .range-picker label {
+            min-width: 0;
+        }
+        .performance figure {
+            margin: 18px 0 26px;
+        }
+        .performance figcaption {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .performance .sessions-note {
+            margin: 0 0 6px;
+        }
+        .chart {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+        .chart text {
+            font-family: 'Hind', sans-serif;
+            font-size: 11px;
+            fill: var(--ink-muted);
+        }
+        .chart .count {
+            fill: currentColor;
+            font-weight: bold;
+        }
+        .chart .label {
+            fill: currentColor;
+        }
+        .chart .grid { stroke: var(--grid); }
+        .chart .axis { stroke: var(--ink-muted); }
+        .chart .before {
+            stroke: var(--before);
+            stroke-width: 2;
+            stroke-linecap: round;
+            opacity: 0.75;
+        }
+        .chart .hit { fill: transparent; }
+        .chart .column:hover .hit { fill: var(--grid); }
+        .chart .bar {
+            fill: var(--c);
+        }
+        .band-easy     { --c: var(--band-easy); }
+        .band-medium   { --c: var(--band-medium); }
+        .band-hard     { --c: var(--band-hard); }
+        .band-vhard    { --c: var(--band-vhard); }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px 14px;
+            margin: 6px 0 0;
+            font-size: 13px;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .swatch {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            margin-right: 5px;
+            border-radius: 3px;
+            border: 1.5px solid var(--c);
+            background: var(--c);
+            box-sizing: border-box;
+        }
+        /* the line, as it looks on the chart */
+        .swatch.before {
+            height: 2px;
+            width: 14px;
+            border: 0;
+            border-radius: 1px;
+            background: var(--before);
+            opacity: 0.75;
+        }
+        .chart-empty {
+            margin: 10px 0;
+            padding: 24px 12px;
+            font-size: 14px;
+            opacity: 0.75;
+            border: 1px dashed var(--grid);
+            border-radius: 5px;
+        }
+        @media (prefers-color-scheme: dark) {
+            .performance {
+                --ink-muted: #a8a8ae;
+                --grid: rgba(255, 255, 255, 0.14);
+                --band-easy: #248a3c;
+                --band-medium: #eda100;
+                --band-hard: #e25550;
+                --band-vhard: #9170e6;
+                --before: #e8e8e8;
+            }
+        }
         @media (prefers-color-scheme: dark) {
             body {
                 background: #111;
@@ -170,11 +363,9 @@
                     <path fill="currentColor" fill-rule="evenodd" d="M11.5,0 C5.5,0.5 1,7 0,19 C0,29 2.2,37 4.5,44 C6.8,52 11,62 13.1,69 C15.2,82 18.6,97 20.9,107 C23,116 33,126 46,126 L54,126 C67,126 77,116 79.1,107 C81.4,97 84.8,82 86.9,69 C89,62 93.2,52 95.5,44 C97.8,37 100,29 100,19 C99,7 94.5,0.5 88.5,0 C85,3.5 81.5,8 78,8 C69,7 61,2.5 50,2.5 C39,2.5 31,7 22,8 C18.5,8 15,3.5 11.5,0 Z M26.5,22.5 H73.5 A8,8 0 0 1 81.5,30.5 V38.5 A8,8 0 0 1 73.5,46.5 H26.5 A8,8 0 0 1 18.5,38.5 V30.5 A8,8 0 0 1 26.5,22.5 Z M32,60 H68 A7,7 0 0 1 75,67 V75 A7,7 0 0 1 68,82 H32 A7,7 0 0 1 25,75 V67 A7,7 0 0 1 32,60 Z M38,94 H62 A6,6 0 0 1 68,100 V105 A6,6 0 0 1 62,111 H38 A6,6 0 0 1 32,105 V100 A6,6 0 0 1 38,94 Z"/>
                 </svg>
                 <div class="app-text">
-                    <h2>Rock Ring Trainer</h2>
+                    <h2>Rock Rings</h2>
                     <p>
-                        The Metolius ten minute rock ring workout, timed and read out
-                        as you go. Easy, original and hard plans, and a log of past
-                        sessions.
+                        The Metolius 10 min rock ring workout.
                     </p>
                 </div>
             </a>
@@ -183,10 +374,9 @@
             <a class="app-card" href="timer/">
                 <i class="demo-icon icon-ccw" aria-hidden="true"></i>
                 <div class="app-text">
-                    <h2>Circuit Timer &amp; Lap Counter</h2>
+                    <h2>Circuit Session</h2>
                     <p>
-                        A stopwatch with a lap button. Tap it each time you finish a
-                        circuit and it keeps your total time and the number of laps done.
+                        A stopwatch with a lap button.
                     </p>
                 </div>
             </a>
@@ -195,10 +385,9 @@
             <a class="app-card" href="gilford/">
                 <i class="demo-icon icon-ok" aria-hidden="true"></i>
                 <div class="app-text">
-                    <h2>Gilford Wall Tick List</h2>
+                    <h2>Gilford Wall</h2>
                     <p>
-                        A digital version of the paper tick list for the 24 routes at
-                        the Gilford wall. Tap the climbs you got up and save the session.
+                        Gilford wall route tick list. 
                     </p>
                 </div>
             </a>
@@ -214,10 +403,9 @@
                     <circle fill="currentColor" cx="52" cy="54" r="4"/>
                 </svg>
                 <div class="app-text">
-                    <h2>Bouldering Session</h2>
+                    <h2>Bouldering</h2>
                     <p>
-                        Count the problems you climb at the wall. Tap a grade each time
-                        you top one out and save the session with a rating and a note.
+                        Track a bouldering gym session.
                     </p>
                 </div>
             </a>
@@ -230,8 +418,7 @@
                 <div class="app-text">
                     <h2>Endurance</h2>
                     <p>
-                        Similar to Stefano Ghisolfi's so called doubles. Endurance or 
-                        Power Endurance options with configuration. 
+                        Endurance system similar to Stefano Ghisolfi's so called doubles.
                     </p>
                 </div>
             </a>
@@ -242,14 +429,37 @@
                 <div class="app-text">
                     <h2>Climbing Twister</h2>
                     <p>
-                        Voice controlled endurance training, originally built for my loft 
-                        home wall but can be configured to any spray wall. Say
-                        &quot;next&quot; and it calls out the next limb and hold colour.
+                        Voice controlled endurance training, calls out random limbs and hold colours.
                     </p>
                 </div>
             </a>
         </li>
     </ul>
+
+    <div class="dashboard">
+    <!-- Drawn by overview-charts.js from the same logs as the table below, and
+         hidden on the same terms. -->
+    <section class="performance" id="performance" hidden>
+        <h2>Your progress</h2>
+        <div class="picker range-picker" role="radiogroup" aria-label="Time range">
+            <input type="radio" name="overviewRange" class="nice-radios" id="range-all" value="all" checked />
+            <label for="range-all">All time</label>
+            <input type="radio" name="overviewRange" class="nice-radios" id="range-30" value="30" />
+            <label for="range-30">30 days</label>
+            <input type="radio" name="overviewRange" class="nice-radios" id="range-7" value="7" />
+            <label for="range-7">7 days</label>
+        </div>
+        <figure>
+            <figcaption>Climbs by grade</figcaption>
+            <p class="sessions-note" id="sportTotal"></p>
+            <div id="sportChart"></div>
+        </figure>
+        <figure>
+            <figcaption>Boulders by grade</figcaption>
+            <p class="sessions-note" id="boulderTotal"></p>
+            <div id="boulderChart"></div>
+        </figure>
+    </section>
 
     <!-- Filled in by the script at the foot of the page, and hidden until there is
          something to put in it - with no JavaScript, or on a device that has never
@@ -263,9 +473,12 @@
             add to, edit or delete one of its sessions.
         </p>
     </section>
+    </div>
 
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
 
+    <script src="common/gilford-routes.js"></script>
+    <script src="overview-charts.js"></script>
     <script>
     /* Every app's sessions, newest first.
 
@@ -343,6 +556,7 @@
                 return [];   // a key someone has hand-edited is not worth a broken page
             }
             if(!Array.isArray(saved)){ return []; }
+            rawLogs[app.key] = saved;   // as stored, for the charts
             return saved.filter(entry => entry && entry.date).map(entry => {
                 let described;
                 try {
@@ -389,9 +603,19 @@
                     : "") + '</td></tr>';
         }
 
+        let rawLogs = {};
         let sessions = [];
         apps.forEach(app => { sessions = sessions.concat(readLog(app)); });
         if(sessions.length === 0){ return; }
+
+        // the charts are a bonus - if they fail to load, the table still draws
+        if(typeof drawOverviewCharts === "function"){
+            try {
+                drawOverviewCharts(rawLogs);
+            } catch(err){
+                console.log("Charts not drawn:", err.message);
+            }
+        }
 
         // by the night climbed, and by when it was saved where two share a date
         sessions.sort((a, b) => a.date === b.date ? b.id - a.id : b.date.localeCompare(a.date));

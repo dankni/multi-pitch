@@ -13,7 +13,7 @@
    serve last month's app forever otherwise. The deploy invalidates /* at
    CloudFront, so the new sw.js is picked up on the next launch. */
 
-const CACHE_VERSION = 'v27';
+const CACHE_VERSION = 'v28';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 /* The shell. Everything an app needs to draw itself with no network at all -
@@ -24,6 +24,7 @@ const SHELL = [
     // redirect on some hosts, and addAll refuses a redirected response - which
     // would mean nothing installs at all
     '/training/',
+    '/training/overview-charts.js',
 
     '/training/common/style.css',
     '/training/common/fontello.css',
