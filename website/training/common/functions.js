@@ -94,23 +94,8 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// Function that can be called by onClick from icon to fullscreen the browser
-function fullscreen(){
-    let icon = document.getElementById('fullscreen');
-    let fsClass = "icon-resize-full";
-    let resizeClass = "icon-resize-normal";
-
-    if(document.fullscreenElement === null) {
-        // App is not fullscreen so make it full
-        document.documentElement.requestFullscreen();
-        icon.classList.remove(fsClass);
-        icon.classList.add(resizeClass);
-    } else {
-        document.exitFullscreen();
-        icon.classList.remove(resizeClass);
-        icon.classList.add(fsClass);
-    }
-}
+// fullscreen() and the service worker are in common/shell.js, which every
+// training page loads - the overview and progress pages as well as the apps
 
 /* Two tap confirm, shared by any app with a button that throws a session away.
 
@@ -733,36 +718,11 @@ function toggleDebug(){
         document.getElementById('debugStatus').innerText = `Off`;
     }
 }
-/* The service worker, which is what lets an app open with no signal at all.
-
-   It lives at /training/ rather than in each app, so one cache holds the shared
-   stylesheet, the icon font and this file rather than five copies. Registration
-   is here because these five apps are the only pages that load functions.js.
-
-   It needs https (or localhost) - over file:// or plain http the browser refuses
-   and the apps carry on exactly as they did before. */
-function registerServiceWorker(){
-    // the truthiness check as well as the 'in' one: a test that stubs the
-    // navigator leaves the property there with nothing behind it
-    if(!('serviceWorker' in navigator) || !navigator.serviceWorker){ return; }
-    navigator.serviceWorker.register('/training/sw.js', {
-        "scope" : '/training/',
-        // never satisfy the update check from the http cache - an app that cannot
-        // be updated is worse than one that cannot be installed
-        "updateViaCache" : 'none'
-    }).catch(err => console.log('Service worker not registered:', err.message));
-}
-
 // Events to show or hide icons based on browser support
 document.addEventListener('DOMContentLoaded', (event) => {
     drawSavePanel();
     loadPreventSleepSetting();
-    registerServiceWorker();
     showCogHint();
-    if (document.documentElement.requestFullscreen && document.getElementById("fullscreen")) {
-        //supports fullscreen mode
-        document.getElementById("fullscreen").style.display = "inline-block";
-    }
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && document.getElementById("darkMode")) {
         // user is in dark mode
         toggleDarkMode();

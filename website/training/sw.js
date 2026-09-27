@@ -13,7 +13,7 @@
    serve last month's app forever otherwise. The deploy invalidates /* at
    CloudFront, so the new sw.js is picked up on the next launch. */
 
-const CACHE_VERSION = 'v56';
+const CACHE_VERSION = 'v57';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 /* The shell. Everything an app needs to draw itself with no network at all -
@@ -24,6 +24,7 @@ const SHELL = [
     // redirect on some hosts, and addAll refuses a redirected response - which
     // would mean nothing installs at all
     '/training/',
+    '/training/manifest.json',
     '/training/progress/',
     '/training/progress/charts.js',
     '/training/progress/sessions.js',
@@ -36,6 +37,7 @@ const SHELL = [
     '/training/common/gilford-routes.js',
     '/training/common/ukc.js',
     '/training/common/bottom-nav.js',
+    '/training/common/shell.js',
     '/training/common/font/hind-400-latin.woff2',
     '/training/common/font/hind-400-latin-ext.woff2',
     '/training/common/font/fontello.woff2',
@@ -45,36 +47,29 @@ const SHELL = [
     '/training/timer/',
     '/training/timer/style.css',
     '/training/timer/main.js',
-    '/training/timer/manifest.json',
 
     '/training/endurance/',
     '/training/endurance/style.css',
     '/training/endurance/main.js',
-    '/training/endurance/manifest.json',
 
     '/training/boulder/',
     '/training/boulder/style.css',
     '/training/boulder/main.js',
-    '/training/boulder/manifest.json',
 
     '/training/trad/',
     '/training/trad/style.css',
     '/training/trad/main.js',
-    '/training/trad/manifest.json',
 
     '/training/gilford/',
     '/training/gilford/style.css',
     '/training/gilford/main.js',
-    '/training/gilford/manifest.json',
 
     '/training/loft/',
     '/training/loft/main.js',
     '/training/loft/style.css',
-    '/training/loft/manifest.json',
 
     '/training/rings/',
     '/training/rings/main.js',
-    '/training/rings/manifest.json',
     '/training/rings/img/plain.png',
     '/training/rings/img/jug.png',
     '/training/rings/img/offset.png',

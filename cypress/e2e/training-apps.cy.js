@@ -669,6 +669,28 @@ describe('Training apps', function () {
         });
     });
 
+    describe('One app', function () {
+        const pages = ['/training/', '/training/progress/', '/training/rings/', '/training/timer/',
+            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/'];
+
+        it('installs as a single app covering every page', () => {
+            cy.request(appUrl + '/training/manifest.json').its('body').should((manifest) => {
+                expect(manifest.scope).to.equal('/training/');
+                expect(manifest.start_url).to.equal('/training/');
+                expect(manifest.display).to.equal('standalone');
+            });
+        });
+
+        pages.forEach((page) => {
+            it('gives ' + page + ' the shared manifest and a full screen button', () => {
+                cy.visit(appUrl + page);
+                cy.get('link[rel="manifest"]').should('have.attr', 'href', '/training/manifest.json');
+                cy.get('meta[name="apple-mobile-web-app-title"]').should('have.attr', 'content', 'Training');
+                cy.get('#fullscreen').should('be.visible').and('have.class', 'icon-resize-full');
+            });
+        });
+    });
+
     describe('Bottom navigation', function () {
         it('leaves the app button empty until an app has been opened', () => {
             cy.visit(appUrl + '/training/');

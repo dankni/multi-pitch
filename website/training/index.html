@@ -5,6 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="Free climbing training web apps from multi-pitch.com - a voice controlled endurance trainer, the Metolius rock ring workout, a lap timer, the Gilford wall tick list and an endurance circuit builder." />
+    <link rel="manifest" href="/training/manifest.json" />
+    <meta name="theme-color" content="#121212">
+    <!-- iOS has no manifest support worth the name: it wants these, and Add to
+         Home Screen by hand from the share sheet -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Training">
+    <link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+    <link rel="icon" href="/img/favicon/android-icon-192x192.png">
     <link href="common/style.css" rel="stylesheet" />
     <link href="common/fontello.css" rel="stylesheet" />
     <link href="common/page.css" rel="stylesheet" />
@@ -143,7 +153,9 @@
         </div>
         <h1>Training Apps</h1>
         <!-- empty, but it balances the left side so the title stays centred -->
-        <div class="right-nav"></div>
+        <div class="right-nav">
+            <i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
+        </div>
     </nav>
 
     <ul class="apps">
@@ -327,6 +339,7 @@
         }).catch(() => { /* nothing to report */ });
     })();
     </script>
+    <script src="common/shell.js"></script>
     <script src="common/bottom-nav.js" defer></script>
   </body>
 </html>
