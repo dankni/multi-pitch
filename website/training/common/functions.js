@@ -594,7 +594,8 @@ function loadAnalytics(){
     loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE");
     setTimeout(function(){
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        // global, as on the main site, so an app can send an event of its own
+        window.gtag = function() { dataLayer.push(arguments); };
         gtag('js', new Date());
         gtag('config', 'G-XR0EG1VTTE');
         window.performance.mark('gta-end');
