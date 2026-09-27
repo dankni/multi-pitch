@@ -673,27 +673,38 @@ describe('Training apps', function () {
         it('leaves the app button empty until an app has been opened', () => {
             cy.visit(appUrl + '/training/');
             cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
-            cy.get('.bottom-nav a').first().should('contain', 'Apps').and('have.attr', 'aria-current', 'page');
-            cy.get('.bottom-nav a').eq(1).should('contain', 'Progress').and('have.attr', 'href', '/training/#performance');
+            // the overview is where you are, so Apps is not a link
+            cy.get('.bottom-nav .bottom-nav-item').first().should('contain', 'Apps')
+                .and('have.attr', 'aria-current', 'page').and('not.have.attr', 'href');
+            cy.get('.bottom-nav a').first().should('contain', 'Progress').and('have.attr', 'href', '/training/progress/');
             cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'empty');
         });
 
-        it('shows the app you are in, and links back to it from the overview', () => {
+        it('marks Progress as the page you are on', () => {
+            cy.visit(appUrl + '/training/progress/');
+            cy.get('.bottom-nav .bottom-nav-item').eq(1).should('contain', 'Progress')
+                .and('have.attr', 'aria-current', 'page');
+            cy.get('.bottom-nav a').first().should('contain', 'Apps').and('have.attr', 'href', '/training/');
+        });
+
+        it('shows the app you are in, and links back to it from elsewhere', () => {
             cy.visit(appUrl + '/training/timer/');
             // where you are, not a link
             cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'current')
                 .and('contain', 'Circuit').and('not.have.attr', 'href');
             cy.get('.bottom-nav a').first().should('have.attr', 'href', '/training/');
             cy.visit(appUrl + '/training/');
-            cy.get('.bottom-nav a').eq(2).should('contain', 'Circuit').and('have.attr', 'href', '/training/timer/');
-            // and following it gets there, rather than being held on the overview
-            cy.get('.bottom-nav a').eq(2).click();
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Circuit')
+                .and('have.attr', 'href', '/training/timer/');
+            // and following it gets there
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).click();
             cy.location('pathname').should('equal', '/training/timer/');
         });
     });
 
-    describe('Overview charts', function () {
+    describe('Progress and sessions', function () {
         const overviewUrl = appUrl + '/training/';
+        const progressUrl = appUrl + '/training/progress/';
 
         // The clock is frozen at 13 Sep 2026, so the last 7 days are 7-13 Sep and
         // the 7 before are 31 Aug - 6 Sep.
@@ -713,8 +724,9 @@ describe('Training apps', function () {
             ]
         };
 
-        function visitWith(seed) {
-            cy.visit(overviewUrl, {
+        // the charts, unless the overview's sessions are what is being looked at
+        function visitWith(seed, url = progressUrl) {
+            cy.visit(url, {
                 onBeforeLoad(win) {
                     Object.keys(seed).forEach((key) => win.localStorage.setItem(key, JSON.stringify(seed[key])));
                 }
@@ -725,20 +737,25 @@ describe('Training apps', function () {
             return cy.get(chart + ' .label').then(($labels) => [...$labels].map((label) => label.textContent));
         }
 
-        it('stays hidden with nothing logged', () => {
-            cy.visit(overviewUrl);
+        it('says there is nothing to chart with nothing logged', () => {
+            cy.visit(progressUrl);
             cy.get('#performance').should('not.be.visible');
+            cy.get('#progressEmpty').should('be.visible');
         });
 
-        it('stays hidden when nothing graded has been logged', () => {
+        it('says the same when nothing graded has been logged', () => {
             visitWith({ lapTimerLog: [{ id: 1, date: '2026-09-13', laps: 4, total: 60000, rating: 0 }] });
-            cy.get('#sessions').should('be.visible');
             cy.get('#performance').should('not.be.visible');
+            cy.get('#progressEmpty').should('be.visible');
+            // the session is still listed on the overview
+            cy.visit(overviewUrl);
+            cy.get('#sessions').should('be.visible');
         });
 
         it('draws both grade charts over the last year by default', () => {
             visitWith(logs);
             cy.get('#performance').should('be.visible');
+            cy.get('#progressEmpty').should('not.be.visible');
             cy.get('#range-365').should('be.checked');
             cy.get('#performance svg').should('have.length', 2);
             // nothing in the year before, so no line on any bar
@@ -782,6 +799,7 @@ describe('Training apps', function () {
             visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: ['V2'], sport: ['6b', '7a', '4+'], rating: 0 }] });
             cy.get('#sportTotal').should('have.text', '3 climbs in the last year, 0 in the year before');
             labels('#sportChart').should('include.members', ['4+', '6b', '7a']);
+            cy.visit(overviewUrl);
             cy.get('#allLogs tbody tr').first().should('contain', 'Gym Session')
                 .and('contain', '1 boulder, 3 sport climbs').and('contain', 'hardest V2 · 7a');
         });
@@ -820,12 +838,14 @@ describe('Training apps', function () {
                 cy.get('#tradFigure').should('be.visible');
                 cy.get('#ukcNote').should('not.be.visible');
                 cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'hardest VS');
             });
 
             it('counts both when the day is not on UKC', () => {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(false)] });
                 cy.get('#tradTotal').should('have.text', '6 trad climbs in the last year, 0 in the year before');
+                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').should('have.length', 3);
             });
 
@@ -833,6 +853,7 @@ describe('Training apps', function () {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(true)] });
                 // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug
                 cy.get('#tradTotal').should('have.text', '4 trad climbs in the last year, 0 in the year before');
+                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').should('have.length', 2);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'UKC data ignored');
                 cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '6 Aug');
@@ -876,14 +897,14 @@ describe('Training apps', function () {
             ].join('\r\n');
 
             // The import is in the trad app: choose the file there - it reloads
-            // once the logbook is saved - then come back to the overview
-            function choose(text) {
+            // once the logbook is saved - then go to the page being tested
+            function choose(text, url = progressUrl) {
                 let firstClimb = text.split('\r\n')[1].split(',')[0].replace(/"/g, '');
                 cy.visit(appUrl + '/training/trad/');
                 cy.get('#ukcFile').selectFile({ contents: Cypress.Buffer.from(text), fileName: 'dankni_Logbook_DLOG.csv' },
                     { force: true });
                 cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', firstClimb);
-                cy.visit(overviewUrl);
+                cy.visit(url);
             }
 
             it('points to the import in the trad app until there is trad to chart', () => {
@@ -891,13 +912,14 @@ describe('Training apps', function () {
                 cy.get('#performance').should('be.visible');
                 cy.get('#tradFigure').should('not.be.visible');
                 cy.get('#tradPrompt a').should('have.text', 'Upload UKC log data to combine and add trad climbs')
-                    .and('have.attr', 'href', 'trad/#ukc');
-                // and the overview has no upload of its own any more
+                    .and('have.attr', 'href', '../trad/#ukc');
+                // the import is only in the trad app
+                cy.get('#ukcFile').should('not.exist');
+                cy.visit(overviewUrl);
                 cy.get('#ukcFile').should('not.exist');
             });
 
             it('charts the trad climbs, turning only UIAA grades British', () => {
-                cy.visit(overviewUrl);
                 choose(csv);
                 cy.get('#performance').should('be.visible');
                 cy.get('#tradFigure').should('be.visible');
@@ -911,7 +933,6 @@ describe('Training apps', function () {
             });
 
             it('adds the sport climbs to the sport chart', () => {
-                cy.visit(overviewUrl);
                 choose(csv);
                 // 4c as 4+, 5c as 5+, and 6a+ as it is
                 cy.get('label[for="range-all"]').click();
@@ -920,8 +941,7 @@ describe('Training apps', function () {
             });
 
             it('adds each day climbed to the sessions', () => {
-                cy.visit(overviewUrl);
-                choose(csv);
+                choose(csv, overviewUrl);
                 cy.get('#sessions').should('be.visible');
                 // six days: the two climbs on 31 Aug are one session
                 cy.get('#allLogs tbody tr').should('have.length', 6);
@@ -931,8 +951,7 @@ describe('Training apps', function () {
             });
 
             it('puts the notes of the hardest climb of the day on its session', () => {
-                cy.visit(overviewUrl);
-                choose(csv);
+                choose(csv, overviewUrl);
                 // UKC exports no rating, so its days have no stars to show
                 cy.get('#allLogs tbody tr').first().find('.icon-star').should('not.exist');
                 cy.get('#allLogs tbody tr').first().find('.icon-note').click();
@@ -943,7 +962,6 @@ describe('Training apps', function () {
             });
 
             it('keeps the name, date, grade, type, crag and notes of each climb', () => {
-                cy.visit(overviewUrl);
                 choose(csv);
                 cy.get('#tradFigure').should('be.visible');
                 cy.window().then((win) => {
@@ -955,29 +973,29 @@ describe('Training apps', function () {
             });
 
             it('replaces the last import with a new one', () => {
-                cy.visit(overviewUrl);
                 choose(csv);
                 cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
                 choose(later);
                 cy.get('#tradTotal').should('have.text', '1 trad climb in the last year, 0 in the year before');
                 cy.get('#sportChart').should('contain', 'No climbs in the last year');
+                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').should('have.length', 1);
             });
 
             it('compares the last 30 days with the 30 before', () => {
-                cy.visit(overviewUrl);
                 choose(csv);
                 cy.get('label[for="range-30"]').click();
                 cy.get('#tradTotal').should('have.text', '2 trad climbs in the last 30 days, 1 in the 30 days before');
             });
 
             it('can be removed again', () => {
-                cy.visit(overviewUrl);
                 choose(csv);
                 cy.contains('#tradFigure a', 'Remove').click();
                 cy.get('#performance').should('not.be.visible');
-                cy.get('#sessions').should('not.be.visible');
+                cy.get('#progressEmpty').should('be.visible');
                 cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));
+                cy.visit(overviewUrl);
+                cy.get('#sessions').should('not.be.visible');
             });
         });
     });

@@ -7,14 +7,12 @@
     <meta name="description" content="Free climbing training web apps from multi-pitch.com - a voice controlled endurance trainer, the Metolius rock ring workout, a lap timer, the Gilford wall tick list and an endurance circuit builder." />
     <link href="common/style.css" rel="stylesheet" />
     <link href="common/fontello.css" rel="stylesheet" />
+    <link href="common/page.css" rel="stylesheet" />
     <style>
-        /* This page doesn't load the apps' functions.js, so dark mode comes from
-           the media query below rather than the .dark class the apps toggle. */
         /* Two columns of cards, wider than the rest of the page: squeezed into the
            520px text column, each card would be half as wide and three times as
            tall. On a narrow phone that is still the case, so they stack there.
-           --wide is two text columns and the gap between them, so on a desktop the
-           cards line up with progress and sessions side by side below them. */
+           --wide is two text columns and the gap between them. */
         :root {
             --wide: 1080px;
         }
@@ -137,12 +135,6 @@
             margin: 0 0 6px;
             font-size: 18px;
         }
-        .sessions-note {
-            margin: 0 0 12px;
-            font-size: 13px;
-            line-height: 1.4;
-            opacity: 0.75;
-        }
         .sessions .log-table tbody tr:nth-child(even) {
             background: rgba(0, 0, 0, 0.05);
         }
@@ -155,208 +147,14 @@
         .log-app {
             white-space: nowrap;
         }
-        .log-app a, .performance .sessions-note a {
+        .log-app a {
             color: #0b4fbf;
             text-decoration: none;
         }
-        .log-app a:hover, .log-app a:focus,
-        .performance .sessions-note a:hover, .performance .sessions-note a:focus {
+        .log-app a:hover, .log-app a:focus {
             text-decoration: underline;
         }
-        /* The charts. Every colour is a custom property so dark mode swaps them in
-           one place below. Each bar takes its colour from --c, which its
-           class sets by how hard the grade is. The period before is a thin line in the
-           page ink across each bar - it has to show over every bar colour and
-           over the page, and stay quieter than the bars themselves. */
-        .performance {
-            --ink-muted: #5c5c63;
-            --grid: rgba(0, 0, 0, 0.1);
-            --band-easy: #2a9d4a;
-            --band-medium: #eda100;
-            --band-hard: #e34948;
-            --band-vhard: #7b3fc4;
-            --before: #2b2b30;
-            width: 90%;
-            max-width: var(--column);
-            margin: 0 auto 30px;
-            background: none;
-            border-radius: 0;
-        }
-        /* common/style.css makes every section an inline-block panel, which
-           outranks the hidden attribute - both sections here rely on it */
-        section[hidden] {
-            display: none;
-        }
-        .performance h2 {
-            margin: 0 0 6px;
-            font-size: 18px;
-        }
-        /* Progress and sessions: one above the other in the text column, or side
-           by side on a screen wide enough for two, top aligned so the two headings
-           sit on one line. The two columns match the two columns of cards above. */
-        @media (min-width: 1024px) {
-            .dashboard {
-                display: flex;
-                align-items: flex-start;
-                gap: 40px;
-                width: 90%;
-                max-width: var(--wide);
-                margin: 0 auto 40px;
-            }
-            .dashboard > section {
-                flex: 1 1 0;
-                min-width: 0;
-                width: auto;
-                max-width: none;
-                margin: 0;
-            }
-            /* with nothing graded logged there is no progress beside it - the
-               sessions go back to the middle at the width they have on a phone */
-            .performance[hidden] + .sessions {
-                flex: 0 1 var(--column);
-                margin: 0 auto;
-            }
-            /* and the other way round - a UKC logbook imported on a device that
-               has no sessions of its own */
-            .dashboard:has(> .sessions[hidden]) > .performance {
-                flex: 0 1 var(--column);
-                margin: 0 auto;
-            }
-        }
-        /* Four ranges on one row, even on a narrow phone, and all four the same
-           size: a flex row drops the gaps the markup's whitespace leaves between
-           inline labels, and each label takes an equal share of it - up to a
-           width that fits ALL TIME, so they stay buttons rather than a bar on a
-           wide screen */
-        .range-picker {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-        }
-        /* as specific as the shared .nice-radios rules, so these win - and the
-           hidden radios out of the row, or each would add a gap of its own */
-        .range-picker .nice-radios {
-            position: absolute;
-        }
-        .range-picker .nice-radios + label {
-            flex: 1 1 0;
-            box-sizing: border-box;
-            max-width: 90px;
-            min-width: 0;
-            margin: 0 0 10px;
-            padding: 8px 4px;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-        /* the chosen one has no border where the others have 1px, which left it
-           2px narrower - a clear border evens them up */
-        .range-picker .nice-radios:checked + label {
-            border: 1px solid transparent;
-        }
-        .performance figure {
-            margin: 18px 0 26px;
-        }
-        .performance figcaption {
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .performance .sessions-note {
-            margin: 0 0 6px;
-        }
-        .chart {
-            display: block;
-            width: 100%;
-            height: auto;
-            overflow: visible;
-        }
-        .chart text {
-            font-family: 'Hind', sans-serif;
-            font-size: 11px;
-            fill: var(--ink-muted);
-        }
-        .chart .count {
-            fill: currentColor;
-            font-weight: bold;
-        }
-        .chart .label {
-            fill: currentColor;
-        }
-        .chart .grid { stroke: var(--grid); }
-        .chart .axis { stroke: var(--ink-muted); }
-        .chart .before {
-            stroke: var(--before);
-            stroke-width: 2;
-            stroke-linecap: round;
-            opacity: 0.75;
-        }
-        .chart .hit { fill: transparent; }
-        .chart .column:hover .hit { fill: var(--grid); }
-        .chart .bar {
-            fill: var(--c);
-        }
-        .band-easy     { --c: var(--band-easy); }
-        .band-medium   { --c: var(--band-medium); }
-        .band-hard     { --c: var(--band-hard); }
-        .band-vhard    { --c: var(--band-vhard); }
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 4px 14px;
-            margin: 6px 0 0;
-            font-size: 13px;
-        }
-        .legend-item {
-            display: inline-flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-        .swatch {
-            display: inline-block;
-            width: 11px;
-            height: 11px;
-            margin-right: 5px;
-            border-radius: 3px;
-            border: 1.5px solid var(--c);
-            background: var(--c);
-            box-sizing: border-box;
-        }
-        /* the line, as it looks on the chart */
-        .swatch.before {
-            height: 2px;
-            width: 14px;
-            border: 0;
-            border-radius: 1px;
-            background: var(--before);
-            opacity: 0.75;
-        }
-        .chart-empty {
-            margin: 10px 0;
-            padding: 24px 12px;
-            font-size: 14px;
-            opacity: 0.75;
-            border: 1px dashed var(--grid);
-            border-radius: 5px;
-        }
         @media (prefers-color-scheme: dark) {
-            .performance {
-                --ink-muted: #a8a8ae;
-                --grid: rgba(255, 255, 255, 0.14);
-                --band-easy: #248a3c;
-                --band-medium: #eda100;
-                --band-hard: #e25550;
-                --band-vhard: #9170e6;
-                --before: #e8e8e8;
-            }
-        }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #111;
-                color: #E8E8E8;
-            }
-            nav {
-                border-bottom: 1px solid #666;
-            }
             .app-card {
                 background: #BFBDBD;
                 color: #121212;
@@ -372,7 +170,7 @@
             .sessions .log-table tbody tr:nth-child(even) {
                 background: rgba(255, 255, 255, 0.08);
             }
-            .log-app a, .performance .sessions-note a {
+            .log-app a {
                 color: #8FC2FF;
             }
             .sessions .icon-star.active {
@@ -494,46 +292,6 @@
         </li>
     </ul>
 
-    <div class="dashboard">
-    <!-- Drawn by overview-charts.js from the same logs as the table below, and
-         hidden on the same terms. -->
-    <section class="performance" id="performance" hidden>
-        <h2>Your progress</h2>
-        <div class="picker range-picker" role="radiogroup" aria-label="Time range">
-            <input type="radio" name="overviewRange" class="nice-radios" id="range-all" value="all" />
-            <label for="range-all">All time</label>
-            <input type="radio" name="overviewRange" class="nice-radios" id="range-365" value="365" checked />
-            <label for="range-365">Year</label>
-            <input type="radio" name="overviewRange" class="nice-radios" id="range-30" value="30" />
-            <label for="range-30">30 days</label>
-            <input type="radio" name="overviewRange" class="nice-radios" id="range-7" value="7" />
-            <label for="range-7">7 days</label>
-        </div>
-        <figure>
-            <figcaption>Climbs by grade</figcaption>
-            <p class="sessions-note" id="sportTotal"></p>
-            <div id="sportChart"></div>
-        </figure>
-        <figure>
-            <figcaption>Boulders by grade</figcaption>
-            <p class="sessions-note" id="boulderTotal"></p>
-            <div id="boulderChart"></div>
-        </figure>
-        <!-- once there is trad to show: from the trad app, or a UKC logbook imported
-             there. Until then, the way to import one. -->
-        <p class="sessions-note" id="tradPrompt" hidden>
-            <a href="trad/#ukc">Upload UKC log data to combine and add trad climbs</a>
-        </p>
-        <figure id="tradFigure" hidden>
-            <figcaption>Trad climbs by grade</figcaption>
-            <p class="sessions-note" id="tradTotal"></p>
-            <div id="tradChart"></div>
-            <p class="sessions-note" id="ukcNote" hidden>
-                <span id="ukcImported"></span><a href="#" onclick="removeUkcLogbook();return false;">Remove</a>
-            </p>
-        </figure>
-    </section>
-
     <!-- Filled in by the script at the foot of the page, and hidden until there is
          something to put in it - with no JavaScript, or on a device that has never
          opened an app, the page is the list of apps and nothing else. -->
@@ -546,7 +304,6 @@
             add to, edit or delete one of its sessions.
         </p>
     </section>
-    </div>
 
     <!-- filled in by the script below; with no JavaScript there is nothing to measure -->
     <p class="storage-use" id="storageUse"></p>
@@ -609,10 +366,8 @@
             + " MB of about 5 MB used";
     })();
     </script>
-    <script src="common/gilford-routes.js"></script>
     <script src="common/bottom-nav.js" defer></script>
     <script src="common/ukc.js"></script>
-    <script src="overview-charts.js"></script>
     <script>
     /* Every app's sessions, newest first.
 
@@ -718,7 +473,6 @@
                 return [];   // a key someone has hand-edited is not worth a broken page
             }
             if(!Array.isArray(saved)){ return []; }
-            rawLogs[app.key] = saved;   // as stored, for the charts
             return saved.filter(entry => entry && entry.date).map(entry => {
                 let described;
                 try {
@@ -805,21 +559,9 @@
                     : "") + '</td></tr>';
         }
 
-        let rawLogs = {};
         let sessions = [];
         apps.forEach(app => { sessions = sessions.concat(readLog(app)); });
         sessions = sessions.concat(ukcSessions());
-
-        // the charts are a bonus - if they fail to load, the table still draws.
-        // Drawn before the check below: an imported UKC logbook is charted even
-        // on a device that has never opened an app.
-        if(typeof drawOverviewCharts === "function"){
-            try {
-                drawOverviewCharts(rawLogs);
-            } catch(err){
-                console.log("Charts not drawn:", err.message);
-            }
-        }
         if(sessions.length === 0){ return; }
 
         // by the night climbed, and by when it was saved where two share a date

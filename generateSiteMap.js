@@ -28,6 +28,7 @@ const gradesContent = JSON.parse(fs.readFileSync('./website/climbing-grades/cont
 // JSON source, so their dates live here - bump one when you change that app.
 const trainingPages = [
     { url: '/training/', lastUpdated: '2026-09-27', priority: '0.7' },
+    { url: '/training/progress/', lastUpdated: '2026-09-27', priority: '0.6' },
     { url: '/training/loft/', lastUpdated: '2026-09-27', priority: '0.6' },
     { url: '/training/rings/', lastUpdated: '2026-09-27', priority: '0.6' },
     { url: '/training/gilford/', lastUpdated: '2026-09-27', priority: '0.6' },

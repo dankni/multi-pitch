@@ -1,14 +1,14 @@
 /* The bar along the bottom of every training page, the way a phone app does it:
-   the list of apps, the progress charts, and the app last used.
+   the list of apps, the progress page, and the app last used.
 
    Everything about it is in this file and in the "Bottom navigation" block at the
    end of common/style.css; a page gets it with one script tag. Taking those out
    takes it away again.
 
-   Which app is last used is remembered when an app page opens. In an app, that
-   app is the one shown, marked as the page you are on rather than linked to;
-   on the overview it links back to the last one opened, or leaves the space
-   empty if no app has been opened on this device. */
+   The button for the page you are on is marked as where you are rather than
+   linked to. Which app is last used is remembered when an app page opens: in an
+   app it is that app, and anywhere else it links back to the last one opened,
+   or leaves the space empty if no app has been opened on this device. */
 (function(){
     const lastAppKey = "trainingLastApp";
 
@@ -47,9 +47,11 @@
     const graphIcon = svg("0 0 100 100",
         `<g fill="currentColor"><rect x="10" y="54" width="20" height="36" rx="3"/><rect x="40" y="32" width="20" height="58" rx="3"/><rect x="70" y="12" width="20" height="78" rx="3"/></g>`);
 
-    // /training/timer/ is the timer app; /training/ itself is the overview
+    // /training/ is the overview, /training/progress/ the charts, and
+    // /training/timer/ and the rest are the apps
     let match = /^\/training\/([a-z]+)\//.exec(location.pathname);
-    let here = match && apps[match[1]] ? match[1] : null;
+    let page = match ? match[1] : "overview";
+    let here = apps[page] ? page : null;   // the app this is, if it is one
     let last = here;
     try {
         if(here){ localStorage.setItem(lastAppKey, here); }
@@ -59,52 +61,30 @@
     }
     if(!apps[last]){ last = null; }
 
-    function link(href, icon, label, current){
-        return `<a class="bottom-nav-item${current ? " current" : ""}" href="${href}"${current ? ' aria-current="page"' : ""}>`
-            + `${icon}<span class="bottom-nav-label">${label}</span></a>`;
+    // A link somewhere else, or - for the page you are on - where you are
+    function item(href, icon, label, current){
+        let inner = `${icon}<span class="bottom-nav-label">${label}</span>`;
+        return current
+            ? `<span class="bottom-nav-item current" aria-current="page">${inner}</span>`
+            : `<a class="bottom-nav-item" href="${href}">${inner}</a>`;
     }
 
-    // The app you are in is where you are, not somewhere to go
     function appItem(){
         if(last === null){ return `<span class="bottom-nav-item empty" aria-hidden="true"></span>`; }
-        if(here){
-            return `<span class="bottom-nav-item current" aria-current="page">`
-                + `${apps[here].icon}<span class="bottom-nav-label">${apps[here].name}</span></span>`;
-        }
-        return link(`/training/${last}/`, apps[last].icon, apps[last].name, false);
+        return item(`/training/${last}/`, apps[last].icon, apps[last].name, here !== null);
     }
 
     function build(){
         let nav = document.createElement("nav");
         nav.className = "bottom-nav";
         nav.setAttribute("aria-label", "Training apps");
-        nav.innerHTML = link("/training/", menuIcon, "Apps", here === null)
-            + link("/training/#performance", graphIcon, "Progress", false)
+        nav.innerHTML = item("/training/", menuIcon, "Apps", page === "overview")
+            + item("/training/progress/", graphIcon, "Progress", page === "progress")
             + appItem();
         document.body.appendChild(nav);
         // on the html element: background() in functions.js rewrites the body's
         // classes wholesale whenever an app changes colour
         document.documentElement.classList.add("has-bottom-nav");
-
-        // On the overview both are this page: scroll rather than reload it. And
-        // arriving from an app's Progress button, go to the charts - they are
-        // hidden until drawn, too late for the browser's own jump to #performance.
-        if(here === null){
-            let charts = document.getElementById("performance");
-            if(location.hash === "#performance" && charts && !charts.hidden){ charts.scrollIntoView(); }
-            // Apps and Progress only - the app button goes off to the app
-            nav.querySelectorAll('a[href^="/training/#"], a[href="/training/"]').forEach(anchor => {
-                anchor.addEventListener("click", event => {
-                    let target = anchor.hash ? document.querySelector(anchor.hash) : null;
-                    event.preventDefault();
-                    if(target && !target.hidden){
-                        target.scrollIntoView({ "behavior" : "smooth" });
-                    } else {
-                        window.scrollTo({ "top" : 0, "behavior" : "smooth" });
-                    }
-                });
-            });
-        }
     }
 
     if(document.readyState === "loading"){

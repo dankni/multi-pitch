@@ -1,10 +1,10 @@
-/* The charts at the top of the overview page: sport climbs, boulders and trad
-   climbs by grade - trad from the trad app and an imported UKC logbook, which
-   common/ukc.js reads - over all time, the last year, or the last 30 or 7 days.
+/* The progress page: sport climbs, boulders and trad climbs by grade - trad from
+   the trad app and an imported UKC logbook, which common/ukc.js reads - over all
+   time, the last year, or the last 30 or 7 days.
 
    Plain SVG written as a string - column charts do not need a library, and a
    library would be the biggest file in the suite. Everything here reads the
-   logs the page has already parsed and writes nothing back to them.
+   apps' logs from localStorage and writes nothing back to them.
 
    The year, 30 and 7 day views compare against the period before them, drawn as a
    thin line across each bar at the height the period before reached. Days are
@@ -395,9 +395,29 @@
         }
     }
 
-    window.drawOverviewCharts = function(logs){
-        // only the timer apps used, say - empty charts would say nothing
-        if(sportClimbs(logs).length + boulderClimbs(logs).length === 0 && !hasTrad(logs)){ return; }
+    /* The logs the charts are drawn from, as the apps saved them. A key someone
+       has hand-edited into something that is not a list counts as empty rather
+       than breaking the page. */
+    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog"];
+
+    function readLogs(){
+        let logs = {};
+        logKeys.forEach(key => {
+            let saved = null;
+            try { saved = JSON.parse(localStorage.getItem(key)); } catch(err){ saved = null; }
+            logs[key] = list(saved);
+        });
+        return logs;
+    }
+
+    function drawProgress(){
+        let logs = readLogs();
+        // only the timer apps used, say - empty charts would say nothing, so the
+        // page says so instead
+        if(sportClimbs(logs).length + boulderClimbs(logs).length === 0 && !hasTrad(logs)){
+            document.getElementById("progressEmpty").hidden = false;
+            return;
+        }
         describeImport(logs);
 
         let saved = null;
@@ -416,10 +436,8 @@
         document.getElementById("performance").hidden = false;
         draw(logs);
 
-        /* Redrawn whenever the chart's own column changes width - the window
-           resizing, but also the layout settling: on a desktop the sessions table
-           appears beside the charts just after they are first drawn, and takes
-           half the width they were drawn to. */
+        // Redrawn whenever the chart's own column changes width - the window
+        // resizing, or a phone turned on its side
         let resizing = null;
         let redraw = () => {
             clearTimeout(resizing);
@@ -434,5 +452,8 @@
         } else {
             window.addEventListener("resize", redraw);
         }
-    };
+    }
+
+    // the last script on the page, so everything it draws into is already there
+    drawProgress();
 })();
