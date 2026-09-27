@@ -653,12 +653,16 @@ function hideCogHint(){
    a panel or a confirm, not this. A second toast replaces the first rather than
    queueing behind it, since the newer one is the one that matters.
 
+   The one exception is a toast with something to do, like the new version's
+   reload: onTap makes its message a button, and it stays until tapped or closed,
+   since there is no telling when the climber will look down.
+
    role="status" so it is announced without stealing focus, and pointer-events are
    off so it can never swallow a tap meant for the app underneath. */
 const toastLife = 5200;
 let toastTimer = null;
 
-function toast(message){
+function toast(message, onTap){
     let box = document.getElementById("toast");
     if(box === null){
         box = document.createElement("div");
@@ -669,16 +673,17 @@ function toast(message){
     }
     // as text, not markup: a message is a message
     box.innerHTML = '<span class="toast-face" aria-hidden="true">\u263A</span>'
-        + '<span class="toast-text"></span>'
+        + (onTap ? '<button type="button" class="toast-text toast-action"></button>' : '<span class="toast-text"></span>')
         + '<button type="button" class="toast-close" aria-label="Close">\u00D7</button>';
     box.querySelector(".toast-text").innerText = message;
     box.querySelector(".toast-close").addEventListener("click", hideToast);
+    if(onTap){ box.querySelector(".toast-action").addEventListener("click", onTap); }
 
     clearTimeout(toastTimer);
     // a frame before the class, or a toast built this instant has nothing to
     // animate from and simply appears
     setTimeout(() => box.classList.add("shown"), 20);
-    toastTimer = setTimeout(hideToast, toastLife);
+    if(!onTap){ toastTimer = setTimeout(hideToast, toastLife); }
 }
 
 function hideToast(){
@@ -760,6 +765,18 @@ function registerServiceWorker(){
         // be updated is worse than one that cannot be installed
         "updateViaCache" : 'none'
     }).catch(err => console.log('Service worker not registered:', err.message));
+
+    /* A new version has taken over the page - but the page on screen was drawn
+       from the old one's files, so it takes a reload to see it. Say so, and let
+       a tap do it, rather than reloading out from under a session.
+
+       The very first install takes over the page too, with nothing old on
+       screen, so that one says nothing. */
+    let hadVersion = Boolean(navigator.serviceWorker.controller);
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if(!hadVersion){ hadVersion = true; return; }
+        toast("There's a new version - tap to reload", () => location.reload());
+    });
 }
 
 /* On every page as it loads. Each of these looks for what it works on and does

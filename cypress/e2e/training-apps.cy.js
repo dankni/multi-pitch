@@ -16,11 +16,16 @@ describe('Training apps', function () {
     // The apps register a service worker, which would serve these specs a cached
     // copy of the last run's files. A no-op register keeps every visit on the
     // real files without the apps having to know they are being tested.
+    // It is an event target, as the real one is, with a version already in
+    // charge - so a test can say a new one has taken over with controllerchange.
     Cypress.on('window:before:load', (win) => {
-        Object.defineProperty(win.navigator, 'serviceWorker', {
-            value: { register: () => Promise.resolve(), getRegistrations: () => Promise.resolve([]) },
-            configurable: true
+        let serviceWorker = new win.EventTarget();
+        Object.assign(serviceWorker, {
+            register: () => Promise.resolve(),
+            getRegistrations: () => Promise.resolve([]),
+            controller: {}
         });
+        Object.defineProperty(win.navigator, 'serviceWorker', { value: serviceWorker, configurable: true });
     });
 
     beforeEach(() => {
@@ -679,6 +684,20 @@ describe('Training apps', function () {
                 expect(manifest.start_url).to.equal('/training/');
                 expect(manifest.display).to.equal('standalone');
             });
+        });
+
+        it('offers a reload when a new version takes over, and waits to be tapped', () => {
+            cy.visit(appUrl + '/training/timer/');
+            cy.window().then((win) => win.navigator.serviceWorker.dispatchEvent(new win.Event('controllerchange')));
+            cy.tick(100);   // the toast fades in on a timer, and the clock is frozen
+            cy.get('.toast').should('be.visible').and('contain', "There's a new version - tap to reload");
+            // it stays, where an ordinary toast is gone in a few seconds
+            cy.tick(10000);
+            cy.get('.toast').should('be.visible');
+            // a tap reloads the page
+            cy.window().then((win) => { win.beforeReload = true; });
+            cy.get('.toast-action').click();
+            cy.window().should('not.have.property', 'beforeReload');
         });
 
         it('opens the overview info panel with the shared functions, and closes it on Escape', () => {

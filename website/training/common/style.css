@@ -441,6 +441,21 @@ aside .ring {
 .toast-text {
     flex: 1 1 auto;
 }
+/* A toast with something to do: its message is the button, so it reads as the
+   same line of text - just underlined, to say a tap does something */
+.toast-action, .toast-action:hover, .toast-action:focus {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+    text-decoration: underline;
+    cursor: pointer;
+}
 /* Quiet: the toast goes on its own in a few seconds, and this is only for
    someone who wants it gone now. */
 .toast-close {
