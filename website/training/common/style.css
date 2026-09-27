@@ -51,13 +51,19 @@ hr {
     max-width: 50%;
     opacity: 0.8;
 }
+/* The two sides are the same width so the title sits centred between them. Each
+   is as tall as the bar, so an empty one still counts: a float with no height
+   takes no room from the title's line, and the overview's right side, with no
+   icon in it, left the title 50px off centre. */
 .left-nav{
     float: left;
     width: 100px;
+    min-height: 100%;
 }
 .right-nav{
     float: right;
     width: 100px;
+    min-height: 100%;
 }
 /* The nav bar’s own icons. Scoped to the nav: the burger is a panel link as
    well now, and a floated icon with 12px above it is nav furniture, not an icon. */

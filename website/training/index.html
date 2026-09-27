@@ -8,14 +8,8 @@
     <link href="common/style.css" rel="stylesheet" />
     <link href="common/fontello.css" rel="stylesheet" />
     <style>
-        /* This page is static - no JavaScript - so dark mode comes from the
-           media query below rather than the .dark class the apps toggle. */
-        .intro {
-            width: 90%;
-            max-width: var(--column);
-            margin: 20px auto 30px;
-            line-height: 1.5;
-        }
+        /* This page doesn't load the apps' functions.js, so dark mode comes from
+           the media query below rather than the .dark class the apps toggle. */
         /* Two columns of cards, wider than the rest of the page: squeezed into the
            520px text column, each card would be half as wide and three times as
            tall. On a narrow phone that is still the case, so they stack there.
@@ -27,7 +21,7 @@
         .apps {
             width: 90%;
             max-width: var(--wide);
-            margin: 0 auto 40px;
+            margin: 30px auto 40px;
             padding: 0;
             list-style: none;
             display: grid;
@@ -52,11 +46,6 @@
             background: #F9F9F9;
             border-radius: 5px;
             padding: 18px 20px;
-            transition: transform 150ms ease, box-shadow 150ms ease;
-        }
-        .app-card:hover, .app-card:focus {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
         }
         .app-card .demo-icon {
             font-size: 34px;
@@ -79,13 +68,15 @@
         }
         /* The icons fade in one card after another as the page opens. It's only
            the icons, so the cards and their words are there to read and tap from
-           the first frame. */
+           the first frame. Opacity alone - they used to grow in as well, and the
+           scaling left dark hairline seams around them on phones. backwards, not
+           both, so the animation lets go of the icon once it has finished. */
         @keyframes icon-in {
-            from { opacity: 0; transform: scale(0.8); }
-            to   { opacity: 1; transform: none; }
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
         .app-card .demo-icon, .app-card .app-icon {
-            animation: icon-in 450ms ease-out both;
+            animation: icon-in 450ms ease-out backwards;
             animation-delay: calc(150ms + var(--order, 0) * 90ms);
         }
         .apps li:nth-child(2) { --order: 1; }
@@ -101,11 +92,15 @@
         .app-card h2 {
             margin: 0 0 4px 0;
             font-size: 18px;
+            line-height: 24px;
         }
+        /* Line heights in whole pixels, so every card - and so every row of the
+           grid - is a whole number of pixels tall. At 1.4 each card came out
+           108.1875px and every card after the first began part way into a pixel. */
         .app-card p {
             margin: 0;
             font-size: 14px;
-            line-height: 1.4;
+            line-height: 20px;
             opacity: 0.85;
         }
         /* Set the link colour explicitly - the browser default blue is close to
@@ -347,13 +342,13 @@
   </head>
   <body>
     <nav>
+        <div class="left-nav">
+            <i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About these training apps" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
+        </div>
         <h1>Training Apps</h1>
+        <!-- empty, but it balances the left side so the title stays centred -->
+        <div class="right-nav"></div>
     </nav>
-
-    <p class="intro">
-        Free climbing training apps. They all run in the browser, work offline once
-        loaded and keep everything on your own device.
-    </p>
 
     <ul class="apps">
         <li>
@@ -477,6 +472,41 @@
 
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
 
+    <aside id="about" class="overlay">
+        <h2>About</h2>
+        <p>
+            Free climbing training apps. They all run in the browser, work offline once
+            loaded and keep everything on your own device using local storage. 
+            You can also save them to your phone's homescreen and they will load offline. 
+        </p>
+        <p>
+            I built the original apps by hand but have now used AI to make some of the newer
+            ones a well as add new features.
+        </p>
+        <p> Feedback and suggested features welcome: admin@multi-pitch.com</p>
+        <hr />
+        <a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+    </aside>
+
+    <script>
+    /* The info panel. The apps open theirs with openOverlay() in functions.js,
+       but that file does far more on load than this page wants - the cog hint,
+       the wake lock, the theme - so this is the same few lines on their own:
+       show it, hold the page still behind it, and let Escape close it. */
+    function openInfoBox(){
+        document.getElementById("about").style.display = "block";
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+    }
+    function hideAbout(){
+        document.getElementById("about").style.display = "none";
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+    }
+    document.addEventListener("keydown", event => {
+        if(event.code === "Escape"){ hideAbout(); }
+    });
+    </script>
     <script src="common/gilford-routes.js"></script>
     <script src="overview-charts.js"></script>
     <script>
