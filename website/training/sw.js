@@ -13,7 +13,7 @@
    serve last month's app forever otherwise. The deploy invalidates /* at
    CloudFront, so the new sw.js is picked up on the next launch. */
 
-const CACHE_VERSION = 'v58';
+const CACHE_VERSION = 'v59';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 /* The shell. Everything an app needs to draw itself with no network at all -
@@ -37,7 +37,6 @@ const SHELL = [
     '/training/common/gilford-routes.js',
     '/training/common/ukc.js',
     '/training/common/bottom-nav.js',
-    '/training/common/shell.js',
     '/training/common/font/hind-400-latin.woff2',
     '/training/common/font/hind-400-latin-ext.woff2',
     '/training/common/font/fontello.woff2',

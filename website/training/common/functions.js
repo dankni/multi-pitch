@@ -94,8 +94,26 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// fullscreen() and the service worker are in common/shell.js, which every
-// training page loads - the overview and progress pages as well as the apps
+/* Full screen, from the icon at the right of the top bar. The icon shows what a
+   tap will do: expand, or come back out. Leaving full screen with Escape or the
+   phone's back gesture changes it too, since the browser says so either way. */
+function fullscreen(){
+    if(document.fullscreenElement){
+        document.exitFullscreen();
+    } else {
+        document.documentElement.requestFullscreen();
+    }
+}
+
+function showFullscreenState(){
+    let icon = document.getElementById("fullscreen");
+    if(icon === null){ return; }
+    let full = Boolean(document.fullscreenElement);
+    icon.classList.toggle("icon-resize-full", !full);
+    icon.classList.toggle("icon-resize-normal", full);
+}
+
+document.addEventListener("fullscreenchange", showFullscreenState);
 
 /* Two tap confirm, shared by any app with a button that throws a session away.
 
@@ -453,7 +471,13 @@ document.addEventListener("click", event => {
     hideSessionNote();
 });
 document.addEventListener("keydown", event => {
-    if(event.code === "Escape"){ hideSessionNote(); }
+    if(event.code === "Escape"){
+        hideSessionNote();
+        overlays.forEach(id => {
+            let panel = document.getElementById(id);
+            if(panel !== null && panel.style.display === "block"){ closeOverlay(id); }
+        });
+    }
 });
 
 // Deleting a session takes two taps like everything else destructive: the bin
@@ -718,11 +742,38 @@ function toggleDebug(){
         document.getElementById('debugStatus').innerText = `Off`;
     }
 }
-// Events to show or hide icons based on browser support
+/* The service worker. It lives at /training/ rather than in each app, so one
+   cache holds the whole suite and one install covers every page - and every
+   page loads this file, so a phone that first opens the overview works offline
+   too.
+
+   It needs https (or localhost) - over file:// or plain http the browser refuses
+   and the pages carry on exactly as they did before. */
+function registerServiceWorker(){
+    // the truthiness check as well as the 'in' one: a test that stubs the
+    // navigator leaves the property there with nothing behind it
+    if(!('serviceWorker' in navigator) || !navigator.serviceWorker){ return; }
+    navigator.serviceWorker.register('/training/sw.js', {
+        "scope" : '/training/',
+        // never satisfy the update check from the http cache - an app that cannot
+        // be updated is worse than one that cannot be installed
+        "updateViaCache" : 'none'
+    }).catch(err => console.log('Service worker not registered:', err.message));
+}
+
+/* On every page as it loads. Each of these looks for what it works on and does
+   nothing without it, so the overview and progress pages - no save panel, no
+   settings, no cog - load this file as safely as the apps do. */
 document.addEventListener('DOMContentLoaded', (event) => {
     drawSavePanel();
     loadPreventSleepSetting();
     showCogHint();
+    registerServiceWorker();
+    // the full screen icon is hidden until the browser shows it can go full
+    // screen - an iPhone cannot
+    if (document.documentElement.requestFullscreen && document.getElementById("fullscreen")) {
+        document.getElementById("fullscreen").style.display = "inline-block";
+    }
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && document.getElementById("darkMode")) {
         // user is in dark mode
         toggleDarkMode();

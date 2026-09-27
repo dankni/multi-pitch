@@ -1,7 +1,7 @@
 /* The two training pages that are not apps - the overview and progress.
 
-   Neither loads functions.js, so dark mode comes from the media query below
-   rather than the .dark class the apps toggle. Each page's own layout is in its
+   Neither has the apps' dark mode switch, so dark mode comes from the media
+   query below rather than the .dark class the apps toggle. Each page's own layout is in its
    own <style> or stylesheet; this is only what they share. */
 
 /* common/style.css makes every section an inline-block panel, which outranks

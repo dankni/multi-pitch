@@ -681,6 +681,16 @@ describe('Training apps', function () {
             });
         });
 
+        it('opens the overview info panel with the shared functions, and closes it on Escape', () => {
+            cy.visit(appUrl + '/training/');
+            cy.get('nav .icon-info').click();
+            cy.get('#about').should('be.visible');
+            cy.get('body').type('{esc}');
+            cy.get('#about').should('not.be.visible');
+            // and no cog hint on a page with no settings to point at
+            cy.get('#cogHint').should('not.exist');
+        });
+
         pages.forEach((page) => {
             it('gives ' + page + ' the shared manifest and a full screen button', () => {
                 cy.visit(appUrl + page);
