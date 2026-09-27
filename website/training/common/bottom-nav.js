@@ -92,7 +92,8 @@
         if(here === null){
             let charts = document.getElementById("performance");
             if(location.hash === "#performance" && charts && !charts.hidden){ charts.scrollIntoView(); }
-            nav.querySelectorAll("a").forEach(anchor => {
+            // Apps and Progress only - the app button goes off to the app
+            nav.querySelectorAll('a[href^="/training/#"], a[href="/training/"]').forEach(anchor => {
                 anchor.addEventListener("click", event => {
                     let target = anchor.hash ? document.querySelector(anchor.hash) : null;
                     event.preventDefault();

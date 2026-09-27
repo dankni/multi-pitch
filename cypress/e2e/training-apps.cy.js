@@ -686,6 +686,9 @@ describe('Training apps', function () {
             cy.get('.bottom-nav a').first().should('have.attr', 'href', '/training/');
             cy.visit(appUrl + '/training/');
             cy.get('.bottom-nav a').eq(2).should('contain', 'Circuit').and('have.attr', 'href', '/training/timer/');
+            // and following it gets there, rather than being held on the overview
+            cy.get('.bottom-nav a').eq(2).click();
+            cy.location('pathname').should('equal', '/training/timer/');
         });
     });
 
