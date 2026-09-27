@@ -260,7 +260,6 @@ function completeList(){
         session.climbs = [];
         session.ticked = [];
         saveCurrent(currentKey, session);
-        speak("Set " + session.setNumber + " done");
         drawAll();
         return;
     }
@@ -274,7 +273,6 @@ function startRest(){
     session.restEndsAt = Date.now() + (debug ? 5000 : restMinutesOf(session) * 60 * 1000);
     saveCurrent(currentKey, session);
     startRestTicker();
-    speak("Rest");
     drawAll();
 }
 
@@ -290,7 +288,6 @@ function endRest(){
     session.climbs = repeatClimb(session.setClimb, sessionTypes[session.style].climbs);
     session.ticked = [];
     saveCurrent(currentKey, session);
-    speak("Set " + session.setNumber);
     drawAll();
 }
 
