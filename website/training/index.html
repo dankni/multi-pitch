@@ -84,6 +84,7 @@
         .apps li:nth-child(4) { --order: 3; }
         .apps li:nth-child(5) { --order: 4; }
         .apps li:nth-child(6) { --order: 5; }
+        .apps li:nth-child(7) { --order: 6; }
         @media (prefers-reduced-motion: reduce) {
             .app-card .demo-icon, .app-card .app-icon {
                 animation: none;
@@ -113,6 +114,13 @@
         }
         .home-link:hover, .home-link:focus {
             color: #062f73;
+        }
+        /* How much of the browser's local storage the site is using - small print,
+           just above the way home */
+        .storage-use {
+            margin: 0 auto 12px;
+            font-size: 14px;
+            opacity: 0.8;
         }
         /* Every app's log on one page. The table itself is .log-table from
            common/style.css, but an app only ever draws one inside a black overlay
@@ -147,11 +155,12 @@
         .log-app {
             white-space: nowrap;
         }
-        .log-app a {
+        .log-app a, .performance .sessions-note a {
             color: #0b4fbf;
             text-decoration: none;
         }
-        .log-app a:hover, .log-app a:focus {
+        .log-app a:hover, .log-app a:focus,
+        .performance .sessions-note a:hover, .performance .sessions-note a:focus {
             text-decoration: underline;
         }
         /* The charts. Every colour is a custom property so dark mode swaps them in
@@ -207,9 +216,42 @@
                 flex: 0 1 var(--column);
                 margin: 0 auto;
             }
+            /* and the other way round - a UKC logbook imported on a device that
+               has no sessions of its own */
+            .dashboard:has(> .sessions[hidden]) > .performance {
+                flex: 0 1 var(--column);
+                margin: 0 auto;
+            }
         }
-        .range-picker label {
+        /* Four ranges on one row, even on a narrow phone, and all four the same
+           size: a flex row drops the gaps the markup's whitespace leaves between
+           inline labels, and each label takes an equal share of it - up to a
+           width that fits ALL TIME, so they stay buttons rather than a bar on a
+           wide screen */
+        .range-picker {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        /* as specific as the shared .nice-radios rules, so these win - and the
+           hidden radios out of the row, or each would add a gap of its own */
+        .range-picker .nice-radios {
+            position: absolute;
+        }
+        .range-picker .nice-radios + label {
+            flex: 1 1 0;
+            box-sizing: border-box;
+            max-width: 90px;
             min-width: 0;
+            margin: 0 0 10px;
+            padding: 8px 4px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        /* the chosen one has no border where the others have 1px, which left it
+           2px narrower - a clear border evens them up */
+        .range-picker .nice-radios:checked + label {
+            border: 1px solid transparent;
         }
         .performance figure {
             margin: 18px 0 26px;
@@ -330,7 +372,7 @@
             .sessions .log-table tbody tr:nth-child(even) {
                 background: rgba(255, 255, 255, 0.08);
             }
-            .log-app a {
+            .log-app a, .performance .sessions-note a {
                 color: #8FC2FF;
             }
             .sessions .icon-star.active {
@@ -398,7 +440,7 @@
                     <circle fill="currentColor" cx="52" cy="54" r="4"/>
                 </svg>
                 <div class="app-text">
-                    <h2>Bouldering</h2>
+                    <h2>Gym Session</h2>
                     <p>
                         Track a bouldering gym session.
                     </p>
@@ -429,6 +471,27 @@
                 </div>
             </a>
         </li>
+        <li>
+            <a class="app-card" href="trad/">
+                <!-- a nut on its wire, leaning over: the tapered head with the slot in
+                     its face, the long thin wire, and the small loop at the end -->
+                <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <g transform="rotate(30 50 50)">
+                        <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round"
+                            d="M39,3 H61 L57,25 H43 Z M46,8 H54 V20 H46 Z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" d="M50,25 V80"/>
+                        <path fill="none" stroke="currentColor" stroke-width="4.5"
+                            d="M50,78 C41,84 42,96 50,96 C58,96 59,84 50,78 Z"/>
+                    </g>
+                </svg>
+                <div class="app-text">
+                    <h2>Trad Climbing</h2>
+                    <p>
+                        Log a day of trad climbing or import logs from UKC.
+                    </p>
+                </div>
+            </a>
+        </li>
     </ul>
 
     <div class="dashboard">
@@ -437,8 +500,10 @@
     <section class="performance" id="performance" hidden>
         <h2>Your progress</h2>
         <div class="picker range-picker" role="radiogroup" aria-label="Time range">
-            <input type="radio" name="overviewRange" class="nice-radios" id="range-all" value="all" checked />
+            <input type="radio" name="overviewRange" class="nice-radios" id="range-all" value="all" />
             <label for="range-all">All time</label>
+            <input type="radio" name="overviewRange" class="nice-radios" id="range-365" value="365" checked />
+            <label for="range-365">Year</label>
             <input type="radio" name="overviewRange" class="nice-radios" id="range-30" value="30" />
             <label for="range-30">30 days</label>
             <input type="radio" name="overviewRange" class="nice-radios" id="range-7" value="7" />
@@ -453,6 +518,19 @@
             <figcaption>Boulders by grade</figcaption>
             <p class="sessions-note" id="boulderTotal"></p>
             <div id="boulderChart"></div>
+        </figure>
+        <!-- once there is trad to show: from the trad app, or a UKC logbook imported
+             there. Until then, the way to import one. -->
+        <p class="sessions-note" id="tradPrompt" hidden>
+            <a href="trad/#ukc">Upload UKC log data to combine and add trad climbs</a>
+        </p>
+        <figure id="tradFigure" hidden>
+            <figcaption>Trad climbs by grade</figcaption>
+            <p class="sessions-note" id="tradTotal"></p>
+            <div id="tradChart"></div>
+            <p class="sessions-note" id="ukcNote" hidden>
+                <span id="ukcImported"></span><a href="#" onclick="removeUkcLogbook();return false;">Remove</a>
+            </p>
         </figure>
     </section>
 
@@ -469,6 +547,9 @@
         </p>
     </section>
     </div>
+
+    <!-- filled in by the script below; with no JavaScript there is nothing to measure -->
+    <p class="storage-use" id="storageUse"></p>
 
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
 
@@ -506,8 +587,30 @@
     document.addEventListener("keydown", event => {
         if(event.code === "Escape"){ hideAbout(); }
     });
+
+    /* Local storage in use, against what a browser allows. There is no API for
+       the limit: Chrome, Firefox and Safari all stop a site at about 5 million
+       characters of keys and values together, so that is what is counted, a
+       character to a byte. It is the whole of multi-pitch.com - the climb pages'
+       cache shares the space with the training logs. */
+    (function(){
+        let used = 0;
+        try {
+            for(let i = 0; i < localStorage.length; i++){
+                let key = localStorage.key(i);
+                used += key.length + (localStorage.getItem(key) || "").length;
+            }
+        } catch(err){
+            return;   // storage blocked - nothing to report
+        }
+        let megabytes = used / 1048576;
+        document.getElementById("storageUse").innerText = "Local storage: "
+            + (megabytes < 0.01 && used > 0 ? "under 0.01" : megabytes.toFixed(2))
+            + " MB of about 5 MB used";
+    })();
     </script>
     <script src="common/gilford-routes.js"></script>
+    <script src="common/ukc.js"></script>
     <script src="overview-charts.js"></script>
     <script>
     /* Every app's sessions, newest first.
@@ -557,10 +660,36 @@
             return Array.isArray(value) ? value : [];
         }
 
+        // The gym session's sport ladder, easiest first - its own order, as in
+        // boulder/main.js, since 4+ and 6a do not sort as text
+        const sportOrder = ["4", "4+", "5", "5+", "6a", "6b", "6c", "7a", "7b", "7c",
+            "8a", "8b", "8c", "9a", "9b", "9c"];
+
+        // A day in the trad app: its climbs, the hardest, and whether it is on UKC
+        // too - in which case the UKC day is not listed beside it
+        function tradSession(entry){
+            let climbs = list(entry.climbs);
+            let hardest = climbs.reduce((max, grade) => Math.max(max, ukc.tradLadder.indexOf(grade)), -1);
+            return { "title" : plural(climbs.length, "trad climb"),
+                     "detail" : [hardest === -1 ? "" : "hardest " + ukc.tradLadder[hardest],
+                                 entry.ukc === true ? "UKC data ignored" : ""].filter(part => part !== "").join(" · ") };
+        }
+
+        // Boulders, and sport climbs once a session has any - older ones never do
+        function gymSession(entry){
+            let boulders = list(entry.climbs), sport = list(entry.sport);
+            let hardestSport = sport.reduce((max, grade) => Math.max(max, sportOrder.indexOf(grade)), -1);
+            let title = [boulders.length > 0 || sport.length === 0 ? plural(boulders.length, "boulder") : "",
+                         sport.length > 0 ? plural(sport.length, "sport climb") : ""];
+            let hardest = [hardestV(boulders).replace("hardest ", ""),
+                           hardestSport === -1 ? "" : sportOrder[hardestSport]].filter(grade => grade !== "");
+            return { "title" : title.filter(part => part !== "").join(", "),
+                     "detail" : hardest.length > 0 ? "hardest " + hardest.join(" · ") : "" };
+        }
+
         const apps = [
-            { "key" : "boulderLog", "name" : "Bouldering", "href" : "boulder/",
-              "line" : entry => ({ "title" : plural(list(entry.climbs).length, "boulder"),
-                                   "detail" : hardestV(list(entry.climbs)) }) },
+            { "key" : "boulderLog", "name" : "Gym Session", "href" : "boulder/",
+              "line" : gymSession },
             { "key" : "gilfordLog", "name" : "Tick List", "href" : "gilford/",
               "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : "" }) },
             { "key" : "enduranceLog", "name" : "Endurance", "href" : "endurance/",
@@ -575,7 +704,9 @@
               "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
                                    "detail" : clock(count(entry.seconds)) + " on the clock" }) },
             { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "rings/",
-              "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) }
+              "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) },
+            { "key" : "tradLog", "name" : "Trad", "href" : "trad/",
+              "line" : tradSession }
         ];
 
         function readLog(app){
@@ -606,8 +737,51 @@
             });
         }
 
+        /* An imported UKC logbook, as one session for each day climbed - read by
+           common/ukc.js, which leaves out a day the trad app has logged and says
+           is on UKC as well. It is edited in UKC, so its link goes there. */
+        const ukcApp = { "name" : "UKC", "href" : "https://www.ukclimbing.com/logbook/" };
+
+        function ukcSessions(){
+            let days = {};
+            ukc.climbs().forEach(climb => {
+                (days[climb.date] = days[climb.date] || []).push(climb);
+            });
+            return Object.keys(days).map(date => {
+                let climbs = days[date];
+                let trad = climbs.filter(climb => climb.type === "trad").length;
+                let sport = climbs.length - trad;
+                // the day's hardest climb by name, and its notes as the session's note
+                let hardest = ukc.hardest(climbs);
+                let named = hardest !== null && typeof hardest.name === "string" && hardest.name !== "";
+                return {
+                    "date" : date,
+                    "id" : 0,
+                    "app" : ukcApp,
+                    "comment" : named && hardest.notes ? hardest.name + ": " + hardest.notes : "",
+                    "rating" : 0,
+                    "title" : [trad ? plural(trad, "trad climb") : "", sport ? plural(sport, "sport climb") : ""]
+                        .filter(part => part !== "").join(", "),
+                    "detail" : [named ? "hardest " + hardest.name + " (" + hardest.grade + ")" : "",
+                                [...new Set(climbs.map(climb => climb.crag).filter(crag => crag))].join(", ")]
+                        .filter(part => part !== "").join(" · ")
+                };
+            });
+        }
+
         function escape(text){
             return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Five stars for a session - none at all for a UKC day, which UKC
+        // exports no rating for: empty stars would read as rated nought
+        function starsFor(session){
+            if(session.app === ukcApp){ return ""; }
+            let stars = "";
+            for(let i = 0; i < 5; i++){
+                stars += '<i class="demo-icon icon-star ' + (i < session.rating ? "active" : "") + '"></i>';
+            }
+            return stars;
         }
 
         function row(session, place){
@@ -616,10 +790,7 @@
             let day = parts.length === 3 && month ? Number(parts[2]) + " " + month : session.date;
             let year = parts.length === 3 && month ? parts[0] : "";
 
-            let stars = "";
-            for(let i = 0; i < 5; i++){
-                stars += '<i class="demo-icon icon-star ' + (i < session.rating ? "active" : "") + '"></i>';
-            }
+            let stars = starsFor(session);
 
             return '<tr><td class="log-date">' + escape(day)
                 + (year === "" ? "" : '<br /><span class="log-year">' + escape(year) + '</span>')
@@ -636,9 +807,11 @@
         let rawLogs = {};
         let sessions = [];
         apps.forEach(app => { sessions = sessions.concat(readLog(app)); });
-        if(sessions.length === 0){ return; }
+        sessions = sessions.concat(ukcSessions());
 
-        // the charts are a bonus - if they fail to load, the table still draws
+        // the charts are a bonus - if they fail to load, the table still draws.
+        // Drawn before the check below: an imported UKC logbook is charted even
+        // on a device that has never opened an app.
         if(typeof drawOverviewCharts === "function"){
             try {
                 drawOverviewCharts(rawLogs);
@@ -646,6 +819,7 @@
                 console.log("Charts not drawn:", err.message);
             }
         }
+        if(sessions.length === 0){ return; }
 
         // by the night climbed, and by when it was saved where two share a date
         sessions.sort((a, b) => a.date === b.date ? b.id - a.id : b.date.localeCompare(a.date));
@@ -671,10 +845,7 @@
             hideNote();
             if(sameOne || !session || !session.comment){ return; }
 
-            let stars = "";
-            for(let i = 0; i < 5; i++){
-                stars += '<i class="demo-icon icon-star ' + (i < session.rating ? "active" : "") + '"></i>';
-            }
+            let stars = starsFor(session);
 
             let note = document.createElement("div");
             note.id = "sessionNote";
@@ -682,7 +853,8 @@
             note.dataset.place = icon.dataset.note;
             note.setAttribute("role", "dialog");
             note.setAttribute("aria-label", "Note from " + session.date);
-            note.innerHTML = '<p class="comment-pop-stars">' + stars + '</p><p class="comment-pop-text"></p>';
+            note.innerHTML = (stars ? '<p class="comment-pop-stars">' + stars + '</p>' : "")
+                + '<p class="comment-pop-text"></p>';
             // as text, not markup: a note is whatever was typed into it
             note.querySelector(".comment-pop-text").innerText = session.comment;
             document.body.appendChild(note);

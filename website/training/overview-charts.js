@@ -1,11 +1,12 @@
-/* The two charts at the top of the overview page: sport climbs and boulders by
-   grade, over all time or the last 30 or 7 days.
+/* The charts at the top of the overview page: sport climbs, boulders and trad
+   climbs by grade - trad from the trad app and an imported UKC logbook, which
+   common/ukc.js reads - over all time, the last year, or the last 30 or 7 days.
 
-   Plain SVG written as a string - two column charts do not need a library, and
-   a library would be the biggest file in the suite. Everything here reads the
-   logs the page has already parsed and writes nothing back.
+   Plain SVG written as a string - column charts do not need a library, and a
+   library would be the biggest file in the suite. Everything here reads the
+   logs the page has already parsed and writes nothing back to them.
 
-   The 30 and 7 day views compare against the 30 or 7 days before them, drawn as a
+   The year, 30 and 7 day views compare against the period before them, drawn as a
    thin line across each bar at the height the period before reached. Days are
    the yyyy-mm-dd the apps store, which is a UTC day (today() in
    common/functions.js), so the windows are built the same way and compared as
@@ -22,11 +23,15 @@
     let chartWidth = 520;
     const rangeKey = "overviewRange";
 
+    // A year is the default: long enough to show a season, short enough that
+    // it is this climber now rather than everything they ever did
     const ranges = {
         "all" : { "days" : 0 },
+        "365" : { "days" : 365, "current" : "the last year", "previous" : "the year before" },
         "30"  : { "days" : 30 },
         "7"   : { "days" : 7 }
     };
+    const defaultRange = "365";
 
     const bands = [
         { "cls" : "band-easy",   "name" : "Easy" },
@@ -35,11 +40,10 @@
         { "cls" : "band-vhard",  "name" : "Very hard" }
     ];
 
-    // French sport grades, easiest first. The chart always shows 5 to 7b as the
-    // Gilford wall grades them, and adds anything else only once it is climbed.
-    const sportLadder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+",
-        "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+",
-        "9a", "9a+", "9b", "9b+", "9c"];
+    // French sport grades, easiest first - the ladder common/ukc.js reads UKC's
+    // sport grades onto. The chart always shows 5 to 7b as the Gilford wall grades
+    // them, and adds anything else only once it is climbed.
+    const sportLadder = ukc.sportLadder;
     const sportAlways = ["5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
 
     function sportBand(grade){
@@ -61,6 +65,38 @@
         if(rung >= 5){ return bands[2]; }
         if(rung >= 3){ return bands[1]; }
         return bands[0];
+    }
+
+    // British adjectival grades, easiest first. VD to E2 always, the rest once
+    // climbed. Banded for trad on its own terms rather than lined up with sport:
+    // VS is medium, E1 hard and E4 very hard.
+    const tradLadder = ukc.tradLadder;
+    const tradAlways = ["VD", "S", "HS", "VS", "HVS", "E1", "E2"];
+
+    function tradBand(grade){
+        let rung = tradLadder.indexOf(grade);
+        if(rung >= tradLadder.indexOf("E4")){ return bands[3]; }
+        if(rung >= tradLadder.indexOf("E1")){ return bands[2]; }
+        if(rung >= tradLadder.indexOf("MVS")){ return bands[1]; }
+        return bands[0];
+    }
+
+    /* Every trad climb: the trad app's sessions, and an imported UKC logbook's
+       trad climbs - less the days the app says are on UKC as well, which
+       ukc.climbs() leaves out (see common/ukc.js) */
+    function tradClimbs(logs){
+        let climbs = [];
+        entriesOf(logs, "tradLog").forEach(entry => {
+            list(entry.climbs).forEach(grade => {
+                if(tradLadder.includes(grade)){ climbs.push({ "date" : entry.date, "grade" : grade }); }
+            });
+        });
+        ukc.climbs().forEach(climb => {
+            if(climb.type === "trad" && tradLadder.includes(climb.grade)){
+                climbs.push({ "date" : climb.date, "grade" : climb.grade });
+            }
+        });
+        return climbs;
     }
 
     /* Days and windows */
@@ -86,6 +122,8 @@
     }
 
     function periodName(range, which){
+        let named = ranges[range][which];
+        if(named){ return named; }
         let days = ranges[range].days;
         return which === "current" ? "the last " + days + " days" : "the " + days + " days before";
     }
@@ -101,7 +139,8 @@
     }
 
     // Every sport climb with a known grade: tick list routes looked up on the
-    // wall, and endurance sessions saved since they started keeping their grades
+    // wall, endurance sessions saved since they started keeping their grades, and
+    // the sport climbs in a UKC logbook
     function sportClimbs(logs){
         let climbs = [];
         entriesOf(logs, "gilfordLog").forEach(entry => {
@@ -114,6 +153,18 @@
             list(entry.grades).forEach(grade => {
                 if(typeof grade === "string"){ climbs.push({ "date" : entry.date, "grade" : grade }); }
             });
+        });
+        // sport climbs from a gym session
+        entriesOf(logs, "boulderLog").forEach(entry => {
+            list(entry.sport).forEach(grade => {
+                if(sportLadder.includes(grade)){ climbs.push({ "date" : entry.date, "grade" : grade }); }
+            });
+        });
+        // and sport climbs from an imported UKC logbook
+        ukc.climbs().forEach(climb => {
+            if(climb.type === "sport" && sportLadder.includes(climb.grade)){
+                climbs.push({ "date" : climb.date, "grade" : climb.grade });
+            }
         });
         return climbs;
     }
@@ -231,8 +282,9 @@
 
     // the key to the line, where there is one
     function beforeLegend(range){
-        let days = ranges[range].days;
-        return days === 0 ? [] : [{ "cls" : "before", "name" : "The " + days + " days before" }];
+        if(ranges[range].days === 0){ return []; }
+        let name = periodName(range, "previous");
+        return [{ "cls" : "before", "name" : name.charAt(0).toUpperCase() + name.slice(1) }];
     }
 
     function empty(message){
@@ -251,7 +303,7 @@
         if(current.length + previous.length === 0){
             total.innerText = "";
             return empty(windows.previous
-                ? "No " + noun + "s in " + periodName(range, "current") + " or the " + ranges[range].days + " before."
+                ? "No " + noun + "s in " + periodName(range, "current") + " or " + periodName(range, "previous") + "."
                 : "No " + noun + "s logged yet.");
         }
 
@@ -293,11 +345,41 @@
         return columns;
     }
 
+    // VD to E2 always, anything else on the ladder only once it has been climbed
+    function tradColumns(present){
+        return tradLadder.filter(grade => tradAlways.includes(grade) || present.includes(grade));
+    }
+
+    // Whether there is any trad to chart: a trad app session, or a UKC logbook
+    function hasTrad(logs){
+        return entriesOf(logs, "tradLog").length > 0 || ukc.load() !== null;
+    }
+
+    // Under the trad chart: when the logbook came in, what was left off it, and
+    // the way to take it off this device again - once there is a logbook. With no
+    // trad at all, the chart gives way to a link to the import in the trad app.
+    function describeImport(logs){
+        let logbook = ukc.load();
+        document.getElementById("tradFigure").hidden = !hasTrad(logs);
+        document.getElementById("tradPrompt").hidden = hasTrad(logs);
+        document.getElementById("ukcNote").hidden = logbook === null;
+        if(logbook === null){ return; }
+
+        let parts = String(logbook.imported).split("-");
+        let month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(parts[1]) - 1];
+        let text = "Imported from UKC on " + (month ? Number(parts[2]) + " " + month + " " + parts[0] : logbook.imported) + ".";
+        let leftOut = Number(logbook.leftOut) || 0;
+        if(leftOut > 0){
+            text += " " + plural(leftOut, "climb") + " left out, with no full date or a grade that could not be read.";
+        }
+        document.getElementById("ukcImported").textContent = text + " ";
+    }
+
     /* The page */
 
     function selectedRange(){
         let checked = document.querySelector('input[name="overviewRange"]:checked');
-        return checked && ranges[checked.value] ? checked.value : "all";
+        return checked && ranges[checked.value] ? checked.value : defaultRange;
     }
 
     function draw(logs){
@@ -307,15 +389,20 @@
             drawGrades(sportClimbs(logs), range, sportColumns, sportBand, "climb", "sportTotal");
         document.getElementById("boulderChart").innerHTML =
             drawGrades(boulderClimbs(logs), range, boulderColumns, boulderBand, "boulder", "boulderTotal");
+        if(hasTrad(logs)){
+            document.getElementById("tradChart").innerHTML =
+                drawGrades(tradClimbs(logs), range, tradColumns, tradBand, "trad climb", "tradTotal");
+        }
     }
 
     window.drawOverviewCharts = function(logs){
-        // only the timer apps used, say - two empty charts would say nothing
-        if(sportClimbs(logs).length + boulderClimbs(logs).length === 0){ return; }
+        // only the timer apps used, say - empty charts would say nothing
+        if(sportClimbs(logs).length + boulderClimbs(logs).length === 0 && !hasTrad(logs)){ return; }
+        describeImport(logs);
 
         let saved = null;
         try { saved = localStorage.getItem(rangeKey); } catch(err){ saved = null; }
-        let radio = document.getElementById("range-" + (ranges[saved] ? saved : "all"));
+        let radio = document.getElementById("range-" + (ranges[saved] ? saved : defaultRange));
         if(radio){ radio.checked = true; }
 
         document.querySelectorAll('input[name="overviewRange"]').forEach(input => {

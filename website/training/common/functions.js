@@ -298,12 +298,23 @@ function resetSavePanel(){
          stats    : log => the summary line above the table (optional),
          onEdit   : the name of a global function taking an id, drawn as a
                     wrench beside the bin (optional),
-         order    : a comparator (optional, newest id first)
+         order    : a comparator (optional, newest id first),
+         extra    : () => more entries to list alongside the log's own (optional) -
+                    read only, so drawn with no wrench and no bin. The trad app
+                    lists an imported UKC logbook's days this way. They need an id
+                    of their own that no saved session can have, and a number,
+                    since it goes into an onclick as one.
      })
 
    Called again with no argument it redraws with whatever it was last given,
    which is how the delete below puts the list back. */
 let sessionLogView = null;
+
+// the log's own sessions, and any read only ones the app lists beside them
+function sessionLogEntries(){
+    let extra = sessionLogView.extra ? sessionLogView.extra() : [];
+    return getLog(sessionLogView.key).concat(extra.map(entry => Object.assign({}, entry, { "readOnly" : true })));
+}
 
 function drawSessionLog(view){
     if(view){ sessionLogView = view; }
@@ -311,7 +322,7 @@ function drawSessionLog(view){
 
     let holder = document.getElementById("log");
     let stats = document.getElementById("stats");
-    let log = getLog(sessionLogView.key).sort(sessionLogView.order || ((a, b) => b.id - a.id));
+    let log = sessionLogEntries().sort(sessionLogView.order || ((a, b) => b.id - a.id));
 
     if(log.length === 0){
         holder.innerHTML = "<p>No sessions saved yet.</p>";
@@ -366,14 +377,23 @@ function logDate(date){
     return when.year === "" ? when.day : when.day + " " + when.year;
 }
 
-function sessionLogRow(entry){
-    let described = sessionLogView.describe(entry);
-    let when = logDateParts(entry.date);
+/* A session's rating as five stars - or nothing for a read only row, such as a
+   UKC day in the trad app: UKC exports no rating, and five empty stars would
+   read as a day rated nought rather than one never rated at all. */
+function sessionStars(entry){
+    if(entry.readOnly){ return ""; }
     let stars = "";
     for(let i = 0; i < 5; i++){
         stars += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
     }
-    let edit = sessionLogView.onEdit
+    return stars;
+}
+
+function sessionLogRow(entry){
+    let described = sessionLogView.describe(entry);
+    let when = logDateParts(entry.date);
+    let stars = sessionStars(entry);
+    let edit = sessionLogView.onEdit && !entry.readOnly
         ? `<i class="demo-icon icon-wrench" role="button" tabindex="0" aria-label="Edit session ${logDate(entry.date)}" onclick="${sessionLogView.onEdit}(${entry.id})"></i>`
         : "";
     // only where there is something to read
@@ -385,12 +405,12 @@ function sessionLogRow(entry){
         <td class="log-date">${when.day}${when.year === "" ? "" : `<br /><span class="log-year">${when.year}</span>`}</td>
         <td>${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
         <td class="log-rating">${stars}</td>
-        <td class="log-actions">${note}${edit}
+        <td class="log-actions">${note}${edit}${entry.readOnly ? "" : `
             <i class="demo-icon icon-trash" id="delete${entry.id}" role="button" tabindex="0" aria-label="Delete session ${logDate(entry.date)}" onclick="toggleConfirm(${entry.id})"></i>
             <span style="display:none" id="confirm${entry.id}">Sure?
                 <i class="demo-icon icon-ok" role="button" tabindex="0" aria-label="Confirm delete" onclick="removeLog(${entry.id})"></i>
                 <i class="demo-icon icon-cancel" role="button" tabindex="0" aria-label="Cancel delete" onclick="toggleConfirm(${entry.id})"></i>
-            </span>
+            </span>`}
         </td>
     </tr>`;
 }
@@ -407,13 +427,10 @@ function showSessionNote(event, id){
     hideSessionNote();
     if(sameOne){ return; }
 
-    let entry = getLog(sessionLogView.key).find(item => String(item.id) === String(id));
+    let entry = sessionLogEntries().find(item => String(item.id) === String(id));
     if(entry === undefined || !entry.comment){ return; }
 
-    let stars = "";
-    for(let i = 0; i < 5; i++){
-        stars += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
-    }
+    let stars = sessionStars(entry);
 
     let note = document.createElement("div");
     note.id = "sessionNote";
@@ -421,7 +438,7 @@ function showSessionNote(event, id){
     note.dataset.id = id;
     note.setAttribute("role", "dialog");
     note.setAttribute("aria-label", "Note from " + logDate(entry.date));
-    note.innerHTML = `<p class="comment-pop-stars">${stars}</p><p class="comment-pop-text"></p>`;
+    note.innerHTML = (stars ? `<p class="comment-pop-stars">${stars}</p>` : "") + `<p class="comment-pop-text"></p>`;
     // as text, not markup: a note is whatever was typed into it
     note.querySelector(".comment-pop-text").innerText = entry.comment;
     document.body.appendChild(note);

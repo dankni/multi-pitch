@@ -4,23 +4,24 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width">
-	<meta name="description" content="Count your boulders at the wall. Tap a grade each time you top one out, then save the session to your phone with a rating and a note.">
-	<link rel="manifest" href="/training/boulder/manifest.json" />
+	<meta name="description" content="Log a day of trad climbing.">
+	<link rel="manifest" href="/training/trad/manifest.json" />
 	<meta name="theme-color" content="#121212">
 	<!-- iOS has no manifest support worth the name: it wants these, and Add to
 	     Home Screen by hand from the share sheet -->
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<meta name="apple-mobile-web-app-title" content="Gym Session">
+	<meta name="apple-mobile-web-app-title" content="Trad">
 	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
 	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
 	<link href="/training/common/fontello.css" rel="stylesheet" />
 	<link href="/training/common/style.css" rel="stylesheet" />
-	<link href="/training/boulder/style.css" rel="stylesheet" />
+	<link href="/training/trad/style.css" rel="stylesheet" />
 	<script src="/training/common/functions.js" ></script>
-	<script src="/training/boulder/main.js" ></script>
-    <title>Gym Session</title>
+	<script src="/training/common/ukc.js" ></script>
+	<script src="/training/trad/main.js" ></script>
+    <title>Trad Climbing</title>
   </head>
 
   <body>
@@ -29,7 +30,7 @@
 			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
 			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
 		</div>
-		<h1>Gym Session</h1>
+		<h1>Trad Climbing</h1>
 		<div class="right-nav">
 			<i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
 		</div>
@@ -42,16 +43,15 @@
 		<div id="sessionBar">
 			<label for="sessionDate">Session date</label>
 			<input type="date" class="field" id="sessionDate" onchange="setSessionDate(this.value)" />
-			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">boulders</span></h3>
+			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">trad climbs</span></h3>
 			<p id="summary">Nothing logged yet</p>
-		</div>
-
-		<!-- which ladder the tiles below are: a session can have both -->
-		<div class="picker" id="ladderPicker" role="radiogroup" aria-label="Climbing">
-			<input type="radio" name="ladder" class="nice-radios" id="tab-boulder" value="boulder" onchange="setLadder(this.value)" checked />
-			<label for="tab-boulder">Bouldering</label>
-			<input type="radio" name="ladder" class="nice-radios" id="tab-sport" value="sport" onchange="setLadder(this.value)" />
-			<label for="tab-sport">Sport</label>
+			<!-- on, the overview counts this day from here and ignores the same day
+			     in an imported UKC logbook - see common/ukc.js. The settings panel's
+			     switch, on the page. -->
+			<label class="switch-label ukc-toggle">
+				<input type="checkbox" id="alsoOnUkc" onchange="setAlsoOnUkc(this.checked)" />
+				<span class="label-content">Ignore UKC data for this date</span>
+			</label>
 		</div>
 
 		<div id="grades">
@@ -66,26 +66,41 @@
 	<aside id="about" class="overlay">
 		<h2>About this application</h2>
 		<p>
-			A counter for a session at the bouldering wall. Tap a grade each time you top
-			one out and it keeps the tally; the minus beside it takes one back. Saving
-			keeps the count, the hardest grade, a rating and a note. Everything is stored
-			on this device only &ndash; nothing is uploaded anywhere.
+			A counter for a day of trad climbing. Tap a grade each time you top a route
+			out and it keeps the tally; the minus beside it takes one back. Saving keeps
+			the count, the hardest grade, a rating and a note. Everything is stored on
+			this device only &ndash; nothing is uploaded anywhere.
 		</p>
 		<p>
-			The ladders stop at V10 and 7c, which covers most nights. HARDER adds the next grade
-			up for this session only &ndash; the next one starts back at V10 and 7c.
+			The ladder stops at E3, which covers most days. HARDER adds the next grade up
+			for this session only &ndash; the next one starts back at E3.
 		</p>
 		<p>
-			The wrench beside a saved session reopens it, so a session can be added to or
-			corrected later.
+			Turn on "Ignore UKC data for this date" when the day is in your UKC logbook
+			as well, and it is counted from here rather than twice.
 		</p>
 		<p class="panel-links">
-			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/boulder" target="blank">
+			<a href="https://github.com/dankni/multi-pitch/tree/master/website/training/trad" target="blank">
 				<i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
 			</a>
 			<a href="/training/" class="quiet">
 				<i class="demo-icon icon-menu"></i> All training apps
 			</a>
+		</p>
+		<hr />
+		<h2 id="ukcHeading">UKC logbook</h2>
+		<p>
+			Download the CSV from your 
+			<a href="https://www.ukclimbing.com/logbook/" target="_blank">UKC logbook (DLOG format)</a> 
+			and upload it here. Your trad and
+			sport climbs are then added to the charts and session logs. Any data is stored
+			on this device only. Uploading a CSV replaces the last one so always download all data.
+		</p>
+		<input type="file" id="ukcFile" accept=".csv,text/csv" hidden onchange="importUkcFile(this)" />
+		<p><button class="quiet" onclick="document.getElementById('ukcFile').click()">Upload UKC Logbook CSV</button></p>
+		<!-- when the logbook came in; its days are in the activity log below -->
+		<p id="ukcStats" hidden>
+			<span id="ukcSummary"></span> <a href="#" onclick="removeUkcLogbook();return false;">Remove</a>
 		</p>
 		<hr />
 		<h2>Activity Log</h2>
@@ -101,12 +116,10 @@
 		<fieldset class="setting-group">
 			<legend>Grade system</legend>
 			<div class="picker" id="systemPicker">
-				<input type="radio" name="gradeSystem" class="nice-radios" id="system-british" value="british" onchange="setGradeSystem()" />
+				<input type="radio" name="gradeSystem" class="nice-radios" id="system-british" value="british" onchange="setGradeSystem()" checked />
 				<label for="system-british">British</label>
-				<input type="radio" name="gradeSystem" class="nice-radios" id="system-font" value="font" onchange="setGradeSystem()" />
-				<label for="system-font">Font</label>
-				<input type="radio" name="gradeSystem" class="nice-radios" id="system-hueco" value="hueco" onchange="setGradeSystem()" checked />
-				<label for="system-hueco">Hueco (V)</label>
+				<input type="radio" name="gradeSystem" class="nice-radios" id="system-uiaa" value="uiaa" onchange="setGradeSystem()" />
+				<label for="system-uiaa">UIAA</label>
 			</div>
 		</fieldset>
 		<label class="switch-label">

@@ -33,7 +33,8 @@ const trainingPages = [
     { url: '/training/gilford/', lastUpdated: '2026-09-27', priority: '0.6' },
     { url: '/training/timer/', lastUpdated: '2026-09-27', priority: '0.6' },
     { url: '/training/endurance/', lastUpdated: '2026-09-27', priority: '0.6' },
-    { url: '/training/boulder/', lastUpdated: '2026-09-27', priority: '0.6' }
+    { url: '/training/boulder/', lastUpdated: '2026-09-27', priority: '0.6' },
+    { url: '/training/trad/', lastUpdated: '2026-09-27', priority: '0.6' }
 ];
 
 function generate() {

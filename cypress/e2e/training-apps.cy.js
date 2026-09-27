@@ -444,6 +444,60 @@ describe('Training apps', function () {
         });
 
         // an old session with an 8A on it has to be editable, ladder or no ladder
+        it('logs sport climbs on a ladder of their own', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('label[for="tab-sport"]').click();
+            // 4, 4+, 5, 5+, then whole grades from 6a, as far as 7c to start with
+            cy.get('#grades .route-grade').then(($grades) => {
+                expect([...$grades].map((grade) => grade.textContent))
+                    .to.deep.equal(['4', '4+', '5', '5+', '6a', '6b', '6c', '7a', '7b', '7c']);
+            });
+            cy.get('#row-6b .grade-add').click();
+            cy.get('#row-6b .grade-add').click();
+            cy.get('#climbCount').should('have.text', '2');
+            cy.get('#countNoun').should('have.text', 'sport climbs');
+            cy.get('#summary').should('have.text', 'Hardest: 6b · 1 boulder');
+            // the boulder is still there on the other ladder
+            cy.get('label[for="tab-boulder"]').click();
+            cy.get('#row-V3 .grade-count').should('have.text', '1');
+            cy.get('#summary').should('have.text', 'Hardest: V3 · 2 sport climbs');
+        });
+
+        it('adds harder sport grades as far as 9c', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('#row-8a').should('not.exist');
+            for(let i = 0; i < 6; i++){ cy.get('.grade-harder').click(); }
+            cy.get('#row-9c').should('exist');
+            cy.get('.grade-harder').click();
+            cy.tick(100);   // the toast fades in on a timer, and the clock is frozen
+            cy.get('.toast').should('be.visible').and('contain', 'You wish! Less clicking more climbing');
+        });
+
+        it('saves the sport climbs with the boulders and reopens them', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('#row-6b .grade-add').click();
+            cy.get('#row-7a .grade-add').click();
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.get('#log').should('contain', '1 boulder, 2 sport climbs').and('contain', 'hardest V3 · 7a');
+            cy.window().then((win) => {
+                let saved = JSON.parse(win.localStorage.getItem('boulderLog'))[0];
+                expect(saved.climbs).to.deep.equal(['V3']);
+                expect(saved.sport).to.deep.equal(['6b', '7a']);
+            });
+            cy.get('#log .icon-wrench').click();
+            cy.get('#row-V3 .grade-count').should('have.text', '1');
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('#row-7a .grade-count').should('have.text', '1');
+        });
+
         it('opens a saved session far enough up the ladder to show it', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();
@@ -512,6 +566,109 @@ describe('Training apps', function () {
         });
     });
 
+    describe('Trad climbing', function () {
+        const tradUrl = appUrl + '/training/trad/';
+
+        it('counts the climbs and names the hardest', () => {
+            cy.visit(tradUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-HS .grade-add').click();
+            cy.get('#row-E1 .grade-add').click();
+            cy.get('#row-HS .grade-add').click();
+            cy.get('#climbCount').should('have.text', '3');
+            cy.get('#summary').should('have.text', 'Hardest: E1');
+            cy.get('#row-HS .grade-count').should('have.text', '2');
+            cy.get('#row-HS .grade-minus').click();
+            cy.get('#climbCount').should('have.text', '2');
+        });
+
+        it('shows the grades in UIAA when asked', () => {
+            cy.visit(tradUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-VS .route-grade').should('have.text', 'VS');
+            cy.get('#row-VS .route-colour').should('have.text', 'V');
+            cy.get('#system-uiaa').check({ force: true });
+            cy.get('#row-VS .route-grade').should('have.text', 'V');
+            cy.get('#row-VS .route-colour').should('have.text', 'VS');
+        });
+
+        it('starts at M to E3 and adds harder grades as far as E11', () => {
+            cy.visit(tradUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-M').should('exist');
+            cy.get('#row-E3').should('exist');
+            cy.get('#row-E4').should('not.exist');
+            for(let i = 0; i < 8; i++){ cy.get('.grade-harder').click(); }
+            cy.get('#row-E11').should('exist');
+            cy.get('.grade-harder').click();
+            cy.tick(100);   // the toast fades in on a timer, and the clock is frozen
+            cy.get('.toast').should('be.visible').and('contain', 'You wish! Less clicking more climbing');
+        });
+
+        it('saves whether the day is on UKC too, and reopens with it', () => {
+            cy.visit(tradUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-E1 .grade-add').click();
+            cy.get('#alsoOnUkc').click();
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.get('#log').should('contain', '1 trad climb').and('contain', 'hardest E1 · UKC data ignored');
+            cy.window().then((win) => {
+                let saved = JSON.parse(win.localStorage.getItem('tradLog'))[0];
+                expect(saved.climbs).to.deep.equal(['E1']);
+                expect(saved.ukc).to.equal(true);
+            });
+            cy.get('#log .icon-wrench').click();
+            cy.get('#alsoOnUkc').should('be.checked');
+        });
+
+        it('opens straight on the UKC import from the link on the overview', () => {
+            cy.visit(tradUrl + '#ukc');
+            cy.get('#about').should('be.visible');
+            cy.location('hash').should('equal', '');
+        });
+
+        it('lists the UKC trad days, less any it has logged itself as on UKC too', () => {
+            cy.visit(tradUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('ukcLogbook', JSON.stringify({ imported: '2026-09-13', leftOut: 0, climbs: [
+                        { date: '2026-08-31', grade: 'HS', type: 'trad', name: 'Goin Back', crag: 'Moorhill Quarry', notes: 'Pumpy' },
+                        { date: '2026-08-06', grade: 'E1', type: 'trad', name: 'No Alibi', crag: 'Moorhill Quarry', notes: '' },
+                        { date: '2026-01-26', grade: '4+', type: 'sport', name: 'Scorpion', crag: 'Echo Valley', notes: '' }
+                    ] }));
+                    win.localStorage.setItem('tradLog', JSON.stringify(
+                        [{ id: 1, date: '2026-08-06', climbs: ['E1'], ukc: true, rating: 0 }]));
+                }
+            });
+            cy.get('.icon-info').click();
+            cy.get('#ukcSummary').should('have.text', 'Imported 13 Sep 2026 · 1 day, 1 trad climb, in the activity log below.');
+            // in the activity log with the app's own session: the sport climb, and
+            // UKC's copy of the day logged here, are left out
+            cy.get('#log tbody tr').should('have.length', 2);
+            cy.get('#log tbody tr').first()
+                .should('contain', '31 Aug').and('contain', '1 trad climb')
+                .and('contain', 'hardest Goin Back (HS) · Moorhill Quarry · from UKC');
+            // read only: edited in UKC, so no wrench and no bin - and no stars,
+            // since UKC exports no rating
+            cy.get('#log tbody tr').first().find('.icon-wrench, .icon-trash, .icon-star').should('not.exist');
+            cy.get('#log tbody tr').first().find('.icon-note').click();
+            cy.get('.comment-pop').should('contain', 'Goin Back: Pumpy');
+            cy.get('.comment-pop-stars').should('not.exist');
+            // the app's own session keeps both
+            cy.get('#log tbody tr').eq(1).should('contain', '6 Aug').and('contain', 'UKC data ignored')
+                .find('.icon-wrench').should('exist');
+        });
+
+        it('imports a UKC logbook from its info panel', () => {
+            cy.visit(tradUrl);
+            cy.get('#ukcFile').selectFile({ contents: Cypress.Buffer.from([
+                'Name,Grade,Style,Partner(empty),Notes,Date,Crag,County,Region,Country,Pitches,Type',
+                '"Goin Back","HS 4b","Lead O/S",,,31/Aug/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad'
+            ].join('\r\n')), fileName: 'dankni_Logbook_DLOG.csv' }, { force: true });
+            cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', 'Goin Back');
+        });
+    });
+
     describe('Overview charts', function () {
         const overviewUrl = appUrl + '/training/';
 
@@ -556,29 +713,38 @@ describe('Training apps', function () {
             cy.get('#performance').should('not.be.visible');
         });
 
-        it('draws both grade charts over all time by default', () => {
+        it('draws both grade charts over the last year by default', () => {
             visitWith(logs);
             cy.get('#performance').should('be.visible');
-            cy.get('#range-all').should('be.checked');
+            cy.get('#range-365').should('be.checked');
             cy.get('#performance svg').should('have.length', 2);
+            // nothing in the year before, so no line on any bar
             cy.get('#performance line.before').should('not.exist');
-            // the grade colours need no key - the grade is under every column
+            // the grade colours need no key - the grade is under every column - so
+            // the only thing in the key is the line for the year before
+            cy.get('#boulderChart .legend').should('have.text', 'The year before');
+            cy.get('#sportChart .legend .legend-item').should('have.length', 1);
+        });
+
+        it('shows everything over all time', () => {
+            visitWith(logs);
+            cy.get('label[for="range-all"]').click();
+            cy.get('#boulderTotal').should('have.text', '5 boulders in all');
             cy.get('#boulderChart .legend').should('not.exist');
-            cy.get('#sportChart .legend').should('not.exist');
         });
 
         it('always shows V0 to V8 and carries on up to the hardest boulder', () => {
             visitWith(logs);
             labels('#boulderChart').should('deep.equal',
                 ['V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10']);
-            cy.get('#boulderTotal').should('have.text', '5 boulders in all');
+            cy.get('#boulderTotal').should('have.text', '5 boulders in the last year, 0 in the year before');
         });
 
         it('stops the boulder chart at V8 when nothing harder is logged', () => {
             visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: ['V1', 'V4'], rating: 0 }] });
             labels('#boulderChart').should('deep.equal',
                 ['V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8']);
-            cy.get('#sportChart').should('contain', 'No climbs logged yet');
+            cy.get('#sportChart').should('contain', 'No climbs in the last year or the year before.');
         });
 
         it('adds sport grades outside 5 to 7b only once they are climbed', () => {
@@ -586,7 +752,15 @@ describe('Training apps', function () {
             labels('#sportChart').should('deep.equal',
                 ['4', '5', '5+', '6a', '6a+', '6b', '6c', '7a', '7a+', '7b', '8a']);
             // the endurance session saved before grades were kept adds nothing
-            cy.get('#sportTotal').should('have.text', '6 climbs in all');
+            cy.get('#sportTotal').should('have.text', '6 climbs in the last year, 0 in the year before');
+        });
+
+        it('adds the sport climbs from a gym session', () => {
+            visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: ['V2'], sport: ['6b', '7a', '4+'], rating: 0 }] });
+            cy.get('#sportTotal').should('have.text', '3 climbs in the last year, 0 in the year before');
+            labels('#sportChart').should('include.members', ['4+', '6b', '7a']);
+            cy.get('#allLogs tbody tr').first().should('contain', 'Gym Session')
+                .and('contain', '1 boulder, 3 sport climbs').and('contain', 'hardest V2 · 7a');
         });
 
         it('compares the last 7 days with the 7 before', () => {
@@ -607,6 +781,181 @@ describe('Training apps', function () {
             cy.reload();
             cy.get('#range-30').should('be.checked');
             cy.get('#boulderTotal').should('have.text', '4 boulders in the last 30 days, 0 in the 30 days before');
+        });
+
+        describe('Trad', function () {
+            // Three UKC climbs over two days, and a trad app session on the first
+            const logbook = { imported: '2026-09-13', leftOut: 0, climbs: [
+                { date: '2026-08-31', grade: 'HS', type: 'trad', name: 'Goin Back', crag: 'Moorhill Quarry', notes: '' },
+                { date: '2026-08-31', grade: 'S', type: 'trad', name: 'Shuffle', crag: 'Moorhill Quarry', notes: '' },
+                { date: '2026-08-06', grade: 'E1', type: 'trad', name: 'No Alibi', crag: 'Moorhill Quarry', notes: '' }
+            ] };
+            const session = (ukc) => ({ id: 1, date: '2026-08-31', climbs: ['HS', 'S', 'VS'], ukc: ukc, rating: 3 });
+
+            it('charts the trad app with no UKC logbook at all', () => {
+                visitWith({ tradLog: [session(false)] });
+                cy.get('#tradFigure').should('be.visible');
+                cy.get('#ukcNote').should('not.be.visible');
+                cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'hardest VS');
+            });
+
+            it('counts both when the day is not on UKC', () => {
+                visitWith({ ukcLogbook: logbook, tradLog: [session(false)] });
+                cy.get('#tradTotal').should('have.text', '6 trad climbs in the last year, 0 in the year before');
+                cy.get('#allLogs tbody tr').should('have.length', 3);
+            });
+
+            it('leaves out the UKC day when the trad app says it is on UKC too', () => {
+                visitWith({ ukcLogbook: logbook, tradLog: [session(true)] });
+                // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug
+                cy.get('#tradTotal').should('have.text', '4 trad climbs in the last year, 0 in the year before');
+                cy.get('#allLogs tbody tr').should('have.length', 2);
+                cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'UKC data ignored');
+                cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '6 Aug');
+            });
+        });
+
+        it('says how much local storage is in use', () => {
+            cy.visit(overviewUrl, {
+                onBeforeLoad(win) {
+                    // half a megabyte of characters, less the length of its own key
+                    win.localStorage.setItem('filler', 'x'.repeat(524288 - 'filler'.length));
+                }
+            });
+            cy.get('#storageUse').should('have.text', 'Local storage: 0.50 MB of about 5 MB used');
+        });
+
+        describe('UKC logbook', function () {
+            // Rows from a real export: quoted notes with "" and a line break in
+            // them, sport routes, trad routes graded French and UIAA, a boulder, and
+            // a date UKC only knows the year of.
+            const csv = [
+                'Name,Grade,Style,Partner(empty),Notes,Date,Crag,County,Region,Country,Pitches,Type',
+                '"Goin Back","HS 4b","Lead O/S",,"Nice route, a little pumpy, good fun",31/Aug/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad',
+                'Shuffle,"S 4a","Lead O/S",,,31/Aug/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad',
+                '"No Alibi","E1 5b","Lead rpt",,"Nice line, the ""gear"" is fine.',
+                'Second line of the note",06/Aug/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad',
+                'Scorpion,4c,AltLd,,,26/Jan/26,"Vall de Guadar (Echo Valley)",Benidorm,"Costa Blanca",Spain,4,Sport',
+                '"Diedro UBSA",5c,"AltLd O/S",,,09/Feb/25,"Penon de Ifach",Calpe,"Costa Blanca",Spain,10,Sport',
+                '"Casca la basca",6a+,Lead,,,30/Apr/16,"Arico - Upper Gorge",Tenerife,"Canary Islands",Spain,1,Sport',
+                '"Via Normal",4b,"AltLd O/S",,,06/Jul/25,"El Catedral",Tenerife,"Canary Islands",Spain,5,Trad',
+                '"Via Steger",IV+,,,,12/Aug/20,"Sella Towers",Dolomites,North,Italy,7,Trad',
+                '"Finger Stain","6b+ 5c","TR O/S",,,25/Jul/16,"Harrison\'s Rocks","East Sussex","South-East England",England,1,Trad',
+                '"The One They Call the White Hair","VS 4c","Lead O/S",,,???/2024,"Hen Mountain","Co. Down","Northern Ireland","Northern Ireland",1,Trad',
+                '"The Prow",f6A,"Sent O/S",,,24/Jul/25,"Bloody Bridge Boulders","Co. Down","Northern Ireland","Northern Ireland",1,Bouldering'
+            ].join('\r\n');
+
+            // A second export, to show a new one replaces the first
+            const later = [
+                'Name,Grade,Style,Partner(empty),Notes,Date,Crag,County,Region,Country,Pitches,Type',
+                '"Hound Dog","HVS 5a","TR O/S",,,12/Sep/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad'
+            ].join('\r\n');
+
+            // The import is in the trad app: choose the file there - it reloads
+            // once the logbook is saved - then come back to the overview
+            function choose(text) {
+                let firstClimb = text.split('\r\n')[1].split(',')[0].replace(/"/g, '');
+                cy.visit(appUrl + '/training/trad/');
+                cy.get('#ukcFile').selectFile({ contents: Cypress.Buffer.from(text), fileName: 'dankni_Logbook_DLOG.csv' },
+                    { force: true });
+                cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', firstClimb);
+                cy.visit(overviewUrl);
+            }
+
+            it('points to the import in the trad app until there is trad to chart', () => {
+                visitWith(logs);
+                cy.get('#performance').should('be.visible');
+                cy.get('#tradFigure').should('not.be.visible');
+                cy.get('#tradPrompt a').should('have.text', 'Upload UKC log data to combine and add trad climbs')
+                    .and('have.attr', 'href', 'trad/#ukc');
+                // and the overview has no upload of its own any more
+                cy.get('#ukcFile').should('not.exist');
+            });
+
+            it('charts the trad climbs, turning only UIAA grades British', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                cy.get('#performance').should('be.visible');
+                cy.get('#tradFigure').should('be.visible');
+                // HS, S, E1, and IV+ as HS. French 4b, sandstone 6b+ 5c and the one
+                // with only a year are left out.
+                cy.get('label[for="range-all"]').click();
+                labels('#tradChart').should('deep.equal', ['VD', 'S', 'HS', 'VS', 'HVS', 'E1', 'E2']);
+                cy.get('#tradTotal').should('have.text', '4 trad climbs in all');
+                cy.get('#ukcImported').should('contain', 'Imported from UKC on 13 Sep 2026.')
+                    .and('contain', '3 climbs left out');
+            });
+
+            it('adds the sport climbs to the sport chart', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                // 4c as 4+, 5c as 5+, and 6a+ as it is
+                cy.get('label[for="range-all"]').click();
+                cy.get('#sportTotal').should('have.text', '3 climbs in all');
+                labels('#sportChart').should('include.members', ['4+', '5+', '6a+']);
+            });
+
+            it('adds each day climbed to the sessions', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                cy.get('#sessions').should('be.visible');
+                // six days: the two climbs on 31 Aug are one session
+                cy.get('#allLogs tbody tr').should('have.length', 6);
+                cy.get('#allLogs tbody tr').first().should('contain', '31 Aug')
+                    .and('contain', 'UKC').and('contain', '2 trad climbs')
+                    .and('contain', 'hardest Goin Back (HS) · Moorhill Quarry');
+            });
+
+            it('puts the notes of the hardest climb of the day on its session', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                // UKC exports no rating, so its days have no stars to show
+                cy.get('#allLogs tbody tr').first().find('.icon-star').should('not.exist');
+                cy.get('#allLogs tbody tr').first().find('.icon-note').click();
+                cy.get('.comment-pop').should('contain', 'Goin Back: Nice route, a little pumpy, good fun');
+                cy.get('.comment-pop-stars').should('not.exist');
+                // a day whose hardest climb has no notes has no note
+                cy.get('#allLogs tbody tr').eq(2).should('contain', '26 Jan').find('.icon-note').should('not.exist');
+            });
+
+            it('keeps the name, date, grade, type, crag and notes of each climb', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                cy.get('#tradFigure').should('be.visible');
+                cy.window().then((win) => {
+                    let saved = win.localStorage.getItem('ukcLogbook');
+                    expect(saved).not.to.contain('Northern Ireland');   // the region, and the rest, stay in UKC
+                    expect(JSON.parse(saved).climbs[0]).to.deep.equal({ date: '2026-08-31', grade: 'HS', type: 'trad',
+                        name: 'Goin Back', crag: 'Moorhill Quarry', notes: 'Nice route, a little pumpy, good fun' });
+                });
+            });
+
+            it('replaces the last import with a new one', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                choose(later);
+                cy.get('#tradTotal').should('have.text', '1 trad climb in the last year, 0 in the year before');
+                cy.get('#sportChart').should('contain', 'No climbs in the last year');
+                cy.get('#allLogs tbody tr').should('have.length', 1);
+            });
+
+            it('compares the last 30 days with the 30 before', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                cy.get('label[for="range-30"]').click();
+                cy.get('#tradTotal').should('have.text', '2 trad climbs in the last 30 days, 1 in the 30 days before');
+            });
+
+            it('can be removed again', () => {
+                cy.visit(overviewUrl);
+                choose(csv);
+                cy.contains('#tradFigure a', 'Remove').click();
+                cy.get('#performance').should('not.be.visible');
+                cy.get('#sessions').should('not.be.visible');
+                cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));
+            });
         });
     });
 });
