@@ -724,9 +724,8 @@ describe('Training apps', function () {
             ]
         };
 
-        // the charts, unless the overview's sessions are what is being looked at
-        function visitWith(seed, url = progressUrl) {
-            cy.visit(url, {
+        function visitWith(seed) {
+            cy.visit(progressUrl, {
                 onBeforeLoad(win) {
                     Object.keys(seed).forEach((key) => win.localStorage.setItem(key, JSON.stringify(seed[key])));
                 }
@@ -747,8 +746,7 @@ describe('Training apps', function () {
             visitWith({ lapTimerLog: [{ id: 1, date: '2026-09-13', laps: 4, total: 60000, rating: 0 }] });
             cy.get('#performance').should('not.be.visible');
             cy.get('#progressEmpty').should('be.visible');
-            // the session is still listed on the overview
-            cy.visit(overviewUrl);
+            // the session is still listed, under where the charts would be
             cy.get('#sessions').should('be.visible');
         });
 
@@ -799,7 +797,6 @@ describe('Training apps', function () {
             visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: ['V2'], sport: ['6b', '7a', '4+'], rating: 0 }] });
             cy.get('#sportTotal').should('have.text', '3 climbs in the last year, 0 in the year before');
             labels('#sportChart').should('include.members', ['4+', '6b', '7a']);
-            cy.visit(overviewUrl);
             cy.get('#allLogs tbody tr').first().should('contain', 'Gym Session')
                 .and('contain', '1 boulder, 3 sport climbs').and('contain', 'hardest V2 · 7a');
         });
@@ -838,14 +835,12 @@ describe('Training apps', function () {
                 cy.get('#tradFigure').should('be.visible');
                 cy.get('#ukcNote').should('not.be.visible');
                 cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
-                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'hardest VS');
             });
 
             it('counts both when the day is not on UKC', () => {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(false)] });
                 cy.get('#tradTotal').should('have.text', '6 trad climbs in the last year, 0 in the year before');
-                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').should('have.length', 3);
             });
 
@@ -853,7 +848,6 @@ describe('Training apps', function () {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(true)] });
                 // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug
                 cy.get('#tradTotal').should('have.text', '4 trad climbs in the last year, 0 in the year before');
-                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').should('have.length', 2);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'UKC data ignored');
                 cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '6 Aug');
@@ -897,14 +891,14 @@ describe('Training apps', function () {
             ].join('\r\n');
 
             // The import is in the trad app: choose the file there - it reloads
-            // once the logbook is saved - then go to the page being tested
-            function choose(text, url = progressUrl) {
+            // once the logbook is saved - then come back to the progress page
+            function choose(text) {
                 let firstClimb = text.split('\r\n')[1].split(',')[0].replace(/"/g, '');
                 cy.visit(appUrl + '/training/trad/');
                 cy.get('#ukcFile').selectFile({ contents: Cypress.Buffer.from(text), fileName: 'dankni_Logbook_DLOG.csv' },
                     { force: true });
                 cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', firstClimb);
-                cy.visit(url);
+                cy.visit(progressUrl);
             }
 
             it('points to the import in the trad app until there is trad to chart', () => {
@@ -941,7 +935,7 @@ describe('Training apps', function () {
             });
 
             it('adds each day climbed to the sessions', () => {
-                choose(csv, overviewUrl);
+                choose(csv);
                 cy.get('#sessions').should('be.visible');
                 // six days: the two climbs on 31 Aug are one session
                 cy.get('#allLogs tbody tr').should('have.length', 6);
@@ -951,7 +945,7 @@ describe('Training apps', function () {
             });
 
             it('puts the notes of the hardest climb of the day on its session', () => {
-                choose(csv, overviewUrl);
+                choose(csv);
                 // UKC exports no rating, so its days have no stars to show
                 cy.get('#allLogs tbody tr').first().find('.icon-star').should('not.exist');
                 cy.get('#allLogs tbody tr').first().find('.icon-note').click();
@@ -978,7 +972,6 @@ describe('Training apps', function () {
                 choose(later);
                 cy.get('#tradTotal').should('have.text', '1 trad climb in the last year, 0 in the year before');
                 cy.get('#sportChart').should('contain', 'No climbs in the last year');
-                cy.visit(overviewUrl);
                 cy.get('#allLogs tbody tr').should('have.length', 1);
             });
 
@@ -994,7 +987,6 @@ describe('Training apps', function () {
                 cy.get('#performance').should('not.be.visible');
                 cy.get('#progressEmpty').should('be.visible');
                 cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));
-                cy.visit(overviewUrl);
                 cy.get('#sessions').should('not.be.visible');
             });
         });

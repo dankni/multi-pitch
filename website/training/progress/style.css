@@ -1,5 +1,5 @@
-/* The progress page's charts. The page itself - dark mode, the small print -
-   is common/page.css, shared with the overview.
+/* The progress page: the charts, then every app's sessions. The page itself -
+   dark mode, the small print - is common/page.css, shared with the overview.
 
    Every colour is a custom property so dark mode swaps them in
    one place below. Each bar takes its colour from --c, which its
@@ -144,5 +144,53 @@
         --band-hard: #e25550;
         --band-vhard: #9170e6;
         --before: #e8e8e8;
+    }
+}
+
+/* Every app's log on one page. The table itself is .log-table from
+   common/style.css, but an app only ever draws one inside a black overlay
+   - out here it is on the page, so the stripe has to be the other way up:
+   black over white, and white over black in dark mode. */
+.sessions {
+    width: 90%;
+    max-width: var(--column);
+    margin: 0 auto 40px;
+    background: none;
+    border-radius: 0;
+}
+.sessions h2 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+.sessions .log-table tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.05);
+}
+/* The gold an earned star wears inside an app is 1.4:1 on a white page -
+   on the dark panel it lives on there it is the brightest thing in the
+   row. Out here it needs taking down to something that reads. */
+.sessions .icon-star.active {
+    color: #a97c00;
+}
+.log-app {
+    white-space: nowrap;
+}
+.log-app a {
+    color: #0b4fbf;
+    text-decoration: none;
+}
+.log-app a:hover, .log-app a:focus {
+    text-decoration: underline;
+}
+@media (prefers-color-scheme: dark) {
+    /* the stripe the log wears inside an app, now that the page behind it
+       is the dark one */
+    .sessions .log-table tbody tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    .log-app a {
+        color: #8FC2FF;
+    }
+    .sessions .icon-star.active {
+        color: #FFD700;
     }
 }
