@@ -669,6 +669,26 @@ describe('Training apps', function () {
         });
     });
 
+    describe('Bottom navigation', function () {
+        it('leaves the app button empty until an app has been opened', () => {
+            cy.visit(appUrl + '/training/');
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
+            cy.get('.bottom-nav a').first().should('contain', 'Apps').and('have.attr', 'aria-current', 'page');
+            cy.get('.bottom-nav a').eq(1).should('contain', 'Progress').and('have.attr', 'href', '/training/#performance');
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'empty');
+        });
+
+        it('shows the app you are in, and links back to it from the overview', () => {
+            cy.visit(appUrl + '/training/timer/');
+            // where you are, not a link
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'current')
+                .and('contain', 'Circuit').and('not.have.attr', 'href');
+            cy.get('.bottom-nav a').first().should('have.attr', 'href', '/training/');
+            cy.visit(appUrl + '/training/');
+            cy.get('.bottom-nav a').eq(2).should('contain', 'Circuit').and('have.attr', 'href', '/training/timer/');
+        });
+    });
+
     describe('Overview charts', function () {
         const overviewUrl = appUrl + '/training/';
 

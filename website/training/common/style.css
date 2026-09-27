@@ -1288,4 +1288,82 @@ input[type="checkbox"].nice-radios:checked + label:before {
         display: none;
     }
   }
-  
+
+/* Bottom navigation - common/bottom-nav.js draws it and puts .has-bottom-nav on
+   the html element. All of it is here, so taking this block and that script out
+   takes it away.
+
+   A dark bar like the one along the top: three buttons of equal width, each an
+   icon over a small label. The one for the page you are on is in the pale blue
+   the dark pages use for links, so it reads as selected without being a button
+   to press. */
+.bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* over the page, under the info and settings panels and everything that
+       pops up over them - the cog hint, the toasts and the notes */
+    z-index: 3;
+    display: flex;
+    height: calc(58px + env(safe-area-inset-bottom));
+    /* all of these undo the nav rule the top bar is styled by */
+    top: auto;
+    width: auto;
+    margin: 0;
+    padding: 0 0 env(safe-area-inset-bottom);
+    box-sizing: border-box;
+    background: #121212;
+    border-top: 1px solid #333;
+    border-bottom: 0;
+    font-size: 11px;
+}
+.overlay {
+    z-index: 4;
+}
+.bottom-nav-item {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+.bottom-nav-item.current {
+    color: #8FC2FF;
+}
+a.bottom-nav-item:hover, a.bottom-nav-item:focus {
+    color: #C4DEFF;
+}
+a.bottom-nav-item:focus-visible {
+    outline: 2px solid #8FC2FF;
+    outline-offset: -4px;
+}
+/* as specific as the top bar's nav .icon-menu, which would float the burger */
+.bottom-nav .bottom-nav-icon {
+    float: none;
+    height: 22px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    line-height: 22px;
+}
+.bottom-nav .bottom-nav-icon:before {
+    margin: 0;
+}
+/* room at the foot of the page so the bar never sits over the last of it */
+.has-bottom-nav body {
+    padding-bottom: calc(58px + env(safe-area-inset-bottom));
+}
+/* and the things that sit on the bottom edge move up above it */
+.has-bottom-nav .toast {
+    bottom: calc(82px + env(safe-area-inset-bottom));
+}
+.has-bottom-nav footer {
+    bottom: calc(58px + env(safe-area-inset-bottom));
+}
