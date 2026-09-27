@@ -194,3 +194,16 @@
         color: #FFD700;
     }
 }
+
+/* On a screen wide enough for both, the charts and the sessions sit side by
+   side - each is the shared inline-block panel. Top aligned, or the shorter one
+   drops to the bottom line of the longer, which a long log takes a page down.
+   The margins give them a gap between, and the same line to start on. */
+.performance, .sessions {
+    vertical-align: top;
+}
+@media (min-width: 1100px) {
+    .performance, .sessions {
+        margin: 20px 20px 40px;
+    }
+}
