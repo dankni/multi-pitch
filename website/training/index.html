@@ -113,9 +113,10 @@
         .home-link:hover, .home-link:focus {
             color: #062f73;
         }
-        /* How much of the browser's local storage the site is using - small print,
-           just above the way home */
-        .storage-use {
+        /* The small print just above the way home: how much of the browser's
+           local storage the site is using, and which version of the apps is
+           installed */
+        .page-foot {
             margin: 0 auto 12px;
             font-size: 14px;
             opacity: 0.8;
@@ -248,7 +249,8 @@
     </ul>
 
     <!-- filled in by the script below; with no JavaScript there is nothing to measure -->
-    <p class="storage-use" id="storageUse"></p>
+    <p class="page-foot" id="storageUse"></p>
+    <p class="page-foot" id="appVersion" hidden></p>
 
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
 
@@ -306,6 +308,23 @@
         document.getElementById("storageUse").innerText = "Local storage: "
             + (megabytes < 0.01 && used > 0 ? "under 0.01" : megabytes.toFixed(2))
             + " MB of about 5 MB used";
+    })();
+
+    /* The version of the apps on this device: the one the service worker has
+       installed, as the name of its cache - training-v55 is v55 (see sw.js). A
+       phone still on an old version shows it here. With no cache yet - a first
+       visit, or a browser without service workers - there is nothing to say. */
+    (function(){
+        if(!("caches" in window)){ return; }
+        caches.keys().then(names => {
+            let versions = names.map(name => /^training-(v\d+)$/.exec(name)).filter(match => match)
+                .map(match => match[1])
+                .sort((a, b) => Number(b.slice(1)) - Number(a.slice(1)));
+            if(versions.length === 0){ return; }
+            let line = document.getElementById("appVersion");
+            line.innerText = "App version: " + versions[0];
+            line.hidden = false;
+        }).catch(() => { /* nothing to report */ });
     })();
     </script>
     <script src="common/bottom-nav.js" defer></script>

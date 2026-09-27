@@ -864,6 +864,17 @@ describe('Training apps', function () {
             cy.get('#storageUse').should('have.text', 'Local storage: 0.50 MB of about 5 MB used');
         });
 
+        it('says which version of the apps is installed, once there is one', () => {
+            // the specs stub out the service worker, so nothing is installed yet
+            cy.visit(overviewUrl);
+            cy.get('#appVersion').should('not.be.visible');
+            // an installed version is the service worker's cache, by name
+            cy.window().then((win) => win.caches.open('training-v99'));
+            cy.reload();
+            cy.get('#appVersion').should('have.text', 'App version: v99');
+            cy.window().then((win) => win.caches.delete('training-v99'));
+        });
+
         describe('UKC logbook', function () {
             // Rows from a real export: quoted notes with "" and a line break in
             // them, sport routes, trad routes graded French and UIAA, a boulder, and
