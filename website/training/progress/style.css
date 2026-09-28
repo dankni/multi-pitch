@@ -1,43 +1,34 @@
-/* The progress page: the charts, then every app's sessions. The page itself -
-   dark mode, the small print - is common/page.css, shared with the overview.
+/* The progress page: the charts, then every app's sessions.
 
-   Every colour is a custom property so dark mode swaps them in
-   one place below. Each bar takes its colour from --c, which its
-   class sets by how hard the grade is. The period before is a thin line in the
-   page ink across each bar - it has to show over every bar colour and
-   over the page, and stay quieter than the bars themselves. */
+   Each bar takes its colour from --c, which its class sets by how hard the grade
+   is. The period before is a thin line across each bar in the page ink, quieter
+   than the bars. */
 .performance {
-    --ink-muted: #5c5c63;
-    --grid: rgba(0, 0, 0, 0.1);
-    --band-easy: #2a9d4a;
+    --ink-muted: light-dark(#5c5c63, #a8a8ae);
+    --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
+    --band-easy: light-dark(#2a9d4a, #248a3c);
     --band-medium: #eda100;
-    --band-hard: #e34948;
-    --band-vhard: #7b3fc4;
-    --before: #2b2b30;
+    --band-hard: light-dark(#e34948, #e25550);
+    --band-vhard: light-dark(#7b3fc4, #9170e6);
+    --before: light-dark(#2b2b30, #e8e8e8);
     width: 90%;
     max-width: var(--column);
     margin: 20px auto 30px;
     background: none;
     border-radius: 0;
 }
-/* Four ranges on one row, even on a narrow phone, and all four the same
-   size: a flex row drops the gaps the markup's whitespace leaves between
-   inline labels, and each label takes an equal share of it - up to a
-   width that fits ALL TIME, so they stay buttons rather than a bar on a
-   wide screen */
+/* Four ranges on one row, all the same size, up to a width that fits ALL TIME */
 .range-picker {
     display: flex;
     justify-content: center;
     gap: 6px;
 }
-/* as specific as the shared .nice-radios rules, so these win - and the
-   hidden radios out of the row, or each would add a gap of its own */
 .range-picker .nice-radios {
     position: absolute;
 }
 .range-picker .nice-radios + label {
     flex: 1 1 0;
-    box-sizing: border-box;
+    box-sizing: border-box;   /* chips are content-box; these share the row equally */
     max-width: 90px;
     min-width: 0;
     margin: 0 0 10px;
@@ -45,8 +36,7 @@
     letter-spacing: 0.5px;
     white-space: nowrap;
 }
-/* the chosen one has no border where the others have 1px, which left it
-   2px narrower - a clear border evens them up */
+/* the others have a 1px border, so the chosen one needs a clear one to match */
 .range-picker .nice-radios:checked + label {
     border: 1px solid transparent;
 }
@@ -116,7 +106,6 @@
     border-radius: 3px;
     border: 1.5px solid var(--c);
     background: var(--c);
-    box-sizing: border-box;
 }
 /* the line, as it looks on the chart */
 .swatch.before {
@@ -135,22 +124,8 @@
     border: 1px dashed var(--grid);
     border-radius: 5px;
 }
-@media (prefers-color-scheme: dark) {
-    .performance {
-        --ink-muted: #a8a8ae;
-        --grid: rgba(255, 255, 255, 0.14);
-        --band-easy: #248a3c;
-        --band-medium: #eda100;
-        --band-hard: #e25550;
-        --band-vhard: #9170e6;
-        --before: #e8e8e8;
-    }
-}
-
-/* Every app's log on one page. The table itself is .log-table from
-   common/style.css, but an app only ever draws one inside a black overlay
-   - out here it is on the page, so the stripe has to be the other way up:
-   black over white, and white over black in dark mode. */
+/* Every app's log on one page: the apps' .log-table, but on the page rather
+   than in a black overlay, so the stripe and the star follow the theme */
 .sessions {
     width: 90%;
     max-width: var(--column);
@@ -163,42 +138,24 @@
     font-size: 18px;
 }
 .sessions .log-table tbody tr:nth-child(even) {
-    background: rgba(0, 0, 0, 0.05);
+    background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08));
 }
-/* The gold an earned star wears inside an app is 1.4:1 on a white page -
-   on the dark panel it lives on there it is the brightest thing in the
-   row. Out here it needs taking down to something that reads. */
+/* the app's gold is 1.4:1 on a white page */
 .sessions .icon-star.active {
-    color: #a97c00;
+    color: light-dark(#a97c00, #FFD700);
 }
 .log-app {
     white-space: nowrap;
 }
 .log-app a {
-    color: #0b4fbf;
+    color: var(--link);
     text-decoration: none;
 }
 .log-app a:hover, .log-app a:focus {
     text-decoration: underline;
 }
-@media (prefers-color-scheme: dark) {
-    /* the stripe the log wears inside an app, now that the page behind it
-       is the dark one */
-    .sessions .log-table tbody tr:nth-child(even) {
-        background: rgba(255, 255, 255, 0.08);
-    }
-    .log-app a {
-        color: #8FC2FF;
-    }
-    .sessions .icon-star.active {
-        color: #FFD700;
-    }
-}
 
-/* On a screen wide enough for both, the charts and the sessions sit side by
-   side - each is the shared inline-block panel. Top aligned, or the shorter one
-   drops to the bottom line of the longer, which a long log takes a page down.
-   The margins give them a gap between, and the same line to start on. */
+/* Side by side on a wide screen, top aligned */
 .performance, .sessions {
     vertical-align: top;
 }

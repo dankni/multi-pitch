@@ -1,19 +1,8 @@
-/* The progress page: sport climbs, boulders and trad climbs by grade - trad from
-   the trad app and an imported UKC logbook, which common/ukc.js reads - over all
-   time, the last year, or the last 30 or 7 days.
-
-   Plain SVG written as a string - column charts do not need a library, and a
-   library would be the biggest file in the suite. Everything here reads the
-   apps' logs from localStorage and writes nothing back to them.
-
-   The year, 30 and 7 day views compare against the period before them, drawn as a
-   thin line across each bar at the height the period before reached. Days are
-   the yyyy-mm-dd the apps store, which is a UTC day (today() in
-   common/functions.js), so the windows are built the same way and compared as
-   strings.
-
-   Grade colours say how hard a grade is, not which grade it is - the grade itself
-   is written under every column, which is why those charts need no key. */
+/* The progress page's charts: sport climbs, boulders and trad climbs by grade,
+   from the apps' logs and an imported UKC logbook, as plain SVG strings. The
+   year, 30 and 7 day views draw the period before as a line across each bar.
+   Days are the UTC yyyy-mm-dd the apps store, compared as strings. A bar's colour
+   says how hard its grade is; the grade is written under it. */
 (function(){
     const day = 86400000;
 
@@ -181,14 +170,6 @@
 
     /* Drawing */
 
-    function escape(text){
-        return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-
-    function plural(count, word){
-        return count + " " + word + (count === 1 ? "" : "s");
-    }
-
     // 1, 2 or 5 times a power of ten - whole numbers only, a count is never 2.5
     function niceStep(rough){
         if(rough <= 1){ return 1; }
@@ -222,7 +203,7 @@
         let ceiling = Math.max(step, Math.ceil(most / step) * step);
         let yOf = value => top + plotHeight - (value / ceiling) * plotHeight;
 
-        let svg = `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escape(ariaLabel)}">`;
+        let svg = `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(ariaLabel)}">`;
 
         // grid and y labels, behind everything
         for(let tick = 0; tick <= ceiling; tick += step){
@@ -242,7 +223,7 @@
             let centre = x + barWidth / 2;
             let total = group.value;
 
-            svg += `<g class="column"><title>${escape(group.title)}</title>`
+            svg += `<g class="column"><title>${escapeHtml(group.title)}</title>`
                 + `<rect class="hit" x="${left + slot * index}" y="${top}" width="${slot}" height="${plotHeight}" />`;
 
             if(total > 0){
@@ -265,7 +246,7 @@
             }
 
             if(index % labelEvery === 0){
-                svg += `<text class="label" x="${centre}" y="${height - bottom + 15}" text-anchor="middle">${escape(group.label)}</text>`;
+                svg += `<text class="label" x="${centre}" y="${height - bottom + 15}" text-anchor="middle">${escapeHtml(group.label)}</text>`;
             }
             svg += `</g>`;
         });
@@ -276,7 +257,7 @@
     function legend(items){
         if(items.length === 0){ return ""; }
         return `<p class="legend">` + items.map(item =>
-            `<span class="legend-item"><span class="swatch ${item.cls}" aria-hidden="true"></span>${escape(item.name)}</span>`
+            `<span class="legend-item"><span class="swatch ${item.cls}" aria-hidden="true"></span>${escapeHtml(item.name)}</span>`
         ).join("") + `</p>`;
     }
 
@@ -288,7 +269,7 @@
     }
 
     function empty(message){
-        return `<p class="chart-empty">${escape(message)}</p>`;
+        return `<p class="chart-empty">${escapeHtml(message)}</p>`;
     }
 
     /* The two grade charts: a column per grade, with a line for the period

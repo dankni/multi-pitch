@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Power endurance and endurance circuits for the Gilford wall. Pick your max grade and the app builds the warm up, the sets and the rests around it.">
 	<link rel="manifest" href="/training/manifest.json" />
 	<meta name="theme-color" content="#121212">
@@ -23,18 +23,17 @@
 	<script src="../common/gilford-routes.js" ></script>
 	<script src="main.js" ></script>
     <title>Endurance Circuits</title>
-	<style>legend { margin: 0 auto; }</style>
   </head>
 
-  <body>
+  <body data-state="idle">
 	<nav>
 		<div class="left-nav">
-			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
-			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
 		</div>
 		<h1>Endurance</h1>
 		<div class="right-nav">
-			<i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
 		</div>
 	</nav>
 
@@ -43,7 +42,7 @@
 		     This is what they add up to, so the session is no surprise. -->
 		<p class="style-hint"></p>
 
-		<button id="primaryButton" onclick="startSession()"><i class="demo-icon icon-play"></i>START SESSION</button>
+		<button id="primaryButton" data-action="startSession"><i class="demo-icon icon-play"></i>START SESSION</button>
 	</div>
 
 	<div class="holder" id="sessionHolder">
@@ -57,14 +56,14 @@
 			<!-- JavaScript will populate this -->
 		</div>
 
-		<a href="#" id="skipRest" onclick="endRest();return false;">Skip the rest &rarr;</a>
+		<button type="button" id="skipRest" class="link-button" data-action="endRest">Skip the rest &rarr;</button>
 
 		<div id="choice">
-			<button id="anotherSet" class="quiet" onclick="addSet()"><i class="demo-icon icon-ccw"></i>ANOTHER SET</button>
-			<button id="finishButton" onclick="openSavePanel()"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
+			<button id="anotherSet" class="quiet" data-action="addSet"><i class="demo-icon icon-ccw"></i>ANOTHER SET</button>
+			<button id="finishButton" data-action="openSavePanel"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
 		</div>
 
-		<button class="secondary" id="discard" onclick="discardSession()"><i class="demo-icon icon-cancel"></i>DISCARD</button>
+		<button class="secondary" id="discard" data-action="discardSession"><i class="demo-icon icon-cancel"></i>DISCARD</button>
 
 		<div id="endingDiv" class="ending"></div>
 	</div>
@@ -84,18 +83,13 @@
 			grades below and gives you 4 laps a set. 3 sets as standard,
 			but you can add more as you go.
 		</p>
-		<p> </p>
 		<p>
 			Power Endurance would typically have 15min rests but on a short wall (like 
 			Gilford) 10mins or even 5mins may be better. Endurance would typically
 			have short rests. You choose.
 		</p>
+		<p>
 			Everything is stored on this device only &ndash; nothing is uploaded anywhere.
-		</p>
-		<p class="panel-links">
-			<a href="/training/" class="quiet">
-				<i class="demo-icon icon-menu"></i> All training apps
-			</a>
 		</p>
 		<hr />
 		<h2>Activity Log</h2>
@@ -103,7 +97,7 @@
 		<div id="log"></div>
 		<br />
 		<hr />
-		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 
 	<aside id="settings" class="overlay">
@@ -117,43 +111,43 @@
 		<fieldset class="setting-group">
 			<legend>Session type</legend>
 			<div class="picker" id="stylePicker">
-				<input type="radio" name="style" class="nice-radios" id="styleEndurance" value="endurance" onchange="setStyle()" checked />
+				<input type="radio" name="style" class="nice-radios" id="styleEndurance" value="endurance" data-change="setStyle" checked />
 				<label for="styleEndurance">Endurance</label>
-				<input type="radio" name="style" class="nice-radios" id="stylePower" value="power" onchange="setStyle()" />
+				<input type="radio" name="style" class="nice-radios" id="stylePower" value="power" data-change="setStyle" />
 				<label for="stylePower">Power Endurance</label>
 			</div>
 		</fieldset>
 		<fieldset class="setting-group">
 			<legend><i class="demo-icon icon-pause"></i> Rest between sets</legend>
 			<div class="picker" id="restPicker">
-				<input type="radio" name="restMinutes" class="nice-radios" id="rest5" value="5" onchange="setRest()" checked />
+				<input type="radio" name="restMinutes" class="nice-radios" id="rest5" value="5" data-change="setRest" checked />
 				<label for="rest5">5 min</label>
-				<input type="radio" name="restMinutes" class="nice-radios" id="rest10" value="10" onchange="setRest()" />
+				<input type="radio" name="restMinutes" class="nice-radios" id="rest10" value="10" data-change="setRest" />
 				<label for="rest10">10 min</label>
-				<input type="radio" name="restMinutes" class="nice-radios" id="rest15" value="15" onchange="setRest()" />
+				<input type="radio" name="restMinutes" class="nice-radios" id="rest15" value="15" data-change="setRest" />
 				<label for="rest15">15 min</label>
 			</div>
 		</fieldset>
 		<label class="switch-label">
-			<input type="checkbox" onchange="toggleWall()" id="useWall" checked />
+			<input type="checkbox" data-change="toggleWall" id="useWall" checked />
 			<span class="label-content">
-				<i class="demo-icon icon-ok"></i> Gilford wall colours <span id="wallStatus">On</span>
+				<i class="demo-icon icon-ok"></i> Gilford wall colours <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
 			<span class="label-content">
-				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" onchange="togglePreventSleep()" id="preventSleep" checked />
+			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
 			<span class="label-content">
-				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span id="preventSleepStatus">On</span>
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
 			</span>
 		</label>
 		<p class="style-hint"></p>
-		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>
+		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>
 </html>

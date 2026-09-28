@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Digital tick list for the 24 routes at the Gilford wall. Start a session, tick the climbs you did and save it to your phone.">
 	<link rel="manifest" href="/training/manifest.json" />
 	<meta name="theme-color" content="#121212">
@@ -17,33 +17,35 @@
 	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
 	<link href="../common/fontello.css" rel="stylesheet" />
 	<link href="../common/style.css" rel="stylesheet" />
+	<link href="../common/log.css" rel="stylesheet" />
 	<link href="style.css" rel="stylesheet" />
 	<script src="../common/functions.js" ></script>
 	<script src="/training/common/bottom-nav.js" defer></script>
 	<script src="../common/gilford-routes.js" ></script>
+	<script src="../common/log.js" ></script>
 	<script src="main.js" ></script>
     <title>Gilford Wall Tick List</title>
   </head>
 
-  <body>
+  <body data-state="idle">
 	<nav>
 		<div class="left-nav">
-			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
-			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
 		</div>
 		<h1>Gilford Tick List</h1>
 		<div class="right-nav">
-			<i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
 		</div>
 	</nav>
 
-	<button id="primaryButton" onclick="startSession()"><i class="demo-icon icon-play"></i>START SESSION</button>
-	<button class="secondary" id="discard" onclick="discardSession()"><i class="demo-icon icon-cancel"></i>DISCARD</button>
+	<button id="primaryButton" data-action="startSession"><i class="demo-icon icon-play"></i>START SESSION</button>
+	<button class="secondary" id="discard" data-action="discardSession"><i class="demo-icon icon-cancel"></i>DISCARD</button>
 
-	<div class="holder" id="sessionHolder" style="display:none">
+	<div class="holder" id="sessionHolder">
 		<div id="sessionBar">
 			<label for="sessionDate">Session date</label>
-			<input type="date" class="field" id="sessionDate" onchange="setSessionDate(this.value)" />
+			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
 			<h3><span id="tickCount">0</span> <span class="of">/ 24</span></h3>
 			<p id="summary">Nothing ticked yet</p>
 		</div>
@@ -52,7 +54,7 @@
 			<!-- JavaScript will populate this -->
 		</div>
 
-		<button id="finishButton" onclick="openSavePanel()"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
+		<button id="finishButton" data-action="openSavePanel"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
 
 		<div id="endingDiv" class="ending"></div>
 	</div>
@@ -68,9 +70,6 @@
 			<a href="/gilford.pdf" target="blank">
 				Original paper tracker (PDF) <i class="demo-icon icon-link-ext"></i>
 			</a>
-			<a href="/training/" class="quiet">
-				<i class="demo-icon icon-menu"></i> All training apps
-			</a>
 		</p>
 		<hr />
 		<h2>Activity Log</h2>
@@ -78,24 +77,24 @@
 		<div id="log"></div>
 		<br />
 		<hr />
-		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
 		<label class="switch-label">
-			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
 			<span class="label-content">
-				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" onchange="togglePreventSleep()" id="preventSleep" checked />
+			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
 			<span class="label-content">
-				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span id="preventSleepStatus">On</span>
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
 			</span>
 		</label>
-		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>
+		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>
 </html>

@@ -1,28 +1,17 @@
-/* The training apps, offline.
+/* The training apps, offline: one worker at /training/ for the whole suite,
+   cache first from a precached shell. The apps have nothing to fetch - sessions
+   live in localStorage - so the job is only keeping the files through a dead
+   signal.
 
-   One worker for all of them. It sits at /training/ so its scope covers every app
-   below it and the landing page, which means the whole suite shares a single
-   cache - the shared stylesheet, the icon font and functions.js are stored once
-   rather than five times.
+   When you change any app, bump CACHE_VERSION, or installed copies keep serving
+   the old files. */
 
-   The apps have no data to fetch: a session lives in localStorage and nothing is
-   ever uploaded. So the whole job here is making the files themselves survive a
-   dead signal, which is cache-first with a precached shell.
-
-   When you change any app: bump CACHE_VERSION. A cache-first worker will happily
-   serve last month's app forever otherwise. The deploy invalidates /* at
-   CloudFront, so the new sw.js is picked up on the next launch. */
-
-const CACHE_VERSION = 'v64';
+const CACHE_VERSION = 'v65';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
-/* The shell. Everything an app needs to draw itself with no network at all -
-   listed by hand because there is no build step to generate it. Add to this when
-   you add a file to an app. */
+// Everything an app needs with no network. Add to it when you add a file.
 const SHELL = [
-    // the landing page by its directory url only: asking for index.html gets a
-    // redirect on some hosts, and addAll refuses a redirected response - which
-    // would mean nothing installs at all
+    // pages by their directory url: index.html is a redirect on some hosts, which addAll refuses
     '/training/',
     '/training/manifest.json',
     '/training/progress/',
@@ -34,6 +23,9 @@ const SHELL = [
     '/training/common/page.css',
     '/training/common/fontello.css',
     '/training/common/functions.js',
+    '/training/common/log.css',
+    '/training/common/log.js',
+    '/training/common/ladder.js',
     '/training/common/gilford-routes.js',
     '/training/common/ukc.js',
     '/training/common/bottom-nav.js',
@@ -52,7 +44,6 @@ const SHELL = [
     '/training/endurance/main.js',
 
     '/training/boulder/',
-    '/training/boulder/style.css',
     '/training/boulder/main.js',
 
     '/training/trad/',
@@ -68,6 +59,7 @@ const SHELL = [
     '/training/loft/style.css',
 
     '/training/rings/',
+    '/training/rings/style.css',
     '/training/rings/main.js',
     '/training/rings/img/plain.png',
     '/training/rings/img/jug.png',
@@ -77,8 +69,7 @@ const SHELL = [
     '/training/rings/img/three_fingers.png',
     '/training/rings/img/four_fingers.png',
 
-    // the paper tracker the tick list links to - 74KB, and the one thing in an
-    // app that is not the app itself
+    // the paper tracker the tick list links to
     '/gilford.pdf',
 
     '/img/favicon/android-icon-192x192.png',
@@ -88,10 +79,8 @@ const SHELL = [
     '/img/favicon/apple-icon-180x180.png'
 ];
 
-/* Precache the lot. addAll is all-or-nothing, which is what we want: a worker
-   that installed with half a shell would be worse than none. Each request is
-   made with cache: 'reload' so an install can't pick up a stale browser copy of
-   a file the deploy has just replaced. */
+/* All or nothing - half a shell is worse than none - and past the browser's
+   own cache, so an install can't pick up a copy the deploy has just replaced. */
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -100,7 +89,7 @@ self.addEventListener('install', event => {
     );
 });
 
-/* Take over straight away, and throw away the caches of older versions. */
+// Take over straight away, and drop older versions' caches
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys()
@@ -112,20 +101,14 @@ self.addEventListener('activate', event => {
     );
 });
 
-/* Cache first: these files only change when the site is deployed, and a session
-   on a wall is the worst moment to wait on a timeout.
-
-   Anything that isn't a plain same-origin GET is left alone - the analytics tag
-   in particular, which should simply fail when there is no signal rather than be
-   cached or retried. */
+/* Cache first: the files only change on a deploy. Anything but a same-origin GET
+   for the apps - the analytics tag in particular - is left to the network. */
 self.addEventListener('fetch', event => {
     const request = event.request;
     if(request.method !== 'GET'){ return; }
 
     const url = new URL(request.url);
     if(url.origin !== self.location.origin){ return; }
-    // what this worker is responsible for - the apps, their icons, and the one
-    // document the tick list links to
     const ours = ['/training/', '/img/favicon/', '/gilford.pdf'];
     if(!ours.some(path => url.pathname.startsWith(path))){ return; }
 
@@ -134,8 +117,7 @@ self.addEventListener('fetch', event => {
             if(hit){ return hit; }
             return fetch(request)
                 .then(response => {
-                    // keep anything new that turns up, so a file added between
-                    // deploys is there next time the signal is not
+                    // keep anything new, for the next time there is no signal
                     if(response.ok && response.type === 'basic'){
                         const copy = response.clone();
                         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
@@ -143,8 +125,7 @@ self.addEventListener('fetch', event => {
                     return response;
                 })
                 .catch(() => {
-                    // offline and never seen: for a page, the app list is a more
-                    // useful dead end than the browser's error page
+                    // offline and never seen: the app list beats the browser's error page
                     if(request.mode === 'navigate'){ return caches.match('/training/'); }
                     return Response.error();
                 });

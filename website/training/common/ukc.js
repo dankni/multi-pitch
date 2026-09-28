@@ -1,18 +1,13 @@
-/* The UKC logbook, from the CSV export UKC gives a logged-in climber. Shared by
-   the overview, which charts it and lists its days, and the trad app, which can
-   import it too.
+/* The UKC logbook, from the CSV export UKC gives a logged-in climber - UKC has no
+   API, so the file is downloaded there and chosen here, and each replaces the
+   last. The progress page charts it and lists its days; the trad app imports it.
 
-   UKC has no API and will not let another site read its pages, so the file is
-   downloaded there and chosen here. Each one chosen replaces the last. Trad and
-   sport climbs with a full date are kept - their name, date, grade, type, crag and
-   notes, on this device only. A UIAA trad grade is turned roughly into a British
-   one, and a sport grade into a French one, so each lands on its chart's ladder.
-   Other trad grades - French, or Southern Sandstone's "6b+ 5c" - are too loose a
-   fit to guess at, and are left out.
+   Trad and sport climbs with a full date are kept, on this device only. UIAA
+   grades are turned roughly into British for trad and French for sport, so each
+   lands on its chart's ladder; other trad grades are too loose a fit to guess.
 
-   A day logged in the trad app with "Ignore UKC data for this date" switched on
-   is a day in both places. The app's record of it wins: ukc.climbs() leaves out
-   every UKC climb on that date, so nothing is counted twice. */
+   A day the trad app has logged with "Ignore UKC data for this date" is in both
+   places, and the app's record wins: ukc.climbs() leaves that date out. */
 const ukc = (function(){
     const key = "ukcLogbook";
     const tradLogKey = "tradLog";
@@ -165,8 +160,11 @@ const ukc = (function(){
              "importText" : importText, "load" : load, "climbs" : climbs, "hardest" : hardest };
 })();
 
-// The file input on either page. A new logbook changes everything drawn from it,
-// so the page starts again rather than patching itself.
+function chooseUkcFile(){
+    document.getElementById("ukcFile").click();
+}
+
+// A new logbook changes everything drawn from it, so the page starts again
 function importUkcFile(input){
     let file = input.files && input.files[0];
     if(!file){ return; }

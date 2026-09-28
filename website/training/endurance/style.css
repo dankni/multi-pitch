@@ -1,5 +1,21 @@
-/* Set up screen */
-/* #setup, like every other wrapper, takes its width from the shared column */
+/* body[data-state] is idle, warmup, rest, set, choice or saving (see main.js) */
+body:not([data-state="idle"]) #setup,
+[data-state="idle"] #sessionHolder {
+    display: none;
+}
+body:not([data-state="idle"]) #discard {
+    display: inline-block;
+}
+#restClock, #skipRest, #choice {
+    display: none;
+}
+[data-state="rest"] #restClock,
+[data-state="rest"] #skipRest,
+[data-state="choice"] #choice {
+    display: block;
+}
+
+/* Set up */
 .picker {
     margin: 0 auto 6px;
 }
@@ -12,23 +28,20 @@
     opacity: 0.8;
     margin: 6px auto 0;
     max-width: 420px;
+    color: var(--strong);
 }
 
-/* The stage bar - which part of the session you are in, and the rest clock */
-#sessionHolder {
-    display: none;
-}
+/* Which part of the session you are in, and the rest clock */
 #stageBar {
     margin: 16px auto 12px;
     padding: 14px 12px;
-    box-sizing: border-box;
+    color: var(--strong);
 }
 #stageBar h2 {
     margin: 0;
     font-size: 24px;
 }
 #restClock {
-    display: none;
     font-size: 60px;
     margin: 6px 0 0;
 }
@@ -38,8 +51,7 @@
     opacity: 0.8;
 }
 
-/* Climbs to tick. The tile itself - hold colours, ticked state, dark mode - is in
-   common/style.css; this is how big they are here. */
+/* Climbs to tick, one to a line */
 #climbs {
     margin: 0 auto;
 }
@@ -47,7 +59,6 @@
     position: relative;
     display: flex;
     width: 100%;
-    box-sizing: border-box;
     flex-direction: column;
     justify-content: center;
     min-height: 64px;
@@ -55,16 +66,13 @@
     padding: 10px 40px 10px 12px;
     border-left: 10px solid var(--hold);
     border-radius: 8px;
-    background: #F9F9F9;
-    color: #222;
     font-family: 'Hind', sans-serif;
     font-size: 15px;
     letter-spacing: 0;
     text-align: left;
     text-transform: none;
 }
-/* With the Gilford wall switched off there is no hold colour to show, so the
-   swatch down the side goes and a ticked climb uses the app's own blue */
+/* With the Gilford wall off there is no hold colour, so a ticked climb takes the blue */
 .route.plain {
     border-left-color: transparent;
     padding-left: 22px;
@@ -73,7 +81,7 @@
     font-size: 24px;
 }
 .route.plain.ticked {
-    background: #0b6ad6;
+    background: var(--primary);
     color: #ffffff;
     border-left-color: #00397f;
     box-shadow: none;
@@ -91,34 +99,19 @@
     opacity: 0;
     margin: 0;
 }
-/* Buttons */
-#choice {
-    display: none;
-}
 
-/* Skipping the rest is a quiet, deliberate thing to do, so it is a plain link
-   rather than a button - but it still has to be readable at arm's length on a
-   wall, hence the solid blues rather than a faded grey. */
+/* Skipping the rest is quiet and deliberate, so a link rather than a button -
+   but readable at arm's length, and on a line of its own */
 #skipRest {
-    display: none;
-    /* shrink wrapped and centred, so it sits on its own line clear of the
-       DISCARD button without turning the whole width into a hit area */
     width: fit-content;
     margin: 20px auto 18px;
     padding: 8px 14px;
     font-size: 17px;
     font-weight: bold;
-    color: #0053ba;
-    text-decoration: underline;
+    color: light-dark(#0053ba, #8ec5ff);
 }
 #skipRest:hover, #skipRest:focus {
-    color: #00306e;
-}
-.dark #skipRest {
-    color: #8ec5ff;
-}
-.dark #skipRest:hover, .dark #skipRest:focus {
-    color: #c5e0ff;
+    color: light-dark(#00306e, #c5e0ff);
 }
 #choice button {
     display: block;
@@ -126,31 +119,11 @@
     margin: 12px auto 0;
 }
 #discard {
-    display: none;
     margin-bottom: 40px;
 }
-
-/* About panel */
-/* The about panel sits on near black, so everything in it is white at full
-   strength - nothing dimmed by opacity, since it gets read at arm's length */
-/* common/style.css gives every .icon-ok a 40px right margin, for the spacing of
-   the delete confirm in the log. The tick on the settings toggle wants none of
-   it - the space in the markup is gap enough before the label. */
 .overlay .switch-label .icon-ok {
     margin-right: 0;
 }
-/* Dark mode */
-.dark h2, .dark .style-hint {
-    color: #FFF;
-}
-.dark #stageBar {
-    background: #262626;
-    color: #FFF;
-}
-.dark #restClock {
-    color: #FFF;
-}
-/* The setting groups these panels are built from are in common/style.css */
 
 @media (max-width: 380px) {
     #restClock {

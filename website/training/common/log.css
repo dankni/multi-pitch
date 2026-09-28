@@ -1,12 +1,30 @@
-/* Session bar - the same block the tick list carries, counting boulders instead
-   of routes */
+/* The apps that log what was climbed - the tick list, the gym session and trad.
+   common/log.js runs the session and puts idle, running or saving on
+   body[data-state]; what is on screen follows from that here. */
+[data-state="idle"] #sessionHolder {
+    display: none;
+}
+[data-state="running"] #primaryButton,
+[data-state="saving"] #primaryButton,
+[data-state="saving"] #finishButton {
+    display: none;
+}
+[data-state="running"] #discard,
+[data-state="saving"] #discard {
+    display: inline-block;
+}
+#finishButton {
+    margin-bottom: 40px;
+}
+
+/* The top of a session: its date, the count and the hardest */
 #sessionBar {
     display: block;
     width: 100%;
     margin: 16px auto 12px;
     padding: 12px;
-    box-sizing: border-box;
-    background: #F9F9F9;
+    background: var(--panel);
+    color: var(--strong);
     border-radius: 5px;
 }
 #sessionBar label {
@@ -27,13 +45,10 @@
     opacity: 0.8;
 }
 
-/* The ladder. Two columns, so thirteen grades are one screen rather than a scroll
-   - the tile you are reaching for should already be on it.
-
-   Each cell is a grade: a tile you tap to add a boulder, and a quiet minus to take
-   one back. Two buttons rather than one tile with a control inside it - a button
-   cannot contain a button, and the minus has to be a button of its own to be
-   reachable from a keyboard. */
+/* ================= The ladder =================
+   The gym session's and trad's grades, two columns so a normal day fits on one
+   screen. Each cell is a tile to add a climb and a minus to take one back: two
+   buttons, since a button can't hold another. HARDER takes the next cell. */
 #grades {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -45,8 +60,6 @@
     gap: 6px;
     margin: 0;
 }
-/* The tile's colours, hover, focus ring and dark mode are .route in
-   common/style.css; this is how big it is here and how the count sits on it. */
 .grade-add {
     position: relative;
     flex: 1 1 auto;
@@ -59,8 +72,6 @@
     padding: 6px 42px 6px 9px;
     border-left: 8px solid transparent;
     border-radius: 8px;
-    background: #F9F9F9;
-    color: #222;
     font-family: 'Hind', sans-serif;
     font-size: 15px;
     letter-spacing: 0;
@@ -71,10 +82,9 @@
     font-size: 20px;
     line-height: 1.1;
 }
-/* Anything climbed gets the blue edge, so the tally reads down the page at a
-   glance rather than only in the numbers */
+/* anything climbed gets the blue edge, so the tally reads down the page */
 .grade-row.done .grade-add {
-    border-left-color: #0b6ad6;
+    border-left-color: var(--primary);
 }
 .grade-count {
     position: absolute;
@@ -85,8 +95,6 @@
     font-weight: bold;
     line-height: 1;
 }
-/* Still wide enough for a thumb at half the page width, and the same height as
-   the tile beside it */
 .grade-minus {
     flex: 0 0 auto;
     width: 42px;
@@ -96,26 +104,12 @@
     font-size: 22px;
     line-height: 1;
 }
-/* HARDER takes the cell after the last grade, so it is always the next thing
-   under the thumb rather than something to go looking for below the ladder. */
 .grade-harder {
     min-height: 56px;
     margin: 0;
     padding: 6px 10px;
     border-radius: 8px;
     font-size: 15px;
-}
-#finishButton {
-    margin-bottom: 40px;
-}
-
-/* Dark mode - the tile itself is handled by .route */
-.dark #sessionBar {
-    background: #262626;
-    color: #FFF;
-}
-.dark #sessionBar label, .dark #summary {
-    color: #FFF;
 }
 @media (max-width: 380px) {
     #grades {

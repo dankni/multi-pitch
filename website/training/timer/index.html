@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="A simple climbing lap timer. Start the clock, tap LAP each time you finish a circuit and it keeps a running total of your time and the number of laps done.">
 	<link rel="manifest" href="/training/manifest.json" />
 	<meta name="theme-color" content="#121212">
@@ -24,20 +24,20 @@
     <title>Climbing Lap Timer</title>
   </head>
 
-  <body>
+  <body data-state="idle">
 	<nav>
 		<div class="left-nav">
-			<i class="demo-icon icon-info" role="button" tabindex="0" aria-label="About this training app" onclick="openInfoBox()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openInfoBox();}"></i>
-			<i class="demo-icon icon-cog" role="button" tabindex="0" aria-label="Settings" onclick="openSettings()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();openSettings();}"></i>
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
 		</div>
 		<h1>Lap Timer</h1>
 		<div class="right-nav">
-			<i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
 		</div>
 	</nav>
 
-	<button id="primaryButton" onclick="toggleTimer()"><i class="demo-icon icon-play"></i>START SESSION</button>
-	<button class="secondary" id="resetButton" onclick="resetTimer()"><i class="demo-icon icon-ccw"></i>RESET</button>
+	<button id="primaryButton" data-action="toggleTimer"><i class="demo-icon icon-play"></i>START SESSION</button>
+	<button class="secondary" id="resetButton" data-action="resetTimer"><i class="demo-icon icon-ccw"></i>RESET</button>
 
 	<div id="data">
 		<div class="box">
@@ -49,8 +49,8 @@
 	</div>
 
 	<div id="actions">
-		<button id="finishButton" onclick="openSavePanel()" disabled>FINISH SESSION</button>
-		<button id="lapButton" class="lap-button" onclick="recordLap()" disabled><i class="demo-icon icon-ok"></i>LAP</button>
+		<button id="finishButton" data-action="openSavePanel" disabled>FINISH SESSION</button>
+		<button id="lapButton" class="lap-button" data-action="recordLap" disabled><i class="demo-icon icon-ok"></i>LAP</button>
 	</div>
 
 	<!-- A session that never went through the timer: the date, time and laps are
@@ -58,11 +58,11 @@
 	<div id="missingDiv" class="ending">
 		<p class="save-title">Add a missing session</p>
 		<div class="field-row">
-			<input type="date" class="field" id="missingDate" onchange="setMissing()" aria-label="Date of the session" />
+			<input type="date" class="field" id="missingDate" data-change="setMissing" aria-label="Date of the session" />
 		</div>
 		<div class="field-row missing-numbers">
-			<label><input type="number" class="field" id="missingMinutes" min="0" inputmode="numeric" oninput="setMissing()" /> min</label>
-			<label><input type="number" class="field" id="missingLaps" min="0" inputmode="numeric" oninput="setMissing()" /> laps</label>
+			<label><input type="number" class="field" id="missingMinutes" min="0" inputmode="numeric" data-input="setMissing" /> min</label>
+			<label><input type="number" class="field" id="missingLaps" min="0" inputmode="numeric" data-input="setMissing" /> laps</label>
 		</div>
 	</div>
 
@@ -80,36 +80,31 @@
 			it is running. Sessions are saved on this device only, nothing is uploaded
 			anywhere. Press the space bar to lap and Escape to pause if you have a keyboard.
 		</p>
-		<p class="panel-links">
-			<a href="/training/" class="quiet">
-				<i class="demo-icon icon-menu"></i> All training apps
-			</a>
-		</p>
 		<hr />
 		<h2>Activity Log</h2>
 		<p id="stats"></p>
-		<p><a href="#" id="addMissingLink" onclick="addMissingSession();return false;">Add a missing session</a></p>
+		<p><button type="button" id="addMissingLink" class="link-button" data-action="addMissingSession">Add a missing session</button></p>
 		<div id="log"></div>
 		<br />
 		<hr />
-		<a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
+		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
 		<label class="switch-label">
-			<input type="checkbox" onchange="toggleDarkMode()" id="darkMode"/>
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
 			<span class="label-content">
-				<i class="demo-icon icon-moon"></i> Dark Mode <span id="darkStatus">Off</span>
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" onchange="togglePreventSleep()" id="preventSleep" checked />
+			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
 			<span class="label-content">
-				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span id="preventSleepStatus">On</span>
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
 			</span>
 		</label>
-		<a href="#" onclick="hideSettings();return false;" class="close" title="close" aria-label="Close settings"></a>
+		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>
 </html>

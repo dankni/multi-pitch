@@ -1,39 +1,11 @@
-/* Session bar */
-#sessionBar, .section-block {
-    display: block;
-    width: 100%;
-    margin: 0 auto 12px;
-    box-sizing: border-box;
-}
-#sessionBar {
-    background: #F9F9F9;
-    border-radius: 5px;
-    padding: 12px;
-    margin-top: 16px;
-}
-#sessionBar label {
-    font-size: 14px;
-    margin-right: 8px;
-}
-#sessionBar h3 {
-    font-size: 44px;
-    margin: 10px 0 0;
-}
-#sessionBar .of {
-    font-size: 20px;
-    opacity: 0.6;
-}
-#summary {
-    margin: 4px 0 0;
-    font-size: 16px;
-    opacity: 0.8;
-}
-
-/* Route grid, one row per wall section */
+/* The wall, a row of tiles per panel. The session bar and the tile itself are
+   in common/log.css and common/style.css. */
 .section-block {
     display: grid;
     grid-template-columns: 38px repeat(3, minmax(0, 1fr));
     gap: 8px;
+    width: 100%;
+    margin: 0 auto 12px;
     background: none;
     border-radius: 0;
 }
@@ -45,7 +17,7 @@
     font-size: 16px;
     font-weight: bold;
     line-height: 1.1;
-    color: #444;
+    color: light-dark(#444, #e8e8e8);
 }
 .section-number small {
     display: block;
@@ -55,9 +27,6 @@
     text-transform: uppercase;
     opacity: 0.7;
 }
-
-/* The tile itself - hold colours, ticked state, dark mode - is in
-   common/style.css; this is how big they are on the wall grid. */
 .route {
     position: relative;
     min-width: 0;
@@ -69,8 +38,6 @@
     padding: 8px 8px 8px 10px;
     border-left: 8px solid var(--hold);
     border-radius: 8px;
-    background: #F9F9F9;
-    color: #222;
     font-family: 'Hind', sans-serif;
     font-size: 15px;
     letter-spacing: 0;
@@ -88,24 +55,6 @@
     font-size: 22px;
     opacity: 0;
     margin: 0;
-}
-#finishButton {
-    margin-bottom: 40px;
-}
-
-/* Dark mode */
-.dark h2, .dark #summary, .dark #sessionBar label {
-    color: #FFF;
-}
-.dark #sessionBar {
-    background: #262626;
-    color: #FFF;
-}
-.dark .section-block {
-    background: none;
-}
-.dark .section-number {
-    color: #e8e8e8;
 }
 @media (max-width: 380px) {
     .section-block {

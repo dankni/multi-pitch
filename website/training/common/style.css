@@ -1,10 +1,7 @@
-/* Hind, served from this repo rather than from Google.
+/* The training apps' shared stylesheet. The live reference for every component
+   is /training/style-guide/, and the reasoning is in TRAINING-STYLE-GUIDE.md. */
 
-   An app that is meant to work with no signal cannot fetch its own typeface from
-   somewhere else - offline the whole suite fell back to the system sans. Two
-   files, 25KB the pair, taken from the same Google Fonts build the pages used to
-   link (Hind v18, weight 400). The second covers accented Latin; a phone only
-   downloads the one it needs. */
+/* Hind, served from here rather than Google so the apps work offline */
 @font-face {
     font-family: 'Hind';
     font-style: normal;
@@ -22,13 +19,52 @@
     unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* Colours. Each theme-dependent one is light-dark(light, dark): the page follows
+   the phone's setting, and the dark mode switch overrides it with .light or .dark
+   on the body. */
 :root {
-    /* The column. Everything these apps draw sits in it: the session, the save
-       panel, both overlays. 90% of a phone, so there is always a gutter down
-       each side, and never wider than this on anything bigger. */
-    --column: 520px;
-}
+    color-scheme: light dark;
+    --column: 520px;   /* the width everything sits in */
 
+    --page: light-dark(#fff, #111);
+    --text: light-dark(#000, #E8E8E8);
+    --strong: light-dark(currentColor, #FFF);   /* headings and labels, white in the dark */
+    --panel: light-dark(#F9F9F9, #262626);
+    --box: light-dark(#cfcfcf, #363636);
+    --tile: light-dark(#F9F9F9, #2a2a2a);
+    --tile-ink: light-dark(#222, #eee);
+    --tile-hover: light-dark(#ececec, #383838);
+    --field: light-dark(#fff, #3a3a3a);
+    --field-ink: light-dark(#222, #FFF);
+    --field-edge: light-dark(#ccc, #555);
+    --placeholder: light-dark(#767676, #b8b8b8);
+    --quiet: light-dark(#e8f0fe, #16294a);
+    --quiet-hover: light-dark(#d2e3fc, #203a66);
+    --quiet-ink: light-dark(#0053ba, #FFF);
+    --link: light-dark(#0b4fbf, #8FC2FF);
+    --link-hover: light-dark(#062f73, #C4DEFF);
+    --nav-edge: light-dark(#121212, #666);
+
+    --nav: #121212;
+    --primary: #0b6ad6;          /* white label at 5.2:1 */
+    --primary-pressed: #0053ba;
+    --focus: #1a73e8;            /* 3:1 or better on a light tile and a dark one */
+    --danger: #a13333;
+    --off: #6b6b73;
+    --confirm: #17812a;
+    --card: #262626;             /* anything floating over the app: toast, note, hint */
+    --card-ink: #E8E8E8;
+}
+body.light { color-scheme: light; }
+body.dark { color-scheme: dark; }
+
+/* A size includes its padding and border, everywhere */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+[hidden] {
+    display: none !important;
+}
 html, body {
     width: 100%;
     margin: 0;
@@ -36,83 +72,67 @@ html, body {
     font-family: 'Hind', sans-serif;
     transition: background-color 0.5s ease;
 }
+body {
+    background: var(--page);
+    color: var(--text);
+}
+/* No width: a block fills the row by itself, padding included */
 nav {
-    top: 0;
-    left: 0;
-    width:100%;
-    font-size:22px;
-    background-color: #121212;
+    font-size: 22px;
+    background-color: var(--nav);
     color: #FFFFFF;
-    margin:0;
-    padding:6px 0;
-    height:45px;
+    margin: 0;
+    padding: 6px 0;
+    height: 58px;
+    border-bottom: 1px solid var(--nav-edge);
 }
 hr {
     max-width: 50%;
     opacity: 0.8;
 }
-/* The two sides are the same width so the title sits centred between them. Each
-   is as tall as the bar, so an empty one still counts: a float with no height
-   takes no room from the title's line, and the overview's right side, with no
-   icon in it, left the title 50px off centre. */
-.left-nav{
+/* Both sides the same width and as tall as the bar, so the title stays centred
+   even when one side is empty */
+.left-nav {
     float: left;
     width: 100px;
     min-height: 100%;
 }
-.right-nav{
+.right-nav {
     float: right;
     width: 100px;
     min-height: 100%;
 }
-/* The nav bar’s own icons. Scoped to the nav: the burger is a panel link as
-   well now, and a floated icon with 12px above it is nav furniture, not an icon. */
-nav .icon-menu, nav .icon-info, nav .icon-cog{
-    float: left;
-    margin:0;
-    padding:12px 6px 0 6px;
-}
-.icon-resize-full,.icon-resize-normal, .icon-volume-high, .icon-volume-off {
-    float: right;
-    margin:0;
-    padding:12px 12px 0 6px;
-    display: none;
-}
-h1{
-    font-size:22px; 
+h1 {
+    font-size: 22px;
     display: inline-block;
-    margin:0 auto;
-    padding:6px 0;
+    margin: 0 auto;
+    padding: 6px 0;
 }
-h2{
+h2 {
     text-transform: capitalize;
-    margin-bottom:18px;
     display: block;
     margin: 20px 0 0 0;
 }
-#color{
-    display:block;
-    width:80px;
-    height:80px;
-    border-radius:40px;
-    margin:0 auto 20px;
+h3 {
+    font-size: 60px;
+    margin: 0;
+    color: var(--strong);
 }
+
+/* ================= Buttons ================= */
 button {
     margin: 25px auto 0;
     display: inline-block;
     border: none;
     padding: 1rem 2rem;
     text-decoration: none;
-    /* White label on this is 5.2:1, and the fill still stands off both the white
-       page and the #111 one. The old #3b94ff carried its label at 3.1:1. */
-    background: #0b6ad6;
+    background: var(--primary);
     color: #ffffff;
     font-family: sans-serif;
     font-size: 1rem;
     cursor: pointer;
     text-align: center;
-    transition: background 250ms ease-in-out, 
-                transform 150ms ease;
+    transition: background 250ms ease-in-out, transform 150ms ease;
     -webkit-appearance: none;
     -moz-appearance: none;
     border-radius: 4px;
@@ -120,9 +140,8 @@ button {
     letter-spacing: 1px;
 }
 button:hover, button:focus {
-    background: #0053ba;
+    background: var(--primary-pressed);
 }
-/* PAUSE is disabled while the countdown runs - there is no session to pause yet */
 button:disabled, button:disabled:hover, button:disabled:focus {
     background: #9bbde8;
     cursor: default;
@@ -137,86 +156,37 @@ button:focus {
 button:active {
     transform: scale(0.99);
 }
-.slim{
-    padding:8px 18px;
-    border-radius: 0.8rem;
-    background: #3d83d886;
-    display: block;
-    min-width: 200px;
-}
-.slim i{
-    color: rgba(255,65,54,1);
-}
-.active {
-    background: #0069ed;
-}
-.active i{
-    color: rgba(46,204,64,1);
-}
-/* The destructive one. Outline and label rather than a red fill, so it never
-   looks like the thing you are meant to press. */
+/* The destructive one: outline and label, so it never looks like the thing to press */
 .secondary {
-    border: 2px solid #a13333;
-    color: #a13333;
-    /* not quite opaque, so it sits on the page rather than punching a white hole
-       in it. In dark mode that leaves #dbdbdb, where the label still reads at
-       5:1 - any more transparent and it would not. */
+    border: 2px solid var(--danger);
+    color: var(--danger);
     background: rgba(255, 255, 255, 0.85);
     display: none;
 }
-/* Paler than the pink it was, and opaque: at 85% the dark page bleeds through and
-   drags a pale hover under AA, while opaque it reads at 6.3:1 in either mode -
-   and the jump from the translucent resting state makes the hover plainer. */
 .secondary:hover, .secondary:focus {
     background: #fdeeee;
 }
-/* The quiet one of two choices: a pale tint with the blue as ink rather than a
-   fill, so the primary button beside it is plainly the louder of the two. The
-   label sits at 6.2:1 on it. ANOTHER SET in the endurance app, and the minus
-   beside a grade in the bouldering app.
-
-   The border is doing real work - #e8f0fe against a white page is 1.15:1, so
-   without it the button has no edge at all. */
+/* The quieter of two choices: a tint with the blue as ink. The border is its
+   only edge against a white page. */
 .quiet {
-    background: #e8f0fe;
-    color: #0053ba;
-    border: 1px solid #1a73e8;
+    background: var(--quiet);
+    color: var(--quiet-ink);
+    border: 1px solid var(--focus);
 }
-/* the shared button:hover fills with #0053ba, which would turn this one solid -
-   a tint one step deeper keeps it the quiet option while still answering a tap */
 .quiet:hover, .quiet:focus {
-    background: #d2e3fc;
-    color: #0053ba;
+    background: var(--quiet-hover);
+    color: var(--quiet-ink);
 }
-/* the shared focus ring is white, which is invisible on a pale fill */
 .quiet:focus {
-    outline: 2px solid #1a73e8;
+    outline: 2px solid var(--focus);
     outline-offset: 1px;
 }
-/* Dark mode wants the same idea the other way up. The light tint on a #111 page
-   comes out at 16:1, which would make the quiet button the brightest thing on
-   the screen - louder than the primary it is meant to sit behind.
-
-   White rather than the pale blue ink the light version mirrors: on this fill it
-   reads at 14.5:1 against the blue's 8:1, and the button is still the quiet one
-   because the fill barely lifts off the page - not because its label is dim. */
-.dark .quiet {
-    background: #16294a;
-    color: #FFFFFF;
-}
-.dark .quiet:hover, .dark .quiet:focus {
-    background: #203a66;
-    color: #FFFFFF;
-}
-.quiet:disabled, .quiet:disabled:hover, .quiet:disabled:focus,
-.dark .quiet:disabled, .dark .quiet:disabled:hover, .dark .quiet:disabled:focus {
+.quiet:disabled, .quiet:disabled:hover, .quiet:disabled:focus {
     background: transparent;
     border-color: #c9c9c9;
     color: #9b9b9b;
 }
-/* An overlay is a black panel whatever the page behind it is doing, so a quiet
-   button on one always takes the dark treatment - the pale tint would be the
-   loudest thing on the panel in light mode, which is the opposite of the point. */
+/* An overlay is black whatever the theme, so its quiet buttons are always the dark ones */
 .overlay .quiet {
     background: #16294a;
     color: #FFFFFF;
@@ -225,273 +195,66 @@ button:active {
     background: #203a66;
     color: #FFFFFF;
 }
-
-/* The way back to the app list. It is the last link in the panel and the only one
-   that is not about this app, so it reads as the quiet action rather than as one
-   more line of the list - a button shape, set apart by the space above it. */
-.panel-links a.quiet {
-    margin-top: 30px;
-    padding: 10px 18px;
-    border-radius: 4px;
-    text-decoration: none;
-}
-/* The column, in one rule for everything that holds content. An app's own
-   wrappers join the list rather than setting a width of their own - before this
-   the lap timer's counters ran the full width of a desktop window while the
-   endurance app's stopped at 520, and the two looked like different apps. */
-.holder, .ending, #setup, #data, #actions, .overlay > *:not(.close) {
-    width: 90%;
-    max-width: var(--column);
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-/* The panel. This rule used to read "section, aside div", which handed a light
-   panel to every div inside an about panel - four apps carried a rule to undo
-   it. The rings preview is the only aside that wants one, so it asks by name. */
-section, #preview div {
-    display:inline-block;
-    width:100%;
-    border-radius:5px;
-    background: #F9F9F9;		
-/*    display: none;*/
-    margin-bottom: 12px;
-    transition: all 0.2s ease;
-}
-.shrink{
-    transform: scale(70%);
-}
-h3 {
-    font-size:60px;
+/* A button that is only an icon - the nav's, the stars, the log's - with none of
+   the look above. Before the icon rules, so they can size and place it. */
+.icon-button {
+    box-sizing: content-box;   /* as the <i> it replaces: padding adds to the target */
     margin: 0;
-}
-footer {
-    position: fixed;
-    bottom: 0;
-    text-align: center;
-    width: 100%;
-    background-color: #fff;
-    font-size: 10px;
-}
-.ring{
-    max-width: 75px;
-    margin: 20px 0 20px 20px;
-    flex: 30%;
-    object-fit:scale-down;
-}
-.task {
-    margin: 20px;
-    flex: 70%;
-    font-size: 28px;
-    text-align: left;
-}
-aside{
-    width: 100%;
-}
-aside a{
-    color: #FFF;
-}
-#preview div {
-    flex:50%;
-    margin: 5px;
-}
-aside .task{
-    font-size: 18px;
-    margin: 10px;
-}
-aside .ring {
-    max-width: 50px;
-    margin: 10px;
-    object-fit:scale-down;
-}
-#preview{
-    display: none;
-}
-#next{
-    display: none;
-}
-/* A word about the cog, for someone opening an app for the first time.
-
-   Small, sitting under the icon it is talking about, and gone in a few seconds - a
-   nudge rather than a dialogue box. No arrow: it could only ever point at where
-   the cog happened to be at one screen width. It is never shown again once
-   the settings panel has been opened, which is the moment it has done its job. */
-.hint-pop {
-    position: fixed;
-    top: 40px;
-    left: 12px;
-    z-index: 5;
-    /* a row of two, centred on each other */
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    max-width: 250px;
-    padding: 8px;
-    border-radius: 6px;
-    background: #262626;
-    color: #E8E8E8;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-    font-size: 14px;
-    /* tight, for two short lines in a small card - 1.4 left them floating */
-    line-height: 1.25;
-    text-align: left;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(-6px);
-    transition: opacity 250ms ease, transform 250ms ease;
-}
-.hint-pop.shown {
-    opacity: 1;
-    transform: none;
-}
-/* The cog turns, slowly. It is the only thing moving on the screen and it is the
-   thing the card is talking about, which is the whole job of the nudge - eight
-   seconds a revolution, so it reads as a hint rather than a spinner waiting on
-   something. */
-@keyframes cog-turn {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-/* the same size and line as the words beside it */
-.hint-pop .demo-icon {
-    flex: 0 0 auto;
-    width: auto;
-    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: inherit;
     font-size: inherit;
-    padding: 0 8px;
     line-height: inherit;
-    animation: cog-turn 8s linear infinite;
+    letter-spacing: normal;
 }
-@media (prefers-reduced-motion: reduce) {
-    .hint-pop {
-        transition: none;
-    }
-    .hint-pop .demo-icon {
-        animation: none;
-    }
-}
-
-/* The toast: a face, the message, and a cross to be rid of it early.
-
-   The card is the same #262626 the note pop-up wears, for the same reason - it is
-   a thing on top of the app rather than part of it, and one grey has to sit on a
-   white page and a #111 one both. It manages that by having an edge rather than by
-   being lighter or darker than either: the green rule along the top, and a hairline
-   of white at 18% which is invisible over a light page and draws the card out of a
-   dark one. It is 15:1 against white and 1.25:1 against #111 - without that edge it
-   would be a grey rectangle lost in the dark page.
-
-   Green from the palette: #17812a, the confirmation green. A toast is the app
-   answering you, so it wears the same colour as a tap that worked. */
-.toast {
-    position: fixed;
-    left: 50%;
-    bottom: 24px;
-    z-index: 6;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    /* room enough that a single line still reads as a card rather than as a
-       strip - a two line message grows past it on its own */
-    min-height: 70px;
-    /* nearly the full width of a phone - 10px of page either side - and the
-       house column on anything wider */
-    width: calc(100% - 20px);
-    max-width: var(--column);
-    padding: 11px 10px 12px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-top: 3px solid #17812a;
-    border-radius: 6px;
-    background: #262626;
-    color: #E8E8E8;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-    font-size: 16px;
-    line-height: 1.35;
-    text-align: left;
-    /* the nudge up it arrives on, folded into the centring */
-    transform: translate(-50%, 10px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 250ms ease, transform 250ms ease;
-}
-.toast.shown {
-    /* not quite solid: enough of the app shows through to say the toast is over
-       it rather than part of it. What bleeds through takes the label from 12:1 on
-       the solid card to 11.7:1 over a white page and 11.9:1 over a dark one, and
-       the face and the cross stay above 6.8:1 either way. The card itself is 1.2:1
-       against a dark page even solid - the hairline border is what draws its edge
-       there, and a couple of percent of the page coming through does not change
-       that. */
-    opacity: 0.98;
-    transform: translate(-50%, 0);
-    /* only once it is up: a toast on its way out must not eat a tap meant for the
-       app underneath, but the cross has to be tappable while it is there */
-    pointer-events: auto;
-}
-/* U+263A, the smiling face, rather than a glyph added to the icon font for one
-   use. #17812a on this card is 3:1 - enough for the 3px rule above, muddy for a
-   face, so the face takes the palette's other green at 7:1. */
-.toast-face {
-    flex: 0 0 auto;
-    color: #2ecc40;
-    font-size: 20px;
-    line-height: 1.2;
-}
-.toast-text {
-    flex: 1 1 auto;
-}
-/* A toast with something to do: its message is the button, so it reads as the
-   same line of text - just underlined, to say a tap does something */
-.toast-action, .toast-action:hover, .toast-action:focus {
+/* A button that reads as a link: an action in a sentence, like "Remove" */
+.link-button {
     margin: 0;
     padding: 0;
     border: 0;
     background: none;
     color: inherit;
     font: inherit;
-    letter-spacing: 0;
-    text-align: left;
+    letter-spacing: normal;
     text-transform: none;
     text-decoration: underline;
-    cursor: pointer;
 }
-/* Quiet: the toast goes on its own in a few seconds, and this is only for
-   someone who wants it gone now. */
-.toast-close {
-    flex: 0 0 auto;
-    margin: -2px 0 0;
-    padding: 0 4px;
-    border: 0;
-    border-radius: 4px;
+/* Only the look is undone on hover, focus and press - never the size, or an
+   icon placed by a rule of its own would lose its padding and jump */
+.icon-button:hover, .icon-button:focus, .icon-button:active,
+.link-button:hover, .link-button:focus, .link-button:active {
     background: none;
-    color: #b9b9b9;
-    font-size: 20px;
-    line-height: 1.2;
-    letter-spacing: 0;
-    text-transform: none;
+    color: inherit;
+    transform: none;
+    outline: none;
 }
-.toast-close:hover, .toast-close:focus {
-    background: none;
-    color: #FFFFFF;
-}
-/* the shared focus ring is white at -4px, which lands inside a button this small */
-.toast-close:focus {
-    outline: 1px solid #b9b9b9;
-    outline-offset: 1px;
-}
-@media (prefers-reduced-motion: reduce) {
-    .toast {
-        transition: none;
-    }
+.icon-button:focus-visible, .link-button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
 }
 
-/* An overlay: the info panel behind the i, and the settings panel behind the cog.
-   Both are the same thing - a full screen sheet over the app - so both wear this.
+/* The column: everything with content in it, 90% of a phone and --column at most */
+.holder, .ending, #setup, #data, #actions, .overlay > *:not(.close) {
+    width: 90%;
+    max-width: var(--column);
+    margin-left: auto;
+    margin-right: auto;
+}
+section {
+    display: inline-block;
+    width: 100%;
+    border-radius: 5px;
+    background: var(--panel);
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
 
-   Fixed, not absolute: an absolute panel is as tall as the document, so the page
-   behind it scrolled out from under it. This one covers the viewport and takes
-   the scrolling itself, and openOverlay() holds the page still behind it. */
+/* ================= Overlays =================
+   The info panel behind the i and the settings panel behind the cog: a fixed
+   sheet over the app that does its own scrolling, while the page behind is held
+   still. openOverlay() adds .open. */
 .overlay {
     position: fixed;
     left: 0;
@@ -501,128 +264,33 @@ aside .ring {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    background-color: rgba(0,0,0,0.98);
-    color:#FFF;
+    background-color: rgba(0, 0, 0, 0.98);
+    color: #FFF;
     display: none;
-    padding:0;
+    padding: 0;
+    z-index: 4;
 }
-/* Inside an overlay the column applies to each direct child, so a paragraph in a
-   fieldset fills its parent rather than being capped twice. The cross is exempt:
-   it is positioned, not in flow. */
+.overlay.open {
+    display: block;
+}
+:root:has(.overlay.open), :root:has(.overlay.open) body {
+    overflow: hidden;
+}
+.overlay a {
+    color: #FFF;
+}
 .overlay p, .overlay h2 {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-.overlay h2{
-    margin-top:60px;
+.overlay h2 {
+    margin-top: 60px;
 }
-
-/* A group of settings that belong together: a fieldset rather than a heading and
-   a div, so a row of radios is announced as the one choice it is. */
-.setting-group {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    padding: 0;
-    border: 0;
-    text-align: center;
-}
-.setting-group legend {
-    margin: 0 auto;
-    padding: 0 0 8px;
-    font-size: 16px;
-}
-/* Laid out as a flex row rather than inline-blocks: the whitespace between the
-   labels in the markup is inline content of its own, and it left a row of three
-   sitting a few pixels off the middle. Flex ignores it, and wraps onto two lines
-   on a narrow phone without losing the centre. */
-.setting-group .picker {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-}
-.setting-group .picker label {
-    margin: 0;
-}
-/* The rule above hides the real radios off to the left but puts them back to
-   position:relative further down, which leaves them taking part in the layout -
-   as flex items of their own they pushed the row off centre. */
-.setting-group .picker input[type="radio"] {
-    position: absolute;
-}
-/* Every overlay reads white at full strength - nothing dimmed with opacity, it
-   gets read at arm's length. The stars are the exception: they are grey until
-   earned and gold after, and this would out-specify both. */
+/* Every overlay reads white at full strength - it gets read at arm's length */
 .overlay, .overlay .switch-label, .overlay .label-content {
     color: #FFFFFF;
 }
-.demo-icon {
-    font-family: "fontello";
-    font-style: normal;
-    font-weight: normal;
-    display: inline-block;
-    text-decoration: inherit;
-    width: 1em;
-    margin-right: .2em;
-    text-align: center;
-    font-variant: normal;
-    text-transform: none;
-    margin-left: .2em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Uncomment for 3D effect */
-    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
-}
-
-.icon-moon:before { content: '\e800'; } /* '' */
-.icon-sun:before { content: '\e801'; } /* '' */
-.icon-cog:before { content: '\e802'; } /* '' */
-.icon-wrench:before { content: '\e803'; } /* '' */
-.icon-play:before { content: '\e804'; } /* '' */
-.icon-pause:before { content: '\e805'; } /* '' */
-.icon-volume-off:before { content: '\e806'; } /* '' */
-.icon-volume-high:before { content: '\e807'; } /* '' */
-.icon-mic:before { content: '\e808'; } /* '' */
-.icon-resize-full:before { content: '\e809'; } /* '' */
-.icon-link:before { content: '\e80a'; } /* '' */
-.icon-info:before { content: '\e80b'; } /* '' */
-.icon-menu:before { content: '\e80c'; } /* '' */
-.icon-github:before { content: '\e80d'; } /* '' */
-.icon-resize-normal:before { content: '\e80e'; } /* '' */
-.icon-ccw:before { content: '\e80f'; } /* '' */
-.icon-star:before { content: '\e810'; } /* '' */
-.icon-star-empty:before { content: '\e811'; } /* '' */
-.icon-ok:before { content: '\e812'; } /* '' */
-.icon-cancel:before { content: '\e813'; } /* '' */
-.icon-mail:before { content: '\e814'; } /* '' */
-.icon-link-ext:before { content: '\f08e'; } /* '' */
-.icon-mail-alt:before { content: '\f0e0'; } /* '' */
-.icon-bug:before { content: '\f188'; } /* '' */
-.icon-share:before { content: '\f1e0'; } /* '' */
-.icon-trash:before { content: '\f1f8'; } /* '' */
-
-/* The note behind a row in the log. The icon font has no speech bubble in it, and
-   regenerating the font is a bigger job than one shape is worth, so this one is
-   drawn: a mask filled with currentColor, which is what a glyph does anyway. It
-   sits in the same 1em box as the rest and answers a tap the same way.
-
-   An envelope did this job first, which read as mail rather than as something
-   someone wrote down after a session. */
-.icon-note {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    vertical-align: -0.13em;
-    background-color: currentColor;
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 3H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 17h2v3.2a.8.8 0 0 0 1.3.6L11.6 17H20a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 3z'/%3E%3C/svg%3E") center / contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 3H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 17h2v3.2a.8.8 0 0 0 1.3.6L11.6 17H20a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 3z'/%3E%3C/svg%3E") center / contain no-repeat;
-    cursor: pointer;
-}
-
-/* close Icon */
-/* Fixed so it is still there after scrolling down a long settings panel */
+/* The cross, fixed so it is still there at the bottom of a long panel */
 .close {
     position: fixed;
     right: 32px;
@@ -633,10 +301,10 @@ aside .ring {
 }
 .close:hover {
     opacity: 0.7;
-    cursor: pointer;
 }
 .close:before, .close:after {
     position: absolute;
+    top: 0;
     left: 15px;
     content: ' ';
     height: 33px;
@@ -649,28 +317,66 @@ aside .ring {
 .close:after {
     transform: rotate(-45deg);
 }
-
-/* Toggles */
-.switch-label{
-    min-width:280px;
+/* The links at the foot of an info panel, one to a line and sized for a thumb */
+.panel-links a {
     display: block;
-    margin:10px auto
+    width: fit-content;
+    margin: 18px auto;
+    padding: 4px 0;
+}
+
+/* ================= Settings =================
+   A group is a fieldset, so a row of radios is announced as the one choice it is */
+.setting-group {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 0;
+    border: 0;
+    text-align: center;
+}
+.setting-group legend {
+    margin: 0 auto;
+    padding: 0 0 8px;
+    font-size: 16px;
+}
+/* flex, so the whitespace between labels can't push the row off centre */
+.setting-group .picker {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+.setting-group .picker label {
+    margin: 0;
+}
+.setting-group .picker input[type="radio"] {
+    position: absolute;
+}
+/* The iOS style switch, with On or Off written after its label */
+.switch-label {
+    min-width: 280px;
+    display: block;
+    margin: 10px auto;
 }
 label .label-content {
     width: 210px;
     display: inline-block;
     text-align: left;
 }
-/* the iOS style switch - not the ones wearing .nice-radios, which are chips */
+.switch-state::after {
+    content: "Off";
+}
+input:checked + .label-content .switch-state::after {
+    content: "On";
+}
 input[type=checkbox]:not(.nice-radios) {
     position: relative;
     width: 51px;
     height: 31px;
     -webkit-appearance: none;
-    -webkit-appearance: none;
-    /* the same grey as an unchecked radio label. Translucent, it came out at
-       2.3:1 against the black panel these live on */
-    background: #6b6b73;
+    appearance: none;
+    background: var(--off);
     outline: none;
     cursor: pointer;
     border-radius: 20px;
@@ -691,117 +397,61 @@ input[type=checkbox]:not(.nice-radios)::before {
     transition: left 300ms;
 }
 input[type=checkbox]:not(.nice-radios):checked {
-    background: #0b6ad6;
+    background: var(--primary);
 }
 input[type=checkbox]:not(.nice-radios):checked::before {
     left: 22px;
-    background-color: #fff;
 }
 
-/* Background colors */
-.dark{
-    background:#111;
-    color: #E8E8E8;
-}
-.dark nav{
-    border-bottom: 1px solid #666;
-}
-.dark h3{ 
-    color:#FFF;
-}
-.dark section, .dark #preview div {
-    background-color: #262626;
-    color: #E8E8E8;
-}
-/* The countdown colours land on a word each, so they can't take the 0.5s fade
-   above - at that speed the screen is still mid-transition when the next word
-   is spoken. The default and green states keep the slower fade. */
-body.red, body.orange, body.yellow {
-    transition: background-color 120ms linear;
-}
-.red {
-    background-color: rgba(255,65,54,0.8);
-}
-.orange {
-    background-color: rgba(255,133,27,0.8);
-}
-.yellow {
-    background-color: rgba(255,220,0,0.81);
-}
-.green {
-    background-color:rgba(46,204,64,0.8);
-}
-.dark.red{
-    background-color: #a13333;
-}
-.dark.orange{
-    background-color: #c84b31;
-}
-.dark.yellow{
-    background-color: #e79e4f;
-}
-.dark.green{
-    background-color: #519872;
-}
-
-/* Hide the real control - the label beside it is the chip you actually see.
-
-   Checkboxes as well as radios: a chip is a chip whether the choice is one of
-   several (a grade, a difficulty) or a set of them (which hold colours are in
-   play in the loft app). */
+/* Chips: the real radio or checkbox is hidden, its label is what you see */
 [type="radio"]:checked,
 [type="radio"]:not(:checked),
-input[type="checkbox"].nice-radios{
-	position: absolute;
-	left: -9999px;
-	width: 0;
-	height: 0;
-	visibility: hidden;
+input[type="checkbox"].nice-radios {
+    position: absolute;
+    left: -9999px;
+    width: 0;
+    height: 0;
+    visibility: hidden;
 }
-/* End Hide */
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
-  position: relative;
-  z-index: 99;
+    position: relative;
+    z-index: 99;
 }
 .nice-radios:checked + label,
 .nice-radios:not(:checked) + label {
-  position: relative;
-  display: inline-block;
-  padding: 8px;
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-align: center;
-  border-radius: 4px;
-  text-transform: uppercase;
-  color: #FFF;
-  -webkit-transition: box-shadow 150ms ease;
-  transition: box-shadow 150ms ease;
-  min-width: 65px;
-  margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+    padding: 8px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+    border-radius: 4px;
+    text-transform: uppercase;
+    color: #FFF;
+    transition: box-shadow 150ms ease;
+    min-width: 65px;
+    box-sizing: content-box;   /* 65px of label, whatever the padding */
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 .nice-radios:checked + label {
-  background-color: #0b6ad6;
-  border: 0;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    background-color: var(--primary);
+    border: 0;
 }
 .nice-radios:not(:checked) + label {
-  /* solid, and dark enough for the white label: 5.3:1, where the translucent
-     grey it replaces managed 2.3:1 over a white page */
-  background-color: #6b6b73;
-  border: 1px solid transparent;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    background-color: var(--off);
+    border: 1px solid transparent;
 }
-/* A chip standing for one of a set says whether it is in or out, in the same
-   tick and cross the rest of the suite uses.
-
-   A radio chip needs none of this - one of them is filled and the others are not,
-   and that is the whole choice. A checkbox chip has no such pair to compare
-   against, and a colour chip least of all: a dark colour filled in reads much
-   like the grey of one switched off. So it is written on the chip.
-
-   The glyphs come from the icon font rather than an <i> in the markup, so nothing
-   has to be redrawn when a chip is toggled. */
+.nice-radios:checked + label:hover,
+.nice-radios:not(:checked) + label:hover,
+[type="radio"]:hover + label {
+    box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: box-shadow 300ms ease;
+}
+/* A checkbox chip has no filled neighbour to compare against, so it says In or
+   Out with a tick or a cross from the icon font */
 input[type="checkbox"].nice-radios + label:before {
     font-family: "fontello";
     font-style: normal;
@@ -814,58 +464,78 @@ input[type="checkbox"].nice-radios + label:before {
 input[type="checkbox"].nice-radios:checked + label:before {
     content: '\e812'; /* icon-ok */
 }
-
-/* A chip that is a colour rather than a word: filled with the colour itself when
-   it is in play, and the plain grey chip when it is not - the cross says which it
-   is, so the off state needs no rim of its own. Both values come from the element:
-   --chip is the colour, and --chip-ink is black or white, whichever can be read
-   on it. */
+/* A colour chip, filled with --chip in its --chip-ink when it is in play */
 .nice-radios:checked + .colour-chip {
     background-color: var(--chip);
     color: var(--chip-ink);
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), inset 0 0 0 1px var(--chip-ink);
 }
 
-.nice-radios:not(:checked) + label:hover,
-.nice-radios:checked + label:hover,
-[type="radio"]:hover + label {
-  box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  -webkit-transition: box-shadow 300ms ease;
-  transition: box-shadow 300ms ease;
+/* ================= Icons ================= */
+.demo-icon {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    margin-left: .2em;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-
-/** Star Rating **/
-.star-holder{
-    font-size: 32px;
+.icon-moon:before { content: '\e800'; }
+.icon-sun:before { content: '\e801'; }
+.icon-cog:before { content: '\e802'; }
+.icon-wrench:before { content: '\e803'; }
+.icon-play:before { content: '\e804'; }
+.icon-pause:before { content: '\e805'; }
+.icon-volume-off:before { content: '\e806'; }
+.icon-volume-high:before { content: '\e807'; }
+.icon-mic:before { content: '\e808'; }
+.icon-resize-full:before { content: '\e809'; }
+.icon-link:before { content: '\e80a'; }
+.icon-info:before { content: '\e80b'; }
+.icon-menu:before { content: '\e80c'; }
+.icon-github:before { content: '\e80d'; }
+.icon-resize-normal:before { content: '\e80e'; }
+.icon-ccw:before { content: '\e80f'; }
+.icon-star:before { content: '\e810'; }
+.icon-star-empty:before { content: '\e811'; }
+.icon-ok:before { content: '\e812'; }
+.icon-cancel:before { content: '\e813'; }
+.icon-mail:before { content: '\e814'; }
+.icon-link-ext:before { content: '\f08e'; }
+.icon-mail-alt:before { content: '\f0e0'; }
+.icon-bug:before { content: '\f188'; }
+.icon-share:before { content: '\f1e0'; }
+.icon-trash:before { content: '\f1f8'; }
+/* The note speech bubble isn't in the font, so it is a mask filled with currentColor */
+.icon-note, .icon-button.icon-note:hover, .icon-button.icon-note:focus {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.13em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 3H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 17h2v3.2a.8.8 0 0 0 1.3.6L11.6 17H20a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 3z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 3H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 17h2v3.2a.8.8 0 0 0 1.3.6L11.6 17H20a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 3z'/%3E%3C/svg%3E") center / contain no-repeat;
     cursor: pointer;
-    user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 }
-.icon-star { 
-    color: #6b6b73;
+/* The nav bar's own icons */
+nav .icon-menu, nav .icon-info, nav .icon-cog {
+    float: left;
+    margin: 0;
+    padding: 12px 6px 0 6px;
 }
-.icon-star.active { 
-    color: #FFD700; 
-    background: none; 
-} 
-.icon-star:hover { 
-    color: #FFED85;
-} 
-.icon-star.hover {
-    color: #FFED85;
+nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon-volume-off {
+    float: right;
+    margin: 0;
+    padding: 12px 12px 0 6px;
 }
-.save-session-button {
-    margin-top: 10px;
-}
-.dark .save-title{
-    color: #FFF;
-    margin:42px auto 0;
-    font-size: 16px;
-}
-.icon-trash{
+.icon-trash {
     margin-left: 8px;
 }
 .icon-ok {
@@ -874,123 +544,148 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .icon-ok, .icon-cancel {
     font-size: 16px;
 }
-/* ================= Session furniture =================
-   The next few blocks were copied, rule for rule, into three or four of the app
-   stylesheets before they were brought here. An app only keeps what is genuinely
-   its own: the geometry of its tiles, the size of its clock. */
 
-/* A counter box - two to four across, label above and number below */
-.box {
-    display: inline-block;
-    width: 45%;
-    margin: 2%;
-    border-radius: 5px;
-    background: #cfcfcf;
-    height: 120px;
-}
-.dark .box {
-    background: #363636;
-}
-/* The number inside a box. A bare h3 is 60px - that is a clock, not a counter. */
-.box h3 {
-    font-size: 28px;
-    margin: 28px 14px;
-}
+/* ================= Pop-ups =================
+   The cog hint, the toast and a session's note all float over the app on the
+   same dark card, which reads on a white page and a dark one both. */
 
-/* Anything that counts up or down: tabular figures, or the digits jitter and the
-   clock appears to dance as it runs */
-.tabular {
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
+/* The first time an app is opened, a word about the cog - gone once the
+   settings have been opened */
+.hint-pop {
+    position: fixed;
+    top: 40px;
+    left: 12px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 266px;
+    padding: 8px;
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--card-ink);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    font-size: 14px;
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 250ms ease, transform 250ms ease;
 }
-
-/* Visually hidden, still read out - a table header over a column of icons */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
+.hint-pop.shown {
+    opacity: 1;
+    transform: none;
 }
-
-/* The save panel, at the end of a session. It ships hidden; an app shows it when
-   FINISH SESSION is hit. The bottom margin keeps it clear of the footer on a
-   phone, where it lands below the fold. */
-.ending {
-    display: none;
-    margin-bottom: 40px;
+@keyframes cog-turn {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
-.save-title {
-    margin-top: 20px;
+.hint-pop .demo-icon {
+    flex: 0 0 auto;
+    width: auto;
+    margin: 0;
+    font-size: inherit;
+    padding: 0 8px;
+    line-height: inherit;
+    animation: cog-turn 8s linear infinite;
 }
 
-/* The links at the foot of an info panel: back to the app list, out to the repo,
-   and whatever else an app points at.
-
-   One to a line with room around each, because they are hit with a thumb rather
-   than aimed at with a cursor. Block, so the margin applies at all - it does
-   nothing on an inline link - and fitted to the text, so the target is the words
-   and not the width of the panel. */
-.panel-links a {
-    display: block;
-    width: fit-content;
-    margin: 18px auto;
-    padding: 4px 0;
-}
-
-/* The note that goes with a session, on the save panel. Two lines to start with,
-   growable, and the count underneath so the limit is visible before it bites. */
-.comment-field {
-    display: block;
-    width: 100%;
+/* A toast: a face, one line, and a cross. The green rule and the white hairline
+   give the card an edge against a dark page. */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 70px;
+    width: calc(100% - 20px);
     max-width: var(--column);
-    margin: 12px auto 0;
-    padding: 8px 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #fff;
-    color: #222;
-    font-family: inherit;
-    font-size: 15px;
-    line-height: 1.4;
-    resize: vertical;
+    padding: 11px 10px 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-top: 3px solid var(--confirm);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--card-ink);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    font-size: 16px;
+    line-height: 1.35;
+    text-align: left;
+    transform: translate(-50%, 10px);
+    opacity: 0;
+    pointer-events: none;   /* on its way out, it must not eat a tap meant for the app */
+    transition: opacity 250ms ease, transform 250ms ease;
 }
-.comment-field:focus {
-    outline: 2px solid #1a73e8;
+.toast.shown {
+    opacity: 0.98;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+}
+.toast-face {
+    flex: 0 0 auto;
+    color: #2ecc40;
+    font-size: 20px;
+    line-height: 1.2;
+}
+.toast-text {
+    flex: 1 1 auto;
+}
+/* A toast with something to do: the message is the button, underlined */
+.toast-action, .toast-action:hover, .toast-action:focus {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.toast-close {
+    flex: 0 0 auto;
+    margin: -2px 0 0;
+    padding: 0 4px;
+    border: 0;
+    border-radius: 4px;
+    background: none;
+    color: #b9b9b9;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-transform: none;
+}
+.toast-close:hover, .toast-close:focus {
+    background: none;
+    color: #FFFFFF;
+}
+.toast-close:focus {
+    outline: 1px solid #b9b9b9;
     outline-offset: 1px;
 }
-.comment-field::placeholder {
-    color: #767676;
-}
-.dark .comment-field {
-    background: #3a3a3a;
-    border-color: #555;
-    color: #FFF;
-}
-.dark .comment-field::placeholder {
-    color: #b8b8b8;
-}
-.comment-count {
-    margin: 4px auto 0;
-    font-size: 12px;
-    opacity: 0.7;
+@media (prefers-reduced-motion: reduce) {
+    .hint-pop, .toast {
+        transition: none;
+    }
+    .hint-pop .demo-icon {
+        animation: none;
+    }
 }
 
-/* And the note read back: a card by the icon that opened it, holding the stars
-   the session was given and the words that went with it. */
+/* A session's note read back, by the icon that opened it */
 .comment-pop {
     position: fixed;
     z-index: 10;
-    max-width: 260px;
+    max-width: 284px;
     padding: 10px 12px;
     border-radius: 6px;
-    background: #262626;
-    color: #E8E8E8;
+    background: var(--card);
+    color: var(--card-ink);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
     font-size: 14px;
     line-height: 1.35;
@@ -1002,20 +697,74 @@ input[type="checkbox"].nice-radios:checked + label:before {
 }
 .comment-pop-text {
     margin: 0;
-    /* a note is typed by hand: keep the line breaks, and break a long word rather
-       than let it push the card off the screen */
     white-space: pre-wrap;
     overflow-wrap: break-word;
 }
 
-/* The activity log, in the about panel. drawSessionLog() in functions.js draws
-   every app's into #log as a table: a row is a session, and the app only says
-   what its own sessions are called. */
-/* It takes its width from the column with everything else. There used to be a
-   "max-width: 300px" here, from when a log was a short list of lines - an id, so
-   it quietly beat the column rule and squeezed the session table into 300px. */
+/* ================= The save panel =================
+   Hidden until a session is finished: [data-state="saving"] on the body */
+.ending {
+    display: none;
+    margin-bottom: 40px;
+}
+[data-state="saving"] #endingDiv {
+    display: block;
+}
+.save-title {
+    margin: 42px auto 0;
+    font-size: 16px;
+    color: var(--strong);
+}
+.star-holder {
+    font-size: 32px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.icon-star {
+    color: var(--off);
+}
+.icon-star.active {
+    color: #FFD700;
+}
+.icon-star:hover {
+    color: #FFED85;
+}
+.save-session-button {
+    margin-top: 10px;
+}
+/* The note to go with a session, with its count underneath */
+.comment-field {
+    display: block;
+    width: 100%;
+    max-width: var(--column);
+    margin: 12px auto 0;
+    padding: 8px 10px;
+    border: 1px solid var(--field-edge);
+    border-radius: 4px;
+    background: var(--field);
+    color: var(--field-ink);
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.4;
+    resize: vertical;
+}
+.comment-field:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+}
+.comment-field::placeholder {
+    color: var(--placeholder);
+}
+.comment-count {
+    margin: 4px auto 0;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* ================= The activity log =================
+   drawSessionLog() in functions.js draws every app's into #log, in the info panel */
 #log {
-    background: rgba(0,0,0,0.98);
+    background: rgba(0, 0, 0, 0.98);
     display: block;
     text-align: left;
     padding: 4px 12px;
@@ -1044,24 +793,17 @@ input[type="checkbox"].nice-radios:checked + label:before {
     text-transform: uppercase;
     opacity: 0.7;
 }
-/* no rule between the rows - the stripe separates them */
 .log-table td {
     padding: 8px 4px;
     vertical-align: top;
 }
-/* A stripe a row, barely there: 4% white over the near black the log sits on.
-   Enough to follow a row across four columns on a phone, not enough to read as
-   lines drawn on the page. The text is white either way, so nothing it carries
-   gets harder to read. */
+/* a faint stripe a row, enough to follow one across on a phone */
 .log-table tbody tr:nth-child(even) {
     background: rgba(255, 255, 255, 0.08);
 }
-
 .log-date {
     white-space: nowrap;
 }
-/* the year sits under the day it belongs to, and a shade quieter: it is the part
-   that hardly ever changes down the column */
 .log-year {
     font-size: 12px;
     opacity: 0.7;
@@ -1079,8 +821,6 @@ input[type="checkbox"].nice-radios:checked + label:before {
     text-align: right;
     font-size: 13px;
 }
-/* The shared 40px on every .icon-ok is for the gap inside a button - in here it
-   would push the delete confirm off the end of its own cell */
 .log-table .demo-icon {
     margin: 0 0 0 4px;
     cursor: pointer;
@@ -1089,16 +829,12 @@ input[type="checkbox"].nice-radios:checked + label:before {
     margin: 0;
     cursor: default;
 }
-/* The note, edit, delete and confirm icons are 13px glyphs, far too small a target
-   for a thumb. Padding makes each one about 40px square to tap, and the matching
-   negative margin keeps the row the height it was, so the list doesn't spread out. */
+/* 13px glyphs padded out to a thumb-sized target, without spreading the rows */
 .log-actions .demo-icon {
     display: inline-block;
     padding: 12px 9px;
     margin: -12px 0;
 }
-/* the note is a mask over its own box rather than a font glyph - held to the
-   content box, or the padding would scale the bubble up with it */
 .log-actions .icon-note {
     -webkit-mask-origin: content-box;
     mask-origin: content-box;
@@ -1106,14 +842,46 @@ input[type="checkbox"].nice-radios:checked + label:before {
     mask-clip: content-box;
 }
 
-/* ================= Tick tiles =================
-   A route or a climb you tap once to say you did it. The colours are the holds on
-   the Gilford wall: --hold is the swatch down the edge, --ink the text once the
-   tile is ticked and fills with it. The tick list and the endurance app share
-   everything here; each keeps its own sizing in its own stylesheet. */
+/* ================= Session furniture ================= */
+
+/* A counter box - two to four across, label above and number below */
+.box {
+    display: inline-block;
+    width: 45%;
+    margin: 2%;
+    border-radius: 5px;
+    background: var(--box);
+    height: 120px;
+}
+.box h3 {
+    font-size: 28px;
+    margin: 28px 14px;
+}
+/* Anything that counts, so the digits don't jitter as it runs */
+.tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+/* Visually hidden, still read out */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* A tile you tap to say you climbed it. --hold is the hold colour down its edge,
+   --ink the text once it is ticked and filled with it. Each app sizes its own. */
 .route {
     --hold: #cccccc;
     --ink: #111111;
+    background: var(--tile);
+    color: var(--tile-ink);
 }
 .hold-yellow { --hold: #ffd400; --ink: #1a1600; }
 .hold-white  { --hold: #e8e8e8; --ink: #222222; }
@@ -1125,22 +893,17 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .hold-blue   { --hold: #0074d9; --ink: #ffffff; }
 .hold-black  { --hold: #2b2b2b; --ink: #ffffff; }
 .route:hover, .route:focus {
-    background: #ececec;
+    background: var(--tile-hover);
 }
-/* #1a73e8 is the one blue that clears 3:1 on a light tile and a dark one both -
-   the brighter #3b94ff managed only 2.9 against a light tile */
 .route:focus {
-    outline: 2px solid #1a73e8;
+    outline: 2px solid var(--focus);
     outline-offset: 1px;
 }
-.route.ticked {
+.route.ticked, .route.ticked:hover, .route.ticked:focus {
     background: var(--hold);
     color: var(--ink);
     border-left-color: var(--ink);
     box-shadow: inset 0 0 0 1px var(--ink);
-}
-.route.ticked:hover, .route.ticked:focus {
-    background: var(--hold);
 }
 .route-colour {
     font-size: 13px;
@@ -1149,51 +912,26 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .route.ticked .tick {
     opacity: 1;
 }
-.dark .route {
-    background: #2a2a2a;
-    color: #eee;
-}
-.dark .route:hover, .dark .route:focus {
-    background: #383838;
-}
-.dark .route.ticked {
-    background: var(--hold);
-    color: var(--ink);
-}
 
-/* ================= Fields =================
-   A date in the tick list, a colour name in the loft app. They used to be two
-   different shapes; this is both of them. Spacing comes from the row rather than
-   from a margin on the field, so one can be dropped in anywhere. */
+/* ================= Fields ================= */
 .field {
-    box-sizing: border-box;
     height: 36px;
     padding: 6px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--field-edge);
     border-radius: 4px;
-    background: #fff;
-    color: #222;
+    background: var(--field);
+    color: var(--field-ink);
     font-family: inherit;
     font-size: 15px;
 }
 .field:focus {
-    outline: 2px solid #1a73e8;
+    outline: 2px solid var(--focus);
     outline-offset: 1px;
 }
 .field::placeholder {
-    color: #767676;
+    color: var(--placeholder);
 }
-.dark .field {
-    background: #3a3a3a;
-    border-color: #555;
-    color: #FFF;
-}
-.dark .field::placeholder {
-    color: #b8b8b8;
-}
-/* Fields that are one thing rather than three: a name, the colour to go with it,
-   and the button that adds the pair. Joined edges and a single border round the
-   lot, so it reads as one control and not as a row of unrelated boxes. */
+/* Several fields that make one control: joined, with one border round the lot */
 .field-group {
     display: flex;
     align-items: stretch;
@@ -1201,7 +939,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
     width: fit-content;
     max-width: 100%;
     margin: 12px auto;
-    border: 1px solid #ccc;
+    border: 1px solid var(--field-edge);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -1210,10 +948,9 @@ input[type="checkbox"].nice-radios:checked + label:before {
     border: 0;
     border-radius: 0;
 }
-/* a hairline between the parts, rather than a gap */
 .field-group .field + .field,
 .field-group button {
-    border-left: 1px solid #ccc;
+    border-left: 1px solid var(--field-edge);
 }
 .field-group button {
     height: 36px;
@@ -1222,27 +959,18 @@ input[type="checkbox"].nice-radios:checked + label:before {
     border-radius: 0;
     font-size: 0.9rem;
 }
-/* a colour input is a swatch, sized for a colour rather than words */
 .field-colour {
     width: 52px;
     padding: 2px 4px;
     cursor: pointer;
 }
 .field-group:focus-within {
-    outline: 2px solid #1a73e8;
+    outline: 2px solid var(--focus);
     outline-offset: 1px;
 }
-/* the field's own focus ring would be drawn inside the group, on top of its
-   neighbours - the group takes it instead */
 .field-group .field:focus {
     outline: none;
 }
-.dark .field-group,
-.dark .field-group .field + .field,
-.dark .field-group button {
-    border-color: #555;
-}
-
 .field-row {
     display: flex;
     flex-wrap: wrap;
@@ -1255,39 +983,46 @@ input[type="checkbox"].nice-radios:checked + label:before {
     padding: 0.5rem 1rem;
 }
 
-/* small screen of very zoomed in */
+/* ================= The countdown =================
+   Three, two, one: fast, so each colour lands on its word */
+body.red, body.orange, body.yellow {
+    transition: background-color 120ms linear;
+}
+.red {
+    background-color: light-dark(rgba(255, 65, 54, 0.8), #a13333);
+}
+.orange {
+    background-color: light-dark(rgba(255, 133, 27, 0.8), #c84b31);
+}
+.yellow {
+    background-color: light-dark(rgba(255, 220, 0, 0.81), #e79e4f);
+}
+.green {
+    background-color: light-dark(rgba(46, 204, 64, 0.8), #519872);
+}
+
+/* A narrow phone, or a zoomed-in screen: shrink things, never rearrange them */
 @media (max-width: 380px) {
-    .task {
-        font-size: 20px
-    }
-    .ring{
-        max-width: 60px;
-    }
-    aside .ring{
-        max-width: 40px;
-    }
-    aside .task{
-        font-size: 14px;
-    }
-    h3{
+    h3 {
         font-size: 46px;
     }
     h1 {
         font-size: 18px;
     }
-    nav{
+    nav {
         font-size: 14px;
+        height: 52px;
         padding: 6px 6px 0 3px;
     }
-    .left-nav, .right-nav{
+    .left-nav, .right-nav {
         width: 80px;
     }
-    button{
+    button {
         font-size: 16px;
         padding: 0.8rem 1.2rem;
         margin-right: 8px;
     }
-    .overlay{
+    .overlay {
         font-size: 14px;
     }
     .box {
@@ -1297,44 +1032,27 @@ input[type="checkbox"].nice-radios:checked + label:before {
         font-size: 24px;
         margin: 24px 8px;
     }
-    /* Four columns is one too many on a narrow phone, and the rating is the part
-       that can wait until the screen is bigger */
     .log-rating {
         display: none;
     }
-  }
+}
 
-/* Bottom navigation - common/bottom-nav.js draws it and puts .has-bottom-nav on
-   the html element. All of it is here, so taking this block and that script out
-   takes it away.
-
-   A dark bar like the one along the top: three buttons of equal width, each an
-   icon over a small label. The one for the page you are on is in the pale blue
-   the dark pages use for links, so it reads as selected without being a button
-   to press. */
+/* ================= Bottom navigation =================
+   Drawn by common/bottom-nav.js, which puts .has-bottom-nav on the html element.
+   Three buttons, the one for this page in the pale blue. */
 .bottom-nav {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    /* over the page, under the info and settings panels and everything that
-       pops up over them - the cog hint, the toasts and the notes */
-    z-index: 3;
+    z-index: 3;   /* over the page, under the overlays and pop-ups */
     display: flex;
     height: calc(58px + env(safe-area-inset-bottom));
-    /* all of these undo the nav rule the top bar is styled by */
-    top: auto;
-    width: auto;
-    margin: 0;
     padding: 0 0 env(safe-area-inset-bottom);
-    box-sizing: border-box;
-    background: #121212;
+    background: var(--nav);
     border-top: 1px solid #333;
     border-bottom: 0;
     font-size: 11px;
-}
-.overlay {
-    z-index: 4;
 }
 .bottom-nav-item {
     flex: 1 1 0;
@@ -1358,7 +1076,7 @@ a.bottom-nav-item:focus-visible {
     outline: 2px solid #8FC2FF;
     outline-offset: -4px;
 }
-/* as specific as the top bar's nav .icon-menu, which would float the burger */
+/* as specific as the nav icon rules above, which would float it */
 .bottom-nav .bottom-nav-icon {
     float: none;
     height: 22px;
@@ -1371,11 +1089,9 @@ a.bottom-nav-item:focus-visible {
 .bottom-nav .bottom-nav-icon:before {
     margin: 0;
 }
-/* room at the foot of the page so the bar never sits over the last of it */
 .has-bottom-nav body {
     padding-bottom: calc(58px + env(safe-area-inset-bottom));
 }
-/* and the things that sit on the bottom edge move up above it */
 .has-bottom-nav .toast {
     bottom: calc(82px + env(safe-area-inset-bottom));
 }

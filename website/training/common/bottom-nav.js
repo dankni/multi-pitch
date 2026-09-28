@@ -1,14 +1,6 @@
-/* The bar along the bottom of every training page, the way a phone app does it:
-   the list of apps, the progress page, and the app last used.
-
-   Everything about it is in this file and in the "Bottom navigation" block at the
-   end of common/style.css; a page gets it with one script tag. Taking those out
-   takes it away again.
-
-   The button for the page you are on is marked as where you are rather than
-   linked to. Which app is last used is remembered when an app page opens: in an
-   app it is that app, and anywhere else it links back to the last one opened,
-   or leaves the space empty if no app has been opened on this device. */
+/* The bar along the bottom of every training page: the app list, the progress
+   page, and the app last used - on this page, where you are rather than a link.
+   Its CSS is the "Bottom navigation" block at the end of common/style.css. */
 (function(){
     const lastAppKey = "trainingLastApp";
 
@@ -82,8 +74,6 @@
             + item("/training/progress/", graphIcon, "Progress", page === "progress")
             + appItem();
         document.body.appendChild(nav);
-        // on the html element: background() in functions.js rewrites the body's
-        // classes wholesale whenever an app changes colour
         document.documentElement.classList.add("has-bottom-nav");
     }
 

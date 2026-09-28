@@ -1,14 +1,4 @@
-/* The two training pages that are not apps - the overview and progress.
-
-   Neither has the apps' dark mode switch, so dark mode comes from the media
-   query below rather than the .dark class the apps toggle. Each page's own layout is in its
-   own <style> or stylesheet; this is only what they share. */
-
-/* common/style.css makes every section an inline-block panel, which outranks
-   the hidden attribute - both pages hide a section until it has something in it */
-section[hidden] {
-    display: none;
-}
+/* What the two pages that are not apps - the overview and progress - share */
 
 /* The small print under a heading or a chart */
 .sessions-note {
@@ -17,25 +7,11 @@ section[hidden] {
     line-height: 1.4;
     opacity: 0.75;
 }
-/* Set the link colour explicitly - the browser default blue is close to
-   invisible on the dark page and a bit weak on white */
-.sessions-note a {
-    color: #0b4fbf;
+.sessions-note a, .sessions-note .link-button {
+    color: var(--link);
     text-decoration: none;
 }
-.sessions-note a:hover, .sessions-note a:focus {
+.sessions-note a:hover, .sessions-note a:focus,
+.sessions-note .link-button:hover, .sessions-note .link-button:focus {
     text-decoration: underline;
-}
-
-@media (prefers-color-scheme: dark) {
-    body {
-        background: #111;
-        color: #E8E8E8;
-    }
-    nav {
-        border-bottom: 1px solid #666;
-    }
-    .sessions-note a {
-        color: #8FC2FF;
-    }
 }

@@ -1056,7 +1056,7 @@ describe('Training apps', function () {
 
             it('can be removed again', () => {
                 choose(csv);
-                cy.contains('#tradFigure a', 'Remove').click();
+                cy.contains('#tradFigure button', 'Remove').click();
                 cy.get('#performance').should('not.be.visible');
                 cy.get('#progressEmpty').should('be.visible');
                 cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));

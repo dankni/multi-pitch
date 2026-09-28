@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Climbing progress from the multi-pitch.com training apps - sport climbs, boulders and trad climbs by grade, over the last year or any time." />
     <link rel="manifest" href="/training/manifest.json" />
     <meta name="theme-color" content="#121212">
@@ -27,7 +27,7 @@
         <div class="left-nav"></div>
         <h1>Progress</h1>
         <div class="right-nav">
-            <i id="fullscreen" class="demo-icon icon-resize-full" role="button" tabindex="0" aria-label="Toggle fullscreen" onclick="fullscreen()" onkeydown="if(event.code==='Enter'||event.code==='Space'){event.preventDefault();fullscreen();}"></i>
+            <button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
         </div>
     </nav>
 
@@ -64,7 +64,7 @@
             <p class="sessions-note" id="tradTotal"></p>
             <div id="tradChart"></div>
             <p class="sessions-note" id="ukcNote" hidden>
-                <span id="ukcImported"></span><a href="#" onclick="removeUkcLogbook();return false;">Remove</a>
+                <span id="ukcImported"></span><button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
             </p>
         </figure>
     </section>

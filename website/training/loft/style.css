@@ -1,28 +1,35 @@
-/* #color, the circle, is in common/style.css */
-.dark h2 {
-    color:#FFF;
-    margin:12px;
-}
-/* FINISH SESSION only exists once there is a session to save */
+/* body[data-state] is idle, counting, running, paused or saving (see main.js) */
 #finishButton {
     display: none;
 }
-#gearDiv, #belaysDiv {
-    display: none;
+[data-state="running"] #finishButton,
+[data-state="paused"] #finishButton,
+[data-state="saving"] #finishButton,
+[data-state="paused"] #reset,
+[data-state="saving"] #reset {
+    display: inline-block;
 }
-/* #newColour is a shared .field now - see common/style.css */
+
+/* The move called out, and the colour it is to */
+#task {
+    margin: 12px;
+    color: var(--strong);
+}
+#color {
+    display: block;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    margin: 0 auto 20px;
+}
 #newColour {
     width: 140px;
 }
-footer{
+/* The note that the browser can't listen, pinned to the bottom */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
     background-color: #ffc640;
-}
-/* the settings are a flat list now - no details, no summary */
-
-/* the swatch in the add group: the same field, sized for a colour rather than
-   words */
-.field-colour {
-    width: 52px;
-    padding: 2px 4px;
-    cursor: pointer;
+    font-size: 10px;
 }

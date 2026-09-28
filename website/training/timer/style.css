@@ -1,48 +1,46 @@
-/* The counter boxes and the numbers inside them, the log, the save panel and the
-   tabular figures on the clock are all in common/style.css now. */
-/* A button under each box, on the same 45% grid, so LAP sits under the lap count
-   and FINISH SESSION under the clock. Neither appears until a session is under
-   way, and they come and go together so that neither ever slides into the
-   other's column. Hidden here rather than in script so they can't flash up
-   before the page has drawn itself. */
+/* body[data-state] is idle, running, paused or saving, and data-missing is set
+   while a missing session is being typed in (see main.js) */
+body:not([data-state="idle"]) #actions button {
+    display: inline-block;
+}
+[data-state="paused"] #resetButton,
+[data-state="saving"] #resetButton {
+    display: inline-block;
+}
+body:not([data-state="idle"]) #addMissingLink {
+    display: none;
+}
+[data-missing] #missingDiv {
+    display: block;
+}
+
+/* LAP under the lap count and FINISH SESSION under the clock, the same size
+   even when FINISH SESSION wraps */
 #actions button {
     display: none;
     width: 45%;
     margin: 0 2% 40px;
     padding: 1.1rem 0.4rem;
-    /* FINISH SESSION wraps to two lines on a narrow phone - the min-height keeps
-       both buttons the same size when it does */
     min-height: 76px;
-    box-sizing: border-box;
     font-size: 1.1rem;
     line-height: 1.2;
     white-space: normal;
     border-radius: 8px;
     vertical-align: top;
 }
-/* Still plainly green, but dark enough to keep LAP readable while it flashes -
-   the brighter #2ecc40 held its white label at 2.1:1 */
 .lap-button.flash {
-    background: #17812a;
+    background: var(--confirm);
     transform: scale(0.99);
 }
 .lap-button i {
     font-size: 1rem;
 }
-
 .missing-numbers {
     margin-top: 10px;
 }
 .missing-numbers .field {
     width: 72px;
     text-align: center;
-}
-
-#resetButton {
-    display: none;
-}
-.dark h2 {
-    color: #FFF;
 }
 
 @media (max-width: 380px) {
