@@ -779,6 +779,45 @@ function registerServiceWorker(){
     });
 }
 
+/* The version of the apps on this device: the one the service worker has
+   installed, as the name of its cache - training-v55 is v55 (see sw.js). A
+   phone still on an old version gets the old one. Null with no cache yet - a
+   first visit, or a browser without service workers. */
+function appVersion(){
+    if(!("caches" in window)){ return Promise.resolve(null); }
+    return caches.keys().then(names => {
+        let versions = names.map(name => /^training-(v\d+)$/.exec(name)).filter(match => match)
+            .map(match => match[1])
+            .sort((a, b) => Number(b.slice(1)) - Number(a.slice(1)));
+        return versions.length > 0 ? versions[0] : null;
+    }).catch(() => null);
+}
+
+/* The version line at the foot of the overview page. */
+function showAppVersion(){
+    let line = document.getElementById("appVersion");
+    if(line === null){ return; }
+    appVersion().then(version => {
+        if(version === null){ return; }
+        line.innerText = "App version: " + version;
+        line.hidden = false;
+    });
+}
+
+/* Feedback links: every mailto: on the page gets a subject naming the page and
+   the version, so an email about a bug says where and on what it happened. The
+   markup keeps a plain mailto:, which still works if this never runs. */
+function tagFeedbackLinks(){
+    let links = document.querySelectorAll('a[href^="mailto:"]');
+    if(links.length === 0){ return; }
+    appVersion().then(version => {
+        let subject = "Feedback: " + document.title + (version ? " (" + version + ")" : "");
+        links.forEach(link => {
+            link.href = link.getAttribute("href").split("?")[0] + "?subject=" + encodeURIComponent(subject);
+        });
+    });
+}
+
 /* On every page as it loads. Each of these looks for what it works on and does
    nothing without it, so the overview and progress pages - no save panel, no
    settings, no cog - load this file as safely as the apps do. */
@@ -787,6 +826,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     loadPreventSleepSetting();
     showCogHint();
     registerServiceWorker();
+    showAppVersion();
+    tagFeedbackLinks();
     // the full screen icon is hidden until the browser shows it can go full
     // screen - an iPhone cannot
     if (document.documentElement.requestFullscreen && document.getElementById("fullscreen")) {

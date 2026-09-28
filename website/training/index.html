@@ -269,16 +269,27 @@
     <aside id="about" class="overlay">
         <h2>About</h2>
         <p>
-            Free climbing training apps. They all run in the browser, work offline once
+            I made this as a simple tool to track my climbing progress.
+            It will be free forever for anyone to use. 
+            All the tools run in the browser, work offline once 
             loaded and keep everything on your own device using local storage. 
             You can also save them to your phone's homescreen and they will load offline. 
         </p>
         <p>
-            I built the original apps by hand but have now used AI to make some of the newer
-            ones a well as add new features.
+            I built the original version by hand but have now used AI to add new 
+            features. It's not perfect but runs more smoothly than some paid climbing 
+            apps (looking at you Crimpd, with sound out of sync with the timer).
         </p>
-        <p> Feedback and suggested features welcome: admin@multi-pitch.com</p>
+        <p> 
+            Feedback and suggested features welcome. If you enjoy it I'd love to hear. 
+            <a href="mailto:admin@multi-pitch.com">admin@multi-pitch.com</a>
+        </p>
         <hr />
+        <p class="panel-links">
+            <a href="https://github.com/dankni/multi-pitch/tree/master/website/training" target="_blank">
+                <i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
+            </a>
+        </p>
         <a href="#" onclick="hideAbout();return false;" class="close" title="close" aria-label="Close info panel"></a>
     </aside>
 
@@ -302,23 +313,6 @@
         document.getElementById("storageUse").innerText = "Local storage: "
             + (megabytes < 0.01 && used > 0 ? "under 0.01" : megabytes.toFixed(2))
             + " MB of about 5 MB used";
-    })();
-
-    /* The version of the apps on this device: the one the service worker has
-       installed, as the name of its cache - training-v55 is v55 (see sw.js). A
-       phone still on an old version shows it here. With no cache yet - a first
-       visit, or a browser without service workers - there is nothing to say. */
-    (function(){
-        if(!("caches" in window)){ return; }
-        caches.keys().then(names => {
-            let versions = names.map(name => /^training-(v\d+)$/.exec(name)).filter(match => match)
-                .map(match => match[1])
-                .sort((a, b) => Number(b.slice(1)) - Number(a.slice(1)));
-            if(versions.length === 0){ return; }
-            let line = document.getElementById("appVersion");
-            line.innerText = "App version: " + versions[0];
-            line.hidden = false;
-        }).catch(() => { /* nothing to report */ });
     })();
     </script>
     <script src="common/functions.js"></script>
