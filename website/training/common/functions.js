@@ -548,35 +548,46 @@ function hideCogHint(){
     setTimeout(() => hint.remove(), 300);
 }
 
-/* A line along the bottom that goes by itself. A newer one replaces it. With
-   onTap its message is a button, and it stays until tapped or closed. */
+/* A line along the bottom that goes by itself. Each is its own card, stacked
+   above any still up, so two things said on one tap are both seen; the same
+   message again restarts its clock rather than stacking a copy. With onTap its
+   message is a button, and it stays until tapped or closed. */
 const toastLife = 5200;
-let toastTimer = null;
 
 function toast(message, onTap){
-    let box = document.getElementById("toast");
-    if(box === null){
-        box = document.createElement("div");
-        box.id = "toast";
-        box.className = "toast";
-        box.setAttribute("role", "status");
-        document.body.appendChild(box);
+    let stack = document.getElementById("toasts");
+    if(stack === null){
+        stack = document.createElement("div");
+        stack.id = "toasts";
+        stack.className = "toast-stack";
+        stack.setAttribute("role", "status");   // announced as each arrives, without taking focus
+        document.body.appendChild(stack);
     }
-    box.innerHTML = '<span class="toast-face" aria-hidden="true">☺</span>'
-        + (onTap ? '<button type="button" class="toast-text toast-action"></button>' : '<span class="toast-text"></span>')
-        + '<button type="button" class="toast-close" aria-label="Close">×</button>';
-    box.querySelector(".toast-text").innerText = message;
-    box.querySelector(".toast-close").addEventListener("click", hideToast);
-    if(onTap){ box.querySelector(".toast-action").addEventListener("click", onTap); }
-
-    clearTimeout(toastTimer);
-    setTimeout(() => box.classList.add("shown"), 20);   // a frame later, so it animates in
-    if(!onTap){ toastTimer = setTimeout(hideToast, toastLife); }
+    let box = [...stack.children].find(card => card.dataset.message === message);
+    if(box === undefined){
+        box = document.createElement("div");
+        box.className = "toast";
+        box.dataset.message = message;
+        box.innerHTML = '<span class="toast-face" aria-hidden="true">☺</span>'
+            + (onTap ? '<button type="button" class="toast-text toast-action"></button>' : '<span class="toast-text"></span>')
+            + '<button type="button" class="toast-close" aria-label="Close">×</button>';
+        box.querySelector(".toast-text").innerText = message;
+        box.querySelector(".toast-close").addEventListener("click", () => hideToast(box));
+        if(onTap){ box.querySelector(".toast-action").addEventListener("click", onTap); }
+        stack.appendChild(box);
+        setTimeout(() => box.classList.add("shown"), 20);   // a frame later, so it animates in
+    } else {
+        clearTimeout(box.removal);   // said again as it was fading out
+        box.classList.add("shown");
+    }
+    clearTimeout(box.timer);
+    if(!onTap){ box.timer = setTimeout(() => hideToast(box), toastLife); }
 }
 
-function hideToast(){
-    let box = document.getElementById("toast");
-    if(box !== null){ box.classList.remove("shown"); }
+function hideToast(box){
+    clearTimeout(box.timer);
+    box.classList.remove("shown");
+    box.removal = setTimeout(() => box.remove(), 300);   // once it has faded
 }
 
 /* ================= Overlays =================

@@ -4,15 +4,45 @@
    session.banked is every run before it added up.
 
    What is on screen follows body[data-state] - idle, running, paused or saving -
-   and data-missing while a missing session is typed in (see style.css). */
+   and data-missing while a missing session is typed in (see style.css).
+
+   With a boulder grade set under the cog, each lap is logged as a boulder of that
+   grade, which the progress page charts with the gym session's. */
 
 const app = {
     "logKey" : "lapTimerLog",
     "currentKey" : "lapTimerCurrent"
 };
 
+const gradeKey = "lapTimerGrade";
+const boulderGrades = Array.from({ "length" : 11 }, (_, number) => "V" + number);   // V0 to V10
+
 let ticker = null;
 let saving = false;
+
+/* The boulder grade: "" for none */
+
+function chosenGrade(){
+    let saved = localStorage.getItem(gradeKey);
+    return boulderGrades.includes(saved) ? saved : "";
+}
+
+function drawGradePicker(){
+    let chosen = chosenGrade();
+    document.getElementById("gradePicker").innerHTML = ["", ...boulderGrades].map(grade =>
+        `<input type="radio" name="lapGrade" class="nice-radios" id="grade-${grade || "none"}" value="${grade}"${grade === chosen ? " checked" : ""} data-change="setGrade" />
+        <label for="grade-${grade || "none"}">${grade || "None"}</label>`).join("");
+}
+
+// A session under way takes the change too - the grade is what this circuit is
+function setGrade(input){
+    localStorage.setItem(gradeKey, input.value);
+    if(session !== null){
+        session.grade = input.value;
+        keepSession();
+    }
+    drawAll();
+}
 
 function isRunning(){
     return session !== null && session.startedAt !== null;
@@ -31,7 +61,7 @@ function toggleTimer(){
 
 function startTimer(){
     if(session === null){
-        session = { "id" : Date.now(), "date" : today(), "banked" : 0, "startedAt" : null, "laps" : 0, "rating" : 0 };
+        session = { "id" : Date.now(), "date" : today(), "banked" : 0, "startedAt" : null, "laps" : 0, "rating" : 0, "grade" : chosenGrade() };
     }
     session.startedAt = Date.now();
     delete session.missing;   // clocked from here on, not typed in
@@ -92,7 +122,8 @@ function clearSession(){
 
 function addMissingSession(){
     if(session !== null){ return; }
-    session = { "id" : Date.now(), "date" : today(), "banked" : 0, "startedAt" : null, "laps" : 0, "rating" : 0, "missing" : true };
+    session = { "id" : Date.now(), "date" : today(), "banked" : 0, "startedAt" : null, "laps" : 0, "rating" : 0,
+        "grade" : chosenGrade(), "missing" : true };
     keepSession();
     drawMissingFields();
     hideAbout();
@@ -129,7 +160,7 @@ function openSavePanel(){
 const logView = {
     "key" : app.logKey,
     "describe" : entry => ({
-        "title" : plural(entry.laps, "lap"),
+        "title" : plural(entry.laps, "lap") + (entry.grade ? " of " + entry.grade : ""),
         "detail" : `${formatClock(entry.total / 1000)} on the clock`
     }),
     "stats" : log => {
@@ -146,6 +177,7 @@ function saveSession(){
         "date" : session.date,
         "total" : elapsed(),
         "laps" : session.laps,
+        "grade" : session.grade || undefined,   // left out with none
         "rating" : session.rating,
         "comment" : sessionComment
     });
@@ -167,6 +199,8 @@ function drawAll(){
     document.body.toggleAttribute("data-missing", started && session.missing === true);
     drawTime();
     document.getElementById("lapCount").innerText = started ? session.laps : 0;
+    let grade = started ? session.grade : chosenGrade();
+    document.getElementById("lapLabel").innerText = grade ? grade + " laps" : "Laps";
     document.getElementById("primaryButton").innerHTML = running
         ? '<i class="demo-icon icon-pause"></i>PAUSE'
         : `<i class="demo-icon icon-play"></i>${started ? "RESUME" : "START SESSION"}`;
@@ -188,6 +222,7 @@ document.addEventListener("keydown", event => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+    drawGradePicker();
     if(restoreSession()){
         if(isRunning()){
             requestWakeLock();

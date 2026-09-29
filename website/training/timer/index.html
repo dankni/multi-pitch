@@ -44,7 +44,7 @@
 			<h3>Timer: <br /><span id="elapsed" class="tabular">0:00:00</span></h3>
 		</div>
 		<div class="box">
-			<h3>Laps: <br /><span id="lapCount" class="tabular">0</span></h3>
+			<h3><span id="lapLabel">Laps</span>: <br /><span id="lapCount" class="tabular">0</span></h3>
 		</div>
 	</div>
 
@@ -73,11 +73,10 @@
 		<p>
 			A stopwatch for lap training. Start the clock, then tap LAP every time you
 			finish a circuit, a set on the bouldering wall or a lap on a route. It keeps
-			the total time and the number of laps &ndash; nothing else to fiddle with.
+			the total time and the number of laps.
 		</p>
 		<p>
-			Pause and start again as often as you like &ndash; the clock only counts while
-			it is running. Sessions are saved on this device only, nothing is uploaded
+			Sessions are saved on this device only, nothing is uploaded
 			anywhere. Press the space bar to lap and Escape to pause if you have a keyboard.
 		</p>
 		<hr />
@@ -92,6 +91,11 @@
 
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
+		<fieldset class="setting-group">
+			<legend>Boulder grade</legend>
+			<p>Each lap is logged as a boulder of this grade, for the progress charts.</p>
+			<div class="picker" id="gradePicker"></div>
+		</fieldset>
 		<label class="switch-label">
 			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
 			<span class="label-content">

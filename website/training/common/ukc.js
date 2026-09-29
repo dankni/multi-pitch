@@ -2,9 +2,10 @@
    API, so the file is downloaded there and chosen here, and each replaces the
    last. The progress page charts it and lists its days; the trad app imports it.
 
-   Trad and sport climbs with a full date are kept, on this device only. UIAA
-   grades are turned roughly into British for trad and French for sport, so each
-   lands on its chart's ladder; other trad grades are too loose a fit to guess.
+   Trad, sport and bouldering with a full date are kept, on this device only. UIAA
+   grades are turned roughly into British for trad and French for sport, and Font
+   boulder grades into V, so each lands on its chart's ladder; other trad grades
+   are too loose a fit to guess.
 
    A day the trad app has logged with "Ignore UKC data for this date" is in both
    places, and the app's record wins: ukc.climbs() leaves that date out. */
@@ -36,6 +37,14 @@ const ukc = (function(){
         "V-" : "5a", "V" : "5b", "V+" : "5c", "VI-" : "6a", "VI" : "6a+", "VI+" : "6b",
         "VII-" : "6b+", "VII" : "6c", "VII+" : "7a", "VIII-" : "7a+", "VIII" : "7b",
         "VIII+" : "7b+", "IX-" : "7c", "IX" : "7c+", "IX+" : "8a", "X-" : "8a+", "X" : "8b"
+    };
+
+    // Font to V: the gym session's table, and the half grades it has no row for
+    const fontToV = {
+        "3" : "V0", "4" : "V0", "4+" : "V0", "5" : "V1", "5+" : "V2",
+        "6A" : "V3", "6A+" : "V3", "6B" : "V4", "6B+" : "V4", "6C" : "V5", "6C+" : "V5",
+        "7A" : "V6", "7A+" : "V7", "7B" : "V8", "7B+" : "V8", "7C" : "V9", "7C+" : "V10",
+        "8A" : "V11", "8A+" : "V12", "8B" : "V13", "8B+" : "V14", "8C" : "V15", "8C+" : "V16", "9A" : "V17"
     };
 
     // Quoted fields, "" inside them and line breaks in the notes - the export has all three
@@ -95,6 +104,15 @@ const ukc = (function(){
         return sportLadder.includes(french) ? french : null;
     }
 
+    // "f6A" or "6A" as V3, "V3" as it is; null for anything else
+    function boulderGrade(text){
+        let word = String(text).trim().split(/\s+/)[0].toUpperCase();
+        if(/^V\d{1,2}$/.test(word) && Number(word.slice(1)) <= 17){ return word; }
+        return fontToV[word.replace(/^F/, "")] || null;
+    }
+
+    const gradeOf = { "trad" : tradGrade, "sport" : sportGrade, "bouldering" : boulderGrade };
+
     // Read a whole export and save it in place of any earlier one
     function importText(text){
         let rows = parseCsv(String(text).replace(/^﻿/, ""));
@@ -106,12 +124,12 @@ const ukc = (function(){
         let climbs = [], leftOut = 0;
         rows.forEach(row => {
             let type = String(row[at("type")] || "").trim().toLowerCase();
-            if(type !== "trad" && type !== "sport"){ return; }
+            if(!gradeOf[type]){ return; }
             let date = ukcDate(row[at("date")]);
-            let grade = type === "trad" ? tradGrade(row[at("grade")]) : sportGrade(row[at("grade")]);
+            let grade = gradeOf[type](row[at("grade")]);
             if(date === null || grade === null){ leftOut++; return; }
             let field = name => at(name) === -1 ? "" : String(row[at(name)] || "").trim();
-            climbs.push({ "date" : date, "grade" : grade, "type" : type,
+            climbs.push({ "date" : date, "grade" : grade, "type" : type === "bouldering" ? "boulder" : type,
                           "name" : field("name"), "crag" : field("crag"), "notes" : field("notes") });
         });
         // a UTC day, as the apps date their sessions
@@ -143,34 +161,44 @@ const ukc = (function(){
         return logbook.climbs.filter(climb => climb && typeof climb.date === "string" && !covered.has(climb.date));
     }
 
-    /* The hardest of a day's climbs. Trad outranks sport - the two ladders do not
-       line up, and a day with both is a trad day with a warm up. Between two at
-       the same grade, the one with notes wins, so the day has something to say. */
+    /* The hardest of a day's climbs. Trad outranks sport and sport a boulder - the
+       ladders do not line up, and a day with more than one is a route day with a
+       warm up. Between two at the same grade, the one with notes wins, so the day
+       has something to say. */
     function hardest(dayClimbs){
-        let rank = climb => climb.type === "trad"
-            ? sportLadder.length + tradLadder.indexOf(climb.grade)
-            : sportLadder.indexOf(climb.grade);
+        const boulders = 18;   // V0 to V17
+        let rank = climb => climb.type === "trad" ? boulders + sportLadder.length + tradLadder.indexOf(climb.grade)
+            : climb.type === "sport" ? boulders + sportLadder.indexOf(climb.grade)
+            : Number(String(climb.grade).slice(1));
         return dayClimbs.reduce((best, climb) => {
             if(best === null || rank(climb) > rank(best)){ return climb; }
             return rank(climb) === rank(best) && !best.notes && climb.notes ? climb : best;
         }, null);
     }
 
+    // A day's climbs in a line: "2 trad climbs, 3 boulders"
+    function summary(dayClimbs){
+        let count = type => dayClimbs.filter(climb => climb.type === type).length;
+        return [["trad", "trad climb"], ["sport", "sport climb"], ["boulder", "boulder"]]
+            .filter(([type]) => count(type) > 0)
+            .map(([type, noun]) => plural(count(type), noun)).join(", ");
+    }
+
     return { "key" : key, "tradLadder" : tradLadder, "sportLadder" : sportLadder,
-             "importText" : importText, "load" : load, "climbs" : climbs, "hardest" : hardest };
+             "importText" : importText, "load" : load, "climbs" : climbs, "hardest" : hardest, "summary" : summary };
 })();
 
 function chooseUkcFile(){
     document.getElementById("ukcFile").click();
 }
 
-// A new logbook changes everything drawn from it, so the page starts again
+// Straight to the progress page, to see what the logbook adds up to
 function importUkcFile(input){
     let file = input.files && input.files[0];
     if(!file){ return; }
     file.text().then(text => {
         ukc.importText(text);
-        location.reload();
+        location.href = "/training/progress/";
     }).catch(err => {
         alert("Couldn't import the UKC logbook: " + err.message);
     }).finally(() => { input.value = ""; });

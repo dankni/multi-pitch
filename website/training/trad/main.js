@@ -71,7 +71,7 @@ const app = {
             // a UKC day by its hardest climb's name and the crag, as typed into UKC
             if(entry.readOnly){
                 return {
-                    "title" : plural(entry.climbs.length, "trad climb"),
+                    "title" : entry.summary,
                     "detail" : escapeHtml([entry.hardest, entry.crags, "from UKC"].filter(part => part).join(" · "))
                 };
             }
@@ -84,7 +84,7 @@ const app = {
         },
         "stats" : log => {
             let total = log.reduce((count, entry) => count + entry.climbs.length, 0);
-            return `${sessionCount(log)} · ${plural(total, "trad climb")} logged`;
+            return `${sessionCount(log)} · ${plural(total, "climb")} logged`;
         }
     }
 };
@@ -96,14 +96,14 @@ function setAlsoOnUkc(input){
     }
 }
 
-/* The trad days in an imported UKC logbook, listed read only beside this app's
-   own sessions (ukc.climbs() leaves out any this app says are on UKC too). Each
-   is shaped like a session: its grades as climbs, and its hardest climb's notes
-   as the note. The id is the date as a negative number, which no saved session's
-   can be. */
+/* Every day in an imported UKC logbook - trad, sport and bouldering - listed
+   read only beside this app's own sessions (ukc.climbs() leaves out any this app
+   says are on UKC too). Each is shaped like a session: its grades as climbs, and
+   its hardest climb's notes as the note. The id is the date as a negative
+   number, which no saved session's can be. */
 function ukcDays(){
     let days = {};
-    ukc.climbs().filter(climb => climb.type === "trad").forEach(climb => {
+    ukc.climbs().forEach(climb => {
         (days[climb.date] = days[climb.date] || []).push(climb);
     });
     return Object.keys(days).map(date => {
@@ -114,6 +114,7 @@ function ukcDays(){
             "id" : -Number(date.replace(/-/g, "")),
             "date" : date,
             "climbs" : climbs.map(climb => climb.grade),
+            "summary" : ukc.summary(climbs),
             "rating" : 0,
             "comment" : named && hardest.notes ? `${hardest.name}: ${hardest.notes}` : "",
             "hardest" : named ? `hardest ${hardest.name} (${hardest.grade})` : "",
@@ -130,7 +131,7 @@ function drawUkcSummary(){
     let days = ukcDays();
     let total = days.reduce((count, day) => count + day.climbs.length, 0);
     document.getElementById("ukcSummary").innerText = `Imported ${logDate(logbook.imported)} · `
-        + `${plural(days.length, "day")}, ${plural(total, "trad climb")}, in the activity log below.`;
+        + `${plural(days.length, "day")}, ${plural(total, "climb")}, in the activity log below.`;
 }
 
 // The progress page links here as /training/trad/#ukc: straight to the import

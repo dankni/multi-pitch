@@ -189,6 +189,35 @@ describe('Training apps', function () {
             // the app is back to a clean slate ready for the next session
             cy.get('#elapsed').should('have.text', '0:00:00');
             cy.get('#lapCount').should('have.text', '0');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('lapTimerLog'))[0]).not.to.have.property('grade'));
+        });
+
+        it('logs each lap as a boulder of the grade set under the cog', () => {
+            cy.visit(timerUrl);
+            cy.get('label[for="grade-none"]').should('exist');
+            // V0 to V10: a circuit is laps of something well within you
+            cy.get('#grade-V10').should('exist');
+            cy.get('#grade-V11').should('not.exist');
+            cy.get('nav .icon-cog').click();
+            cy.get('label[for="grade-V3"]').click();
+            cy.get('body').type('{esc}');
+            cy.get('#lapLabel').should('have.text', 'V3 laps');
+            runSession(9);
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.get('#log').should('contain', '9 laps of V3');
+            cy.window().then((win) => {
+                let entry = JSON.parse(win.localStorage.getItem('lapTimerLog'))[0];
+                expect(entry.grade).to.equal('V3');
+                expect(entry.laps).to.equal(9);
+            });
+            // the setting sticks for the next session
+            cy.reload();
+            cy.get('#grade-V3').should('be.checked');
+            // and the progress page counts them as boulders
+            cy.visit(appUrl + '/training/progress/');
+            cy.get('#boulderTotal').should('have.text', '9 boulders in the last year, 0 in the year before');
+            cy.get('#allLogs').should('contain', '9 laps of V3');
         });
 
         it('adds a missing session through the usual save panel', () => {
@@ -291,9 +320,29 @@ describe('Training apps', function () {
             for(let id = 1; id <= 24; id++){ cy.get('#route' + id).click(); }
             cy.tick(100);
             cy.get('#tickCount').should('have.text', '24');
-            // the sevens went up on the way, but the last tick is the wall
             cy.get('.toast').should('be.visible')
                 .and('contain', 'Amazing! you ticked them all');
+        });
+
+        it('says everything one tick finishes, each in a toast of its own', () => {
+            cy.visit(gilfordUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#route12').click();   // 7a
+            cy.get('#route15').click();   // 7a+
+            for(let id = 1; id <= 9; id++){ cy.get('#route' + id).click(); }
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#route18').click();   // 7b: the sevens, and the twelfth of 24
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 2);
+            cy.get('.toast').eq(0).should('be.visible').and('contain', 'Half the routes on the wall ticked');
+            cy.get('.toast').eq(1).should('be.visible').and('contain', "Nice work ticking the 7's");
+            // closing one leaves the other
+            cy.get('.toast').eq(0).find('.toast-close').click();
+            cy.tick(400);
+            cy.get('.toast').should('have.length', 1).and('contain', "Nice work ticking the 7's");
+            cy.tick(6000);
+            cy.get('.toast').should('not.exist');
         });
 
         it('saves a session and reopens it for editing', () => {
@@ -435,7 +484,17 @@ describe('Training apps', function () {
             cy.tick(100);
             cy.get('.toast').should('be.visible');
             cy.tick(6000);   // a toast lives 5.2 seconds
-            cy.get('.toast').should('not.be.visible');
+            cy.get('.toast').should('not.exist');
+        });
+
+        it('says the same thing once, however often it is said', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            for(let i = 0; i < 7; i++){ cy.get('.grade-harder').click(); }
+            cy.get('.grade-harder').click();
+            cy.get('.grade-harder').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1);
         });
 
         it('starts the next session back at V10', () => {
@@ -633,11 +692,12 @@ describe('Training apps', function () {
             cy.location('hash').should('equal', '');
         });
 
-        it('lists the UKC trad days, less any it has logged itself as on UKC too', () => {
+        it('lists every UKC day, less any it has logged itself as on UKC too', () => {
             cy.visit(tradUrl, {
                 onBeforeLoad(win) {
                     win.localStorage.setItem('ukcLogbook', JSON.stringify({ imported: '2026-09-13', leftOut: 0, climbs: [
                         { date: '2026-08-31', grade: 'HS', type: 'trad', name: 'Goin Back', crag: 'Moorhill Quarry', notes: 'Pumpy' },
+                        { date: '2026-08-31', grade: 'V3', type: 'boulder', name: 'The Prow', crag: 'Moorhill Quarry', notes: '' },
                         { date: '2026-08-06', grade: 'E1', type: 'trad', name: 'No Alibi', crag: 'Moorhill Quarry', notes: '' },
                         { date: '2026-01-26', grade: '4+', type: 'sport', name: 'Scorpion', crag: 'Echo Valley', notes: '' }
                     ] }));
@@ -646,12 +706,14 @@ describe('Training apps', function () {
                 }
             });
             cy.get('.icon-info').click();
-            cy.get('#ukcSummary').should('have.text', 'Imported 13 Sep 2026 · 1 day, 1 trad climb, in the activity log below.');
-            // in the activity log with the app's own session: the sport climb, and
-            // UKC's copy of the day logged here, are left out
-            cy.get('#log tbody tr').should('have.length', 2);
+            cy.get('#ukcSummary').should('have.text', 'Imported 13 Sep 2026 · 2 days, 3 climbs, in the activity log below.');
+            // in the activity log with the app's own session, sport and bouldering
+            // days too - but not UKC's copy of the day logged here
+            cy.get('#log tbody tr').should('have.length', 3);
+            cy.get('#log tbody tr').eq(2).should('contain', '26 Jan').and('contain', '1 sport climb');
+            // a route beats a boulder for the day's hardest
             cy.get('#log tbody tr').first()
-                .should('contain', '31 Aug').and('contain', '1 trad climb')
+                .should('contain', '31 Aug').and('contain', '1 trad climb, 1 boulder')
                 .and('contain', 'hardest Goin Back (HS) · Moorhill Quarry · from UKC');
             // read only: edited in UKC, so no wrench and no bin - and no stars,
             // since UKC exports no rating
@@ -671,6 +733,9 @@ describe('Training apps', function () {
                 '"Goin Back","HS 4b","Lead O/S",,,31/Aug/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad'
             ].join('\r\n')), fileName: 'dankni_Logbook_DLOG.csv' }, { force: true });
             cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', 'Goin Back');
+            // and on to the progress page, to see it charted
+            cy.location('pathname').should('equal', '/training/progress/');
+            cy.get('#tradFigure').should('be.visible');
         });
     });
 
@@ -791,6 +856,8 @@ describe('Training apps', function () {
             cy.visit(progressUrl);
             cy.get('#performance').should('not.be.visible');
             cy.get('#progressEmpty').should('be.visible');
+            // and there is still the way to bring a UKC logbook in
+            cy.get('#ukcPrompt').should('be.visible');
         });
 
         it('says the same when nothing graded has been logged', () => {
@@ -886,7 +953,7 @@ describe('Training apps', function () {
                 cy.get('#tradFigure').should('be.visible');
                 cy.get('#ukcNote').should('not.be.visible');
                 cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
-                cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'hardest VS');
+                cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', 'hardest VS');
             });
 
             it('counts both when the day is not on UKC', () => {
@@ -900,7 +967,7 @@ describe('Training apps', function () {
                 // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug
                 cy.get('#tradTotal').should('have.text', '4 trad climbs in the last year, 0 in the year before');
                 cy.get('#allLogs tbody tr').should('have.length', 2);
-                cy.get('#allLogs tbody tr').first().should('contain', 'Trad').and('contain', 'UKC data ignored');
+                cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', 'UKC data ignored');
                 cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '6 Aug');
             });
         });
@@ -974,12 +1041,15 @@ describe('Training apps', function () {
                 cy.visit(progressUrl);
             }
 
-            it('points to the import in the trad app until there is trad to chart', () => {
+            it('points to the import in the trad app until a logbook is imported', () => {
                 visitWith(logs);
                 cy.get('#performance').should('be.visible');
                 cy.get('#tradFigure').should('not.be.visible');
-                cy.get('#tradPrompt a').should('have.text', 'Upload UKC log data to combine and add trad climbs')
-                    .and('have.attr', 'href', '../trad/#ukc');
+                cy.get('#ukcPrompt').should('be.visible');
+                cy.get('#ukcPrompt a').should('have.attr', 'href', '../trad/#ukc');
+                // and not once there is one
+                choose(csv);
+                cy.get('#ukcPrompt').should('not.be.visible');
                 // the import is only in the trad app
                 cy.get('#ukcFile').should('not.exist');
                 cy.visit(overviewUrl);
@@ -1007,11 +1077,33 @@ describe('Training apps', function () {
                 labels('#sportChart').should('include.members', ['4+', '5+', '6a+']);
             });
 
+            it('adds the boulders to the boulder chart, Font grades as V', () => {
+                choose([
+                    'Name,Grade,Style,Partner(empty),Notes,Date,Crag,County,Region,Country,Pitches,Type',
+                    '"The Prow",f6A,"Sent O/S",,,24/Jul/25,"Bloody Bridge Boulders","Co. Down","Northern Ireland","Northern Ireland",1,Bouldering',
+                    '"Buttercup Traverse Low",f6A+,"Sent O/S",,,19/Jun/25,Altataggart,"Co. Down","Northern Ireland","Northern Ireland",1,Bouldering',
+                    'B3,f3,"Sent O/S",,,19/Jun/25,Altataggart,"Co. Down","Northern Ireland","Northern Ireland",1,Bouldering',
+                    'Overhang,V5,"Sent",,,19/Jun/25,Altataggart,"Co. Down","Northern Ireland","Northern Ireland",1,Bouldering',
+                    'Mystery,5c,"Sent",,,19/Jun/25,Altataggart,"Co. Down","Northern Ireland","Northern Ireland",1,Bouldering'
+                ].join('\r\n'));
+                cy.window().then((win) => {
+                    let grades = JSON.parse(win.localStorage.getItem('ukcLogbook')).climbs.map((climb) => climb.type + ' ' + climb.grade);
+                    // f6A and f6A+ as V3, f3 as V0, V5 as it is - and a British 5c left out
+                    expect(grades).to.deep.equal(['boulder V3', 'boulder V3', 'boulder V0', 'boulder V5']);
+                });
+                cy.get('label[for="range-all"]').click();
+                cy.get('#boulderTotal').should('have.text', '4 boulders in all');
+                cy.get('#ukcImported').should('contain', '1 climb left out');
+                cy.contains('#allLogs tbody tr', '19 Jun').should('contain', '3 boulders')
+                    .and('contain', 'hardest Overhang (V5)');
+            });
+
             it('adds each day climbed to the sessions', () => {
                 choose(csv);
                 cy.get('#sessions').should('be.visible');
-                // six days: the two climbs on 31 Aug are one session
-                cy.get('#allLogs tbody tr').should('have.length', 6);
+                // seven days: the two climbs on 31 Aug are one session
+                cy.get('#allLogs tbody tr').should('have.length', 7);
+                cy.contains('#allLogs tbody tr', '24 Jul').should('contain', '1 boulder');
                 cy.get('#allLogs tbody tr').first().should('contain', '31 Aug')
                     .and('contain', 'UKC').and('contain', '2 trad climbs')
                     .and('contain', 'hardest Goin Back (HS) · Moorhill Quarry');

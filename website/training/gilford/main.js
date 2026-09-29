@@ -59,18 +59,16 @@ function toggleClimb(button){
     cheer(before);
 }
 
-// One thing said, the biggest: the whole wall, then the sevens, then half
+// Everything this tap completed gets its say, the biggest last
 function cheer(before){
-    if(allTicked(everything)){
-        if(!before.wall){ toast("Amazing! you ticked them all, that's the goal this app was made for"); }
-        return;
+    if(session.climbs.length === halfway && before.count < halfway){
+        toast("Half the routes on the wall ticked, nice one!");
     }
     if(allTicked(sevens) && !before.sevens){
         toast("Nice work ticking the 7's");
-        return;
     }
-    if(session.climbs.length === halfway && before.count < halfway){
-        toast("Half the routes on the wall ticked, nice one!");
+    if(allTicked(everything) && !before.wall){
+        toast("Amazing! you ticked them all, that's the goal this app was made for");
     }
 }
 

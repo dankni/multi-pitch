@@ -31,6 +31,11 @@
         </div>
     </nav>
 
+    <!-- until a UKC logbook has been imported -->
+    <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
+        Log climbs on UKC? <a href="../trad/#ukc">Import your UKC logbook</a> to chart them here too.
+    </p>
+
     <!-- Drawn by charts.js from the apps' logs and an imported UKC logbook, and
          hidden until there is something graded to draw -->
     <section class="performance" id="performance" hidden>
@@ -54,11 +59,6 @@
             <p class="sessions-note" id="boulderTotal"></p>
             <div id="boulderChart"></div>
         </figure>
-        <!-- once there is trad to show: from the trad app, or a UKC logbook imported
-             there. Until then, the way to import one. -->
-        <p class="sessions-note" id="tradPrompt" hidden>
-            <a href="../trad/#ukc">Upload UKC log data to combine and add trad climbs</a>
-        </p>
         <figure id="tradFigure" hidden>
             <figcaption>Trad climbs by grade</figcaption>
             <p class="sessions-note" id="tradTotal"></p>
@@ -72,9 +72,9 @@
     <!-- in place of the charts on a device with nothing graded logged yet -->
     <section class="performance" id="progressEmpty" hidden>
         <p class="chart-empty">
-            Nothing graded logged yet. Climbs from the Gym Session, Gilford Wall,
-            Endurance and Trad Climbing apps are charted here, and so is an imported
-            UKC logbook.
+            Nothing graded logged yet. Climbs from the Gym Session, Circuit Session,
+            Gilford Wall, Endurance and Outside Climbing apps are charted here, and so is an
+            imported UKC logbook.
         </p>
     </section>
 

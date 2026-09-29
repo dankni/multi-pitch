@@ -3,6 +3,17 @@
    Each bar takes its colour from --c, which its class sets by how hard the grade
    is. The period before is a thin line across each bar in the page ink, quieter
    than the bars. */
+/* The way to import a UKC logbook, above everything until there is one */
+.ukc-prompt {
+    width: 90%;
+    max-width: var(--column);
+    margin: 18px auto 0;
+    font-size: 14px;
+    opacity: 1;
+}
+.ukc-prompt a {
+    text-decoration: underline;
+}
 .performance {
     --ink-muted: light-dark(#5c5c63, #a8a8ae);
     --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));

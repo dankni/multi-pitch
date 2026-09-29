@@ -158,12 +158,25 @@
         return climbs;
     }
 
+    // The gym session's boulders, and a circuit logged at a grade as a boulder a lap
     function boulderClimbs(logs){
         let climbs = [];
         entriesOf(logs, "boulderLog").forEach(entry => {
             list(entry.climbs).forEach(grade => {
                 if(boulderRung(grade) !== -1){ climbs.push({ "date" : entry.date, "grade" : grade }); }
             });
+        });
+        entriesOf(logs, "lapTimerLog").forEach(entry => {
+            if(boulderRung(entry.grade) === -1){ return; }
+            for(let lap = 0; lap < Math.floor(Number(entry.laps) || 0); lap++){
+                climbs.push({ "date" : entry.date, "grade" : entry.grade });
+            }
+        });
+        // and the boulders in an imported UKC logbook
+        ukc.climbs().forEach(climb => {
+            if(climb.type === "boulder" && boulderRung(climb.grade) !== -1){
+                climbs.push({ "date" : climb.date, "grade" : climb.grade });
+            }
         });
         return climbs;
     }
@@ -337,12 +350,10 @@
     }
 
     // Under the trad chart: when the logbook came in, what was left off it, and
-    // the way to take it off this device again - once there is a logbook. With no
-    // trad at all, the chart gives way to a link to the import in the trad app.
+    // the way to take it off this device again - once there is a logbook
     function describeImport(logs){
         let logbook = ukc.load();
         document.getElementById("tradFigure").hidden = !hasTrad(logs);
-        document.getElementById("tradPrompt").hidden = hasTrad(logs);
         document.getElementById("ukcNote").hidden = logbook === null;
         if(logbook === null){ return; }
 
@@ -379,7 +390,7 @@
     /* The logs the charts are drawn from, as the apps saved them. A key someone
        has hand-edited into something that is not a list counts as empty rather
        than breaking the page. */
-    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog"];
+    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog", "lapTimerLog"];
 
     function readLogs(){
         let logs = {};
@@ -393,6 +404,8 @@
 
     function drawProgress(){
         let logs = readLogs();
+        // the way to import a UKC logbook, until there is one - even with nothing else to show
+        document.getElementById("ukcPrompt").hidden = ukc.load() !== null;
         // only the timer apps used, say - empty charts would say nothing, so the
         // page says so instead
         if(sportClimbs(logs).length + boulderClimbs(logs).length === 0 && !hasTrad(logs)){

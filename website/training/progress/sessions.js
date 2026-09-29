@@ -57,14 +57,14 @@
                                    + (entry.maxGrade ? " off " + entry.maxGrade : ""),
                                "detail" : plural(count(entry.sets), "set") + " · " + count(entry.climbs) + " climbs" }) },
         { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/",
-          "line" : entry => ({ "title" : plural(count(entry.laps), "lap"),
+          "line" : entry => ({ "title" : plural(count(entry.laps), "lap") + (typeof entry.grade === "string" && entry.grade ? " of " + entry.grade : ""),
                                "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }) },
         { "key" : "loftLog", "name" : "Twister", "href" : "/training/loft/",
           "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
                                "detail" : formatClock(count(entry.seconds)) + " on the clock" }) },
         { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "/training/rings/",
           "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) },
-        { "key" : "tradLog", "name" : "Trad", "href" : "/training/trad/",
+        { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
           "line" : tradSession }
     ];
 
@@ -107,8 +107,6 @@
         });
         return Object.keys(days).map(date => {
             let climbs = days[date];
-            let trad = climbs.filter(climb => climb.type === "trad").length;
-            let sport = climbs.length - trad;
             let hardest = ukc.hardest(climbs);
             let named = hardest !== null && typeof hardest.name === "string" && hardest.name !== "";
             return {
@@ -118,8 +116,7 @@
                 "readOnly" : true,
                 "comment" : named && hardest.notes ? hardest.name + ": " + hardest.notes : "",
                 "rating" : 0,
-                "title" : [trad ? plural(trad, "trad climb") : "", sport ? plural(sport, "sport climb") : ""]
-                    .filter(part => part !== "").join(", "),
+                "title" : ukc.summary(climbs),
                 "detail" : [named ? "hardest " + hardest.name + " (" + hardest.grade + ")" : "",
                             [...new Set(climbs.map(climb => climb.crag).filter(crag => crag))].join(", ")]
                     .filter(part => part !== "").join(" · ")
