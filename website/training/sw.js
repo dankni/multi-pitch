@@ -6,7 +6,7 @@
    When you change any app, bump CACHE_VERSION, or installed copies keep serving
    the old files. */
 
-const CACHE_VERSION = 'v66';
+const CACHE_VERSION = 'v67';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -17,6 +17,7 @@ const SHELL = [
     '/training/progress/',
     '/training/progress/charts.js',
     '/training/progress/sessions.js',
+    '/training/progress/backup.js',
     '/training/progress/style.css',
 
     '/training/common/style.css',

@@ -782,6 +782,15 @@ describe('Training apps', function () {
                 cy.get('meta[name="apple-mobile-web-app-title"]').should('have.attr', 'content', 'Training');
                 cy.get('#fullscreen').should('be.visible').and('have.class', 'icon-resize-full');
             });
+
+            // The host serves /training/timer as well as /training/timer/, without a
+            // redirect - every stylesheet and script has to load either way
+            it('styles and runs ' + page + ' without its trailing slash', () => {
+                cy.visit(appUrl + page.replace(/\/$/, ''));
+                cy.get('nav').should('have.css', 'background-color', 'rgb(18, 18, 18)');
+                cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
+                cy.get('#fullscreen').should('be.visible');
+            });
         });
     });
 
@@ -851,6 +860,48 @@ describe('Training apps', function () {
         function labels(chart) {
             return cy.get(chart + ' .label').then(($labels) => [...$labels].map((label) => label.textContent));
         }
+
+        it('marks each day climbed on a calendar above the sessions', () => {
+            visitWith(Object.assign({}, logs, {
+                lapTimerLog: [{ id: 20, date: '2026-09-13', total: 60000, laps: 3, rating: 0 }]   // a second on the 13th
+            }));
+            cy.get('#sessionCalendar svg').should('be.visible');
+            // each day in the colour of its hardest grade, as the charts band them:
+            // V10 is very hard, the tick list's 7a hard, V3 medium and V1 easy
+            cy.get('#sessionCalendar rect[data-date="2026-09-13"]').should('have.class', 'band-vhard')
+                .find('title').should('have.text', '13 Sep 2026: 2 sessions, hardest very hard');
+            cy.get('#sessionCalendar rect[data-date="2026-09-12"]').should('have.class', 'band-hard');
+            cy.get('#sessionCalendar rect[data-date="2026-09-03"]').should('have.class', 'band-medium');
+            cy.get('#sessionCalendar rect[data-date="2026-07-01"]').should('have.class', 'band-easy');
+            // a session with no grade in it, and a day with none
+            cy.get('#sessionCalendar rect[data-date="2026-08-01"]').should('have.class', 'plain');
+            cy.get('#sessionCalendar rect[data-date="2026-09-11"]').should('have.class', 'none')
+                .find('title').should('have.text', '11 Sep 2026: no sessions');
+            // today is the last square - nothing drawn for the rest of the week
+            cy.get('#sessionCalendar rect[data-date="2026-09-14"]').should('not.exist');
+            // 13 and 12 Sep, 10 and 3 Sep, 1 Aug and 1 Jul
+            cy.get('#sessionCalendar rect:not(.none)').should('have.length', 6);
+            cy.get('.calendar-key').should('have.text', '11 May – 13 Sep 2026 · 6 days climbed');
+        });
+
+        it('steps the calendar back through a year, 18 weeks at a time', () => {
+            visitWith(logs);
+            const earlier = '#sessionCalendar [aria-label="Earlier weeks"]';
+            const later = '#sessionCalendar [aria-label="Later weeks"]';
+            cy.get('#sessionCalendar rect').first().should('have.attr', 'data-date', '2026-05-11');   // a Monday
+            cy.get(later).should('not.be.visible');   // nothing after today
+            cy.get(earlier).click();
+            cy.get('.calendar-key').should('contain', '5 Jan – 10 May 2026');
+            cy.get('#sessionCalendar rect[data-date="2026-09-13"]').should('not.exist');
+            cy.get('#sessionCalendar rect').should('have.length', 18 * 7);
+            cy.get(earlier).click();
+            cy.get('.calendar-key').should('contain', '1 Sep 2025 – 4 Jan 2026');
+            // three lots of 18 weeks is as far back as it goes
+            cy.get(earlier).should('not.be.visible');
+            cy.get(later).click();
+            cy.get(later).click();
+            cy.get('.calendar-key').should('contain', '11 May – 13 Sep 2026');
+        });
 
         it('says there is nothing to chart with nothing logged', () => {
             cy.visit(progressUrl);
@@ -972,6 +1023,83 @@ describe('Training apps', function () {
             });
         });
 
+        describe('Backup', function () {
+            function visitSeeded() {
+                cy.visit(progressUrl, {
+                    onBeforeLoad(win) {
+                        win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]));
+                        win.localStorage.setItem('boulderGradeSystem', 'font');
+                        win.localStorage.setItem('boulderCurrent', JSON.stringify({ id: 9, date: '2026-09-13', climbs: [] }));
+                        win.localStorage.setItem('ukcLogbook', JSON.stringify({ imported: '2026-09-01', climbs: [] }));
+                    }
+                });
+            }
+
+            function restore(backup) {
+                cy.get('nav .icon-info').click();
+                cy.get('#backupFile').selectFile({ contents: Cypress.Buffer.from(typeof backup === 'string' ? backup : JSON.stringify(backup)),
+                    fileName: 'training-backup.json' }, { force: true });
+            }
+
+            it('saves every log and setting, without UKC or a session in progress', () => {
+                visitSeeded();
+                cy.get('nav .icon-info').click();
+                cy.get('#about').should('be.visible');
+                cy.contains('#about button', 'SAVE').click();
+                cy.readFile('cypress/downloads/training-backup-2026-09-13.json').then((backup) => {
+                    expect(backup.backup).to.equal('multi-pitch training apps');
+                    expect(backup.logs.boulderLog).to.deep.equal([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]);
+                    expect(backup.settings.boulderGradeSystem).to.equal('font');
+                    expect(backup.logs).not.to.have.property('ukcLogbook');
+                    expect(JSON.stringify(backup)).not.to.contain('ukcLogbook').and.not.to.contain('boulderCurrent');
+                });
+            });
+
+            it('restores a backup, adding only what is missing', () => {
+                visitSeeded();
+                restore({
+                    backup: 'multi-pitch training apps', version: 1, saved: '2026-09-01',
+                    logs: {
+                        boulderLog: [{ id: 1, date: '2026-09-10', climbs: ['V9'], rating: 5 },   // already here
+                                     { id: 7, date: '2026-08-01', climbs: ['V4'], rating: 2 }],
+                        gilfordLog: [{ id: 4, date: '2026-08-12', climbs: [1, 3], rating: 4 }],
+                        ukcLogbook: [{ id: 1, date: '2026-01-01' }]
+                    },
+                    settings: { boulderGradeSystem: 'british', tradGradeSystem: 'uiaa', ukcLogbook: 'x', somethingElse: 'x' }
+                });
+                // the page starts again with the sessions in it, then says so
+                cy.get('#allLogs tbody tr').should('have.length', 3);
+                cy.get('.toast').should('exist');
+                cy.tick(100);
+                cy.get('.toast').should('be.visible').and('contain', 'Backup restored: 2 sessions added');
+                cy.window().then((win) => {
+                    let boulders = JSON.parse(win.localStorage.getItem('boulderLog'));
+                    expect(boulders.map((entry) => entry.id)).to.deep.equal([1, 7]);
+                    expect(boulders[0].climbs).to.deep.equal(['V2']);   // the phone's own copy wins
+                    expect(JSON.parse(win.localStorage.getItem('gilfordLog'))).to.have.length(1);
+                    expect(win.localStorage.getItem('boulderGradeSystem')).to.equal('font');   // set here already
+                    expect(win.localStorage.getItem('tradGradeSystem')).to.equal('uiaa');      // wasn't
+                    expect(win.localStorage.getItem('ukcLogbook')).to.contain('2026-09-01');
+                    expect(win.localStorage.getItem('somethingElse')).to.equal(null);
+                });
+                // and the same sessions again add nothing
+                cy.tick(6000);
+                cy.get('.toast').should('not.exist');
+                restore({ backup: 'multi-pitch training apps', logs: { boulderLog: [{ id: 7, date: '2026-08-01', climbs: ['V4'] }] } });
+                cy.get('.toast').should('exist');
+                cy.tick(100);
+                cy.get('.toast').should('be.visible').and('contain', 'Nothing new in that backup');
+            });
+
+            it('turns away a file that is not a backup', () => {
+                visitSeeded();
+                restore('{"imported":"2026-09-01","climbs":[]}');
+                cy.tick(100);
+                cy.get('.toast').should('contain', "Couldn't restore that file");
+                cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('boulderLog'))).to.have.length(1));
+            });
+        });
+
         it('says how much local storage is in use', () => {
             cy.visit(overviewUrl, {
                 onBeforeLoad(win) {
@@ -1046,7 +1174,7 @@ describe('Training apps', function () {
                 cy.get('#performance').should('be.visible');
                 cy.get('#tradFigure').should('not.be.visible');
                 cy.get('#ukcPrompt').should('be.visible');
-                cy.get('#ukcPrompt a').should('have.attr', 'href', '../trad/#ukc');
+                cy.get('#ukcPrompt a').should('have.attr', 'href', '/training/trad/#ukc');
                 // and not once there is one
                 choose(csv);
                 cy.get('#ukcPrompt').should('not.be.visible');

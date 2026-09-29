@@ -95,7 +95,7 @@ function displayTask(minute, preview){
     [["first", first], ["second", second]].forEach(([place, task]) => {
         document.getElementById(place + suffix).hidden = !task;
         if(!task){ return; }
-        document.getElementById(place + "_hold" + suffix).src = "img/" + task.hold;
+        document.getElementById(place + "_hold" + suffix).src = "/training/rings/img/" + task.hold;
         document.getElementById(place + "_task" + suffix).innerText = task.task;
     });
     if(!preview && first){ speak(first.task); }

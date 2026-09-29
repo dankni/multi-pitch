@@ -15,16 +15,17 @@
     <meta name="apple-mobile-web-app-title" content="Training">
     <link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
     <link rel="icon" href="/img/favicon/android-icon-192x192.png">
-    <link href="../common/style.css" rel="stylesheet" />
-    <link href="../common/fontello.css" rel="stylesheet" />
-    <link href="../common/page.css" rel="stylesheet" />
-    <link href="style.css" rel="stylesheet" />
+    <link href="/training/common/style.css" rel="stylesheet" />
+    <link href="/training/common/fontello.css" rel="stylesheet" />
+    <link href="/training/common/page.css" rel="stylesheet" />
+    <link href="/training/progress/style.css" rel="stylesheet" />
     <title>Climbing Progress</title>
   </head>
   <body>
     <nav>
-        <!-- both sides empty, so the title stays centred -->
-        <div class="left-nav"></div>
+        <div class="left-nav">
+            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Back up your sessions"></button>
+        </div>
         <h1>Progress</h1>
         <div class="right-nav">
             <button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
@@ -33,7 +34,7 @@
 
     <!-- until a UKC logbook has been imported -->
     <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
-        Log climbs on UKC? <a href="../trad/#ukc">Import your UKC logbook</a> to chart them here too.
+        Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
     </p>
 
     <!-- Drawn by charts.js from the apps' logs and an imported UKC logbook, and
@@ -82,6 +83,7 @@
     <section class="sessions" id="sessions" hidden>
         <h2>Your sessions</h2>
         <p class="sessions-note" id="sessionsStats"></p>
+        <div id="sessionCalendar"></div>
         <div id="allLogs"></div>
         <p class="sessions-note" id="sessionsFoot">
             Read off this device only &ndash; the apps never upload anything. Open an app to
@@ -89,11 +91,32 @@
         </p>
     </section>
 
-    <script src="../common/gilford-routes.js"></script>
-    <script src="../common/ukc.js"></script>
-    <script src="../common/functions.js"></script>
-    <script src="../common/bottom-nav.js" defer></script>
-    <script src="charts.js"></script>
-    <script src="sessions.js"></script>
+    <aside id="about" class="overlay">
+        <h2>Back up</h2>
+        <p>
+            Your sessions only live on this device. Save a backup file of every app's log and
+            settings, and restore it here to put them back &ndash; on this phone or a new one.
+            Restoring adds what's missing and keeps what's already here. Your UKC logbook isn't
+            included: import it again from UKC.
+        </p>
+        <p class="backup-actions">
+            <button type="button" data-action="downloadBackup">
+                <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v10M3.5 7.5 8 12l4.5-4.5M2 14.5h12"/></svg>SAVE
+            </button>
+            <button type="button" class="quiet" data-action="chooseBackupFile">
+                <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 14V4M3.5 8.5 8 4l4.5 4.5M2 1.5h12"/></svg>RESTORE
+            </button>
+        </p>
+        <input type="file" id="backupFile" accept=".json,application/json" hidden data-change="importBackupFile" />
+        <button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
+    </aside>
+
+    <script src="/training/common/gilford-routes.js"></script>
+    <script src="/training/common/ukc.js"></script>
+    <script src="/training/common/functions.js"></script>
+    <script src="/training/common/bottom-nav.js" defer></script>
+    <script src="/training/progress/charts.js"></script>
+    <script src="/training/progress/sessions.js"></script>
+    <script src="/training/progress/backup.js"></script>
   </body>
 </html>

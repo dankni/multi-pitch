@@ -171,4 +171,89 @@
             + ". The rest are in each app, under the i. " + document.getElementById("sessionsFoot").innerHTML;
     }
     document.getElementById("sessions").hidden = false;
+
+    /* A square a day, GitHub style: weeks left to right, Monday at the top, in the
+       colour of the hardest grade climbed that day - the charts' easy, medium,
+       hard and very hard - or plain for a day with sessions but no grade in them.
+       18 weeks at a time, about 120 days, with arrows back through three of them:
+       a year. */
+    const perDay = {};
+    sessions.forEach(session => { perDay[session.date] = (perDay[session.date] || 0) + 1; });
+    const hardest = typeof hardestBands === "function" ? hardestBands() : {};
+    const dayLength = 86400000;
+    const calendarWeeks = 18;
+    const calendarPages = 3;
+    const calendar = document.getElementById("sessionCalendar");
+    let calendarPage = 0;   // 0 is the latest
+    let calendarWidth = 0;
+
+    function chevron(path){
+        return `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${path}"/></svg>`;
+    }
+
+    function drawCalendar(){
+        const left = 26, top = 14;
+        let step = Math.min(18, (calendarWidth - left) / calendarWeeks);   // squares no bigger than 16px
+        let size = step - 2;
+        let width = left + calendarWeeks * step;
+        let now = Date.parse(today());   // a UTC day, as the apps store them
+        let thisMonday = now - ((new Date(now).getUTCDay() + 6) % 7) * dayLength;
+        let start = thisMonday - ((calendarPage + 1) * calendarWeeks - 1) * 7 * dayLength;
+        let last = Math.min(now, start + (calendarWeeks * 7 - 1) * dayLength);
+        let days = 0, squares = "", months = "", lastMonth = -1, lastLabel = -4;
+
+        for(let week = 0; week < calendarWeeks; week++){
+            let monday = start + week * 7 * dayLength;
+            let month = new Date(monday).getUTCMonth();
+            // a month's name where it starts, with room for it and clear of the last one
+            if(month !== lastMonth && week - lastLabel >= 3 && left + week * step + 16 <= width){
+                months += `<text x="${(left + week * step).toFixed(1)}" y="9">${logMonths[month]}</text>`;
+                lastLabel = week;
+            }
+            lastMonth = month;
+            for(let day = 0; day < 7 && monday + day * dayLength <= last; day++){
+                let date = new Date(monday + day * dayLength).toISOString().slice(0, 10);
+                let count = perDay[date] || 0;
+                let band = hardest[date];
+                if(count > 0){ days++; }
+                let kind = count === 0 ? "none" : band ? band.cls : "plain";
+                let says = count === 0 ? "no sessions" : plural(count, "session") + (band ? ", hardest " + band.name.toLowerCase() : "");
+                squares += `<rect class="day ${kind}" data-date="${date}" x="${(left + week * step).toFixed(1)}"`
+                    + ` y="${(top + day * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}" rx="2">`
+                    + `<title>${logDate(date)}: ${says}</title></rect>`;
+            }
+        }
+        let weekdays = [["Mon", 0], ["Wed", 2], ["Fri", 4]]
+            .map(([name, row]) => `<text x="0" y="${(top + row * step + size - 1).toFixed(1)}">${name}</text>`).join("");
+        // "11 May - 13 Sep 2026", the first year only where it differs
+        let from = logDateParts(new Date(start).toISOString().slice(0, 10));
+        let to = logDateParts(new Date(last).toISOString().slice(0, 10));
+        let span = `${from.day}${from.year === to.year ? "" : " " + from.year} – ${to.day} ${to.year}`;
+
+        calendar.innerHTML = `<svg class="calendar" width="${width.toFixed(1)}" viewBox="0 0 ${width.toFixed(1)} ${Math.ceil(top + 7 * step)}" role="img"`
+            + ` aria-label="${span}: ${plural(days, "day")} climbed">${months}${weekdays}${squares}</svg>`
+            + `<div class="calendar-nav" style="max-width: ${width.toFixed(1)}px">`
+            + `<button type="button" class="icon-button calendar-arrow" data-calendar="1" aria-label="Earlier weeks"${calendarPage === calendarPages - 1 ? " disabled" : ""}>${chevron("M10 3 5 8l5 5")}</button>`
+            + `<p class="sessions-note calendar-key">${span} &middot; ${plural(days, "day")} climbed</p>`
+            + `<button type="button" class="icon-button calendar-arrow" data-calendar="-1" aria-label="Later weeks"${calendarPage === 0 ? " disabled" : ""}>${chevron("M6 3l5 5-5 5")}</button>`
+            + `</div>`;
+    }
+
+    calendar.addEventListener("click", event => {
+        let arrow = event.target.closest("[data-calendar]");
+        if(arrow === null || arrow.disabled){ return; }
+        calendarPage = Math.max(0, Math.min(calendarPages - 1, calendarPage + Number(arrow.dataset.calendar)));
+        drawCalendar();
+        calendar.querySelector(`[data-calendar="${arrow.dataset.calendar}"]`).focus();   // keep the keyboard where it was
+    });
+
+    // drawn to its column, and again when that changes width - a window resized, or a phone turned
+    function fitCalendar(){
+        let width = Math.round(calendar.clientWidth) || 520;
+        if(width === calendarWidth){ return; }
+        calendarWidth = width;
+        drawCalendar();
+    }
+    fitCalendar();
+    if(typeof ResizeObserver === "function"){ new ResizeObserver(fitCalendar).observe(calendar); }
 })();

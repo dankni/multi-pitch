@@ -448,6 +448,21 @@
         }
     }
 
+    // The hardest band climbed each day, by date - for the calendar in sessions.js
+    window.hardestBands = function(){
+        let logs = readLogs();
+        let hardest = {};
+        [[sportClimbs, sportBand], [boulderClimbs, boulderBand], [tradClimbs, tradBand]].forEach(([climbsOf, bandOf]) => {
+            climbsOf(logs).forEach(climb => {
+                let band = bandOf(climb.grade);
+                if(hardest[climb.date] === undefined || bands.indexOf(band) > bands.indexOf(hardest[climb.date])){
+                    hardest[climb.date] = band;
+                }
+            });
+        });
+        return hardest;
+    };
+
     // the last script on the page, so everything it draws into is already there
     drawProgress();
 })();
