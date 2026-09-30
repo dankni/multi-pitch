@@ -54,6 +54,7 @@ function toggleClimb(button){
     position === -1 ? session.climbs.push(id) : session.climbs.splice(position, 1);
     button.classList.toggle("ticked", position === -1);
     button.setAttribute("aria-pressed", position === -1);
+    if(position === -1){ haptic(); }   // a tick, not taking one back
     keepSession();
     updateSummary();
     cheer(before);

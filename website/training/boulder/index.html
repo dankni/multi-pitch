@@ -20,6 +20,7 @@
 	<link href="/training/common/log.css" rel="stylesheet" />
 	<script src="/training/common/functions.js" ></script>
 	<script src="/training/common/bottom-nav.js" defer></script>
+	<script src="/training/common/grades.js" ></script>
 	<script src="/training/common/log.js" ></script>
 	<script src="/training/common/ladder.js" ></script>
 	<script src="/training/boulder/main.js" ></script>
@@ -99,6 +100,12 @@
 				<label for="system-hueco">Hueco (V)</label>
 			</div>
 		</fieldset>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleSplitLow" id="splitLow"/>
+			<span class="label-content">
+				<i class="demo-icon icon-menu"></i> Split out low grades <span class="switch-state"></span>
+			</span>
+		</label>
 		<label class="switch-label">
 			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
 			<span class="label-content">

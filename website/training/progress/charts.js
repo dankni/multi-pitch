@@ -143,10 +143,11 @@
                 if(typeof grade === "string"){ climbs.push({ "date" : entry.date, "grade" : grade }); }
             });
         });
-        // sport climbs from a gym session
+        // sport climbs from a gym session - 4c as 4+ and so on, if its low grades were split out
         entriesOf(logs, "boulderLog").forEach(entry => {
-            list(entry.sport).forEach(grade => {
-                if(sportLadder.includes(grade)){ climbs.push({ "date" : entry.date, "grade" : grade }); }
+            list(entry.sport).forEach(tapped => {
+                let grade = typeof tapped === "string" ? ukc.sportGrade(tapped) : null;
+                if(grade !== null){ climbs.push({ "date" : entry.date, "grade" : grade }); }
             });
         });
         // and sport climbs from an imported UKC logbook
@@ -447,6 +448,9 @@
             window.addEventListener("resize", redraw);
         }
     }
+
+    // The band a grade is charted in - for the grade conversions on the info panel
+    window.gradeBands = { "boulder" : boulderBand, "sport" : sportBand, "trad" : tradBand };
 
     // The hardest band climbed each day, by date - for the calendar in sessions.js
     window.hardestBands = function(){

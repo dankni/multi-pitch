@@ -5,46 +5,31 @@
    Boulders are in `climbs`, as they were before sport was added, so older
    sessions and the progress charts that read them are unchanged. */
 
-/* The bouldering ladder in the three systems a UK wall labels in. Conversions
-   are approximate and argued over; these follow the usual UK gym tables, and are
-   only ever displayed - a session stores the V grade. Font grades carry their f
-   so a tile can't be read as the French sport grade. */
-const grades = [
-    { "v" : "V0",  "font" : "f4",   "brit" : "4a" },
-    { "v" : "V1",  "font" : "f5",   "brit" : "4b" },
-    { "v" : "V2",  "font" : "f5+",  "brit" : "4c" },
-    { "v" : "V3",  "font" : "f6A",  "brit" : "5a" },
-    { "v" : "V4",  "font" : "f6B",  "brit" : "5b" },
-    { "v" : "V5",  "font" : "f6C",  "brit" : "5c" },
-    { "v" : "V6",  "font" : "f7A",  "brit" : "6a" },
-    { "v" : "V7",  "font" : "f7A+", "brit" : "6b" },
-    { "v" : "V8",  "font" : "f7B",  "brit" : "6b" },
-    { "v" : "V9",  "font" : "f7C",  "brit" : "6c" },
-    { "v" : "V10", "font" : "f7C+", "brit" : "7a" },
-    { "v" : "V11", "font" : "f8A",  "brit" : "7a" },
-    { "v" : "V12", "font" : "f8A+", "brit" : "7b" },
-    { "v" : "V13", "font" : "f8B",  "brit" : "7b" },
-    { "v" : "V14", "font" : "f8B+", "brit" : "7b" },
-    { "v" : "V15", "font" : "f8C",  "brit" : "7c" },
-    { "v" : "V16", "font" : "f8C+", "brit" : "7c" },
-    { "v" : "V17", "font" : "f9A",  "brit" : "7c" }
-];
+// The bouldering ladder: V, Font and British, from common/grades.js
+const grades = boulderGradeTable;
 
-// French, as a UK wall labels its routes, and all on the progress page's sport ladder
-const sportGrades = ["4", "4+", "5", "5+", "6a", "6b", "6c", "7a", "7b", "7c",
-    "8a", "8b", "8c", "9a", "9b", "9c"];
+// The sport ladder, from common/grades.js: 4 to 5+, or 4a to 5c once split out
+const splitKey = "boulderSplitLow";
+
+function splitLowGrades(){
+    return localStorage.getItem(splitKey) === "true";
+}
+function sportGrades(){
+    return splitLowGrades() ? gymSportGradesSplit : gymSportGrades;
+}
 
 const app = {
     "logKey" : "boulderLog",
     "currentKey" : "boulderCurrent",
     "systemKey" : "boulderGradeSystem",
     "defaultSystem" : "hueco",
-    // V0 to V10 and 4 to 7c to start with, as far as V17 and 9c
+    // V0 to V10 and 4 to 7c to start with, as far as V17 and 9c. The sport
+    // ladder's order says which of 4+ and 4c is harder, whichever are on it.
     "ladders" : {
         "boulder" : { "list" : "climbs", "shown" : "shown",      "names" : grades.map(grade => grade.v),
                       "starts" : 11, "noun" : "boulder" },
-        "sport"   : { "list" : "sport",  "shown" : "sportShown", "names" : sportGrades,
-                      "starts" : 10, "noun" : "sport climb" }
+        "sport"   : { "list" : "sport",  "shown" : "sportShown", "names" : sportGrades(),
+                      "order" : gymSportOrder, "starts" : sportGrades().length - 6, "noun" : "sport climb" }
     },
     "grades" : grades,
     "gradeKey" : "v",
@@ -58,7 +43,10 @@ const app = {
     "toEntry" : ladderEntry,
     "hasClimbs" : ladderHasClimbs,
     "draw" : drawLadder,
-    "onLoad" : loadGradeSystem,
+    "onLoad" : () => {
+        loadGradeSystem();
+        document.getElementById("splitLow").checked = splitLowGrades();
+    },
     "logView" : {
         "key" : "boulderLog",
         "order" : byDate,
@@ -81,3 +69,20 @@ const app = {
         }
     }
 };
+
+/* Split out low grades, under the cog: 4 to 5+ on the sport ladder as 4a to 5c.
+   A session keeps its grades as tapped, so the ladder on show grows or shrinks
+   by the two it gains or loses rather than dropping 7c off the top. */
+function toggleSplitLow(input){
+    localStorage.setItem(splitKey, input.checked);
+    let sport = app.ladders.sport;
+    let before = sport.names.length;
+    sport.names = sportGrades();
+    sport.starts = sport.names.length - 6;
+    if(session !== null){
+        session.sportShown = shownGrades("sport") + sport.names.length - before;
+        keepSession();
+        drawGrades();
+        updateSummary();
+    }
+}

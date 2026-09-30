@@ -186,6 +186,7 @@ function toggleClimb(button){
     let index = Number(button.dataset.index);
     let position = session.ticked.indexOf(index);
     position === -1 ? session.ticked.push(index) : session.ticked.splice(position, 1);
+    if(position === -1){ haptic(); }   // a tick, not taking one back
     keepSession();
     session.ticked.length === session.climbs.length ? completeList() : drawAll();
 }

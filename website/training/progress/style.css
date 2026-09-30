@@ -2,7 +2,7 @@
 
 /* How hard a grade is, for the charts' bars and the calendar's days: each takes
    its colour from --c, which its band class sets */
-.performance, .sessions {
+.performance, .sessions, #about {
     --band-easy: light-dark(#2a9d4a, #248a3c);
     --band-medium: #eda100;
     --band-hard: light-dark(#e34948, #e25550);
@@ -36,6 +36,39 @@
     margin: 0;
     padding-left: 1rem;
     padding-right: 1rem;
+}
+/* Bouldering or routes, and the table of it: a colour for each grade the charts
+   count, and a row that fits a phone */
+.conversion-picker {
+    margin-top: -4px;
+}
+.conversion-picker .nice-radios + label {
+    max-width: 120px;
+}
+.conversion-table {
+    font-size: 13px;
+}
+.conversion-table td {
+    padding: 6px 3px;
+}
+.conversion-table .between {
+    font-size: 11px;
+    opacity: 0.65;
+}
+.conversion-table small {
+    display: block;
+    padding-left: 16px;   /* under the grade, past its swatch */
+    font-size: 12px;
+    opacity: 0.75;
+}
+.conversion-table abbr {
+    text-decoration: none;
+}
+.conversion-table .swatch {
+    vertical-align: -1px;
+}
+.overlay .conversion-note {
+    margin: 16px auto 60px;
 }
 .arrow {
     flex: 0 0 auto;
@@ -178,6 +211,9 @@
     margin: 0 0 6px;
     font-size: 18px;
 }
+.sessions .log-heading {
+    margin-bottom: 0;
+}
 /* The calendar of days climbed: a day in its hardest grade's band colour,
    plain for sessions with no grade, and faint for none */
 .sessions {
@@ -196,7 +232,8 @@
     fill: currentColor;
     opacity: 0.7;
 }
-.calendar .day { fill: var(--c); }
+.calendar .day { fill: var(--c); cursor: pointer; }
+.calendar .none { cursor: default; }
 .calendar .none { fill: var(--day-none); }
 .calendar .plain { fill: var(--day-plain); }
 /* The weeks on show, between the arrows back and forward through the year */

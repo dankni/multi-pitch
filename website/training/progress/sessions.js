@@ -24,9 +24,8 @@
         return Array.isArray(value) ? value : [];
     }
 
-    // The gym session's sport ladder, as in boulder/main.js - 4+ and 6a don't sort as text
-    const sportOrder = ["4", "4+", "5", "5+", "6a", "6b", "6c", "7a", "7b", "7c",
-        "8a", "8b", "8c", "9a", "9b", "9c"];
+    // The gym session's sport grades, from common/grades.js - 4+ and 6a don't sort as text
+    const sportOrder = gymSportOrder;
 
     function tradSession(entry){
         let climbs = list(entry.climbs);
@@ -178,7 +177,13 @@
        18 weeks at a time, about 120 days, with arrows back through three of them:
        a year. */
     const perDay = {};
-    sessions.forEach(session => { perDay[session.date] = (perDay[session.date] || 0) + 1; });
+    sessions.forEach(session => { (perDay[session.date] = perDay[session.date] || []).push(session); });
+
+    // A day's sessions as the log names them, a line each - its hover text, and what a tap shows
+    function daySays(date){
+        return [logDate(date)].concat((perDay[date] || []).map(session =>
+            session.app.name + ": " + session.title + (session.detail ? " · " + session.detail : ""))).join("\n");
+    }
     const hardest = typeof hardestBands === "function" ? hardestBands() : {};
     const dayLength = 86400000;
     const calendarWeeks = 18;
@@ -213,14 +218,13 @@
             lastMonth = month;
             for(let day = 0; day < 7 && monday + day * dayLength <= last; day++){
                 let date = new Date(monday + day * dayLength).toISOString().slice(0, 10);
-                let count = perDay[date] || 0;
+                let count = (perDay[date] || []).length;
                 let band = hardest[date];
                 if(count > 0){ days++; }
                 let kind = count === 0 ? "none" : band ? band.cls : "plain";
-                let says = count === 0 ? "no sessions" : plural(count, "session") + (band ? ", hardest " + band.name.toLowerCase() : "");
                 squares += `<rect class="day ${kind}" data-date="${date}" x="${(left + week * step).toFixed(1)}"`
                     + ` y="${(top + day * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}" rx="2">`
-                    + `<title>${logDate(date)}: ${says}</title></rect>`;
+                    + `<title>${escapeHtml(count === 0 ? logDate(date) + ": no sessions" : daySays(date))}</title></rect>`;
             }
         }
         let weekdays = [["Mon", 0], ["Wed", 2], ["Fri", 4]]
@@ -240,6 +244,13 @@
     }
 
     calendar.addEventListener("click", event => {
+        // a day with sessions: the hover text, which a phone has no hover to show
+        let day = event.target.closest(".day:not(.none)");
+        if(day !== null){
+            event.stopPropagation();   // or the page's own listener closes the note again
+            showNote(day, daySays(day.dataset.date), "", "Sessions on " + day.dataset.date);
+            return;
+        }
         let arrow = event.target.closest("[data-calendar]");
         if(arrow === null || arrow.disabled){ return; }
         calendarPage = Math.max(0, Math.min(calendarPages - 1, calendarPage + Number(arrow.dataset.calendar)));

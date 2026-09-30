@@ -185,7 +185,8 @@ const ukc = (function(){
     }
 
     return { "key" : key, "tradLadder" : tradLadder, "sportLadder" : sportLadder,
-             "importText" : importText, "load" : load, "climbs" : climbs, "hardest" : hardest, "summary" : summary };
+             "importText" : importText, "load" : load, "climbs" : climbs, "hardest" : hardest, "summary" : summary,
+             "sportGrade" : sportGrade };
 })();
 
 function chooseUkcFile(){

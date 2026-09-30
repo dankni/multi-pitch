@@ -548,6 +548,21 @@ function hideCogHint(){
     setTimeout(() => hint.remove(), 300);
 }
 
+/* A tap that records something flashes green for a moment - the lap button, a
+   grade tile - rather than moving the screen about; see .flash in style.css */
+function flash(element){
+    haptic();
+    if(element === null){ return; }
+    element.classList.add("flash");
+    setTimeout(() => element.classList.remove("flash"), 250);
+}
+
+/* And a buzz too short to be more than a tap back: with flash(), and on a tick.
+   Android only - iOS Safari has no vibrate, and nothing happens. */
+function haptic(){
+    if(typeof navigator.vibrate === "function"){ navigator.vibrate(15); }
+}
+
 /* A line along the bottom that goes by itself. Each is its own card, stacked
    above any still up, so two things said on one tap are both seen; the same
    message again restarts its clock rather than stacking a copy. With onTap its

@@ -270,6 +270,15 @@ describe('Training apps', function () {
             cy.get('#summary').should('contain', '7a'); // route 12 is the hardest ticked
         });
 
+        it('buzzes on a tick but not on taking one back', () => {
+            cy.visit(gilfordUrl, { onBeforeLoad: win => cy.stub(win.navigator, 'vibrate').as('vibrate') });
+            cy.get('#primaryButton').click();
+            cy.get('#route7').click();
+            cy.get('@vibrate').should('have.been.calledOnce');
+            cy.get('#route7').click();
+            cy.get('@vibrate').should('have.been.calledOnce');
+        });
+
         it('discards a session with nothing ticked on the first tap', () => {
             cy.visit(gilfordUrl);
             cy.get('#primaryButton').click();
@@ -436,6 +445,26 @@ describe('Training apps', function () {
             cy.get('#row-V3 .grade-count').should('have.text', '2');
         });
 
+        it('flashes a grade green for a moment when it is tapped, with a buzz', () => {
+            cy.visit(boulderUrl, { onBeforeLoad: win => cy.stub(win.navigator, 'vibrate').as('vibrate') });
+            cy.get('#primaryButton').click();
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('#row-V3 .grade-add').should('have.class', 'flash');
+            cy.tick(300);
+            cy.get('#row-V3 .grade-add').should('not.have.class', 'flash');
+            cy.get('@vibrate').should('have.been.calledOnceWith', 15);
+        });
+
+        it('flashes a grade with a + in it, and counts it', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('[id="row-5+"] .grade-add').click();
+            cy.get('[id="row-5+"] .grade-add').should('have.class', 'flash');
+            cy.get('#climbCount').should('have.text', '1');
+            cy.get('#summary').should('contain', '5+');
+        });
+
         it('takes one back with the minus beside the grade', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();
@@ -505,6 +534,34 @@ describe('Training apps', function () {
             cy.get('#discard').click();   // nothing climbed, so one tap is enough
             cy.get('#primaryButton').click();
             cy.get('#row-V11').should('not.exist');
+        });
+
+        it('splits 4 to 5+ into 4a to 5c when the setting is on', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('[id="row-5+"] .grade-add').click();
+            cy.get('nav .icon-cog').click();
+            cy.get('#splitLow').check({ force: true });
+            cy.get('#settings .close').click();
+            // the two it gains are on show, and 7c is still at the top
+            cy.get('#grades .route-grade').then(($grades) => {
+                expect([...$grades].map((grade) => grade.textContent)).to.deep.equal(
+                    ['4a', '4b', '4c', '5a', '5b', '5c', '6a', '6b', '6c', '7a', '7b', '7c']);
+            });
+            cy.get('#row-4c .grade-add').click();
+            // the 5+ from before still counts, and still outranks 4c
+            cy.get('#climbCount').should('have.text', '2');
+            cy.get('#summary').should('have.text', 'Hardest: 5+');
+            cy.get('#row-5c .grade-add').click();
+            cy.get('#summary').should('have.text', 'Hardest: 5c');
+            cy.window().then((win) => expect(win.localStorage.getItem('boulderSplitLow')).to.equal('true'));
+            // and off again
+            cy.get('nav .icon-cog').click();
+            cy.get('#splitLow').uncheck({ force: true });
+            cy.get('#settings .close').click();
+            cy.get('#grades .route-grade').first().should('have.text', '4');
+            cy.get('#grades .route-grade').should('have.length', 10);
         });
 
         // an old session with an 8A on it has to be editable, ladder or no ladder
@@ -869,7 +926,13 @@ describe('Training apps', function () {
             // each day in the colour of its hardest grade, as the charts band them:
             // V10 is very hard, the tick list's 7a hard, V3 medium and V1 easy
             cy.get('#sessionCalendar rect[data-date="2026-09-13"]').should('have.class', 'band-vhard')
-                .find('title').should('have.text', '13 Sep 2026: 2 sessions, hardest very hard');
+                // the day's sessions as the log below names them, a line each
+                .find('title').invoke('text').then((text) => {
+                    const lines = text.split('\n');
+                    expect(lines).to.have.length(3);
+                    expect(lines[0]).to.equal('13 Sep 2026');
+                    expect(text).to.contain('3 laps').and.contain('hardest V10');
+                });
             cy.get('#sessionCalendar rect[data-date="2026-09-12"]').should('have.class', 'band-hard');
             cy.get('#sessionCalendar rect[data-date="2026-09-03"]').should('have.class', 'band-medium');
             cy.get('#sessionCalendar rect[data-date="2026-07-01"]').should('have.class', 'band-easy');
@@ -882,6 +945,18 @@ describe('Training apps', function () {
             // 13 and 12 Sep, 10 and 3 Sep, 1 Aug and 1 Jul
             cy.get('#sessionCalendar rect:not(.none)').should('have.length', 6);
             cy.get('.calendar-key').should('have.text', '11 May – 13 Sep 2026 · 6 days climbed');
+        });
+
+        it('shows the sessions of a day on a tap, for a phone with no hover', () => {
+            visitWith(logs);
+            cy.get('#sessionCalendar rect[data-date="2026-09-12"]').click();
+            cy.get('#sessionNote').should('be.visible').and('contain', '12 Sep 2026').and('contain', '3 climbs');
+            // tapped again, or anywhere else, it goes
+            cy.get('#sessionCalendar rect[data-date="2026-09-12"]').click();
+            cy.get('#sessionNote').should('not.exist');
+            // and a day with nothing on it has nothing to show
+            cy.get('#sessionCalendar rect[data-date="2026-09-11"]').click();
+            cy.get('#sessionNote').should('not.exist');
         });
 
         it('steps the calendar back through a year, 18 weeks at a time', () => {
@@ -970,6 +1045,14 @@ describe('Training apps', function () {
                 .and('contain', '1 boulder, 3 sport climbs').and('contain', 'hardest V2 · 7a');
         });
 
+        it('charts split out low grades on the rungs they fall on', () => {
+            visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: [], sport: ['4a', '4c', '5b', '5c'], rating: 0 }] });
+            cy.get('#sportTotal').should('have.text', '4 climbs in the last year, 0 in the year before');
+            labels('#sportChart').should('include.members', ['4', '4+', '5', '5+']);
+            cy.get('#allLogs tbody tr').first().should('contain', '4 sport climbs').and('contain', 'hardest 5c');
+            cy.get('.log-heading').should('have.text', 'Activity Log');
+        });
+
         it('compares the last 7 days with the 7 before', () => {
             visitWith(logs);
             cy.get('label[for="range-7"]').click();
@@ -1020,6 +1103,29 @@ describe('Training apps', function () {
                 cy.get('#allLogs tbody tr').should('have.length', 2);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', 'UKC data ignored');
                 cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '6 Aug');
+            });
+        });
+
+        describe('Grade conversions', function () {
+            it('shows bouldering first, each V grade in its chart colour', () => {
+                cy.visit(appUrl + '/training/progress/');
+                cy.get('nav .icon-info').click();
+                cy.get('#boulderConversions tbody tr').should('have.length', 18).and('be.visible');
+                cy.get('#boulderConversions tbody tr').eq(3).should('contain', 'V3').and('contain', 'f6A').and('contain', '5a');
+                cy.get('#boulderConversions tbody tr').eq(0).find('.swatch').should('have.class', 'band-easy');
+                cy.get('#boulderConversions tbody tr').eq(8).find('.swatch').should('have.class', 'band-vhard');
+                cy.get('#routeConversions').should('not.be.visible');
+            });
+
+            it('switches to routes in five systems', () => {
+                cy.visit(appUrl + '/training/progress/');
+                cy.get('nav .icon-info').click();
+                cy.get('label[for="conversions-route"]').click();
+                cy.get('#boulderConversions').should('not.be.visible');
+                cy.get('#routeConversions thead').should('contain', 'UIAA').and('contain', 'YDS').and('contain', 'French');
+                cy.get('#routeConversions tbody tr').should('have.length', 17);
+                cy.get('#routeConversions tbody tr').eq(6).should('contain', 'E1').and('contain', '5.10a to c');
+                cy.get('#routeConversions tbody tr').eq(6).find('.swatch').should('have.class', 'band-hard');
             });
         });
 

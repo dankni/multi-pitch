@@ -2,10 +2,11 @@
    bouldering and sport ladders, and trad's one. Runs inside common/log.js; the
    app adds to its `app`:
 
-     ladders  : { name : { list, shown, names, starts, noun } } - the session
-                field a ladder's climbs go in, the one saying how many rungs are
-                on show, its grades easiest first, how many a session starts
-                with, and what one climb is called,
+     ladders  : { name : { list, shown, names, starts, noun, order } } - the
+                session field a ladder's climbs go in, the one saying how many
+                rungs are on show, its grades easiest first, how many a session
+                starts with, what one climb is called, and optionally every grade
+                it has ever had, easiest first, to find the hardest by,
      grades   : a row per grade naming it in each system,
      gradeKey : the system a session stores a grade by,
      systems  : { name : { main, also } } - the system a grade is called by, and
@@ -63,10 +64,12 @@ function hardestRung(ladder, climbs){
     return climbs.reduce((hardest, name) => Math.max(hardest, app.ladders[ladder].names.indexOf(name)), -1);
 }
 
+// by a ladder's order where it has one - a grade that is no longer on it still counts
 function hardestGrade(ladder, climbs){
-    let rung = hardestRung(ladder, climbs);
+    let order = app.ladders[ladder].order || app.ladders[ladder].names;
+    let rung = climbs.reduce((hardest, name) => Math.max(hardest, order.indexOf(name)), -1);
     if(rung === -1){ return ""; }
-    let name = app.ladders[ladder].names[rung];
+    let name = order[rung];
     let grade = gradeOf(name);
     return grade ? mainGrade(grade) : name;
 }
@@ -132,6 +135,8 @@ function addClimb(button){
     climbsOn(ladder).push(name);
     keepSession();
     drawGradeRow(name);
+    // the redrawn tile, found by id: as a selector the + in 5+ or 6a+ is CSS
+    flash(document.getElementById("row-" + name).querySelector(".grade-add"));
     updateSummary();
 }
 

@@ -28,10 +28,6 @@ body:not([data-state="idle"]) #addMissingLink {
     border-radius: 8px;
     vertical-align: top;
 }
-.lap-button.flash {
-    background: var(--confirm);
-    transform: scale(0.99);
-}
 .lap-button i {
     font-size: 1rem;
 }

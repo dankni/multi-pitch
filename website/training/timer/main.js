@@ -96,9 +96,7 @@ function recordLap(){
     if(!isRunning()){ return; }
     session.laps = session.laps + 1;
     keepSession();
-    let button = document.getElementById("lapButton");
-    button.classList.add("flash");
-    setTimeout(() => button.classList.remove("flash"), 250);
+    flash(document.getElementById("lapButton"));
     drawAll();
 }
 

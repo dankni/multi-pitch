@@ -913,6 +913,12 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     border-left-color: var(--ink);
     box-shadow: inset 0 0 0 1px var(--ink);
 }
+/* see flash() in functions.js; after the tile's own hover and focus, which it beats */
+.flash, .flash:hover, .flash:focus {
+    background: var(--confirm);
+    color: #ffffff;
+    transform: scale(0.99);
+}
 .route-colour {
     font-size: 13px;
     opacity: 0.75;

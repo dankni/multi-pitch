@@ -24,7 +24,7 @@
   <body>
     <nav>
         <div class="left-nav">
-            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Back up your sessions"></button>
+            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Back up your sessions and see grade conversions"></button>
         </div>
         <h1>Progress</h1>
         <div class="right-nav">
@@ -84,6 +84,7 @@
         <h2>Your sessions</h2>
         <p class="sessions-note" id="sessionsStats"></p>
         <div id="sessionCalendar"></div>
+        <h2 class="log-heading">Activity Log</h2>
         <div id="allLogs"></div>
         <p class="sessions-note" id="sessionsFoot">
             Read off this device only &ndash; the apps never upload anything. Open an app to
@@ -108,15 +109,31 @@
             </button>
         </p>
         <input type="file" id="backupFile" accept=".json,application/json" hidden data-change="importBackupFile" />
+
+        <h2>Grade conversions</h2>
+        <div class="picker range-picker conversion-picker" role="radiogroup" aria-label="Grade conversions for">
+            <input type="radio" name="conversions" class="nice-radios" id="conversions-boulder" value="boulder" data-change="showConversions" checked />
+            <label for="conversions-boulder">Bouldering</label>
+            <input type="radio" name="conversions" class="nice-radios" id="conversions-route" value="route" data-change="showConversions" />
+            <label for="conversions-route">Routes</label>
+        </div>
+        <!-- Filled in by conversions.js from common/grades.js -->
+        <div id="boulderConversions"></div>
+        <div id="routeConversions" hidden></div>
+        <p class="sessions-note conversion-note">
+            Approximate Conversions
+        </p>
         <button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
     </aside>
 
     <script src="/training/common/gilford-routes.js"></script>
+    <script src="/training/common/grades.js"></script>
     <script src="/training/common/ukc.js"></script>
     <script src="/training/common/functions.js"></script>
     <script src="/training/common/bottom-nav.js" defer></script>
     <script src="/training/progress/charts.js"></script>
     <script src="/training/progress/sessions.js"></script>
     <script src="/training/progress/backup.js"></script>
+    <script src="/training/progress/conversions.js"></script>
   </body>
 </html>
