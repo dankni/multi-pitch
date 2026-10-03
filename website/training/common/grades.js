@@ -28,12 +28,14 @@ const boulderGradeTable = [
 
 /* The gym session's sport ladder: French, as a UK wall labels its routes, and
    all on the progress page's sport ladder. With "split out low grades" on, 4 to
-   5+ are 4a to 5c, as the chart counts them - see ukc.sportGrade. */
+   5+ are 4a to 5c, as the chart counts them - see ukc.sportGrade. "Show plus
+   grades" adds 6a+ after 6a and so on; there is no 9c+. */
+const gymSportLow = ["4", "4+", "5", "5+"];
+const gymSportLowSplit = ["4a", "4b", "4c", "5a", "5b", "5c"];
 const gymSportHigher = ["6a", "6b", "6c", "7a", "7b", "7c", "8a", "8b", "8c", "9a", "9b", "9c"];
-const gymSportGrades = ["4", "4+", "5", "5+"].concat(gymSportHigher);
-const gymSportGradesSplit = ["4a", "4b", "4c", "5a", "5b", "5c"].concat(gymSportHigher);
-// both in one order, to find the hardest of a session with either in it
-const gymSportOrder = ["4", "4a", "4b", "4+", "4c", "5", "5a", "5b", "5+", "5c"].concat(gymSportHigher);
+const gymSportHigherPlus = gymSportHigher.flatMap(grade => grade === "9c" ? [grade] : [grade, grade + "+"]);
+// all of them in one order, to find the hardest of a session with any in it
+const gymSportOrder = ["4", "4a", "4b", "4+", "4c", "5", "5a", "5b", "5+", "5c"].concat(gymSportHigherPlus);
 
 /* Routes, a row per British adjectival grade, each other system as the range
    it spans - [easiest, hardest], or one grade. D to E2 are the table on
@@ -58,3 +60,41 @@ const routeGradeTable = [
     { "uk" : "E10", "tech" : "7b",         "uiaa" : ["XI", "XI+"],     "french" : ["8c+", "9a"],  "yds" : ["5.14c", "5.14d"], "nordic" : ["10-", "10"] },
     { "uk" : "E11", "tech" : ["7b", "7c"], "uiaa" : ["XI+", "XII-"],   "french" : ["9a+", "9b"],  "yds" : ["5.15a", "5.15b"], "nordic" : ["10", "10+"] }
 ];
+
+// easiest first
+const tradLadder = ["M", "D", "HD", "VD", "HVD", "MS", "S", "HS", "MVS", "VS", "HVS",
+    "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11"];
+const sportLadder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+",
+    "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+",
+    "9a", "9a+", "9b", "9b+", "9c"];
+
+// A grade's colour band. Trad is banded on its own terms, not lined up with sport.
+const gradeBands = (function(){
+    const bands = [
+        { "cls" : "band-easy",   "name" : "Easy" },
+        { "cls" : "band-medium", "name" : "Medium" },
+        { "cls" : "band-hard",   "name" : "Hard" },
+        { "cls" : "band-vhard",  "name" : "Very hard" }
+    ];
+
+    function boulder(grade){
+        let rung = /^V\d+$/.test(grade) ? Number(grade.slice(1)) : -1;
+        return bands[rung >= 8 ? 3 : rung >= 5 ? 2 : rung >= 3 ? 1 : 0];
+    }
+
+    // off the ladder counts as very hard, except a gym's split 4a to 5c
+    function sport(grade){
+        if(/^[3-5][abc]?\+?$/.test(grade)){ return bands[0]; }
+        let rung = sportLadder.indexOf(grade);
+        if(rung === -1 || rung >= sportLadder.indexOf("7b")){ return bands[3]; }
+        return bands[rung >= sportLadder.indexOf("6c") ? 2 : rung >= sportLadder.indexOf("6a") ? 1 : 0];
+    }
+
+    function trad(grade){
+        let rung = tradLadder.indexOf(grade);
+        return bands[rung >= tradLadder.indexOf("E4") ? 3 : rung >= tradLadder.indexOf("E1") ? 2
+            : rung >= tradLadder.indexOf("MVS") ? 1 : 0];
+    }
+
+    return { "bands" : bands, "boulder" : boulder, "sport" : sport, "trad" : trad };
+})();

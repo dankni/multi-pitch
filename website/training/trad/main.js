@@ -40,7 +40,7 @@ const app = {
     // M to E3 to start with, as far as E11 - the hardest trad route there is
     "ladders" : {
         "trad" : { "list" : "climbs", "shown" : "shown", "names" : grades.map(grade => grade.brit),
-                   "starts" : 11, "noun" : "trad climb" }
+                   "starts" : 11, "noun" : "trad climb", "band" : gradeBands.trad }
     },
     "grades" : grades,
     "gradeKey" : "brit",

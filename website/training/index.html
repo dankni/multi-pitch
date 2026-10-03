@@ -36,7 +36,7 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
             /* every row as tall as the tallest card, so the cards all match */
             grid-auto-rows: 1fr;
-            gap: 12px;
+            gap: 10px;
         }
         @media (max-width: 600px) {
             .apps {
@@ -52,7 +52,7 @@
             color: light-dark(currentColor, #121212);
             background: light-dark(#F9F9F9, #BFBDBD);
             border-radius: 5px;
-            padding: 18px 20px;
+            padding: 12px 18px;
         }
         .app-card .demo-icon {
             font-size: 34px;
@@ -145,42 +145,6 @@
 
     <ul class="apps">
         <li>
-            <a class="app-card" href="/training/rings/">
-                <!-- AI generated SVG is a bit wonkey but good enough -->
-                <svg class="app-icon" viewBox="0 0 100 126" aria-hidden="true" focusable="false">
-                    <path fill="currentColor" fill-rule="evenodd" d="M11.5,0 C5.5,0.5 1,7 0,19 C0,29 2.2,37 4.5,44 C6.8,52 11,62 13.1,69 C15.2,82 18.6,97 20.9,107 C23,116 33,126 46,126 L54,126 C67,126 77,116 79.1,107 C81.4,97 84.8,82 86.9,69 C89,62 93.2,52 95.5,44 C97.8,37 100,29 100,19 C99,7 94.5,0.5 88.5,0 C85,3.5 81.5,8 78,8 C69,7 61,2.5 50,2.5 C39,2.5 31,7 22,8 C18.5,8 15,3.5 11.5,0 Z M26.5,22.5 H73.5 A8,8 0 0 1 81.5,30.5 V38.5 A8,8 0 0 1 73.5,46.5 H26.5 A8,8 0 0 1 18.5,38.5 V30.5 A8,8 0 0 1 26.5,22.5 Z M32,60 H68 A7,7 0 0 1 75,67 V75 A7,7 0 0 1 68,82 H32 A7,7 0 0 1 25,75 V67 A7,7 0 0 1 32,60 Z M38,94 H62 A6,6 0 0 1 68,100 V105 A6,6 0 0 1 62,111 H38 A6,6 0 0 1 32,105 V100 A6,6 0 0 1 38,94 Z"/>
-                </svg>
-                <div class="app-text">
-                    <h2>Rock Rings</h2>
-                    <p>
-                        The Metolius 10 min rock ring workout.
-                    </p>
-                </div>
-            </a>
-        </li>
-        <li>
-            <a class="app-card" href="/training/timer/">
-                <i class="demo-icon icon-ccw" aria-hidden="true"></i>
-                <div class="app-text">
-                    <h2>Circuit Session</h2>
-                    <p>
-                        A stopwatch with a lap button.
-                    </p>
-                </div>
-            </a>
-        </li>
-        <li>
-            <a class="app-card" href="/training/gilford/">
-                <i class="demo-icon icon-ok" aria-hidden="true"></i>
-                <div class="app-text">
-                    <h2>Gilford Wall</h2>
-                    <p>
-                        Gilford wall route tick list. 
-                    </p>
-                </div>
-            </a>
-        </li>
-        <li>
             <a class="app-card" href="/training/boulder/">
                 <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
                     <g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
@@ -199,25 +163,12 @@
             </a>
         </li>
         <li>
-            <a class="app-card" href="/training/endurance/">
-                <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-                    <path fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M6,56 H26 L36,28 L52,76 L62,50 L70,56 H94"/>
-                </svg>
+            <a class="app-card" href="/training/gilford/">
+                <i class="demo-icon icon-ok" aria-hidden="true"></i>
                 <div class="app-text">
-                    <h2>Endurance</h2>
+                    <h2>Gilford Wall</h2>
                     <p>
-                        Endurance system similar to Stefano Ghisolfi's so called doubles.
-                    </p>
-                </div>
-            </a>
-        </li>
-         <li>
-            <a class="app-card" href="/training/loft/">
-                <i class="demo-icon icon-mic" aria-hidden="true"></i>
-                <div class="app-text">
-                    <h2>Climbing Twister</h2>
-                    <p>
-                        Voice controlled endurance training, calls out random limbs and hold colours.
+                        Gilford wall route tick list. 
                     </p>
                 </div>
             </a>
@@ -229,8 +180,8 @@
                 <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
                     <g transform="rotate(30 50 50)">
                         <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round"
-                            d="M39,3 H61 L57,25 H43 Z M46,8 H54 V20 H46 Z"/>
-                        <path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" d="M50,25 V80"/>
+                            d="M39,5 Q50,0 61,5 L57,25 Q50,21 43,25 Z M46,9 Q50,7 54,9 V19 Q50,17 46,19 Z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" d="M50,24 Q56,52 50,80"/>
                         <path fill="none" stroke="currentColor" stroke-width="4.5"
                             d="M50,78 C41,84 42,96 50,96 C58,96 59,84 50,78 Z"/>
                     </g>
@@ -238,7 +189,55 @@
                 <div class="app-text">
                     <h2>Outside Climbing</h2>
                     <p>
-                        Log a day of trad climbing or import logs from UKC.
+                        Log trad climbing or import logs from UKC.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="/training/endurance/">
+                <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <path fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M6,56 H26 L36,28 L52,76 L62,50 L70,56 H94"/>
+                </svg>
+                <div class="app-text">
+                    <h2>Endurance</h2>
+                    <p>
+                        Endurance or power endurance system.
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="/training/timer/">
+                <i class="demo-icon icon-ccw" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Circuit Session</h2>
+                    <p>
+                        A stopwatch with a lap button.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="/training/rings/">
+                <!-- AI generated SVG is a bit wonkey but good enough -->
+                <svg class="app-icon" viewBox="0 0 100 126" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" fill-rule="evenodd" d="M11.5,0 C5.5,0.5 1,7 0,19 C0,29 2.2,37 4.5,44 C6.8,52 11,62 13.1,69 C15.2,82 18.6,97 20.9,107 C23,116 33,126 46,126 L54,126 C67,126 77,116 79.1,107 C81.4,97 84.8,82 86.9,69 C89,62 93.2,52 95.5,44 C97.8,37 100,29 100,19 C99,7 94.5,0.5 88.5,0 C85,3.5 81.5,8 78,8 C69,7 61,2.5 50,2.5 C39,2.5 31,7 22,8 C18.5,8 15,3.5 11.5,0 Z M26.5,22.5 H73.5 A8,8 0 0 1 81.5,30.5 V38.5 A8,8 0 0 1 73.5,46.5 H26.5 A8,8 0 0 1 18.5,38.5 V30.5 A8,8 0 0 1 26.5,22.5 Z M32,60 H68 A7,7 0 0 1 75,67 V75 A7,7 0 0 1 68,82 H32 A7,7 0 0 1 25,75 V67 A7,7 0 0 1 32,60 Z M38,94 H62 A6,6 0 0 1 68,100 V105 A6,6 0 0 1 62,111 H38 A6,6 0 0 1 32,105 V100 A6,6 0 0 1 38,94 Z"/>
+                </svg>
+                <div class="app-text">
+                    <h2>Rock Rings</h2>
+                    <p>
+                        The Metolius 10 min rock ring workout.
+                    </p>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="app-card" href="/training/loft/">
+                <i class="demo-icon icon-mic" aria-hidden="true"></i>
+                <div class="app-text">
+                    <h2>Climbing Twister</h2>
+                    <p>
+                        Voice controlled endurance training.
                     </p>
                 </div>
             </a>

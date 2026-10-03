@@ -161,6 +161,7 @@ function startSession(){
         "setClimb" : null     // the route the set on screen repeats
     };
     session.climbs = pickClimbs(poolFor(warmUpSteps, session.wall), warmUpSize, session.wall);
+    session.start = session.id;
     requestWakeLock();
     keepSession();
     drawAll();
@@ -254,6 +255,8 @@ function tickRest(){
 /* Saving */
 
 function openSavePanel(){
+    session.finish = Date.now();
+    keepSession();
     saving = true;
     drawAll();
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
@@ -263,25 +266,37 @@ const logView = {
     "key" : app.logKey,
     "describe" : entry => ({
         "title" : `${sessionTypes[entry.style] ? sessionTypes[entry.style].name : entry.style} off ${entry.maxGrade}`,
-        "detail" : `${plural(entry.sets, "set")} · ${entry.climbs} climbs · ${restMinutesOf(entry)} min rests · ${entry.wall === false ? "grades only" : "Gilford wall"}`
+        "detail" : `${plural(entry.sets, "set")} · ${entry.climbs} climbs · ${restMinutesOf(entry)} min rests · ${entry.wall === false ? "grades only" : "Gilford wall"}${entry.minutes ? " · " + sessionLength(entry) : ""}`
     }),
     "stats" : log => `${sessionCount(log)} · ${log.reduce((total, entry) => total + entry.climbs, 0)} climbs logged`
 };
 
+// A session can end part way through a list: what was ticked on it counts
+function climbsDone(){
+    let onScreen = session.stage === "warmup" || session.stage === "set" ? session.ticked.map(index => session.climbs[index]) : [];
+    return session.logged.concat(onScreen);
+}
+
+// a set finished on before a lap of it was ticked isn't one
+function setsDone(){
+    return session.stage === "set" && session.ticked.length === 0 ? session.setNumber - 1 : session.setNumber;
+}
+
 function saveSession(){
-    saveToLog(app.logKey, {
+    let climbs = climbsDone();
+    saveToLog(app.logKey, Object.assign({
         "id" : session.id,
         "date" : session.date,
         "style" : session.style,
         "maxGrade" : session.maxGrade,
         "wall" : session.wall,
         "rest" : restMinutesOf(session),
-        "sets" : session.setNumber,
-        "climbs" : session.logged.length,
-        "grades" : session.logged.map(climb => climb.grade),   // for the progress charts
+        "sets" : setsDone(),
+        "climbs" : climbs.length,
+        "grades" : climbs.map(climb => climb.grade),   // for the progress charts
         "rating" : session.rating,
         "comment" : sessionComment
-    });
+    }, sessionTiming(session)));
     closeSession();
     drawSessionLog(logView);
     openInfoBox();

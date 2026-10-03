@@ -43,18 +43,18 @@
                      sport.length > 0 ? plural(sport.length, "sport climb") : ""];
         let hardest = [hardestV(boulders), hardestSport === -1 ? "" : sportOrder[hardestSport]].filter(grade => grade !== "");
         return { "title" : title.filter(part => part !== "").join(", "),
-                 "detail" : hardest.length > 0 ? "hardest " + hardest.join(" · ") : "" };
+                 "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", sessionLength(entry)]) };
     }
 
     const apps = [
         { "key" : "boulderLog", "name" : "Gym Session", "href" : "/training/boulder/",
           "line" : gymSession },
         { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/",
-          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : "" }) },
+          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }) },
         { "key" : "enduranceLog", "name" : "Endurance", "href" : "/training/endurance/",
           "line" : entry => ({ "title" : (styleNames[entry.style] || entry.style || "Endurance")
                                    + (entry.maxGrade ? " off " + entry.maxGrade : ""),
-                               "detail" : plural(count(entry.sets), "set") + " · " + count(entry.climbs) + " climbs" }) },
+                               "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }) },
         { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/",
           "line" : entry => ({ "title" : plural(count(entry.laps), "lap") + (typeof entry.grade === "string" && entry.grade ? " of " + entry.grade : ""),
                                "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }) },

@@ -12,9 +12,9 @@ const backupFormat = "multi-pitch training apps";
 const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "loftLog", "rockRingsLog", "tradLog"];
 
 // stored as the apps wrote them, strings and all
-const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "tradGradeSystem", "enduranceWall", "enduranceRest",
+const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "tradGradeSystem", "enduranceWall", "enduranceRest",
     "enduranceGrade", "enduranceStyle", "lapTimerGrade", "colours", "tradMode", "difficulty",
-    "preventSleep", "overviewRange", "seenSettings", "trainingLastApp"];
+    "preventSleep", "overviewRange", "progressHidden", "seenSettings", "trainingLastApp"];
 
 function backupData(){
     let data = { "backup" : backupFormat, "version" : 1, "saved" : today(), "logs" : {}, "settings" : {} };

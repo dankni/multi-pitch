@@ -4,6 +4,7 @@
 const app = {
     "logKey" : "gilfordLog",
     "currentKey" : "gilfordCurrent",
+    "timed" : true,
     "newSession" : () => ({ "climbs" : [] }),
     "fromEntry" : entry => ({ "climbs" : entry.climbs.slice() }),
     "toEntry" : from => ({ "climbs" : from.climbs.slice() }),
@@ -18,7 +19,7 @@ const app = {
         "onEdit" : editSession,
         "describe" : entry => {
             let hardest = hardestGrade(entry.climbs);
-            return { "title" : plural(entry.climbs.length, "climb"), "detail" : hardest ? `hardest ${hardest}` : "" };
+            return { "title" : plural(entry.climbs.length, "climb"), "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", sessionLength(entry)]) };
         },
         "stats" : log => {
             let total = log.reduce((count, entry) => count + entry.climbs.length, 0);

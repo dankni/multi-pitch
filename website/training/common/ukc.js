@@ -13,14 +13,6 @@ const ukc = (function(){
     const key = "ukcLogbook";
     const tradLogKey = "tradLog";
 
-    // British adjectival grades, easiest first
-    const tradLadder = ["M", "D", "HD", "VD", "HVD", "MS", "S", "HS", "MVS", "VS", "HVS",
-        "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11"];
-    // French sport grades, easiest first, as the overview's sport chart counts them
-    const sportLadder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+",
-        "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+",
-        "9a", "9a+", "9b", "9b+", "9c"];
-
     const monthNumbers = { "jan" : "01", "feb" : "02", "mar" : "03", "apr" : "04", "may" : "05", "jun" : "06",
                            "jul" : "07", "aug" : "08", "sep" : "09", "oct" : "10", "nov" : "11", "dec" : "12" };
 

@@ -82,9 +82,12 @@
     font-size: 20px;
     line-height: 1.1;
 }
-/* anything climbed gets the blue edge, so the tally reads down the page */
+/* band colour, faint until climbed; blue if the ladder has no bands */
+.grade-add {
+    border-left-color: color-mix(in srgb, var(--c, transparent) 30%, transparent);
+}
 .grade-row.done .grade-add {
-    border-left-color: var(--primary);
+    border-left-color: var(--c, var(--primary));
 }
 .grade-count {
     position: absolute;

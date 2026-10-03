@@ -14,7 +14,8 @@
          onLoad     : () => set up before a session is picked back up (optional),
          onOpen     : () => anything else when a session opens (optional),
          onSaved    : () => anything else once one is saved (optional),
-         logView    : what drawSessionLog() is given
+         logView    : what drawSessionLog() is given,
+         timed      : true to save start, finish and minutes (optional)
      };
 
    What is on screen follows body[data-state] - idle, running or saving - in
@@ -22,13 +23,19 @@
 
 function startSession(){
     session = Object.assign({ "id" : Date.now(), "date" : today(), "rating" : 0, "editing" : false }, app.newSession());
+    if(app.timed){ session.start = session.id; }
     openSession();
+}
+
+function timing(from){
+    return app.timed ? sessionTiming(from) : {};
 }
 
 function editSession(id){
     let entry = getLog(app.logKey).find(item => item.id === id);
     if(!entry){ return; }
-    session = Object.assign({ "id" : entry.id, "date" : entry.date, "rating" : entry.rating, "editing" : true }, app.fromEntry(entry));
+    session = Object.assign({ "id" : entry.id, "date" : entry.date, "rating" : entry.rating, "editing" : true },
+        timing(entry), app.fromEntry(entry));
     setSessionComment(entry.comment);   // or saving again would wipe it
     hideAbout();
     openSession();
@@ -64,12 +71,17 @@ function setSessionDate(input){
 }
 
 function openSavePanel(){
+    // a reopened session keeps its times; finishing again after climbing on moves the finish
+    if(app.timed && !session.editing){
+        session.finish = Date.now();
+        keepSession();
+    }
     showState("saving");
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
 
 function saveSession(){
-    saveToLog(app.logKey, Object.assign({ "id" : session.id, "date" : session.date }, app.toEntry(session),
+    saveToLog(app.logKey, Object.assign({ "id" : session.id, "date" : session.date }, timing(session), app.toEntry(session),
         { "rating" : session.rating, "comment" : sessionComment }));
     closeSession();
     drawSessionLog();

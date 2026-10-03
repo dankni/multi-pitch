@@ -29,8 +29,8 @@
         "loft" : { "name" : "Twister", "icon" : glyph("icon-mic") },
         "trad" : { "name" : "Outside", "icon" : svg("0 0 100 100",
             `<g transform="rotate(30 50 50)">
-                <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round" d="M39,3 H61 L57,25 H43 Z M46,8 H54 V20 H46 Z"/>
-                <path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" d="M50,25 V80"/>
+                <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round" d="M39,5 Q50,0 61,5 L57,25 Q50,21 43,25 Z M46,9 Q50,7 54,9 V19 Q50,17 46,19 Z"/>
+                <path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" d="M50,24 Q56,52 50,80"/>
                 <path fill="none" stroke="currentColor" stroke-width="4.5" d="M50,78 C41,84 42,96 50,96 C58,96 59,84 50,78 Z"/>
             </g>`) }
     };

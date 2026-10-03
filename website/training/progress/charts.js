@@ -22,53 +22,19 @@
     };
     const defaultRange = "365";
 
-    const bands = [
-        { "cls" : "band-easy",   "name" : "Easy" },
-        { "cls" : "band-medium", "name" : "Medium" },
-        { "cls" : "band-hard",   "name" : "Hard" },
-        { "cls" : "band-vhard",  "name" : "Very hard" }
-    ];
+    const bands = gradeBands.bands;
+    const sportBand = gradeBands.sport, boulderBand = gradeBands.boulder, tradBand = gradeBands.trad;
 
-    // French sport grades, easiest first - the ladder common/ukc.js reads UKC's
-    // sport grades onto. The chart always shows 5 to 7b as the Gilford wall grades
-    // them, and adds anything else only once it is climbed.
-    const sportLadder = ukc.sportLadder;
+    // 5 to 7b always, as the Gilford wall grades them; anything else once climbed
     const sportAlways = ["5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
-
-    function sportBand(grade){
-        let rung = sportLadder.indexOf(grade);
-        if(rung === -1 || rung >= sportLadder.indexOf("7b")){ return bands[3]; }
-        if(rung >= sportLadder.indexOf("6c")){ return bands[2]; }
-        if(rung >= sportLadder.indexOf("6a")){ return bands[1]; }
-        return bands[0];
-    }
 
     function boulderRung(grade){
         let rung = Number(String(grade).replace("V", ""));
         return /^V\d+$/.test(grade) && isFinite(rung) ? rung : -1;
     }
 
-    function boulderBand(grade){
-        let rung = boulderRung(grade);
-        if(rung >= 8){ return bands[3]; }
-        if(rung >= 5){ return bands[2]; }
-        if(rung >= 3){ return bands[1]; }
-        return bands[0];
-    }
-
-    // British adjectival grades, easiest first. VD to E2 always, the rest once
-    // climbed. Banded for trad on its own terms rather than lined up with sport:
-    // VS is medium, E1 hard and E4 very hard.
-    const tradLadder = ukc.tradLadder;
+    // British adjectival grades: VD to E2 always, the rest once climbed
     const tradAlways = ["VD", "S", "HS", "VS", "HVS", "E1", "E2"];
-
-    function tradBand(grade){
-        let rung = tradLadder.indexOf(grade);
-        if(rung >= tradLadder.indexOf("E4")){ return bands[3]; }
-        if(rung >= tradLadder.indexOf("E1")){ return bands[2]; }
-        if(rung >= tradLadder.indexOf("MVS")){ return bands[1]; }
-        return bands[0];
-    }
 
     /* Every trad climb: the trad app's sessions, and an imported UKC logbook's
        trad climbs - less the days the app says are on UKC as well, which
@@ -237,7 +203,7 @@
             let centre = x + barWidth / 2;
             let total = group.value;
 
-            svg += `<g class="column"><title>${escapeHtml(group.title)}</title>`
+            svg += `<g class="column" style="--i:${index}"><title>${escapeHtml(group.title)}</title>`
                 + `<rect class="hit" x="${left + slot * index}" y="${top}" width="${slot}" height="${plotHeight}" />`;
 
             if(total > 0){
@@ -356,6 +322,7 @@
         let logbook = ukc.load();
         document.getElementById("tradFigure").hidden = !hasTrad(logs);
         document.getElementById("ukcNote").hidden = logbook === null;
+        document.getElementById("ukcSettingsNote").hidden = logbook === null;
         if(logbook === null){ return; }
 
         let parts = String(logbook.imported).split("-");
@@ -366,6 +333,7 @@
             text += " " + plural(leftOut, "climb") + " left out, with no full date or a grade that could not be read.";
         }
         document.getElementById("ukcImported").textContent = text + " ";
+        document.getElementById("ukcSettingsImported").textContent = text + " ";
     }
 
     /* The page */
@@ -375,9 +343,15 @@
         return checked && ranges[checked.value] ? checked.value : defaultRange;
     }
 
+    // the first chart on show; any of them can be switched off
+    function chartColumn(){
+        return ["sportChart", "boulderChart", "tradChart"].map(id => document.getElementById(id))
+            .find(chart => chart.clientWidth > 0) || document.getElementById("sportChart");
+    }
+
     function draw(logs){
         let range = selectedRange();
-        chartWidth = Math.round(document.getElementById("sportChart").clientWidth) || 520;
+        chartWidth = Math.round(chartColumn().clientWidth) || 520;
         document.getElementById("sportChart").innerHTML =
             drawGrades(sportClimbs(logs), range, sportColumns, sportBand, "climb", "sportTotal");
         document.getElementById("boulderChart").innerHTML =
@@ -401,6 +375,22 @@
             logs[key] = list(saved);
         });
         return logs;
+    }
+
+    // Bars grow in the first time each chart is seen, once per page load
+    function growOnFirstSight(){
+        if(typeof IntersectionObserver !== "function" || matchMedia("(prefers-reduced-motion: reduce)").matches){ return; }
+        let seen = new IntersectionObserver(entries => entries.forEach(entry => {
+            if(!entry.isIntersecting){ return; }
+            seen.unobserve(entry.target);
+            entry.target.dataset.grow = "go";
+            setTimeout(() => delete entry.target.dataset.grow, 3000);
+        }), { "threshold" : 0.4 });
+        ["sportChart", "boulderChart", "tradChart"].forEach(id => {
+            let chart = document.getElementById(id);
+            chart.dataset.grow = "wait";
+            seen.observe(chart);
+        });
     }
 
     function drawProgress(){
@@ -429,6 +419,7 @@
 
         // shown first, so there is a width to draw to
         document.getElementById("performance").hidden = false;
+        growOnFirstSight();
         draw(logs);
 
         // Redrawn whenever the chart's own column changes width - the window
@@ -437,20 +428,18 @@
         let redraw = () => {
             clearTimeout(resizing);
             resizing = setTimeout(() => {
-                if(Math.round(document.getElementById("sportChart").clientWidth) !== chartWidth){
+                if(Math.round(chartColumn().clientWidth) !== chartWidth){
                     draw(logs);
                 }
             }, 100);
         };
         if(typeof ResizeObserver === "function"){
-            new ResizeObserver(redraw).observe(document.getElementById("sportChart"));
+            let observer = new ResizeObserver(redraw);
+            ["sportChart", "boulderChart", "tradChart"].forEach(id => observer.observe(document.getElementById(id)));
         } else {
             window.addEventListener("resize", redraw);
         }
     }
-
-    // The band a grade is charted in - for the grade conversions on the info panel
-    window.gradeBands = { "boulder" : boulderBand, "sport" : sportBand, "trad" : tradBand };
 
     // The hardest band climbed each day, by date - for the calendar in sessions.js
     window.hardestBands = function(){

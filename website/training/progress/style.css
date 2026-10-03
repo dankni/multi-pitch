@@ -1,12 +1,18 @@
 /* The progress page: the charts, then every app's sessions. */
 
-/* How hard a grade is, for the charts' bars and the calendar's days: each takes
-   its colour from --c, which its band class sets */
-.performance, .sessions, #about {
-    --band-easy: light-dark(#2a9d4a, #248a3c);
-    --band-medium: #eda100;
-    --band-hard: light-dark(#e34948, #e25550);
-    --band-vhard: light-dark(#7b3fc4, #9170e6);
+/* switched off under the cog */
+.switched-off {
+    display: none;
+}
+/* the font icons' own margins wrapped the longer labels */
+#settings .label-content {
+    width: 230px;
+}
+#settings .label-content .demo-icon {
+    margin: 0 0.3em 0 0;
+}
+#settings .toggle-icon {
+    margin: 0 0.3em 0 0;
 }
 /* The way to import a UKC logbook, above everything until there is one */
 .ukc-prompt {
@@ -66,6 +72,11 @@
 }
 .conversion-table .swatch {
     vertical-align: -1px;
+}
+.conversion-table + .show-more {
+    display: block;
+    margin: 10px auto 0;
+    padding: 0.6rem 1.5rem;
 }
 .overlay .conversion-note {
     margin: 16px auto 60px;
@@ -155,10 +166,23 @@
 .chart .bar {
     fill: var(--c);
 }
-.band-easy     { --c: var(--band-easy); }
-.band-medium   { --c: var(--band-medium); }
-.band-hard     { --c: var(--band-hard); }
-.band-vhard    { --c: var(--band-vhard); }
+/* see growOnFirstSight() */
+.chart .bar {
+    transform-box: fill-box;
+    transform-origin: bottom;
+}
+[data-grow="wait"] .bar { transform: scaleY(0); }
+[data-grow="wait"] .count,
+[data-grow="wait"] .before { opacity: 0; }
+[data-grow="go"] .bar {
+    animation: grow 0.9s calc(var(--i) * 45ms) ease-out both;
+}
+[data-grow="go"] .count,
+[data-grow="go"] .before {
+    animation: fade-in 0.4s calc(var(--i) * 45ms + 0.75s) both;
+}
+@keyframes grow { from { transform: scaleY(0); } }
+@keyframes fade-in { from { opacity: 0; } }
 .legend {
     display: flex;
     flex-wrap: wrap;
@@ -232,10 +256,10 @@
     fill: currentColor;
     opacity: 0.7;
 }
-.calendar .day { fill: var(--c); cursor: pointer; }
+.calendar .day { fill: var(--c); fill-opacity: 0.9; cursor: pointer; }
 .calendar .none { cursor: default; }
-.calendar .none { fill: var(--day-none); }
-.calendar .plain { fill: var(--day-plain); }
+.calendar .none { fill: var(--day-none); fill-opacity: 1; }
+.calendar .plain { fill: var(--day-plain); fill-opacity: 1; }
 /* The weeks on show, between the arrows back and forward through the year */
 .calendar-nav {
     display: flex;

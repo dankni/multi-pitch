@@ -456,7 +456,7 @@ describe('Training apps', function () {
         });
 
         it('flashes a grade with a + in it, and counts it', () => {
-            cy.visit(boulderUrl);
+            cy.visit(boulderUrl, { onBeforeLoad: (win) => win.localStorage.setItem('boulderSplitLow', 'false') });
             cy.get('#primaryButton').click();
             cy.get('label[for="tab-sport"]').click();
             cy.get('[id="row-5+"] .grade-add').click();
@@ -537,7 +537,7 @@ describe('Training apps', function () {
         });
 
         it('splits 4 to 5+ into 4a to 5c when the setting is on', () => {
-            cy.visit(boulderUrl);
+            cy.visit(boulderUrl, { onBeforeLoad: (win) => win.localStorage.setItem('boulderSplitLow', 'false') });
             cy.get('#primaryButton').click();
             cy.get('label[for="tab-sport"]').click();
             cy.get('[id="row-5+"] .grade-add').click();
@@ -564,17 +564,42 @@ describe('Training apps', function () {
             cy.get('#grades .route-grade').should('have.length', 10);
         });
 
+        it('adds plus grades from 6a up when the setting is on', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('nav .icon-cog').click();
+            cy.get('#plusGrades').check({ force: true });
+            cy.get('#settings .close').click();
+            // still as far as 7c
+            cy.get('#grades .route-grade').then(($grades) => {
+                expect([...$grades].map((grade) => grade.textContent)).to.deep.equal(
+                    ['4a', '4b', '4c', '5a', '5b', '5c', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a', '7a+', '7b', '7b+', '7c']);
+            });
+            cy.get('[id="row-6b+"] .grade-add').click();
+            cy.get('#row-6b .grade-add').click();
+            cy.get('#summary').should('have.text', 'Hardest: 6b+');
+            cy.window().then((win) => expect(win.localStorage.getItem('boulderPlusGrades')).to.equal('true'));
+            // and off again: the 6b+ still counts
+            cy.get('nav .icon-cog').click();
+            cy.get('#plusGrades').uncheck({ force: true });
+            cy.get('#settings .close').click();
+            cy.get('#grades .route-grade').should('have.length', 12);
+            cy.get('#climbCount').should('have.text', '2');
+        });
+
         // an old session with an 8A on it has to be editable, ladder or no ladder
         it('logs sport climbs on a ladder of their own', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();
             cy.get('#row-V3 .grade-add').click();
             cy.get('label[for="tab-sport"]').click();
-            // 4, 4+, 5, 5+, then whole grades from 6a, as far as 7c to start with
+            // low grades split out by default, then whole grades from 6a, as far as 7c to start with
             cy.get('#grades .route-grade').then(($grades) => {
                 expect([...$grades].map((grade) => grade.textContent))
-                    .to.deep.equal(['4', '4+', '5', '5+', '6a', '6b', '6c', '7a', '7b', '7c']);
+                    .to.deep.equal(['4a', '4b', '4c', '5a', '5b', '5c', '6a', '6b', '6c', '7a', '7b', '7c']);
             });
+            cy.get('#splitLow').should('be.checked');
             cy.get('#row-6b .grade-add').click();
             cy.get('#row-6b .grade-add').click();
             cy.get('#climbCount').should('have.text', '2');
@@ -683,6 +708,24 @@ describe('Training apps', function () {
                 expect(saved.climbs).to.equal(16);
                 expect(saved.grades).to.have.length(16);
                 saved.grades.forEach((grade) => expect(grade).to.match(/^[4-7][abc]?\+?$/));
+            });
+        });
+
+        it('finishes at any point, counting what was ticked', () => {
+            cy.visit(enduranceUrl);
+            cy.get('#primaryButton').click();
+            tickAll(4);                          // the warm up
+            cy.get('#skipRest').click();
+            tickAll(2);                          // half of set 1
+            cy.get('#finishButton').should('be.visible').click();
+            cy.get('#saveSession').click();
+            cy.window().then((win) => {
+                const saved = JSON.parse(win.localStorage.getItem('enduranceLog'))[0];
+                expect(saved.climbs).to.equal(6);
+                expect(saved.grades).to.have.length(6);
+                expect(saved.sets).to.equal(1);
+                expect(saved.finish).to.be.at.least(saved.start);
+                expect(saved.minutes).to.equal(0);
             });
         });
     });
@@ -976,6 +1019,29 @@ describe('Training apps', function () {
             cy.get(later).click();
             cy.get(later).click();
             cy.get('.calendar-key').should('contain', '11 May – 13 Sep 2026');
+        });
+
+        it('switches charts and the calendar off under the cog, and remembers', () => {
+            visitWith(logs);
+            cy.get('[data-action="openSettings"]').click();
+            cy.get('[data-part="sportFigure"]').uncheck({ force: true });
+            cy.get('[data-part="sessionCalendar"]').uncheck({ force: true });
+            cy.get('#sportFigure').should('not.be.visible');
+            cy.get('#sessionCalendar').should('not.be.visible');
+            cy.get('#boulderFigure').should('be.visible');
+            cy.reload();
+            cy.get('#sportFigure').should('not.be.visible');
+            cy.get('[data-part="sportFigure"]').should('not.be.checked');
+            // the boulder chart drawn to its own width with the sport one gone
+            cy.get('#boulderChart').then(chart => {
+                cy.get('#boulderChart svg').should('have.attr', 'viewBox', `0 0 ${Math.round(chart[0].clientWidth)} 200`);
+            });
+            // every chart off takes the range picker with it
+            cy.get('[data-part="boulderFigure"]').uncheck({ force: true });
+            cy.get('#performance').should('not.be.visible');
+            cy.get('[data-part="sportFigure"]').check({ force: true });
+            cy.get('#performance').should('be.visible');
+            cy.get('#sportFigure').should('be.visible');
         });
 
         it('says there is nothing to chart with nothing logged', () => {
@@ -1284,8 +1350,9 @@ describe('Training apps', function () {
                 // and not once there is one
                 choose(csv);
                 cy.get('#ukcPrompt').should('not.be.visible');
-                // the import is only in the trad app
-                cy.get('#ukcFile').should('not.exist');
+                // the import is in the trad app and under the progress cog
+                cy.get('#settings #ukcFile').should('exist');
+                cy.get('#ukcSettingsNote').should('not.have.attr', 'hidden');
                 cy.visit(overviewUrl);
                 cy.get('#ukcFile').should('not.exist');
             });

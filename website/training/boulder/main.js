@@ -8,28 +8,39 @@
 // The bouldering ladder: V, Font and British, from common/grades.js
 const grades = boulderGradeTable;
 
-// The sport ladder, from common/grades.js: 4 to 5+, or 4a to 5c once split out
+// The sport ladder, from common/grades.js: 4 to 5+, or 4a to 5c once split out,
+// and 6a up with or without the plus grades
 const splitKey = "boulderSplitLow";
+const plusKey = "boulderPlusGrades";
 
 function splitLowGrades(){
-    return localStorage.getItem(splitKey) === "true";
+    return localStorage.getItem(splitKey) !== "false";   // on unless switched off
+}
+function plusGrades(){
+    return localStorage.getItem(plusKey) === "true";
 }
 function sportGrades(){
-    return splitLowGrades() ? gymSportGradesSplit : gymSportGrades;
+    return (splitLowGrades() ? gymSportLowSplit : gymSportLow).concat(plusGrades() ? gymSportHigherPlus : gymSportHigher);
+}
+// up to 7c to start with
+function sportStarts(){
+    return sportGrades().indexOf("7c") + 1;
 }
 
 const app = {
     "logKey" : "boulderLog",
     "currentKey" : "boulderCurrent",
     "systemKey" : "boulderGradeSystem",
+    "timed" : true,
     "defaultSystem" : "hueco",
     // V0 to V10 and 4 to 7c to start with, as far as V17 and 9c. The sport
     // ladder's order says which of 4+ and 4c is harder, whichever are on it.
     "ladders" : {
         "boulder" : { "list" : "climbs", "shown" : "shown",      "names" : grades.map(grade => grade.v),
-                      "starts" : 11, "noun" : "boulder" },
+                      "starts" : 11, "noun" : "boulder", "band" : gradeBands.boulder },
         "sport"   : { "list" : "sport",  "shown" : "sportShown", "names" : sportGrades(),
-                      "order" : gymSportOrder, "starts" : sportGrades().length - 6, "noun" : "sport climb" }
+                      "order" : gymSportOrder, "starts" : sportStarts(), "noun" : "sport climb",
+                      "band" : gradeBands.sport }
     },
     "grades" : grades,
     "gradeKey" : "v",
@@ -46,6 +57,7 @@ const app = {
     "onLoad" : () => {
         loadGradeSystem();
         document.getElementById("splitLow").checked = splitLowGrades();
+        document.getElementById("plusGrades").checked = plusGrades();
     },
     "logView" : {
         "key" : "boulderLog",
@@ -59,7 +71,7 @@ const app = {
             let hardest = [hardestGrade("boulder", entry.climbs), hardestGrade("sport", sport)].filter(grade => grade !== "");
             return {
                 "title" : title.filter(part => part !== "").join(", "),
-                "detail" : hardest.length > 0 ? "hardest " + hardest.join(" · ") : ""
+                "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", sessionLength(entry)])
             };
         },
         "stats" : log => {
@@ -70,17 +82,25 @@ const app = {
     }
 };
 
-/* Split out low grades, under the cog: 4 to 5+ on the sport ladder as 4a to 5c.
-   A session keeps its grades as tapped, so the ladder on show grows or shrinks
-   by the two it gains or loses rather than dropping 7c off the top. */
+/* Split out low grades and show plus grades, under the cog. A session keeps its
+   grades as tapped, and the ladder on show still reaches the grade it did. */
 function toggleSplitLow(input){
     localStorage.setItem(splitKey, input.checked);
+    rebuildSportLadder();
+}
+
+function togglePlusGrades(input){
+    localStorage.setItem(plusKey, input.checked);
+    rebuildSportLadder();
+}
+
+function rebuildSportLadder(){
     let sport = app.ladders.sport;
-    let before = sport.names.length;
+    let reach = gymSportOrder.indexOf(sport.names[shownGrades("sport") - 1]);
     sport.names = sportGrades();
-    sport.starts = sport.names.length - 6;
+    sport.starts = sportStarts();
     if(session !== null){
-        session.sportShown = shownGrades("sport") + sport.names.length - before;
+        session.sportShown = sport.names.filter(grade => gymSportOrder.indexOf(grade) <= reach).length;
         keepSession();
         drawGrades();
         updateSummary();

@@ -212,6 +212,24 @@ function plural(count, noun){
     return `${count} ${noun}${count === 1 ? "" : "s"}`;
 }
 
+// start and finish are epoch ms; minutes is the duration. {} for an untimed session.
+function sessionTiming(from){
+    if(!from.start || !from.finish){ return {}; }
+    return { "start" : from.start, "finish" : from.finish, "minutes" : Math.round((from.finish - from.start) / 60000) };
+}
+
+// a timed session's minutes as "45 min" or "1h 25m"; "" for an untimed one
+function sessionLength(entry){
+    let minutes = Number(entry.minutes);
+    if(!isFinite(minutes) || minutes <= 0){ return ""; }
+    return minutes < 60 ? minutes + " min" : Math.floor(minutes / 60) + "h " + String(minutes % 60).padStart(2, "0") + "m";
+}
+
+// the parts of a log row's detail that are there, as one line
+function joinDetail(parts){
+    return parts.filter(part => part).join(" · ");
+}
+
 // "12 sessions (3 this month)", which every log's stats line starts with
 function sessionCount(log){
     let month = today().slice(0, 7);

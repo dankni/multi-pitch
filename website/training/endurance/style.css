@@ -113,10 +113,13 @@ body:not([data-state="idle"]) #discard {
 #skipRest:hover, #skipRest:focus {
     color: light-dark(#00306e, #c5e0ff);
 }
-#choice button {
+#choice button, #finishButton {
     display: block;
     width: 100%;
     margin: 12px auto 0;
+}
+[data-state="saving"] #finishButton {
+    display: none;
 }
 #discard {
     margin-bottom: 40px;

@@ -2,11 +2,12 @@
    bouldering and sport ladders, and trad's one. Runs inside common/log.js; the
    app adds to its `app`:
 
-     ladders  : { name : { list, shown, names, starts, noun, order } } - the
+     ladders  : { name : { list, shown, names, starts, noun, order, band } } - the
                 session field a ladder's climbs go in, the one saying how many
                 rungs are on show, its grades easiest first, how many a session
                 starts with, what one climb is called, and optionally every grade
-                it has ever had, easiest first, to find the hardest by,
+                it has ever had, easiest first, to find the hardest by, and the
+                gradeBands function for a tile's edge,
      grades   : a row per grade naming it in each system,
      gradeKey : the system a session stores a grade by,
      systems  : { name : { main, also } } - the system a grade is called by, and
@@ -173,8 +174,10 @@ function harder(){
 function gradeRow(name){
     let done = countOf(name);
     let grade = gradeOf(name);
-    let noun = app.ladders[ladderOf(name)].noun;
-    return `<div class="grade-row${done > 0 ? " done" : ""}" id="row-${name}">
+    let ladder = app.ladders[ladderOf(name)];
+    let noun = ladder.noun;
+    let band = ladder.band ? " " + ladder.band(name).cls : "";
+    return `<div class="grade-row${done > 0 ? " done" : ""}${band}" id="row-${name}">
         <button type="button" class="route grade-add" data-action="addClimb" data-grade="${name}"
             aria-label="Add a ${name} ${noun}, ${done} so far">
             ${grade ? `<span class="route-colour">${otherGrades(grade)}</span>` : ""}

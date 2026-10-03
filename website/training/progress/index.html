@@ -24,7 +24,8 @@
   <body>
     <nav>
         <div class="left-nav">
-            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Back up your sessions and see grade conversions"></button>
+            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Back up your sessions and see rough grade conversions"></button>
+            <button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
         </div>
         <h1>Progress</h1>
         <div class="right-nav">
@@ -50,12 +51,12 @@
             <input type="radio" name="overviewRange" class="nice-radios" id="range-7" value="7" />
             <label for="range-7">7 days</label>
         </div>
-        <figure>
-            <figcaption>Climbs by grade</figcaption>
+        <figure id="sportFigure">
+            <figcaption>Sport climbs by grade</figcaption>
             <p class="sessions-note" id="sportTotal"></p>
             <div id="sportChart"></div>
         </figure>
-        <figure>
+        <figure id="boulderFigure">
             <figcaption>Boulders by grade</figcaption>
             <p class="sessions-note" id="boulderTotal"></p>
             <div id="boulderChart"></div>
@@ -110,8 +111,8 @@
         </p>
         <input type="file" id="backupFile" accept=".json,application/json" hidden data-change="importBackupFile" />
 
-        <h2>Grade conversions</h2>
-        <div class="picker range-picker conversion-picker" role="radiogroup" aria-label="Grade conversions for">
+        <h2>Rough Grade Conversion</h2>
+        <div class="picker range-picker conversion-picker" role="radiogroup" aria-label="Rough grade conversion for">
             <input type="radio" name="conversions" class="nice-radios" id="conversions-boulder" value="boulder" data-change="showConversions" checked />
             <label for="conversions-boulder">Bouldering</label>
             <input type="radio" name="conversions" class="nice-radios" id="conversions-route" value="route" data-change="showConversions" />
@@ -126,6 +127,77 @@
         <button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
     </aside>
 
+    <aside id="settings" class="overlay">
+        <h2>Settings</h2>
+        <label class="switch-label">
+            <input type="checkbox" data-change="toggleProgressPart" data-part="sportFigure" checked />
+            <span class="label-content">
+                <i class="demo-icon icon-ok"></i> Sport Climbing Graph <span class="switch-state"></span>
+            </span>
+        </label>
+        <label class="switch-label">
+            <input type="checkbox" data-change="toggleProgressPart" data-part="boulderFigure" checked />
+            <span class="label-content">
+                <svg class="toggle-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12,34 C11,26 15,22 22,22 L86,20 C92,20 94,26 93,33 C92,50 86,62 76,70 C67,77 58,80 50,80 C40,80 30,75 23,66 C16,57 13,45 12,34 Z"/>
+                        <path d="M20,31 C41,38 70,37 86,27"/>
+                        <circle cx="52" cy="54" r="11"/>
+                    </g>
+                    <circle fill="currentColor" cx="52" cy="54" r="4"/>
+                </svg> Bouldering Graph <span class="switch-state"></span>
+            </span>
+        </label>
+        <label class="switch-label">
+            <input type="checkbox" data-change="toggleProgressPart" data-part="tradFigure" checked />
+            <span class="label-content">
+                <svg class="toggle-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <g transform="rotate(30 50 50)">
+                        <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round"
+                            d="M39,5 Q50,0 61,5 L57,25 Q50,21 43,25 Z M46,9 Q50,7 54,9 V19 Q50,17 46,19 Z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" d="M50,24 Q56,52 50,80"/>
+                        <path fill="none" stroke="currentColor" stroke-width="5.5"
+                            d="M50,78 C41,84 42,96 50,96 C58,96 59,84 50,78 Z"/>
+                    </g>
+                </svg> Trad Climbing Graph <span class="switch-state"></span>
+            </span>
+        </label>
+        <label class="switch-label">
+            <input type="checkbox" data-change="toggleProgressPart" data-part="sessionCalendar" checked />
+            <span class="label-content">
+                <svg class="toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                        <rect x="1.5" y="2.75" width="13" height="11.75" rx="1.5"/>
+                        <path d="M1.5 6.5h13M5 1v3M11 1v3"/>
+                    </g>
+                    <path fill="currentColor" d="M4 8.5h2v2H4zM7 8.5h2v2H7zM10 8.5h2v2h-2zM4 11.5h2v2H4zM7 11.5h2v2H7z"/>
+                </svg> Session calendar <span class="switch-state"></span>
+            </span>
+        </label>
+        <label class="switch-label">
+            <input type="checkbox" data-change="toggleDarkMode" id="darkMode" />
+            <span class="label-content">
+                <i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
+            </span>
+        </label>
+        <hr />
+        <h2>UKC logbook</h2>
+        <p>
+            Download the CSV from your
+            <a href="https://www.ukclimbing.com/logbook/" target="_blank">UKC logbook (DLOG format)</a>
+            and upload it here. Your trad and
+            sport climbs are then added to the charts and session logs. Any data is stored
+            on this device only. Uploading a CSV replaces the last one, so always download all data.
+            Your CSV is never uploaded anywhere.
+        </p>
+        <input type="file" id="ukcFile" accept=".csv,text/csv" hidden data-change="importUkcFile" />
+        <p><button class="quiet" data-action="chooseUkcFile">Upload UKC Logbook CSV</button></p>
+        <p id="ukcSettingsNote" hidden>
+            <span id="ukcSettingsImported"></span><button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
+        </p>
+        <button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
+    </aside>
+
     <script src="/training/common/gilford-routes.js"></script>
     <script src="/training/common/grades.js"></script>
     <script src="/training/common/ukc.js"></script>
@@ -133,6 +205,7 @@
     <script src="/training/common/bottom-nav.js" defer></script>
     <script src="/training/progress/charts.js"></script>
     <script src="/training/progress/sessions.js"></script>
+    <script src="/training/progress/settings.js"></script>
     <script src="/training/progress/backup.js"></script>
     <script src="/training/progress/conversions.js"></script>
   </body>
