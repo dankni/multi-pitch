@@ -1,0 +1,52 @@
+/* For the apps on common/workout.js: rock rings and no hangs.
+   body[data-state] is idle, counting, running, paused or finished, and
+   data-saving is set once the save panel is up. */
+[data-state="idle"] .holder,
+[data-state="counting"] .holder {
+    display: none;
+}
+[data-state="paused"] #reset,
+[data-state="finished"] #reset {
+    display: inline-block;
+}
+[data-state="finished"] #primaryButton {
+    display: none;
+}
+[data-saving] #endingDiv {
+    display: block;
+}
+
+/* What to do now, and what's next underneath it */
+#first, #second, #preview, #preview div {
+    display: flex;
+}
+#preview {
+    width: 100%;
+}
+#preview div {
+    width: 100%;
+    flex: 50%;
+    margin: 5px;
+    border-radius: 5px;
+    background: var(--panel);
+    transition: all 0.2s ease;
+}
+.task {
+    margin: 20px;
+    flex: 70%;
+    font-size: 28px;
+    text-align: left;
+}
+#preview .task {
+    font-size: 18px;
+    margin: 10px;
+}
+
+@media (max-width: 380px) {
+    .task {
+        font-size: 20px;
+    }
+    #preview .task {
+        font-size: 14px;
+    }
+}

@@ -17,12 +17,12 @@
 	<link href="/training/common/fontello.css" rel="stylesheet" />
 	<link href="/training/common/style.css" rel="stylesheet" />
 	<link href="/training/common/workout.css" rel="stylesheet" />
-	<link href="/training/rings/style.css" rel="stylesheet" />
+	<link href="/training/nohangs/style.css" rel="stylesheet" />
 	<script src="/training/common/functions.js" ></script>
 	<script src="/training/common/bottom-nav.js" defer></script>
 	<script src="/training/common/workout.js" ></script>
-	<script src="/training/rings/main.js" ></script>
-    <title>Rock Ring Training</title>
+	<script src="/training/nohangs/main.js" ></script>
+    <title>No Hangs Training</title>
   </head>
 
   <body data-state="idle">
@@ -31,7 +31,7 @@
 			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
 			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
 		</div>
-		<h1>Rock Ring Trainer</h1>
+		<h1>No Hangs</h1>
 		<div class="right-nav">
 			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
 			<button type="button" id="sound" class="icon-button demo-icon icon-volume-high" data-action="toggleSound" aria-label="Toggle sound"></button>
@@ -44,39 +44,41 @@
 	</div>
 	<div class="holder">
 		<section id="first" hidden>
-			<img id="first_hold" src="/training/rings/img/plain.png" class="ring" />
-			<p class="task" id="first_task"></p>
-		</section>
-		<section id="second" hidden>
-			<img id="second_hold" src="/training/rings/img/plain.png" class="ring" />
-			<p class="task" id="second_task"></p>
-		</section>
-		<h2 id="next" hidden>Next Up...</h2>
-		<aside id="preview" hidden>
-			<div id="first_preview">
-				<img id="first_hold_preview" src="/training/rings/img/plain.png" class="ring" />
-				<p class="task" id="first_task_preview"></p>
+			<div class="now">
+				<p class="task" id="first_task"></p>
+				<p class="rep" id="first_rep"></p>
 			</div>
-			<div id="second_preview">
-				<img id="second_hold_preview" src="/training/rings/img/plain.png" class="ring" />
-				<p class="task" id="second_task_preview"></p>
-			</div>
-		</aside>
+			<p class="count" id="first_count"></p>
+		</section>
 		<div id="endingDiv" class="ending"></div>
 	</div>
+	<!-- every grip, filled in from the plan in main.js and marked off as the session goes -->
+	<table class="hangs" id="hangs"></table>
 	<aside id="about" class="overlay">
-		<h2>About this application</h2>
-		<p>
-			This app is based on the Metolius plan for use with their rock rings.
-			We are not in any way affiliated with Metolius. This application was 
-			built for personal use but is free to use for anyone that finds
-			it helpful.
-		</p>
-		<p class="panel-links">
-			<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="blank">
-				metoliusclimbing.com plan <i class="demo-icon icon-link-ext"></i>
-			</a>
-		</p>
+		<h2>Sub-max "No Hangs"</h2>
+		<p>Emil Abrahamsens daily no hang routine. Every rep is a 10 second hang and 20 seconds rest. Feet remain on the floor at all times. Exertion should be around 20% of max. Use an edge that is comfortable. Typically between 15mm and 30mm.</p>
+		<h2>Examples</h2>
+		<div class="grips">
+			<figure>
+				<img src="/training/nohangs/img/open.webp" alt="" width="96" height="96" />
+				<figcaption>Open Hand</figcaption>
+			</figure>
+			<figure>
+				<img src="/training/nohangs/img/half-crimp.webp" alt="" width="96" height="96" />
+				<figcaption>Half Crimp</figcaption>
+			</figure>
+			<figure>
+				<img src="/training/nohangs/img/front-3.webp" alt="" width="96" height="96" />
+				<figcaption>Front 3</figcaption>
+			</figure>
+			<figure>
+				<img src="/training/nohangs/img/middle-2.webp" alt="" width="96" height="96" />
+				<figcaption>Middle 2</figcaption>
+			</figure>
+		</div>
+		<h2>The Routine</h2>
+		<!-- filled in from the plan in main.js -->
+		<table class="routine" id="routine"></table>
 		<hr />
 		<h2>Activity Log</h2>
 		<div id="log"></div>
@@ -87,17 +89,6 @@
 
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
-		<fieldset class="setting-group">
-			<legend>Difficulty</legend>
-			<div class="picker">
-				<input class="nice-radios" type="radio" value="easy" name="mode" id="easy" data-change="changeDifficulty" />
-				<label for="easy">Easy</label>
-				<input class="nice-radios" type="radio" value="original" name="mode" id="original" data-change="changeDifficulty" />
-				<label for="original">Original</label>
-				<input class="nice-radios" type="radio" value="hard" name="mode" id="hard" data-change="changeDifficulty" />
-				<label for="hard">Hard</label>
-			</div>
-		</fieldset>
 		<label class="switch-label">
 			<input type="checkbox" data-change="toggleDebug" id="debugMode"/>
 			<span class="label-content">

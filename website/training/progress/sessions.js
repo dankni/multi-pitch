@@ -64,7 +64,9 @@
         { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "/training/rings/",
           "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) },
         { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
-          "line" : tradSession }
+          "line" : tradSession },
+        { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
+          "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) }
     ];
 
     function readLog(app){

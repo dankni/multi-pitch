@@ -542,10 +542,22 @@ input[type="checkbox"].nice-radios:checked + label:before {
     cursor: pointer;
 }
 /* The nav bar's own icons */
+/* A thumb's width each, and apart, so the i and the cog aren't tapped for each
+   other. Square around the glyph so the cog turns on its own centre. */
 nav .icon-menu, nav .icon-info, nav .icon-cog {
     float: left;
     margin: 0;
-    padding: 12px 6px 0 6px;
+    padding: 12px 11px;
+    line-height: 1;
+}
+nav .icon-info + .icon-cog {
+    margin-left: 8px;
+}
+@keyframes cog-spin {
+    to { transform: rotate(720deg); }
+}
+nav .icon-cog {
+    animation: cog-spin 3s ease-in-out;
 }
 nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon-volume-off {
     float: right;
@@ -697,7 +709,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     .hint-pop, .toast {
         transition: none;
     }
-    .hint-pop .demo-icon {
+    .hint-pop .demo-icon, nav .icon-cog {
         animation: none;
     }
 }

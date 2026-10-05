@@ -27,6 +27,14 @@
         "endurance" : { "name" : "Endurance", "icon" : svg("0 0 100 100",
             `<path fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M6,56 H26 L36,28 L52,76 L62,50 L70,56 H94"/>`) },
         "loft" : { "name" : "Twister", "icon" : glyph("icon-mic") },
+        "nohangs" : { "name" : "No Hangs", "icon" : svg("0 0 100 100",
+            `<rect fill="currentColor" x="18" y="4" width="64" height="14" rx="3"/>
+            <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M30,18 L50,48 L70,18"/>
+                <circle cx="50" cy="32" r="8"/>
+                <path d="M50,40 V70 L40,94 M50,70 L60,94"/>
+            </g>
+            <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M22,97.5 H78"/>`) },
         "trad" : { "name" : "Outside", "icon" : svg("0 0 100 100",
             `<g transform="rotate(30 50 50)">
                 <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round" d="M39,5 Q50,0 61,5 L57,25 Q50,21 43,25 Z M46,9 Q50,7 54,9 V19 Q50,17 46,19 Z"/>

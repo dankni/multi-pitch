@@ -506,6 +506,34 @@ function speak(text, onStart){
     }
 }
 
+/* Tones, made with Web Audio so there are no files to cache. A browser only
+   lets the sound start from a tap, so a start button calls unlockAudio(). */
+let audio = null;
+
+function unlockAudio(){
+    let Context = window.AudioContext || window.webkitAudioContext;
+    if(audio === null && Context){ audio = new Context(); }
+    if(audio !== null && audio.state === "suspended"){ audio.resume(); }
+}
+
+// frequency in Hz, length in seconds, volume 0 to 1, fading out
+function tone(frequency, length, volume){
+    if(!sound || audio === null){ return; }
+    let oscillator = audio.createOscillator();
+    let gain = audio.createGain();
+    let now = audio.currentTime;
+    oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + length);
+    oscillator.connect(gain).connect(audio.destination);
+    oscillator.start(now);
+    oscillator.stop(now + length);
+}
+
+// a bright ring for something done, a quiet tick for a count
+function ping(){ tone(1320, 0.7, 0.4); }
+function beep(){ tone(880, 0.12, 0.15); }
+
 // Three, two, one - each colour on its word, each step timed from the one before it
 function countdown(onComplete){
     const steps = [

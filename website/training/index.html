@@ -92,6 +92,7 @@
         .apps li:nth-child(5) { --order: 4; }
         .apps li:nth-child(6) { --order: 5; }
         .apps li:nth-child(7) { --order: 6; }
+        .apps li:nth-child(8) { --order: 7; }
         @media (prefers-reduced-motion: reduce) {
             .app-card .demo-icon, .app-card .app-icon {
                 animation: none;
@@ -121,8 +122,8 @@
             color: var(--link-hover);
         }
         /* The small print just above the way home: how much of the browser's
-           local storage the site is using, and which version of the apps is
-           installed */
+           local storage the site is using, how much was downloaded for offline,
+           and which version of the apps is installed */
         .page-foot {
             margin: 0 auto 12px;
             font-size: 14px;
@@ -242,10 +243,31 @@
                 </div>
             </a>
         </li>
+        <li>
+            <a class="app-card" href="/training/nohangs/">
+                <!-- a stick man hanging from a block, feet on the floor -->
+                <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <rect fill="currentColor" x="18" y="4" width="64" height="14" rx="3"/>
+                    <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M30,18 L50,48 L70,18"/>
+                        <circle cx="50" cy="32" r="8"/>
+                        <path d="M50,40 V70 L40,94 M50,70 L60,94"/>
+                    </g>
+                    <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M22,97.5 H78"/>
+                </svg>
+                <div class="app-text">
+                    <h2>No Hangs</h2>
+                    <p>
+                        Sub-max daily "no hangs".
+                    </p>
+                </div>
+            </a>
+        </li>
     </ul>
 
     <!-- filled in by the script below; with no JavaScript there is nothing to measure -->
     <p class="page-foot" id="storageUse"></p>
+    <p class="page-foot" id="offlineUse" hidden></p>
     <p class="page-foot" id="appVersion" hidden></p>
 
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
@@ -293,10 +315,27 @@
         } catch(err){
             return;   // storage blocked - nothing to report
         }
-        let megabytes = used / 1048576;
-        document.getElementById("storageUse").innerText = "Local storage: "
-            + (megabytes < 0.01 && used > 0 ? "under 0.01" : megabytes.toFixed(2))
-            + " MB of about 5 MB used";
+        document.getElementById("storageUse").innerText = "Local storage: " + megabytes(used) + " MB of about 5 MB used";
+
+        // The files the service worker has downloaded for offline use
+        if(!("caches" in window)){ return; }
+        caches.keys()
+            .then(names => Promise.all(names.filter(name => name.startsWith("training-"))
+                .map(name => caches.open(name).then(cache => cache.matchAll()))))
+            .then(lists => Promise.all(lists.flat().map(response => response.blob().then(blob => blob.size))))
+            .then(sizes => {
+                let downloaded = sizes.reduce((total, size) => total + size, 0);
+                if(downloaded === 0){ return; }
+                let line = document.getElementById("offlineUse");
+                line.innerText = "Offline files: " + megabytes(downloaded) + " MB";
+                line.hidden = false;
+            })
+            .catch(() => {});
+
+        function megabytes(bytes){
+            let mb = bytes / 1048576;
+            return mb < 0.01 && bytes > 0 ? "under 0.01" : mb.toFixed(2);
+        }
     })();
     </script>
     <script src="/training/common/functions.js"></script>

@@ -1,0 +1,105 @@
+/* A little smaller than the rings app's, so "Half Crimp · Front 2" fits a phone's line */
+#first .task {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+.now {
+    flex: 70%;
+}
+/* The rep is what you glance at mid-hang, so it's nearly the size of the count */
+.rep {
+    margin: 0 20px 20px;
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: bold;
+    text-align: left;
+    color: var(--strong);
+    font-variant-numeric: tabular-nums;
+}
+@media (max-width: 380px) {
+    .rep {
+        font-size: 28px;
+    }
+}
+
+/* Every grip, a dot a rep: the one you're on stands out, and the ones done fade */
+.hangs {
+    width: 90%;
+    max-width: var(--column);
+    margin: 24px auto;
+    border-collapse: collapse;
+    text-align: left;
+}
+.hangs td {
+    padding: 10px 12px;
+    transition: opacity 0.3s ease;
+}
+.hangs tr {
+    border-bottom: 1px solid var(--box);
+}
+.hangs tr.done td {
+    opacity: 0.4;
+}
+.hangs tr.current {
+    background: var(--panel);
+    outline: 3px solid var(--primary);
+    outline-offset: -3px;
+    font-weight: bold;
+}
+.pips {
+    white-space: nowrap;
+    text-align: right;
+}
+.pip {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 5px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+.pip.done {
+    background: currentColor;
+}
+.pip.hanging {
+    --hang: light-dark(var(--confirm), #4cd964);
+    border-color: var(--hang);
+    background: var(--hang);
+}
+/* The seconds left of the hang or the rest, beside it; the rest is common/workout.css */
+.count {
+    margin: 20px 20px 20px 0;
+    flex: none;
+    font-size: 56px;
+    line-height: 1;
+    align-self: center;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+/* The example photos, each already cut to a circle: four across, or two by two on a phone */
+.grips {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+@media (max-width: 480px) {
+    .grips {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.grips figure {
+    margin: 0;
+}
+.grips img {
+    display: block;
+    margin: 0 auto 6px;
+}
+.routine {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+.routine td {
+    padding: 4px 0;
+}

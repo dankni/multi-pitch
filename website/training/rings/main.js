@@ -1,8 +1,6 @@
 /* The Metolius rock ring workout: ten minutes, a minute's exercise at a time,
-   with the next one shown 15 seconds before it starts.
-
-   What is on screen follows body[data-state] - idle, counting (the three, two,
-   one), running or paused - and data-saving once the save panel is up. */
+   with the next one shown 15 seconds before it starts. The session itself is
+   common/workout.js. */
 
 const app = { "logKey" : "rockRingsLog" };
 
@@ -68,20 +66,31 @@ const plans = {
 };
 
 let difficulty = "original";
-let paused = true;
-let countedIn = false;
 
 /* The minute's exercises go up on the minute, and the next minute's at :45 in
    the red. The save panel comes up at 9:30. */
-const clock = secondsClock(seconds => {
+app.clock = secondsClock(seconds => {
     let minute = Math.floor(seconds / 60);
     let second = seconds % 60;
     if(second === 5){ background(""); }
     if(second === 0 && minute < 10){ displayTask(minute, false); }
     if(second === 45 && minute < 9){ displayTask(minute, true); }
-    if(second === 30 && minute === 9){ document.body.setAttribute("data-saving", ""); }
-    document.getElementById("elapsed").innerText = `${String(minute).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
+    if(second === 30 && minute === 9){ showSavePanel(); }
+    showElapsed(seconds);
 });
+
+app.onGo = () => displayTask(0, false);
+
+app.onReset = () => {
+    ["first", "second", "preview", "next"].forEach(id => { document.getElementById(id).hidden = true; });
+};
+
+app.logEntry = () => ({ "difficulty" : difficulty });
+
+app.logView = {
+    "key" : app.logKey,
+    "describe" : entry => ({ "title" : (entry.difficulty || "original") + " workout" })
+};
 
 // The exercises for the minute after `minute` - or, as a preview, the one after that
 function displayTask(minute, preview){
@@ -100,74 +109,6 @@ function displayTask(minute, preview){
     });
     if(!preview && first){ speak(first.task); }
     if(!preview && second){ speak(" followed by " + second.task); }
-}
-
-function toggleSession(){
-    paused ? startSession() : pauseSession();
-}
-
-function drawState(state){
-    showState(state);
-    document.getElementById("primaryButton").innerHTML = paused
-        ? `<i class="demo-icon icon-play"></i>${countedIn ? "RESUME" : "START SESSION"}`
-        : '<i class="demo-icon icon-pause"></i>PAUSE';
-}
-
-// The first start counts in and puts the first minute up
-function startSession(){
-    requestWakeLock();
-    paused = false;
-    if(countedIn){
-        clock.start();
-        drawState("running");
-        return;
-    }
-    let button = document.getElementById("primaryButton");
-    button.disabled = true;   // nothing to pause until the countdown has had its say
-    drawState("counting");
-    countdown(() => {
-        countedIn = true;
-        drawState("running");
-        displayTask(0, false);
-        clock.start();
-        button.disabled = false;
-    });
-}
-
-function pauseSession(){
-    paused = true;
-    clock.stop();
-    drawState("paused");
-}
-
-function reset(){
-    releaseWakeLock();
-    clock.reset();
-    paused = true;
-    countedIn = false;
-    background("");
-    document.getElementById("elapsed").innerText = "00:00";
-    ["first", "second", "preview", "next"].forEach(id => { document.getElementById(id).hidden = true; });
-    document.body.removeAttribute("data-saving");
-    drawState("idle");
-}
-
-const logView = {
-    "key" : app.logKey,
-    "describe" : entry => ({ "title" : (entry.difficulty || "original") + " workout" })
-};
-
-function saveSession(){
-    saveToLog(app.logKey, {
-        "id" : Date.now(),
-        "date" : today(),
-        "difficulty" : difficulty,
-        "rating" : sessionRating,
-        "comment" : sessionComment
-    });
-    document.body.removeAttribute("data-saving");
-    resetSavePanel();
-    drawSessionLog(logView);
 }
 
 function loadDifficulty(){
@@ -206,5 +147,5 @@ function migrateLog(){
 document.addEventListener("DOMContentLoaded", () => {
     loadDifficulty();
     migrateLog();
-    drawSessionLog(logView);
+    drawSessionLog(app.logView);
 });

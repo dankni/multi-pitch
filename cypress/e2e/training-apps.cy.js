@@ -28,6 +28,14 @@ describe('Training apps', function () {
         Object.defineProperty(win.navigator, 'serviceWorker', { value: serviceWorker, configurable: true });
     });
 
+    // Many taps as one command, with the page's own click: much quicker than a
+    // cy.click() a tap. Each is looked up as it comes, as a tap can redraw the
+    // list it was in.
+    function tap(...selectors) {
+        cy.document().then((doc) => selectors.forEach((selector) => doc.querySelector(selector).click()));
+    }
+    const times = (count, selector) => Array(count).fill(selector);
+
     beforeEach(() => {
         cy.clearLocalStorage();
         stubAnalytics();
@@ -326,7 +334,7 @@ describe('Training apps', function () {
         it('says something bigger when the whole wall goes up', () => {
             cy.visit(gilfordUrl);
             cy.get('#primaryButton').click();
-            for(let id = 1; id <= 24; id++){ cy.get('#route' + id).click(); }
+            tap(...Array.from({ length: 24 }, (_, i) => '#route' + (i + 1)));
             cy.tick(100);
             cy.get('#tickCount').should('have.text', '24');
             cy.get('.toast').should('be.visible')
@@ -338,7 +346,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('#route12').click();   // 7a
             cy.get('#route15').click();   // 7a+
-            for(let id = 1; id <= 9; id++){ cy.get('#route' + id).click(); }
+            tap(...Array.from({ length: 9 }, (_, i) => '#route' + (i + 1)));
             cy.tick(100);
             cy.get('.toast').should('not.exist');
             cy.get('#route18').click();   // 7b: the sevens, and the twelfth of 24
@@ -431,6 +439,122 @@ describe('Training apps', function () {
         });
     });
 
+    // Rock rings and no hangs share common/workout.js. A voice that starts at once
+    // makes the count in exactly three seconds, and keeps what was said.
+    describe('Workouts run to a clock', function () {
+        function visitWorkout(path) {
+            cy.visit(appUrl + path, {
+                onBeforeLoad(win) {
+                    win.spoken = [];
+                    // tones by frequency: the ping is the high one, the beeps the low
+                    win.tones = [];
+                    win.AudioContext = function () {
+                        let node = () => ({ connect: (next) => next, gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} } });
+                        return {
+                            state: 'running', currentTime: 0, destination: {},
+                            createGain: node,
+                            createOscillator: () => Object.assign(node(), {
+                                frequency: {},
+                                start() { win.tones.push(this.frequency.value); },
+                                stop() {}
+                            })
+                        };
+                    };
+                    Object.defineProperty(win, 'speechSynthesis', { configurable: true, value: {
+                        speaking: false,
+                        pending: false,
+                        cancel: () => {},
+                        speak: (utterance) => { win.spoken.push(utterance.text); utterance.onstart(); }
+                    } });
+                }
+            });
+        }
+
+        it('rock rings puts up each minute in turn', () => {
+            visitWorkout('/training/rings/');
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('#first_task').should('have.text', '3 pull ups');
+            cy.get('body').should('have.class', 'green');
+            cy.tick(45000);
+            cy.get('#next').should('be.visible');
+            cy.get('#first_task_preview').should('have.text', '10 second bent-arm hang');
+            cy.tick(15000);
+            cy.get('#first_task').should('have.text', '10 second bent-arm hang');
+            cy.get('#elapsed').should('have.text', '01:00');
+        });
+
+        it('no hangs hangs, rests, shows the next rep, and finishes on the last hang', () => {
+            visitWorkout('/training/nohangs/');
+            // the info panel: example photos, then the routine a line a grip
+            cy.get('.grips img').should('have.length', 4).each(($img) => expect($img[0].naturalWidth).to.be.greaterThan(0));
+            cy.get('.grips figcaption').should('have.length', 4).first().should('have.text', 'Open Hand');
+            cy.get('#routine tr').should('have.length', 6).first().should('have.text', 'Open Hand · 4 Fingers · 6 reps');
+
+            // the main screen lists every grip, a dot a rep, before it starts
+            cy.get('#hangs tr').should('have.length', 6).first().should('contain', 'Open Hand · 4 Fingers');
+            cy.get('#hangs tr').first().find('.pip').should('have.length', 6);
+            cy.get('#hangs .pip').should('have.length', 20);
+            cy.get('#hangs tr.current, #hangs tr.done').should('not.exist');
+
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('#first_task').should('have.text', 'Open Hand · 4 Fingers');
+            cy.get('#first_rep').should('have.text', 'Rep 1 of 6');
+            cy.get('#first_count').should('have.text', '10');
+            cy.get('body').should('have.class', 'green');
+            cy.get('#hangs tr').first().should('have.class', 'current');
+            cy.get('#hangs .pip').first().should('have.class', 'hanging');
+
+            cy.window().its('tones').should('deep.equal', [1320]);   // a ping as the hang starts
+            cy.tick(10000);
+            cy.get('#first_task').should('have.text', 'Rest, then');
+            cy.get('#first_count').should('have.text', '20');
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
+            cy.get('#hangs .pip.done').should('have.length', 1);
+            cy.get('#hangs .pip.hanging').should('not.exist');
+            cy.get('body').should('not.have.class', 'green');
+            cy.window().its('tones').should('deep.equal', [1320, 1320]);   // and as it ends
+            cy.tick(15000);
+            cy.get('body').should('have.class', 'red');
+            cy.tick(5000);
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
+            cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // three beeps to go, then the next hang's ping
+
+            // the rest after a grip's last hang greys it out and lights the next
+            cy.tick(135000);
+            cy.get('#first_rep').should('have.text', 'Rep 1 of 6');
+            cy.get('#hangs tr').eq(0).should('have.class', 'done');
+            cy.get('#hangs tr').eq(1).should('have.class', 'current');
+            // named as it starts and not before
+            cy.tick(15000);
+            cy.get('#first_task').should('contain', 'Front 3');
+            cy.window().its('spoken').should('include', 'Front 3, Open Hand').and('not.include', 'Next, Front 3, Open Hand')
+                .and('not.include', 'Hang').and('not.include', 'Rest');
+
+            // on to the half crimps
+            cy.tick(300000);
+            cy.get('#first_task').should('contain', 'Half Crimp · Front 2');
+
+            // 20 reps of 30 seconds, less the rest after the last
+            cy.tick(100000);
+            cy.get('#elapsed').should('have.text', '09:40');
+            cy.get('#endingDiv').should('be.visible');
+            cy.get('#primaryButton').should('not.be.visible');
+            cy.get('#first').should('not.be.visible');
+            cy.get('#hangs tr.done').should('have.length', 6);
+            cy.get('#hangs .pip.done').should('have.length', 20);
+            cy.get('#saveSession').click();
+            cy.window().its('localStorage').invoke('getItem', 'noHangsLog').then((log) => {
+                expect(JSON.parse(log)).to.have.length(1);
+            });
+            cy.get('#reset').click();
+            cy.get('#primaryButton').should('contain', 'START SESSION');
+            cy.get('#elapsed').should('have.text', '00:00');
+            cy.get('#hangs tr.done, #hangs .pip.done').should('not.exist');
+        });
+    });
+
     describe('Bouldering session', function () {
         const boulderUrl = appUrl + '/training/boulder/';
 
@@ -499,7 +623,7 @@ describe('Training apps', function () {
             cy.get('.grade-harder').click();
             cy.get('#row-V11').should('exist');
             cy.get('#row-V12').should('not.exist');
-            for(let i = 0; i < 6; i++){ cy.get('.grade-harder').click(); }
+            tap(...times(6, '.grade-harder'));
             cy.get('#row-V17').should('exist');
             cy.get('.grade-harder').click();
             cy.tick(100);   // the toast fades in on a timer, and the clock is frozen
@@ -519,7 +643,7 @@ describe('Training apps', function () {
         it('says the same thing once, however often it is said', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();
-            for(let i = 0; i < 7; i++){ cy.get('.grade-harder').click(); }
+            tap(...times(7, '.grade-harder'));
             cy.get('.grade-harder').click();
             cy.get('.grade-harder').click();
             cy.tick(100);
@@ -616,7 +740,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('label[for="tab-sport"]').click();
             cy.get('#row-8a').should('not.exist');
-            for(let i = 0; i < 6; i++){ cy.get('.grade-harder').click(); }
+            tap(...times(6, '.grade-harder'));
             cy.get('#row-9c').should('exist');
             cy.get('.grade-harder').click();
             cy.tick(100);   // the toast fades in on a timer, and the clock is frozen
@@ -686,11 +810,9 @@ describe('Training apps', function () {
     describe('Endurance', function () {
         const enduranceUrl = appUrl + '/training/endurance/';
 
-        // tap every climb on screen; the list redraws on each tap, so by position
+        // tap every climb on screen
         function tickAll(count) {
-            for (let i = 0; i < count; i++) {
-                cy.get('#climbs button').eq(i).click();
-            }
+            tap(...Array.from({ length: count }, (_, i) => "#climb" + i));
         }
 
         it('saves the grade of every climb for the overview charts', () => {
@@ -762,7 +884,7 @@ describe('Training apps', function () {
             cy.get('#row-M').should('exist');
             cy.get('#row-E3').should('exist');
             cy.get('#row-E4').should('not.exist');
-            for(let i = 0; i < 8; i++){ cy.get('.grade-harder').click(); }
+            tap(...times(8, '.grade-harder'));
             cy.get('#row-E11').should('exist');
             cy.get('.grade-harder').click();
             cy.tick(100);   // the toast fades in on a timer, and the clock is frozen
@@ -841,7 +963,7 @@ describe('Training apps', function () {
 
     describe('One app', function () {
         const pages = ['/training/', '/training/progress/', '/training/rings/', '/training/timer/',
-            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/'];
+            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/'];
 
         it('installs as a single app covering every page', () => {
             cy.request(appUrl + '/training/manifest.json').its('body').should((manifest) => {
@@ -1280,6 +1402,15 @@ describe('Training apps', function () {
                 }
             });
             cy.get('#storageUse').should('have.text', 'Local storage: 0.50 MB of about 5 MB used');
+        });
+
+        it('says how much was downloaded for offline use, once there is any', () => {
+            cy.visit(overviewUrl);
+            cy.window().then((win) => win.caches.open('training-v99')
+                .then(cache => cache.put('/training/filler', new win.Response('x'.repeat(1048576)))));
+            cy.reload();
+            cy.get('#offlineUse').should('have.text', 'Offline files: 1.00 MB');
+            cy.window().then((win) => win.caches.delete('training-v99'));
         });
 
         it('says which version of the apps is installed, once there is one', () => {
