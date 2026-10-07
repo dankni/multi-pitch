@@ -101,7 +101,7 @@ function recordLap(){
 }
 
 function resetTimer(){
-    confirmReset("resetButton", session !== null && (elapsed() > 0 || session.laps > 0), clearSession);
+    confirmReset("reset", session !== null && (elapsed() > 0 || session.laps > 0), clearSession);
 }
 
 function clearSession(){

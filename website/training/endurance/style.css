@@ -6,12 +6,12 @@ body:not([data-state="idle"]) #setup,
 body:not([data-state="idle"]) #discard {
     display: inline-block;
 }
-#restClock, #skipRest, #choice {
+#restClock, #skipRest, #anotherSet {
     display: none;
 }
 [data-state="rest"] #restClock,
 [data-state="rest"] #skipRest,
-[data-state="choice"] #choice {
+[data-state="choice"] #anotherSet {
     display: block;
 }
 
@@ -113,15 +113,10 @@ body:not([data-state="idle"]) #discard {
 #skipRest:hover, #skipRest:focus {
     color: light-dark(#00306e, #c5e0ff);
 }
-#choice button, #finishButton {
-    display: block;
-    width: 100%;
-    margin: 12px auto 0;
-}
 [data-state="saving"] #finishButton {
     display: none;
 }
-#discard {
+#finishButton {
     margin-bottom: 40px;
 }
 .overlay .switch-label .icon-ok {

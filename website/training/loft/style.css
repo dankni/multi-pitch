@@ -30,6 +30,10 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #ffc640;
+    border-top: 3px solid var(--warn);
+    background-color: light-dark(#fff3dc, #3a2a0a);
     font-size: 10px;
+}
+.warn-icon {
+    color: light-dark(#b36b00, var(--warn));
 }

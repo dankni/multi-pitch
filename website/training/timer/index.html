@@ -37,7 +37,7 @@
 	</nav>
 
 	<button id="primaryButton" data-action="toggleTimer"><i class="demo-icon icon-play"></i>START SESSION</button>
-	<button class="secondary" id="resetButton" data-action="resetTimer"><i class="demo-icon icon-ccw"></i>RESET</button>
+	<button class="secondary" id="reset" data-action="resetTimer"><i class="demo-icon icon-ccw"></i>RESET</button>
 
 	<div id="data">
 		<div class="box">
@@ -48,9 +48,9 @@
 		</div>
 	</div>
 
-	<div id="actions">
-		<button id="finishButton" data-action="openSavePanel" disabled>FINISH SESSION</button>
-		<button id="lapButton" class="lap-button" data-action="recordLap" disabled><i class="demo-icon icon-ok"></i>LAP</button>
+	<div id="actions" class="button-stack">
+		<button id="lapButton" class="quiet" data-action="recordLap" disabled><i class="demo-icon icon-ccw"></i>LAP</button>
+		<button id="finishButton" data-action="openSavePanel" disabled><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
 	</div>
 
 	<!-- A session that never went through the timer: the date, time and laps are

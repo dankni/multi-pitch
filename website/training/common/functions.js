@@ -484,6 +484,19 @@ document.addEventListener("click", event => {
 
 /* ================= Speech and the countdown ================= */
 const speechStartTimeout = 1000;
+let voiceOff = false;   // the Voice disabled setting: beeps and pings only
+const voiceOffKey = "voiceOff";
+
+function toggleVoiceOff(input){
+    voiceOff = input.checked;
+    localStorage.setItem(voiceOffKey, JSON.stringify(voiceOff));
+}
+
+function loadVoiceOffSetting(){
+    voiceOff = localStorage.getItem(voiceOffKey) === "true";
+    let box = document.getElementById("voiceOff");
+    if(box !== null){ box.checked = voiceOff; }
+}
 
 /* Says the text. onStart fires the moment the voice actually starts - or at once
    with no voice, or after a second if the engine never says - so what is on
@@ -495,7 +508,7 @@ function speak(text, onStart){
         fired = true;
         if(onStart){ onStart(); }
     };
-    if(sound && "speechSynthesis" in window){
+    if(sound && !voiceOff && "speechSynthesis" in window){
         let utterance = new SpeechSynthesisUtterance(text);
         utterance.onstart = fire;
         utterance.onerror = fire;
@@ -552,6 +565,7 @@ function countdown(onComplete){
             return;
         }
         speak(steps[index].word, () => {
+            if(voiceOff){ beep(); }
             background(steps[index].colour);
             setTimeout(() => runStep(index + 1), gap);
         });
@@ -612,10 +626,13 @@ function haptic(){
 /* A line along the bottom that goes by itself. Each is its own card, stacked
    above any still up, so two things said on one tap are both seen; the same
    message again restarts its clock rather than stacking a copy. With onTap its
-   message is a button, and it stays until tapped or closed. */
+   message is a button, and it stays until tapped or closed; sticky keeps a
+   plain one up until closed, and warn makes it an orange warning. message is
+   text, or a <template> whose markup it shows - for a link. */
 const toastLife = 5200;
 
-function toast(message, onTap){
+function toast(message, onTap, sticky, warn){
+    const text = typeof message === "string" ? message : message.content.textContent.trim();
     let stack = document.getElementById("toasts");
     if(stack === null){
         stack = document.createElement("div");
@@ -624,15 +641,19 @@ function toast(message, onTap){
         stack.setAttribute("role", "status");   // announced as each arrives, without taking focus
         document.body.appendChild(stack);
     }
-    let box = [...stack.children].find(card => card.dataset.message === message);
+    let box = [...stack.children].find(card => card.dataset.message === text);
     if(box === undefined){
         box = document.createElement("div");
-        box.className = "toast";
-        box.dataset.message = message;
-        box.innerHTML = '<span class="toast-face" aria-hidden="true">☺</span>'
+        box.className = warn ? "toast warn" : "toast";
+        box.dataset.message = text;
+        box.innerHTML = '<span class="toast-face" aria-hidden="true">' + (warn ? "⚠︎" : "☺") + '</span>'
             + (onTap ? '<button type="button" class="toast-text toast-action"></button>' : '<span class="toast-text"></span>')
             + '<button type="button" class="toast-close" aria-label="Close">×</button>';
-        box.querySelector(".toast-text").innerText = message;
+        if(typeof message === "string"){
+            box.querySelector(".toast-text").innerText = message;
+        } else {
+            box.querySelector(".toast-text").append(message.content.cloneNode(true));
+        }
         box.querySelector(".toast-close").addEventListener("click", () => hideToast(box));
         if(onTap){ box.querySelector(".toast-action").addEventListener("click", onTap); }
         stack.appendChild(box);
@@ -642,7 +663,7 @@ function toast(message, onTap){
         box.classList.add("shown");
     }
     clearTimeout(box.timer);
-    if(!onTap){ box.timer = setTimeout(() => hideToast(box), toastLife); }
+    if(!onTap && !sticky){ box.timer = setTimeout(() => hideToast(box), toastLife); }
 }
 
 function hideToast(box){
@@ -762,6 +783,7 @@ function loadAnalytics(){
 document.addEventListener("DOMContentLoaded", () => {
     drawSavePanel();
     loadPreventSleepSetting();
+    loadVoiceOffSetting();
     showDarkModeSetting(prefersDark());
     showCogHint();
     registerServiceWorker();

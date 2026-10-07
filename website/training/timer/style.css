@@ -1,10 +1,13 @@
 /* body[data-state] is idle, running, paused or saving, and data-missing is set
    while a missing session is being typed in (see main.js) */
-body:not([data-state="idle"]) #actions button {
+body:not([data-state="idle"]) #lapButton {
+    display: block;
+}
+body:not([data-state="idle"]) #finishButton {
     display: inline-block;
 }
-[data-state="paused"] #resetButton,
-[data-state="saving"] #resetButton {
+[data-state="paused"] #reset,
+[data-state="saving"] #reset {
     display: inline-block;
 }
 body:not([data-state="idle"]) #addMissingLink {
@@ -14,22 +17,12 @@ body:not([data-state="idle"]) #addMissingLink {
     display: block;
 }
 
-/* LAP under the lap count and FINISH SESSION under the clock, the same size
-   even when FINISH SESSION wraps */
+/* LAP on a row of its own and FINISH SESSION below it */
 #actions button {
     display: none;
-    width: 45%;
-    margin: 0 2% 40px;
-    padding: 1.1rem 0.4rem;
-    min-height: 76px;
-    font-size: 1.1rem;
-    line-height: 1.2;
-    white-space: normal;
-    border-radius: 8px;
-    vertical-align: top;
 }
-.lap-button i {
-    font-size: 1rem;
+#finishButton {
+    margin-bottom: 40px;
 }
 .missing-numbers {
     margin-top: 10px;
@@ -39,9 +32,3 @@ body:not([data-state="idle"]) #addMissingLink {
     text-align: center;
 }
 
-@media (max-width: 380px) {
-    #actions button {
-        padding: 0.9rem 0.3rem;
-        font-size: 1rem;
-    }
-}

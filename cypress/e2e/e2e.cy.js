@@ -1,7 +1,7 @@
 const climbsData = require('../../website/data/data.json');
 
 describe('Load the website page', function () {
-    const appUrl = 'localhost:9000';
+    const appUrl = Cypress.env('appUrl');
     
     it('Make sure that we display the right number of cards', () => {
         var numberOfPublishCard = climbsData.climbs.filter(c => c.status === "publish").length;

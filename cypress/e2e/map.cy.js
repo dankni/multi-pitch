@@ -1,5 +1,5 @@
 describe('Map page (self-hosted Leaflet)', function () {
-    const appUrl = 'localhost:9000';
+    const appUrl = Cypress.env('appUrl');
 
     const stubWeather = () => {
         cy.fixture('weather.json').then((weather) => {

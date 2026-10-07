@@ -5,7 +5,7 @@ const climbsData = require('../../website/data/data.json');
 // for each stored shape so a refactor of climbCard.js or a re-export of the
 // climb JSON files cannot silently drop or invent attribute rings.
 describe('Climb card attribute rings', function () {
-    const appUrl = 'localhost:9000';
+    const appUrl = Cypress.env('appUrl');
 
     function openCard(climbId) {
         cy.visit(appUrl);

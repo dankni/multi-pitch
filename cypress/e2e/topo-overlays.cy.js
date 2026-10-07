@@ -1,5 +1,5 @@
 describe('Topo overlay attribute toggles', function () {
-    const appUrl = 'localhost:9000';
+    const appUrl = Cypress.env('appUrl');
 
     // climb 7 has every overlay attribute: route, 4 pitches (belays + labels),
     // 2 descent entries and 4 alternative routes

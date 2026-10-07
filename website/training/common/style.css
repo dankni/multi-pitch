@@ -52,6 +52,7 @@
     --danger: #a13333;
     --off: #6b6b73;
     --confirm: #17812a;
+    --warn: #eda100;
     --card: #262626;             /* anything floating over the app: toast, note, hint */
     --card-ink: #E8E8E8;
 
@@ -195,6 +196,15 @@ button:active {
     background: transparent;
     border-color: #c9c9c9;
     color: #9b9b9b;
+}
+/* Buttons one above another, centred, each as wide as the widest */
+.button-stack {
+    display: grid;
+    justify-content: center;
+}
+.button-stack > button {
+    margin-left: 0;
+    margin-right: 0;
 }
 /* An overlay is black whatever the theme, so its quiet buttons are always the dark ones */
 .overlay .quiet {
@@ -370,7 +380,7 @@ section {
     margin: 10px auto;
 }
 label .label-content {
-    width: 210px;
+    width: 250px;
     display: inline-block;
     text-align: left;
 }
@@ -669,6 +679,16 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 .toast-text {
     flex: 1 1 auto;
+}
+/* A warning: orange where a toast is green */
+.toast.warn {
+    border-top-color: var(--warn);
+}
+.toast.warn .toast-face {
+    color: var(--warn);
+}
+.toast-text a {
+    color: inherit;
 }
 /* A toast with something to do: the message is the button, underlined */
 .toast-action, .toast-action:hover, .toast-action:focus {

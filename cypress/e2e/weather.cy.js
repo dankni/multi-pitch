@@ -1,5 +1,5 @@
 describe('Weather forecast strip', function () {
-    const appUrl = 'localhost:9000';
+    const appUrl = Cypress.env('appUrl');
     const climbSlug = '/climbs/original-route-on-old-man-of-stoer/';
 
     const DAY_KEYS = ['currently']

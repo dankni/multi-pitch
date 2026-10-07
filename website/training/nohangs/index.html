@@ -40,7 +40,7 @@
 	<button id="primaryButton" data-action="toggleSession"><i class="demo-icon icon-play"></i>START SESSION</button>
 	<button class="secondary" id="reset" data-action="reset"><i class="demo-icon icon-ccw"></i>RESET</button>
 	<div id="data">
-		<h3 id="elapsed">00:00</h3>
+		<h3 id="elapsed">09:40</h3>
 	</div>
 	<div class="holder">
 		<section id="first" hidden>
@@ -105,6 +105,12 @@
 			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
 			<span class="label-content">
 				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleVoiceOff" id="voiceOff"/>
+			<span class="label-content">
+				<i class="icon-note toggle-icon" aria-hidden="true"></i> Voice disabled (just beeps) <span class="switch-state"></span>
 			</span>
 		</label>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>

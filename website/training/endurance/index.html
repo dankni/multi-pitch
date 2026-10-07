@@ -45,6 +45,8 @@
 		<button id="primaryButton" data-action="startSession"><i class="demo-icon icon-play"></i>START SESSION</button>
 	</div>
 
+	<button class="secondary" id="discard" data-action="discardSession"><i class="demo-icon icon-cancel"></i>DISCARD</button>
+
 	<div class="holder" id="sessionHolder">
 		<section id="stageBar">
 			<h2 id="stageTitle">Warm up</h2>
@@ -58,12 +60,10 @@
 
 		<button type="button" id="skipRest" class="link-button" data-action="endRest">Skip the rest &rarr;</button>
 
-		<div id="choice">
+		<div class="button-stack">
 			<button id="anotherSet" class="quiet" data-action="addSet"><i class="demo-icon icon-ccw"></i>ANOTHER SET</button>
+			<button id="finishButton" data-action="openSavePanel"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
 		</div>
-		<button id="finishButton" data-action="openSavePanel"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
-
-		<button class="secondary" id="discard" data-action="discardSession"><i class="demo-icon icon-cancel"></i>DISCARD</button>
 
 		<div id="endingDiv" class="ending"></div>
 	</div>

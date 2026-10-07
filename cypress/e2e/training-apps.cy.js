@@ -4,7 +4,7 @@
 // Every test freezes the clock with cy.clock() before the page loads, so elapsed
 // time is driven by cy.tick() rather than by how long the test takes to run.
 describe('Training apps', function () {
-    const appUrl = 'localhost:9000';
+    const appUrl = Cypress.env('appUrl');
     const sessionDate = new Date(2026, 8, 13, 12, 0, 0); // midday, so the UTC date the apps log matches
 
     // Analytics is loaded by common/functions.js on every one of these pages.
@@ -60,7 +60,7 @@ describe('Training apps', function () {
             cy.get('#lapCount').should('have.text', '0');
             cy.get('#primaryButton').should('contain', 'START');
             cy.get('#lapButton').should('not.be.visible');
-            cy.get('#resetButton').should('not.be.visible');
+            cy.get('#reset').should('not.be.visible');
             cy.get('#finishButton').should('not.be.visible');
         });
 
@@ -138,22 +138,22 @@ describe('Training apps', function () {
         it('only offers reset while the clock is stopped', () => {
             cy.visit(timerUrl);
             runSession(1);
-            cy.get('#resetButton').should('not.be.visible');
+            cy.get('#reset').should('not.be.visible');
             cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#resetButton').should('be.visible');
+            cy.get('#reset').should('be.visible');
             cy.get('#primaryButton').click(); // RESUME
-            cy.get('#resetButton').should('not.be.visible');
+            cy.get('#reset').should('not.be.visible');
         });
 
         it('keeps the session on the first reset tap and clears it on the second', () => {
             cy.visit(timerUrl);
             runSession(2);
             cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#resetButton').click();
-            cy.get('#resetButton').should('contain', 'SURE?');
+            cy.get('#reset').click();
+            cy.get('#reset').should('contain', 'SURE?');
             cy.get('#lapCount').should('have.text', '2');
             cy.get('#elapsed').should('have.text', '0:00:20');
-            cy.get('#resetButton').click();
+            cy.get('#reset').click();
             cy.get('#lapCount').should('have.text', '0');
             cy.get('#elapsed').should('have.text', '0:00:00');
             cy.get('#primaryButton').should('contain', 'START');
@@ -163,10 +163,10 @@ describe('Training apps', function () {
             cy.visit(timerUrl);
             runSession(1);
             cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#resetButton').click();
-            cy.get('#resetButton').should('contain', 'SURE?');
+            cy.get('#reset').click();
+            cy.get('#reset').should('contain', 'SURE?');
             cy.tick(4000);
-            cy.get('#resetButton').should('contain', 'RESET');
+            cy.get('#reset').should('contain', 'RESET');
             cy.get('#lapCount').should('have.text', '1'); // still there
         });
 
@@ -174,11 +174,11 @@ describe('Training apps', function () {
             cy.visit(timerUrl);
             runSession(1);
             cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#resetButton').click();
-            cy.get('#resetButton').should('contain', 'SURE?');
+            cy.get('#reset').click();
+            cy.get('#reset').should('contain', 'SURE?');
             cy.get('#primaryButton').click(); // RESUME rather than confirming
             cy.get('#primaryButton').click(); // PAUSE again
-            cy.get('#resetButton').should('contain', 'RESET'); // not one tap from wiping the session
+            cy.get('#reset').should('contain', 'RESET'); // not one tap from wiping the session
             cy.get('#lapCount').should('have.text', '1');
         });
 
@@ -497,6 +497,7 @@ describe('Training apps', function () {
             cy.get('#hangs .pip').should('have.length', 20);
             cy.get('#hangs tr.current, #hangs tr.done').should('not.exist');
 
+            cy.get('#elapsed').should('have.text', '09:40');   // counts down what is left
             cy.get('#primaryButton').click();
             cy.tick(3000);
             cy.get('#first_task').should('have.text', 'Open Hand · 4 Fingers');
@@ -538,7 +539,7 @@ describe('Training apps', function () {
 
             // 20 reps of 30 seconds, less the rest after the last
             cy.tick(100000);
-            cy.get('#elapsed').should('have.text', '09:40');
+            cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#endingDiv').should('be.visible');
             cy.get('#primaryButton').should('not.be.visible');
             cy.get('#first').should('not.be.visible');
@@ -550,7 +551,7 @@ describe('Training apps', function () {
             });
             cy.get('#reset').click();
             cy.get('#primaryButton').should('contain', 'START SESSION');
-            cy.get('#elapsed').should('have.text', '00:00');
+            cy.get('#elapsed').should('have.text', '09:40');
             cy.get('#hangs tr.done, #hangs .pip.done').should('not.exist');
         });
     });

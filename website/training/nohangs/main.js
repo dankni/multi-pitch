@@ -36,14 +36,16 @@ const reps = plan.flatMap((step, row) => Array.from({ "length" : step.reps }, (_
 // no rest after the last hang
 const totalSeconds = reps.length * repSeconds - restSeconds;
 
+// the main clock counts down what is left of the session
 app.clock = secondsClock(seconds => {
-    showElapsed(seconds);
+    showElapsed(totalSeconds - seconds);
     seconds < totalSeconds ? showSecond(seconds) : finish();
 });
 
 app.onGo = () => showSecond(0);
 
 app.onReset = () => {
+    showElapsed(totalSeconds);
     document.getElementById("first").hidden = true;
     markHangs(0, false);
 };
@@ -98,7 +100,7 @@ function showSecond(seconds){
 
 function finish(){
     background("");
-    app.onReset();
+    document.getElementById("first").hidden = true;
     markHangs(reps.length, false);
     speak("Done");
     finishSession();
@@ -133,5 +135,6 @@ function markHangs(done, hanging){
 document.addEventListener("DOMContentLoaded", () => {
     drawRoutine();
     drawHangs();
+    showElapsed(totalSeconds);
     drawSessionLog(app.logView);
 });

@@ -58,6 +58,10 @@ website/climbs
 website/sitemap.xml
 multi-pitch.iml
 
+# The live style guide: for whoever is building a training app, not for climbers,
+# so it stays on the machine it is used on and never reaches the bucket
+website/training/style-guide
+
 # Dans helpers #
 ################
 working-files/runbook.docx
