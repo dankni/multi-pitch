@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="manifest" href="/training/manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Training">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
+	<link href="/training/common/fontello.css" rel="stylesheet" />
+	<link href="/training/common/style.css" rel="stylesheet" />
+	<link href="/training/gaps/style.css" rel="stylesheet" />
+	<script src="/training/common/functions.js" ></script>
+	<script src="/training/common/bottom-nav.js" defer></script>
+	<script src="/training/gaps/progressor.js" ></script>
+	<script src="/training/gaps/figure.js" ></script>
+	<script src="/training/gaps/main.js" ></script>
+    <title>Tindeq Arcade</title>
+  </head>
+
+  <body data-state="idle">
+	<nav>
+		<div class="left-nav">
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
+		</div>
+		<h1>Tindeq Arcade</h1>
+		<div class="right-nav">
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
+			<button type="button" id="sound" class="icon-button demo-icon icon-volume-high" data-action="toggleSound" aria-label="Toggle sound"></button>
+		</div>
+	</nav>
+
+	<!-- The game fills the space between the navs, or the whole screen maximised:
+	     the course, with the score, the buttons and what happened on it -->
+	<div class="game">
+		<span class="cloud" aria-hidden="true"></span>
+		<span class="cloud" aria-hidden="true"></span>
+		<span class="cloud" aria-hidden="true"></span>
+		<canvas id="course" aria-label="The course: hold a pull to climb each wall"></canvas>
+		<p class="score"><span id="score">0</span><span id="best"></span></p>
+		<div class="screen">
+			<div class="over" id="over">
+				<h2 id="overTitle">You fell off</h2>
+				<p id="overScore"></p>
+				<p id="overPull" hidden></p>
+			</div>
+			<button id="primaryButton" data-action="startGame"><i class="demo-icon icon-play"></i>START</button>
+			<button type="button" id="share" data-action="shareScore"><i class="demo-icon icon-share"></i>SHARE</button>
+			<p class="pull-hint" id="pullHint">Hold the screen or the space bar to pull</p>
+			<button type="button" id="connect" data-action="connectProgressor" hidden>Connect Progressor</button>
+		</div>
+		<button type="button" id="maximise" class="icon-button demo-icon icon-resize-full" data-action="toggleMaximise" aria-label="Fill the screen with the game"></button>
+		<div class="force" id="force" hidden>
+			<div class="force-bar"><span id="forceFill"></span><i id="forceMark"></i></div>
+			<span id="forceText"></span>
+		</div>
+	</div>
+
+	<aside id="about" class="overlay">
+		<h2>Tindeq Arcade</h2>
+		<p>Connect a <a href="https://tindeq.com/" target="_blank" rel="noopener">Tindeq</a> device via bluetooth. Pull the required force to climb the walls</p>
+		<p>Set your max pull under the cog. Leave it hanging free while it connects, so it zeroes. It needs Chrome or Edge on Android or a computer. Unfortunatly iPhone's don't support this via a browser. You can play by holding the screen instead.</p>
+		<template id="noBluetoothToast">This browser can't <a href="https://caniuse.com/web-bluetooth" target="_blank" rel="noopener">connect to a Tindeq Progressor</a>. Use Chrome or Edge on Android or a computer - or hold the screen to play.</template>
+		<p id="noBluetooth" hidden>This browser can't connect to a Progressor.</p>
+		<hr />
+		<h2>Activity Log</h2>
+		<p id="stats"></p>
+		<div id="log"></div>
+		<br />
+		<hr />
+		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
+	</aside>
+
+	<aside id="settings" class="overlay">
+		<h2>Settings</h2>
+		<fieldset class="setting-group">
+			<legend>Max pull</legend>
+			<div class="field-group">
+				<input type="number" class="field" id="maxPull" min="2" max="200" step="1" inputmode="numeric" data-change="setMaxPull" aria-label="Max pull in kg" />
+				<span class="unit">kg</span>
+			</div>
+			<p class="progressor-tips">Each wall asks for its own pull, from 2 kg up to this - most of them around half.</p>
+		</fieldset>
+		<fieldset class="setting-group">
+			<legend>Climber</legend>
+			<div class="picker climber-picker">
+				<input type="radio" name="climber" class="nice-radios" id="climber-girl" value="girl" data-change="setClimber" checked />
+				<label for="climber-girl"><canvas class="climber-preview" data-figure="girl" aria-hidden="true"></canvas>Girl</label>
+				<input type="radio" name="climber" class="nice-radios" id="climber-boy" value="boy" data-change="setClimber" />
+				<label for="climber-boy"><canvas class="climber-preview" data-figure="boy" aria-hidden="true"></canvas>Boy</label>
+			</div>
+		</fieldset>
+		<fieldset class="setting-group progressor-setup">
+			<legend>Tindeq Progressor</legend>
+			<p class="progressor-status" id="progressorStatus" data-status="off" role="status">
+				<span class="status-dot" aria-hidden="true"></span><span id="progressorStatusText">Not connected</span>
+			</p>
+			<p class="progressor-detail" id="progressorDetail" hidden></p>
+			<p class="progressor-error" id="progressorError" hidden></p>
+			<div class="progressor-buttons">
+				<button type="button" class="quiet" id="settingsConnect" data-action="connectProgressor">Connect</button>
+				<button type="button" class="quiet" id="disconnect" data-action="disconnectProgressor" hidden>Disconnect</button>
+				<button type="button" class="quiet" id="tare" data-action="tareProgressor" hidden>Zero it</button>
+			</div>
+			<ol class="progressor-steps" id="progressorSteps">
+				<li>Switch the Progressor on with its button.</li>
+				<li>Hang it with nothing pulling on it, so it zeroes at 0 kg.</li>
+				<li>Tap Connect and choose the Progressor in the list.</li>
+				<li>Pull on it and watch the kg move.</li>
+			</ol>
+			<p class="progressor-tips" id="progressorTips">Not in the list? Check Bluetooth is on, and that the Tindeq app isn't connected to it - it talks to one app at a time. It switches itself off after 10 minutes without use.</p>
+			<p class="progressor-tips" id="bluetoothOff" hidden>Bluetooth looks to be off on this device.</p>
+			<p class="progressor-tips" id="noBluetoothSettings" hidden>This browser can't connect to a Progressor. It needs Chrome or Edge on Android or a computer. unfortunatly iPhone's don't support this via a browser. You can play by holding the screen instead.</p>
+		</fieldset>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
+			<span class="label-content">
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
+			</span>
+		</label>
+		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
+	</aside>
+  </body>
+</html>

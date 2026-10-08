@@ -35,6 +35,8 @@
                 <path d="M50,40 V70 L40,94 M50,70 L60,94"/>
             </g>
             <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M22,97.5 H78"/>`) },
+        "gaps" : { "name" : "Tindeq Arcade", "icon" : svg("0 0 100 100",
+            `<path fill="none" stroke="currentColor" stroke-width="8" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/>`) },
         "trad" : { "name" : "Outside", "icon" : svg("0 0 100 100",
             `<g transform="rotate(30 50 50)">
                 <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round" d="M39,5 Q50,0 61,5 L57,25 Q50,21 43,25 Z M46,9 Q50,7 54,9 V19 Q50,17 46,19 Z"/>

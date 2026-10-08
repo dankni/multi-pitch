@@ -35,6 +35,20 @@
                              entry.ukc === true ? "UKC data ignored" : ""].filter(part => part !== "").join(" · ") };
     }
 
+    /* The score, just a number: metres climbed, coins and all. Runs from before the score was kept have
+       seconds of pull (or "metres" at 1 m/s), at the game's 3 m/s climb. */
+    function gapsSession(entry){
+        let pulled = count(entry.seconds ?? entry.metres);
+        let score = typeof entry.score === "number" ? entry.score : pulled * 3;
+        return { "title" : String(Math.round(score)),
+                 "detail" : "",
+                 "rating" : 0,   // its score is points, not stars
+                 "comment" : [plural(count(entry.walls ?? entry.gaps), "wall"),
+                              count(entry.coins) > 0 ? plural(entry.coins, "coin") : "",
+                              Math.round(pulled) + " s pulled",
+                              typeof entry.peakKg === "number" ? "max pull " + entry.peakKg + " kg" : ""].filter(part => part !== "").join(" · ") };
+    }
+
     // Boulders, and sport climbs once a session has any
     function gymSession(entry){
         let boulders = list(entry.climbs), sport = list(entry.sport);
@@ -66,7 +80,9 @@
         { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
           "line" : tradSession },
         { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
-          "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) }
+          "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) },
+        { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
+          "line" : gapsSession }
     ];
 
     function readLog(app){
@@ -88,8 +104,8 @@
                 "date" : entry.date,
                 "id" : entry.id || 0,
                 "app" : app,
-                "comment" : typeof entry.comment === "string" ? entry.comment : "",
-                "rating" : count(entry.rating) || count(entry.score),
+                "comment" : described.comment ?? (typeof entry.comment === "string" ? entry.comment : ""),
+                "rating" : described.rating ?? (count(entry.rating) || count(entry.score)),
                 "title" : described.title,
                 "detail" : described.detail
             };

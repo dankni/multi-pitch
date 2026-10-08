@@ -6,7 +6,7 @@
    When you change any app, bump CACHE_VERSION, or installed copies keep serving
    the old files. */
 
-const CACHE_VERSION = 'v130';
+const CACHE_VERSION = 'v144';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -82,6 +82,22 @@ const SHELL = [
     '/training/nohangs/img/half-crimp.webp',
     '/training/nohangs/img/front-3.webp',
     '/training/nohangs/img/middle-2.webp',
+
+    '/training/gaps/',
+    '/training/gaps/style.css',
+    '/training/gaps/progressor.js',
+    '/training/gaps/main.js',
+    '/training/gaps/figure.js',
+    '/training/gaps/img/sky.png',
+    '/training/gaps/img/earth.png',
+    '/training/gaps/img/rock.png',
+    '/training/gaps/img/grass.png',
+    '/training/gaps/img/flag-down.png',
+    '/training/gaps/img/flag-1.png',
+    '/training/gaps/img/flag-2.png',
+    '/training/gaps/img/coin.png',
+    '/training/gaps/img/mushroom-brown.png',
+    '/training/gaps/img/mushroom-red.png',
 
     // the paper tracker the tick list links to
     '/gilford.pdf',

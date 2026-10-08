@@ -400,11 +400,16 @@ function logButton(action, id, icon, label){
     return `<button type="button" class="icon-button demo-icon ${icon}" data-log="${action}" data-id="${id}" aria-label="${label}"></button>`;
 }
 
+// What was typed about a session, or what an app's view makes of it
+function logComment(entry){
+    return sessionLogView.comment ? sessionLogView.comment(entry) : entry.comment;
+}
+
 function sessionLogRow(entry){
     let described = sessionLogView.describe(entry);
     let when = logDateParts(entry.date);
     let date = logDate(entry.date);
-    let note = entry.comment ? logButton("note", entry.id, "icon-note", "Read the note from " + date) : "";
+    let note = logComment(entry) ? logButton("note", entry.id, "icon-note", "Read the note from " + date) : "";
     let edit = sessionLogView.onEdit && !entry.readOnly ? logButton("edit", entry.id, "icon-wrench", "Edit session " + date) : "";
     let remove = entry.readOnly ? "" : " " + logButton("delete", entry.id, "icon-trash", "Delete session " + date).replace("<button", `<button id="delete${entry.id}"`)
         + ` <span hidden id="confirm${entry.id}">Sure?
@@ -426,7 +431,7 @@ function logClicked(event){
     if(action === "note"){
         event.stopPropagation();   // or the page's own listener closes it again
         let entry = sessionLogEntries().find(item => item.id === id);
-        showNote(button, entry.comment, sessionStars(entry), "Note from " + logDate(entry.date));
+        showNote(button, logComment(entry), sessionStars(entry), "Note from " + logDate(entry.date));
     }
     if(action === "edit"){ sessionLogView.onEdit(id); }
     if(action === "delete" || action === "cancel"){ toggleConfirm(id); }

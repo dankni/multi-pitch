@@ -1,0 +1,371 @@
+/* The game fills the screen between the two 58px navs: a sky that main.js
+   moves along behind the course, the same in either theme, with the score,
+   the buttons and what happened over it.
+   All of it is arcade style - blocky capitals with a hard outline. That is the
+   game's own look, kept here: the rest of the app keeps the house style. */
+.game {
+    --arcade-ink: #1d2b53;
+    --arcade-gold: #ffd84a;
+    --arcade-outline: 2px 0 var(--arcade-ink), -2px 0 var(--arcade-ink), 0 2px var(--arcade-ink), 0 -2px var(--arcade-ink),
+                      2px 2px var(--arcade-ink), -2px 2px var(--arcade-ink), 2px -2px var(--arcade-ink), -2px -2px var(--arcade-ink);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: calc(100vh - 116px - env(safe-area-inset-bottom));
+    height: calc(100dvh - 116px - env(safe-area-inset-bottom));
+    background: #d0f4f7 url(img/sky.png) repeat-x;
+    background-size: auto 100%;
+    background-position: 0 100%;
+}
+.score, .screen, .force {
+    font-family: ui-monospace, Menlo, Consolas, "Roboto Mono", "DejaVu Sans Mono", monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: var(--arcade-outline);
+}
+
+/* Now and then a cloud drifts over: each crosses in part of its long loop,
+   off the side for the rest, so there are rarely more than one or two */
+.cloud {
+    position: absolute;
+    left: 110%;
+    width: 90px;
+    height: 26px;
+    border-radius: 13px;
+    background: #fff;
+    opacity: 0.9;
+    pointer-events: none;
+    animation: drift 60s linear infinite;
+}
+.cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    bottom: 10px;
+    border-radius: 50%;
+    background: #fff;
+}
+.cloud::before {
+    left: 14px;
+    width: 38px;
+    height: 34px;
+}
+.cloud::after {
+    left: 44px;
+    width: 30px;
+    height: 26px;
+}
+.cloud:nth-child(1) {
+    top: 14%;
+}
+.cloud:nth-child(2) {
+    top: 26%;
+    transform: scale(0.7);
+    animation-duration: 85s;
+    animation-delay: -30s;
+}
+.cloud:nth-child(3) {
+    top: 8%;
+    transform: scale(1.3);
+    animation-duration: 110s;
+    animation-delay: -80s;
+}
+@keyframes drift {
+    from { left: 110%; }
+    60% { left: -40%; }
+    to { left: -40%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cloud {
+        animation: none;
+    }
+    .cloud:nth-child(1) {
+        left: 60%;
+    }
+}
+
+/* Maximised, the navs go and the game takes the whole screen */
+.maximised nav, .maximised .bottom-nav {
+    display: none;
+}
+.has-bottom-nav.maximised body {
+    padding-bottom: 0;
+}
+.maximised .game {
+    height: 100vh;
+    height: 100dvh;
+}
+#maximise {
+    position: absolute;
+    z-index: 3;
+    right: 12px;
+    bottom: 12px;
+    box-sizing: border-box;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    font-size: 20px;
+    line-height: 38px;
+    color: var(--arcade-ink);
+    background: var(--arcade-gold);
+    border: 3px solid var(--arcade-ink);
+    box-shadow: 3px 3px 0 var(--arcade-ink);
+}
+#maximise:hover, #maximise:focus {
+    color: var(--arcade-ink);
+    background: #ffe47e;
+}
+#maximise:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+}
+
+#course {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;   /* a hold is a pull, never a scroll or a zoom */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    cursor: pointer;
+}
+
+.score {
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;   /* a hold on it is still a hold on the course */
+}
+#best {
+    color: var(--arcade-gold);
+}
+
+/* The buttons and messages, in the middle of the course. Only the buttons
+   take a tap: anywhere else is the course, to hold. */
+.screen {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 48px 16px;
+    pointer-events: none;
+}
+.screen button {
+    pointer-events: auto;
+    margin: 0;
+    padding: 14px 24px;
+    font: inherit;
+    font-size: 22px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: none;
+    color: var(--arcade-ink);
+    background: var(--arcade-gold);
+    border: 4px solid var(--arcade-ink);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--arcade-ink);
+    transition: none;
+}
+.screen button:hover, .screen button:focus {
+    background: #ffe47e;
+}
+.screen button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+.screen button:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+.screen .demo-icon {
+    margin-right: 10px;
+}
+#connect, #share {
+    font-size: 15px;
+    padding: 10px 16px;
+    background: #fff;
+}
+#connect:hover, #connect:focus, #share:hover, #share:focus {
+    background: #e8f4ff;
+}
+.pull-hint {
+    margin: 0;
+    font-size: 15px;
+    text-shadow: 1px 1px 0 var(--arcade-ink), -1px -1px 0 var(--arcade-ink), 1px -1px 0 var(--arcade-ink), -1px 1px 0 var(--arcade-ink);
+}
+
+/* The Progressor's pull out of the max, with a line at what this wall wants,
+   along the bottom of the course */
+.force {
+    position: absolute;
+    z-index: 1;
+    left: 12px;
+    right: 68px;   /* clear of the maximise button */
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+}
+.force-bar {
+    position: relative;
+    flex: 1;
+    height: 14px;
+    border: 3px solid var(--arcade-ink);
+    background: #fff;
+    overflow: hidden;
+}
+#forceFill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--primary);
+}
+#forceFill.over {
+    background: #4cd964;
+}
+#forceMark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background: var(--arcade-ink);
+}
+#forceText {
+    min-width: 130px;
+    text-align: right;
+}
+
+/* Each climber drawn on its own chip, standing over its name */
+.climber-picker label {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.climber-preview {
+    width: 48px;
+    height: 64px;
+}
+
+.unit {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-left: 1px solid var(--field-edge);
+}
+#maxPull {
+    width: 80px;
+    text-align: right;
+}
+
+/* The Progressor under the cog: a dot for how it is, then what to do */
+.progressor-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 18px;
+}
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--off);
+}
+[data-status="connecting"] .status-dot {
+    background: var(--band-medium);
+    animation: status-pulse 1s ease-in-out infinite alternate;
+}
+[data-status="connected"] .status-dot {
+    background: #4cd964;
+}
+@keyframes status-pulse {
+    to { opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-status="connecting"] .status-dot {
+        animation: none;
+    }
+}
+.progressor-detail, .progressor-error {
+    margin: 6px 0 0;
+    font-size: 14px;
+}
+.progressor-error {
+    color: #ff8a80;
+}
+.progressor-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.progressor-buttons button {
+    margin-top: 12px;
+}
+.progressor-steps {
+    margin: 16px auto 0;
+    padding-left: 22px;
+    max-width: 320px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.progressor-tips {
+    margin: 10px auto 0;
+    max-width: 320px;
+    font-size: 14px;
+    text-align: left;
+    opacity: 0.8;
+}
+/* The toast already says it */
+body:has(.toast.warn.shown) #noBluetoothSettings {
+    display: none;
+}
+
+/* What is on screen follows body[data-state]: idle, running or over */
+.over {
+    display: none;
+}
+[data-state="over"] .over {
+    display: block;
+}
+.over h2 {
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 30px;
+    color: var(--arcade-gold);
+}
+.over p {
+    margin: 8px 0 0;
+    font-size: 18px;
+}
+#share {
+    display: none;
+}
+[data-state="over"] #share {
+    display: inline-block;
+}
+[data-state="running"] #primaryButton,
+[data-state="running"] #connect,
+[data-state="running"] .pull-hint {
+    display: none;
+}
