@@ -566,10 +566,14 @@ describe('Training apps', function () {
     describe('Tindeq Arcade', function () {
         const gapsUrl = appUrl + '/training/gaps/';
 
+        // Bluetooth there by default, as on this machine but not on CI, where the
+        // page's warning that it can't connect would cover what a test taps
         function visitGaps(extra) {
             cy.visit(gapsUrl, {
                 onBeforeLoad(win) {
                     win.Math.random = () => 0;
+                    Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+                        value: { requestDevice: () => Promise.reject(new win.Error('No device chosen')) } });
                     if (extra) { extra(win); }
                 }
             });
