@@ -873,6 +873,13 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     white-space: nowrap;
     font-size: 13px;
 }
+.tindeq-mark {
+    width: 1.3em;
+    height: 1.3em;
+    margin-left: 6px;
+    vertical-align: -0.3em;
+    color: var(--primary);
+}
 .log-actions {
     white-space: nowrap;
     text-align: right;

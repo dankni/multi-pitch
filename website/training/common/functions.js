@@ -363,7 +363,7 @@ function drawSessionLog(view){
             <tr>
                 <th>Date</th>
                 <th>Session</th>
-                <th class="log-rating">Rating</th>
+                <th class="log-rating">${sessionLogView.unrated ? "" : "Rating"}</th>
                 <th><span class="sr-only">Delete</span></th>
             </tr>
         </thead>
@@ -400,6 +400,15 @@ function logButton(action, id, icon, label){
     return `<button type="button" class="icon-button demo-icon ${icon}" data-log="${action}" data-id="${id}" aria-label="${label}"></button>`;
 }
 
+// The Tindeq mark, two peaks, after a session that was pulled on a Progressor
+const tindeqMark = '<svg class="tindeq-mark" viewBox="0 0 100 100" role="img" aria-label="pulled on a Tindeq Progressor">'
+    + '<path fill="none" stroke="currentColor" stroke-width="9" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/></svg>';
+
+// No stars for a view that says it has no rating, as a game with a score
+function logStars(entry){
+    return sessionLogView.unrated ? "" : sessionStars(entry);
+}
+
 // What was typed about a session, or what an app's view makes of it
 function logComment(entry){
     return sessionLogView.comment ? sessionLogView.comment(entry) : entry.comment;
@@ -418,7 +427,7 @@ function sessionLogRow(entry){
     return `<tr>
         <td class="log-date">${when.day}${when.year === "" ? "" : `<br /><span class="log-year">${when.year}</span>`}</td>
         <td>${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
-        <td class="log-rating">${sessionStars(entry)}</td>
+        <td class="log-rating">${logStars(entry)}</td>
         <td class="log-actions">${note}${edit}${remove}</td>
     </tr>`;
 }
@@ -431,7 +440,7 @@ function logClicked(event){
     if(action === "note"){
         event.stopPropagation();   // or the page's own listener closes it again
         let entry = sessionLogEntries().find(item => item.id === id);
-        showNote(button, logComment(entry), sessionStars(entry), "Note from " + logDate(entry.date));
+        showNote(button, logComment(entry), logStars(entry), "Note from " + logDate(entry.date));
     }
     if(action === "edit"){ sessionLogView.onEdit(id); }
     if(action === "delete" || action === "cancel"){ toggleConfirm(id); }

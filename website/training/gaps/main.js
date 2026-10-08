@@ -65,7 +65,8 @@ let lastFrame = Date.now();
 
 app.logView = {
     "key" : app.logKey,
-    "describe" : entry => ({ "title" : points(entryScore(entry)), "detail" : "" }),
+    "describe" : entry => ({ "title" : points(entryScore(entry)) + (entry.input === "tindeq" ? tindeqMark : ""), "detail" : "" }),
+    "unrated" : true,
     // the rest of a run behind the note button
     "comment" : entry => joinDetail([plural(entry.walls ?? entry.gaps, "wall"), entry.coins ? plural(entry.coins, "coin") : "",
                                      Math.round(Number(entry.seconds ?? entry.metres) || 0) + " s of pull",

@@ -610,6 +610,8 @@ describe('Training apps', function () {
                 expect(log[0]).to.include({ score: 9, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 20 });
             });
             cy.get('#log tbody tr').should('have.length', 1).and('contain', '9');
+            // no stars for a game, and no Tindeq mark for a run on the screen
+            cy.get('#log .icon-star, #log .tindeq-mark').should('not.exist');
             // the rest of the run behind the note button, as the other apps' notes
             cy.get('#log .log-detail').should('not.exist');
             cy.get('#stats').should('contain.text', 'Highscore 9');
@@ -788,6 +790,8 @@ describe('Training apps', function () {
             cy.get('body').should('have.attr', 'data-state', 'over');
             savedLog().its(0).should('include', { input: 'tindeq', maxPull: 20, peakKg: 12 });
             cy.get('#overPull').should('be.visible').and('have.text', 'Max pull 12 kg');
+            cy.get('#log .tindeq-mark').should('have.length', 1);
+            cy.get('#log .icon-star').should('not.exist');
 
             // and back to the connect button if it goes
             cy.window().then((win) => win.progressorDevice.dispatchEvent(new win.Event('gattserverdisconnected')));
@@ -1580,6 +1584,17 @@ describe('Training apps', function () {
             cy.get('#progressEmpty').should('be.visible');
             // and there is still the way to bring a UKC logbook in
             cy.get('#ukcPrompt').should('be.visible');
+        });
+
+        it('lists a Tindeq Arcade run with its score and no stars, and the Tindeq mark for one on a Progressor', () => {
+            visitWith({ gapsLog: [
+                { id: 1, date: '2026-09-12', score: 30, seconds: 9, walls: 2, coins: 3, input: 'tap', maxPull: 20 },
+                { id: 2, date: '2026-09-13', score: 49, seconds: 15, walls: 3, coins: 4, input: 'tindeq', maxPull: 20, peakKg: 14.5 }
+            ] });
+            cy.get('#sessions tbody tr').should('have.length', 2);
+            cy.get('#sessions tbody tr').first().should('contain', '49').find('.tindeq-mark').should('exist');
+            cy.get('#sessions tbody tr').last().should('contain', '30').find('.tindeq-mark').should('not.exist');
+            cy.get('#sessions .icon-star').should('not.exist');
         });
 
         it('says the same when nothing graded has been logged', () => {

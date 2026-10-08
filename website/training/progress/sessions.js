@@ -42,7 +42,8 @@
         let score = typeof entry.score === "number" ? entry.score : pulled * 3;
         return { "title" : String(Math.round(score)),
                  "detail" : "",
-                 "rating" : 0,   // its score is points, not stars
+                 "unrated" : true,   // its score is points, not stars
+                 "tindeq" : entry.input === "tindeq",
                  "comment" : [plural(count(entry.walls ?? entry.gaps), "wall"),
                               count(entry.coins) > 0 ? plural(entry.coins, "coin") : "",
                               Math.round(pulled) + " s pulled",
@@ -105,7 +106,9 @@
                 "id" : entry.id || 0,
                 "app" : app,
                 "comment" : described.comment ?? (typeof entry.comment === "string" ? entry.comment : ""),
-                "rating" : described.rating ?? (count(entry.rating) || count(entry.score)),
+                "rating" : count(entry.rating) || count(entry.score),
+                "unrated" : described.unrated === true,
+                "tindeq" : described.tindeq === true,
                 "title" : described.title,
                 "detail" : described.detail
             };
@@ -146,9 +149,9 @@
         return '<tr><td class="log-date">' + escapeHtml(when.day)
             + (when.year === "" ? "" : '<br /><span class="log-year">' + escapeHtml(when.year) + '</span>')
             + '</td><td class="log-app"><a href="' + session.app.href + '">' + escapeHtml(session.app.name) + '</a></td>'
-            + '<td>' + escapeHtml(session.title)
+            + '<td>' + escapeHtml(session.title) + (session.tindeq ? tindeqMark : "")
             + (session.detail ? '<br /><span class="log-detail">' + escapeHtml(session.detail) + '</span>' : "")
-            + '</td><td class="log-rating">' + sessionStars(session) + '</td>'
+            + '</td><td class="log-rating">' + (session.unrated ? "" : sessionStars(session)) + '</td>'
             + '<td class="log-actions">' + (session.comment
                 ? '<button type="button" class="icon-button demo-icon icon-note" data-note="' + place
                     + '" aria-label="Read the note from ' + escapeHtml(when.day) + '"></button>'
@@ -174,7 +177,7 @@
         if(button === null){ return; }
         event.stopPropagation();   // or the page's own listener closes the note again
         let session = shown[Number(button.dataset.note)];
-        showNote(button, session.comment, sessionStars(session), "Note from " + session.date);
+        showNote(button, session.comment, session.unrated ? "" : sessionStars(session), "Note from " + session.date);
     });
 
     let month = new Date().toISOString().slice(0, 7);
