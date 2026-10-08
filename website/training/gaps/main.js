@@ -5,9 +5,14 @@
    pull, or let go on it, and you fall. A wall is its seconds of climbing high,
    so it wants that long a pull - and, on a Progressor, its own kg, which leans
    it: a slab for the lightest, overhanging at the max pull. At the top the
-   runner runs on, a wall higher. The score is the metres climbed, as they are
-   climbed, and a point a coin jumped for. Distances are in metres and times in
-   seconds; the course scrolls past a runner who stays put on screen. */
+   runner runs on, a wall higher. On a Progressor a coinKg pull starts a run as
+   well as the button. After the first fall the runner walks back from the wall
+   and waits for a coinKg pull on the other arm - or a hold of the screen - to go
+   again; the second is game over. The score
+   is the metres climbed times each wall's kg, as they are climbed, and
+   coinPoints a coin jumped for. On a Progressor only its pull counts, not the
+   screen. Distances are in metres and times in seconds; the course scrolls
+   past a runner who stays put on screen. */
 
 const app = { "logKey" : "gapsLog" };
 const maxPullKey = "gapsMaxPull";
@@ -40,6 +45,13 @@ const fallAccel = 20;        // m/s², a quicker fall than gravity's
 const fallSeconds = 1;       // at the least, from letting go to it being over
 const lieSeconds = 0.4;      // on the ground after a long fall
 const stepMs = 20;           // the most time one update covers
+const pointsPerKgMetre = 10; // 8 m of a 10 kg wall is 800
+const coinPoints = 100;      // about a metre of a middling wall
+const lives = 2;             // one an arm
+const walkSpeed = 2;         // m/s, walking back from a wall fallen from
+const walkStride = 0.8;
+const restartBack = 2 * runSpeed;    // before the wall fallen from, to run at it again
+const forceStep = 0.1;       // seconds between the Progressor readings kept for the graph
 
 /* What's on screen, in metres: the course fills the space between the navs.
    18 across, or more on a wide screen so the runner never gets huge - but no
@@ -63,20 +75,36 @@ let holding = false;         // the screen or the space bar
 let maxPull = defaultMaxPull;
 let lastFrame = Date.now();
 
+// Runs on a Progressor and runs on the screen, each logged and scored apart
+let logKind = "tindeq";
+const isKind = (entry, kind) => (entry.input === "tindeq") === (kind === "tindeq");
+
 app.logView = {
     "key" : app.logKey,
-    "describe" : entry => ({ "title" : points(entryScore(entry)) + (entry.input === "tindeq" ? tindeqMark : ""), "detail" : "" }),
+    "describe" : entry => ({ "title" : points(entryScore(entry)), "detail" : "" }),
+    "filter" : entry => isKind(entry, logKind),
     "unrated" : true,
     // the rest of a run behind the note button
     "comment" : entry => joinDetail([plural(entry.walls ?? entry.gaps, "wall"), entry.coins ? plural(entry.coins, "coin") : "",
                                      Math.round(Number(entry.seconds ?? entry.metres) || 0) + " s of pull",
                                      entry.input !== "tindeq" ? "held the screen" : entry.peakKg !== undefined ? "max pull " + entry.peakKg + " kg" : "Progressor"]),
-    "stats" : log => sessionCount(log) + " · Highscore " + points(bestScore())
+    "stats" : log => sessionCount(log) + " · Highscore " + points(bestScore(logKind))
 };
 
-// The score, just a number
+function setLogKind(input){
+    logKind = input.value;
+    drawSessionLog();
+}
+
+function showLogKind(kind){
+    logKind = kind;
+    document.getElementById("log-" + kind).checked = true;
+    drawSessionLog(app.logView);
+}
+
+// The score as a number with commas: 12,345
 function points(value){
-    return String(Math.round(value));
+    return Math.round(value).toLocaleString("en-GB");
 }
 
 const roundKg = kg => Math.round(kg * 10) / 10;
@@ -87,32 +115,36 @@ function entryScore(entry){
     return typeof entry.score === "number" ? entry.score : (Number(entry.seconds ?? entry.metres) || 0) * climbSpeed;
 }
 
-// Metres climbed so far, the highest the feet have been, and a point a coin
+// The walls climbed so far, metres times kg, and the coins
 function currentScore(){
-    return Math.round(game.high) + game.collected;
+    return Math.round(game.points) + game.collected * coinPoints;
 }
 
-function bestScore(){
-    return getLog(app.logKey).reduce((best, entry) => Math.max(best, entryScore(entry)), 0);
+// The best of the runs on a Progressor, or of those on the screen
+function bestScore(kind){
+    return getLog(app.logKey).filter(entry => isKind(entry, kind)).reduce((best, entry) => Math.max(best, entryScore(entry)), 0);
 }
 
 /* ================= The course ================= */
 
 function newGame(){
+    let input = progressor.connected ? "tindeq" : "tap";
     game = {
-        "state" : "ready",   // ready, running, climbing, falling or over
+        "state" : "ready",   // ready, running, climbing, falling, recovering (walking back), waiting or over
         "x" : 0,             // how far the runner's hands have come
         "y" : 0,             // how high its feet are
         "walls" : [],
         "next" : 0,          // the wall ahead, or the one being climbed
         "cleared" : 0,
         "seconds" : 0,       // of pull, up the walls topped
+        "climbed" : 0,       // seconds on a wall, topped or not
         "fallen" : 0,        // seconds into a fall
         "speed" : 0,         // of the fall
         "landed" : null,     // seconds into the fall it hit the ground
         "cause" : "",        // of the fall: "wall" ran into one, "off" let go of one
         "onWall" : false,    // climbing with hands on it, not still leaping
         "high" : 0,          // the highest the feet have climbed
+        "points" : 0,        // for the climbing, so far
         "coins" : [],        // along the ground, to jump for
         "collected" : 0,
         "shown" : 0,         // the score on screen
@@ -120,10 +152,15 @@ function newGame(){
         "air" : 0,           // how high a jump has the feet off the ground
         "airSpeed" : 0,
         "low" : 0,           // seconds the pull has been under the wall's kg
-        "best" : bestScore(),
+        "lives" : lives,
+        "paused" : false,
+        "backTo" : 0,        // where the hands walk back to, after a fall
+        "forces" : [[], []], // [seconds, kg] on the Progressor, an arm each
+        "armStarted" : null, // Date.now() at the arm's first reading
+        "best" : bestScore(input),
         "beaten" : false,
         "peakKg" : 0,        // the most the Progressor read in the run
-        "input" : progressor.connected ? "tindeq" : "tap"
+        "input" : input      // a Progressor dropped mid run makes it a run on the screen
     };
     extendCourse();
 }
@@ -146,8 +183,9 @@ function extendCourse(){
         let kg = wallKg();
         let slant = wallSlant(kg);
         let slope = Math.tan(slant * Math.PI / 180);
+        let pointsAtTop = (last ? last.pointsAtTop : 0) + height * kg * pointsPerKgMetre;
         game.walls.push({ "edge" : edge, "topEdge" : edge + height * slope, "base" : base, "top" : base + height,
-                          "seconds" : seconds, "kg" : kg, "slant" : slant, "slope" : slope });
+                          "seconds" : seconds, "kg" : kg, "slant" : slant, "slope" : slope, "pointsAtTop" : pointsAtTop });
         placeCoins((last ? last.topEdge : 0) + 6, edge - 8, base);
     }
 }
@@ -203,20 +241,34 @@ function needKg(){
     return game.walls[game.next].kg;
 }
 
+// With a Progressor connected, holding the screen does nothing
 function pulling(){
-    return holding || (progressor.connected && progressor.kg >= needKg());
+    return progressor.connected ? progressor.kg >= needKg() : holding;
 }
 
 // On the ground, away from a wall, the pull that jumps
 function jumping(){
-    return holding || (progressor.connected && progressor.kg >= coinKg);
+    return progressor.connected ? progressor.kg >= coinKg : holding;
 }
 
 /* ================= Each step ================= */
 
 function update(seconds, pull){
+    if(game.paused){ return; }
+    if(game.state === "ready"){
+        readyStep();
+        return;
+    }
     if(game.state === "falling"){
         fallStep(seconds);
+        return;
+    }
+    if(game.state === "recovering"){
+        recoverStep(seconds);
+        return;
+    }
+    if(game.state === "waiting"){
+        waitStep();
         return;
     }
     if(!["running", "climbing"].includes(game.state)){ return; }
@@ -227,7 +279,13 @@ function update(seconds, pull){
     game.wasJumping = jump;
     if(game.state === "climbing"){
         game.y += climbSpeed * seconds;
-        game.high = Math.max(game.high, game.y);
+        game.climbed += seconds;
+        // only height not climbed before scores, so a wall climbed again after a fall doesn't
+        let up = Math.min(game.y, wall.top);
+        if(up > game.high){
+            game.points += (up - game.high) * wall.kg * pointsPerKgMetre;
+            game.high = up;
+        }
     }
     if(game.airSpeed !== 0){
         game.air += game.airSpeed * seconds;
@@ -329,7 +387,49 @@ function fallStep(seconds){
     game.y = Math.max(floor, game.y - game.speed * seconds);
     game.x = Math.min(game.x, faceAt(wall, game.y + handRise));
     if(game.y === floor && game.landed === null){ game.landed = game.fallen; }
-    if(game.landed !== null && game.fallen >= Math.max(fallSeconds, game.landed + lieSeconds)){ endGame(); }
+    if(game.landed !== null && game.fallen >= Math.max(fallSeconds, game.landed + lieSeconds)){
+        game.lives > 1 ? getUp() : endGame();
+    }
+}
+
+// Onto the other arm, and back far enough to run at the wall again
+function getUp(){
+    let wall = game.walls[game.next];
+    let last = game.walls[game.next - 1];
+    game.lives--;
+    game.armStarted = null;
+    game.state = "recovering";
+    game.backTo = Math.max(last ? last.topEdge + topOutRun : 0, wall.edge - restartBack);
+    showLives();
+    speak("Switch arm");
+}
+
+function recoverStep(seconds){
+    game.x = Math.max(game.backTo, game.x - walkSpeed * seconds);
+    if(game.x > game.backTo){ return; }
+    game.state = "waiting";
+    game.wasJumping = jumping();   // a pull held from before doesn't start it
+    speak(startWords());
+}
+
+// Off again on a pull started while waiting
+function waitStep(){
+    let jump = jumping();
+    if(jump && !game.wasJumping){
+        game.state = "running";
+        game.cause = "";
+        game.low = 0;
+    }
+    game.wasJumping = jump;
+}
+
+const startWords = () => progressor.connected ? "Pull " + coinKg + " kg to start" : "Hold to start";
+
+// On a Progressor, a pull started at the start screen starts the run - not with a panel open over it
+function readyStep(){
+    let jump = progressor.connected && progressor.kg >= coinKg;
+    if(jump && !game.wasJumping && !isOpen("about") && !isOpen("settings") && !isOpen("forces")){ startGame(); }
+    else { game.wasJumping = jump; }
 }
 
 /* ================= Start and finish ================= */
@@ -339,30 +439,53 @@ function startGame(){
     requestWakeLock();
     newGame();
     game.state = "running";
+    game.wasJumping = jumping();   // the pull that started it isn't a jump
     lastFrame = Date.now();
     showScore();
+    showLives();
     showState("running");
+}
+
+// Back to the start screen, for a new run
+function restartGame(){
+    newGame();
+    game.wasJumping = jumping();
+    showScore();
+    showLives();
+    showState("idle");
+    draw();
+}
+
+function togglePause(){
+    if(!game || ["ready", "over"].includes(game.state)){ return; }
+    game.paused = !game.paused;
+    lastFrame = Date.now();   // no catching up on the time paused
+    game.paused ? releaseWakeLock() : requestWakeLock();
+    showState(game.paused ? "paused" : "running");
 }
 
 function endGame(){
     game.state = "over";
+    game.lives = 0;
     releaseWakeLock();
-    let best = bestScore();
+    let best = bestScore(game.input);
     let score = currentScore();
+    let tindeq = game.input === "tindeq";
     // a run that climbed nothing isn't worth a line in the log
     if(score > 0){
         saveToLog(app.logKey, { "id" : Date.now(), "date" : today(), "score" : score, "seconds" : game.seconds,
                                 "walls" : game.cleared, "coins" : game.collected, "input" : game.input, "maxPull" : maxPull,
-                                ...(game.input === "tindeq" ? { "peakKg" : roundKg(game.peakKg) } : {}) });
-        drawSessionLog(app.logView);
+                                ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}) });
+        showLogKind(game.input);
     }
-    document.getElementById("overTitle").innerText = game.cause === "wall" ? "You ran into the wall" : "You fell off";
-    document.getElementById("overScore").innerText = "Score " + points(score) + (score > best ? " - a new high score" : "");
-    let peak = document.getElementById("overPull");
-    peak.hidden = game.input !== "tindeq";
-    peak.innerText = "Max pull " + roundKg(game.peakKg) + " kg";
-    document.getElementById("primaryButton").innerHTML = '<i class="demo-icon icon-ccw"></i>PLAY AGAIN';
+    let stats = [["Score", points(score)], ["Walls", game.cleared], ["Coins", game.collected],
+                 ["Climbed", Math.round(game.high) + " m"], ["Pulled", Math.round(game.climbed) + " s"]];
+    if(tindeq){ stats.push(["Max pull", roundKg(game.peakKg) + " kg"]); }
+    document.getElementById("overStats").innerHTML = stats.map(([name, value]) => `<dt>${name}</dt><dd>${value}</dd>`).join("");
+    document.getElementById("overBest").hidden = !(score > best);
+    document.getElementById("forceButton").hidden = !tindeq || game.forces.every(arm => arm.length === 0);
     showScore();
+    showLives();
     showState("over");
 }
 
@@ -371,6 +494,51 @@ function showScore(){
     document.getElementById("score").innerText = points(score);
     let best = Math.max(game.best, score);
     document.getElementById("best").innerText = best > 0 ? "High score " + points(best) : "";
+}
+
+// A full heart a life left
+function showLives(){
+    document.querySelectorAll("#lives img").forEach((heart, n) => {
+        heart.src = "/training/gaps/img/heart-" + (n < game.lives ? "full" : "empty") + ".png";
+    });
+}
+
+/* ================= The force graph =================
+   The Progressor's pull through the run, an arm a line, each from its first reading */
+
+function keepForce(kg){
+    if(["ready", "over"].includes(game.state) || game.paused){ return; }
+    let now = Date.now();
+    if(game.armStarted === null){ game.armStarted = now; }
+    let readings = game.forces[lives - game.lives];
+    let at = (now - game.armStarted) / 1000;
+    if(readings.length > 0 && at - readings[readings.length - 1][0] < forceStep){ return; }
+    readings.push([at, roundKg(kg)]);
+}
+
+function showForces(){
+    openOverlay("forces");
+    let holder = document.getElementById("forceGraph");
+    let width = Math.max(260, Math.round(holder.clientWidth) || 320), height = 220;
+    let left = 34, right = 10, top = 10, bottom = 28;
+    let seconds = Math.max(1, ...game.forces.flat().map(([at]) => at));
+    let most = Math.max(maxPull, ...game.forces.flat().map(([, kg]) => kg));
+    let x = at => left + at / seconds * (width - left - right);
+    let y = kg => top + (1 - kg / most) * (height - top - bottom);
+    let ticks = (top, step) => Array.from({ "length" : Math.floor(top / step) + 1 }, (_, n) => n * step);
+    let kgStep = most > 40 ? 20 : most > 20 ? 10 : 5;
+    let secondStep = seconds > 120 ? 30 : seconds > 40 ? 10 : 5;
+    let grid = ticks(most, kgStep).map(kg => `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(kg)}" y2="${y(kg)}"/>`
+        + `<text x="${left - 6}" y="${y(kg) + 4}" text-anchor="end">${kg}</text>`).join("")
+        + ticks(seconds, secondStep).map(at => `<text x="${x(at)}" y="${height - 8}" text-anchor="middle">${at}</text>`).join("");
+    let lines = game.forces.map((readings, arm) => readings.length === 0 ? ""
+        : `<polyline class="arm-${arm + 1}" points="${readings.map(([at, kg]) => x(at).toFixed(1) + "," + y(Math.max(0, kg)).toFixed(1)).join(" ")}"/>`).join("");
+    holder.innerHTML = `<svg viewBox="0 0 ${width} ${height}" width="100%" role="img" aria-label="Kg pulled through the run, an arm a line">${grid}${lines}</svg>`
+        + `<p class="force-key"><span class="arm-1">First arm</span><span class="arm-2">Second arm</span> &middot; kg over seconds</p>`;
+}
+
+function hideForces(){
+    closeOverlay("forces");
 }
 
 /* ================= Drawing ================= */
@@ -524,6 +692,13 @@ function draw(){
     if(game.state === "running" && wall.edge - game.x <= warnAhead && !pulling()){
         arcadeText(pen, "Pull!", screenX(runnerX), feet - runnerHeight * scale - 12, danger);
     }
+    if(game.state === "recovering"){
+        arcadeText(pen, "Switch arm", screenX(runnerX), feet - runnerHeight * scale - 12, "#ffd84a");
+    }
+    if(game.state === "waiting"){
+        arcadeText(pen, "Switch arm", screenX(runnerX), feet - runnerHeight * scale - 34, "#ffd84a");
+        arcadeText(pen, startWords(), screenX(runnerX), feet - runnerHeight * scale - 12, "#ffd84a");
+    }
 }
 
 const plaqueSize = 1.3;       // metres square
@@ -576,7 +751,7 @@ function arcadeText(pen, text, x, y, colour){
 // Where this device's best would be beaten, coins aside: the top of the wall that climbs past it
 function bestFlagAt(){
     if(game.best <= 0){ return null; }
-    return game.walls.find(wall => wall.top > game.best) ?? null;
+    return game.walls.find(wall => wall.pointsAtTop > game.best) ?? null;
 }
 
 const flagBack = 0.6;        // metres back from the top's edge
@@ -605,6 +780,9 @@ function runnerPose(){
     }
     if(game.state === "falling" || (game.state === "over" && game.cause)){
         return fallPose(game.fallen);
+    }
+    if(game.state === "recovering"){
+        return { ...runPose(game.x / walkStride), "tilt" : 0, "bob" : 0, "back" : true };
     }
     if(game.state === "running" && game.air > 0){
         return jumpPose();
@@ -653,6 +831,7 @@ function showForce(){
     if(!progressor.connected){ return; }
     let kg = Math.max(0, progressor.kg);
     if(["running", "climbing"].includes(game.state)){ game.peakKg = Math.max(game.peakKg, kg); }
+    keepForce(kg);
     let need = needKg();
     document.getElementById("forceFill").style.width = Math.min(100, kg / maxPull * 100) + "%";
     document.getElementById("forceFill").classList.toggle("over", kg >= need);
@@ -709,6 +888,7 @@ function bindHolding(){
     });
     document.addEventListener("keyup", event => {
         if(event.code === "Space"){ hold(false); }
+        if(event.code === "KeyP" || event.code === "Escape"){ togglePause(); }
     });
 }
 
@@ -781,9 +961,23 @@ function showConnection(){
     error.innerText = "Couldn't connect: " + progressor.error;
     showDetail();
 
-    document.getElementById("pullHint").innerText = connected
-        ? "Pull each wall's kg on the Progressor to climb it"
-        : "Hold the screen or the space bar to pull";
+    document.getElementById("pullHint").innerText = connected ? "Pull " + coinKg + " kg to start"
+        : "Connect Tindeq or " + (matchMedia("(pointer: coarse)").matches ? "press screen" : "use spacebar or click") + " to emulate";
+}
+
+/* A run that lost its Progressor is a run on the screen. One waiting to start
+   takes whichever there is now, and that kind's best. */
+function connectionChanged(){
+    showConnection();
+    if(game === null || game.state === "over"){ return; }
+    let input = progressor.connected ? "tindeq" : "tap";
+    if(game.state === "ready"){
+        game.input = input;
+        game.best = bestScore(input);
+        showScore();
+    } else if(input === "tap"){
+        game.input = "tap";
+    }
 }
 
 // Chrome can say whether the phone's Bluetooth is on at all
@@ -798,6 +992,8 @@ function showBluetoothOff(){
 document.addEventListener("visibilitychange", () => {
     if(document.visibilityState === "hidden"){
         progressor.stop();
+        // paused for when it's back
+        if(game && !game.paused){ togglePause(); }
     } else {
         lastFrame = Date.now();   // no catching up on time spent away
         progressor.start();
@@ -850,7 +1046,7 @@ function setMaxPull(input){
 document.addEventListener("DOMContentLoaded", () => {
     loadMaxPull();
     loadClimber();
-    progressor.onChange = showConnection;
+    progressor.onChange = connectionChanged;
     progressor.onWeight = showForce;
     showConnection();
     showBluetoothOff();
@@ -860,6 +1056,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bindHolding();
     newGame();
     showScore();
+    showLives();
     sizeCanvas();
     // its own size, not the window's: a scrollbar coming or going changes it too
     let sizedTo = "";

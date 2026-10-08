@@ -1,4 +1,4 @@
-/* The progress page: the charts, then every app's sessions. */
+/* The progress page: the sessions' calendar, the charts, then the activity log. */
 
 /* switched off under the cog */
 .switched-off {
@@ -227,7 +227,7 @@
 .sessions {
     width: 90%;
     max-width: var(--column);
-    margin: 0 auto 40px;
+    margin: 20px auto 10px;
     background: none;
     border-radius: 0;
 }

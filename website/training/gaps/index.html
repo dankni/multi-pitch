@@ -45,18 +45,34 @@
 		<span class="cloud" aria-hidden="true"></span>
 		<span class="cloud" aria-hidden="true"></span>
 		<canvas id="course" aria-label="The course: hold a pull to climb each wall"></canvas>
-		<p class="score"><span id="score">0</span><span id="best"></span></p>
+		<div class="score">
+			<div class="run">
+				<span id="score">0</span>
+				<!-- a life an arm: the second heart empties on the first fall -->
+				<span class="lives" id="lives">
+					<img src="/training/gaps/img/heart-full.png" alt="" /><img src="/training/gaps/img/heart-full.png" alt="" />
+				</span>
+			</div>
+			<span id="best"></span>
+		</div>
 		<div class="screen">
 			<div class="over" id="over">
-				<h2 id="overTitle">You fell off</h2>
-				<p id="overScore"></p>
-				<p id="overPull" hidden></p>
+				<h2>Game over</h2>
+				<p id="overBest" hidden>A new high score</p>
+				<dl class="run-stats" id="overStats"></dl>
 			</div>
-			<button id="primaryButton" data-action="startGame"><i class="demo-icon icon-play"></i>START</button>
-			<button type="button" id="share" data-action="shareScore"><i class="demo-icon icon-share"></i>SHARE</button>
-			<p class="pull-hint" id="pullHint">Hold the screen or the space bar to pull</p>
+			<h2 class="paused-title">Paused</h2>
+			<button type="button" id="primaryButton" data-action="startGame"><i class="demo-icon icon-play"></i>START</button>
+			<button type="button" id="resume" data-action="togglePause"><i class="demo-icon icon-play"></i>RESUME</button>
+			<div class="over-buttons">
+				<button type="button" id="restart" data-action="restartGame"><i class="demo-icon icon-ccw"></i>RESTART</button>
+				<button type="button" id="share" data-action="shareScore"><i class="demo-icon icon-share"></i>SHARE</button>
+				<button type="button" id="forceButton" data-action="showForces" hidden>FORCE GRAPH</button>
+			</div>
+			<p class="pull-hint" id="pullHint"></p>
 			<button type="button" id="connect" data-action="connectProgressor" hidden>Connect Progressor</button>
 		</div>
+		<button type="button" id="pause" class="icon-button demo-icon icon-pause" data-action="togglePause" aria-label="Pause"></button>
 		<button type="button" id="maximise" class="icon-button demo-icon icon-resize-full" data-action="toggleMaximise" aria-label="Fill the screen with the game"></button>
 		<div class="force" id="force" hidden>
 			<div class="force-bar"><span id="forceFill"></span><i id="forceMark"></i></div>
@@ -72,11 +88,23 @@
 		<p id="noBluetooth" hidden>This browser can't connect to a Progressor.</p>
 		<hr />
 		<h2>Activity Log</h2>
+		<div class="picker" id="logPicker" role="radiogroup" aria-label="Runs">
+			<input type="radio" name="logKind" class="nice-radios" id="log-tindeq" value="tindeq" data-change="setLogKind" checked />
+			<label for="log-tindeq">Tindeq</label>
+			<input type="radio" name="logKind" class="nice-radios" id="log-tap" value="tap" data-change="setLogKind" />
+			<label for="log-tap">Fake</label>
+		</div>
 		<p id="stats"></p>
 		<div id="log"></div>
 		<br />
 		<hr />
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
+	</aside>
+
+	<aside id="forces" class="overlay">
+		<h2>Force</h2>
+		<div id="forceGraph"></div>
+		<button type="button" class="icon-button close" data-action="hideForces" aria-label="Close the force graph"></button>
 	</aside>
 
 	<aside id="settings" class="overlay">

@@ -1,4 +1,5 @@
-/* Every app's sessions, newest first, under the charts on the progress page -
+/* Every app's sessions, newest first, on the progress page: a calendar over
+   the charts and the activity log under them -
    read from each app's log in localStorage, and never written: a session is
    edited in the app that recorded it. Each app is described in a line below,
    short, since its own log has the whole of it. */
@@ -35,12 +36,12 @@
                              entry.ukc === true ? "UKC data ignored" : ""].filter(part => part !== "").join(" · ") };
     }
 
-    /* The score, just a number: metres climbed, coins and all. Runs from before the score was kept have
+    /* The score, just a number. Runs from before the score was kept have
        seconds of pull (or "metres" at 1 m/s), at the game's 3 m/s climb. */
     function gapsSession(entry){
         let pulled = count(entry.seconds ?? entry.metres);
         let score = typeof entry.score === "number" ? entry.score : pulled * 3;
-        return { "title" : String(Math.round(score)),
+        return { "title" : Math.round(score).toLocaleString("en-GB"),
                  "detail" : "",
                  "unrated" : true,   // its score is points, not stars
                  "tindeq" : entry.input === "tindeq",
@@ -82,8 +83,9 @@
           "line" : tradSession },
         { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) },
+        // a run on the screen is a game, not training
         { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
-          "line" : gapsSession }
+          "line" : gapsSession, "keep" : entry => entry.input === "tindeq" }
     ];
 
     function readLog(app){
@@ -94,7 +96,7 @@
             return [];   // a hand-edited key is not worth a broken page
         }
         if(!Array.isArray(saved)){ return []; }
-        return saved.filter(entry => entry && entry.date).map(entry => {
+        return saved.filter(entry => entry && entry.date && (!app.keep || app.keep(entry))).map(entry => {
             let described;
             try {
                 described = app.line(entry);
@@ -191,6 +193,7 @@
             + ". The rest are in each app, under the i. " + document.getElementById("sessionsFoot").innerHTML;
     }
     document.getElementById("sessions").hidden = false;
+    document.getElementById("activity").hidden = false;
 
     /* A square a day, GitHub style: weeks left to right, Monday at the top, in the
        colour of the hardest grade climbed that day - the charts' easy, medium,

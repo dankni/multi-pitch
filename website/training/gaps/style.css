@@ -96,7 +96,7 @@
     height: 100vh;
     height: 100dvh;
 }
-#maximise {
+#maximise, #pause {
     position: absolute;
     z-index: 3;
     right: 12px;
@@ -112,13 +112,22 @@
     border: 3px solid var(--arcade-ink);
     box-shadow: 3px 3px 0 var(--arcade-ink);
 }
-#maximise:hover, #maximise:focus {
+#maximise:hover, #maximise:focus, #pause:hover, #pause:focus {
     color: var(--arcade-ink);
     background: #ffe47e;
 }
-#maximise:active {
+#maximise:active, #pause:active {
     transform: translate(3px, 3px);
     box-shadow: none;
+}
+/* under the high score, only while a run is going */
+#pause {
+    display: none;
+    top: 40px;
+    bottom: auto;
+}
+[data-state="running"] #pause {
+    display: block;
 }
 
 #course {
@@ -149,6 +158,17 @@
 }
 #best {
     color: var(--arcade-gold);
+}
+.run {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* each heart is the middle of its 128px image */
+.lives img {
+    width: 32px;
+    height: 32px;
+    margin: -6px -3px;
 }
 
 /* The buttons and messages, in the middle of the course. Only the buttons
@@ -195,13 +215,28 @@
 .screen .demo-icon {
     margin-right: 10px;
 }
-#connect, #share {
+.over-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+}
+.over-buttons button {
+    font-size: 16px;
+    padding: 10px 16px;
+}
+#connect, #share, #forceButton {
     font-size: 15px;
     padding: 10px 16px;
     background: #fff;
 }
-#connect:hover, #connect:focus, #share:hover, #share:focus {
+#connect:hover, #connect:focus, #share:hover, #share:focus, #forceButton:hover, #forceButton:focus {
     background: #e8f4ff;
+}
+.paused-title {
+    margin: 0;
+    font-size: 30px;
+    color: var(--arcade-gold);
 }
 .pull-hint {
     margin: 0;
@@ -341,12 +376,22 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
     display: none;
 }
 
-/* What is on screen follows body[data-state]: idle, running or over */
-.over {
+/* What is on screen follows body[data-state]: idle, running, paused or over */
+.over, .paused-title, #resume, .over-buttons {
     display: none;
 }
-[data-state="over"] .over {
+[data-state="over"] .over, [data-state="paused"] .paused-title, [data-state="paused"] #resume {
     display: block;
+}
+[data-state="over"] .over-buttons, [data-state="paused"] .over-buttons {
+    display: flex;
+}
+[data-state="paused"] #share, [data-state="paused"] #forceButton,
+:is([data-state="running"], [data-state="paused"], [data-state="over"]) :is(#primaryButton, #connect, .pull-hint) {
+    display: none;
+}
+.over {
+    text-align: center;
 }
 .over h2 {
     margin: 0;
@@ -358,14 +403,60 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
     margin: 8px 0 0;
     font-size: 18px;
 }
-#share {
-    display: none;
+/* the run's numbers, a name and its value a line */
+.run-stats {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 4px 16px;
+    margin: 12px auto 0;
+    font-size: 16px;
 }
-[data-state="over"] #share {
+.run-stats dt {
+    text-align: left;
+}
+.run-stats dd {
+    margin: 0;
+    text-align: right;
+}
+
+/* The force graph, in the house style of the overlays */
+#forceGraph svg {
+    display: block;
+    max-width: 100%;
+    font-size: 11px;
+}
+#forceGraph text {
+    fill: currentColor;
+    opacity: 0.8;
+}
+#forceGraph .grid {
+    stroke: currentColor;
+    opacity: 0.15;
+}
+#forceGraph polyline {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+}
+#forceGraph .arm-1 {
+    stroke: var(--band-easy);
+    color: var(--band-easy);
+}
+#forceGraph .arm-2 {
+    stroke: var(--band-hard);
+    color: var(--band-hard);
+}
+.force-key {
+    font-size: 14px;
+}
+.force-key span::before {
+    content: "";
     display: inline-block;
+    width: 14px;
+    height: 3px;
+    margin: 0 6px 3px 0;
+    background: currentColor;
 }
-[data-state="running"] #primaryButton,
-[data-state="running"] #connect,
-[data-state="running"] .pull-hint {
-    display: none;
+.force-key span + span {
+    margin-left: 12px;
 }

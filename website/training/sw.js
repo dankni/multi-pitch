@@ -6,7 +6,7 @@
    When you change any app, bump CACHE_VERSION, or installed copies keep serving
    the old files. */
 
-const CACHE_VERSION = 'v145';
+const CACHE_VERSION = 'v146';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -96,6 +96,8 @@ const SHELL = [
     '/training/gaps/img/flag-1.png',
     '/training/gaps/img/flag-2.png',
     '/training/gaps/img/coin.png',
+    '/training/gaps/img/heart-full.png',
+    '/training/gaps/img/heart-empty.png',
     '/training/gaps/img/mushroom-brown.png',
     '/training/gaps/img/mushroom-red.png',
 

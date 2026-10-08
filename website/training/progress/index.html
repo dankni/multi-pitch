@@ -33,6 +33,13 @@
         </div>
     </nav>
 
+    <!-- Filled in by sessions.js, and hidden until there is something to put in it -->
+    <section class="sessions" id="sessions" hidden>
+        <h2>Your sessions</h2>
+        <p class="sessions-note" id="sessionsStats"></p>
+        <div id="sessionCalendar"></div>
+    </section>
+
     <!-- until a UKC logbook has been imported -->
     <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
         Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
@@ -80,11 +87,8 @@
         </p>
     </section>
 
-    <!-- Filled in by sessions.js, and hidden until there is something to put in it -->
-    <section class="sessions" id="sessions" hidden>
-        <h2>Your sessions</h2>
-        <p class="sessions-note" id="sessionsStats"></p>
-        <div id="sessionCalendar"></div>
+    <!-- Filled in by sessions.js too, under the charts -->
+    <section class="sessions" id="activity" hidden>
         <h2 class="log-heading">Activity Log</h2>
         <div id="allLogs"></div>
         <p class="sessions-note" id="sessionsFoot">

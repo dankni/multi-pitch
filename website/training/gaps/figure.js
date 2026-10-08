@@ -4,8 +4,8 @@
    a sheet, so it stays sharp at any size and any pose can be made.
    A pose, in degrees, with + turning clockwise - for a figure facing right, a
    limb at 0 hangs straight down and one at -90 points forward:
-   { lean, tilt, bob, head, armNear, armFar, legNear, legFar, spread, face }
-   lean tips the whole figure over on its feet, tilt the body on its hips,
+   { lean, tilt, bob, head, armNear, armFar, legNear, legFar, spread, face, back }
+   back turns it to face left, lean tips the whole figure over on its feet, tilt the body on its hips,
    spread brings the limbs in from the body's sides (1 is the sheet's, 0 the middle).
    The two share a skeleton, all but where the head sits. */
 
@@ -73,6 +73,7 @@ function drawFigure(pen, x, feet, tall, pose, kind = figureKind){
     pen.save();
     // tipped over, it lies on its back rather than through the ground
     pen.translate(x, feet - Math.abs(Math.sin(rad(pose.lean || 0))) * 19 * unit);
+    if(pose.back){ pen.scale(-1, 1); }
     pen.rotate(rad(pose.lean || 0));
     pen.scale(unit, unit);
     pen.translate(0, -footBelow - (pose.bob || 0));

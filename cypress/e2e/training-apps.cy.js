@@ -586,62 +586,160 @@ describe('Training apps', function () {
         const letGo = () => { cy.window().trigger('pointerup'); cy.wait(50); };
         const savedLog = () => cy.window().its('localStorage').invoke('getItem', 'gapsLog').then((log) => JSON.parse(log));
         const stateIs = (state) => cy.get('body').should('have.attr', 'data-state', state);
+        const gameIs = (state) => cy.window().then((win) => expect(win.eval('game.state')).to.equal(state));
+        const start = () => cy.get('#primaryButton').click();
+        // A pull, on the Progressor of kg or on the screen, and let go
+        function pullToStart(kg) {
+            if (kg) { cy.window().then((win) => win.sendKg(kg)); cy.wait(50); } else { hold(); }
+            play(100);
+            if (kg) { cy.window().then((win) => win.sendKg(0)); cy.wait(50); } else { letGo(); }
+        }
+        // the rest of the walk back from the wall, waiting for the pull that starts it, then 2 s
+        // back at the wall with none and the last fall
+        function secondLife(kg) {
+            play(4000);
+            gameIs('waiting');
+            pullToStart(kg);
+            play(3500);
+        }
 
-        it('climbs a wall on a pull held from before it to the top, and runs into the next with none', () => {
+        it('climbs a wall on a pull held from before it to the top, and runs into the next with none, twice', () => {
             visitGaps();
             cy.get('#score').should('have.text', '0');
-            cy.get('#primaryButton').click();
+            cy.get('#lives img[src$="heart-full.png"]').should('have.length', 2);
+            start();
             stateIs('running');
             play(4500);
             hold();
             play(3600);
-            cy.get('#score').should('have.text', '9');
+            // 9 m of a 2 kg wall
+            cy.get('#score').should('have.text', '180');
             letGo();
             stateIs('running');
             play(9000);
+            // the first fall: up again on the other arm, walking back from the wall
+            gameIs('recovering');
+            cy.window().then((win) => expect(win.eval('runnerPose().back')).to.equal(true));
+            cy.get('#lives img[src$="heart-empty.png"]').should('have.length', 1);
+            secondLife();
             stateIs('over');
-            cy.get('#overTitle').should('have.text', 'You ran into the wall');
-            cy.get('#overScore').should('have.text', 'Score 9 - a new high score');
-            cy.get('#best').should('have.text', 'High score 9');
-            cy.get('#primaryButton').should('contain', 'PLAY AGAIN');
-            cy.get('#overPull').should('not.be.visible');
+            cy.get('#lives img[src$="heart-empty.png"]').should('have.length', 2);
+            cy.get('.over h2').should('have.text', 'Game over');
+            cy.get('#overBest').should('be.visible');
+            cy.get('#overStats').invoke('text').should('equal', 'Score180Walls1Coins0Climbed9 mPulled3 s');
+            cy.get('#best').should('have.text', 'High score 180');
+            cy.get('#restart, #share').should('be.visible');
+            cy.get('#primaryButton, #forceButton, #pause').should('not.be.visible');
             savedLog().then((log) => {
                 expect(log).to.have.length(1);
-                expect(log[0]).to.include({ score: 9, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 20 });
+                expect(log[0]).to.include({ score: 180, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 20 });
             });
-            cy.get('#log tbody tr').should('have.length', 1).and('contain', '9');
-            // no stars for a game, and no Tindeq mark for a run on the screen
+            // a run on the screen is in the Fake log
+            cy.get('#log-tap').should('be.checked');
+            cy.get('#log tbody tr').should('have.length', 1).and('contain', '180');
+            // no stars for a game, and no Tindeq mark
             cy.get('#log .icon-star, #log .tindeq-mark').should('not.exist');
             // the rest of the run behind the note button, as the other apps' notes
             cy.get('#log .log-detail').should('not.exist');
-            cy.get('#stats').should('contain.text', 'Highscore 9');
+            cy.get('#stats').should('contain.text', 'Highscore 180');
             cy.get('nav .icon-info').click();
             cy.get('#log .icon-note').click();
             cy.get('#sessionNote').should('be.visible').and('contain', '1 wall · 3 s of pull · held the screen');
+            cy.get('label[for="log-tindeq"]').click();
+            cy.get('#log').should('contain', 'No sessions saved yet.');
+            cy.get('#about .close').click();
+            // and back to the start screen for another
+            cy.get('#restart').click();
+            stateIs('idle');
+            cy.get('#primaryButton').should('be.visible');
+            cy.get('#score').should('have.text', '0');
+            cy.get('#lives img[src$="heart-full.png"]').should('have.length', 2);
         });
 
-        it('falls off on a pull let go on the wall, and logs the height it reached', () => {
+        // a touch screen by its coarse pointer
+        function touch(coarse) {
+            return (win) => {
+                let real = win.matchMedia.bind(win);
+                win.matchMedia = (query) => query.includes('pointer') ? { matches: coarse } : real(query);
+            };
+        }
+
+        it('says how to play on the start screen', () => {
+            visitGaps(touch(false));
+            cy.get('#pullHint').should('have.text', 'Connect Tindeq or use spacebar or click to emulate');
+            visitGaps(touch(true));
+            cy.get('#pullHint').should('have.text', 'Connect Tindeq or press screen to emulate');
+        });
+
+        it('pauses, and goes on from where it was', () => {
             visitGaps();
-            cy.get('#primaryButton').click();
+            cy.get('#pause').should('not.be.visible');
+            start();
+            play(1000);
+            cy.get('#pause').click();
+            stateIs('paused');
+            cy.get('#resume, #restart').should('be.visible');
+            cy.get('#share').should('not.be.visible');
+            cy.window().then((win) => {
+                let x = win.eval('game.x');
+                cy.tick(5000);
+                cy.wait(50);
+                cy.window().then(() => expect(win.eval('game.x')).to.equal(x));
+            });
+            cy.get('#resume').click();
+            stateIs('running');
+            play(500);
+            cy.window().then((win) => expect(win.eval('game.x')).to.be.closeTo(4.5, 0.1));
+            // P pauses from the keyboard too
+            cy.get('body').trigger('keyup', { code: 'KeyP' });
+            stateIs('paused');
+        });
+
+        it('falls off on a pull let go on the wall, gets up on the other arm, and logs the height it reached', () => {
+            visitGaps();
+            start();
             play(4500);
             hold();
             play(2000);
-            // the score is the height, as it is climbed
-            cy.get('#score').invoke('text').should('match', /^[1-9]\d*$/);
+            // the score is the height times the kg, as it is climbed
+            cy.get('#score').invoke('text').should('match', /^[1-9][\d,]*$/);
+            letGo();
+            play(1500);
+            gameIs('recovering');
+            // back from the wall it waits, for as long as it takes, for a pull
+            play(4000);
+            gameIs('waiting');
+            play(5000);
+            gameIs('waiting');
+            hold();
+            play(100);
+            gameIs('running');
+            // and a pull kept on climbs the wall again
+            play(2500);
+            gameIs('climbing');
             letGo();
             play(1500);
             stateIs('over');
-            cy.get('#overTitle').should('have.text', 'You fell off');
-            cy.get('#overScore').invoke('text').should('match', /^Score [1-9]\d* - a new high score$/);
+            cy.get('.over h2').should('have.text', 'Game over');
+            cy.get('#overStats').invoke('text').should('match', /^Score[1-9][\d,]*Walls0/);
             savedLog().then((log) => {
                 expect(log[0]).to.include({ walls: 0 });
                 expect(log[0].score).to.be.above(0);
             });
         });
 
+        it('puts commas in a score', () => {
+            visitGaps();
+            cy.window().then((win) => {
+                expect(win.eval('points(800)')).to.equal('800');
+                expect(win.eval('points(12345.4)')).to.equal('12,345');
+                expect(win.eval('points(1234567)')).to.equal('1,234,567');
+            });
+        });
+
         it('jumps on a pull far from a wall, and lands running', () => {
             visitGaps();
-            cy.get('#primaryButton').click();
+            start();
             play(1000);
             hold();
             play(200);
@@ -656,19 +754,19 @@ describe('Training apps', function () {
 
         // With Math.random() at 0 the first coin is over the ground 6 m in, 2.1 m up:
         // the runner's middle is under it at 2.17 s
-        it('takes a coin for a point, jumping for it', () => {
+        it('takes a coin for 100 points, jumping for it', () => {
             visitGaps();
-            cy.get('#primaryButton').click();
+            start();
             play(1900);
             hold();
             play(600);
-            cy.get('#score').should('have.text', '1');
+            cy.get('#score').should('have.text', '100');
         });
 
         it('jumps on a Progressor only for a pull of 5 kg or more', () => {
             visitGaps(fakeProgressor);
             cy.get('#connect').click();
-            cy.get('#primaryButton').click();
+            start();
             play(1000);
             cy.window().then((win) => win.sendKg(4));
             cy.wait(50);
@@ -685,22 +783,30 @@ describe('Training apps', function () {
 
         it('runs into the wall on a pull started too late, at it, and logs nothing for nothing climbed', () => {
             visitGaps();
-            cy.get('#primaryButton').click();
+            start();
             play(5300);
             hold();
             play(1500);
+            gameIs('recovering');
+            // a pull held from before doesn't start it again
+            play(4000);
+            gameIs('waiting');
+            letGo();
+            play(100);
+            gameIs('waiting');
+            pullToStart();
+            play(3500);
             stateIs('over');
-            cy.get('#overTitle').should('have.text', 'You ran into the wall');
             cy.window().its('localStorage').invoke('getItem', 'gapsLog').should('be.null');
         });
 
         it('takes a pull started early, held for longer', () => {
             visitGaps();
-            cy.get('#primaryButton').click();
+            start();
             play(1000);
             hold();
             play(7500);
-            cy.get('#score').should('have.text', '9');
+            cy.get('#score').should('have.text', '180');
             letGo();
             stateIs('running');
         });
@@ -772,28 +878,42 @@ describe('Training apps', function () {
             cy.window().its('written').should('deep.equal', [100, 111, 101]);   // tare, battery, then start measuring
             cy.get('#connect').should('not.be.visible');
             cy.get('#force').should('be.visible');
-            cy.get('#pullHint').should('have.text', "Pull each wall's kg on the Progressor to climb it");
+            cy.get('#pullHint').should('have.text', 'Pull 5 kg to start');
             cy.window().then((win) => win.sendKg(12));
             cy.get('#forceText').should('have.text', '12.0 / 2 kg');
             cy.get('#forceFill').should('have.class', 'over');
             cy.window().then((win) => win.sendKg(0));
 
-            cy.get('#primaryButton').click();
+            start();
             play(4500);
             cy.window().then((win) => win.sendKg(12));
             cy.wait(50);
             play(3600);
-            cy.get('#score').should('have.text', '9');
+            cy.get('#score').should('have.text', '180');
             cy.window().then((win) => win.sendKg(1));   // under the wall's kg is letting go
             cy.wait(50);
             play(9000);
+            secondLife(6);
             cy.get('body').should('have.attr', 'data-state', 'over');
             savedLog().its(0).should('include', { input: 'tindeq', maxPull: 20, peakKg: 12 });
-            cy.get('#overPull').should('be.visible').and('have.text', 'Max pull 12 kg');
-            cy.get('#log .tindeq-mark').should('have.length', 1);
-            cy.get('#log .icon-star').should('not.exist');
+            cy.get('#overStats').should('contain', 'Max pull12 kg');
+            cy.get('#log-tindeq').should('be.checked');
+            cy.get('#log tbody tr').should('have.length', 1);
+            cy.get('#log .icon-star, #log .tindeq-mark').should('not.exist');
 
-            // and back to the connect button if it goes
+            // the pull through the run, a line an arm
+            cy.get('#forceButton').should('be.visible').click();
+            cy.get('#forces').should('be.visible');
+            cy.get('#forceGraph polyline.arm-1').should('have.length', 1);
+            cy.get('#forceGraph polyline.arm-2').should('have.length', 1);
+            cy.window().then((win) => {
+                expect(win.eval('game.forces[0].map(([, kg]) => kg)')).to.deep.equal([12, 1]);
+                expect(win.eval('game.forces[1].map(([, kg]) => kg)')).to.deep.equal([6, 0]);
+            });
+            cy.get('#forces .close').click();
+
+            // and back to the connect button on the start screen if it goes
+            cy.get('#restart').click();
             cy.window().then((win) => win.progressorDevice.dispatchEvent(new win.Event('gattserverdisconnected')));
             cy.get('#connect').should('be.visible');
             cy.tick(100);
@@ -805,7 +925,7 @@ describe('Training apps', function () {
         it('asks each wall for its own kg, and lets a moment under it go', () => {
             visitGaps((win) => { fakeProgressor(win); win.Math.random = () => 0.5; });
             cy.get('#connect').click();
-            cy.get('#primaryButton').click();
+            start();
             play(4500);
             cy.window().then((win) => win.sendKg(8));   // under the 10 kg: still on the ground
             cy.get('#forceText').should('have.text', '8.0 / 10 kg');
@@ -823,13 +943,69 @@ describe('Training apps', function () {
             cy.window().then((win) => win.sendKg(11));
             cy.wait(50);
             play(7000);
-            cy.get('#score').should('have.text', '21');
+            // 21 m of a 10 kg wall
+            cy.get('#score').should('have.text', '2,100');
             // but longer, on a wall, is
             play(7500);
             cy.window().then((win) => win.sendKg(4));
             cy.wait(50);
             play(1500);
+            // waiting for 5 kg: 4 doesn't start it
+            play(4000);
+            gameIs('waiting');
+            cy.window().then((win) => expect(win.eval('startWords()')).to.equal('Pull 5 kg to start'));
+            cy.window().then((win) => win.sendKg(4.5));
+            cy.wait(50);
+            play(100);
+            gameIs('waiting');
+            pullToStart(5);
+            gameIs('running');
+            play(3500);
             cy.get('body').should('have.attr', 'data-state', 'over');
+        });
+
+        it('takes no notice of holding the screen with a Progressor connected', () => {
+            visitGaps(fakeProgressor);
+            cy.get('#connect').click();
+            start();
+            play(4500);
+            hold();
+            play(1000);
+            gameIs('falling');
+        });
+
+        it('starts on a 5 kg pull on the Progressor, as well as the button', () => {
+            visitGaps(fakeProgressor);
+            cy.get('#connect').click();
+            cy.window().then((win) => win.sendKg(4));
+            cy.wait(50);
+            play(100);
+            stateIs('idle');
+            cy.window().then((win) => win.sendKg(5));
+            cy.wait(50);
+            play(100);
+            stateIs('running');
+            // and the pull that started it isn't a jump
+            cy.window().then((win) => expect(win.eval('game.air')).to.equal(0));
+        });
+
+        it('keeps the best of the runs on a Progressor apart from those on the screen', () => {
+            visitGaps((win) => {
+                fakeProgressor(win);
+                win.localStorage.setItem('gapsLog', JSON.stringify([
+                    { id: 1, date: '2026-10-01', score: 5000, input: 'tap', maxPull: 20 },
+                    { id: 2, date: '2026-10-02', score: 800, input: 'tindeq', maxPull: 20 }]));
+            });
+            cy.get('#best').should('have.text', 'High score 5,000');
+            cy.get('#connect').click();
+            cy.get('#best').should('have.text', 'High score 800');
+            cy.get('nav .icon-info').click();
+            cy.get('#log-tindeq').should('be.checked');
+            cy.get('#log tbody tr').should('have.length', 1).and('contain', '800');
+            cy.get('#stats').should('contain.text', 'Highscore 800');
+            cy.get('label[for="log-tap"]').click();
+            cy.get('#log tbody tr').should('have.length', 1).and('contain', '5,000');
+            cy.get('#stats').should('contain.text', 'Highscore 5,000');
         });
 
         it('draws a wall\'s kg from 2 up to the max pull, around half of it', () => {
@@ -916,7 +1092,7 @@ describe('Training apps', function () {
         it('flags the best on the device, and says when it is beaten', () => {
             visitGaps((win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', metres: 2, gaps: 1, input: 'tap', maxPull: 20 }])));
             cy.window().then((win) => expect(win.eval('bestFlagAt()')).to.include({ edge: 15, top: 9 }));
-            cy.get('#primaryButton').click();
+            start();
             play(4500);
             hold();
             play(3600);
@@ -934,9 +1110,10 @@ describe('Training apps', function () {
                 Object.defineProperty(win.navigator, 'share', { configurable: true, value: cy.stub().as('share').resolves() });
             });
             cy.get('#share').should('not.be.visible');
-            cy.get('#primaryButton').click();
+            start();
             play(5300);
             play(1500);
+            secondLife();
             stateIs('over');
             cy.get('#share').should('be.visible').click();
             cy.get('@share').should('have.been.calledWithMatch', { title: 'Tindeq Arcade', text: 'I scored 0 on Tindeq Arcade' });
@@ -1586,23 +1763,29 @@ describe('Training apps', function () {
             cy.get('#ukcPrompt').should('be.visible');
         });
 
-        it('lists a Tindeq Arcade run with its score and no stars, and the Tindeq mark for one on a Progressor', () => {
+        it('lists a Tindeq Arcade run on a Progressor with its score, the Tindeq mark and no stars, and none on the screen', () => {
             visitWith({ gapsLog: [
-                { id: 1, date: '2026-09-12', score: 30, seconds: 9, walls: 2, coins: 3, input: 'tap', maxPull: 20 },
-                { id: 2, date: '2026-09-13', score: 49, seconds: 15, walls: 3, coins: 4, input: 'tindeq', maxPull: 20, peakKg: 14.5 }
+                { id: 1, date: '2026-09-12', score: 3000, seconds: 9, walls: 2, coins: 3, input: 'tap', maxPull: 20 },
+                { id: 2, date: '2026-09-13', score: 14900, seconds: 15, walls: 3, coins: 4, input: 'tindeq', maxPull: 20, peakKg: 14.5 }
             ] });
-            cy.get('#sessions tbody tr').should('have.length', 2);
-            cy.get('#sessions tbody tr').first().should('contain', '49').find('.tindeq-mark').should('exist');
-            cy.get('#sessions tbody tr').last().should('contain', '30').find('.tindeq-mark').should('not.exist');
-            cy.get('#sessions .icon-star').should('not.exist');
+            cy.get('#activity tbody tr').should('have.length', 1)
+                .and('contain', '14,900').find('.tindeq-mark').should('exist');
+            cy.get('#activity .icon-star').should('not.exist');
+        });
+
+        it('has the sessions and their calendar, then the charts, then the activity log', () => {
+            visitWith(logs);
+            cy.get('#sessions, #performance, #activity').should('be.visible').then((parts) => {
+                expect([...parts].map((part) => part.id)).to.deep.equal(['sessions', 'performance', 'activity']);
+            });
         });
 
         it('says the same when nothing graded has been logged', () => {
             visitWith({ lapTimerLog: [{ id: 1, date: '2026-09-13', laps: 4, total: 60000, rating: 0 }] });
             cy.get('#performance').should('not.be.visible');
             cy.get('#progressEmpty').should('be.visible');
-            // the session is still listed, under where the charts would be
-            cy.get('#sessions').should('be.visible');
+            // the session is still listed
+            cy.get('#sessions, #activity').should('be.visible');
         });
 
         it('draws both grade charts over the last year by default', () => {

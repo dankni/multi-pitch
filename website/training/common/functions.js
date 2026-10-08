@@ -331,6 +331,7 @@ function resetSavePanel(){
          stats    : log => the line above the table (optional),
          onEdit   : id => reopen that session - drawn as a wrench (optional),
          order    : a comparator (optional, newest id first),
+         filter   : entry => whether to list it (optional, all of them),
          extra    : () => read only entries to list as well (optional)
      })
 
@@ -339,7 +340,7 @@ let sessionLogView = null;
 
 function sessionLogEntries(){
     let extra = sessionLogView.extra ? sessionLogView.extra() : [];
-    return getLog(sessionLogView.key).concat(extra.map(entry => Object.assign({}, entry, { "readOnly" : true })));
+    return getLog(sessionLogView.key).filter(sessionLogView.filter || (() => true)).concat(extra.map(entry => Object.assign({}, entry, { "readOnly" : true })));
 }
 
 function drawSessionLog(view){
