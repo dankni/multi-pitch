@@ -46,12 +46,15 @@
 		<span class="cloud" aria-hidden="true"></span>
 		<canvas id="course" aria-label="The course: hold a pull to climb each wall"></canvas>
 		<div class="score">
-			<div class="run">
-				<span id="score">0</span>
-				<!-- a life an arm: the second heart empties on the first fall -->
-				<span class="lives" id="lives">
-					<img src="/training/gaps/img/heart-full.png" alt="" /><img src="/training/gaps/img/heart-full.png" alt="" />
-				</span>
+			<div>
+				<div class="run">
+					<span id="score">0</span>
+					<!-- a life an arm: the second heart empties on the first fall -->
+					<span class="lives" id="lives">
+						<img src="/training/gaps/img/heart-full.png" alt="" /><img src="/training/gaps/img/heart-full.png" alt="" />
+					</span>
+				</div>
+				<span id="timer">0:00</span>
 			</div>
 			<span id="best"></span>
 		</div>
@@ -75,7 +78,11 @@
 		<button type="button" id="pause" class="icon-button demo-icon icon-pause" data-action="togglePause" aria-label="Pause"></button>
 		<button type="button" id="maximise" class="icon-button demo-icon icon-resize-full" data-action="toggleMaximise" aria-label="Fill the screen with the game"></button>
 		<div class="force" id="force" hidden>
-			<div class="force-bar"><span id="forceFill"></span><i id="forceMark"></i></div>
+			<!-- the pull, with a line at the kg the wall wants and that kg over it -->
+			<div class="force-track">
+				<div class="force-bar"><span id="forceFill"></span></div>
+				<i id="forceMark"><span id="forceNeed"></span></i>
+			</div>
 			<span id="forceText"></span>
 		</div>
 	</div>

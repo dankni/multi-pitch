@@ -96,11 +96,12 @@
     height: 100vh;
     height: 100dvh;
 }
+/* Under the high score: at the foot of the course a phone's toolbars can cover it */
 #maximise, #pause {
     position: absolute;
     z-index: 3;
+    top: 40px;
     right: 12px;
-    bottom: 12px;
     box-sizing: border-box;
     width: 44px;
     height: 44px;
@@ -120,11 +121,10 @@
     transform: translate(3px, 3px);
     box-shadow: none;
 }
-/* under the high score, only while a run is going */
+/* beside it, only while a run is going */
 #pause {
     display: none;
-    top: 40px;
-    bottom: auto;
+    right: 68px;
 }
 [data-state="running"] #pause {
     display: block;
@@ -158,6 +158,14 @@
 }
 #best {
     color: var(--arcade-gold);
+}
+#timer {
+    display: block;
+    margin-top: 6px;
+    text-align: left;
+}
+[data-state="idle"] #timer {
+    visibility: hidden;
 }
 .run {
     display: flex;
@@ -250,20 +258,25 @@
     position: absolute;
     z-index: 1;
     left: 12px;
-    right: 68px;   /* clear of the maximise button */
+    right: 12px;
     bottom: 12px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 10px;
     font-variant-numeric: tabular-nums;
     pointer-events: none;
 }
-.force-bar {
+/* room over the bar for the kg at the line */
+.force-track {
     position: relative;
     flex: 1;
-    height: 14px;
-    border: 3px solid var(--arcade-ink);
+    margin-top: 22px;
+}
+.force-bar {
+    height: 24px;
+    border: 4px solid var(--arcade-ink);
     background: #fff;
+    box-shadow: 3px 3px 0 var(--arcade-ink);
     overflow: hidden;
 }
 #forceFill {
@@ -275,16 +288,30 @@
 #forceFill.over {
     background: #4cd964;
 }
+/* through the bar and out past both its edges */
 #forceMark {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: -6px;
+    bottom: -6px;
     left: 50%;
-    width: 3px;
-    background: var(--arcade-ink);
+    width: 4px;
+    margin-left: -2px;
+    background: var(--danger);
+    box-shadow: 0 0 0 1px #fff;
+}
+#forceNeed {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 2px;
+    font-size: 14px;
+    white-space: nowrap;
+    color: var(--arcade-gold);
 }
 #forceText {
     min-width: 130px;
+    font-size: 18px;
     text-align: right;
 }
 

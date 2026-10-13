@@ -626,7 +626,7 @@ describe('Training apps', function () {
             cy.get('#lives img[src$="heart-empty.png"]').should('have.length', 2);
             cy.get('.over h2').should('have.text', 'Game over');
             cy.get('#overBest').should('be.visible');
-            cy.get('#overStats').invoke('text').should('equal', 'Score180Walls1Coins0Climbed9 mPulled3 s');
+            cy.get('#overStats').invoke('text').should('equal', 'Score180Time0:24Walls1Coins0Climbed9 mPulled3 s');
             cy.get('#best').should('have.text', 'High score 180');
             cy.get('#restart, #share').should('be.visible');
             cy.get('#primaryButton, #forceButton, #pause').should('not.be.visible');
@@ -644,7 +644,7 @@ describe('Training apps', function () {
             cy.get('#stats').should('contain.text', 'Highscore 180');
             cy.get('nav .icon-info').click();
             cy.get('#log .icon-note').click();
-            cy.get('#sessionNote').should('be.visible').and('contain', '1 wall · 3 s of pull · held the screen');
+            cy.get('#sessionNote').should('be.visible').and('contain', '1 wall · 3 s of pull · 0:24 played · held the screen');
             cy.get('label[for="log-tindeq"]').click();
             cy.get('#log').should('contain', 'No sessions saved yet.');
             cy.get('#about .close').click();
@@ -721,7 +721,7 @@ describe('Training apps', function () {
             play(1500);
             stateIs('over');
             cy.get('.over h2').should('have.text', 'Game over');
-            cy.get('#overStats').invoke('text').should('match', /^Score[1-9][\d,]*Walls0/);
+            cy.get('#overStats').invoke('text').should('match', /^Score[1-9][\d,]*Time0:\d\dWalls0/);
             savedLog().then((log) => {
                 expect(log[0]).to.include({ walls: 0 });
                 expect(log[0].score).to.be.above(0);
@@ -964,6 +964,37 @@ describe('Training apps', function () {
             cy.get('body').should('have.attr', 'data-state', 'over');
         });
 
+        it('hangs off one arm for a dip under the kg, climbing on as the pull comes back, and falls after 0.3 s', () => {
+            visitGaps((win) => { fakeProgressor(win); win.Math.random = () => 0.5; });
+            cy.get('#connect').click();
+            start();
+            play(4500);
+            cy.window().then((win) => win.sendKg(11));
+            cy.wait(50);
+            play(1500);
+            cy.window().then((win) => {
+                let y = win.eval('game.y');
+                win.sendKg(9);
+                cy.wait(50);
+                play(250);
+                cy.window().then(() => {
+                    expect(win.eval('game.state')).to.equal('climbing');
+                    expect(win.eval('game.y')).to.equal(y);
+                    expect(win.eval('runnerPose().armFar')).to.equal(-160);
+                });
+            });
+            cy.window().then((win) => win.sendKg(11));
+            cy.wait(50);
+            play(500);
+            cy.window().then((win) => expect(win.eval('runnerPose().armFar')).not.to.equal(-160));
+            cy.window().then((win) => win.sendKg(9));
+            cy.wait(50);
+            play(250);
+            gameIs('climbing');
+            play(100);
+            gameIs('falling');
+        });
+
         it('takes no notice of holding the screen with a Progressor connected', () => {
             visitGaps(fakeProgressor);
             cy.get('#connect').click();
@@ -1016,7 +1047,44 @@ describe('Training apps', function () {
                 expect(kgAt(0)).to.equal(2);       // never under 2 kg
                 expect(kgAt(0.5)).to.equal(10);    // half the max
                 expect(kgAt(0.999)).to.equal(20);  // never over it
+                expect(win.eval('wallKg(2)')).to.equal(12);   // the first three a warm up, at 60% at most
+                expect(win.eval('wallKg(3)')).to.equal(20);
+                win.Math.random = () => 0.5;
+                expect(win.eval('wallKg(0)')).to.equal(10);
             });
+        });
+
+        it('eases the wall fallen from and the next two to a warm up for the other arm, moving the course on along with them', () => {
+            visitGaps((win) => { win.Math.random = () => 0.999; });
+            cy.window().then((win) => {
+                win.eval('maxPull = 20; newGame(); while(game.walls.length < 8){ game.x += 20; extendCourse(); } game.x = 0');
+                win.eval('game.coins.push({ "x" : game.walls[6].edge - 1, "y" : 0, "taken" : false })');
+                let coinBefore = win.eval('game.walls[6].edge - game.coins[game.coins.length - 1].x');
+                expect(win.eval('game.walls.slice(3, 7).map(wall => wall.kg)')).to.deep.equal([20, 20, 20, 20]);
+                win.eval('game.next = 3; getUp()');
+                expect(win.eval('game.walls.slice(3, 7).map(wall => wall.kg)')).to.deep.equal([12, 12, 12, 20]);
+                for (let n = 4; n < 8; n++) {
+                    expect(win.eval(`game.walls[${n}].edge - game.walls[${n - 1}].topEdge`)).to.be.closeTo(win.eval(`restBefore(${n})`), 0.001);
+                }
+                expect(win.eval('game.walls[6].edge - game.coins[game.coins.length - 1].x')).to.be.closeTo(coinBefore, 0.001);
+                expect(win.eval('game.walls[3].slant')).to.be.closeTo(win.eval('wallSlant(12)'), 0.001);
+            });
+        });
+
+        it('times the run, stopping for a pause', () => {
+            visitGaps();
+            cy.get('#timer').should('not.be.visible');
+            start();
+            cy.get('#timer').should('be.visible').and('have.text', '0:00');
+            play(4500);
+            cy.get('#timer').should('have.text', '0:04');
+            cy.get('#pause').click();
+            cy.tick(5000);
+            cy.wait(50);
+            cy.get('#resume').click();
+            play(1000);
+            cy.get('#timer').should('have.text', '0:05');
+            cy.window().then((win) => expect(win.eval('clock(75)')).to.equal('1:15'));
         });
 
         it('leans a wall back for the lightest pull and out for the max, 13.5 degrees off vertical at most', () => {
