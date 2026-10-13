@@ -964,7 +964,7 @@ describe('Training apps', function () {
             cy.get('body').should('have.attr', 'data-state', 'over');
         });
 
-        it('hangs off one arm for a dip under the kg, climbing on as the pull comes back, and falls after 0.3 s', () => {
+        it('hangs off one arm for a dip under the kg, climbing on as the pull comes back, and falls after 0.5 s', () => {
             visitGaps((win) => { fakeProgressor(win); win.Math.random = () => 0.5; });
             cy.get('#connect').click();
             start();
@@ -989,7 +989,7 @@ describe('Training apps', function () {
             cy.window().then((win) => expect(win.eval('runnerPose().armFar')).not.to.equal(-160));
             cy.window().then((win) => win.sendKg(9));
             cy.wait(50);
-            play(250);
+            play(450);
             gameIs('climbing');
             play(100);
             gameIs('falling');
