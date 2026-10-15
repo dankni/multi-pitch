@@ -1094,6 +1094,36 @@ describe('Training apps', function () {
             cy.get('#lives img[src$="heart-half.png"]').should('have.length', 1);
         });
 
+        it('tells analytics a Progressor connected, and the score and high score at the end of a run on it - not one on the screen', () => {
+            visitGaps(fakeProgressor, (win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', score: 100, input: 'tindeq', maxPull: 20 }])));
+            cy.window().then((win) => { win.gtag = cy.stub().as('gtag'); });
+            cy.get('#connect').click();
+            cy.get('@gtag').should('have.been.calledWith', 'event', 'tindeq_connected');
+            start();
+            play(4500);
+            cy.window().then((win) => win.sendKg(5));
+            cy.wait(50);
+            play(3600);
+            cy.window().then((win) => win.sendKg(0));
+            cy.wait(50);
+            play(9000);
+            secondLife(6);
+            stateIs('over');
+            cy.get('@gtag').should('have.been.calledWith', 'event', 'tindeq_arcade_game_over',
+                { score: 180, high_score: 180, new_high_score: true, walls: 1, max_pull: 20 });
+        });
+
+        it('tells analytics nothing at the end of a run on the screen', () => {
+            visitGaps();
+            cy.window().then((win) => { win.gtag = cy.stub().as('gtag'); });
+            start();
+            play(5300);
+            play(1500);
+            secondLife();
+            stateIs('over');
+            cy.get('@gtag').should('not.have.been.calledWith', 'event', 'tindeq_arcade_game_over');
+        });
+
         it('takes no notice of holding the screen with a Progressor connected', () => {
             visitGaps(fakeProgressor);
             cy.get('#connect').click();

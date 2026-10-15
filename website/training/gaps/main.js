@@ -580,6 +580,10 @@ function endGame(){
     let best = bestScore(game.input);
     let score = currentScore();
     let tindeq = game.input === "tindeq";
+    if(tindeq){
+        track("tindeq_arcade_game_over", { "score" : score, "high_score" : Math.max(best, score), "new_high_score" : score > best,
+                                           "walls" : game.cleared, "max_pull" : maxPull });
+    }
     // a run that climbed nothing isn't worth a line in the log
     if(score > 0){
         saveToLog(app.logKey, { "id" : Date.now(), "date" : today(), "score" : score, "seconds" : game.seconds,
@@ -1124,9 +1128,18 @@ function showConnection(){
         : "Connect Tindeq or " + (matchMedia("(pointer: coarse)").matches ? "press screen" : "use spacebar or click") + " to emulate";
 }
 
+let wasConnected = false;
+
+// To Google Analytics, which functions.js loads - unless it is blocked
+function track(name, params){
+    if(typeof gtag === "function"){ gtag("event", name, params); }
+}
+
 /* A run that lost its Progressor is a run on the screen. One waiting to start
    takes whichever there is now, and that kind's best. */
 function connectionChanged(){
+    if(progressor.connected && !wasConnected){ track("tindeq_connected"); }
+    wasConnected = progressor.connected;
     showConnection();
     if(game === null || game.state === "over"){ return; }
     let input = progressor.connected ? "tindeq" : "tap";
