@@ -51,6 +51,8 @@ const dipGrace = 0.5;        // seconds out of a wall's kg band, hanging, before
 const hangBelow = 2;         // kg under a wall's that hangs rather than climbs - no lower than half its kg
 const tooMuch = 5;           // kg over a wall's that is too hard a pull
 const fakeRate = 10;         // kg a second, 1 every tenth
+// The gauge's top: room over a max pull wall for its band and for pulling too hard
+const gaugeKg = () => maxPull + 2 * tooMuch;
 const waspChance = 0.35;     // of a wall past the warm up having one
 const waspReach = 2;         // metres either way of its middle, along
 const waspOut = 2.2;         // its middle, out from the face: at its nearest it all but touches it
@@ -342,7 +344,7 @@ function grip(){
 
 function stepFakeKg(seconds){
     if(progressor.connected){ return; }
-    fakeKg = Math.min(maxPull, Math.max(0, fakeKg + (holding ? fakeRate : -fakeRate) * seconds));
+    fakeKg = Math.min(gaugeKg(), Math.max(0, fakeKg + (holding ? fakeRate : -fakeRate) * seconds));
 }
 
 // On the ground, away from a wall, the pull that jumps
@@ -971,7 +973,7 @@ function fallPose(seconds){
     return { "lean" : -Math.min(90, seconds * 200), "face" : "worried", "armsBack" : true, "armNear" : -170, "armFar" : -150, "legNear" : -30, "legFar" : 20 };
 }
 
-/* The pull out of the max pull - the Progressor's, or the one holding stands in
+/* The pull out of gaugeKg - the Progressor's, or the one holding stands in
    for - with a mark at what this wall wants and its band shaded to tooMuch over */
 function showForce(){
     let kg = Math.max(0, pullKg());
@@ -980,7 +982,7 @@ function showForce(){
         keepForce(kg);
     }
     let need = needKg();
-    let share = kg => Math.min(100, kg / maxPull * 100);
+    let share = kg => Math.min(100, kg / gaugeKg() * 100);
     let fill = document.getElementById("forceFill");
     fill.style.width = share(kg) + "%";
     fill.classList.toggle("over", kg >= need && kg < need + tooMuch);

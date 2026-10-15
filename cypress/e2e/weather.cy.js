@@ -34,6 +34,9 @@ describe('Weather forecast strip', function () {
         });
     };
 
+    // a day has 23 or 25 hours when the clocks change
+    const dayOfHours = () => cy.get('#weatherHourly .wx-hour').should('have.length.within', 23, 25);
+
     const visitClimbWithWeather = (theme, mutate) => {
         stubWeatherFeed(mutate);
         cy.readFile('website/data/climbs/1.json').then((climbFile) => {
@@ -88,7 +91,7 @@ describe('Weather forecast strip', function () {
         cy.get('#weatherHourly .wx-day-summary').should('exist')
             .and('contain', 'sun ')          // per-day sunrise-sunset
             .and('contain', 'low tide');     // climb 1 is a tidal sea stack
-        cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+        dayOfHours();
         cy.get('#weatherStrip .wx-today').should('have.class', 'wx-selected');
 
         // hour cells carry local time, icon, temp, rain and wind
@@ -98,7 +101,7 @@ describe('Weather forecast strip', function () {
 
         // hovering tomorrow is enough to move the selection (no click needed)
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').trigger('mouseover');
-        cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+        dayOfHours();
         cy.get('#weatherHourly .wx-hour .wx-dow').first().should('have.text', '00:00');
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').should('have.class', 'wx-selected');
         cy.get('#weatherStrip .wx-today').should('not.have.class', 'wx-selected');
@@ -117,7 +120,7 @@ describe('Weather forecast strip', function () {
         // even a far-out day and a past day show their detail on hover
         cy.get('#weatherStrip .wx-day[data-day="offsetPlus10"]').trigger('mouseover');
         cy.get('#weatherHourly .wx-day-summary').should('exist');
-        cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+        dayOfHours();
         cy.get('#weatherStrip .wx-day[data-day="offsetMinus2"]').trigger('mouseover');
         cy.get('#weatherHourly .wx-day-summary').should('contain', 'rain fell');
     });
@@ -169,7 +172,7 @@ describe('Weather forecast strip', function () {
         });
 
         cy.wait('@hourlyFile');
-        cy.get('#weatherHourly .wx-hour').should('have.length', 24); // hour rows appear once the file lands
+        dayOfHours(); // hour rows appear once the file lands
         cy.get('#weatherStrip .wx-hours-day').should('have.length', 18);
     });
 
@@ -315,7 +318,7 @@ describe('Weather forecast strip', function () {
         it('desktop light', () => {
             visitClimbWithWeather('light');
             cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').click();
-            cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+            dayOfHours();
             screenshotWidget('weather-strip-desktop-light');
         });
 
@@ -323,7 +326,7 @@ describe('Weather forecast strip', function () {
             visitClimbWithWeather('dark');
             cy.get('html').should('have.attr', 'data-theme', 'dark');
             cy.get('#weatherStrip .wx-day[data-day="offsetPlus1"]').click();
-            cy.get('#weatherHourly .wx-hour').should('have.length', 24);
+            dayOfHours();
             screenshotWidget('weather-strip-desktop-dark');
         });
 

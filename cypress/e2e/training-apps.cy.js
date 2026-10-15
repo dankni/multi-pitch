@@ -578,8 +578,11 @@ describe('Training apps', function () {
                 }
             });
         }
-        // Holding the screen tops out at the max pull: at 6 kg it stays in a 2 kg wall's band, up to 7
-        const lowMax = (win) => win.localStorage.setItem('gapsMaxPull', '6');
+        // Holding the screen as a steady 5 kg, in a 2 kg wall's band, and letting go as none: a test
+        // can't feather the rise and fall it really has
+        const steadyHold = (win) => win.addEventListener('DOMContentLoaded', () => {
+            win.eval('stepFakeKg = () => { fakeKg = holding ? 5 : 0; }');
+        });
         function play(ms) {
             cy.tick(ms);
             cy.wait(50);
@@ -606,7 +609,7 @@ describe('Training apps', function () {
         }
 
         it('climbs a wall on a pull held from before it to the top, and runs into the next with none, twice', () => {
-            visitGaps(lowMax);
+            visitGaps(steadyHold);
             cy.get('#score').should('have.text', '0');
             cy.get('#lives img[src$="heart-full.png"]').should('have.length', 2);
             start();
@@ -634,7 +637,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton, #forceButton, #pause').should('not.be.visible');
             savedLog().then((log) => {
                 expect(log).to.have.length(1);
-                expect(log[0]).to.include({ score: 180, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 6 });
+                expect(log[0]).to.include({ score: 180, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 20 });
             });
             // a run on the screen is in the Fake log
             cy.get('#log-tap').should('be.checked');
@@ -698,7 +701,7 @@ describe('Training apps', function () {
         });
 
         it('falls off on a pull let go on the wall, gets up on the other arm, and logs the height it reached', () => {
-            visitGaps(lowMax);
+            visitGaps(steadyHold);
             start();
             play(4500);
             hold();
@@ -785,7 +788,7 @@ describe('Training apps', function () {
         });
 
         it('runs into the wall on a pull started too late, at it, and logs nothing for nothing climbed', () => {
-            visitGaps();
+            visitGaps(steadyHold);
             start();
             play(5300);
             hold();
@@ -804,7 +807,7 @@ describe('Training apps', function () {
         });
 
         it('takes a pull started early, held for longer', () => {
-            visitGaps(lowMax);
+            visitGaps(steadyHold);
             start();
             play(1000);
             hold();
@@ -1021,13 +1024,28 @@ describe('Training apps', function () {
             stateIs('idle');
             play(300);
             stateIs('running');
-            play(2000);
-            cy.get('#forceText').should('have.text', '20.0 / 2 kg');   // no more than the max pull
+            play(3000);
+            // no more than the gauge goes to: 5 kg over the max pull for its band, and 5 more
+            cy.get('#forceText').should('have.text', '30.0 / 2 kg');
             letGo();
             play(200);
-            cy.window().then((win) => expect(win.eval('fakeKg')).to.be.closeTo(18, 0.2));
-            play(2500);
+            cy.window().then((win) => expect(win.eval('fakeKg')).to.be.closeTo(28, 0.2));
+            play(3000);
             cy.window().then((win) => expect(win.eval('fakeKg')).to.equal(0));
+        });
+
+        it('draws the gauge to 10 kg over the max pull, so a max pull wall has its band on it', () => {
+            visitGaps((win) => { fakeProgressor(win); win.Math.random = () => 0.999; });
+            cy.get('#connect').click();
+            cy.window().then((win) => win.sendKg(15));
+            // the first wall is a warm up of 12 kg, of a gauge to 30
+            cy.get('#forceFill').should('have.attr', 'style').and('contain', 'width: 50%');
+            cy.get('#forceMark').should('have.attr', 'style').and('contain', 'left: 40%');
+            cy.window().then((win) => {
+                win.eval('game.walls[0].kg = maxPull; showForce()');
+                expect(parseFloat(win.document.getElementById('forceBand').style.left)).to.be.closeTo(20 / 30 * 100, 0.001);
+                expect(parseFloat(win.document.getElementById('forceBand').style.width)).to.be.closeTo(5 / 30 * 100, 0.001);
+            });
         });
 
         it('hangs on a wall held too hard on the screen, and never falls for it', () => {
@@ -1239,7 +1257,7 @@ describe('Training apps', function () {
 
         // A best of 2 s on the device, logged in metres as before: the first 3 s wall beats it, so the flag is on its top
         it('flags the best on the device, and says when it is beaten', () => {
-            visitGaps(lowMax, (win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', metres: 2, gaps: 1, input: 'tap', maxPull: 20 }])));
+            visitGaps(steadyHold, (win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', metres: 2, gaps: 1, input: 'tap', maxPull: 20 }])));
             cy.window().then((win) => expect(win.eval('bestFlagAt()')).to.include({ edge: 15, top: 9 }));
             start();
             play(4500);
