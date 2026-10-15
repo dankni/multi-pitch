@@ -2,8 +2,12 @@
    (progressor.js), or holding the screen or the space bar. A pull close to a
    wall leaps the runner onto it, and holding it climbs; further out, a pull
    just jumps - on a Progressor, one of coinKg or more. Reach a wall without a
-   pull, or let go on it, and you fall - though on a Progressor a dip under the
-   wall's kg only stops the climb, hanging off one arm, until dipGrace is up. A wall is its seconds of climbing high,
+   pull and you fall. On it, a pull from the wall's kg to tooMuch over it climbs;
+   more than that, or up to hangBelow under it, hangs off one arm; any less
+   hangs until dipGrace is up, then falls. Without a Progressor, holding the
+   screen stands in for one, its pull rising fakeRate a second while held and
+   falling as fast when not. Now and then a wasp flies round a spot on a wall:
+   touching it costs half a heart, so hang below it until it is out of the way. A wall is its seconds of climbing high,
    so it wants that long a pull - and, on a Progressor, its own kg, which leans
    it: a slab for the lightest, overhanging at the max pull. The first
    warmUpWalls ask no more than warmUpShare of the max pull, and so do the
@@ -43,7 +47,17 @@ const jumpSpeed = 4.5;       // m/s up, off the ground
 const jumpFall = 14;         // m/s², bringing a jump back down
 const handRise = 1;          // how far above the feet the hands hold the wall
 const mostSlant = 0.15 * 90; // degrees off vertical: a slab for the lightest pull, overhanging for the max
-const dipGrace = 0.5;        // seconds under a wall's kg, hanging, before it counts as letting go
+const dipGrace = 0.5;        // seconds out of a wall's kg band, hanging, before it counts as letting go
+const hangBelow = 2;         // kg under a wall's that hangs rather than climbs - no lower than half its kg
+const tooMuch = 5;           // kg over a wall's that is too hard a pull
+const fakeRate = 10;         // kg a second, 1 every tenth
+const waspChance = 0.35;     // of a wall past the warm up having one
+const waspReach = 2;         // metres either way of its middle, along
+const waspOut = 2.2;         // its middle, out from the face: at its nearest it all but touches it
+const waspBob = 0.4;         // metres up and down as it goes round
+const waspPeriod = 4;        // seconds round
+const waspSize = 1;
+const stingSafe = 1.5;       // seconds after a sting before another
 const warmUpWalls = 3;
 const warmUpShare = 0.6;
 const warnAhead = 2 * runSpeed;      // before a wall to say pull, if not yet
@@ -78,6 +92,7 @@ const topOutRun = 0.3;       // stepping up onto the top, past its edge
 
 let game = null;
 let holding = false;         // the screen or the space bar
+let fakeKg = 0;              // the pull holding stands in for, without a Progressor
 let maxPull = defaultMaxPull;
 let lastFrame = Date.now();
 
@@ -154,7 +169,7 @@ function newGame(){
         "fallen" : 0,        // seconds into a fall
         "speed" : 0,         // of the fall
         "landed" : null,     // seconds into the fall it hit the ground
-        "cause" : "",        // of the fall: "wall" ran into one, "off" let go of one
+        "cause" : "",        // of the fall: "wall" ran into one, "off" let go of one, "sting" lost a heart to wasps
         "onWall" : false,    // climbing with hands on it, not still leaping
         "high" : 0,          // the highest the feet have climbed
         "points" : 0,        // for the climbing, so far
@@ -164,9 +179,12 @@ function newGame(){
         "wasJumping" : false,
         "air" : 0,           // how high a jump has the feet off the ground
         "airSpeed" : 0,
-        "low" : 0,           // seconds the pull has been under the wall's kg
+        "low" : 0,           // seconds the pull has been out of the wall's band
+        "grip" : "",         // on a wall, as grip() says
         "time" : 0,          // seconds since the start, less any paused
-        "lives" : lives,
+        "lives" : lives,     // hearts, a half lost to a sting
+        "arm" : 0,           // which arm, for the force graph
+        "stungAt" : null,    // game.time of the last sting
         "paused" : false,
         "backTo" : 0,        // where the hands walk back to, after a fall
         "forces" : [[], []], // [seconds, kg] on the Progressor, an arm each
@@ -198,9 +216,32 @@ function extendCourse(){
         let pointsAtTop = (last ? last.pointsAtTop : 0) + height * kg * pointsPerKgMetre;
         let wall = { "edge" : edge, "base" : base, "top" : base + height, "seconds" : seconds, "kg" : kg, "pointsAtTop" : pointsAtTop };
         shapeWall(wall);
+        if(count >= warmUpWalls && Math.random() < waspChance){
+            wall.wasp = { "up" : height * (0.35 + 0.3 * Math.random()), "phase" : Math.random() };
+        }
         game.walls.push(wall);
         placeCoins((last ? last.topEdge : 0) + 6, edge - 8, base);
     }
+}
+
+// Round a spot on its wall, wide along and a little up and down: by game.time, so it stops for a pause
+function waspAt(wall){
+    let turn = (game.time / waspPeriod + wall.wasp.phase) * 2 * Math.PI;
+    let up = wall.base + wall.wasp.up + waspBob * Math.sin(turn);
+    return { "x" : faceAt(wall, up) - waspOut + waspReach * Math.cos(turn), "y" : up, "right" : Math.sin(turn) < 0 };
+}
+
+// Half a heart, and a heart emptied by it is a fall
+function checkSting(wall){
+    if(!wall.wasp || (game.stungAt !== null && game.time - game.stungAt < stingSafe)){ return; }
+    let wasp = waspAt(wall);
+    let middle = faceAt(wall, game.y) - wallHug;
+    if(Math.abs(wasp.x - middle) > waspSize / 2 + 0.2 || wasp.y < game.y - 0.2 || wasp.y > game.y + runnerHeight + 0.2){ return; }
+    game.stungAt = game.time;
+    game.lives -= 0.5;
+    showLives();
+    beep();
+    if(Number.isInteger(game.lives)){ fall("sting"); }
 }
 
 // Its lean, from its kg, and so where its top is
@@ -284,8 +325,24 @@ function needKg(){
 }
 
 // With a Progressor connected, holding the screen does nothing
+const pullKg = () => progressor.connected ? progressor.kg : fakeKg;
+
 function pulling(){
-    return progressor.connected ? progressor.kg >= needKg() : holding;
+    return pullKg() >= needKg();
+}
+
+// On a wall: "climb", "hang", or "off" - too little, which falls in time. Too much hangs.
+function grip(){
+    let kg = pullKg();
+    let need = needKg();
+    if(kg >= need + tooMuch){ return "hang"; }
+    if(kg >= need){ return "climb"; }
+    return kg >= Math.max(need - hangBelow, need / 2) ? "hang" : "off";
+}
+
+function stepFakeKg(seconds){
+    if(progressor.connected){ return; }
+    fakeKg = Math.min(maxPull, Math.max(0, fakeKg + (holding ? fakeRate : -fakeRate) * seconds));
 }
 
 // On the ground, away from a wall, the pull that jumps
@@ -295,8 +352,9 @@ function jumping(){
 
 /* ================= Each step ================= */
 
-function update(seconds, pull){
+function update(seconds){
     if(game.paused || game.state === "over"){ return; }
+    stepFakeKg(seconds);
     if(game.state === "ready"){
         readyStep();
         return;
@@ -320,10 +378,9 @@ function update(seconds, pull){
     let jump = jumping();
     let started = jump && !game.wasJumping;
     game.wasJumping = jump;
-    if(game.state === "climbing"){
-        game.low = pull ? 0 : game.low + seconds;
-    }
-    if(game.state === "climbing" && pull){
+    game.grip = game.state === "climbing" ? grip() : "";
+    game.low = game.grip === "off" ? game.low + seconds : 0;
+    if(game.grip === "climb"){
         game.y += climbSpeed * seconds;
         game.climbed += seconds;
         // only height not climbed before scores, so a wall climbed again after a fall doesn't
@@ -342,7 +399,7 @@ function update(seconds, pull){
     let hold = faceAt(wall, game.y + game.air + handRise);
     game.x = game.onWall ? hold : Math.min(hold, game.x + runSpeed * seconds);
     if(game.state === "running"){
-        if(pull && hold - game.x <= leapReach){
+        if(pulling() && hold - game.x <= leapReach){
             game.state = "climbing";
             game.y += game.air;
             land();
@@ -357,6 +414,8 @@ function update(seconds, pull){
     }
     if(game.state === "climbing"){
         game.onWall = game.onWall || game.x >= hold;
+        checkSting(wall);
+        if(game.state !== "climbing"){ return; }
         if(game.y >= wall.top){
             game.y = wall.top;
             game.x = wall.topEdge;
@@ -365,8 +424,8 @@ function update(seconds, pull){
             clear(wall);
             return;
         }
-        // a moment under the kg on a Progressor hangs there; any longer and it's letting go
-        if(game.low > 0 && game.low >= (progressor.connected ? dipGrace : 0)){
+        // a moment out of the band hangs there; any longer and it's letting go
+        if(game.low >= dipGrace){
             fall("off");
         }
     }
@@ -433,7 +492,9 @@ function fallStep(seconds){
     game.x = Math.min(game.x, faceAt(wall, game.y + handRise));
     if(game.y === floor && game.landed === null){ game.landed = game.fallen; }
     if(game.landed !== null && game.fallen >= Math.max(fallSeconds, game.landed + lieSeconds)){
-        game.lives > 1 ? getUp() : endGame();
+        // a sting's fall has already emptied its heart
+        if(game.cause !== "sting"){ game.lives = Math.ceil(game.lives) - 1; }
+        game.lives > 0 ? getUp() : endGame();
     }
 }
 
@@ -441,7 +502,7 @@ function fallStep(seconds){
 function getUp(){
     let wall = game.walls[game.next];
     let last = game.walls[game.next - 1];
-    game.lives--;
+    game.arm++;
     game.armStarted = null;
     game.state = "recovering";
     game.backTo = Math.max(last ? last.topEdge + topOutRun : 0, wall.edge - restartBack);
@@ -473,7 +534,7 @@ const startWords = () => progressor.connected ? "Pull " + coinKg + " kg to start
 
 // On a Progressor, a pull started at the start screen starts the run - not with a panel open over it
 function readyStep(){
-    let jump = progressor.connected && progressor.kg >= coinKg;
+    let jump = pullKg() >= coinKg;
     if(jump && !game.wasJumping && !isOpen("about") && !isOpen("settings") && !isOpen("forces")){ startGame(); }
     else { game.wasJumping = jump; }
 }
@@ -549,10 +610,10 @@ function showTime(){
     if(timer.textContent !== text){ timer.textContent = text; }
 }
 
-// A full heart a life left
+// A full heart a life left, and a half one stung
 function showLives(){
     document.querySelectorAll("#lives img").forEach((heart, n) => {
-        heart.src = "/training/gaps/img/heart-" + (n < game.lives ? "full" : "empty") + ".png";
+        heart.src = "/training/gaps/img/heart-" + (game.lives >= n + 1 ? "full" : game.lives >= n + 0.5 ? "half" : "empty") + ".png";
     });
 }
 
@@ -563,7 +624,7 @@ function keepForce(kg){
     if(["ready", "over"].includes(game.state) || game.paused){ return; }
     let now = Date.now();
     if(game.armStarted === null){ game.armStarted = now; }
-    let readings = game.forces[lives - game.lives];
+    let readings = game.forces[game.arm];
     let at = (now - game.armStarted) / 1000;
     if(readings.length > 0 && at - readings[readings.length - 1][0] < forceStep){ return; }
     readings.push([at, roundKg(kg)]);
@@ -614,7 +675,7 @@ function sizeCanvas(){
 /* The scenery, from Kenney's Platformer Pack Remastered (CC0, kenney.nl): the
    earth and grass the ground is made of, rocks, tufts and mushrooms along it, the coins and the flag */
 const art = {};
-["earth", "rock", "grass", "mushroom-brown", "mushroom-red", "flag-down", "flag-1", "flag-2", "coin"].forEach(name => {
+["earth", "rock", "grass", "mushroom-brown", "mushroom-red", "flag-down", "flag-1", "flag-2", "coin", "wasp-1", "wasp-2"].forEach(name => {
     art[name] = new Image();
     art[name].src = "/training/gaps/img/" + name + ".png";
 });
@@ -696,14 +757,14 @@ function draw(){
         pen.fillRect(screenX(fromAt), screenY(up), (toAt - fromAt) * scale, Math.max(2, 0.04 * scale));
     });
 
-    // now and then on the flat, a tuft of grass or a rock - and very now and then a mushroom
+    // now and then on the flat, a tuft of grass, a rock or a mushroom, red or brown
     for(let n = Math.floor((left - 1) / sceneryStep); n * sceneryStep < right + 1; n++){
         let chance = scatter(n);
         if(chance > 0.35){ continue; }
         let at = (n + chance) * sceneryStep;
         // clear of the walls; the first and last flats run on past the screen's edges, so scroll off them
         let flat = flats.find(([fromAt, toAt], i) => at > (i === 0 ? -Infinity : fromAt + 1.2) && at < (i === flats.length - 1 ? Infinity : toAt - 1.2));
-        let image = chance < 0.02 ? art[n % 2 ? "mushroom-red" : "mushroom-brown"] : chance < 0.22 ? art.grass : art.rock;
+        let image = chance < 0.07 ? art[scatter(n + 0.5) < 0.5 ? "mushroom-red" : "mushroom-brown"] : chance < 0.22 ? art.grass : art.rock;
         if(!flat || !drawn(image)){ continue; }
         let size = (image === art.rock || image === art.grass ? (image === art.rock ? 1.2 : 1) : 1.3) * scale;
         pen.drawImage(image, screenX(at) - size / 2, screenY(flat[2]) - size + 0.06 * scale, size, size);
@@ -735,15 +796,39 @@ function draw(){
         drawFlag(pen, screenX(pole), screenY(flag.top), scale, flying);
     }
 
-    // on a wall the feet are on its face, the body leaning with it
+    // each wasp facing the way it flies, its wings beating - the middle 112px of its image, which faces left
+    let beat = Math.floor(Date.now() / 80) % 2 ? art["wasp-2"] : art["wasp-1"];
+    if(drawn(beat)){
+        let size = waspSize * scale;
+        inView.forEach(wall => {
+            if(!wall.wasp){ return; }
+            let wasp = waspAt(wall);
+            pen.save();
+            pen.translate(screenX(wasp.x), screenY(wasp.y));
+            if(wasp.right){ pen.scale(-1, 1); }
+            pen.drawImage(beat, 8, 10, 112, 112, -size / 2, -size / 2, size, size);
+            pen.restore();
+        });
+    }
+
+    // on a wall the feet are on its face, the body leaning with it - flickering a while after a sting
     let wall = game.walls[game.next];
     let feet = screenY(game.y + game.air);
     let runnerX = game.onWall ? faceAt(wall, game.y) - wallHug : game.x - handsAhead;
+    let stung = game.stungAt !== null && game.time - game.stungAt < stingSafe;
+    pen.save();
+    if(stung && Math.floor(game.time * 10) % 2){ pen.globalAlpha = 0.35; }
     drawFigure(pen, screenX(runnerX), feet, runnerHeight * scale, runnerPose());
+    pen.restore();
 
     // near a wall on the ground, or hanging on one, a nudge
-    if((game.state === "running" && wall.edge - game.x <= warnAhead || game.state === "climbing" && game.low > 0) && !pulling()){
-        arcadeText(pen, "Pull!", screenX(runnerX), feet - runnerHeight * scale - 12, danger);
+    let overhead = feet - runnerHeight * scale - 12;
+    if(stung && game.time - game.stungAt < 0.6){
+        arcadeText(pen, "Ouch!", screenX(runnerX), overhead, danger);
+    } else if(game.state === "climbing" && game.grip !== "climb"){
+        arcadeText(pen, pulling() ? "Ease off!" : "Pull!", screenX(runnerX), overhead, game.grip === "off" ? danger : "#ffd84a");
+    } else if(game.state === "running" && wall.edge - game.x <= warnAhead && !pulling()){
+        arcadeText(pen, "Pull!", screenX(runnerX), overhead, danger);
     }
     if(game.state === "recovering"){
         arcadeText(pen, "Switch arm", screenX(runnerX), feet - runnerHeight * scale - 12, "#ffd84a");
@@ -828,7 +913,7 @@ const wave = phase => Math.sin(phase * 2 * Math.PI);
 function runnerPose(){
     let wall = game.walls[game.next];
     let last = game.walls[game.next - 1];
-    if(game.state === "climbing" && game.onWall && game.low > 0){
+    if(game.state === "climbing" && game.onWall && game.grip !== "climb"){
         return { ...hangPose, "lean" : wall.slant };
     }
     if(game.state === "climbing"){
@@ -886,16 +971,24 @@ function fallPose(seconds){
     return { "lean" : -Math.min(90, seconds * 200), "face" : "worried", "armsBack" : true, "armNear" : -170, "armFar" : -150, "legNear" : -30, "legFar" : 20 };
 }
 
-// The Progressor's reading out of the max pull, with a mark at what this wall wants
+/* The pull out of the max pull - the Progressor's, or the one holding stands in
+   for - with a mark at what this wall wants and its band shaded to tooMuch over */
 function showForce(){
-    if(!progressor.connected){ return; }
-    let kg = Math.max(0, progressor.kg);
-    if(["running", "climbing"].includes(game.state)){ game.peakKg = Math.max(game.peakKg, kg); }
-    keepForce(kg);
+    let kg = Math.max(0, pullKg());
+    if(progressor.connected){
+        if(["running", "climbing"].includes(game.state)){ game.peakKg = Math.max(game.peakKg, kg); }
+        keepForce(kg);
+    }
     let need = needKg();
-    document.getElementById("forceFill").style.width = Math.min(100, kg / maxPull * 100) + "%";
-    document.getElementById("forceFill").classList.toggle("over", kg >= need);
-    document.getElementById("forceMark").style.left = Math.min(100, need / maxPull * 100) + "%";
+    let share = kg => Math.min(100, kg / maxPull * 100);
+    let fill = document.getElementById("forceFill");
+    fill.style.width = share(kg) + "%";
+    fill.classList.toggle("over", kg >= need && kg < need + tooMuch);
+    fill.classList.toggle("too-much", kg >= need + tooMuch);
+    document.getElementById("forceMark").style.left = share(need) + "%";
+    let band = document.getElementById("forceBand");
+    band.style.left = share(need) + "%";
+    band.style.width = (share(need + tooMuch) - share(need)) + "%";
     document.getElementById("forceNeed").innerText = need + " kg";
     document.getElementById("forceText").innerText = kg.toFixed(1) + " / " + need + " kg";
     showDetail();
@@ -920,9 +1013,10 @@ function frame(){
     lastFrame = now;
     while(elapsed > 0){
         let slice = Math.min(stepMs, elapsed);
-        update(slice / 1000, pulling());
+        update(slice / 1000);
         elapsed -= slice;
     }
+    if(!progressor.connected){ showForce(); }
     if(game.state !== "ready"){
         checkScore();
         showTime();
@@ -1007,7 +1101,6 @@ function showConnection(){
     let status = progressor.supported ? progressor.status : "off";
     document.getElementById("connect").hidden = !progressor.supported || status !== "off";
     document.getElementById("noBluetooth").hidden = progressor.supported;
-    document.getElementById("force").hidden = !connected;
 
     // the setup under the cog
     document.getElementById("progressorStatus").dataset.status = status;
@@ -1121,6 +1214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     newGame();
     showScore();
     showLives();
+    showForce();
     sizeCanvas();
     // its own size, not the window's: a scrollbar coming or going changes it too
     let sizedTo = "";

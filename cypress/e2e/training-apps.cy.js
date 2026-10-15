@@ -568,16 +568,18 @@ describe('Training apps', function () {
 
         // Bluetooth there by default, as on this machine but not on CI, where the
         // page's warning that it can't connect would cover what a test taps
-        function visitGaps(extra) {
+        function visitGaps(...extras) {
             cy.visit(gapsUrl, {
                 onBeforeLoad(win) {
                     win.Math.random = () => 0;
                     Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
                         value: { requestDevice: () => Promise.reject(new win.Error('No device chosen')) } });
-                    if (extra) { extra(win); }
+                    extras.forEach((extra) => extra(win));
                 }
             });
         }
+        // Holding the screen tops out at the max pull: at 6 kg it stays in a 2 kg wall's band, up to 7
+        const lowMax = (win) => win.localStorage.setItem('gapsMaxPull', '6');
         function play(ms) {
             cy.tick(ms);
             cy.wait(50);
@@ -604,7 +606,7 @@ describe('Training apps', function () {
         }
 
         it('climbs a wall on a pull held from before it to the top, and runs into the next with none, twice', () => {
-            visitGaps();
+            visitGaps(lowMax);
             cy.get('#score').should('have.text', '0');
             cy.get('#lives img[src$="heart-full.png"]').should('have.length', 2);
             start();
@@ -632,7 +634,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton, #forceButton, #pause').should('not.be.visible');
             savedLog().then((log) => {
                 expect(log).to.have.length(1);
-                expect(log[0]).to.include({ score: 180, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 20 });
+                expect(log[0]).to.include({ score: 180, seconds: 3, walls: 1, coins: 0, input: 'tap', maxPull: 6 });
             });
             // a run on the screen is in the Fake log
             cy.get('#log-tap').should('be.checked');
@@ -696,15 +698,16 @@ describe('Training apps', function () {
         });
 
         it('falls off on a pull let go on the wall, gets up on the other arm, and logs the height it reached', () => {
-            visitGaps();
+            visitGaps(lowMax);
             start();
             play(4500);
             hold();
             play(2000);
             // the score is the height times the kg, as it is climbed
             cy.get('#score').invoke('text').should('match', /^[1-9][\d,]*$/);
+            // the pull dropping away, then dipGrace, then the fall
             letGo();
-            play(1500);
+            play(2500);
             gameIs('recovering');
             // back from the wall it waits, for as long as it takes, for a pull
             play(4000);
@@ -718,7 +721,7 @@ describe('Training apps', function () {
             play(2500);
             gameIs('climbing');
             letGo();
-            play(1500);
+            play(2500);
             stateIs('over');
             cy.get('.over h2').should('have.text', 'Game over');
             cy.get('#overStats').invoke('text').should('match', /^Score[1-9][\d,]*Time0:\d\dWalls0/);
@@ -801,7 +804,7 @@ describe('Training apps', function () {
         });
 
         it('takes a pull started early, held for longer', () => {
-            visitGaps();
+            visitGaps(lowMax);
             start();
             play(1000);
             hold();
@@ -873,30 +876,29 @@ describe('Training apps', function () {
 
         it('connects a Progressor, zeroes and starts it, and climbs on its pull', () => {
             visitGaps(fakeProgressor);
-            cy.get('#force').should('not.be.visible');
             cy.get('#connect').should('be.visible').click();
             cy.window().its('written').should('deep.equal', [100, 111, 101]);   // tare, battery, then start measuring
             cy.get('#connect').should('not.be.visible');
             cy.get('#force').should('be.visible');
             cy.get('#pullHint').should('have.text', 'Pull 5 kg to start');
-            cy.window().then((win) => win.sendKg(12));
-            cy.get('#forceText').should('have.text', '12.0 / 2 kg');
+            cy.window().then((win) => win.sendKg(5));
+            cy.get('#forceText').should('have.text', '5.0 / 2 kg');
             cy.get('#forceFill').should('have.class', 'over');
             cy.window().then((win) => win.sendKg(0));
 
             start();
             play(4500);
-            cy.window().then((win) => win.sendKg(12));
+            cy.window().then((win) => win.sendKg(5));
             cy.wait(50);
             play(3600);
             cy.get('#score').should('have.text', '180');
-            cy.window().then((win) => win.sendKg(1));   // under the wall's kg is letting go
+            cy.window().then((win) => win.sendKg(0.5));   // under half the wall's kg is letting go
             cy.wait(50);
             play(9000);
             secondLife(6);
             cy.get('body').should('have.attr', 'data-state', 'over');
-            savedLog().its(0).should('include', { input: 'tindeq', maxPull: 20, peakKg: 12 });
-            cy.get('#overStats').should('contain', 'Max pull12 kg');
+            savedLog().its(0).should('include', { input: 'tindeq', maxPull: 20, peakKg: 5 });
+            cy.get('#overStats').should('contain', 'Max pull5 kg');
             cy.get('#log-tindeq').should('be.checked');
             cy.get('#log tbody tr').should('have.length', 1);
             cy.get('#log .icon-star, #log .tindeq-mark').should('not.exist');
@@ -907,7 +909,7 @@ describe('Training apps', function () {
             cy.get('#forceGraph polyline.arm-1').should('have.length', 1);
             cy.get('#forceGraph polyline.arm-2').should('have.length', 1);
             cy.window().then((win) => {
-                expect(win.eval('game.forces[0].map(([, kg]) => kg)')).to.deep.equal([12, 1]);
+                expect(win.eval('game.forces[0].map(([, kg]) => kg)')).to.deep.equal([5, 0.5]);
                 expect(win.eval('game.forces[1].map(([, kg]) => kg)')).to.deep.equal([6, 0]);
             });
             cy.get('#forces .close').click();
@@ -964,7 +966,8 @@ describe('Training apps', function () {
             cy.get('body').should('have.attr', 'data-state', 'over');
         });
 
-        it('hangs off one arm for a dip under the kg, climbing on as the pull comes back, and falls after 0.5 s', () => {
+        // Math.random() at 0.5: a 10 kg wall, which climbs from 10 kg to under 15 and hangs from 8, or from 15
+        it('hangs off one arm 2 kg under the kg, or over pulling, for as long as it is held, and falls half a second under that', () => {
             visitGaps((win) => { fakeProgressor(win); win.Math.random = () => 0.5; });
             cy.get('#connect').click();
             start();
@@ -974,9 +977,9 @@ describe('Training apps', function () {
             play(1500);
             cy.window().then((win) => {
                 let y = win.eval('game.y');
-                win.sendKg(9);
+                win.sendKg(8.5);
                 cy.wait(50);
-                play(250);
+                play(3000);
                 cy.window().then(() => {
                     expect(win.eval('game.state')).to.equal('climbing');
                     expect(win.eval('game.y')).to.equal(y);
@@ -987,12 +990,90 @@ describe('Training apps', function () {
             cy.wait(50);
             play(500);
             cy.window().then((win) => expect(win.eval('runnerPose().armFar')).not.to.equal(-160));
-            cy.window().then((win) => win.sendKg(9));
+            // under 8 kg
+            cy.window().then((win) => win.sendKg(7.5));
             cy.wait(50);
             play(450);
             gameIs('climbing');
-            play(100);
+            cy.window().then((win) => win.sendKg(11));
+            cy.wait(50);
+            play(500);
+            // 15 kg or more
+            cy.window().then((win) => win.sendKg(15));
+            cy.wait(50);
+            cy.get('#forceFill').should('have.class', 'too-much');
+            play(3000);
+            gameIs('climbing');
+            cy.window().then((win) => expect(win.eval('game.grip')).to.equal('hang'));
+            cy.window().then((win) => win.sendKg(7.5));
+            cy.wait(50);
+            play(550);
             gameIs('falling');
+        });
+
+        it('stands a pull in for holding the screen, 1 kg up every tenth of a second held and down every one let go, and starts on 5 kg', () => {
+            visitGaps();
+            cy.get('#force').should('be.visible');
+            cy.get('#forceText').should('have.text', '0.0 / 2 kg');
+            hold();
+            play(300);
+            cy.window().then((win) => expect(win.eval('fakeKg')).to.be.closeTo(3, 0.2));   // to the last frame
+            stateIs('idle');
+            play(300);
+            stateIs('running');
+            play(2000);
+            cy.get('#forceText').should('have.text', '20.0 / 2 kg');   // no more than the max pull
+            letGo();
+            play(200);
+            cy.window().then((win) => expect(win.eval('fakeKg')).to.be.closeTo(18, 0.2));
+            play(2500);
+            cy.window().then((win) => expect(win.eval('fakeKg')).to.equal(0));
+        });
+
+        it('hangs on a wall held too hard on the screen, and never falls for it', () => {
+            visitGaps();
+            start();
+            play(4500);
+            hold();
+            play(4000);
+            gameIs('climbing');
+            cy.window().then((win) => expect(win.eval('game.grip')).to.equal('hang'));
+        });
+
+        // Math.random() at 0 puts a wasp on every wall from the fourth; here on the first,
+        // a metre up and at the face at the start of its round
+        it('takes half a heart for a wasp\'s sting, none for a while after, and a fall for a heart emptied', () => {
+            visitGaps();
+            start();
+            cy.window().then((win) => {
+                win.eval('game.walls[0].wasp = { "up" : 1, "phase" : 0 }; game.y = 0; game.time = 0; game.paused = true');
+                win.eval('checkSting(game.walls[0])');
+                expect(win.eval('game.lives')).to.equal(1.5);
+                win.eval('checkSting(game.walls[0])');
+                expect(win.eval('game.lives')).to.equal(1.5);
+                // half way round it is out from the wall
+                win.eval('game.time = 2; checkSting(game.walls[0])');
+                expect(win.eval('game.lives')).to.equal(1.5);
+                win.eval('game.time = 4; checkSting(game.walls[0])');
+                expect(win.eval('game.lives')).to.equal(1);
+                expect(win.eval('game.state')).to.equal('falling');
+                win.eval('showLives(); game.paused = false');
+            });
+            cy.get('#lives img[src$="heart-full.png"]').should('have.length', 1);
+            cy.get('#lives img[src$="heart-empty.png"]').should('have.length', 1);
+            play(2000);
+            // up on the other arm, its heart still full - at the start, so with no walk back
+            gameIs('waiting');
+            cy.window().then((win) => {
+                expect(win.eval('game.lives')).to.equal(1);
+                expect(win.eval('game.arm')).to.equal(1);
+            });
+        });
+
+        it('draws half a heart', () => {
+            visitGaps();
+            cy.window().then((win) => win.eval('game.lives = 1.5; showLives()'));
+            cy.get('#lives img[src$="heart-half.png"]').should('have.length', 1);
         });
 
         it('takes no notice of holding the screen with a Progressor connected', () => {
@@ -1158,7 +1239,7 @@ describe('Training apps', function () {
 
         // A best of 2 s on the device, logged in metres as before: the first 3 s wall beats it, so the flag is on its top
         it('flags the best on the device, and says when it is beaten', () => {
-            visitGaps((win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', metres: 2, gaps: 1, input: 'tap', maxPull: 20 }])));
+            visitGaps(lowMax, (win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', metres: 2, gaps: 1, input: 'tap', maxPull: 20 }])));
             cy.window().then((win) => expect(win.eval('bestFlagAt()')).to.include({ edge: 15, top: 9 }));
             start();
             play(4500);

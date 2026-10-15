@@ -16,6 +16,7 @@
     background: #d0f4f7 url(img/sky.png) repeat-x;
     background-size: auto 100%;
     background-position: 0 100%;
+    -webkit-tap-highlight-color: transparent;   /* Chrome flashes a held canvas otherwise */
 }
 .score, .screen, .force {
     font-family: ui-monospace, Menlo, Consolas, "Roboto Mono", "DejaVu Sans Mono", monospace;
@@ -273,6 +274,7 @@
     margin-top: 22px;
 }
 .force-bar {
+    position: relative;
     height: 24px;
     border: 4px solid var(--arcade-ink);
     background: #fff;
@@ -287,6 +289,17 @@
 }
 #forceFill.over {
     background: #4cd964;
+}
+#forceFill.too-much {
+    background: var(--danger);
+}
+/* where a pull climbs, over the fill so it shows either way */
+#forceBand {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(76, 217, 100, 0.3);
+    border-right: 3px solid var(--arcade-ink);
 }
 /* through the bar and out past both its edges */
 #forceMark {
