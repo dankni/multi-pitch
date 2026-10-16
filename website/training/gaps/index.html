@@ -60,11 +60,12 @@
 		</div>
 		<div class="screen">
 			<div class="over" id="over">
-				<h2>Game over</h2>
+				<h2 id="overTitle">Game over</h2>
 				<p id="overBest" hidden>A new high score</p>
 				<dl class="run-stats" id="overStats"></dl>
 			</div>
 			<h2 class="paused-title">Paused</h2>
+			<label class="warm-up" id="warmUp" hidden><input type="checkbox" id="warmedUp" data-change="setWarmedUp" /> I've done a general warm-up</label>
 			<button type="button" id="primaryButton" data-action="startGame"><i class="demo-icon icon-play"></i>START</button>
 			<button type="button" id="resume" data-action="togglePause"><i class="demo-icon icon-play"></i>RESUME</button>
 			<div class="over-buttons">
@@ -117,14 +118,6 @@
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
 		<fieldset class="setting-group">
-			<legend>Max pull</legend>
-			<div class="field-group">
-				<input type="number" class="field" id="maxPull" min="2" max="200" step="1" inputmode="numeric" data-change="setMaxPull" aria-label="Max pull in kg" />
-				<span class="unit">kg</span>
-			</div>
-			<p class="progressor-tips">Each wall asks for its own pull, from 2 kg up to this - most of them around half.</p>
-		</fieldset>
-		<fieldset class="setting-group">
 			<legend>Climber</legend>
 			<div class="picker climber-picker">
 				<input type="radio" name="climber" class="nice-radios" id="climber-girl" value="girl" data-change="setClimber" checked />
@@ -133,6 +126,30 @@
 				<label for="climber-boy"><canvas class="climber-preview" data-figure="boy" aria-hidden="true"></canvas>Boy</label>
 			</div>
 		</fieldset>
+		<fieldset class="setting-group">
+			<legend>Game mode</legend>
+			<div class="picker">
+				<input type="radio" name="mode" class="nice-radios" id="mode-adventure" value="adventure" data-change="setMode" checked />
+				<label for="mode-adventure">Adventure</label>
+				<input type="radio" name="mode" class="nice-radios" id="mode-maxHang" value="maxHang" data-change="setMode" />
+				<label for="mode-maxHang">Max hang</label>
+			</div>
+		</fieldset>
+		<fieldset class="setting-group">
+			<legend>Max pull (one arm)</legend>
+			<div class="field-group">
+				<input type="number" class="field" id="maxPull" min="2" max="200" step="1" inputmode="numeric" data-change="setMaxPull" aria-label="Max pull for one arm in kg" />
+				<span class="unit">kg</span>
+			</div>
+		</fieldset>
+		<!-- what the mode picked does, as a tab under the picker -->
+		<div class="mode-about" id="about-adventure">
+			<p class="progressor-tips">Run and climb as far as you can. Each wall asks for its own pull, from 2 kg up to your max - most of them around half. Jump for coins, dodge the wasps.</p>
+		</div>
+		<div class="mode-about" id="about-maxHang" hidden>
+			<p class="progressor-tips">A max hang session: each hang on one arm, then the other, then a rest. Set the max pull to the most you can hold for 10 s.</p>
+			<ol class="progressor-steps" id="routineSteps"></ol>
+		</div>
 		<fieldset class="setting-group progressor-setup">
 			<legend>Tindeq Progressor</legend>
 			<p class="progressor-status" id="progressorStatus" data-status="off" role="status">

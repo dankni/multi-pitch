@@ -669,6 +669,126 @@ describe('Training apps', function () {
             };
         }
 
+        /* The max hang routine at a 5 kg max pull: walls of 3 and 4 kg that the steady 5 kg climbs,
+           each 10 s of pull and 30 m high but the warm-ups of 7 and 5 s */
+        const maxHangs = (win) => {
+            win.localStorage.setItem('gapsMaxHang', 'true');
+            win.localStorage.setItem('gapsMaxPull', '5');
+        };
+
+        it('picks the max hang mode under the cog, for the run waiting to start', () => {
+            visitGaps();
+            cy.get('#warmUp').should('not.be.visible');
+            cy.get('nav .icon-cog').click();
+            cy.get('#mode-adventure').should('be.checked');
+            cy.get('#about-adventure').should('be.visible');
+            cy.get('#about-maxHang').should('not.be.visible');
+            cy.get('label[for="mode-maxHang"]').click();
+            cy.window().its('localStorage').invoke('getItem', 'gapsMaxHang').should('equal', 'true');
+            cy.get('#about-adventure').should('not.be.visible');
+            cy.get('#about-maxHang').should('be.visible');
+            // its steps at this max pull, and again at a new one
+            cy.get('#routineSteps li').should('have.length', 5).first().should('have.text', 'Warm-up 1: 10 kg for 10 s × 2, rest 1:00');
+            cy.get('#maxPull').clear().type('40').trigger('change');
+            cy.get('#routineSteps li').last().should('have.text', 'Max hang: 35 kg for 10 s × 5, rest 3:00');
+            cy.get('#settings .close').click();
+            cy.get('#warmUp').should('be.visible');
+            cy.get('#score').should('have.text', 'Warm-up 1');
+            cy.get('#best').should('have.text', '1 of 2 · Arm 1');
+            cy.get('#lives').should('not.be.visible');
+            cy.window().then((win) => expect(win.eval('game.hangs.length')).to.equal(20));
+        });
+
+        it('runs the max hang routine an arm at a time with rests, never falling, once warmed up', () => {
+            visitGaps(steadyHold, maxHangs);
+            cy.get('#primaryButton').should('be.disabled');
+            cy.get('#warmedUp').check();
+            cy.get('#primaryButton').should('not.be.disabled');
+            start();
+            // how far through it is, by the time it should take: 1260 s of rests, 184 s of hangs and 25 s of running
+            cy.get('#timer').should('have.text', '0% · 24:29 left');
+            cy.window().then((win) => {
+                expect(win.eval('game.coins.length')).to.equal(0);
+                expect(win.eval('game.walls.some(wall => wall.wasps.length > 0)')).to.equal(false);
+            });
+            // at the foot of the first wall with no pull, it waits rather than falls
+            play(7000);
+            gameIs('running');
+            cy.window().then((win) => expect(win.eval('game.stopped')).to.equal(true));
+            hold();
+            play(3000);
+            gameIs('climbing');
+            // pulling too hard still climbs, told to ease off
+            cy.window().then((win) => win.eval('stepFakeKg = () => { fakeKg = holding ? 20 : 0; }'));
+            play(1000);
+            cy.window().then((win) => {
+                expect(win.eval('game.grip')).to.equal('over');
+                expect(win.eval('game.y')).to.be.within(11.5, 12.5);
+                expect(win.eval('runnerPose().face')).to.equal('talk');
+                win.eval('stepFakeKg = () => { fakeKg = holding ? 5 : 0; }');
+            });
+            // a dip just hangs
+            letGo();
+            play(2000);
+            gameIs('climbing');
+            hold();
+            play(6100);
+            cy.get('#best').should('have.text', '1 of 2 · Arm 2');
+            letGo();
+            play(3000);
+            gameIs('running');
+            hold();
+            play(10100);
+            // both arms done: a minute's rest, which a pull doesn't cut short
+            cy.get('#best').should('have.text', '2 of 2 · Arm 1');
+            play(30000);
+            gameIs('running');
+            cy.window().then((win) => expect(win.eval('game.restLeft')).to.be.within(25, 35));
+            play(1500000);
+            stateIs('over');
+            cy.get('.over h2').should('have.text', 'Routine done');
+            cy.get('#timer').should('have.text', '100% · 0:00 left');
+            cy.get('#overStats').invoke('text').should('contain', 'Hangs20');
+            cy.get('#overBest').should('not.be.visible');
+            savedLog().then((log) => {
+                expect(log).to.have.length(1);
+                expect(log[0]).to.include({ routine: 'maxHang', walls: 20, input: 'tap', maxPull: 5 });
+            });
+            cy.get('#log tbody tr').should('have.length', 1).and('contain', 'Max hangs');
+            // not a score for the game to beat
+            cy.window().then((win) => expect(win.eval('bestScore("tap")')).to.equal(0));
+        });
+
+        it('puts a wasp in each half of a long wall, and now and then a pair flying together', () => {
+            visitGaps();
+            cy.window().then((win) => {
+                let long = { base: 0, top: 30, wasps: [] };
+                win.eval('placeWasps')(long, 10);
+                expect(long.wasps.map((spot) => spot.up)).to.deep.equal([5.25, 20.25]);
+                // a wasp, high on its spot, and a second there with it
+                let rolls = [0, 0.5, 0.5, 0.9];
+                win.Math.random = () => rolls.shift();
+                let short = { base: 0, top: 9, wasps: [] };
+                win.eval('placeWasps')(short, 3);
+                expect(short.wasps).to.have.length(2);
+                expect(short.wasps[1].up - short.wasps[0].up).to.be.closeTo(0.7, 0.001);
+                expect(short.wasps[1].phase - short.wasps[0].phase).to.be.closeTo(0.04, 0.001);
+            });
+        });
+
+        // A max pull changed mid run used to lean the walls still to come by the new one: 18 kg against 10 at 40° over
+        it('keeps a run to the max pull it started with', () => {
+            visitGaps();
+            start();
+            cy.get('nav .icon-cog').click();
+            cy.get('#maxPull').clear().type('10').trigger('change');
+            cy.window().then((win) => {
+                expect(win.eval('maxPull')).to.equal(10);
+                expect(win.eval('game.maxPull')).to.equal(20);
+                expect(win.eval('wallSlant(18)')).to.be.within(-13.5, 0);
+            });
+        });
+
         it('says how to play on the start screen', () => {
             visitGaps(touch(false));
             cy.get('#pullHint').should('have.text', 'Connect Tindeq or use spacebar or click to emulate');
@@ -1064,7 +1184,7 @@ describe('Training apps', function () {
             visitGaps();
             start();
             cy.window().then((win) => {
-                win.eval('game.walls[0].wasp = { "up" : 1, "phase" : 0 }; game.y = 0; game.time = 0; game.paused = true');
+                win.eval('game.walls[0].wasps = [{ "up" : 1, "phase" : 0 }]; game.y = 0; game.time = 0; game.paused = true');
                 win.eval('checkSting(game.walls[0])');
                 expect(win.eval('game.lives')).to.equal(1.5);
                 win.eval('checkSting(game.walls[0])');
@@ -1282,7 +1402,7 @@ describe('Training apps', function () {
             cy.get('.toast-close').click();
             cy.tick(400);
             cy.get('.toast').should('not.exist');
-            cy.get('#noBluetoothSettings').should('be.visible');
+            cy.get('#noBluetoothSettings').scrollIntoView().should('be.visible');
         });
 
         // A best of 2 s on the device, logged in metres as before: the first 3 s wall beats it, so the flag is on its top

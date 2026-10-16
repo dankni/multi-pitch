@@ -247,10 +247,30 @@
     font-size: 30px;
     color: var(--arcade-gold);
 }
-.pull-hint {
+.pull-hint, .warm-up {
     margin: 0;
     font-size: 15px;
     text-shadow: 1px 1px 0 var(--arcade-ink), -1px -1px 0 var(--arcade-ink), 1px -1px 0 var(--arcade-ink), -1px 1px 0 var(--arcade-ink);
+}
+/* the routine's start waits for this */
+.warm-up {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+}
+.warm-up[hidden] {
+    display: none;
+}
+.warm-up input {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+}
+.screen button:disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 /* The Progressor's pull out of the max, with a line at what this wall wants,
@@ -427,7 +447,7 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
     display: flex;
 }
 [data-state="paused"] #share, [data-state="paused"] #forceButton,
-:is([data-state="running"], [data-state="paused"], [data-state="over"]) :is(#primaryButton, #connect, .pull-hint) {
+:is([data-state="running"], [data-state="paused"], [data-state="over"]) :is(#primaryButton, #connect, .pull-hint, .warm-up) {
     display: none;
 }
 .over {

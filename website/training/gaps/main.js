@@ -6,7 +6,7 @@
    more than that, or up to hangBelow under it, hangs off one arm; any less
    hangs until dipGrace is up, then falls. Without a Progressor, holding the
    screen stands in for one, its pull rising fakeRate a second while held and
-   falling as fast when not. Now and then a wasp flies round a spot on a wall:
+   falling as fast when not. Now and then a wasp, or a pair, flies round a spot on a wall - two spots on a long one:
    touching it costs half a heart, so hang below it until it is out of the way. A wall is its seconds of climbing high,
    so it wants that long a pull - and, on a Progressor, its own kg, which leans
    it: a slab for the lightest, overhanging at the max pull. The first
@@ -20,7 +20,8 @@
    coinPoints a coin jumped for. On a Progressor only its pull counts, not the
    screen. No voice, only beeps: what to do is written over the runner.
    Distances are in metres and times in seconds; the course scrolls past a
-   runner who stays put on screen. */
+   runner who stays put on screen.
+   Under the cog, the game can be swapped for a max hang routine (routine). */
 
 const app = { "logKey" : "gapsLog" };
 const maxPullKey = "gapsMaxPull";
@@ -52,8 +53,12 @@ const hangBelow = 2;         // kg under a wall's that hangs rather than climbs 
 const tooMuch = 5;           // kg over a wall's that is too hard a pull
 const fakeRate = 10;         // kg a second, 1 every tenth
 // The gauge's top: room over a max pull wall for its band and for pulling too hard
-const gaugeKg = () => maxPull + 2 * tooMuch;
-const waspChance = 0.35;     // of a wall past the warm up having one
+const gaugeKg = () => game.maxPull + 2 * tooMuch;
+const waspChance = 0.35;     // of a spot on a wall past the warm up having one
+const twoSpotSeconds = 7;    // a wall this long or longer has two spots
+const pairChance = 0.2;      // of a spot's wasp having another with it
+const pairGap = 0.7;         // metres the second of a pair flies above the first
+const pairLag = 0.04;        // of a turn it trails by
 const waspReach = 2;         // metres either way of its middle, along
 const waspOut = 2.2;         // its middle, out from the face: at its nearest it all but touches it
 const waspBob = 0.4;         // metres up and down as it goes round
@@ -92,6 +97,45 @@ const runStride = 1.2;       // metres a running cycle
 const climbStride = 0.8;
 const topOutRun = 0.3;       // stepping up onto the top, past its edge
 
+/* The max hang routine, Eva López style: each hang a wall on one arm, then one
+   on the other, then a rest. Its kg are shares of the max pull, taken as the
+   most held for 10 s - a 70 kg climber who holds +30 kg pulls 100 kg in all, so
+   -20 kg is half. A general warm-up is ticked off first. No coins, no wasps and
+   no falls: a wall waits for its pull, and a dip just hangs. */
+const maxHangKey = "gapsMaxHang";
+const routine = [
+    { "name" : "Warm-up 1", "share" : 0.5,   "seconds" : 10, "reps" : 2, "rest" : 60 },
+    { "name" : "Warm-up 2", "share" : 0.7,   "seconds" : 10, "reps" : 1, "rest" : 120 },
+    { "name" : "Warm-up 3", "share" : 0.8,   "seconds" : 7,  "reps" : 1, "rest" : 120 },
+    { "name" : "Warm-up 4", "share" : 0.85,  "seconds" : 5,  "reps" : 1, "rest" : 180 },
+    { "name" : "Max hang",  "share" : 0.875, "seconds" : 10, "reps" : 5, "rest" : 180 }
+];
+const hangGap = 2 * runSpeed;   // between the routine's walls: the runner rests at the foot of the next
+let maxHang = false;
+let warmedUp = false;
+
+// A wall an arm a hang, the rest after the second arm's
+function routineHangs(){
+    return routine.flatMap(step => Array.from({ "length" : step.reps * 2 }, (_, n) => ({
+        "name" : step.name, "rep" : Math.floor(n / 2) + 1, "reps" : step.reps, "arm" : n % 2, "seconds" : step.seconds,
+        "kg" : Math.max(leastKg, Math.round(maxPull * step.share)), "rest" : n % 2 ? step.rest : 0
+    })));
+}
+
+// Seconds before a hang's pull: the run to its wall, or the rest before it, which the run is part of
+function leadIn(n){
+    return n === 0 ? firstRunIn / runSpeed : Math.max(hangGap / runSpeed, game.hangs[n - 1].rest);
+}
+
+// Seconds of the routine still to go, were each wall pulled on the moment it is reached
+function routineLeft(){
+    if(game.state === "over"){ return 0; }
+    let wall = game.walls[game.next];
+    let now = game.state === "climbing" ? (wall.top - game.y) / climbSpeed
+        : Math.max(game.restLeft, (wall.edge - game.x) / runSpeed) + wall.seconds;
+    return game.hangs.slice(game.next + 1).reduce((left, hang, n) => left + leadIn(game.next + 1 + n) + hang.seconds, now);
+}
+
 let game = null;
 let holding = false;         // the screen or the space bar
 let fakeKg = 0;              // the pull holding stands in for, without a Progressor
@@ -104,11 +148,13 @@ const isKind = (entry, kind) => (entry.input === "tindeq") === (kind === "tindeq
 
 app.logView = {
     "key" : app.logKey,
-    "describe" : entry => ({ "title" : points(entryScore(entry)), "detail" : "" }),
+    "describe" : entry => ({ "title" : entry.routine ? "Max hangs" : points(entryScore(entry)), "detail" : "" }),
     "filter" : entry => isKind(entry, logKind),
     "unrated" : true,
     // the rest of a run behind the note button
-    "comment" : entry => joinDetail([plural(entry.walls ?? entry.gaps, "wall"), entry.coins ? plural(entry.coins, "coin") : "",
+    "comment" : entry => joinDetail(entry.routine ? [plural(entry.walls, "hang"), "max pull set to " + entry.maxPull + " kg",
+                                                     clock(entry.time) + " long", entry.input !== "tindeq" ? "held the screen" : "Progressor"]
+                                   : [plural(entry.walls ?? entry.gaps, "wall"), entry.coins ? plural(entry.coins, "coin") : "",
                                      Math.round(Number(entry.seconds ?? entry.metres) || 0) + " s of pull",
                                      entry.time !== undefined ? clock(entry.time) + " played" : "",
                                      entry.input !== "tindeq" ? "held the screen" : entry.peakKg !== undefined ? "max pull " + entry.peakKg + " kg" : "Progressor"]),
@@ -150,9 +196,9 @@ function currentScore(){
     return Math.round(game.points) + game.collected * coinPoints;
 }
 
-// The best of the runs on a Progressor, or of those on the screen
+// The best of the runs on a Progressor, or of those on the screen - not the routine's
 function bestScore(kind){
-    return getLog(app.logKey).filter(entry => isKind(entry, kind)).reduce((best, entry) => Math.max(best, entryScore(entry)), 0);
+    return getLog(app.logKey).filter(entry => isKind(entry, kind) && !entry.routine).reduce((best, entry) => Math.max(best, entryScore(entry)), 0);
 }
 
 /* ================= The course ================= */
@@ -191,12 +237,17 @@ function newGame(){
         "backTo" : 0,        // where the hands walk back to, after a fall
         "forces" : [[], []], // [seconds, kg] on the Progressor, an arm each
         "armStarted" : null, // Date.now() at the arm's first reading
-        "best" : bestScore(input),
+        "best" : maxHang ? 0 : bestScore(input),
+        "maxPull" : maxPull,   // kept for the run: a wall leans by its kg against it
+        "hangs" : maxHang ? routineHangs() : null,
+        "restLeft" : 0,      // seconds, after the second arm of a hang in the routine
+        "stopped" : false,   // at the foot of a routine's wall, waiting for its pull
         "beaten" : false,
         "peakKg" : 0,        // the most the Progressor read in the run
         "input" : input      // a Progressor dropped mid run makes it a run on the screen
     };
     extendCourse();
+    if(game.hangs){ game.routineTotal = routineLeft(); }
 }
 
 function restBefore(wallNumber){
@@ -209,36 +260,53 @@ function restBefore(wallNumber){
 function extendCourse(){
     while(game.walls.length === 0 || game.walls[game.walls.length - 1].edge < game.x + viewWidth * 2){
         let count = game.walls.length;
+        let hang = game.hangs ? game.hangs[count] : null;
+        if(game.hangs && !hang){ return; }
         let last = game.walls[count - 1];
-        let seconds = shortestPull + Math.floor(Math.random() * (longestPull - shortestPull + 1));
-        let edge = (last ? last.topEdge : 0) + (count === 0 ? firstRunIn : restBefore(count));
+        let seconds = hang ? hang.seconds : shortestPull + Math.floor(Math.random() * (longestPull - shortestPull + 1));
+        let edge = (last ? last.topEdge : 0) + (count === 0 ? firstRunIn : hang ? hangGap : restBefore(count));
         let base = last ? last.top : 0;
         let height = seconds * climbSpeed;
-        let kg = wallKg(count);
+        let kg = hang ? hang.kg : wallKg(count);
         let pointsAtTop = (last ? last.pointsAtTop : 0) + height * kg * pointsPerKgMetre;
-        let wall = { "edge" : edge, "base" : base, "top" : base + height, "seconds" : seconds, "kg" : kg, "pointsAtTop" : pointsAtTop };
+        let wall = { "edge" : edge, "base" : base, "top" : base + height, "seconds" : seconds, "kg" : kg, "pointsAtTop" : pointsAtTop,
+                     "hang" : hang, "wasps" : [] };
         shapeWall(wall);
-        if(count >= warmUpWalls && Math.random() < waspChance){
-            wall.wasp = { "up" : height * (0.35 + 0.3 * Math.random()), "phase" : Math.random() };
-        }
+        if(!hang && count >= warmUpWalls){ placeWasps(wall, seconds); }
         game.walls.push(wall);
-        placeCoins((last ? last.topEdge : 0) + 6, edge - 8, base);
+        if(!hang){ placeCoins((last ? last.topEdge : 0) + 6, edge - 8, base); }
+    }
+}
+
+/* A spot for a wasp on a wall, or two on a long one, each in its own half so
+   there is room to hang between them. Now and then a spot has a pair, flying
+   together, so it is no harder to time past than one. */
+function placeWasps(wall, seconds){
+    let spots = seconds >= twoSpotSeconds ? 2 : 1;
+    let height = wall.top - wall.base;
+    for(let n = 0; n < spots; n++){
+        if(Math.random() >= waspChance){ continue; }
+        let up = height * (n + 0.35 + 0.3 * Math.random()) / spots;
+        let phase = Math.random();
+        wall.wasps.push({ "up" : up, "phase" : phase });
+        // 1 - random, so a test's Math.random() of 0 keeps to one
+        if(1 - Math.random() < pairChance){ wall.wasps.push({ "up" : up + pairGap, "phase" : phase + pairLag }); }
     }
 }
 
 // Round a spot on its wall, wide along and a little up and down: by game.time, so it stops for a pause
-function waspAt(wall){
-    let turn = (game.time / waspPeriod + wall.wasp.phase) * 2 * Math.PI;
-    let up = wall.base + wall.wasp.up + waspBob * Math.sin(turn);
+function waspAt(wall, spot){
+    let turn = (game.time / waspPeriod + spot.phase) * 2 * Math.PI;
+    let up = wall.base + spot.up + waspBob * Math.sin(turn);
     return { "x" : faceAt(wall, up) - waspOut + waspReach * Math.cos(turn), "y" : up, "right" : Math.sin(turn) < 0 };
 }
 
 // Half a heart, and a heart emptied by it is a fall
 function checkSting(wall){
-    if(!wall.wasp || (game.stungAt !== null && game.time - game.stungAt < stingSafe)){ return; }
-    let wasp = waspAt(wall);
+    if(game.stungAt !== null && game.time - game.stungAt < stingSafe){ return; }
     let middle = faceAt(wall, game.y) - wallHug;
-    if(Math.abs(wasp.x - middle) > waspSize / 2 + 0.2 || wasp.y < game.y - 0.2 || wasp.y > game.y + runnerHeight + 0.2){ return; }
+    let touching = wasp => Math.abs(wasp.x - middle) <= waspSize / 2 + 0.2 && wasp.y >= game.y - 0.2 && wasp.y <= game.y + runnerHeight + 0.2;
+    if(!wall.wasps.some(spot => touching(waspAt(wall, spot)))){ return; }
     game.stungAt = game.time;
     game.lives -= 0.5;
     showLives();
@@ -307,18 +375,18 @@ function groundAt(at){
 
 // The lightest pull leans back, the max pull leans out, in between in step
 function wallSlant(kg){
-    let share = maxPull > leastKg ? (kg - leastKg) / (maxPull - leastKg) : 0.5;
+    let share = game.maxPull > leastKg ? (kg - leastKg) / (game.maxPull - leastKg) : 0.5;
     return mostSlant * (1 - 2 * share);
 }
 
 /* Between leastKg and the max pull, mostly near half of it: three randoms
    averaged make a bell around the middle. The first few are a warm up. */
-const warmUpKg = () => Math.max(leastKg, Math.floor(maxPull * warmUpShare));
+const warmUpKg = () => Math.max(leastKg, Math.floor(game.maxPull * warmUpShare));
 
 function wallKg(wallNumber){
-    let most = wallNumber < warmUpWalls ? warmUpKg() : maxPull;
+    let most = wallNumber < warmUpWalls ? warmUpKg() : game.maxPull;
     let bell = (Math.random() + Math.random() + Math.random()) / 3;
-    return Math.round(Math.min(most, Math.max(leastKg, maxPull * bell)));
+    return Math.round(Math.min(most, Math.max(leastKg, game.maxPull * bell)));
 }
 
 // The kg that counts as pulling: the wall ahead's, or the one being climbed
@@ -333,11 +401,12 @@ function pulling(){
     return pullKg() >= needKg();
 }
 
-// On a wall: "climb", "hang", or "off" - too little, which falls in time. Too much hangs.
+/* On a wall: "climb", "hang", or "off" - too little, which falls in time. Too much
+   hangs, but in the routine is "over": it still climbs, told to ease off. */
 function grip(){
     let kg = pullKg();
     let need = needKg();
-    if(kg >= need + tooMuch){ return "hang"; }
+    if(kg >= need + tooMuch){ return game.walls[game.next].hang ? "over" : "hang"; }
     if(kg >= need){ return "climb"; }
     return kg >= Math.max(need - hangBelow, need / 2) ? "hang" : "off";
 }
@@ -375,6 +444,7 @@ function update(seconds){
         return;
     }
     if(!["running", "climbing"].includes(game.state)){ return; }
+    if(game.restLeft > 0){ countRest(seconds); }
 
     let wall = game.walls[game.next];
     let jump = jumping();
@@ -382,7 +452,7 @@ function update(seconds){
     game.wasJumping = jump;
     game.grip = game.state === "climbing" ? grip() : "";
     game.low = game.grip === "off" ? game.low + seconds : 0;
-    if(game.grip === "climb"){
+    if(game.grip === "climb" || game.grip === "over"){
         game.y += climbSpeed * seconds;
         game.climbed += seconds;
         // only height not climbed before scores, so a wall climbed again after a fall doesn't
@@ -401,15 +471,18 @@ function update(seconds){
     let hold = faceAt(wall, game.y + game.air + handRise);
     game.x = game.onWall ? hold : Math.min(hold, game.x + runSpeed * seconds);
     if(game.state === "running"){
-        if(pulling() && hold - game.x <= leapReach){
+        game.stopped = false;
+        if(pulling() && hold - game.x <= leapReach && game.restLeft === 0){
             game.state = "climbing";
             game.y += game.air;
             land();
             game.low = 0;
+        } else if(game.x >= hold && wall.hang){
+            game.stopped = true;
         } else if(game.x >= hold){
             fall("wall");
             return;
-        } else if(started && game.air === 0){
+        } else if(started && game.air === 0 && !wall.hang){
             game.airSpeed = jumpSpeed;
         }
         takeCoins();
@@ -427,7 +500,7 @@ function update(seconds){
             return;
         }
         // a moment out of the band hangs there; any longer and it's letting go
-        if(game.low >= dipGrace){
+        if(game.low >= dipGrace && !wall.hang){
             fall("off");
         }
     }
@@ -436,9 +509,23 @@ function update(seconds){
 function clear(wall){
     game.cleared++;
     game.seconds += wall.seconds;
+    ping();
+    if(wall.hang && game.next === game.hangs.length - 1){
+        endGame();
+        return;
+    }
+    game.restLeft = wall.hang ? wall.hang.rest : 0;
     game.next++;
     extendCourse();
-    ping();
+    if(wall.hang){ showScore(); }
+}
+
+// The routine's rest, its last three seconds beeped
+function countRest(seconds){
+    let was = Math.ceil(game.restLeft);
+    game.restLeft = Math.max(0, game.restLeft - seconds);
+    let now = Math.ceil(game.restLeft);
+    if(now !== was && now > 0 && now <= 3){ beep(); }
 }
 
 // Any coin the runner's body is up against
@@ -532,18 +619,22 @@ function waitStep(){
     game.wasJumping = jump;
 }
 
+// The routine waits for its warm-up to be ticked off
+const canStart = () => !game.hangs || warmedUp;
+
 const startWords = () => progressor.connected ? "Pull " + coinKg + " kg to start" : "Hold to start";
 
 // On a Progressor, a pull started at the start screen starts the run - not with a panel open over it
 function readyStep(){
     let jump = pullKg() >= coinKg;
-    if(jump && !game.wasJumping && !isOpen("about") && !isOpen("settings") && !isOpen("forces")){ startGame(); }
+    if(jump && !game.wasJumping && canStart() && !isOpen("about") && !isOpen("settings") && !isOpen("forces")){ startGame(); }
     else { game.wasJumping = jump; }
 }
 
 /* ================= Start and finish ================= */
 
 function startGame(){
+    if(!canStart()){ return; }
     unlockAudio();
     requestWakeLock();
     newGame();
@@ -575,35 +666,58 @@ function togglePause(){
 
 function endGame(){
     game.state = "over";
-    game.lives = 0;
     releaseWakeLock();
-    let best = bestScore(game.input);
-    let score = currentScore();
     let tindeq = game.input === "tindeq";
-    if(tindeq){
-        track("tindeq_arcade_game_over", { "score" : score, "high_score" : Math.max(best, score), "new_high_score" : score > best,
-                                           "walls" : game.cleared, "max_pull" : maxPull });
-    }
-    // a run that climbed nothing isn't worth a line in the log
-    if(score > 0){
-        saveToLog(app.logKey, { "id" : Date.now(), "date" : today(), "score" : score, "seconds" : game.seconds,
-                                "time" : Math.round(game.time), "walls" : game.cleared, "coins" : game.collected, "input" : game.input, "maxPull" : maxPull,
-                                ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}) });
-        showLogKind(game.input);
-    }
-    let stats = [["Score", points(score)], ["Time", clock(game.time)], ["Walls", game.cleared], ["Coins", game.collected],
-                 ["Climbed", Math.round(game.high) + " m"], ["Pulled", Math.round(game.climbed) + " s"]];
+    let stats = game.hangs ? finishRoutine(tindeq) : finishGame(tindeq);
     if(tindeq){ stats.push(["Max pull", roundKg(game.peakKg) + " kg"]); }
+    document.getElementById("overTitle").innerText = game.hangs ? "Routine done" : "Game over";
     document.getElementById("overStats").innerHTML = stats.map(([name, value]) => `<dt>${name}</dt><dd>${value}</dd>`).join("");
-    document.getElementById("overBest").hidden = !(score > best);
     document.getElementById("forceButton").hidden = !tindeq || game.forces.every(arm => arm.length === 0);
     showScore();
     showLives();
     showState("over");
 }
 
+// Every hang done, logged with the game's runs but never scored against them
+function finishRoutine(tindeq){
+    if(tindeq){ track("tindeq_arcade_max_hangs", { "max_pull" : game.maxPull }); }
+    saveToLog(app.logKey, { "id" : Date.now(), "date" : today(), "routine" : "maxHang", "seconds" : game.seconds,
+                            "time" : Math.round(game.time), "walls" : game.cleared, "input" : game.input, "maxPull" : game.maxPull,
+                            ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}) });
+    showLogKind(game.input);
+    document.getElementById("overBest").hidden = true;
+    return [["Time", clock(game.time)], ["Hangs", game.cleared], ["Pulled", Math.round(game.climbed) + " s"]];
+}
+
+function finishGame(tindeq){
+    game.lives = 0;
+    let best = bestScore(game.input);
+    let score = currentScore();
+    if(tindeq){
+        track("tindeq_arcade_game_over", { "score" : score, "high_score" : Math.max(best, score), "new_high_score" : score > best,
+                                           "walls" : game.cleared, "max_pull" : game.maxPull });
+    }
+    // a run that climbed nothing isn't worth a line in the log
+    if(score > 0){
+        saveToLog(app.logKey, { "id" : Date.now(), "date" : today(), "score" : score, "seconds" : game.seconds,
+                                "time" : Math.round(game.time), "walls" : game.cleared, "coins" : game.collected, "input" : game.input, "maxPull" : game.maxPull,
+                                ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}) });
+        showLogKind(game.input);
+    }
+    document.getElementById("overBest").hidden = !(score > best);
+    return [["Score", points(score)], ["Time", clock(game.time)], ["Walls", game.cleared], ["Coins", game.collected],
+            ["Climbed", Math.round(game.high) + " m"], ["Pulled", Math.round(game.climbed) + " s"]];
+}
+
 function showScore(){
     showTime();
+    // the routine shows the hang it is on instead
+    if(game.hangs){
+        let hang = game.hangs[game.next];
+        document.getElementById("score").innerText = hang.name;
+        document.getElementById("best").innerText = (hang.reps > 1 ? hang.rep + " of " + hang.reps + " · " : "") + "Arm " + (hang.arm + 1);
+        return;
+    }
     let score = currentScore();
     document.getElementById("score").innerText = points(score);
     let best = Math.max(game.best, score);
@@ -613,11 +727,17 @@ function showScore(){
 function showTime(){
     let timer = document.getElementById("timer");
     let text = clock(game.time);
+    // the routine's progress instead, by the time it should take
+    if(game.hangs){
+        let left = routineLeft();
+        text = Math.max(0, Math.floor(100 * (1 - left / game.routineTotal))) + "% · " + clock(Math.ceil(left)) + " left";
+    }
     if(timer.textContent !== text){ timer.textContent = text; }
 }
 
 // A full heart a life left, and a half one stung
 function showLives(){
+    document.getElementById("lives").hidden = game.hangs !== null;
     document.querySelectorAll("#lives img").forEach((heart, n) => {
         heart.src = "/training/gaps/img/heart-" + (game.lives >= n + 1 ? "full" : game.lives >= n + 0.5 ? "half" : "empty") + ".png";
     });
@@ -630,8 +750,13 @@ function keepForce(kg){
     if(["ready", "over"].includes(game.state) || game.paused){ return; }
     let now = Date.now();
     if(game.armStarted === null){ game.armStarted = now; }
-    let readings = game.forces[game.arm];
     let at = (now - game.armStarted) / 1000;
+    let hang = game.walls[game.next].hang;
+    let arm = hang ? hang.arm : game.arm;
+    // the routine's arms take turns on one clock, so the one let go drops to nothing until its next hang
+    let other = game.forces[1 - arm];
+    if(hang && other.length > 0 && other[other.length - 1][1] !== 0){ other.push([at, 0]); }
+    let readings = game.forces[arm];
     if(readings.length > 0 && at - readings[readings.length - 1][0] < forceStep){ return; }
     readings.push([at, roundKg(kg)]);
 }
@@ -642,7 +767,7 @@ function showForces(){
     let width = Math.max(260, Math.round(holder.clientWidth) || 320), height = 220;
     let left = 34, right = 10, top = 10, bottom = 28;
     let seconds = Math.max(1, ...game.forces.flat().map(([at]) => at));
-    let most = Math.max(maxPull, ...game.forces.flat().map(([, kg]) => kg));
+    let most = Math.max(game.maxPull, ...game.forces.flat().map(([, kg]) => kg));
     let x = at => left + at / seconds * (width - left - right);
     let y = kg => top + (1 - kg / most) * (height - top - bottom);
     let ticks = (top, step) => Array.from({ "length" : Math.floor(top / step) + 1 }, (_, n) => n * step);
@@ -728,14 +853,18 @@ function draw(){
         points.push([wall.topEdge, wall.top]);
         return points;
     });
-    let outline = [[from, groundAt(from)], ...faces.flat(), [to, groundAt(to)]];
+    /* the ground either side is the foot of the first wall in view and the top of the last:
+       groundAt() goes wrong past an overhang, whose foot can be further on than the next one's top */
+    let before = inView.length ? inView[0].base : groundAt(from);
+    let after = inView.length ? inView[inView.length - 1].top : groundAt(to);
+    let outline = [[from, before], ...faces.flat(), [to, after]];
     let flats = [];
     let flatFrom = from;
     inView.forEach(wall => {
         flats.push([flatFrom, wall.edge, wall.base]);
         flatFrom = wall.topEdge;
     });
-    flats.push([flatFrom, to, groundAt(to)]);
+    flats.push([flatFrom, to, after]);
 
     pen.beginPath();
     outline.forEach(([at, up]) => pen.lineTo(screenX(at), screenY(up)));
@@ -770,7 +899,7 @@ function draw(){
         let at = (n + chance) * sceneryStep;
         // clear of the walls; the first and last flats run on past the screen's edges, so scroll off them
         let flat = flats.find(([fromAt, toAt], i) => at > (i === 0 ? -Infinity : fromAt + 1.2) && at < (i === flats.length - 1 ? Infinity : toAt - 1.2));
-        let image = chance < 0.07 ? art[scatter(n + 0.5) < 0.5 ? "mushroom-red" : "mushroom-brown"] : chance < 0.22 ? art.grass : art.rock;
+        let image = chance < 0.1 ? art[scatter(n + 0.5) < 0.75 ? "mushroom-red" : "mushroom-brown"] : chance < 0.22 ? art.grass : art.rock;
         if(!flat || !drawn(image)){ continue; }
         let size = (image === art.rock || image === art.grass ? (image === art.rock ? 1.2 : 1) : 1.3) * scale;
         pen.drawImage(image, screenX(at) - size / 2, screenY(flat[2]) - size + 0.06 * scale, size, size);
@@ -781,7 +910,7 @@ function draw(){
     inView.forEach(wall => {
         let middle = wall.base + plaqueUp + plaque / scale / 2;
         let x = screenX(faceAt(wall, middle) + plaqueIn) + plaque / 2;
-        drawPlaque(pen, x, screenY(middle), plaque, wall.slant, Math.round(wall.top - wall.base) + " m", wall.kg + " kg");
+        drawPlaque(pen, x, screenY(middle), plaque, wall.slant, wall.hang ? wall.seconds + " s" : Math.round(wall.top - wall.base) + " m", wall.kg + " kg");
     });
 
     // the coins still to take, bobbing - each the middle 64px of its image
@@ -806,15 +935,14 @@ function draw(){
     let beat = Math.floor(Date.now() / 80) % 2 ? art["wasp-2"] : art["wasp-1"];
     if(drawn(beat)){
         let size = waspSize * scale;
-        inView.forEach(wall => {
-            if(!wall.wasp){ return; }
-            let wasp = waspAt(wall);
+        inView.forEach(wall => wall.wasps.forEach(spot => {
+            let wasp = waspAt(wall, spot);
             pen.save();
             pen.translate(screenX(wasp.x), screenY(wasp.y));
             if(wasp.right){ pen.scale(-1, 1); }
             pen.drawImage(beat, 8, 10, 112, 112, -size / 2, -size / 2, size, size);
             pen.restore();
-        });
+        }));
     }
 
     // on a wall the feet are on its face, the body leaning with it - flickering a while after a sting
@@ -833,6 +961,11 @@ function draw(){
         arcadeText(pen, "Ouch!", screenX(runnerX), overhead, danger);
     } else if(game.state === "climbing" && game.grip !== "climb"){
         arcadeText(pen, pulling() ? "Ease off!" : "Pull!", screenX(runnerX), overhead, game.grip === "off" ? danger : "#ffd84a");
+    } else if(game.state === "running" && game.restLeft > 0){
+        arcadeText(pen, "Rest " + clock(Math.ceil(game.restLeft)), screenX(runnerX), overhead, "#ffd84a");
+    } else if(game.state === "running" && wall.hang && wall.edge - game.x <= warnAhead && !pulling()){
+        if(wall.hang.arm){ arcadeText(pen, "Switch arm", screenX(runnerX), overhead - 22, "#ffd84a"); }
+        arcadeText(pen, "Pull " + wall.kg + " kg", screenX(runnerX), overhead, "#ffd84a");
     } else if(game.state === "running" && wall.edge - game.x <= warnAhead && !pulling()){
         arcadeText(pen, "Pull!", screenX(runnerX), overhead, danger);
     }
@@ -919,7 +1052,7 @@ const wave = phase => Math.sin(phase * 2 * Math.PI);
 function runnerPose(){
     let wall = game.walls[game.next];
     let last = game.walls[game.next - 1];
-    if(game.state === "climbing" && game.onWall && game.grip !== "climb"){
+    if(game.state === "climbing" && game.onWall && !["climb", "over"].includes(game.grip)){
         return { ...hangPose, "lean" : wall.slant };
     }
     if(game.state === "climbing"){
@@ -930,6 +1063,9 @@ function runnerPose(){
     }
     if(game.state === "recovering"){
         return { ...runPose(game.x / walkStride), "tilt" : 0, "bob" : 0, "back" : true };
+    }
+    if(game.state === "running" && game.stopped){
+        return standPose;
     }
     if(game.state === "running" && game.air > 0){
         return jumpPose();
@@ -1058,7 +1194,7 @@ function bindHolding(){
 
 // The phone's own share sheet, or the words copied where there isn't one
 function shareScore(){
-    let text = "I scored " + points(currentScore()) + " on Tindeq Arcade";
+    let text = game.hangs ? "I did a max hang routine on Tindeq Arcade" : "I scored " + points(currentScore()) + " on Tindeq Arcade";
     let url = location.origin + "/training/gaps/";
     if(navigator.share){
         navigator.share({ "title" : "Tindeq Arcade", "text" : text, "url" : url }).catch(() => {});
@@ -1145,7 +1281,7 @@ function connectionChanged(){
     let input = progressor.connected ? "tindeq" : "tap";
     if(game.state === "ready"){
         game.input = input;
-        game.best = bestScore(input);
+        game.best = game.hangs ? 0 : bestScore(input);
         showScore();
     } else if(input === "tap"){
         game.input = "tap";
@@ -1207,6 +1343,7 @@ function setMaxPull(input){
     maxPull = value >= leastKg ? Math.min(value, 200) : defaultMaxPull;
     input.value = maxPull;
     localStorage.setItem(maxPullKey, maxPull);
+    showMode();
     // the course waiting to start is redrawn to the new max
     if(game.state === "ready"){
         newGame();
@@ -1215,8 +1352,49 @@ function setMaxPull(input){
     showForce();
 }
 
+// Adventure or the max hang routine, from the next run on: one under way keeps to what it started as
+function loadMode(){
+    maxHang = localStorage.getItem(maxHangKey) === "true";
+    document.getElementById(maxHang ? "mode-maxHang" : "mode-adventure").checked = true;
+    showMode();
+}
+
+function setMode(input){
+    maxHang = input.value === "maxHang";
+    localStorage.setItem(maxHangKey, maxHang);
+    showMode();
+    if(game.state === "ready"){
+        newGame();
+        showScore();
+        showLives();
+        showForce();
+        draw();
+    }
+}
+
+function setWarmedUp(input){
+    warmedUp = input.checked;
+    showWarmUp();
+}
+
+function showWarmUp(){
+    document.getElementById("warmUp").hidden = !maxHang;
+    document.getElementById("primaryButton").disabled = maxHang && !warmedUp;
+}
+
+// The picked mode's description under the cog, the routine's steps at this max pull
+function showMode(){
+    document.getElementById("about-adventure").hidden = maxHang;
+    document.getElementById("about-maxHang").hidden = !maxHang;
+    document.getElementById("routineSteps").innerHTML = routine.map(step =>
+        `<li>${step.name}: ${Math.max(leastKg, Math.round(maxPull * step.share))} kg for ${step.seconds} s`
+        + `${step.reps > 1 ? " × " + step.reps : ""}, rest ${clock(step.rest)}</li>`).join("");
+    showWarmUp();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadMaxPull();
+    loadMode();
     loadClimber();
     progressor.onChange = connectionChanged;
     progressor.onWeight = showForce;
