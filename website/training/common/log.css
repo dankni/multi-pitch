@@ -16,6 +16,14 @@
 #finishButton {
     margin-bottom: 40px;
 }
+/* the note can be written as you go; the stars and save wait for FINISH */
+[data-state="running"] #endingDiv {
+    display: block;
+    margin-bottom: 0;
+}
+[data-state="running"] #endingDiv :is(.save-title, .star-holder, #saveSession) {
+    display: none;
+}
 
 /* The top of a session: its date, the count and the hardest */
 #sessionBar {

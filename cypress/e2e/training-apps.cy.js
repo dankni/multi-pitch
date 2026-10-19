@@ -1711,6 +1711,26 @@ describe('Training apps', function () {
             cy.get('#sessionComment').should('have.value', 'Slabby.');
             cy.get('#saveSession').should('have.text', 'UPDATE SESSION');
         });
+
+        it('takes a note before finishing and keeps it through a reload', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#star1').should('not.be.visible');
+            cy.get('#saveSession').should('not.be.visible');
+            cy.get('#sessionComment').should('be.visible').type('Crimpy.');
+            cy.reload();
+            cy.get('#sessionComment').should('have.value', 'Crimpy.');
+            cy.get('#commentCount').should('have.text', '7');
+            cy.get('#row-V2 .grade-add').click();
+            cy.get('#finishButton').click();
+            cy.get('#star3').click();
+            cy.get('#saveSession').click();
+            cy.get('#log .icon-note').click();
+            cy.get('.comment-pop').should('contain', 'Crimpy.');
+            cy.get('#about .close').click();
+            cy.get('#primaryButton').click();
+            cy.get('#sessionComment').should('have.value', '');
+        });
     });
 
     describe('Endurance', function () {

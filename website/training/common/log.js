@@ -22,7 +22,7 @@
    common/log.css. */
 
 function startSession(){
-    session = Object.assign({ "id" : Date.now(), "date" : today(), "rating" : 0, "editing" : false }, app.newSession());
+    session = Object.assign({ "id" : Date.now(), "date" : today(), "rating" : 0, "comment" : "", "editing" : false }, app.newSession());
     if(app.timed){ session.start = session.id; }
     openSession();
 }
@@ -34,9 +34,8 @@ function timing(from){
 function editSession(id){
     let entry = getLog(app.logKey).find(item => item.id === id);
     if(!entry){ return; }
-    session = Object.assign({ "id" : entry.id, "date" : entry.date, "rating" : entry.rating, "editing" : true },
+    session = Object.assign({ "id" : entry.id, "date" : entry.date, "rating" : entry.rating, "comment" : entry.comment, "editing" : true },
         timing(entry), app.fromEntry(entry));
-    setSessionComment(entry.comment);   // or saving again would wipe it
     hideAbout();
     openSession();
 }
@@ -52,6 +51,15 @@ function openSession(){
     if(app.onOpen){ app.onOpen(); }
     app.draw();
     setStar(session.rating);
+    setSessionComment(session.comment);
+}
+
+// The note is written during the session, so it is kept with it like a climb
+function keepComment(){
+    if(session){
+        session.comment = sessionComment;
+        keepSession();
+    }
 }
 
 function closeSession(){
@@ -100,6 +108,8 @@ function byDate(a, b){
 
 document.addEventListener("DOMContentLoaded", () => {
     if(app.onLoad){ app.onLoad(); }
+    // added after functions.js's data-input delegate, so runs once updateComment has read the field
+    document.addEventListener("input", event => { if(event.target.id === "sessionComment"){ keepComment(); } });
     if(restoreSession()){ openSession(); }
     drawSessionLog(app.logView);
 });
