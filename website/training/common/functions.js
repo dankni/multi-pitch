@@ -577,9 +577,24 @@ function ping(){ tone(1320, 0.7, 0.4); }
 function beep(){ tone(880, 0.12, 0.15); }
 
 /* A buzz to feel when the screen is out of sight - on whatever the phone allows,
-   which is not an iPhone. Not silenced by the mute: that is for the noise. */
+   which is not an iPhone. Not silenced by the mute: that is for the noise, and
+   the Vibration disabled setting is for this. */
+let vibrateOff = false;
+const vibrateOffKey = "vibrateOff";
+
+function toggleVibrateOff(input){
+    vibrateOff = input.checked;
+    localStorage.setItem(vibrateOffKey, JSON.stringify(vibrateOff));
+}
+
+function loadVibrateOffSetting(){
+    vibrateOff = localStorage.getItem(vibrateOffKey) === "true";
+    let box = document.getElementById("vibrateOff");
+    if(box !== null){ box.checked = vibrateOff; }
+}
+
 function vibrate(pattern){
-    if(navigator.vibrate){ navigator.vibrate(pattern); }
+    if(!vibrateOff && navigator.vibrate){ navigator.vibrate(pattern); }
 }
 
 // Three, two, one - each colour on its word, each step timed from the one before it
@@ -820,6 +835,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadPreventSleepSetting();
     loadVoiceOffSetting();
     loadSoundSetting();
+    loadVibrateOffSetting();
     showDarkModeSetting(prefersDark());
     showCogHint();
     registerServiceWorker();

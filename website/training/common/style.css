@@ -540,6 +540,13 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .icon-bug:before { content: '\f188'; }
 .icon-share:before { content: '\f1e0'; }
 .icon-trash:before { content: '\f1f8'; }
+/* A phone buzzing, for the Vibration disabled setting - not in the font either */
+.icon-vibrate {
+    display: inline-block;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='7' y='3' width='10' height='18' rx='2'/%3E%3Cpath d='M3 8v8M21 8v8'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='7' y='3' width='10' height='18' rx='2'/%3E%3Cpath d='M3 8v8M21 8v8'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 /* The note speech bubble isn't in the font, so it is a mask filled with currentColor */
 .icon-note, .icon-button.icon-note:hover, .icon-button.icon-note:focus {
     display: inline-block;

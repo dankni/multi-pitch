@@ -515,6 +515,18 @@ describe('Training apps', function () {
             cy.get('body').should('have.class', 'green');
         });
 
+        it('no hangs keeps still with vibration disabled, and remembers it', () => {
+            visitWorkout('/training/nohangs/');
+            cy.get('#vibrateOff').should('not.be.checked').check({ force: true });
+            cy.window().then((win) => expect(win.localStorage.getItem('vibrateOff')).to.equal('true'));
+            visitWorkout('/training/nohangs/');
+            cy.get('#vibrateOff').should('be.checked');
+            cy.get('#primaryButton').click();
+            cy.tick(33000);   // past the let go and the hang soon buzzes
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
+            cy.window().its('buzzes').should('deep.equal', []);
+        });
+
         it('no hangs hangs, rests, shows the next rep, and finishes on the last hang', () => {
             visitWorkout('/training/nohangs/');
             // the info panel: example photos, then the routine a line a grip
