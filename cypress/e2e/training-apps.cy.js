@@ -554,6 +554,57 @@ describe('Training apps', function () {
             cy.get('#elapsed').should('have.text', '09:40');
             cy.get('#hangs tr.done, #hangs .pip.done').should('not.exist');
         });
+
+        it('tabata remembers its settings, works, rests, and finishes on the last set', () => {
+            visitWorkout('/training/tabata/');
+            // the classic: 8 sets of 20 on, 10 off, less the rest after the last
+            cy.get('#elapsed').should('have.text', '03:50');
+            cy.get('#sets .pip').should('have.length', 8);
+            tap('[data-setting="sets"][data-step="-1"]', '[data-setting="sets"][data-step="-1"]');
+            cy.get('#setsValue').should('have.text', '6');
+            cy.get('#elapsed').should('have.text', '02:50');
+            cy.get('#sets .pip').should('have.length', 6);
+            cy.get('[data-setting="rest"][data-step="-1"]').click().click();
+            cy.get('[data-setting="rest"][data-step="-1"]').should('be.disabled');   // no rest at all is the least
+            cy.get('[data-setting="rest"][data-step="1"]').click().click();
+            cy.window().its('localStorage').invoke('getItem', 'tabataSettings').then((saved) => {
+                expect(JSON.parse(saved)).to.deep.equal({ work: 20, rest: 10, sets: 6 });
+            });
+            visitWorkout('/training/tabata/');   // a fresh visit, the stubs and all
+            cy.get('#setsValue').should('have.text', '6');
+            cy.get('#elapsed').should('have.text', '02:50');
+
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('#setup').should('not.be.visible');
+            cy.get('#first_task').should('have.text', 'Work');
+            cy.get('#first_rep').should('have.text', 'Set 1 of 6');
+            cy.get('body').should('have.class', 'green');
+            cy.get('#sets .pip.working').should('have.length', 1);
+            cy.tick(20000);
+            cy.get('#first_task').should('have.text', 'Rest, then');
+            cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+            cy.get('body').should('not.have.class', 'green');
+            cy.get('#sets .pip.done').should('have.length', 1);
+            cy.tick(7000);
+            cy.get('body').should('have.class', 'red');
+            cy.tick(3000);
+            cy.get('body').should('have.class', 'green');
+            cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+
+            cy.tick(140000);
+            cy.get('#elapsed').should('have.text', '00:00');
+            cy.get('#endingDiv').should('be.visible');
+            cy.get('#sets .pip.done').should('have.length', 6);
+            cy.get('#saveSession').click();
+            cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
+                expect(JSON.parse(log)).to.have.length(1);
+                expect(JSON.parse(log)[0]).to.include({ work: 20, rest: 10, sets: 6 });
+            });
+            cy.get('#reset').click();
+            cy.get('#setup').should('be.visible');
+            cy.get('#elapsed').should('have.text', '02:50');
+        });
     });
 
     /* Tindeq Arcade. Math.random() at 0 makes every wall a 3 second one, 9 m high at 3 m/s, so
@@ -1889,7 +1940,7 @@ describe('Training apps', function () {
 
     describe('One app', function () {
         const pages = ['/training/', '/training/progress/', '/training/rings/', '/training/timer/',
-            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/', '/training/gaps/'];
+            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/', '/training/tabata/', '/training/gaps/'];
 
         it('installs as a single app covering every page', () => {
             cy.request(appUrl + '/training/manifest.json').its('body').should((manifest) => {
