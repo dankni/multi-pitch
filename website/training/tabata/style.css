@@ -57,17 +57,43 @@ body:not([data-state="idle"]) #setup {
     margin-bottom: 4px;
 }
 
-/* The dots in a row that wraps, bigger than no hangs' as there's nothing else below */
-.sets {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+/* The session to scale: a block a set's work, a line its rest. In the text
+   colour, so it reads on the green and the red as well as the page */
+.timeline {
+    position: relative;
     width: 90%;
     max-width: var(--column);
+    height: 28px;
     margin: 24px auto;
 }
-.pip {
-    width: 18px;
-    height: 18px;
+.track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+}
+.track i {
+    flex-basis: 0;
+    min-width: 1px;
+}
+.work {
+    align-self: stretch;
+    border-radius: 3px;
+    background: currentColor;
+}
+.rest {
+    height: 4px;
+    min-width: 2px;
+    background: currentColor;
+}
+/* no rest: still a gap between sets, so 50 of them aren't one bar */
+.gap {
+    min-width: 2px;
+}
+/* all of it, faint; then what's done, solid, cut off at where you are */
+#todo {
+    opacity: 0.25;
+}
+#done {
+    clip-path: inset(0 100% 0 0);
 }

@@ -79,17 +79,3 @@
         font-size: 28px;
     }
 }
-
-/* A dot a rep or set: filled once done, green while you're on it. Each app sizes its own */
-.pip {
-    border: 2px solid currentColor;
-    border-radius: 50%;
-}
-.pip.done {
-    background: currentColor;
-}
-.pip.hanging, .pip.working {
-    --go: light-dark(var(--confirm), #4cd964);
-    border-color: var(--go);
-    background: var(--go);
-}

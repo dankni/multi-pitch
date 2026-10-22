@@ -22,15 +22,19 @@ const totalSeconds = () => settings.sets * setSeconds() - settings.rest;
 // the main clock counts down what is left of the session
 app.clock = secondsClock(seconds => {
     showElapsed(totalSeconds() - seconds);
+    showProgress(seconds);
     seconds < totalSeconds() ? showSecond(seconds) : finish();
 });
 
-app.onGo = () => showSecond(0);
+app.onGo = () => {
+    showProgress(0);
+    showSecond(0);
+};
 
 app.onReset = () => {
     showElapsed(totalSeconds());
     document.getElementById("first").hidden = true;
-    markSets(0, false);
+    showProgress(0);
 };
 
 app.logEntry = () => ({ "work" : settings.work, "rest" : settings.rest, "sets" : settings.sets });
@@ -51,7 +55,6 @@ function showSecond(seconds){
         document.getElementById("first").hidden = false;
         document.getElementById("first_task").innerText = "Work";
         document.getElementById("first_rep").innerText = `Set ${index + 1} of ${settings.sets}`;
-        markSets(index, true);
         background("green");
         ping();
         if(index === settings.sets - 1 && settings.sets > 1){ speak("Last one"); }
@@ -59,7 +62,6 @@ function showSecond(seconds){
     if(into === settings.work){
         document.getElementById("first_task").innerText = "Rest, then";
         document.getElementById("first_rep").innerText = `Set ${index + 2} of ${settings.sets}`;
-        markSets(index + 1, false);
         background("");
         ping();
     }
@@ -74,7 +76,6 @@ function showSecond(seconds){
 function finish(){
     background("");
     document.getElementById("first").hidden = true;
-    markSets(settings.sets, false);
     speak("Done");
     finishSession();
 }
@@ -119,22 +120,48 @@ function drawSettings(){
         document.querySelector(`[data-setting="${name}"][data-step="1"]`).disabled = settings[name] >= limits[name].max;
     });
     showElapsed(totalSeconds());
-    drawSets();
+    drawTimeline();
 }
 
-/* ================= The sets, a dot each ================= */
+/* ================= The session, drawn to scale =================
+   A block a set's work and a line its rest, so 20/10 looks like 20/10. Two
+   copies of it: the faint one is all of it, and the solid one on top is cut
+   off where the session has got to. */
 
-function drawSets(){
-    document.getElementById("sets").innerHTML = '<span class="pip"></span>'.repeat(settings.sets);
-    document.getElementById("sets").setAttribute("aria-label", plural(settings.sets, "set"));
-}
+// each work and rest in the solid copy, with when it starts and how long it is
+let phases = [];
 
-// done is how many sets are over, and working lights the next one's dot
-function markSets(done, working){
-    document.querySelectorAll("#sets .pip").forEach((pip, index) => {
-        pip.classList.toggle("done", index < done);
-        pip.classList.toggle("working", working && index === done);
+function drawTimeline(){
+    let html = "";
+    for(let set = 0; set < settings.sets; set++){
+        html += `<i class="work" style="flex-grow: ${settings.work}"></i>`;
+        // no rest after the last set; none at all still leaves a gap between sets
+        if(set < settings.sets - 1){ html += `<i class="${settings.rest > 0 ? "rest" : "gap"}" style="flex-grow: ${settings.rest}"></i>`; }
+    }
+    document.getElementById("todo").innerHTML = html;
+    document.getElementById("done").innerHTML = html;
+    let start = 0;
+    phases = [...document.querySelectorAll("#done i")].map((element, index) => {
+        let length = index % 2 === 0 ? settings.work : settings.rest;
+        start += length;
+        return { "element" : element, "start" : start - length, "length" : length };
     });
+    document.getElementById("timeline").setAttribute("aria-valuemax", totalSeconds());
+    showProgress(0);
+}
+
+// From the blocks as drawn rather than the seconds, as each gap has a width of its own
+function showProgress(seconds){
+    let timeline = document.getElementById("timeline");
+    let phase = phases.find(each => seconds < each.start + each.length) || phases[phases.length - 1];
+    let into = Math.min(1, (seconds - phase.start) / (phase.length || 1));
+    let edge = phase.element.offsetLeft + phase.element.offsetWidth * into;
+    let percent = timeline.offsetWidth ? 100 - edge / timeline.offsetWidth * 100 : 100;
+    document.getElementById("done").style.clipPath = `inset(0 ${percent}% 0 0)`;
+    timeline.setAttribute("aria-valuenow", seconds);
+    // countedIn is common/workout.js's: whether the session has begun
+    timeline.setAttribute("aria-valuetext", !countedIn ? plural(settings.sets, "set")
+        : `Set ${Math.min(settings.sets, Math.floor(seconds / setSeconds()) + 1)} of ${settings.sets}`);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

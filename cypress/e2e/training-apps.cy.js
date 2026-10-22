@@ -559,13 +559,16 @@ describe('Training apps', function () {
             visitWorkout('/training/tabata/');
             // the classic: 8 sets of 20 on, 10 off, less the rest after the last
             cy.get('#elapsed').should('have.text', '03:50');
-            cy.get('#sets .pip').should('have.length', 8);
+            cy.get('#todo .work').should('have.length', 8);   // a block a set's work, a line its rest
+            cy.get('#todo .rest').should('have.length', 7);
             tap(...times(2, '[data-setting="sets"][data-step="-1"]'));
             cy.get('#setsValue').should('have.text', '6');
             cy.get('#elapsed').should('have.text', '02:50');
-            cy.get('#sets .pip').should('have.length', 6);
+            cy.get('#todo .work').should('have.length', 6);
             tap(...times(2, '[data-setting="rest"][data-step="-1"]'));
             cy.get('[data-setting="rest"][data-step="-1"]').should('be.disabled');   // no rest at all is the least
+            cy.get('#todo .rest').should('not.exist');
+            cy.get('#todo .gap').should('have.length', 5);   // still apart, with nothing between them
             tap(...times(2, '[data-setting="rest"][data-step="1"]'));
             cy.window().its('localStorage').invoke('getItem', 'tabataSettings').then((saved) => {
                 expect(JSON.parse(saved)).to.deep.equal({ work: 20, rest: 10, sets: 6 });
@@ -580,12 +583,12 @@ describe('Training apps', function () {
             cy.get('#first_task').should('have.text', 'Work');
             cy.get('#first_rep').should('have.text', 'Set 1 of 6');
             cy.get('body').should('have.class', 'green');
-            cy.get('#sets .pip.working').should('have.length', 1);
+            cy.get('#timeline').should('have.attr', 'aria-valuetext', 'Set 1 of 6');
             cy.tick(20000);
             cy.get('#first_task').should('have.text', 'Rest, then');
             cy.get('#first_rep').should('have.text', 'Set 2 of 6');
             cy.get('body').should('not.have.class', 'green');
-            cy.get('#sets .pip.done').should('have.length', 1);
+            cy.get('#timeline').should('have.attr', 'aria-valuenow', '20');
             cy.tick(7000);
             cy.get('body').should('have.class', 'red');
             cy.tick(3000);
@@ -596,7 +599,8 @@ describe('Training apps', function () {
             cy.tick(140000);
             cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#endingDiv').should('be.visible');
-            cy.get('#sets .pip.done').should('have.length', 6);
+            cy.get('#timeline').should('have.attr', 'aria-valuenow', '170');
+            cy.get('#done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
             cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {

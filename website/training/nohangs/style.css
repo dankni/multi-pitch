@@ -37,7 +37,17 @@
     width: 12px;
     height: 12px;
     margin-left: 5px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
     vertical-align: middle;
+}
+.pip.done {
+    background: currentColor;
+}
+.pip.hanging {
+    --hang: light-dark(var(--confirm), #4cd964);
+    border-color: var(--hang);
+    background: var(--hang);
 }
 /* The example photos, each already cut to a circle: four across, or two by two on a phone */
 .grips {

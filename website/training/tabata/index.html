@@ -80,8 +80,11 @@
 		</section>
 		<div id="endingDiv" class="ending"></div>
 	</div>
-	<!-- a dot a set, filled in from the settings and marked off as the session goes -->
-	<div class="sets" id="sets" role="img"></div>
+	<!-- the whole session to scale, filled in from the settings and as it goes -->
+	<div class="timeline" id="timeline" role="progressbar" aria-label="Session" aria-valuemin="0">
+		<div class="track" id="todo"></div>
+		<div class="track" id="done"></div>
+	</div>
 	<aside id="about" class="overlay">
 		<h2>Tabata</h2>
 		<p>Short, hard efforts with short rests. The classic is 20 seconds of work and 10 seconds of rest, eight times: four minutes in all.</p>
