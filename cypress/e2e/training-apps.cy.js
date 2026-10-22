@@ -560,13 +560,13 @@ describe('Training apps', function () {
             // the classic: 8 sets of 20 on, 10 off, less the rest after the last
             cy.get('#elapsed').should('have.text', '03:50');
             cy.get('#sets .pip').should('have.length', 8);
-            tap('[data-setting="sets"][data-step="-1"]', '[data-setting="sets"][data-step="-1"]');
+            tap(...times(2, '[data-setting="sets"][data-step="-1"]'));
             cy.get('#setsValue').should('have.text', '6');
             cy.get('#elapsed').should('have.text', '02:50');
             cy.get('#sets .pip').should('have.length', 6);
-            cy.get('[data-setting="rest"][data-step="-1"]').click().click();
+            tap(...times(2, '[data-setting="rest"][data-step="-1"]'));
             cy.get('[data-setting="rest"][data-step="-1"]').should('be.disabled');   // no rest at all is the least
-            cy.get('[data-setting="rest"][data-step="1"]').click().click();
+            tap(...times(2, '[data-setting="rest"][data-step="1"]'));
             cy.window().its('localStorage').invoke('getItem', 'tabataSettings').then((saved) => {
                 expect(JSON.parse(saved)).to.deep.equal({ work: 20, rest: 10, sets: 6 });
             });
@@ -591,11 +591,13 @@ describe('Training apps', function () {
             cy.tick(3000);
             cy.get('body').should('have.class', 'green');
             cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+            cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // work, rest, three beeps, work
 
             cy.tick(140000);
             cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#endingDiv').should('be.visible');
             cy.get('#sets .pip.done').should('have.length', 6);
+            cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
                 expect(JSON.parse(log)).to.have.length(1);
@@ -2312,13 +2314,15 @@ describe('Training apps', function () {
         });
 
         describe('Backup', function () {
-            function visitSeeded() {
+            // extra seeds more for a test of its own
+            function visitSeeded(extra) {
                 cy.visit(progressUrl, {
                     onBeforeLoad(win) {
                         win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]));
                         win.localStorage.setItem('boulderGradeSystem', 'font');
                         win.localStorage.setItem('boulderCurrent', JSON.stringify({ id: 9, date: '2026-09-13', climbs: [] }));
                         win.localStorage.setItem('ukcLogbook', JSON.stringify({ imported: '2026-09-01', climbs: [] }));
+                        if (extra) { extra(win); }
                     }
                 });
             }
@@ -2330,7 +2334,10 @@ describe('Training apps', function () {
             }
 
             it('saves every log and setting, without UKC or a session in progress', () => {
-                visitSeeded();
+                visitSeeded((win) => {
+                    win.localStorage.setItem('tabataLog', JSON.stringify([{ id: 2, date: '2026-09-11', work: 20, rest: 10, sets: 8 }]));
+                    win.localStorage.setItem('tabataSettings', JSON.stringify({ work: 30, rest: 15, sets: 6 }));
+                });
                 cy.get('nav .icon-info').click();
                 cy.get('#about').should('be.visible');
                 cy.contains('#about button', 'SAVE').click();
@@ -2338,6 +2345,8 @@ describe('Training apps', function () {
                     expect(backup.backup).to.equal('multi-pitch training apps');
                     expect(backup.logs.boulderLog).to.deep.equal([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]);
                     expect(backup.settings.boulderGradeSystem).to.equal('font');
+                    expect(backup.logs.tabataLog).to.have.length(1);
+                    expect(JSON.parse(backup.settings.tabataSettings)).to.deep.equal({ work: 30, rest: 15, sets: 6 });
                     expect(backup.logs).not.to.have.property('ukcLogbook');
                     expect(JSON.stringify(backup)).not.to.contain('ukcLogbook').and.not.to.contain('boulderCurrent');
                 });

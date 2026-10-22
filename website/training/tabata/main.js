@@ -85,8 +85,10 @@ function loadSettings(){
     try {
         let saved = JSON.parse(localStorage.getItem(settingsKey)) || {};
         Object.keys(limits).forEach(name => {
-            let value = Number(saved[name]);
-            if(Number.isFinite(value)){ settings[name] = Math.min(limits[name].max, Math.max(limits[name].min, Math.round(value))); }
+            let value = saved[name];
+            let limit = limits[name];
+            // onto the steppers' grid, so a hand-edited 7 doesn't step 12, 17...
+            if(typeof value === "number" && Number.isFinite(value)){ settings[name] = Math.min(limit.max, Math.max(limit.min, Math.round(value / limit.step) * limit.step)); }
         });
     } catch(err){
         // storage blocked or hand-edited: the classic Tabata will do

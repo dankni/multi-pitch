@@ -1,4 +1,4 @@
-/* For the apps on common/workout.js: rock rings and no hangs.
+/* For the apps on common/workout.js: rock rings, no hangs and tabata.
    body[data-state] is idle, counting, running, paused or finished, and
    data-saving is set once the save panel is up. */
 [data-state="idle"] .holder,
@@ -49,4 +49,47 @@
     #preview .task {
         font-size: 14px;
     }
+}
+
+/* The rep or set you're on, and the seconds left of it beside it: no hangs and tabata */
+.now {
+    flex: 70%;
+}
+/* The rep is what you glance at mid-hang, so it's nearly the size of the count */
+.rep {
+    margin: 0 20px 20px;
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: bold;
+    text-align: left;
+    color: var(--strong);
+    font-variant-numeric: tabular-nums;
+}
+.count {
+    margin: 20px 20px 20px 0;
+    flex: none;
+    font-size: 56px;
+    line-height: 1;
+    align-self: center;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+@media (max-width: 380px) {
+    .rep {
+        font-size: 28px;
+    }
+}
+
+/* A dot a rep or set: filled once done, green while you're on it. Each app sizes its own */
+.pip {
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+.pip.done {
+    background: currentColor;
+}
+.pip.hanging, .pip.working {
+    --go: light-dark(var(--confirm), #4cd964);
+    border-color: var(--go);
+    background: var(--go);
 }
