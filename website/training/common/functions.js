@@ -94,11 +94,25 @@ function showFullscreenState(){
 }
 document.addEventListener("fullscreenchange", showFullscreenState);
 
+// Muted or not is remembered for next time, across every app
+const soundOffKey = "soundOff";
+
 function toggleSound(){
     sound = !sound;
+    localStorage.setItem(soundOffKey, JSON.stringify(!sound));
+    showSoundState();
+}
+
+function showSoundState(){
     let icon = document.getElementById("sound");
+    if(icon === null){ return; }
     icon.classList.toggle("icon-volume-high", sound);
     icon.classList.toggle("icon-volume-off", !sound);
+}
+
+function loadSoundSetting(){
+    sound = localStorage.getItem(soundOffKey) !== "true";
+    showSoundState();
 }
 
 // Debug mode speeds time up
@@ -562,6 +576,12 @@ function tone(frequency, length, volume){
 function ping(){ tone(1320, 0.7, 0.4); }
 function beep(){ tone(880, 0.12, 0.15); }
 
+/* A buzz to feel when the screen is out of sight - on whatever the phone allows,
+   which is not an iPhone. Not silenced by the mute: that is for the noise. */
+function vibrate(pattern){
+    if(navigator.vibrate){ navigator.vibrate(pattern); }
+}
+
 // Three, two, one - each colour on its word, each step timed from the one before it
 function countdown(onComplete){
     const steps = [
@@ -799,6 +819,7 @@ document.addEventListener("DOMContentLoaded", () => {
     drawSavePanel();
     loadPreventSleepSetting();
     loadVoiceOffSetting();
+    loadSoundSetting();
     showDarkModeSetting(prefersDark());
     showCogHint();
     registerServiceWorker();
