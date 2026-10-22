@@ -35,6 +35,12 @@
                 <path d="M50,40 V70 L40,94 M50,70 L60,94"/>
             </g>
             <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M22,97.5 H78"/>`) },
+        "tabata" : { "name" : "Tabata", "icon" : svg("0 0 100 100",
+            `<g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+                <circle cx="50" cy="56" r="36"/>
+                <path d="M40,8 H60 M50,8 V20"/>
+            </g>
+            <path fill="currentColor" d="M50,56 V30 A26,26 0 0 1 72.5,69 Z"/>`) },
         "gaps" : { "name" : "Tindeq Arcade", "icon" : svg("0 0 100 100",
             `<path fill="none" stroke="currentColor" stroke-width="8" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/>`) },
         "trad" : { "name" : "Outside", "icon" : svg("0 0 100 100",

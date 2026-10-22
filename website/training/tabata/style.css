@@ -1,0 +1,99 @@
+/* The settings are only for before you start: once it runs, the sets take over */
+body:not([data-state="idle"]) #setup {
+    display: none;
+}
+.setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--box);
+    text-align: left;
+}
+.setting-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--strong);
+}
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.stepper output {
+    min-width: 64px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--strong);
+    font-variant-numeric: tabular-nums;
+}
+/* Round and quiet, so the blue start button stays the thing to press */
+.stepper button {
+    margin: 0;
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--quiet);
+    color: var(--quiet-ink);
+    font-size: 28px;
+    line-height: 1;
+}
+.stepper button:hover {
+    background: var(--quiet-hover);
+}
+.stepper button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+.stepper button:disabled, .stepper button:disabled:hover {
+    background: var(--quiet);
+    opacity: 0.35;
+}
+
+/* Work or rest, then the set: the rest is common/workout.css */
+#first .task {
+    margin-bottom: 4px;
+}
+
+/* The session to scale: a block a set's work, a line its rest. In the text
+   colour, so it reads on the green and the red as well as the page */
+.timeline {
+    position: relative;
+    width: 90%;
+    max-width: var(--column);
+    height: 28px;
+    margin: 24px auto;
+}
+.track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+}
+.track i {
+    flex-basis: 0;
+    min-width: 1px;
+}
+.work {
+    align-self: stretch;
+    border-radius: 3px;
+    background: currentColor;
+}
+.rest {
+    height: 4px;
+    min-width: 2px;
+    background: currentColor;
+}
+/* no rest: still a gap between sets, so 50 of them aren't one bar */
+.gap {
+    min-width: 2px;
+}
+/* all of it, faint; then what's done, solid, cut off at where you are */
+#todo {
+    opacity: 0.25;
+}
+#done {
+    clip-path: inset(0 100% 0 0);
+}

@@ -83,6 +83,8 @@
           "line" : tradSession },
         { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) },
+        { "key" : "tabataLog", "name" : "Tabata", "href" : "/training/tabata/",
+          "line" : entry => ({ "title" : plural(count(entry.sets), "set"), "detail" : `${count(entry.work)}s on, ${count(entry.rest)}s off` }) },
         // a run on the screen is a game, not training
         { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
           "line" : gapsSession, "keep" : entry => entry.input === "tindeq" }
