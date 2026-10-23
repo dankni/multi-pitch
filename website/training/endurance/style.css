@@ -16,12 +16,6 @@ body:not([data-state="idle"]) #discard {
 }
 
 /* Set up */
-.picker {
-    margin: 0 auto 6px;
-}
-.picker label {
-    margin: 0 3px 10px;
-}
 .style-hint {
     font-size: 14px;
     line-height: 1.5;

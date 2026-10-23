@@ -25,10 +25,6 @@ function drawState(state){
         : '<i class="demo-icon icon-pause"></i>PAUSE';
 }
 
-function showElapsed(seconds){
-    document.getElementById("elapsed").innerText = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-}
-
 function showSavePanel(){
     document.body.setAttribute("data-saving", "");
 }
@@ -85,7 +81,8 @@ function reset(){
 function saveSession(){
     saveToLog(app.logKey, Object.assign({ "id" : Date.now(), "date" : today() }, app.logEntry(), {
         "rating" : sessionRating,
-        "comment" : sessionComment
+        "comment" : sessionComment,
+        "title" : titleToSave()
     }));
     document.body.removeAttribute("data-saving");
     resetSavePanel();

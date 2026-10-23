@@ -45,9 +45,6 @@
 }
 /* Bouldering or routes, and the table of it: a colour for each grade the charts
    count, and a row that fits a phone */
-.conversion-picker {
-    margin-top: -4px;
-}
 .conversion-picker .nice-radios + label {
     max-width: 120px;
 }
@@ -102,28 +99,24 @@
     background: none;
     border-radius: 0;
 }
-/* Four ranges on one row, all the same size, up to a width that fits ALL TIME */
-.range-picker {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-}
-.range-picker .nice-radios {
-    position: absolute;
+/* Four ranges on one row, all the same size, up to a width that fits ALL TIME:
+   four 90px chips, the gaps between them and the track's padding */
+.range-picker.picker {
+    width: 100%;
+    max-width: calc(4 * 90px + 3 * 2px + 6px);
 }
 .range-picker .nice-radios + label {
     flex: 1 1 0;
     box-sizing: border-box;   /* chips are content-box; these share the row equally */
     max-width: 90px;
     min-width: 0;
-    margin: 0 0 10px;
     padding: 8px 4px;
     letter-spacing: 0.5px;
     white-space: nowrap;
 }
-/* the others have a 1px border, so the chosen one needs a clear one to match */
-.range-picker .nice-radios:checked + label {
-    border: 1px solid transparent;
+.conversion-picker.picker {
+    max-width: calc(2 * 120px + 2px + 6px);
+    margin-top: -4px;
 }
 .performance figure {
     margin: 18px 0 26px;
@@ -297,6 +290,10 @@
 }
 .log-app {
     white-space: nowrap;
+}
+/* a title can wrap, or a long one would widen the column off a phone */
+.log-app .log-title {
+    white-space: normal;
 }
 .log-app a {
     color: var(--link);

@@ -112,7 +112,8 @@
                 "unrated" : described.unrated === true,
                 "tindeq" : described.tindeq === true,
                 "title" : described.title,
-                "detail" : described.detail
+                "detail" : described.detail,
+                "name" : typeof entry.title === "string" ? entry.title.slice(0, titleLimit) : ""   // the title typed for it, if any
             };
         });
     }
@@ -150,7 +151,8 @@
         let when = logDateParts(session.date);
         return '<tr><td class="log-date">' + escapeHtml(when.day)
             + (when.year === "" ? "" : '<br /><span class="log-year">' + escapeHtml(when.year) + '</span>')
-            + '</td><td class="log-app"><a href="' + session.app.href + '">' + escapeHtml(session.app.name) + '</a></td>'
+            + '</td><td class="log-app"><a href="' + session.app.href + '">' + escapeHtml(session.app.name) + '</a>'
+            + (session.name ? '<br /><span class="log-title">' + escapeHtml(session.name) + '</span>' : "") + '</td>'
             + '<td>' + escapeHtml(session.title) + (session.tindeq ? tindeqMark : "")
             + (session.detail ? '<br /><span class="log-detail">' + escapeHtml(session.detail) + '</span>' : "")
             + '</td><td class="log-rating">' + (session.unrated ? "" : sessionStars(session)) + '</td>'

@@ -22,7 +22,7 @@
    common/log.css. */
 
 function startSession(){
-    session = Object.assign({ "id" : Date.now(), "date" : today(), "rating" : 0, "comment" : "", "editing" : false }, app.newSession());
+    session = Object.assign({ "id" : Date.now(), "date" : today(), "rating" : 0, "comment" : "", "title" : "", "editing" : false }, app.newSession());
     if(app.timed){ session.start = session.id; }
     openSession();
 }
@@ -34,7 +34,7 @@ function timing(from){
 function editSession(id){
     let entry = getLog(app.logKey).find(item => item.id === id);
     if(!entry){ return; }
-    session = Object.assign({ "id" : entry.id, "date" : entry.date, "rating" : entry.rating, "comment" : entry.comment, "editing" : true },
+    session = Object.assign({ "id" : entry.id, "date" : entry.date, "rating" : entry.rating, "comment" : entry.comment, "title" : entry.title, "editing" : true },
         timing(entry), app.fromEntry(entry));
     hideAbout();
     openSession();
@@ -52,12 +52,14 @@ function openSession(){
     app.draw();
     setStar(session.rating);
     setSessionComment(session.comment);
+    setSessionTitle(session.title);
 }
 
-// The note is written during the session, so it is kept with it like a climb
+// The note and title are written during the session, so they are kept with it like a climb
 function keepComment(){
     if(session){
         session.comment = sessionComment;
+        session.title = sessionTitle;
         keepSession();
     }
 }
@@ -90,7 +92,7 @@ function openSavePanel(){
 
 function saveSession(){
     saveToLog(app.logKey, Object.assign({ "id" : session.id, "date" : session.date }, timing(session), app.toEntry(session),
-        { "rating" : session.rating, "comment" : sessionComment }));
+        { "rating" : session.rating, "comment" : sessionComment, "title" : titleToSave() }));
     closeSession();
     drawSessionLog();
     if(app.onSaved){ app.onSaved(); }
@@ -109,7 +111,7 @@ function byDate(a, b){
 document.addEventListener("DOMContentLoaded", () => {
     if(app.onLoad){ app.onLoad(); }
     // added after functions.js's data-input delegate, so runs once updateComment has read the field
-    document.addEventListener("input", event => { if(event.target.id === "sessionComment"){ keepComment(); } });
+    document.addEventListener("input", event => { if(event.target.id === "sessionComment" || event.target.id === "sessionTitle"){ keepComment(); } });
     if(restoreSession()){ openSession(); }
     drawSessionLog(app.logView);
 });
