@@ -1748,6 +1748,7 @@ describe('Training apps', function () {
             cy.get('#log .icon-wrench').click();
             cy.get('#sessionTitle').should('have.value', '<b>Bold</b> limit sessio');
             cy.get('#sessionTitle').clear();
+            cy.get('#finishButton').click();   // reopened, it is running again: SAVE is under FINISH
             cy.get('#saveSession').click();
             cy.get('#log .log-title').should('not.exist');
             cy.window().then((win) => {
