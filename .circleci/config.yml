@@ -19,9 +19,9 @@ jobs:
       - run:
           name: Install local dependencies
           command: npm install
-      # Generate all the data dependencies, that's it: js date, climbs folder and sitemap
+      # Generate all the data dependencies, that's it: js date, climbs folder, sitemap and webp images
       - run:
-          name: Build all data, js date, climbs folder and sitemap
+          name: Build all data, js date, climbs folder, sitemap and webp images
           command: npm run generate-all
       # Cache local dependencies if they don't exist
       - save_cache:

@@ -13,11 +13,12 @@
     "generate-sitemap": "node generateSiteMap.js",
     "generate-blog" : "node generateBlogPages.js",
     "generate-content": "node generateContentPages.js",
-    "generate-all": "npm run generate-climbs && npm run generate-sitemap && npm run generate-blog && npm run generate-content",
+    "generate-webp": "node generateWebP.js",
+    "generate-all": "npm run generate-climbs && npm run generate-sitemap && npm run generate-blog && npm run generate-content && npm run generate-webp",
     "start": "npx serve ./website -l 9000",
     "test": "cypress run --headless",
     "test:training": "cypress run --headless --spec cypress/e2e/training-apps.cy.js",
-    "deploy-test": "aws s3 sync website s3://multi-pitch-test.co.uk --delete"
+    "deploy-test": "npm run generate-webp && aws s3 sync website s3://multi-pitch-test.co.uk --delete"
   },
   "repository": {
     "type": "git",
