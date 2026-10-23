@@ -33,5 +33,9 @@
     "cypress": "^15.18.0",
     "serve": "^14.2.4",
     "webp-converter": "^2.2.3"
+  },
+  "overrides": {
+    "compression": "^1.8.2",
+    "uuid": "^11.1.1"
   }
 }
