@@ -1199,7 +1199,7 @@ function shareScore(){
     if(navigator.share){
         navigator.share({ "title" : "Tindeq Arcade", "text" : text, "url" : url }).catch(() => {});
     } else if(navigator.clipboard){
-        navigator.clipboard.writeText(text + " " + url).then(() => toast("Copied, ready to paste"), () => toast("Couldn't copy it"));
+        navigator.clipboard.writeText(text + " " + url).then(() => toast("Copied, ready to paste"), () => toast("Couldn't copy it", null, false, true));
     }
 }
 

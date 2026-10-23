@@ -348,8 +348,9 @@
     text-align: right;
 }
 
-/* Each climber drawn on its own chip, standing over its name */
-.climber-picker label {
+/* Each climber drawn on its own chip, standing over its name. As specific as the
+   chip rule in common/style.css, which would otherwise make it inline-block */
+.climber-picker > .nice-radios + label {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -431,6 +432,21 @@
     text-align: left;
     opacity: 0.8;
 }
+/* Toasts drop from under the top nav here, newest at the top: from the bottom
+   they would cover the force gauge, which is read through a whole pull */
+.toast-stack,
+.has-bottom-nav .toast-stack {
+    top: calc(66px + env(safe-area-inset-top));
+    bottom: auto;
+    flex-direction: column-reverse;
+}
+.maximised .toast-stack {
+    top: calc(12px + env(safe-area-inset-top));
+}
+.toast {
+    transform: translateY(-10px);
+}
+
 /* The toast already says it */
 body:has(.toast.warn.shown) #noBluetoothSettings {
     display: none;

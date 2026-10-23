@@ -22,6 +22,33 @@ delegate("click", "data-action");
 delegate("change", "data-change");
 delegate("input", "data-input");
 
+/* ================= Pickers =================
+   CSS fills the checked chip of a radio picker whatever happens here; this only
+   slides the fill over from the chip it was on, so a choice set from code just
+   appears. The old chip is noted on the press, before the radio has changed. */
+let pickedBefore = null;
+
+function rememberPick(event){
+    let picker = event.target.closest ? event.target.closest(".picker") : null;
+    pickedBefore = picker === null ? null : picker.querySelector(':scope > [type="radio"]:checked + label');
+}
+document.addEventListener("pointerdown", rememberPick, true);
+document.addEventListener("keydown", rememberPick, true);
+
+document.addEventListener("change", event => {
+    let from = pickedBefore;
+    pickedBefore = null;
+    let label = event.target.type === "radio" ? event.target.nextElementSibling : null;
+    if(from === null || label === null || label === from || !label.isConnected || from.parentElement !== label.parentElement){ return; }
+    if(!label.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches){ return; }
+    let was = from.getBoundingClientRect();
+    let now = label.getBoundingClientRect();
+    label.animate([
+        {inset: `${was.top - now.top}px ${now.right - was.right}px ${now.bottom - was.bottom}px ${was.left - now.left}px`},
+        {inset: "0px"}
+    ], {duration: 250, easing: "cubic-bezier(0.3, 0, 0.2, 1)", pseudoElement: "::before"});
+});
+
 /* ================= Keeping the screen on =================
    A session asks for the wake lock when it starts and lets it go when it ends.
    The browser drops the lock whenever the page is hidden, so wakeLockWanted
@@ -262,16 +289,26 @@ function formatClock(seconds){
     return `${Math.floor(whole / 3600)}:${String(Math.floor(whole % 3600 / 60)).padStart(2, "0")}:${String(whole % 60).padStart(2, "0")}`;
 }
 
+// The big mm:ss clock every timing app shows in <h3 id="elapsed">, minutes
+// running on past 59 rather than growing an hour
+function showElapsed(seconds){
+    let whole = Math.max(0, Math.floor(seconds));
+    document.getElementById("elapsed").innerText = `${String(Math.floor(whole / 60)).padStart(2, "0")}:${String(whole % 60).padStart(2, "0")}`;
+}
+
 function escapeHtml(text){
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /* ================= The save panel =================
    An app writes <div id="endingDiv" class="ending"></div> and this fills it with
-   the stars, the note and the save button, which calls the app's saveSession(). */
+   the stars, a title, the note and the save button, which calls the app's
+   saveSession(). The title is optional, and saved only when there is one. */
 let sessionRating = 0;
 let sessionComment = "";
+let sessionTitle = "";
 const commentLimit = 300;
+const titleLimit = 24;   // fits under the app's name in a log row
 
 function setStar(value){
     document.querySelectorAll(".star-holder .icon-star").forEach((star, index) => {
@@ -297,6 +334,8 @@ function drawSavePanel(){
     }
     panel.innerHTML = `<p class="save-title">Good Session?</p>
         <div class="star-holder">${stars}</div>
+        <input type="text" id="sessionTitle" class="comment-field" maxlength="${titleLimit}" data-input="updateTitle"
+            placeholder="Give it a title (optional)" aria-label="A title for this session" />
         <textarea id="sessionComment" class="comment-field" rows="2" maxlength="${commentLimit}" data-input="updateComment"
             placeholder="Anything worth remembering?" aria-label="A note about this session"></textarea>
         <p class="comment-count"><span id="commentCount">0</span>/${commentLimit}</p>
@@ -316,10 +355,27 @@ function setSessionComment(text){
     document.getElementById("commentCount").innerText = sessionComment.length;
 }
 
+function updateTitle(field){
+    setSessionTitle(field.value);
+}
+
+// Also how an app hands a saved title back when it reopens a session
+function setSessionTitle(text){
+    sessionTitle = String(text === undefined || text === null ? "" : text).slice(0, titleLimit);
+    let field = document.getElementById("sessionTitle");
+    if(field !== null && field.value !== sessionTitle){ field.value = sessionTitle; }
+}
+
+// What a log entry saves as its title: trimmed, and left out with none
+function titleToSave(){
+    return sessionTitle.trim() || undefined;
+}
+
 // Ready for the next session
 function resetSavePanel(){
     setStar(0);
     setSessionComment("");
+    setSessionTitle("");
 }
 
 /* ================= The activity log =================
@@ -415,6 +471,12 @@ function logComment(entry){
     return sessionLogView.comment ? sessionLogView.comment(entry) : entry.comment;
 }
 
+// The title typed for a session, on a line of its own over what the app makes of it
+function logTitle(entry){
+    return typeof entry.title === "string" && entry.title !== ""
+        ? `<span class="log-title">${escapeHtml(entry.title.slice(0, titleLimit))}</span><br />` : "";
+}
+
 function sessionLogRow(entry){
     let described = sessionLogView.describe(entry);
     let when = logDateParts(entry.date);
@@ -427,7 +489,7 @@ function sessionLogRow(entry){
         </span>`;
     return `<tr>
         <td class="log-date">${when.day}${when.year === "" ? "" : `<br /><span class="log-year">${when.year}</span>`}</td>
-        <td>${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
+        <td>${logTitle(entry)}${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
         <td class="log-rating">${logStars(entry)}</td>
         <td class="log-actions">${note}${edit}${remove}</td>
     </tr>`;

@@ -60,7 +60,7 @@ const progressor = (function(){
             batteryAsked = false;
             self.onChange();
         } else if(code === response.lowPower){
-            toast("The Progressor's battery is low");
+            toast("The Progressor's battery is low", null, true, true);   // up until closed, so it isn't missed mid-pull
         }
     }
 

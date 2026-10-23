@@ -56,7 +56,7 @@ describe('Training apps', function () {
 
         it('starts at zero with nothing but START on offer', () => {
             cy.visit(timerUrl);
-            cy.get('#elapsed').should('have.text', '0:00:00');
+            cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#lapCount').should('have.text', '0');
             cy.get('#primaryButton').should('contain', 'START');
             cy.get('#lapButton').should('not.be.visible');
@@ -84,14 +84,14 @@ describe('Training apps', function () {
             cy.get('#primaryButton').should('contain', 'PAUSE');
             cy.get('#lapButton').should('not.be.disabled');
             cy.tick(65000);
-            cy.get('#elapsed').should('have.text', '0:01:05');
+            cy.get('#elapsed').should('have.text', '01:05');
         });
 
         it('counts a lap on every tap and nothing else', () => {
             cy.visit(timerUrl);
             runSession(3);
             cy.get('#lapCount').should('have.text', '3');
-            cy.get('#elapsed').should('have.text', '0:00:30');
+            cy.get('#elapsed').should('have.text', '00:30');
         });
 
         it('ignores the lap button while paused', () => {
@@ -109,17 +109,17 @@ describe('Training apps', function () {
             cy.tick(5000);
             cy.get('#primaryButton').click(); // PAUSE
             cy.tick(600000);                  // ten minutes stood around
-            cy.get('#elapsed').should('have.text', '0:00:05');
+            cy.get('#elapsed').should('have.text', '00:05');
             cy.get('#primaryButton').should('contain', 'RESUME').click();
             cy.tick(5000);
-            cy.get('#elapsed').should('have.text', '0:00:10');
+            cy.get('#elapsed').should('have.text', '00:10');
         });
 
         it('rolls over into hours', () => {
             cy.visit(timerUrl);
             cy.get('#primaryButton').click();
             cy.tick(3725000); // 1h 2m 5s
-            cy.get('#elapsed').should('have.text', '1:02:05');
+            cy.get('#elapsed').should('have.text', '62:05');
         });
 
         it('picks the session back up after a reload', () => {
@@ -131,7 +131,7 @@ describe('Training apps', function () {
             cy.clock().then((clock) => clock.setSystemTime(sessionDate.getTime() + 20000));
             cy.tick(1000);
             cy.get('#lapCount').should('have.text', '2');
-            cy.get('#elapsed').should('have.text', '0:00:21'); // and it kept counting
+            cy.get('#elapsed').should('have.text', '00:21'); // and it kept counting
             cy.get('#primaryButton').should('contain', 'PAUSE'); // still running
         });
 
@@ -152,10 +152,10 @@ describe('Training apps', function () {
             cy.get('#reset').click();
             cy.get('#reset').should('contain', 'SURE?');
             cy.get('#lapCount').should('have.text', '2');
-            cy.get('#elapsed').should('have.text', '0:00:20');
+            cy.get('#elapsed').should('have.text', '00:20');
             cy.get('#reset').click();
             cy.get('#lapCount').should('have.text', '0');
-            cy.get('#elapsed').should('have.text', '0:00:00');
+            cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#primaryButton').should('contain', 'START');
         });
 
@@ -195,7 +195,7 @@ describe('Training apps', function () {
             cy.get('#stats').should('contain', '1 session').and('contain', '4 laps');
             cy.get('#log .icon-star.active').should('have.length', 4);
             // the app is back to a clean slate ready for the next session
-            cy.get('#elapsed').should('have.text', '0:00:00');
+            cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#lapCount').should('have.text', '0');
             cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('lapTimerLog'))[0]).not.to.have.property('grade'));
         });
@@ -236,7 +236,7 @@ describe('Training apps', function () {
             cy.get('#missingDate').should('have.value', '2026-09-13').clear().type('2026-09-10');
             cy.get('#missingMinutes').clear().type('65');
             cy.get('#missingLaps').clear().type('12');
-            cy.get('#elapsed').should('have.text', '1:05:00');
+            cy.get('#elapsed').should('have.text', '65:00');
             cy.get('#lapCount').should('have.text', '12');
             cy.get('#star3').click();
             cy.get('#sessionComment').type('forgot to press start');
@@ -244,7 +244,7 @@ describe('Training apps', function () {
             cy.get('#log').should('contain', '10 Sep').and('contain', '12 laps').and('contain', '1:05:00');
             cy.get('#log .icon-star.active').should('have.length', 3);
             cy.get('#missingDiv').should('not.be.visible');
-            cy.get('#elapsed').should('have.text', '0:00:00');
+            cy.get('#elapsed').should('have.text', '00:00');
         });
 
         it('only offers a missing session while nothing else is under way', () => {
@@ -416,13 +416,13 @@ describe('Training apps', function () {
         it('keeps the session on the first reset tap and clears it on the second', () => {
             visitLoft();
             startAndCountIn();
-            cy.get('#elapsed').should('not.have.text', '0:00:00');
+            cy.get('#elapsed').should('not.have.text', '00:00');
             cy.get('#primaryButton').click(); // PAUSE
             cy.get('#reset').click();
             cy.get('#reset').should('contain', 'SURE?');
-            cy.get('#elapsed').should('not.have.text', '0:00:00'); // nothing lost yet
+            cy.get('#elapsed').should('not.have.text', '00:00'); // nothing lost yet
             cy.get('#reset').click();
-            cy.get('#elapsed').should('have.text', '0:00:00');
+            cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#moves').should('have.text', '0');
             cy.get('#primaryButton').should('contain', 'START');
         });
@@ -435,7 +435,7 @@ describe('Training apps', function () {
             cy.get('#reset').should('contain', 'SURE?');
             cy.tick(4000);
             cy.get('#reset').should('contain', 'RESET');
-            cy.get('#elapsed').should('not.have.text', '0:00:00');
+            cy.get('#elapsed').should('not.have.text', '00:00');
         });
     });
 
@@ -1731,6 +1731,29 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('#sessionComment').should('have.value', '');
         });
+
+        it('saves an optional title of 24 characters at most, keeps it through a reload and reopens it', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#sessionTitle').should('have.attr', 'maxlength', '24').type('Project night <b>at the wall</b>');
+            cy.get('#sessionTitle').should('have.value', 'Project night <b>at the w');
+            cy.reload();
+            cy.get('#sessionTitle').should('have.value', 'Project night <b>at the w');
+            cy.get('#row-V2 .grade-add').click();
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            // over what the app makes of it, and as typed rather than as markup
+            cy.get('#log .log-title').should('have.text', 'Project night <b>at the w');
+            cy.get('#log .log-title b').should('not.exist');
+            cy.get('#log .icon-wrench').click();
+            cy.get('#sessionTitle').should('have.value', 'Project night <b>at the w');
+            cy.get('#sessionTitle').clear();
+            cy.get('#saveSession').click();
+            cy.get('#log .log-title').should('not.exist');
+            cy.window().then((win) => {
+                expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0]).not.to.have.property('title');
+            });
+        });
     });
 
     describe('Endurance', function () {
@@ -2090,6 +2113,12 @@ describe('Training apps', function () {
             cy.get('[data-part="sportFigure"]').check({ force: true });
             cy.get('#performance').should('be.visible');
             cy.get('#sportFigure').should('be.visible');
+        });
+
+        it('puts a session title under the app name in the activity log', () => {
+            visitWith({ lapTimerLog: [{ id: 20, date: '2026-09-13', total: 60000, laps: 3, rating: 0, title: 'Fingers <i>off</i>' }] });
+            cy.get('#allLogs .log-app').should('contain', 'Lap Timer')
+                .find('.log-title').should('have.text', 'Fingers <i>off</i>');
         });
 
         it('says there is nothing to chart with nothing logged', () => {

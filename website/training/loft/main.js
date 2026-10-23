@@ -22,7 +22,7 @@ function freshMoves(){
 
 const clock = secondsClock(seconds => {
     if(seconds === 1){ background(""); }   // the countdown's yellow goes after a second
-    document.getElementById("elapsed").innerText = formatClock(seconds);
+    showElapsed(seconds);
 });
 
 /* Listening for "next" */
@@ -224,7 +224,8 @@ function saveSession(){
         "seconds" : clock.seconds,
         "moves" : moves.made,
         "rating" : sessionRating,
-        "comment" : sessionComment
+        "comment" : sessionComment,
+        "title" : titleToSave()
     });
     clearSession();
     drawSessionLog(logView);
@@ -243,7 +244,7 @@ function clearSession(){
     countedIn = false;
     moves = freshMoves();
     document.getElementById("color").style.backgroundColor = "";
-    document.getElementById("elapsed").innerText = formatClock(0);
+    showElapsed(0);
     showTask("");
     drawState("idle");
 }

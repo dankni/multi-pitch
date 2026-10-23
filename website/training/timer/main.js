@@ -177,7 +177,8 @@ function saveSession(){
         "laps" : session.laps,
         "grade" : session.grade || undefined,   // left out with none
         "rating" : session.rating,
-        "comment" : sessionComment
+        "comment" : sessionComment,
+        "title" : titleToSave()
     });
     clearSession();
     drawSessionLog(logView);
@@ -187,7 +188,7 @@ function saveSession(){
 /* Drawing */
 
 function drawTime(){
-    document.getElementById("elapsed").innerText = formatClock(elapsed() / 1000);
+    showElapsed(elapsed() / 1000);
 }
 
 function drawAll(){

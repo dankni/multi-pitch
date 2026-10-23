@@ -83,7 +83,7 @@ function importBackupFile(input){
             : `Backup restored: ${plural(added, "session")} added`);
         location.reload();
     }).catch(err => {
-        toast("Couldn't restore that file: " + err.message);
+        toast("Couldn't restore that file: " + err.message, null, false, true);
     }).finally(() => { input.value = ""; });
 }
 

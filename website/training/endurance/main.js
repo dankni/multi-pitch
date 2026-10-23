@@ -295,7 +295,8 @@ function saveSession(){
         "climbs" : climbs.length,
         "grades" : climbs.map(climb => climb.grade),   // for the progress charts
         "rating" : session.rating,
-        "comment" : sessionComment
+        "comment" : sessionComment,
+        "title" : titleToSave()
     }, sessionTiming(session)));
     closeSession();
     drawSessionLog(logView);
