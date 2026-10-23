@@ -1735,18 +1735,18 @@ describe('Training apps', function () {
         it('saves an optional title of 24 characters at most, keeps it through a reload and reopens it', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();
-            cy.get('#sessionTitle').should('have.attr', 'maxlength', '24').type('Project night <b>at the wall</b>');
-            cy.get('#sessionTitle').should('have.value', 'Project night <b>at the w');
+            cy.get('#sessionTitle').should('have.attr', 'maxlength', '24').type('<b>Bold</b> limit session go');
+            cy.get('#sessionTitle').should('have.value', '<b>Bold</b> limit sessio');
             cy.reload();
-            cy.get('#sessionTitle').should('have.value', 'Project night <b>at the w');
+            cy.get('#sessionTitle').should('have.value', '<b>Bold</b> limit sessio');
             cy.get('#row-V2 .grade-add').click();
             cy.get('#finishButton').click();
             cy.get('#saveSession').click();
             // over what the app makes of it, and as typed rather than as markup
-            cy.get('#log .log-title').should('have.text', 'Project night <b>at the w');
+            cy.get('#log .log-title').should('have.text', '<b>Bold</b> limit sessio');
             cy.get('#log .log-title b').should('not.exist');
             cy.get('#log .icon-wrench').click();
-            cy.get('#sessionTitle').should('have.value', 'Project night <b>at the w');
+            cy.get('#sessionTitle').should('have.value', '<b>Bold</b> limit sessio');
             cy.get('#sessionTitle').clear();
             cy.get('#saveSession').click();
             cy.get('#log .log-title').should('not.exist');
