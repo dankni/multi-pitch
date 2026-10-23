@@ -56,6 +56,8 @@ img_compression
 ###########################
 website/climbs
 website/sitemap.xml
+# webp copies are built from the .jpg / .png by generateWebP.js (npm run generate-webp)
+website/img/**/*.webp
 multi-pitch.iml
 
 # The live style guide: for whoever is building a training app, not for climbers,
