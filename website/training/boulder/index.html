@@ -21,6 +21,8 @@
 	<script src="/training/common/functions.js" ></script>
 	<script src="/training/common/bottom-nav.js" defer></script>
 	<script src="/training/common/grades.js" ></script>
+	<script src="/training/common/gilford-routes.js" ></script>
+	<script src="/training/common/records.js" ></script>
 	<script src="/training/common/log.js" ></script>
 	<script src="/training/common/ladder.js" ></script>
 	<script src="/training/boulder/main.js" ></script>
@@ -46,6 +48,12 @@
 		<div id="sessionBar">
 			<label for="sessionDate">Session date</label>
 			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
+			<!-- once FINISH is tapped: when it started and finished, to put right by hand -->
+			<div class="session-times">
+				<label>Started <input type="time" class="field" id="sessionStart" data-change="setSessionTime" /></label>
+				<label>Finished <input type="time" class="field" id="sessionFinish" data-change="setSessionTime" /></label>
+				<span class="session-length" id="sessionLengthShown"></span>
+			</div>
 			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">boulders</span></h3>
 			<p id="summary">Nothing logged yet</p>
 		</div>

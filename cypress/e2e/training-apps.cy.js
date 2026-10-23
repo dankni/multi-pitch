@@ -54,6 +54,48 @@ describe('Training apps', function () {
             }
         }
 
+        // 3 laps over 30 days ago, 1 this month
+        function visitWithLaps() {
+            cy.visit(timerUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('lapTimerLog', JSON.stringify([
+                        { id: 1, date: '2026-07-01', total: 60000, laps: 3, rating: 0 },
+                        { id: 2, date: '2026-09-10', total: 60000, laps: 1, rating: 0 }
+                    ]));
+                }
+            });
+        }
+
+        it('says on FINISH, not on a lap, when a session has the most laps of the last 30 days', () => {
+            visitWithLaps();
+            runSession(2);   // past the month's 1
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1)
+                .and('contain', "That's your longest session this month. You're getting strong!");
+        });
+
+        it('says on FINISH when a session has the most laps ever', () => {
+            visitWithLaps();
+            runSession(4);   // past the 3 of July
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1)
+                .and('contain', "Wow, that's your longest session ever. You're getting strong!");
+        });
+
+        it('says nothing on FINISH of a session no longer than the month', () => {
+            visitWithLaps();
+            runSession(1);
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+        });
+
         it('starts at zero with nothing but START on offer', () => {
             cy.visit(timerUrl);
             cy.get('#elapsed').should('have.text', '00:00');
@@ -329,6 +371,21 @@ describe('Training apps', function () {
             cy.get('#route18').click();   // 7b, and that is the set
             cy.tick(100);
             cy.get('.toast').should('be.visible').and('contain', "Nice work ticking the 7's");
+        });
+
+        it('says when a tick is harder than any sport climb saved in any app', () => {
+            cy.visit(gilfordUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-01', climbs: [], sport: ['6c'], rating: 0 }]));
+                }
+            });
+            cy.get('#primaryButton').click();
+            cy.get('#route9').click();   // 6c, no harder
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#route12').click();   // 7a
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1).and('contain', "Wow, that's the highest grade we have seen you tick! Congrats.");
         });
 
         it('says something bigger when the whole wall goes up', () => {
@@ -1755,6 +1812,115 @@ describe('Training apps', function () {
                 expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0]).not.to.have.property('title');
             });
         });
+
+        function visitWithLogs(logs) {
+            cy.visit(boulderUrl, {
+                onBeforeLoad(win) {
+                    Object.keys(logs).forEach((key) => win.localStorage.setItem(key, JSON.stringify(logs[key])));
+                }
+            });
+        }
+
+        // 5 climbs to V6 over 30 days ago, 2 to V3 this month
+        const boulderHistory = { boulderLog: [
+            { id: 1, date: '2026-07-01', climbs: ['V6', 'V1', 'V1', 'V1', 'V1'], rating: 0 },
+            { id: 2, date: '2026-09-01', climbs: ['V3', 'V2'], rating: 0 }
+        ] };
+
+        it('says when a tick is the hardest of the last 30 days, and the hardest ever', () => {
+            visitWithLogs(boulderHistory);
+            cy.get('#primaryButton').click();
+            cy.get('#row-V3 .grade-add').click();   // no harder than the month's
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#row-V4 .grade-add').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1)
+                .and('contain', "That's the highest grade we have seen you tick this month! Congrats.");
+            cy.tick(6000);
+            cy.get('#row-V7 .grade-add').click();   // past July's V6, and the third climb - but that waits for FINISH
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1)
+                .and('contain', "Wow, that's the highest grade we have seen you tick! Congrats.");
+        });
+
+        it('says on FINISH, not on a tick, when the session is the longest of the last 30 days', () => {
+            visitWithLogs(boulderHistory);
+            cy.get('#primaryButton').click();
+            tap(...times(3, '#row-V0 .grade-add'));   // 3: past the month's 2
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1)
+                .and('contain', "That's your longest session this month. You're getting strong!");
+        });
+
+        it('says on FINISH when the session is the longest ever, and not again once reopened', () => {
+            visitWithLogs(boulderHistory);
+            cy.get('#primaryButton').click();
+            tap(...times(6, '#row-V0 .grade-add'));   // 6: past July's 5
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1)
+                .and('contain', "Wow, that's your longest session ever. You're getting strong!");
+            cy.get('#saveSession').click();
+            cy.tick(6000);
+            cy.get('#log .icon-wrench').first().click();
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+        });
+
+        it('counts the tick list and endurance sport grades against the gym session', () => {
+            visitWithLogs({ gilfordLog: [{ id: 1, date: '2026-09-01', climbs: [12], rating: 0 }] });   // route 12 is 7a
+            cy.get('#primaryButton').click();
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('#row-7a .grade-add').click();
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            cy.get('#row-7b .grade-add').click();
+            cy.tick(100);
+            cy.get('.toast').should('have.length', 1).and('contain', "Wow, that's the highest grade we have seen you tick!");
+        });
+
+        it('says nothing of records on a first session, with nothing to beat', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            tap('#row-V0 .grade-add', '#row-V5 .grade-add', '#row-V9 .grade-add');
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+        });
+
+        it('puts the start and finish right when saving, and again when reopened', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#sessionStart').should('not.be.visible');   // not until FINISH
+            cy.get('#row-V2 .grade-add').click();
+            cy.get('#finishButton').click();
+            cy.get('#sessionStart').should('be.visible').and('have.value', '12:00');   // the frozen clock's midday
+            cy.get('#sessionStart').invoke('val', '10:00').trigger('change');
+            cy.get('#sessionFinish').invoke('val', '12:15').trigger('change');
+            cy.get('#sessionLengthShown').should('have.text', '2h 15m');
+            cy.get('#saveSession').click();
+            cy.get('#log').should('contain', '2h 15m');
+            cy.window().then((win) => {
+                expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0].minutes).to.equal(135);
+            });
+            cy.get('#log .icon-wrench').click();
+            cy.get('#finishButton').click();
+            cy.get('#sessionStart').should('have.value', '10:00');
+            cy.get('#sessionFinish').should('have.value', '12:15');
+            cy.get('#sessionFinish').invoke('val', '09:30').trigger('change');   // before the start: the next morning
+            cy.get('#sessionLengthShown').should('have.text', '23h 30m');
+            cy.get('#sessionFinish').invoke('val', '13:00').trigger('change');
+            cy.get('#saveSession').click();
+            cy.window().then((win) => {
+                expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0].minutes).to.equal(180);
+            });
+        });
     });
 
     describe('Endurance', function () {
@@ -1841,14 +2007,15 @@ describe('Training apps', function () {
             cy.get('.toast').should('be.visible').and('contain', 'You wish! Less clicking more climbing');
         });
 
-        it('saves whether the day is on UKC too, and reopens with it', () => {
+        it('saves whether to merge the day with UKC, and reopens with it', () => {
             cy.visit(tradUrl);
             cy.get('#primaryButton').click();
             cy.get('#row-E1 .grade-add').click();
             cy.get('#alsoOnUkc').click();
             cy.get('#finishButton').click();
             cy.get('#saveSession').click();
-            cy.get('#log').should('contain', '1 trad climb').and('contain', 'hardest E1 · UKC data ignored');
+            // with no UKC logbook there is nothing to merge with yet
+            cy.get('#log').should('contain', '1 trad climb').and('contain', 'hardest E1').and('not.contain', 'merged');
             cy.window().then((win) => {
                 let saved = JSON.parse(win.localStorage.getItem('tradLog'))[0];
                 expect(saved.climbs).to.deep.equal(['E1']);
@@ -1858,13 +2025,28 @@ describe('Training apps', function () {
             cy.get('#alsoOnUkc').should('be.checked');
         });
 
+        it('saves how long the day out was, START to FINISH, and lists it', () => {
+            cy.visit(tradUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-VS .grade-add').click();
+            cy.tick(3 * 3600000 + 25 * 60000);   // three hours twenty-five at the crag
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.window().then((win) => {
+                const saved = JSON.parse(win.localStorage.getItem('tradLog'))[0];
+                expect(saved.minutes).to.equal(205);
+                expect(saved.finish - saved.start).to.equal(205 * 60000);
+            });
+            cy.get('#log').should('contain', 'hardest VS · 3h 25m');
+        });
+
         it('opens straight on the UKC import from the link on the overview', () => {
             cy.visit(tradUrl + '#ukc');
             cy.get('#about').should('be.visible');
             cy.location('hash').should('equal', '');
         });
 
-        it('lists every UKC day, less any it has logged itself as on UKC too', () => {
+        it('lists every UKC day, less the trad climbs of one merged into a session here', () => {
             cy.visit(tradUrl, {
                 onBeforeLoad(win) {
                     win.localStorage.setItem('ukcLogbook', JSON.stringify({ imported: '2026-09-13', leftOut: 0, climbs: [
@@ -1880,7 +2062,7 @@ describe('Training apps', function () {
             cy.get('.icon-info').click();
             cy.get('#ukcSummary').should('have.text', 'Imported 13 Sep 2026 · 2 days, 3 climbs, in the activity log below.');
             // in the activity log with the app's own session, sport and bouldering
-            // days too - but not UKC's copy of the day logged here
+            // days too - but not UKC's trad climbs of the day merged here, all it had
             cy.get('#log tbody tr').should('have.length', 3);
             cy.get('#log tbody tr').eq(2).should('contain', '26 Jan').and('contain', '1 sport climb');
             // a route beats a boulder for the day's hardest
@@ -1894,7 +2076,7 @@ describe('Training apps', function () {
             cy.get('.comment-pop').should('contain', 'Goin Back: Pumpy');
             cy.get('.comment-pop-stars').should('not.exist');
             // the app's own session keeps both
-            cy.get('#log tbody tr').eq(1).should('contain', '6 Aug').and('contain', 'UKC data ignored')
+            cy.get('#log tbody tr').eq(1).should('contain', '6 Aug').and('contain', 'merged with UKC')
                 .find('.icon-wrench').should('exist');
         });
 
@@ -2116,6 +2298,38 @@ describe('Training apps', function () {
             cy.get('#sportFigure').should('be.visible');
         });
 
+        it('adds up the time trained this month from each app, in its own units', () => {
+            visitWith({
+                boulderLog: [
+                    { id: 1, date: '2026-09-13', climbs: ['V2'], rating: 3, minutes: 45 },
+                    { id: 2, date: '2026-08-20', climbs: ['V2'], rating: 3, minutes: 100 }   // last month
+                ],
+                lapTimerLog: [{ id: 3, date: '2026-09-10', total: 30 * 60000, laps: 3, rating: 0 }],   // ms
+                loftLog: [{ id: 4, date: '2026-09-02', seconds: 900, moves: 20, rating: 0 }],          // seconds
+                rockRingsLog: [{ id: 5, date: '2026-09-03', difficulty: 'easy', seconds: 570, rating: 0 }],   // saved at 9:30
+                noHangsLog: [{ id: 6, date: '2026-09-01', rating: 0 }],   // saved before it kept time: the whole 9:40
+                tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }]                    // from before it was timed
+            });
+            // 45 + 30 + 15 + 9.5 + 9 2/3 minutes
+            cy.get('#sessionsStats').should('have.text', '7 sessions · 6 this month, 1h 49m trained · across 6 apps');
+        });
+
+        it('says nothing of time trained when no session this month kept any', () => {
+            visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
+            cy.get('#sessionsStats').should('have.text', '1 session · 1 this month · across 1 app');
+        });
+
+        it('saves how long a No Hangs session ran', () => {
+            cy.visit(appUrl + '/training/nohangs/');
+            // app is a const of the page's script, not a property of its window
+            cy.window().then((win) => win.eval('app.clock.reset(); app.clock.start()'));
+            cy.tick(42000);
+            cy.window().then((win) => {
+                win.saveSession();
+                expect(JSON.parse(win.localStorage.getItem('noHangsLog'))[0].seconds).to.equal(42);
+            });
+        });
+
         it('puts a session title under the app name in the activity log', () => {
             visitWith({ lapTimerLog: [{ id: 20, date: '2026-09-13', total: 60000, laps: 3, rating: 0, title: 'Fingers <i>off</i>' }] });
             cy.get('#allLogs .log-app').should('contain', 'Lap Timer')
@@ -2257,13 +2471,31 @@ describe('Training apps', function () {
                 cy.get('#allLogs tbody tr').should('have.length', 3);
             });
 
-            it('leaves out the UKC day when the trad app says it is on UKC too', () => {
+            it("merges the UKC day into the session, keeping the session's three over UKC's two", () => {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(true)] });
-                // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug
+                // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug as well
                 cy.get('#tradTotal').should('have.text', '4 trad climbs in the last year, 0 in the year before');
                 cy.get('#allLogs tbody tr').should('have.length', 2);
-                cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', 'UKC data ignored');
+                cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', '3 trad climbs')
+                    .and('contain', 'merged with UKC');
                 cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '6 Aug');
+            });
+
+            it("takes UKC's climbs and note when it has more, the session's time, and keeps UKC's sport that day", () => {
+                const busier = { imported: '2026-09-13', leftOut: 0, climbs: logbook.climbs.map((climb) =>
+                    climb.name === 'Goin Back' ? Object.assign({}, climb, { notes: 'Pumpy' }) : climb).concat(
+                    [{ date: '2026-08-31', grade: '6a', type: 'sport', name: 'Sunny Side', crag: 'Moorhill Quarry', notes: '' }]) };
+                visitWith({ ukcLogbook: busier, tradLog: [{ id: 1, date: '2026-08-31', climbs: ['VS'], ukc: true, rating: 3, minutes: 240 }] });
+                // UKC's two from 31 Aug over the session's one, and its one from 6 Aug
+                cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                cy.get('#allLogs tbody tr').should('have.length', 3);
+                cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', '2 trad climbs')
+                    .and('contain', 'hardest HS').and('contain', '4h 00m').and('contain', 'merged with UKC');
+                // the session has no note of its own, so it shows UKC's
+                cy.get('#allLogs tbody tr').first().find('.icon-note').click();
+                cy.get('.comment-pop').should('contain', 'Goin Back: Pumpy');
+                // and UKC's sport climb that day is a session of its own still
+                cy.get('#allLogs tbody tr').eq(1).should('contain', 'UKC').and('contain', '31 Aug').and('contain', '1 sport climb');
             });
         });
 

@@ -80,6 +80,7 @@ function reset(){
 
 function saveSession(){
     saveToLog(app.logKey, Object.assign({ "id" : Date.now(), "date" : today() }, app.logEntry(), {
+        "seconds" : app.clock.seconds,   // how long it ran, for the time trained on the progress page
         "rating" : sessionRating,
         "comment" : sessionComment,
         "title" : titleToSave()

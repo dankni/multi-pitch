@@ -80,12 +80,42 @@ function setSessionDate(input){
     }
 }
 
+/* Started and finished, to put right before saving: a start forgotten until the
+   second climb, or a finish tapped on the drive home. A time is on the session's
+   date, and a finish before the start is the next morning. */
+function clockTime(at){
+    let when = new Date(at);
+    return String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0");
+}
+
+function drawSessionTimes(){
+    document.getElementById("sessionStart").value = session.start ? clockTime(session.start) : "";
+    document.getElementById("sessionFinish").value = session.finish ? clockTime(session.finish) : "";
+    document.getElementById("sessionLengthShown").innerText = sessionLength(sessionTiming(session));
+}
+
+// Both read back, so they land on the same day whichever was changed
+function setSessionTime(){
+    if(!session){ return; }
+    let start = document.getElementById("sessionStart").value;
+    let finish = document.getElementById("sessionFinish").value;
+    // local time, with no zone given
+    if(start){ session.start = Date.parse(session.date + "T" + start); }
+    if(finish){ session.finish = Date.parse(session.date + "T" + finish); }
+    if(session.start && session.finish && session.finish < session.start){ session.finish += 86400000; }
+    keepSession();
+    drawSessionTimes();
+}
+
 function openSavePanel(){
     // a reopened session keeps its times; finishing again after climbing on moves the finish
     if(app.timed && !session.editing){
         session.finish = Date.now();
         keepSession();
     }
+    if(app.timed){ drawSessionTimes(); }
+    // the longest session is said once it is done, and not again on a reopened one - see common/records.js
+    if(app.sessionSize && !session.editing){ cheerLongest(app.logKey, app.sessionSize(session), app.sessionSize); }
     showState("saving");
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }

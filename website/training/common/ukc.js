@@ -7,8 +7,9 @@
    boulder grades into V, so each lands on its chart's ladder; other trad grades
    are too loose a fit to guess.
 
-   A day the trad app has logged with "Ignore UKC data for this date" is in both
-   places, and the app's record wins: ukc.climbs() leaves that date out. */
+   A day the trad app has logged with "Merge with UKC" is one session - see
+   session() below. ukc.climbs() leaves out only that day's trad climbs, which
+   the session carries. */
 const ukc = (function(){
     const key = "ukcLogbook";
     const tradLogKey = "tradLog";
@@ -136,21 +137,51 @@ const ukc = (function(){
         return saved && Array.isArray(saved.climbs) ? saved : null;
     }
 
-    // The days a trad app session says are on UKC as well
-    function coveredDays(){
+    /* "Merge with UKC": a trad app session and that day in UKC as one session.
+       The session's time stands, and its note unless it has none, when it takes
+       UKC's as a UKC day's would read; its trad climbs are UKC's that day if UKC
+       has more. Only UKC's trad climbs fold in - its sport and boulders that day
+       are counted as ever. Unmerged, the two are separate sessions.
+       Two merged sessions on one day: the first saved takes the merge. */
+    function mergedDays(){
         let log = null;
         try { log = JSON.parse(localStorage.getItem(tradLogKey)); } catch(err){ log = null; }
-        return new Set(Array.isArray(log)
-            ? log.filter(entry => entry && entry.ukc === true && typeof entry.date === "string").map(entry => entry.date)
-            : []);
+        let days = new Map();
+        (Array.isArray(log) ? log : []).forEach(entry => {
+            if(!entry || entry.ukc !== true || typeof entry.date !== "string"){ return; }
+            if(!days.has(entry.date) || entry.id < days.get(entry.date)){ days.set(entry.date, entry.id); }
+        });
+        return days;
     }
 
-    // Every imported climb, less the days the trad app has already logged
-    function climbs(){
+    function allClimbs(){
         let logbook = load();
-        if(logbook === null){ return []; }
-        let covered = coveredDays();
-        return logbook.climbs.filter(climb => climb && typeof climb.date === "string" && !covered.has(climb.date));
+        return logbook === null ? [] : logbook.climbs.filter(climb => climb && typeof climb.date === "string");
+    }
+
+    // Every imported climb, less the trad climbs of a day merged into a trad app session
+    function climbs(){
+        let merged = mergedDays();
+        return allClimbs().filter(climb => !(climb.type === "trad" && merged.has(climb.date)));
+    }
+
+    // A day's climbs' note as UKC has it: the hardest climb's name and notes
+    function note(dayClimbs){
+        let best = hardest(dayClimbs);
+        return best !== null && best.name && best.notes ? best.name + ": " + best.notes : "";
+    }
+
+    /* A trad app session as it counts: { climbs, comment, merged }. Unmerged, or
+       with no UKC logbook, just its own. */
+    function session(entry){
+        let own = Array.isArray(entry.climbs) ? entry.climbs : [];
+        let comment = typeof entry.comment === "string" ? entry.comment : "";
+        if(entry.ukc !== true || load() === null || mergedDays().get(entry.date) !== entry.id){
+            return { "climbs" : own, "comment" : comment, "merged" : false };
+        }
+        let day = allClimbs().filter(climb => climb.type === "trad" && climb.date === entry.date);
+        let theirs = day.map(climb => climb.grade);
+        return { "climbs" : theirs.length > own.length ? theirs : own, "comment" : comment || note(day), "merged" : true };
     }
 
     /* The hardest of a day's climbs. Trad outranks sport and sport a boulder - the
@@ -177,7 +208,8 @@ const ukc = (function(){
     }
 
     return { "key" : key, "tradLadder" : tradLadder, "sportLadder" : sportLadder,
-             "importText" : importText, "load" : load, "climbs" : climbs, "hardest" : hardest, "summary" : summary,
+             "importText" : importText, "load" : load, "climbs" : climbs, "session" : session, "note" : note,
+             "hardest" : hardest, "summary" : summary,
              "sportGrade" : sportGrade };
 })();
 

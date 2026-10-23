@@ -28,12 +28,15 @@
     // The gym session's sport grades, from common/grades.js - 4+ and 6a don't sort as text
     const sportOrder = gymSportOrder;
 
+    // Merged with that day in UKC, its climbs and note are the merge's - see common/ukc.js
     function tradSession(entry){
-        let climbs = list(entry.climbs);
+        let merge = ukc.session(entry);
+        let climbs = list(merge.climbs);
         let hardest = climbs.reduce((max, grade) => Math.max(max, ukc.tradLadder.indexOf(grade)), -1);
         return { "title" : plural(climbs.length, "trad climb"),
-                 "detail" : [hardest === -1 ? "" : "hardest " + ukc.tradLadder[hardest],
-                             entry.ukc === true ? "UKC data ignored" : ""].filter(part => part !== "").join(" · ") };
+                 "detail" : joinDetail([hardest === -1 ? "" : "hardest " + ukc.tradLadder[hardest], sessionLength(entry),
+                                        merge.merged ? "merged with UKC" : ""]),
+                 "comment" : merge.comment };
     }
 
     /* The score, just a number. Runs from before the score was kept have
@@ -62,6 +65,12 @@
                  "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", sessionLength(entry)]) };
     }
 
+    // A fixed length workout's seconds on the clock when it was saved, or, saved
+    // before it kept them, the whole workout
+    function ranFor(entry, fullSeconds){
+        return (count(entry.seconds) || fullSeconds) / 60;
+    }
+
     const apps = [
         { "key" : "boulderLog", "name" : "Gym Session", "href" : "/training/boulder/",
           "line" : gymSession },
@@ -73,20 +82,32 @@
                                "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }) },
         { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/",
           "line" : entry => ({ "title" : plural(count(entry.laps), "lap") + (typeof entry.grade === "string" && entry.grade ? " of " + entry.grade : ""),
-                               "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }) },
+                               "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }),
+          "minutes" : entry => count(entry.total) / 60000 },
         { "key" : "loftLog", "name" : "Twister", "href" : "/training/loft/",
           "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
-                               "detail" : formatClock(count(entry.seconds)) + " on the clock" }) },
+                               "detail" : formatClock(count(entry.seconds)) + " on the clock" }),
+          "minutes" : entry => count(entry.seconds) / 60 },
         { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "/training/rings/",
-          "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) },
+          "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }),
+          "minutes" : entry => ranFor(entry, 10 * 60) },
         { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
           "line" : tradSession },
         { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
-          "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) },
+          "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
+          "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
         // a run on the screen is a game, not training
         { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
-          "line" : gapsSession, "keep" : entry => entry.input === "tindeq" }
+          "line" : gapsSession, "keep" : entry => entry.input === "tindeq", "minutes" : entry => count(entry.time) / 60 }
     ];
+
+    /* How long a session took, in minutes. The timed apps save minutes; the lap
+       timer, Twister, the arcade and the two workouts say how long in their own
+       units, given as "minutes" above. An Outside session from before it was
+       timed, or a UKC day, counts for none. */
+    function minutesOf(app, entry){
+        return app.minutes ? app.minutes(entry) : count(entry.minutes);
+    }
 
     function readLog(app){
         let saved;
@@ -109,6 +130,7 @@
                 "app" : app,
                 "comment" : described.comment ?? (typeof entry.comment === "string" ? entry.comment : ""),
                 "rating" : count(entry.rating) || count(entry.score),
+                "minutes" : minutesOf(app, entry),
                 "unrated" : described.unrated === true,
                 "tindeq" : described.tindeq === true,
                 "title" : described.title,
@@ -118,9 +140,9 @@
         });
     }
 
-    /* An imported UKC logbook as a session a day, less any day the trad app has
-       logged as on UKC too. It is edited in UKC, so its link goes there, and it
-       has no rating. */
+    /* An imported UKC logbook as a session a day, less the trad climbs of a day
+       merged into a trad app session - there are none left of a day all trad. It
+       is edited in UKC, so its link goes there, and it has no rating. */
     const ukcApp = { "name" : "UKC", "href" : "https://www.ukclimbing.com/logbook/" };
 
     function ukcSessions(){
@@ -185,10 +207,13 @@
     });
 
     let month = new Date().toISOString().slice(0, 7);
-    let thisMonth = sessions.filter(session => session.date.slice(0, 7) === month).length;
+    let monthsSessions = sessions.filter(session => session.date.slice(0, 7) === month);
+    // time trained this month, from the apps that keep it - nothing said with none
+    let trained = sessionLength({ "minutes" : Math.round(monthsSessions.reduce((total, session) => total + (session.minutes || 0), 0)) });
     let used = new Set(sessions.map(session => session.app.name)).size;
     document.getElementById("sessionsStats").innerText =
-        plural(sessions.length, "session") + " · " + thisMonth + " this month · across " + plural(used, "app");
+        plural(sessions.length, "session") + " · " + monthsSessions.length + " this month"
+        + (trained ? ", " + trained + " trained" : "") + " · across " + plural(used, "app");
 
     if(sessions.length > shown.length){
         document.getElementById("sessionsFoot").innerHTML = "The last " + shown.length + " of " + sessions.length
