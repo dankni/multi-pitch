@@ -16,6 +16,11 @@ body:not([data-state="idle"]) #discard {
 }
 
 /* Set up */
+/* The five grades on one line on a 320px phone: 52px chips where the default is 81px */
+#gradePicker .nice-radios + label {
+    min-width: 40px;
+    padding: 8px 6px;
+}
 .style-hint {
     font-size: 14px;
     line-height: 1.5;
