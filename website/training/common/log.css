@@ -39,6 +39,28 @@
     font-size: 14px;
     margin-right: 8px;
 }
+/* Started and finished, once there is a finish to show */
+.session-times {
+    display: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 14px;
+    margin-top: 10px;
+}
+[data-state="saving"] .session-times {
+    display: flex;
+}
+#sessionBar .session-times label {
+    margin-right: 0;
+}
+.session-times .field {
+    margin-left: 6px;
+}
+.session-length {
+    font-size: 14px;
+    opacity: 0.8;
+}
 #sessionBar h3 {
     font-size: 44px;
     margin: 10px 0 0;

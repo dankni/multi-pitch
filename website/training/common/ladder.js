@@ -133,12 +133,15 @@ function addClimb(button){
     let name = button.dataset.grade;
     let ladder = ladderOf(name);
     if(session === null || ladder === undefined){ return; }
+    let earlier = climbsOn(ladder).slice();
     climbsOn(ladder).push(name);
     keepSession();
     drawGradeRow(name);
     // the redrawn tile, found by id: as a selector the + in 5+ or 6a+ is CSS
     flash(document.getElementById("row-" + name).querySelector(".grade-add"));
     updateSummary();
+    // a ladder is named for its kind of climb - see common/records.js
+    if(recordKinds[ladder]){ cheerGrade(ladder, name, earlier); }
 }
 
 // one tap too many, or a climb that turned out to be the one next to it

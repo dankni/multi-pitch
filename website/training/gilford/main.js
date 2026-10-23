@@ -52,6 +52,7 @@ function toggleClimb(button){
     // what was already done before this tap, so a set is only cheered as it completes
     let before = { "sevens" : allTicked(sevens), "wall" : allTicked(everything), "count" : session.climbs.length };
     let position = session.climbs.indexOf(id);
+    let earlier = session.climbs.map(ticked => (getRoute(ticked) || {}).grade);   // a route since re-set has none
     position === -1 ? session.climbs.push(id) : session.climbs.splice(position, 1);
     button.classList.toggle("ticked", position === -1);
     button.setAttribute("aria-pressed", position === -1);
@@ -59,6 +60,7 @@ function toggleClimb(button){
     keepSession();
     updateSummary();
     cheer(before);
+    if(position === -1){ cheerGrade("sport", getRoute(id).grade, earlier); }   // see common/records.js
 }
 
 // Everything this tap completed gets its say, the biggest last

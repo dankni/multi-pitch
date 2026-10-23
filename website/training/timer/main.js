@@ -152,6 +152,8 @@ function openSavePanel(){
     pauseTimer();
     saving = true;
     drawAll();
+    // on FINISH, not for one being typed in - see common/records.js
+    if(!session.missing){ cheerLongest(app.logKey, session.laps, entry => entry.laps); }
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
 

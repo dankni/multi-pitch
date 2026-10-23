@@ -50,6 +50,8 @@ const app = {
         "british" : { "main" : "brit", "also" : ["v", "font"] }
     },
     "newSession" : ladderSession,
+    // boulders and sport climbs together, for the longest session in common/records.js
+    "sessionSize" : from => climbsOn("boulder", from).length + climbsOn("sport", from).length,
     "fromEntry" : ladderFromEntry,
     "toEntry" : ladderEntry,
     "hasClimbs" : ladderHasClimbs,

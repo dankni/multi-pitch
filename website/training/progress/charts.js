@@ -37,12 +37,12 @@
     const tradAlways = ["VD", "S", "HS", "VS", "HVS", "E1", "E2"];
 
     /* Every trad climb: the trad app's sessions, and an imported UKC logbook's
-       trad climbs - less the days the app says are on UKC as well, which
-       ukc.climbs() leaves out (see common/ukc.js) */
+       trad climbs. A session merged with UKC counts its day's trad climbs once,
+       whichever has more, and ukc.climbs() leaves them out (see common/ukc.js) */
     function tradClimbs(logs){
         let climbs = [];
         entriesOf(logs, "tradLog").forEach(entry => {
-            list(entry.climbs).forEach(grade => {
+            list(ukc.session(entry).climbs).forEach(grade => {
                 if(tradLadder.includes(grade)){ climbs.push({ "date" : entry.date, "grade" : grade }); }
             });
         });

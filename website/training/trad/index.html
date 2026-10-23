@@ -23,6 +23,7 @@
 	<script src="/training/common/bottom-nav.js" defer></script>
 	<script src="/training/common/grades.js" ></script>
 	<script src="/training/common/ukc.js" ></script>
+	<script src="/training/common/records.js" ></script>
 	<script src="/training/common/log.js" ></script>
 	<script src="/training/common/ladder.js" ></script>
 	<script src="/training/trad/main.js" ></script>
@@ -48,14 +49,19 @@
 		<div id="sessionBar">
 			<label for="sessionDate">Session date</label>
 			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
+			<!-- once FINISH is tapped: when it started and finished, to put right by hand -->
+			<div class="session-times">
+				<label>Started <input type="time" class="field" id="sessionStart" data-change="setSessionTime" /></label>
+				<label>Finished <input type="time" class="field" id="sessionFinish" data-change="setSessionTime" /></label>
+				<span class="session-length" id="sessionLengthShown"></span>
+			</div>
 			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">trad climbs</span></h3>
 			<p id="summary">Nothing logged yet</p>
-			<!-- on, the overview counts this day from here and ignores the same day
-			     in an imported UKC logbook - see common/ukc.js. The settings panel's
-			     switch, on the page. -->
+			<!-- on, this session and the same day in an imported UKC logbook are one
+			     session - see common/ukc.js. The settings panel's switch, on the page. -->
 			<label class="switch-label ukc-toggle">
 				<input type="checkbox" id="alsoOnUkc" data-change="setAlsoOnUkc" />
-				<span class="label-content">Ignore UKC data for this date</span>
+				<span class="label-content">Merge with UKC for this date</span>
 			</label>
 		</div>
 
@@ -76,9 +82,10 @@
 			this device only &ndash; nothing is uploaded anywhere.
 		</p>
 		<p>
-			You can turn on "Ignore UKC data for this date" when the day is in your UKC logbook
-			as well, and it is counted from here rather than twice. Alternatively, just add it to UKC and 
-			import your <em>whole</em> logbook here.
+			Turn on "Merge with UKC" when the day is in your UKC logbook as well, and the two are one
+			session: the time and note from here (UKC's note if you leave yours blank), and the trad
+			climbs from whichever has more. Sport and bouldering logged on UKC that day still count.
+			Left off, the session here and the day on UKC are counted as separate sessions.
 		</p>
 		<hr />
 		<h2 id="ukcHeading">UKC logbook</h2>

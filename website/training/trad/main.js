@@ -2,10 +2,10 @@
    session's ladder with British grades on it - the session flow is common/log.js
    and the ladder common/ladder.js.
 
-   A session can say it is on UKC as well. The progress page then counts that day
-   from here and leaves the same day out of an imported UKC logbook, so nothing is
-   counted twice - see common/ukc.js, which also does the import on this app's
-   info panel. */
+   A session can be merged with the same day in an imported UKC logbook, and the
+   two count as one: its time, its note or UKC's, and the trad climbs of whichever
+   has more - see common/ukc.js, which also does the import on this app's info
+   panel. Unmerged, they are separate sessions. */
 
 /* British grades as a UK crag gives them - the half steps UK guides barely use
    are left off - and roughly the UIAA equivalent, which follows the table ukc.js
@@ -36,6 +36,7 @@ const app = {
     "logKey" : "tradLog",
     "currentKey" : "tradCurrent",
     "systemKey" : "tradGradeSystem",
+    "timed" : true,   // START to FINISH - the day out, walk in and all
     "defaultSystem" : "british",
     // M to E3 to start with, as far as E11 - the hardest trad route there is
     "ladders" : {
@@ -75,15 +76,18 @@ const app = {
                     "detail" : escapeHtml([entry.hardest, entry.crags, "from UKC"].filter(part => part).join(" · "))
                 };
             }
-            let hardest = hardestGrade("trad", entry.climbs);
+            // merged with the day in UKC, as it counts - see common/ukc.js
+            let merge = ukc.session(entry);
+            let hardest = hardestGrade("trad", merge.climbs);
             return {
-                "title" : plural(entry.climbs.length, "trad climb"),
-                "detail" : [hardest ? "hardest " + hardest : "", entry.ukc === true ? "UKC data ignored" : ""]
-                    .filter(part => part !== "").join(" · ")
+                "title" : plural(merge.climbs.length, "trad climb"),
+                "detail" : joinDetail([hardest ? "hardest " + hardest : "", sessionLength(entry), merge.merged ? "merged with UKC" : ""])
             };
         },
+        // a merged session with no note of its own shows UKC's
+        "comment" : entry => entry.readOnly ? entry.comment : ukc.session(entry).comment,
         "stats" : log => {
-            let total = log.reduce((count, entry) => count + entry.climbs.length, 0);
+            let total = log.reduce((count, entry) => count + (entry.readOnly ? entry.climbs : ukc.session(entry).climbs).length, 0);
             return `${sessionCount(log)} · ${plural(total, "climb")} logged`;
         }
     }
@@ -97,8 +101,8 @@ function setAlsoOnUkc(input){
 }
 
 /* Every day in an imported UKC logbook - trad, sport and bouldering - listed
-   read only beside this app's own sessions (ukc.climbs() leaves out any this app
-   says are on UKC too). Each is shaped like a session: its grades as climbs, and
+   read only beside this app's own sessions (ukc.climbs() leaves out the trad
+   climbs of a day merged into one). Each is shaped like a session: its grades as climbs, and
    its hardest climb's notes as the note. The id is the date as a negative
    number, which no saved session's can be. */
 function ukcDays(){
@@ -116,7 +120,7 @@ function ukcDays(){
             "climbs" : climbs.map(climb => climb.grade),
             "summary" : ukc.summary(climbs),
             "rating" : 0,
-            "comment" : named && hardest.notes ? `${hardest.name}: ${hardest.notes}` : "",
+            "comment" : ukc.note(climbs),
             "hardest" : named ? `hardest ${hardest.name} (${hardest.grade})` : "",
             "crags" : [...new Set(climbs.map(climb => climb.crag).filter(crag => crag))].join(", ")
         };
