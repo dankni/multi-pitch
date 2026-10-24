@@ -34,10 +34,10 @@
     --tile: light-dark(#F9F9F9, #2a2a2a);
     --tile-ink: light-dark(#222, #eee);
     --tile-hover: light-dark(#ececec, #383838);
-    --field: light-dark(#fff, #3a3a3a);
-    --field-ink: light-dark(#222, #FFF);
-    --field-edge: light-dark(#ccc, #555);
-    --placeholder: light-dark(#767676, #b8b8b8);
+    --field: var(--track);              /* fields wear the pickers' track, light or dark */
+    --field-ink: #FFF;
+    --field-edge: var(--track-edge);
+    --placeholder: #a8a8ae;
     --quiet: light-dark(#e8f0fe, #16294a);
     --quiet-hover: light-dark(#d2e3fc, #203a66);
     --quiet-ink: light-dark(#0053ba, #FFF);
@@ -568,7 +568,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .icon-pause:before { content: '\e805'; }
 .icon-volume-off:before { content: '\e806'; }
 .icon-volume-high:before { content: '\e807'; }
-.icon-mic:before { content: '\e808'; }
+.icon-mic:before { content: '\e808'; font-size: 90%; }   /* the glyph is big for its box */
 .icon-resize-full:before { content: '\e809'; }
 .icon-link:before { content: '\e80a'; }
 .icon-info:before { content: '\e80b'; }
@@ -676,14 +676,15 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     animation: cog-turn 8s linear infinite;
 }
 
-/* Toasts stack up from the bottom, newest lowest, each going in its own time */
+/* Toasts drop from under the top nav, newest at the top, each going in its own
+   time: from the bottom they cover SAVE and the Tindeq gauge */
 .toast-stack {
     position: fixed;
     left: 50%;
-    bottom: 24px;
+    top: calc(66px + env(safe-area-inset-top));
     z-index: 6;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 8px;
     width: calc(100% - 20px);
     max-width: var(--column);
@@ -707,7 +708,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     font-size: 16px;
     line-height: 1.35;
     text-align: left;
-    transform: translateY(10px);
+    transform: translateY(-10px);
     opacity: 0;
     pointer-events: none;   /* on its way out, it must not eat a tap meant for the app */
     transition: opacity 250ms ease, transform 250ms ease;
@@ -843,7 +844,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     margin: 12px auto 0;
     padding: 8px 10px;
     border: 1px solid var(--field-edge);
-    border-radius: 4px;
+    border-radius: 12px;
     background: var(--field);
     color: var(--field-ink);
     font-family: inherit;
@@ -1035,11 +1036,15 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 
 /* ================= Fields ================= */
+.field, .comment-field {
+    color-scheme: dark;   /* the date and time pickers' icons and pop-ups, on the dark track */
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
 .field {
     height: 36px;
     padding: 6px 10px;
     border: 1px solid var(--field-edge);
-    border-radius: 4px;
+    border-radius: 12px;
     background: var(--field);
     color: var(--field-ink);
     font-family: inherit;
@@ -1061,13 +1066,15 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     max-width: 100%;
     margin: 12px auto;
     border: 1px solid var(--field-edge);
-    border-radius: 4px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
     overflow: hidden;
 }
 .field-group .field {
     height: 36px;
     border: 0;
     border-radius: 0;
+    box-shadow: none;
 }
 .field-group .field + .field,
 .field-group button {
@@ -1212,9 +1219,6 @@ a.bottom-nav-item:focus-visible {
 }
 .has-bottom-nav body {
     padding-bottom: calc(58px + env(safe-area-inset-bottom));
-}
-.has-bottom-nav .toast-stack {
-    bottom: calc(82px + env(safe-area-inset-bottom));
 }
 .has-bottom-nav footer {
     bottom: calc(58px + env(safe-area-inset-bottom));

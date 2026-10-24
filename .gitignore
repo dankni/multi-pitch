@@ -81,3 +81,6 @@ working-files/runbook.docx
 lambda-node/**/resp.json
 cypress/screenshots
 
+
+# Before/after screenshots belong in the PR they prove, not the repo
+docs/**/*.png

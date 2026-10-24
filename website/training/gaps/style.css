@@ -432,19 +432,9 @@
     text-align: left;
     opacity: 0.8;
 }
-/* Toasts drop from under the top nav here, newest at the top: from the bottom
-   they would cover the force gauge, which is read through a whole pull */
-.toast-stack,
-.has-bottom-nav .toast-stack {
-    top: calc(66px + env(safe-area-inset-top));
-    bottom: auto;
-    flex-direction: column-reverse;
-}
+/* No nav to sit under */
 .maximised .toast-stack {
     top: calc(12px + env(safe-area-inset-top));
-}
-.toast {
-    transform: translateY(-10px);
 }
 
 /* The toast already says it */
