@@ -281,6 +281,50 @@
 .calendar-nav .calendar-arrow:disabled {
     visibility: hidden;   /* nothing further that way, but the row keeps its shape */
 }
+/* Time trained: one bar, climbing, fingerboard and other a segment each, with a
+   2px gap of page between. The palette's first three categorical slots, light
+   and dark, which tell apart side by side or not, checked against #fff and
+   #111; the legend says each in words, as the third is under 3:1 on white. */
+.time-split {
+    --split-1: light-dark(#2a78d6, #3987e5);
+    --split-2: light-dark(#eb6834, #d95926);
+    --split-3: light-dark(#1baf7a, #199e70);
+    margin: 10px 0 24px;
+}
+.split-1 { --c: var(--split-1); }
+.split-2 { --c: var(--split-2); }
+.split-3 { --c: var(--split-3); }
+.time-split figcaption {
+    font-weight: bold;
+    font-size: 16px;
+}
+.time-split .sessions-note {
+    margin: 0 0 8px;
+}
+.split-bar {
+    display: flex;
+    gap: 2px;
+    height: 24px;
+}
+.split-bar span {
+    flex-basis: 0;
+    min-width: 3px;
+    background: var(--c);
+}
+.split-bar span:first-child {
+    border-radius: 4px 0 0 4px;
+}
+.split-bar span:last-child {
+    border-radius: 0 4px 4px 0;
+}
+.split-bar span:only-child {
+    border-radius: 4px;
+}
+.split-legend {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
 .sessions .log-table tbody tr:nth-child(even) {
     background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08));
 }

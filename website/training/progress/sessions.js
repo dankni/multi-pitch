@@ -93,35 +93,37 @@
 
     const apps = [
         { "key" : "boulderLog", "name" : "Gym Session", "href" : "/training/boulder/",
-          "line" : gymSession, "climbs" : entry => list(entry.climbs).length + list(entry.sport).length },
-        { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/",
+          "kind" : "Climbing", "line" : gymSession, "climbs" : entry => list(entry.climbs).length + list(entry.sport).length },
+        { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/", "kind" : "Climbing",
           "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }),
           "climbs" : entry => list(entry.climbs).length },
-        { "key" : "enduranceLog", "name" : "Endurance", "href" : "/training/endurance/",
+        { "key" : "enduranceLog", "name" : "Endurance", "href" : "/training/endurance/", "kind" : "Climbing",
           "line" : entry => ({ "title" : (styleNames[entry.style] || entry.style || "Endurance")
                                    + (entry.maxGrade ? " off " + entry.maxGrade : ""),
                                "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }),
           "climbs" : entry => count(entry.climbs) },
-        { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/",
+        { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/", "kind" : "Climbing",
           "line" : entry => ({ "title" : plural(count(entry.laps), "lap") + (typeof entry.grade === "string" && entry.grade ? " of " + entry.grade : ""),
                                "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }),
           "minutes" : entry => count(entry.total) / 60000, "climbs" : entry => count(entry.laps) },
-        { "key" : "loftLog", "name" : "Twister", "href" : "/training/loft/",
+        { "key" : "loftLog", "name" : "Twister", "href" : "/training/loft/", "kind" : "Other",
           "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
                                "detail" : formatClock(count(entry.seconds)) + " on the clock" }),
           "minutes" : entry => count(entry.seconds) / 60 },
-        { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "/training/rings/",
+        { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "/training/rings/", "kind" : "Fingerboard",
           "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 10 * 60) },
         { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
-          "line" : tradSession, "climbs" : entry => list(ukc.session(entry).climbs).length },
-        { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
+          "kind" : "Climbing", "line" : tradSession, "climbs" : entry => list(ukc.session(entry).climbs).length },
+        { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/", "kind" : "Fingerboard",
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
         { "key" : "tabataLog", "name" : "Tabata", "href" : "/training/tabata/",
+          // repeaters are fingerboard sessions, a classic Tabata is not
+          "kind" : entry => typeof entry.setRest === "number" ? "Fingerboard" : "Other",
           "line" : tabataSession, "minutes" : entry => ranFor(entry, tabataSeconds(entry)) },
         // a run on the screen is a game, not training
-        { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
+        { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/", "kind" : "Other",
           "line" : gapsSession, "keep" : entry => entry.input === "tindeq", "minutes" : entry => count(entry.time) / 60 }
     ];
 
@@ -155,6 +157,7 @@
                 "comment" : described.comment ?? (typeof entry.comment === "string" ? entry.comment : ""),
                 "rating" : count(entry.rating) || count(entry.score),
                 "minutes" : minutesOf(app, entry),
+                "kind" : typeof app.kind === "function" ? app.kind(entry) : app.kind,
                 "climbs" : app.climbs ? app.climbs(entry) : 0,
                 "unrated" : described.unrated === true,
                 "tindeq" : described.tindeq === true,
@@ -239,6 +242,37 @@
     let climbed = monthsSessions.reduce((total, session) => total + (session.climbs || 0), 0);
     document.getElementById("sessionsStats").innerText = ["This month", plural(monthsSessions.length, "session"),
         trained ? trained + " trained" : "", plural(climbed, "climb") + " done"].filter(part => part !== "").join(" · ");
+
+    /* The last 30 days' time trained, a kind of training a segment of one bar by
+       its share - always in this order and colour, so each keeps its place - and
+       the apps in it, biggest first, in its hover text */
+    const kinds = ["Climbing", "Fingerboard", "Other"];
+    const minutesText = minutes => sessionLength({ "minutes" : Math.max(1, Math.round(minutes)) });
+    function drawTimeSplit(){
+        let since = new Date(Date.parse(today()) - 29 * 86400000).toISOString().slice(0, 10);
+        let recent = sessions.filter(session => session.date >= since && session.minutes > 0);
+        if(recent.length === 0){ return; }
+        let total = recent.reduce((sum, session) => sum + session.minutes, 0);
+        let parts = kinds.map((name, index) => {
+            let apps = {};
+            recent.filter(session => session.kind === name)
+                .forEach(session => { apps[session.app.name] = (apps[session.app.name] || 0) + session.minutes; });
+            let minutes = Object.values(apps).reduce((sum, each) => sum + each, 0);
+            let share = minutes / total * 100;
+            return { "name" : name, "minutes" : minutes, "cls" : "split-" + (index + 1),
+                "percent" : share < 1 ? "<1%" : Math.round(share) + "%", "time" : minutesText(minutes),
+                "apps" : Object.keys(apps).sort((a, b) => apps[b] - apps[a]).map(app => app + " " + minutesText(apps[app])).join(", ") };
+        }).filter(part => part.minutes > 0);
+        let says = part => part.name + " " + part.percent + " · " + part.time + " (" + part.apps + ")";
+        let bar = document.getElementById("timeSplitBar");
+        bar.innerHTML = parts.map(part => `<span class="${part.cls}" style="flex-grow: ${part.minutes}" title="${escapeHtml(says(part))}"></span>`).join("");
+        bar.setAttribute("aria-label", "Time trained in the last 30 days: " + parts.map(says).join(", "));
+        document.getElementById("timeSplitLegend").innerHTML = parts.map(part =>
+            `<li class="legend-item ${part.cls}"><span class="swatch" aria-hidden="true"></span>${escapeHtml(part.name)}&nbsp;<strong>${part.percent}</strong>&nbsp;· ${part.time}</li>`).join("");
+        document.getElementById("timeSplitTotal").innerText = "Last 30 days · " + sessionLength({ "minutes" : Math.round(total) }) + " trained";
+        document.getElementById("timeSplit").hidden = false;
+    }
+    drawTimeSplit();
 
     if(sessions.length > shown.length){
         document.getElementById("sessionsFoot").innerHTML = "The last " + shown.length + " of " + sessions.length

@@ -2618,6 +2618,52 @@ describe('Training apps', function () {
             cy.get('#sessionsStats').should('have.text', 'This month · 6 sessions · 1h 49m trained · 5 climbs done');
         });
 
+        it('splits the last 30 days of time trained into climbing, fingerboard and other', () => {
+            visitWith({
+                boulderLog: [
+                    { id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3, minutes: 60 },
+                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 500 }   // over 30 days ago
+                ],
+                lapTimerLog: [{ id: 3, date: '2026-09-01', total: 30 * 60000, laps: 3, rating: 0 }],
+                loftLog: [{ id: 4, date: '2026-08-20', seconds: 900, moves: 20, rating: 0 }],
+                tradLog: [{ id: 5, date: '2026-09-04', climbs: ['VS'], rating: 0 }]   // no time kept
+            });
+            cy.get('#timeSplit').should('be.visible');
+            cy.get('#timeSplitTotal').should('have.text', 'Last 30 days · 1h 45m trained');
+            cy.get('#timeSplitBar span').should('have.length', 2);   // no fingerboard to show
+            cy.get('#timeSplitBar span').eq(0).should('have.class', 'split-1')
+                .and('have.attr', 'title', 'Climbing 86% · 1h 30m (Gym Session 1h 00m, Lap Timer 30 min)');
+            cy.get('#timeSplitBar span').eq(1).should('have.class', 'split-3')
+                .and('have.attr', 'title', 'Other 14% · 15 min (Twister 15 min)');
+            cy.get('#timeSplitLegend li').eq(0).should('have.text', 'Climbing\u00a086%\u00a0· 1h 30m');
+            cy.get('#timeSplitBar').should('have.attr', 'aria-label').and('contain', 'Other 14% · 15 min');
+        });
+
+        it('counts Tabata repeaters as fingerboard and a classic Tabata as other, in a fixed order', () => {
+            const day = '2026-09-10';
+            visitWith({
+                noHangsLog: [{ id: 1, date: day, seconds: 600, rating: 0 }],
+                rockRingsLog: [{ id: 2, date: day, difficulty: 'easy', seconds: 300, rating: 0 }],
+                tabataLog: [
+                    { id: 3, date: day, routine: 'Max hangs', work: 7, rest: 3, reps: 10, sets: 2, setRest: 240, seconds: 1200, rating: 0 },
+                    { id: 4, date: day, work: 20, rest: 10, reps: 8, seconds: 600, rating: 0 }
+                ],
+                gapsLog: [{ id: 5, date: day, input: 'tindeq', time: 3600, score: 1 }]
+            });
+            cy.get('#timeSplitBar span').should('have.length', 2);
+            // other is the bigger, but fingerboard still comes first
+            cy.get('#timeSplitBar span').eq(0).should('have.class', 'split-2')
+                .and('have.attr', 'title', 'Fingerboard 33% · 35 min (Tabata 20 min, No Hangs 10 min, Rock Rings 5 min)');
+            cy.get('#timeSplitBar span').eq(1).should('have.class', 'split-3')
+                .and('have.attr', 'title', 'Other 67% · 1h 10m (Tindeq Arcade 1h 00m, Tabata 10 min)');
+        });
+
+        it('leaves out the time split with no time kept in the last 30 days', () => {
+            visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
+            cy.get('#sessions').should('be.visible');
+            cy.get('#timeSplit').should('not.be.visible');
+        });
+
         it('says nothing of time trained when no session this month kept any', () => {
             visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
             cy.get('#sessionsStats').should('have.text', 'This month · 1 session · 1 climb done');
