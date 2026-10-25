@@ -245,9 +245,51 @@
 
     /* The last 30 days' time trained, a kind of training a segment of one bar by
        its share - always in this order and colour, so each keeps its place - and
-       the apps in it, biggest first, in its hover text */
+       the apps in it, biggest first, in its hover text. Tapping a segment opens a
+       bar of its apps under it; tapping it again, or anywhere else, closes it. */
     const kinds = ["Climbing", "Fingerboard", "Other"];
     const minutesText = minutes => sessionLength({ "minutes" : Math.max(1, Math.round(minutes)) });
+    const shareText = share => share < 1 ? "<1%" : Math.round(share) + "%";
+    let splitParts = [];
+    let openKind = null;
+
+    function legendItem(cls, name, percent, time){
+        return `<li class="legend-item ${cls}"><span class="swatch" aria-hidden="true"></span>${escapeHtml(name)}&nbsp;<strong>${percent}</strong>&nbsp;· ${time}</li>`;
+    }
+
+    // An app a segment, biggest first, as its share of the kind: the palette's
+    // slots 4 to 8 in order, so none is the colour of a kind in the bar above
+    function showKind(index){
+        openKind = index;
+        document.querySelectorAll("#timeSplitBar button").forEach(button => {
+            let open = Number(button.dataset.kind) === index;
+            button.setAttribute("aria-expanded", String(open));
+            button.classList.toggle("dim", index !== null && !open);
+        });
+        let detail = document.getElementById("timeSplitDetail");
+        detail.hidden = index === null;
+        if(index === null){ return; }
+        let part = splitParts[index];
+        let apps = part.apps.map((app, place) => Object.assign({}, app, { "cls" : "split-app-" + (place + 1),
+            "percent" : shareText(app.minutes / part.minutes * 100), "time" : minutesText(app.minutes) }));
+        let says = app => app.name + " " + app.percent + " · " + app.time;
+        document.getElementById("timeSplitDetailTitle").innerText = part.name + " · " + part.time + ", by app";
+        let bar = document.getElementById("timeSplitDetailBar");
+        bar.innerHTML = apps.map(app => `<span class="${app.cls}" style="flex-grow: ${app.minutes}" title="${escapeHtml(says(app))}"></span>`).join("");
+        bar.setAttribute("aria-label", part.name + " by app: " + apps.map(says).join(", "));
+        document.getElementById("timeSplitDetailLegend").innerHTML = apps.map(app => legendItem(app.cls, app.name, app.percent, app.time)).join("");
+    }
+
+    document.getElementById("timeSplitBar").addEventListener("click", event => {
+        let button = event.target.closest("button");
+        if(button === null){ return; }
+        event.stopPropagation();   // or the page's listener below closes it again
+        let index = Number(button.dataset.kind);
+        showKind(openKind === index ? null : index);
+    });
+    document.addEventListener("click", () => { if(openKind !== null){ showKind(null); } });
+    document.addEventListener("keydown", event => { if(event.key === "Escape" && openKind !== null){ showKind(null); } });
+
     function drawTimeSplit(){
         let since = new Date(Date.parse(today()) - 29 * 86400000).toISOString().slice(0, 10);
         let recent = sessions.filter(session => session.date >= since && session.minutes > 0);
@@ -258,17 +300,17 @@
             recent.filter(session => session.kind === name)
                 .forEach(session => { apps[session.app.name] = (apps[session.app.name] || 0) + session.minutes; });
             let minutes = Object.values(apps).reduce((sum, each) => sum + each, 0);
-            let share = minutes / total * 100;
             return { "name" : name, "minutes" : minutes, "cls" : "split-" + (index + 1),
-                "percent" : share < 1 ? "<1%" : Math.round(share) + "%", "time" : minutesText(minutes),
-                "apps" : Object.keys(apps).sort((a, b) => apps[b] - apps[a]).map(app => app + " " + minutesText(apps[app])).join(", ") };
+                "percent" : shareText(minutes / total * 100), "time" : minutesText(minutes),
+                "apps" : Object.keys(apps).sort((a, b) => apps[b] - apps[a]).map(app => ({ "name" : app, "minutes" : apps[app] })) };
         }).filter(part => part.minutes > 0);
-        let says = part => part.name + " " + part.percent + " · " + part.time + " (" + part.apps + ")";
-        let bar = document.getElementById("timeSplitBar");
-        bar.innerHTML = parts.map(part => `<span class="${part.cls}" style="flex-grow: ${part.minutes}" title="${escapeHtml(says(part))}"></span>`).join("");
-        bar.setAttribute("aria-label", "Time trained in the last 30 days: " + parts.map(says).join(", "));
-        document.getElementById("timeSplitLegend").innerHTML = parts.map(part =>
-            `<li class="legend-item ${part.cls}"><span class="swatch" aria-hidden="true"></span>${escapeHtml(part.name)}&nbsp;<strong>${part.percent}</strong>&nbsp;· ${part.time}</li>`).join("");
+        splitParts = parts;
+        let says = part => part.name + " " + part.percent + " · " + part.time
+            + " (" + part.apps.map(app => app.name + " " + minutesText(app.minutes)).join(", ") + ")";
+        document.getElementById("timeSplitBar").innerHTML = parts.map((part, index) =>
+            `<button type="button" class="${part.cls}" style="flex-grow: ${part.minutes}" data-kind="${index}" aria-expanded="false"
+                title="${escapeHtml(says(part))}" aria-label="${escapeHtml(says(part))}, show by app"></button>`).join("");
+        document.getElementById("timeSplitLegend").innerHTML = parts.map(part => legendItem(part.cls, part.name, part.percent, part.time)).join("");
         document.getElementById("timeSplitTotal").innerText = "Last 30 days · " + sessionLength({ "minutes" : Math.round(total) }) + " trained";
         document.getElementById("timeSplit").hidden = false;
     }

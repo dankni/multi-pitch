@@ -6,7 +6,7 @@
    When you change any app, bump CACHE_VERSION, or installed copies keep serving
    the old files. */
 
-const CACHE_VERSION = 'v171';
+const CACHE_VERSION = 'v172';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.

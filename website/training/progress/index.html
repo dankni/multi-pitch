@@ -42,8 +42,14 @@
         <figure class="time-split" id="timeSplit" hidden>
             <figcaption>Time trained</figcaption>
             <p class="sessions-note" id="timeSplitTotal"></p>
-            <div class="split-bar" id="timeSplitBar" role="img"></div>
+            <div class="split-bar" id="timeSplitBar" role="group" aria-label="Time trained in the last 30 days"></div>
             <ul class="legend split-legend" id="timeSplitLegend"></ul>
+            <!-- a segment's apps, once it is tapped -->
+            <div class="split-detail" id="timeSplitDetail" hidden>
+                <p class="sessions-note" id="timeSplitDetailTitle"></p>
+                <div class="split-bar" id="timeSplitDetailBar" role="img"></div>
+                <ul class="legend split-legend" id="timeSplitDetailLegend"></ul>
+            </div>
         </figure>
     </section>
 

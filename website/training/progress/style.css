@@ -294,6 +294,12 @@
 .split-1 { --c: var(--split-1); }
 .split-2 { --c: var(--split-2); }
 .split-3 { --c: var(--split-3); }
+/* a kind's apps: slots 4 to 8, a run that tells apart side by side */
+.split-app-1 { --c: light-dark(#eda100, #c98500); }
+.split-app-2 { --c: light-dark(#e87ba4, #d55181); }
+.split-app-3 { --c: #008300; }
+.split-app-4 { --c: light-dark(#6250d6, #9085e9); }
+.split-app-5 { --c: light-dark(#e34948, #e66767); }
 .time-split figcaption {
     font-weight: bold;
     font-size: 16px;
@@ -306,19 +312,42 @@
     gap: 2px;
     height: 24px;
 }
-.split-bar span {
+.split-bar > * {
     flex-basis: 0;
     min-width: 3px;
     background: var(--c);
 }
-.split-bar span:first-child {
+/* a segment to tap: none of a button's own look */
+.split-bar button {
+    all: unset;
+    display: block;
+    flex-basis: 0;
+    min-width: 3px;
+    background: var(--c);
+    cursor: pointer;
+    transition: opacity 150ms ease;
+}
+.split-bar button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+/* the others fade while one is open */
+.split-bar button.dim {
+    opacity: 0.35;
+}
+.split-bar > :first-child {
     border-radius: 4px 0 0 4px;
 }
-.split-bar span:last-child {
+.split-bar > :last-child {
     border-radius: 0 4px 4px 0;
 }
-.split-bar span:only-child {
+.split-bar > :only-child {
     border-radius: 4px;
+}
+.split-detail {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
 }
 .split-legend {
     margin: 10px 0 0;

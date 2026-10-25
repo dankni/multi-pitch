@@ -2630,13 +2630,13 @@ describe('Training apps', function () {
             });
             cy.get('#timeSplit').should('be.visible');
             cy.get('#timeSplitTotal').should('have.text', 'Last 30 days · 1h 45m trained');
-            cy.get('#timeSplitBar span').should('have.length', 2);   // no fingerboard to show
-            cy.get('#timeSplitBar span').eq(0).should('have.class', 'split-1')
+            cy.get('#timeSplitBar button').should('have.length', 2);   // no fingerboard to show
+            cy.get('#timeSplitBar button').eq(0).should('have.class', 'split-1')
                 .and('have.attr', 'title', 'Climbing 86% · 1h 30m (Gym Session 1h 00m, Lap Timer 30 min)');
-            cy.get('#timeSplitBar span').eq(1).should('have.class', 'split-3')
+            cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3')
                 .and('have.attr', 'title', 'Other 14% · 15 min (Twister 15 min)');
             cy.get('#timeSplitLegend li').eq(0).should('have.text', 'Climbing\u00a086%\u00a0· 1h 30m');
-            cy.get('#timeSplitBar').should('have.attr', 'aria-label').and('contain', 'Other 14% · 15 min');
+            cy.get('#timeSplitBar button').eq(1).should('have.attr', 'aria-label', 'Other 14% · 15 min (Twister 15 min), show by app');
         });
 
         it('counts Tabata repeaters as fingerboard and a classic Tabata as other, in a fixed order', () => {
@@ -2650,12 +2650,46 @@ describe('Training apps', function () {
                 ],
                 gapsLog: [{ id: 5, date: day, input: 'tindeq', time: 3600, score: 1 }]
             });
-            cy.get('#timeSplitBar span').should('have.length', 2);
+            cy.get('#timeSplitBar button').should('have.length', 2);
             // other is the bigger, but fingerboard still comes first
-            cy.get('#timeSplitBar span').eq(0).should('have.class', 'split-2')
+            cy.get('#timeSplitBar button').eq(0).should('have.class', 'split-2')
                 .and('have.attr', 'title', 'Fingerboard 33% · 35 min (Tabata 20 min, No Hangs 10 min, Rock Rings 5 min)');
-            cy.get('#timeSplitBar span').eq(1).should('have.class', 'split-3')
+            cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3')
                 .and('have.attr', 'title', 'Other 67% · 1h 10m (Tindeq Arcade 1h 00m, Tabata 10 min)');
+        });
+
+        it('opens a bar of the apps in a kind when it is tapped, and closes it again', () => {
+            const day = '2026-09-10';
+            visitWith({
+                boulderLog: [{ id: 1, date: day, climbs: ['V2'], rating: 3, minutes: 60 }],
+                tradLog: [{ id: 2, date: day, climbs: ['VS'], rating: 0, minutes: 180 }],
+                lapTimerLog: [{ id: 3, date: day, total: 30 * 60000, laps: 3, rating: 0 }],
+                noHangsLog: [{ id: 4, date: day, seconds: 600, rating: 0 }]
+            });
+            cy.get('#timeSplitDetail').should('not.be.visible');
+            cy.get('#timeSplitBar button').eq(0).click();
+            cy.get('#timeSplitBar button').eq(0).should('have.attr', 'aria-expanded', 'true').and('not.have.class', 'dim');
+            cy.get('#timeSplitBar button').eq(1).should('have.class', 'dim');
+            cy.get('#timeSplitDetail').should('be.visible');
+            cy.get('#timeSplitDetailTitle').should('have.text', 'Climbing · 4h 30m, by app');
+            cy.get('#timeSplitDetailBar span').should('have.length', 3);
+            cy.get('#timeSplitDetailBar span').eq(0).should('have.class', 'split-app-1').and('have.attr', 'title', 'Outside 67% · 3h 00m');
+            cy.get('#timeSplitDetailBar span').eq(2).should('have.attr', 'title', 'Lap Timer 11% · 30 min');
+            cy.get('#timeSplitDetailLegend li').eq(1).should('have.text', 'Gym Session\u00a022%\u00a0· 1h 00m');
+            // another kind swaps it, the same kind closes it
+            cy.get('#timeSplitBar button').eq(1).click();
+            cy.get('#timeSplitDetailTitle').should('have.text', 'Fingerboard · 10 min, by app');
+            cy.get('#timeSplitBar button').eq(1).click();
+            cy.get('#timeSplitDetail').should('not.be.visible');
+            cy.get('#timeSplitBar button').should('not.have.class', 'dim');
+            // anywhere else closes it, and so does Escape
+            cy.get('#timeSplitBar button').eq(0).click();
+            cy.get('#timeSplitDetail').should('be.visible');
+            cy.get('#sessions h2').click();
+            cy.get('#timeSplitDetail').should('not.be.visible');
+            cy.get('#timeSplitBar button').eq(0).click();
+            cy.get('body').type('{esc}');
+            cy.get('#timeSplitDetail').should('not.be.visible');
         });
 
         it('leaves out the time split with no time kept in the last 30 days', () => {
