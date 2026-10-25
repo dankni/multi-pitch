@@ -30,6 +30,9 @@ const restSeconds = 20;
 const warningSeconds = 5;   // the rest goes red this long before the next hang
 const beeps = 3;            // a beep a second for the last of the red
 const repSeconds = hangSeconds + restSeconds;
+const vibrateSeconds = 1;              // the phone buzzes this long before a hang starts and ends
+const hangSoonBuzz = [200];            // one long one: go
+const letGoSoonBuzz = [100, 80, 100];  // two short ones: let go
 
 // Every rep in order, as { hold, fingers, rep, of, step } - step its row in the plan
 const reps = plan.flatMap((step, row) => Array.from({ "length" : step.reps }, (_, index) => ({ "hold" : step.hold, "fingers" : step.fingers, "rep" : index + 1, "of" : step.reps, "step" : row })));
@@ -95,6 +98,13 @@ function showSecond(seconds){
     }
     if(!hanging && left <= beeps){
         beep();
+    }
+    // the first hang is counted in by the three, two, one instead
+    if(into === repSeconds - vibrateSeconds){
+        vibrate(hangSoonBuzz);
+    }
+    if(into === hangSeconds - vibrateSeconds){
+        vibrate(letGoSoonBuzz);
     }
 }
 

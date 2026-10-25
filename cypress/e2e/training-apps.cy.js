@@ -517,6 +517,8 @@ describe('Training apps', function () {
                             })
                         };
                     };
+                    win.buzzes = [];
+                    Object.defineProperty(win.navigator, 'vibrate', { configurable: true, value: (pattern) => win.buzzes.push(pattern) });
                     Object.defineProperty(win, 'speechSynthesis', { configurable: true, value: {
                         speaking: false,
                         pending: false,
@@ -539,6 +541,47 @@ describe('Training apps', function () {
             cy.tick(15000);
             cy.get('#first_task').should('have.text', '10 second bent-arm hang');
             cy.get('#elapsed').should('have.text', '01:00');
+        });
+
+        it('remembers being muted, across a reload and in the other apps', () => {
+            cy.visit(appUrl + '/training/nohangs/');
+            cy.get('#sound').should('have.class', 'icon-volume-high').click();
+            cy.get('#sound').should('have.class', 'icon-volume-off');
+            cy.window().then((win) => expect(win.localStorage.getItem('soundOff')).to.equal('true'));
+            cy.reload();
+            cy.get('#sound').should('have.class', 'icon-volume-off');
+            cy.visit(appUrl + '/training/rings/');
+            cy.get('#sound').should('have.class', 'icon-volume-off').click();
+            cy.reload();
+            cy.get('#sound').should('have.class', 'icon-volume-high');
+        });
+
+        it('no hangs buzzes the phone a second before each hang starts and ends', () => {
+            visitWorkout('/training/nohangs/');
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.window().its('buzzes').should('deep.equal', []);   // the first hang is counted in
+            cy.tick(9000);
+            cy.window().its('buzzes').should('deep.equal', [[100, 80, 100]]);   // let go soon
+            cy.tick(1000);
+            cy.get('body').should('not.have.class', 'green');
+            cy.tick(19000);
+            cy.window().its('buzzes').should('deep.equal', [[100, 80, 100], [200]]);   // hang soon
+            cy.get('body').should('not.have.class', 'green');
+            cy.tick(1000);
+            cy.get('body').should('have.class', 'green');
+        });
+
+        it('no hangs keeps still with vibration disabled, and remembers it', () => {
+            visitWorkout('/training/nohangs/');
+            cy.get('#vibrateOff').should('not.be.checked').check({ force: true });
+            cy.window().then((win) => expect(win.localStorage.getItem('vibrateOff')).to.equal('true'));
+            visitWorkout('/training/nohangs/');
+            cy.get('#vibrateOff').should('be.checked');
+            cy.get('#primaryButton').click();
+            cy.tick(33000);   // past the let go and the hang soon buzzes
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
+            cy.window().its('buzzes').should('deep.equal', []);
         });
 
         it('no hangs hangs, rests, shows the next rep, and finishes on the last hang', () => {
