@@ -666,57 +666,57 @@ describe('Training apps', function () {
             cy.get('#hangs tr.done, #hangs .pip.done').should('not.exist');
         });
 
-        it('tabata remembers its settings, works, rests, and finishes on the last set', () => {
+        it('tabata remembers its settings, works, rests, and finishes on the last rep', () => {
             visitWorkout('/training/tabata/');
-            // the classic: 8 sets of 20 on, 10 off, less the rest after the last
+            // the classic: 8 reps of 20 on, 10 off, less the rest after the last
             cy.get('#elapsed').should('have.text', '03:50');
-            cy.get('#todo .work').should('have.length', 8);   // a block a set's work, a line its rest
-            cy.get('#todo .rest').should('have.length', 7);
-            tap(...times(2, '[data-setting="sets"][data-step="-1"]'));
-            cy.get('#setsValue').should('have.text', '6');
+            cy.get('.todo .work').should('have.length', 8);   // a block a rep's work, a line its rest
+            cy.get('.todo .rest').should('have.length', 7);
+            tap(...times(2, '[data-setting="reps"][data-step="-1"]'));
+            cy.get('#repsValue').should('have.text', '6');
             cy.get('#elapsed').should('have.text', '02:50');
-            cy.get('#todo .work').should('have.length', 6);
+            cy.get('.todo .work').should('have.length', 6);
             tap(...times(2, '[data-setting="rest"][data-step="-1"]'));
             cy.get('[data-setting="rest"][data-step="-1"]').should('be.disabled');   // no rest at all is the least
-            cy.get('#todo .rest').should('not.exist');
-            cy.get('#todo .gap').should('have.length', 5);   // still apart, with nothing between them
+            cy.get('.todo .rest').should('not.exist');
+            cy.get('.todo .gap').should('have.length', 5);   // still apart, with nothing between them
             tap(...times(2, '[data-setting="rest"][data-step="1"]'));
             cy.window().its('localStorage').invoke('getItem', 'tabataSettings').then((saved) => {
-                expect(JSON.parse(saved)).to.deep.equal({ work: 20, rest: 10, sets: 6 });
+                expect(JSON.parse(saved)).to.deep.equal({ work: 20, rest: 10, reps: 6 });
             });
             visitWorkout('/training/tabata/');   // a fresh visit, the stubs and all
-            cy.get('#setsValue').should('have.text', '6');
+            cy.get('#repsValue').should('have.text', '6');
             cy.get('#elapsed').should('have.text', '02:50');
 
             cy.get('#primaryButton').click();
             cy.tick(3000);
             cy.get('#setup').should('not.be.visible');
             cy.get('#first_task').should('have.text', 'Work');
-            cy.get('#first_rep').should('have.text', 'Set 1 of 6');
+            cy.get('#first_rep').should('have.text', 'Rep 1 of 6');
             cy.get('body').should('have.class', 'green');
-            cy.get('#timeline').should('have.attr', 'aria-valuetext', 'Set 1 of 6');
+            cy.get('#timeline').should('have.attr', 'aria-valuetext', 'Rep 1 of 6');
             cy.tick(20000);
             cy.get('#first_task').should('have.text', 'Rest, then');
-            cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
             cy.get('body').should('not.have.class', 'green');
             cy.get('#timeline').should('have.attr', 'aria-valuenow', '20');
             cy.tick(7000);
             cy.get('body').should('have.class', 'red');
             cy.tick(3000);
             cy.get('body').should('have.class', 'green');
-            cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
             cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // work, rest, three beeps, work
 
             cy.tick(140000);
             cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#endingDiv').should('be.visible');
             cy.get('#timeline').should('have.attr', 'aria-valuenow', '170');
-            cy.get('#done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
+            cy.get('.done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
             cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
                 expect(JSON.parse(log)).to.have.length(1);
-                expect(JSON.parse(log)[0]).to.include({ work: 20, rest: 10, sets: 6 });
+                expect(JSON.parse(log)[0]).to.include({ work: 20, rest: 10, reps: 6 });
             });
             cy.get('#reset').click();
             cy.get('#setup').should('be.visible');
@@ -730,8 +730,8 @@ describe('Training apps', function () {
             cy.get('#workValue').should('have.text', '21s');
             tap(...times(3, '[data-setting="rest"][data-step="-1"]'));
             cy.get('#restValue').should('have.text', '7s');
-            tap(...times(2, '[data-setting="sets"][data-step="1"]'));
-            cy.get('#setsValue').should('have.text', '10');   // sets go by one either way
+            tap(...times(2, '[data-setting="reps"][data-step="1"]'));
+            cy.get('#repsValue').should('have.text', '10');   // reps go by one either way
             visitWorkout('/training/tabata/');
             cy.get('#oneSecond').should('be.checked');
             cy.get('#workValue').should('have.text', '21s');
@@ -740,6 +740,134 @@ describe('Training apps', function () {
             cy.get('#workValue').should('have.text', '25s');
             cy.get('[data-setting="rest"][data-step="-1"]').click();
             cy.get('#restValue').should('have.text', '5s');
+        });
+
+        it('tabata in repeater mode: its own defaults, a named track a set, and plain Tabata kept apart', () => {
+            visitWorkout('/training/tabata/');
+            cy.get('[data-setting="sets"]').should('not.be.visible');
+            cy.get('#repeaterMode').should('not.be.checked').check({ force: true });
+            cy.get('#workValue').should('have.text', '7s');
+            cy.get('#restValue').should('have.text', '3s');
+            cy.get('#repsValue').should('have.text', '10');
+            cy.get('#setsValue').should('be.visible').and('have.text', '6');
+            cy.get('#setRestValue').should('have.text', '4:00');
+            // 6 sets of 10 reps of 7 on, 3 off, less each set's last rest, and 5 rests of 4 minutes
+            cy.get('#elapsed').should('have.text', '29:42');
+            cy.get('.set-track').should('have.length', 6);
+            cy.get('.set-track').first().find('.todo .work').should('have.length', 10);
+            cy.get('.set-track').first().find('.todo .rest').should('have.length', 9);
+            cy.get('[data-setting="setRest"][data-step="1"]').click();
+            cy.get('#setRestValue').should('have.text', '4:15');   // 15 s a tap
+            cy.get('.set-name-field').eq(1).type('Half crimp');
+            visitWorkout('/training/tabata/');
+            cy.get('#repeaterMode').should('be.checked');
+            cy.get('#setRestValue').should('have.text', '4:15');
+            cy.get('.set-name-field').eq(1).should('have.value', 'Half crimp');
+            cy.get('#repeaterMode').uncheck({ force: true });
+            cy.get('#repsValue').should('have.text', '8');
+            cy.get('#elapsed').should('have.text', '03:50');
+            cy.get('.set-track').should('have.length', 1);
+            cy.get('.set-name-field').should('not.exist');
+        });
+
+        it('tabata runs a repeater session set by set, with the rest between sets', () => {
+            visitWorkout('/training/tabata/');
+            cy.get('#repeaterMode').check({ force: true });
+            tap(...times(8, '[data-setting="reps"][data-step="-1"]'));
+            tap(...times(4, '[data-setting="sets"][data-step="-1"]'));
+            cy.get('#elapsed').should('have.text', '04:34');   // 2 x (7 + 3 + 7) + 240
+            cy.get('.set-name-field').eq(0).type('Crimp');
+            cy.get('.set-name-field').eq(1).type('Pinch');
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('#first_task').should('have.text', 'Work');
+            cy.get('#first_rep').should('have.text', 'Rep 1 of 2');
+            cy.get('#first_set').should('be.visible').and('have.text', 'Set 1 of 2 · Crimp');
+            cy.get('.set-track').eq(0).should('have.class', 'current').find('.set-label').should('have.text', 'Set 1 of 2 · Crimp');
+            cy.get('#timeline').should('have.attr', 'aria-valuetext', 'Set 1 of 2, rep 1 of 2');
+            cy.tick(7000);
+            cy.get('#first_task').should('have.text', 'Rest, then');
+            cy.get('#first_rep').should('have.text', 'Rep 2 of 2');
+            cy.tick(10000);   // the second rep's work, and no rest after it
+            cy.get('#first_task').should('have.text', 'Rest, then');
+            cy.get('#first_rep').should('have.text', 'Set 2 of 2');
+            cy.get('#first_set').should('have.text', 'Pinch');
+            cy.window().its('spoken').should('include', 'Next, Pinch');
+            cy.get('.set-track').eq(0).find('.done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');
+            cy.get('.set-track').eq(1).find('.done').should('have.attr', 'style').and('contain', 'inset(0px 100% 0px 0px)');
+            cy.tick(237000);
+            cy.get('body').should('have.class', 'red');
+            cy.tick(3000);
+            cy.get('body').should('have.class', 'green');
+            cy.get('#first_set').should('have.text', 'Set 2 of 2 · Pinch');
+            cy.get('.set-track').eq(1).should('have.class', 'current');
+            cy.window().its('spoken').should('include', 'Last set');
+            cy.tick(17000);
+            cy.get('#elapsed').should('have.text', '00:00');
+            cy.get('#endingDiv').should('be.visible');
+            cy.get('#saveSession').click();
+            cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
+                expect(JSON.parse(log)[0]).to.include({ work: 7, rest: 3, reps: 2, sets: 2, setRest: 240 });
+            });
+            cy.get('#log').should('contain', 'Repeaters').and('contain', '2 sets of 2 · 7s on, 3s off');
+        });
+
+        it('tabata saves named routines, opens, updates and deletes them, but not mid-session', () => {
+            visitWorkout('/training/tabata/');
+            cy.get('#repeaterMode').check({ force: true });
+            cy.get('#saveRoutine').should('be.disabled');
+            cy.get('#routineName').type('Max hangs');
+            cy.get('#saveRoutine').should('be.enabled').click();
+            cy.tick(100);
+            cy.get('.toast').should('contain', 'Routine saved');
+            cy.get('[data-setting="reps"][data-step="-1"]').click();
+            cy.get('#routineName').clear().type('Short');
+            cy.get('#saveRoutine').click();
+            cy.get('[data-action="openSettings"]').click();
+            cy.get('#routineList li').should('have.length', 2);
+            cy.get('#routineList li').eq(0).should('contain', 'Max hangs').and('contain', '6 × 10 · 7s / 3s');
+            cy.get('#routineList li').eq(1).should('contain', 'Short').and('contain', '6 × 9');
+            cy.contains('.routine-open', 'Max hangs').click();
+            cy.get('#settings').should('not.be.visible');
+            cy.get('#repsValue').should('have.text', '10');
+            cy.get('#routineName').should('have.value', 'Max hangs');
+            // edited by saving it again under its name
+            cy.get('[data-setting="reps"][data-step="1"]').click();
+            cy.get('#saveRoutine').click();
+            cy.tick(100);
+            cy.get('.toast').should('contain', 'Routine updated');
+            cy.get('[data-action="openSettings"]').click();
+            cy.get('#routineList li').should('have.length', 2);
+            cy.get('#routineList li').eq(0).should('contain', '6 × 11');
+            cy.get('#routineList li').eq(1).find('.routine-bin').click();
+            cy.get('#routineList li').eq(1).find('.routine-confirm').should('be.visible').find('.icon-ok').click();
+            cy.get('#routineList li').should('have.length', 1).and('contain', 'Max hangs');
+            cy.get('[data-action="hideSettings"]').click();
+            // a routine is opened with repeater mode off too
+            cy.get('#repeaterMode').uncheck({ force: true });
+            cy.get('[data-action="openSettings"]').click();
+            cy.contains('.routine-open', 'Max hangs').click();
+            cy.get('#repeaterMode').should('be.checked');
+            cy.get('#repsValue').should('have.text', '11');
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('[data-action="openSettings"]').click();
+            cy.contains('.routine-open', 'Max hangs').click();
+            cy.tick(100);
+            cy.get('.toast.warn').should('contain', 'Reset the session to open a routine');
+            cy.get('body').should('have.attr', 'data-state', 'running');
+        });
+
+        it('tabata reads settings and sessions saved when reps were called sets', () => {
+            cy.visit(appUrl + '/training/tabata/', {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('tabataSettings', JSON.stringify({ work: 30, rest: 15, sets: 6 }));
+                    win.localStorage.setItem('tabataLog', JSON.stringify([{ id: 1, date: '2026-09-11', work: 20, rest: 10, sets: 8, rating: 0 }]));
+                }
+            });
+            cy.get('#repsValue').should('have.text', '6');
+            cy.get('#workValue').should('have.text', '30s');
+            cy.get('#log').should('contain', '8 reps');
         });
     });
 

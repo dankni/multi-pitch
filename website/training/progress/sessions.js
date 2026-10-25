@@ -65,6 +65,26 @@
                  "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", sessionLength(entry)]) };
     }
 
+    /* Reps of work and rest, or in repeater mode sets of them with a rest between.
+       Saved before reps were called reps, a session's reps were its "sets". */
+    function tabataReps(entry){
+        return count(typeof entry.reps === "number" ? entry.reps : entry.sets);
+    }
+    function tabataSession(entry){
+        let reps = tabataReps(entry);
+        let onOff = `${count(entry.work)}s on, ${count(entry.rest)}s off`;
+        return typeof entry.setRest === "number"
+            ? { "title" : typeof entry.routine === "string" && entry.routine ? entry.routine : "Repeaters",
+                "detail" : plural(count(entry.sets), "set") + " of " + reps + " · " + onOff }
+            : { "title" : plural(reps, "rep"), "detail" : onOff };
+    }
+    // the whole session: no rest after a set's last rep, the rest between sets instead
+    function tabataSeconds(entry){
+        let sets = typeof entry.setRest === "number" ? Math.max(1, count(entry.sets)) : 1;
+        let reps = tabataReps(entry);
+        return sets * (reps * (count(entry.work) + count(entry.rest)) - count(entry.rest)) + (sets - 1) * count(entry.setRest);
+    }
+
     // A fixed length workout's seconds on the clock when it was saved, or, saved
     // before it kept them, the whole workout
     function ranFor(entry, fullSeconds){
@@ -99,8 +119,7 @@
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
         { "key" : "tabataLog", "name" : "Tabata", "href" : "/training/tabata/",
-          "line" : entry => ({ "title" : plural(count(entry.sets), "set"), "detail" : `${count(entry.work)}s on, ${count(entry.rest)}s off` }),
-          "minutes" : entry => ranFor(entry, count(entry.sets) * (count(entry.work) + count(entry.rest)) - count(entry.rest)) },
+          "line" : tabataSession, "minutes" : entry => ranFor(entry, tabataSeconds(entry)) },
         // a run on the screen is a game, not training
         { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
           "line" : gapsSession, "keep" : entry => entry.input === "tindeq", "minutes" : entry => count(entry.time) / 60 }

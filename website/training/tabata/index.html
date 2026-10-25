@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="A Tabata interval timer for climbing training. Set the work, the rest and the number of sets, and it counts you through them and remembers your settings.">
+	<meta name="description" content="A Tabata interval timer for climbing training. Set the work, the rest and the number of reps, and it counts you through them and remembers your settings.">
 	<link rel="manifest" href="/training/manifest.json" />
 	<meta name="theme-color" content="#121212">
 	<!-- iOS has no manifest support worth the name: it wants these, and Add to
@@ -45,6 +45,11 @@
 	</div>
 	<!-- remembered in localStorage, so the next session starts where this one was set -->
 	<div id="setup">
+		<!-- repeater mode: the settings below saved under this name, listed under the cog -->
+		<div class="field-group routine-save repeater-only">
+			<input type="text" class="field" id="routineName" maxlength="40" data-input="setRoutineName" placeholder="Name this routine" aria-label="Routine name" />
+			<button type="button" id="saveRoutine" data-action="saveRoutine" disabled>SAVE</button>
+		</div>
 		<div class="setting">
 			<span class="setting-name" id="workLabel">Work</span>
 			<div class="stepper" role="group" aria-labelledby="workLabel">
@@ -62,11 +67,27 @@
 			</div>
 		</div>
 		<div class="setting">
+			<span class="setting-name" id="repsLabel">Reps</span>
+			<div class="stepper" role="group" aria-labelledby="repsLabel">
+				<button type="button" data-action="stepSetting" data-setting="reps" data-step="-1" aria-label="Fewer reps">&minus;</button>
+				<output id="repsValue" aria-live="polite">8</output>
+				<button type="button" data-action="stepSetting" data-setting="reps" data-step="1" aria-label="More reps">+</button>
+			</div>
+		</div>
+		<div class="setting repeater-only">
 			<span class="setting-name" id="setsLabel">Sets</span>
 			<div class="stepper" role="group" aria-labelledby="setsLabel">
 				<button type="button" data-action="stepSetting" data-setting="sets" data-step="-1" aria-label="Fewer sets">&minus;</button>
-				<output id="setsValue" aria-live="polite">8</output>
+				<output id="setsValue" aria-live="polite">6</output>
 				<button type="button" data-action="stepSetting" data-setting="sets" data-step="1" aria-label="More sets">+</button>
+			</div>
+		</div>
+		<div class="setting repeater-only">
+			<span class="setting-name" id="setRestLabel">Rest between sets</span>
+			<div class="stepper" role="group" aria-labelledby="setRestLabel">
+				<button type="button" data-action="stepSetting" data-setting="setRest" data-step="-1" aria-label="Less rest between sets">&minus;</button>
+				<output id="setRestValue" aria-live="polite">4:00</output>
+				<button type="button" data-action="stepSetting" data-setting="setRest" data-step="1" aria-label="More rest between sets">+</button>
 			</div>
 		</div>
 	</div>
@@ -75,20 +96,19 @@
 			<div class="now">
 				<p class="task" id="first_task"></p>
 				<p class="rep" id="first_rep"></p>
+				<p class="set-line" id="first_set" hidden></p>
 			</div>
 			<p class="count" id="first_count"></p>
 		</section>
 		<div id="endingDiv" class="ending"></div>
 	</div>
 	<!-- the whole session to scale, filled in from the settings and as it goes -->
-	<div class="timeline" id="timeline" role="progressbar" aria-label="Session" aria-valuemin="0">
-		<div class="track" id="todo"></div>
-		<div class="track" id="done"></div>
-	</div>
+	<div class="timeline" id="timeline" role="progressbar" aria-label="Session" aria-valuemin="0"></div>
 	<aside id="about" class="overlay">
 		<h2>Tabata</h2>
 		<p>Short, hard efforts with short rests. The classic is 20 seconds of work and 10 seconds of rest, eight times: four minutes in all.</p>
-		<p>Set the work, the rest and the number of sets before you start. The screen goes green while you work, and red with a beep a second for the last three seconds of each rest. Your settings are remembered for next time.</p>
+		<p>Set the work, the rest and the number of reps before you start. The screen goes green while you work, and red with a beep a second for the last three seconds of each rest. Your settings are remembered for next time.</p>
+		<p>Repeater mode, under the cog, adds sets of those reps with a longer rest between them: a track for each set, which you can name. Name the whole routine and tap SAVE to keep it; your routines are listed under the cog. To change one, open it, adjust it and save it with the same name.</p>
 		<hr />
 		<h2>Activity Log</h2>
 		<div id="log"></div>
@@ -129,6 +149,17 @@
 				<i class="icon-note toggle-icon" aria-hidden="true"></i> Voice disabled <span class="switch-state"></span>
 			</span>
 		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleRepeaterMode" id="repeaterMode"/>
+			<span class="label-content">
+				Repeater mode <span class="switch-state"></span>
+			</span>
+		</label>
+		<fieldset class="setting-group">
+			<legend>Routines</legend>
+			<p id="noRoutines">Name a routine and tap SAVE, and it's kept here to open again.</p>
+			<ul class="routine-list" id="routineList"></ul>
+		</fieldset>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>

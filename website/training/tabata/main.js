@@ -1,25 +1,64 @@
-/* A Tabata interval timer: work, rest, and how many sets of them, set on the
-   main screen and remembered for next time. The session itself is
-   common/workout.js. */
+/* A Tabata interval timer: work and rest, so many reps of them. In repeater mode,
+   so many sets of those reps with a longer rest between, each set a track of its
+   own that can be named, and the whole saved as a named routine. Set on the main
+   screen and remembered for next time. The session itself is common/workout.js. */
 
 const app = { "logKey" : "tabataLog" };
 const settingsKey = "tabataSettings";
+const repeatersKey = "tabataRepeaters";       // the repeater settings in use, routine or not
+const routinesKey = "tabataRoutines";         // the named routines saved
+const repeaterModeKey = "tabataRepeaterMode";
 const oneSecondKey = "tabataOneSecond";
 
 // what each setting can be, and how far a tap of - or + moves it
 const limits = {
-    "work" : { "min" : 5, "max" : 300, "step" : 5 },
-    "rest" : { "min" : 0, "max" : 300, "step" : 5 },
-    "sets" : { "min" : 1, "max" : 50,  "step" : 1 }
+    "work" :    { "min" : 5, "max" : 300, "step" : 5, "seconds" : true },
+    "rest" :    { "min" : 0, "max" : 300, "step" : 5, "seconds" : true },
+    "reps" :    { "min" : 1, "max" : 50,  "step" : 1 },
+    "sets" :    { "min" : 1, "max" : 20,  "step" : 1 },
+    "setRest" : { "min" : 0, "max" : 900, "step" : 15 }   // minutes long, so 15 s a tap whatever the increments
 };
-// the classic Tabata: 20 seconds on, 10 off, eight times
-const settings = { "work" : 20, "rest" : 10, "sets" : 8 };
-let oneSecond = false;   // the Use 1 second increments setting: work and rest step by 1, not 5
-const warningSeconds = 3;   // the rest goes red, a beep a second, this long before the next set
+const nameLimit = 40;
+const setNameLimit = 24;
 
-const setSeconds = () => settings.work + settings.rest;
-// no rest after the last set
-const totalSeconds = () => settings.sets * setSeconds() - settings.rest;
+// the classic Tabata: 20 seconds on, 10 off, eight times
+const tabata = { "work" : 20, "rest" : 10, "reps" : 8 };
+// a hangboard repeater: 7 on, 3 off, ten times, six sets four minutes apart
+const repeaterDefaults = { "name" : "", "work" : 7, "rest" : 3, "reps" : 10, "sets" : 6, "setRest" : 240, "setNames" : [] };
+const repeaters = copyRoutine(repeaterDefaults);
+let routines = [];
+let repeaterMode = false;
+let oneSecond = false;   // the Use 1 second increments setting: work and rest step by 1, not 5
+const warningSeconds = 3;   // a rest goes red, a beep a second, this long before the next work
+
+const current = () => repeaterMode ? repeaters : tabata;
+const setsOf = () => repeaterMode ? repeaters.sets : 1;
+
+/* The whole session as work, rest and the rest between sets, in order: a set's
+   last rep has the rest between sets after it instead of its own rest */
+let plan = [];
+
+function buildPlan(){
+    let settings = current();
+    let at = 0;
+    plan = [];
+    let add = (kind, length, set, rep) => {
+        plan.push({ "kind" : kind, "length" : length, "set" : set, "rep" : rep, "start" : at });
+        at += length;
+    };
+    for(let set = 0; set < setsOf(); set++){
+        for(let rep = 0; rep < settings.reps; rep++){
+            add("work", settings.work, set, rep);
+            if(rep < settings.reps - 1){ add("rest", settings.rest, set, rep); }
+        }
+        if(set < setsOf() - 1){ add("setRest", repeaters.setRest, set, settings.reps - 1); }
+    }
+}
+
+const totalSeconds = () => {
+    let last = plan[plan.length - 1];
+    return last.start + last.length;
+};
 
 // the main clock counts down what is left of the session
 app.clock = secondsClock(seconds => {
@@ -39,38 +78,66 @@ app.onReset = () => {
     showProgress(0);
 };
 
-app.logEntry = () => ({ "work" : settings.work, "rest" : settings.rest, "sets" : settings.sets });
+app.logEntry = () => repeaterMode
+    ? { "routine" : repeaters.name.trim() || undefined, "work" : repeaters.work, "rest" : repeaters.rest,
+        "reps" : repeaters.reps, "sets" : repeaters.sets, "setRest" : repeaters.setRest }
+    : { "work" : tabata.work, "rest" : tabata.rest, "reps" : tabata.reps };
+
+// saved before reps were called reps, a session's reps were its "sets"
+const repsOf = entry => typeof entry.reps === "number" ? entry.reps : entry.sets;
 
 app.logView = {
     "key" : app.logKey,
-    "describe" : entry => ({ "title" : plural(entry.sets, "set"), "detail" : `${entry.work}s on, ${entry.rest}s off` })
+    "describe" : entry => typeof entry.setRest === "number"
+        ? { "title" : escapeHtml(entry.routine || "Repeaters"), "detail" : `${plural(entry.sets, "set")} of ${entry.reps} · ${entry.work}s on, ${entry.rest}s off` }
+        : { "title" : plural(repsOf(entry), "rep"), "detail" : `${entry.work}s on, ${entry.rest}s off` }
 };
 
+function setName(set){
+    return (repeaters.setNames[set] || "").trim();
+}
+
+// "Set 2 of 6 · Half crimp"
+function setLine(set){
+    return [`Set ${set + 1} of ${repeaters.sets}`, setName(set)].filter(part => part !== "").join(" · ");
+}
+
 function showSecond(seconds){
-    let index = Math.floor(seconds / setSeconds());
-    let into = seconds % setSeconds();
-    let working = into < settings.work;
-    let left = working ? settings.work - into : setSeconds() - into;
+    let settings = current();
+    let phase = plan.find(each => seconds < each.start + each.length);
+    let left = phase.start + phase.length - seconds;
     document.getElementById("first_count").innerText = left;
 
-    if(into === 0){
+    if(seconds === phase.start){
+        let line = document.getElementById("first_set");
         document.getElementById("first").hidden = false;
-        document.getElementById("first_task").innerText = "Work";
-        document.getElementById("first_rep").innerText = `Set ${index + 1} of ${settings.sets}`;
-        background("green");
-        ping();
-        if(index === settings.sets - 1 && settings.sets > 1){ speak("Last one"); }
+        if(phase.kind === "work"){
+            document.getElementById("first_task").innerText = "Work";
+            document.getElementById("first_rep").innerText = `Rep ${phase.rep + 1} of ${settings.reps}`;
+            line.innerText = setLine(phase.set);
+            background("green");
+            ping();
+            if(!repeaterMode && phase.rep === settings.reps - 1 && settings.reps > 1){ speak("Last one"); }
+            if(repeaterMode && phase.rep === 0 && phase.set === repeaters.sets - 1 && repeaters.sets > 1){ speak("Last set"); }
+        } else if(phase.kind === "rest"){
+            document.getElementById("first_task").innerText = "Rest, then";
+            document.getElementById("first_rep").innerText = `Rep ${phase.rep + 2} of ${settings.reps}`;
+            background("");
+            ping();
+        } else {
+            document.getElementById("first_task").innerText = "Rest, then";
+            document.getElementById("first_rep").innerText = `Set ${phase.set + 2} of ${repeaters.sets}`;
+            line.innerText = setName(phase.set + 1);
+            background("");
+            ping();
+            if(setName(phase.set + 1)){ speak("Next, " + setName(phase.set + 1)); }
+        }
+        line.hidden = !repeaterMode || line.textContent === "";
     }
-    if(into === settings.work){
-        document.getElementById("first_task").innerText = "Rest, then";
-        document.getElementById("first_rep").innerText = `Set ${index + 2} of ${settings.sets}`;
-        background("");
-        ping();
-    }
-    if(!working && left === Math.min(warningSeconds, settings.rest)){
+    if(phase.kind !== "work" && left === Math.min(warningSeconds, phase.length)){
         background("red");
     }
-    if(!working && left <= warningSeconds){
+    if(phase.kind !== "work" && left <= warningSeconds){
         beep();
     }
 }
@@ -84,45 +151,82 @@ function finish(){
 
 /* ================= Settings ================= */
 
-function loadSettings(){
+function readJson(key){
     try {
-        let saved = JSON.parse(localStorage.getItem(settingsKey)) || {};
-        Object.keys(limits).forEach(name => {
-            let value = saved[name];
-            let limit = limits[name];
-            if(typeof value === "number" && Number.isFinite(value)){ settings[name] = Math.min(limit.max, Math.max(limit.min, Math.round(value))); }
-        });
-        oneSecond = localStorage.getItem(oneSecondKey) === "true";
+        return JSON.parse(localStorage.getItem(key));
     } catch(err){
-        // storage blocked or hand-edited: the classic Tabata will do
+        return null;   // storage blocked or hand-edited: the defaults will do
     }
+}
+
+function store(key, value){
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch(err){
+        // storage blocked: it works, it just won't remember
+    }
+}
+
+function settingValue(value, name, fallback){
+    let limit = limits[name];
+    return typeof value === "number" && Number.isFinite(value) ? Math.min(limit.max, Math.max(limit.min, Math.round(value))) : fallback;
+}
+
+function textValue(value, limit){
+    return typeof value === "string" ? value.slice(0, limit) : "";
+}
+
+function copyRoutine(from){
+    return Object.assign({}, from, { "setNames" : from.setNames.slice() });
+}
+
+// a saved routine or the repeater settings, onto `into`, anything missing or out of range left as it was
+function readRoutine(saved, into){
+    ["work", "rest", "reps", "sets", "setRest"].forEach(name => { into[name] = settingValue(saved[name], name, into[name]); });
+    into.name = textValue(saved.name, nameLimit);
+    into.setNames = Array.isArray(saved.setNames) ? saved.setNames.slice(0, limits.sets.max).map(name => textValue(name, setNameLimit)) : [];
+    return into;
+}
+
+function loadSettings(){
+    let saved = readJson(settingsKey) || {};
+    tabata.work = settingValue(saved.work, "work", tabata.work);
+    tabata.rest = settingValue(saved.rest, "rest", tabata.rest);
+    tabata.reps = settingValue(saved.reps ?? saved.sets, "reps", tabata.reps);
+    readRoutine(readJson(repeatersKey) || {}, repeaters);
+    let savedRoutines = readJson(routinesKey);
+    routines = (Array.isArray(savedRoutines) ? savedRoutines : [])
+        .filter(routine => routine && typeof routine.name === "string" && routine.name.trim() !== "")
+        .map(routine => readRoutine(routine, copyRoutine(repeaterDefaults)));
+    repeaterMode = readJson(repeaterModeKey) === true;
+    oneSecond = readJson(oneSecondKey) === true;
+    document.getElementById("repeaterMode").checked = repeaterMode;
     document.getElementById("oneSecond").checked = oneSecond;
+}
+
+function saveSettings(){
+    repeaterMode ? store(repeatersKey, repeaters) : store(settingsKey, tabata);
 }
 
 function toggleOneSecond(input){
     oneSecond = input.checked;
-    try {
-        localStorage.setItem(oneSecondKey, JSON.stringify(oneSecond));
-    } catch(err){
-        // storage blocked: it works, it just won't remember
-    }
+    store(oneSecondKey, oneSecond);
+}
+
+function toggleRepeaterMode(input){
+    repeaterMode = input.checked;
+    store(repeaterModeKey, repeaterMode);
+    drawSettings();
 }
 
 function stepOf(name){
-    return oneSecond && name !== "sets" ? 1 : limits[name].step;
-}
-
-function saveSettings(){
-    try {
-        localStorage.setItem(settingsKey, JSON.stringify(settings));
-    } catch(err){
-        // storage blocked: it works, it just won't remember
-    }
+    return oneSecond && limits[name].seconds ? 1 : limits[name].step;
 }
 
 // A - or + button: data-setting is which, data-step the direction
 function stepSetting(button){
     let name = button.dataset.setting;
+    let settings = current();
     let limit = limits[name];
     let step = stepOf(name);
     let direction = Number(button.dataset.step);
@@ -133,59 +237,169 @@ function stepSetting(button){
     drawSettings();
 }
 
+function shownValue(name, value){
+    if(name === "setRest" && value >= 60){ return Math.floor(value / 60) + ":" + String(value % 60).padStart(2, "0"); }
+    return limits[name].seconds || name === "setRest" ? value + "s" : String(value);
+}
+
 function drawSettings(){
-    Object.keys(limits).forEach(name => {
-        document.getElementById(name + "Value").innerText = name === "sets" ? settings[name] : settings[name] + "s";
+    let settings = current();
+    document.body.toggleAttribute("data-repeater", repeaterMode);
+    Object.keys(settings).filter(name => limits[name]).forEach(name => {
+        document.getElementById(name + "Value").innerText = shownValue(name, settings[name]);
         document.querySelector(`[data-setting="${name}"][data-step="-1"]`).disabled = settings[name] <= limits[name].min;
         document.querySelector(`[data-setting="${name}"][data-step="1"]`).disabled = settings[name] >= limits[name].max;
     });
+    let field = document.getElementById("routineName");
+    if(field.value !== repeaters.name){ field.value = repeaters.name; }
+    document.getElementById("saveRoutine").disabled = repeaters.name.trim() === "";
+    buildPlan();
     showElapsed(totalSeconds());
     drawTimeline();
 }
 
-/* ================= The session, drawn to scale =================
-   A block a set's work and a line its rest, so 20/10 looks like 20/10. Two
-   copies of it: the faint one is all of it, and the solid one on top is cut
-   off where the session has got to. */
+/* ================= Routines =================
+   The repeater settings saved under a name, listed under the cog. Saving with a
+   name already there puts the new settings in its place. */
 
-// each work and rest in the solid copy, with when it starts and how long it is
-let phases = [];
+function setRoutineName(input){
+    repeaters.name = input.value.slice(0, nameLimit);
+    saveSettings();
+    document.getElementById("saveRoutine").disabled = repeaters.name.trim() === "";
+}
+
+function setSetName(input){
+    let set = Number(input.dataset.set);
+    repeaters.setNames[set] = input.value.slice(0, setNameLimit);
+    saveSettings();
+    input.parentNode.querySelector(".set-label").innerText = setLine(set);
+}
+
+const sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+
+function saveRoutine(){
+    let name = repeaters.name.trim();
+    if(name === ""){ return; }
+    let routine = copyRoutine(repeaters);
+    routine.name = name;
+    routine.setNames = routine.setNames.slice(0, routine.sets);
+    let place = routines.findIndex(each => sameName(each.name, name));
+    place === -1 ? routines.push(routine) : routines.splice(place, 1, routine);
+    routines.sort((a, b) => a.name.localeCompare(b.name));
+    store(routinesKey, routines);
+    drawRoutines();
+    toast(place === -1 ? "Routine saved" : "Routine updated");
+}
+
+// not mid-session: the session is the settings it started with
+function openRoutine(button){
+    if(document.body.dataset.state !== "idle"){
+        toast("Reset the session to open a routine", null, false, true);
+        return;
+    }
+    readRoutine(routines[Number(button.dataset.routine)], repeaters);
+    repeaterMode = true;
+    store(repeaterModeKey, true);
+    document.getElementById("repeaterMode").checked = true;
+    saveSettings();
+    drawSettings();
+    hideSettings();
+}
+
+// The bin asks Sure? with a tick and a cross, as a session in the log does
+function askDeleteRoutine(button){
+    drawRoutines();
+    let row = document.querySelector(`#routineList [data-row="${button.dataset.routine}"]`);
+    row.querySelector(".routine-bin").hidden = true;
+    row.querySelector(".routine-confirm").hidden = false;
+}
+
+function deleteRoutine(button){
+    routines.splice(Number(button.dataset.routine), 1);
+    store(routinesKey, routines);
+    drawRoutines();
+}
+
+function drawRoutines(){
+    document.getElementById("noRoutines").hidden = routines.length > 0;
+    document.getElementById("routineList").innerHTML = routines.map((routine, index) => {
+        let name = escapeHtml(routine.name);
+        return `<li data-row="${index}">
+            <button type="button" class="link-button routine-open" data-action="openRoutine" data-routine="${index}">${name}</button>
+            <span class="routine-detail">${routine.sets} × ${routine.reps} · ${routine.work}s / ${routine.rest}s</span>
+            <button type="button" class="icon-button demo-icon icon-trash routine-bin" data-action="askDeleteRoutine" data-routine="${index}" aria-label="Delete ${name}"></button>
+            <span class="routine-confirm" hidden>Sure?
+                <button type="button" class="icon-button demo-icon icon-ok" data-action="deleteRoutine" data-routine="${index}" aria-label="Confirm delete ${name}"></button>
+                <button type="button" class="icon-button demo-icon icon-cancel" data-action="drawRoutines" aria-label="Cancel delete"></button>
+            </span>
+        </li>`;
+    }).join("");
+}
+
+/* ================= The session, drawn to scale =================
+   A track a set: a block a rep's work and a line its rest, so 20/10 looks like
+   20/10. Two copies of each: the faint one is all of it, and the solid one on
+   top is cut off where the session has got to. In repeater mode each set's
+   track has its name over it, typed in before the start. */
 
 function drawTimeline(){
     let html = "";
-    for(let set = 0; set < settings.sets; set++){
-        html += `<i class="work" style="flex-grow: ${settings.work}"></i>`;
-        // no rest after the last set; none at all still leaves a gap between sets
-        if(set < settings.sets - 1){ html += `<i class="${settings.rest > 0 ? "rest" : "gap"}" style="flex-grow: ${settings.rest}"></i>`; }
+    for(let set = 0; set < setsOf(); set++){
+        let blocks = plan.filter(phase => phase.set === set && phase.kind !== "setRest").map(phase => phase.kind === "work"
+            ? `<i class="work" style="flex-grow: ${phase.length}"></i>`
+            // no rest still leaves a gap between reps
+            : `<i class="${phase.length > 0 ? "rest" : "gap"}" style="flex-grow: ${phase.length}"></i>`).join("");
+        let label = repeaterMode ? `<input type="text" class="field set-name-field" data-input="setSetName" data-set="${set}"
+                maxlength="${setNameLimit}" placeholder="Set ${set + 1}" aria-label="Name of set ${set + 1}" value="${escapeHtml(setName(set))}" />
+            <p class="set-label">${escapeHtml(setLine(set))}</p>` : "";
+        html += `<div class="set-track" data-set="${set}">${label}
+            <div class="tracks"><div class="track todo">${blocks}</div><div class="track done">${blocks}</div></div>
+        </div>`;
     }
-    document.getElementById("todo").innerHTML = html;
-    document.getElementById("done").innerHTML = html;
-    let start = 0;
-    phases = [...document.querySelectorAll("#done i")].map((element, index) => {
-        let length = index % 2 === 0 ? settings.work : settings.rest;
-        start += length;
-        return { "element" : element, "start" : start - length, "length" : length };
-    });
-    document.getElementById("timeline").setAttribute("aria-valuemax", totalSeconds());
+    let timeline = document.getElementById("timeline");
+    timeline.innerHTML = html;
+    // each block in the solid copies, by the phase it draws
+    let drawn = plan.filter(phase => phase.kind !== "setRest");
+    [...timeline.querySelectorAll(".done i")].forEach((element, index) => { drawn[index].element = element; });
+    timeline.setAttribute("aria-valuemax", totalSeconds());
     showProgress(0);
 }
 
 // From the blocks as drawn rather than the seconds, as each gap has a width of its own
 function showProgress(seconds){
     let timeline = document.getElementById("timeline");
-    let phase = phases.find(each => seconds < each.start + each.length) || phases[phases.length - 1];
-    let into = Math.min(1, (seconds - phase.start) / (phase.length || 1));
-    let edge = phase.element.offsetLeft + phase.element.offsetWidth * into;
-    let percent = timeline.offsetWidth ? 100 - edge / timeline.offsetWidth * 100 : 100;
-    document.getElementById("done").style.clipPath = `inset(0 ${percent}% 0 0)`;
+    let settings = current();
+    timeline.querySelectorAll(".set-track").forEach(track => {
+        let set = Number(track.dataset.set);
+        let drawn = plan.filter(phase => phase.set === set && phase.element);
+        let last = drawn[drawn.length - 1];
+        let done = track.querySelector(".done");
+        let percent;
+        if(seconds >= last.start + last.length){
+            percent = 0;
+        } else if(seconds <= drawn[0].start){
+            percent = 100;
+        } else {
+            let phase = drawn.find(each => seconds < each.start + each.length);
+            let into = Math.min(1, (seconds - phase.start) / (phase.length || 1));
+            let edge = phase.element.offsetLeft + phase.element.offsetWidth * into;
+            percent = done.offsetWidth ? 100 - edge / done.offsetWidth * 100 : 100;
+        }
+        done.style.clipPath = `inset(0 ${percent}% 0 0)`;
+    });
+    let phase = plan.find(each => seconds < each.start + each.length) || plan[plan.length - 1];
+    timeline.querySelectorAll(".set-track").forEach(track => track.classList.toggle("current", countedIn && Number(track.dataset.set) === phase.set));
     timeline.setAttribute("aria-valuenow", seconds);
     // countedIn is common/workout.js's: whether the session has begun
-    timeline.setAttribute("aria-valuetext", !countedIn ? plural(settings.sets, "set")
-        : `Set ${Math.min(settings.sets, Math.floor(seconds / setSeconds()) + 1)} of ${settings.sets}`);
+    let rep = `Rep ${Math.min(settings.reps, phase.rep + 1)} of ${settings.reps}`;
+    timeline.setAttribute("aria-valuetext", !countedIn
+        ? (repeaterMode ? `${plural(repeaters.sets, "set")} of ${plural(repeaters.reps, "rep")}` : plural(tabata.reps, "rep"))
+        : (repeaterMode ? `Set ${phase.set + 1} of ${repeaters.sets}, ${rep.toLowerCase()}` : rep));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     loadSettings();
     drawSettings();
+    drawRoutines();
     drawSessionLog(app.logView);
 });

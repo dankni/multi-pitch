@@ -1,6 +1,18 @@
-/* The settings are only for before you start: once it runs, the sets take over */
+/* The settings are only for before you start: once it runs, the reps take over */
 body:not([data-state="idle"]) #setup {
     display: none;
+}
+/* body[data-repeater] in repeater mode: sets, the rest between them, routines */
+body:not([data-repeater]) .repeater-only {
+    display: none;
+}
+.routine-save {
+    width: 100%;
+    margin: 12px 0 4px;
+}
+.routine-save .field {
+    flex: 1;
+    min-width: 0;
 }
 .setting {
     display: flex;
@@ -52,19 +64,56 @@ body:not([data-state="idle"]) #setup {
     opacity: 0.35;
 }
 
-/* Work or rest, then the set: the rest is common/workout.css */
+/* Work or rest, then the rep: the rest is common/workout.css */
 #first .task {
     margin-bottom: 4px;
 }
+/* repeater mode: the set and its name, under the rep */
+.set-line {
+    margin: -12px 20px 20px;
+    font-size: 18px;
+    text-align: left;
+    color: var(--strong);
+}
 
-/* The session to scale: a block a set's work, a line its rest. In the text
-   colour, so it reads on the green and the red as well as the page */
+/* The session to scale: a track a set, a block a rep's work, a line its rest. In
+   the text colour, so it reads on the green and the red as well as the page */
 .timeline {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     width: 90%;
     max-width: var(--column);
-    height: 28px;
     margin: 24px auto;
+}
+.tracks {
+    position: relative;
+    height: 28px;
+}
+[data-repeater] .tracks {
+    height: 20px;
+}
+/* a set's name: typed in before the start, then a label, bold for the set you're on */
+.set-name-field {
+    display: block;
+    width: 100%;
+    height: 32px;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+.set-label {
+    margin: 0 0 4px;
+    font-size: 14px;
+    text-align: left;
+    opacity: 0.7;
+}
+.set-track.current .set-label {
+    font-weight: bold;
+    opacity: 1;
+}
+body:not([data-state="idle"]) .set-name-field,
+[data-state="idle"] .set-label {
+    display: none;
 }
 .track {
     position: absolute;
@@ -86,14 +135,40 @@ body:not([data-state="idle"]) #setup {
     min-width: 2px;
     background: currentColor;
 }
-/* no rest: still a gap between sets, so 50 of them aren't one bar */
+/* no rest: still a gap between reps, so 50 of them aren't one bar */
 .gap {
     min-width: 2px;
 }
 /* all of it, faint; then what's done, solid, cut off at where you are */
-#todo {
+.todo {
     opacity: 0.25;
 }
-#done {
+.done {
     clip-path: inset(0 100% 0 0);
+}
+
+/* The routines under the cog: a link to open one, and a bin */
+.routine-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.routine-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-bottom: 6px;
+}
+.routine-open, .routine-open:hover, .routine-open:focus {
+    color: #FFF;   /* as .overlay a */
+    font-size: 18px;
+}
+.routine-detail {
+    font-size: 13px;
+    opacity: 0.8;
+}
+.routine-confirm {
+    white-space: nowrap;
 }
