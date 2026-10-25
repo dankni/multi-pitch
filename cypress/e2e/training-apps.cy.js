@@ -45,6 +45,17 @@ describe('Training apps', function () {
     describe('Lap timer', function () {
         const timerUrl = appUrl + '/training/timer/';
 
+        it('shows the recent laps, with the grade when there is one', () => {
+            cy.visit(timerUrl, { onBeforeLoad: (win) => win.localStorage.setItem('lapTimerGrade', 'V4') });
+            cy.get('.recent-logs').should('not.be.visible');
+            cy.get('#primaryButton').click();
+            cy.tick(10000);
+            cy.get('#lapButton').click();
+            cy.tick(5000);
+            cy.contains('summary', 'Show recent logs').click();
+            cy.get('#recentLogs li').should('have.length', 1).and('have.text', 'V4 lap 1 tapped 5 secs ago');
+        });
+
         // Start the clock and put `laps` laps on it, one every ten seconds
         function runSession(laps) {
             cy.get('#primaryButton').click();
@@ -710,6 +721,25 @@ describe('Training apps', function () {
             cy.get('#reset').click();
             cy.get('#setup').should('be.visible');
             cy.get('#elapsed').should('have.text', '02:50');
+        });
+
+        it('tabata steps work and rest by a second with Use 1 second increments on, and back onto the fives off', () => {
+            visitWorkout('/training/tabata/');
+            cy.get('#oneSecond').should('not.be.checked').check({ force: true });
+            cy.get('[data-setting="work"][data-step="1"]').click();
+            cy.get('#workValue').should('have.text', '21s');
+            tap(...times(3, '[data-setting="rest"][data-step="-1"]'));
+            cy.get('#restValue').should('have.text', '7s');
+            tap(...times(2, '[data-setting="sets"][data-step="1"]'));
+            cy.get('#setsValue').should('have.text', '10');   // sets go by one either way
+            visitWorkout('/training/tabata/');
+            cy.get('#oneSecond').should('be.checked');
+            cy.get('#workValue').should('have.text', '21s');
+            cy.get('#oneSecond').uncheck({ force: true });
+            cy.get('[data-setting="work"][data-step="1"]').click();
+            cy.get('#workValue').should('have.text', '25s');
+            cy.get('[data-setting="rest"][data-step="-1"]').click();
+            cy.get('#restValue').should('have.text', '5s');
         });
     });
 
@@ -1632,6 +1662,31 @@ describe('Training apps', function () {
             cy.get('#row-V3 .grade-count').should('have.text', '2');
         });
 
+        it('shows the last three taps and how long ago behind Show recent logs', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#recentDetails').should('not.have.attr', 'open');
+            cy.contains('summary', 'Show recent logs').click();
+            cy.get('#recentLogs li').should('have.length', 1).and('have.text', 'Nothing logged yet');
+            cy.get('#row-V1 .grade-add').click();
+            cy.tick(1000);
+            cy.get('#row-V2 .grade-add').click();
+            cy.get('#row-V3 .grade-add').click();
+            cy.tick(26000);
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('#row-V3 .grade-minus').click();
+            cy.tick(1000);
+            cy.get('#recentLogs li').should('have.length', 3);
+            cy.get('#recentLogs li').eq(0).should('have.text', 'V3 taken back 1 sec ago');
+            cy.get('#recentLogs li').eq(1).should('have.text', 'V3 tapped 1 sec ago');
+            cy.get('#recentLogs li').eq(2).should('have.text', 'V3 tapped 27 secs ago');
+            cy.contains('summary', 'Hide recent logs').click();
+            cy.get('#recentDetails').should('not.have.attr', 'open');
+            cy.reload();   // kept with the session
+            cy.contains('summary', 'Show recent logs').click();
+            cy.get('#recentLogs li').eq(0).should('contain', 'V3 taken back');
+        });
+
         it('flashes a grade green for a moment when it is tapped, with a buzz', () => {
             cy.visit(boulderUrl, { onBeforeLoad: win => cy.stub(win.navigator, 'vibrate').as('vibrate') });
             cy.get('#primaryButton').click();
@@ -1877,7 +1932,15 @@ describe('Training apps', function () {
             cy.get('#sessionComment').should('be.visible').type('Crimpy.');
             cy.reload();
             cy.get('#sessionComment').should('have.value', 'Crimpy.');
-            cy.get('#commentCount').should('have.text', '7');
+            cy.get('#commentCountLine').should('not.be.visible');
+            cy.get('#sessionComment').clear().invoke('val', 'a'.repeat(249)).trigger('input');
+            cy.get('#commentCountLine').should('not.be.visible');
+            cy.get('#sessionComment').invoke('val', 'a'.repeat(250)).trigger('input');
+            cy.get('#commentCountLine').should('be.visible').and('have.text', '250/300').and('not.have.class', 'full');
+            cy.get('#sessionComment').invoke('val', 'a'.repeat(300)).trigger('input');
+            cy.get('#commentCountLine').should('have.text', '300/300').and('have.class', 'full');
+            cy.get('#sessionComment').clear().type('Crimpy.');
+            cy.get('#commentCountLine').should('not.be.visible');
             cy.get('#row-V2 .grade-add').click();
             cy.get('#finishButton').click();
             cy.get('#star3').click();
@@ -2082,6 +2145,19 @@ describe('Training apps', function () {
             cy.get('#row-HS .grade-count').should('have.text', '2');
             cy.get('#row-HS .grade-minus').click();
             cy.get('#climbCount').should('have.text', '2');
+        });
+
+        it('shows recent taps by the grade system on show', () => {
+            cy.visit(tradUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-HS .grade-add').click();
+            cy.tick(90000);
+            cy.contains('summary', 'Show recent logs').click();
+            cy.get('#recentLogs li').should('have.length', 1).and('have.text', 'HS tapped 1 min 30 secs ago');
+            cy.tick(30000);
+            cy.get('#recentLogs li').should('have.text', 'HS tapped 2 mins ago');   // no 0 secs
+            cy.tick(3600000 + 5 * 60000);
+            cy.get('#recentLogs li').should('have.text', 'HS tapped 1 hour 7 mins ago');
         });
 
         it('shows the grades in UIAA when asked', () => {
@@ -2410,13 +2486,13 @@ describe('Training apps', function () {
                 noHangsLog: [{ id: 6, date: '2026-09-01', rating: 0 }],   // saved before it kept time: the whole 9:40
                 tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }]                    // from before it was timed
             });
-            // 45 + 30 + 15 + 9.5 + 9 2/3 minutes
-            cy.get('#sessionsStats').should('have.text', '7 sessions · 6 this month, 1h 49m trained · across 6 apps');
+            // 45 + 30 + 15 + 9.5 + 9 2/3 minutes; a boulder, 3 laps and a trad climb
+            cy.get('#sessionsStats').should('have.text', 'This month · 6 sessions · 1h 49m trained · 5 climbs done');
         });
 
         it('says nothing of time trained when no session this month kept any', () => {
             visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
-            cy.get('#sessionsStats').should('have.text', '1 session · 1 this month · across 1 app');
+            cy.get('#sessionsStats').should('have.text', 'This month · 1 session · 1 climb done');
         });
 
         it('saves how long a No Hangs session ran', () => {

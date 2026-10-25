@@ -4,6 +4,7 @@
 
 const app = { "logKey" : "tabataLog" };
 const settingsKey = "tabataSettings";
+const oneSecondKey = "tabataOneSecond";
 
 // what each setting can be, and how far a tap of - or + moves it
 const limits = {
@@ -13,6 +14,7 @@ const limits = {
 };
 // the classic Tabata: 20 seconds on, 10 off, eight times
 const settings = { "work" : 20, "rest" : 10, "sets" : 8 };
+let oneSecond = false;   // the Use 1 second increments setting: work and rest step by 1, not 5
 const warningSeconds = 3;   // the rest goes red, a beep a second, this long before the next set
 
 const setSeconds = () => settings.work + settings.rest;
@@ -88,12 +90,26 @@ function loadSettings(){
         Object.keys(limits).forEach(name => {
             let value = saved[name];
             let limit = limits[name];
-            // onto the steppers' grid, so a hand-edited 7 doesn't step 12, 17...
-            if(typeof value === "number" && Number.isFinite(value)){ settings[name] = Math.min(limit.max, Math.max(limit.min, Math.round(value / limit.step) * limit.step)); }
+            if(typeof value === "number" && Number.isFinite(value)){ settings[name] = Math.min(limit.max, Math.max(limit.min, Math.round(value))); }
         });
+        oneSecond = localStorage.getItem(oneSecondKey) === "true";
     } catch(err){
         // storage blocked or hand-edited: the classic Tabata will do
     }
+    document.getElementById("oneSecond").checked = oneSecond;
+}
+
+function toggleOneSecond(input){
+    oneSecond = input.checked;
+    try {
+        localStorage.setItem(oneSecondKey, JSON.stringify(oneSecond));
+    } catch(err){
+        // storage blocked: it works, it just won't remember
+    }
+}
+
+function stepOf(name){
+    return oneSecond && name !== "sets" ? 1 : limits[name].step;
 }
 
 function saveSettings(){
@@ -108,7 +124,11 @@ function saveSettings(){
 function stepSetting(button){
     let name = button.dataset.setting;
     let limit = limits[name];
-    settings[name] = Math.min(limit.max, Math.max(limit.min, settings[name] + Number(button.dataset.step) * limit.step));
+    let step = stepOf(name);
+    let direction = Number(button.dataset.step);
+    // off the grid after 1 second steps, a 17 goes to 20 or 15, not 22 or 12
+    let onGrid = direction > 0 ? Math.floor(settings[name] / step) * step : Math.ceil(settings[name] / step) * step;
+    settings[name] = Math.min(limit.max, Math.max(limit.min, onGrid + direction * step));
     saveSettings();
     drawSettings();
 }

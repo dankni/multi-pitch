@@ -51,6 +51,12 @@ function mainGrade(grade){
     return grade[app.systems[gradeSystem].main];
 }
 
+// a grade as its tile shows it
+function shownName(name){
+    let grade = gradeOf(name);
+    return grade ? mainGrade(grade) : name;
+}
+
 function otherGrades(grade){
     return app.systems[gradeSystem].also.map(system => grade[system]).join(" · ");
 }
@@ -116,6 +122,7 @@ function drawLadder(){
     if(tab !== null){ tab.checked = true; }
     drawGrades();
     updateSummary();
+    drawRecent();
 }
 
 /* Tapping */
@@ -135,6 +142,7 @@ function addClimb(button){
     if(session === null || ladder === undefined){ return; }
     let earlier = climbsOn(ladder).slice();
     climbsOn(ladder).push(name);
+    noteRecent(shownName(name) + " tapped");
     keepSession();
     drawGradeRow(name);
     // the redrawn tile, found by id: as a selector the + in 5+ or 6a+ is CSS
@@ -153,6 +161,7 @@ function removeClimb(button){
     let position = list.lastIndexOf(name);
     if(position === -1){ return; }
     list.splice(position, 1);
+    noteRecent(shownName(name) + " taken back");
     keepSession();
     drawGradeRow(name);
     updateSummary();

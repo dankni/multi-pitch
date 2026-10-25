@@ -95,6 +95,7 @@ function stopTicking(){
 function recordLap(){
     if(!isRunning()){ return; }
     session.laps = session.laps + 1;
+    noteRecent((session.grade ? session.grade + " lap " : "Lap ") + session.laps + " tapped");
     keepSession();
     flash(document.getElementById("lapButton"));
     drawAll();
@@ -208,6 +209,7 @@ function drawAll(){
     // LAP greys out while paused rather than going, or FINISH would slide into its place
     document.getElementById("lapButton").disabled = !running;
     document.getElementById("finishButton").disabled = saving;
+    drawRecent();
 }
 
 // Space to lap and Escape to pause, when no button or field has the key

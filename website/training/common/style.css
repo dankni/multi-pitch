@@ -871,6 +871,11 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     font-size: 12px;
     opacity: 0.7;
 }
+.comment-count.full {
+    color: var(--band-hard);
+    font-weight: bold;
+    opacity: 1;
+}
 
 /* ================= The activity log =================
    drawSessionLog() in functions.js draws every app's into #log, in the info panel */
@@ -1040,6 +1045,40 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 .route.ticked .tick {
     opacity: 1;
+}
+
+/* ================= Recent logs =================
+   A session's last few taps behind a line to tap - drawRecent() in functions.js */
+.recent-logs {
+    max-width: var(--column);
+    margin: 8px auto 0;
+    font-size: 14px;
+    text-align: center;
+}
+.recent-logs summary {
+    display: inline-block;
+    padding: 6px 10px;
+    color: var(--link);
+    text-decoration: underline;
+    cursor: pointer;
+}
+.recent-logs summary::-webkit-details-marker {
+    display: none;
+}
+.recent-logs ol {
+    margin: 2px 0 0;
+    padding: 0;
+    list-style: none;
+}
+.recent-logs li {
+    padding: 2px 0;
+}
+.recent-ago {
+    opacity: 0.7;
+}
+[data-state="idle"] .recent-logs,
+[data-missing] .recent-logs {
+    display: none;
 }
 
 /* ================= Fields ================= */

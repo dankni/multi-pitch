@@ -73,17 +73,19 @@
 
     const apps = [
         { "key" : "boulderLog", "name" : "Gym Session", "href" : "/training/boulder/",
-          "line" : gymSession },
+          "line" : gymSession, "climbs" : entry => list(entry.climbs).length + list(entry.sport).length },
         { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/",
-          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }) },
+          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }),
+          "climbs" : entry => list(entry.climbs).length },
         { "key" : "enduranceLog", "name" : "Endurance", "href" : "/training/endurance/",
           "line" : entry => ({ "title" : (styleNames[entry.style] || entry.style || "Endurance")
                                    + (entry.maxGrade ? " off " + entry.maxGrade : ""),
-                               "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }) },
+                               "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }),
+          "climbs" : entry => count(entry.climbs) },
         { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/",
           "line" : entry => ({ "title" : plural(count(entry.laps), "lap") + (typeof entry.grade === "string" && entry.grade ? " of " + entry.grade : ""),
                                "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }),
-          "minutes" : entry => count(entry.total) / 60000 },
+          "minutes" : entry => count(entry.total) / 60000, "climbs" : entry => count(entry.laps) },
         { "key" : "loftLog", "name" : "Twister", "href" : "/training/loft/",
           "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
                                "detail" : formatClock(count(entry.seconds)) + " on the clock" }),
@@ -92,7 +94,7 @@
           "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 10 * 60) },
         { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
-          "line" : tradSession },
+          "line" : tradSession, "climbs" : entry => list(ukc.session(entry).climbs).length },
         { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
@@ -134,6 +136,7 @@
                 "comment" : described.comment ?? (typeof entry.comment === "string" ? entry.comment : ""),
                 "rating" : count(entry.rating) || count(entry.score),
                 "minutes" : minutesOf(app, entry),
+                "climbs" : app.climbs ? app.climbs(entry) : 0,
                 "unrated" : described.unrated === true,
                 "tindeq" : described.tindeq === true,
                 "title" : described.title,
@@ -162,6 +165,7 @@
                 "id" : 0,
                 "app" : ukcApp,
                 "readOnly" : true,
+                "climbs" : climbs.length,
                 "comment" : named && hardest.notes ? hardest.name + ": " + hardest.notes : "",
                 "rating" : 0,
                 "title" : ukc.summary(climbs),
@@ -213,10 +217,9 @@
     let monthsSessions = sessions.filter(session => session.date.slice(0, 7) === month);
     // time trained this month, from the apps that keep it - nothing said with none
     let trained = sessionLength({ "minutes" : Math.round(monthsSessions.reduce((total, session) => total + (session.minutes || 0), 0)) });
-    let used = new Set(sessions.map(session => session.app.name)).size;
-    document.getElementById("sessionsStats").innerText =
-        plural(sessions.length, "session") + " · " + monthsSessions.length + " this month"
-        + (trained ? ", " + trained + " trained" : "") + " · across " + plural(used, "app");
+    let climbed = monthsSessions.reduce((total, session) => total + (session.climbs || 0), 0);
+    document.getElementById("sessionsStats").innerText = ["This month", plural(monthsSessions.length, "session"),
+        trained ? trained + " trained" : "", plural(climbed, "climb") + " done"].filter(part => part !== "").join(" · ");
 
     if(sessions.length > shown.length){
         document.getElementById("sessionsFoot").innerHTML = "The last " + shown.length + " of " + sessions.length

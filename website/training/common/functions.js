@@ -314,6 +314,45 @@ function escapeHtml(text){
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+/* ================= Recent logs =================
+   A session's last few taps and how long ago, behind "Show recent logs": the gym
+   session, Outside and the lap timer. Kept on the session, never saved. */
+const recentShown = 3;
+let recentTicker = null;
+
+// before the caller's keepSession()
+function noteRecent(text){
+    if(session === null){ return; }
+    session.recent = [{ "text" : text, "at" : Date.now() }, ...(Array.isArray(session.recent) ? session.recent : [])].slice(0, recentShown);
+    drawRecent();
+}
+
+function timeAgo(at){
+    let seconds = Math.max(0, Math.round((Date.now() - at) / 1000));
+    if(seconds === 0){ return "just now"; }
+    if(seconds < 60){ return plural(seconds, "sec") + " ago"; }
+    // the smaller part left out at 0: "2 mins", not "2 mins 0 secs"
+    let both = (big, bigNoun, small, smallNoun) => plural(big, bigNoun) + (small > 0 ? " " + plural(small, smallNoun) : "") + " ago";
+    let minutes = Math.floor(seconds / 60);
+    return minutes < 60 ? both(minutes, "min", seconds % 60, "sec") : both(Math.floor(minutes / 60), "hour", minutes % 60, "min");
+}
+
+function drawRecent(){
+    let list = document.getElementById("recentLogs");
+    if(list === null){ return; }
+    let recent = session !== null && Array.isArray(session.recent) ? session.recent : [];
+    list.innerHTML = recent.length === 0 ? "<li>Nothing logged yet</li>"
+        : recent.map(item => `<li>${escapeHtml(item.text)} <span class="recent-ago">${timeAgo(item.at)}</span></li>`).join("");
+}
+
+// the "ago"s count on only while it is open
+function toggleRecent(details){
+    details.querySelector("summary").innerText = details.open ? "Hide recent logs" : "Show recent logs";
+    clearInterval(recentTicker);
+    recentTicker = details.open ? setInterval(drawRecent, 1000) : null;
+    drawRecent();
+}
+
 /* ================= The save panel =================
    An app writes <div id="endingDiv" class="ending"></div> and this fills it with
    the stars, a title, the note and the save button, which calls the app's
@@ -322,6 +361,7 @@ let sessionRating = 0;
 let sessionComment = "";
 let sessionTitle = "";
 const commentLimit = 300;
+const commentCountFrom = 250;   // the count shows from here, red at the limit
 const titleLimit = 24;   // fits under the app's name in a log row
 
 function setStar(value){
@@ -352,7 +392,7 @@ function drawSavePanel(){
             placeholder="Give it a title (optional)" aria-label="A title for this session" />
         <textarea id="sessionComment" class="comment-field" rows="2" maxlength="${commentLimit}" data-input="updateComment"
             placeholder="Anything worth remembering?" aria-label="A note about this session"></textarea>
-        <p class="comment-count"><span id="commentCount">0</span>/${commentLimit}</p>
+        <p class="comment-count" id="commentCountLine" hidden><span id="commentCount">0</span>/${commentLimit}</p>
         <button id="saveSession" class="save-session-button" data-action="saveSession">SAVE SESSION</button>`;
 }
 
@@ -367,6 +407,9 @@ function setSessionComment(text){
     if(field === null){ return; }
     if(field.value !== sessionComment){ field.value = sessionComment; }
     document.getElementById("commentCount").innerText = sessionComment.length;
+    let line = document.getElementById("commentCountLine");
+    line.hidden = sessionComment.length < commentCountFrom;
+    line.classList.toggle("full", sessionComment.length >= commentLimit);
 }
 
 function updateTitle(field){
@@ -898,6 +941,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadVoiceOffSetting();
     loadSoundSetting();
     loadVibrateOffSetting();
+    let recentDetails = document.getElementById("recentDetails");
+    if(recentDetails !== null){ recentDetails.addEventListener("toggle", () => toggleRecent(recentDetails)); }
     showDarkModeSetting(prefersDark());
     showCogHint();
     registerServiceWorker();
