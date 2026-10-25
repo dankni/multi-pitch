@@ -654,6 +654,63 @@ describe('Training apps', function () {
             cy.get('#elapsed').should('have.text', '09:40');
             cy.get('#hangs tr.done, #hangs .pip.done').should('not.exist');
         });
+
+        it('tabata remembers its settings, works, rests, and finishes on the last set', () => {
+            visitWorkout('/training/tabata/');
+            // the classic: 8 sets of 20 on, 10 off, less the rest after the last
+            cy.get('#elapsed').should('have.text', '03:50');
+            cy.get('#todo .work').should('have.length', 8);   // a block a set's work, a line its rest
+            cy.get('#todo .rest').should('have.length', 7);
+            tap(...times(2, '[data-setting="sets"][data-step="-1"]'));
+            cy.get('#setsValue').should('have.text', '6');
+            cy.get('#elapsed').should('have.text', '02:50');
+            cy.get('#todo .work').should('have.length', 6);
+            tap(...times(2, '[data-setting="rest"][data-step="-1"]'));
+            cy.get('[data-setting="rest"][data-step="-1"]').should('be.disabled');   // no rest at all is the least
+            cy.get('#todo .rest').should('not.exist');
+            cy.get('#todo .gap').should('have.length', 5);   // still apart, with nothing between them
+            tap(...times(2, '[data-setting="rest"][data-step="1"]'));
+            cy.window().its('localStorage').invoke('getItem', 'tabataSettings').then((saved) => {
+                expect(JSON.parse(saved)).to.deep.equal({ work: 20, rest: 10, sets: 6 });
+            });
+            visitWorkout('/training/tabata/');   // a fresh visit, the stubs and all
+            cy.get('#setsValue').should('have.text', '6');
+            cy.get('#elapsed').should('have.text', '02:50');
+
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('#setup').should('not.be.visible');
+            cy.get('#first_task').should('have.text', 'Work');
+            cy.get('#first_rep').should('have.text', 'Set 1 of 6');
+            cy.get('body').should('have.class', 'green');
+            cy.get('#timeline').should('have.attr', 'aria-valuetext', 'Set 1 of 6');
+            cy.tick(20000);
+            cy.get('#first_task').should('have.text', 'Rest, then');
+            cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+            cy.get('body').should('not.have.class', 'green');
+            cy.get('#timeline').should('have.attr', 'aria-valuenow', '20');
+            cy.tick(7000);
+            cy.get('body').should('have.class', 'red');
+            cy.tick(3000);
+            cy.get('body').should('have.class', 'green');
+            cy.get('#first_rep').should('have.text', 'Set 2 of 6');
+            cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // work, rest, three beeps, work
+
+            cy.tick(140000);
+            cy.get('#elapsed').should('have.text', '00:00');
+            cy.get('#endingDiv').should('be.visible');
+            cy.get('#timeline').should('have.attr', 'aria-valuenow', '170');
+            cy.get('#done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
+            cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
+            cy.get('#saveSession').click();
+            cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
+                expect(JSON.parse(log)).to.have.length(1);
+                expect(JSON.parse(log)[0]).to.include({ work: 20, rest: 10, sets: 6 });
+            });
+            cy.get('#reset').click();
+            cy.get('#setup').should('be.visible');
+            cy.get('#elapsed').should('have.text', '02:50');
+        });
     });
 
     /* Tindeq Arcade. Math.random() at 0 makes every wall a 3 second one, 9 m high at 3 m/s, so
@@ -2138,7 +2195,7 @@ describe('Training apps', function () {
 
     describe('One app', function () {
         const pages = ['/training/', '/training/progress/', '/training/rings/', '/training/timer/',
-            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/', '/training/gaps/'];
+            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/', '/training/tabata/', '/training/gaps/'];
 
         it('installs as a single app covering every page', () => {
             cy.request(appUrl + '/training/manifest.json').its('body').should((manifest) => {
@@ -2566,13 +2623,15 @@ describe('Training apps', function () {
         });
 
         describe('Backup', function () {
-            function visitSeeded() {
+            // extra seeds more for a test of its own
+            function visitSeeded(extra) {
                 cy.visit(progressUrl, {
                     onBeforeLoad(win) {
                         win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]));
                         win.localStorage.setItem('boulderGradeSystem', 'font');
                         win.localStorage.setItem('boulderCurrent', JSON.stringify({ id: 9, date: '2026-09-13', climbs: [] }));
                         win.localStorage.setItem('ukcLogbook', JSON.stringify({ imported: '2026-09-01', climbs: [] }));
+                        if (extra) { extra(win); }
                     }
                 });
             }
@@ -2584,7 +2643,10 @@ describe('Training apps', function () {
             }
 
             it('saves every log and setting, without UKC or a session in progress', () => {
-                visitSeeded();
+                visitSeeded((win) => {
+                    win.localStorage.setItem('tabataLog', JSON.stringify([{ id: 2, date: '2026-09-11', work: 20, rest: 10, sets: 8 }]));
+                    win.localStorage.setItem('tabataSettings', JSON.stringify({ work: 30, rest: 15, sets: 6 }));
+                });
                 cy.get('nav .icon-info').click();
                 cy.get('#about').should('be.visible');
                 cy.contains('#about button', 'SAVE').click();
@@ -2592,6 +2654,8 @@ describe('Training apps', function () {
                     expect(backup.backup).to.equal('multi-pitch training apps');
                     expect(backup.logs.boulderLog).to.deep.equal([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]);
                     expect(backup.settings.boulderGradeSystem).to.equal('font');
+                    expect(backup.logs.tabataLog).to.have.length(1);
+                    expect(JSON.parse(backup.settings.tabataSettings)).to.deep.equal({ work: 30, rest: 15, sets: 6 });
                     expect(backup.logs).not.to.have.property('ukcLogbook');
                     expect(JSON.stringify(backup)).not.to.contain('ukcLogbook').and.not.to.contain('boulderCurrent');
                 });

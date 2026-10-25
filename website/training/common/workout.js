@@ -1,4 +1,4 @@
-/* A workout that runs to a clock once counted in: rock rings and no hangs.
+/* A workout that runs to a clock once counted in: rock rings, no hangs and tabata.
 
    The app gives `app`:
      clock    : a secondsClock()

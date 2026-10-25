@@ -3,24 +3,6 @@
     font-size: 24px;
     margin-bottom: 4px;
 }
-.now {
-    flex: 70%;
-}
-/* The rep is what you glance at mid-hang, so it's nearly the size of the count */
-.rep {
-    margin: 0 20px 20px;
-    font-size: 36px;
-    line-height: 1.1;
-    font-weight: bold;
-    text-align: left;
-    color: var(--strong);
-    font-variant-numeric: tabular-nums;
-}
-@media (max-width: 380px) {
-    .rep {
-        font-size: 28px;
-    }
-}
 
 /* Every grip, a dot a rep: the one you're on stands out, and the ones done fade */
 .hangs {
@@ -66,16 +48,6 @@
     --hang: light-dark(var(--confirm), #4cd964);
     border-color: var(--hang);
     background: var(--hang);
-}
-/* The seconds left of the hang or the rest, beside it; the rest is common/workout.css */
-.count {
-    margin: 20px 20px 20px 0;
-    flex: none;
-    font-size: 56px;
-    line-height: 1;
-    align-self: center;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
 }
 /* The example photos, each already cut to a circle: four across, or two by two on a phone */
 .grips {

@@ -96,6 +96,9 @@
         { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/",
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
+        { "key" : "tabataLog", "name" : "Tabata", "href" : "/training/tabata/",
+          "line" : entry => ({ "title" : plural(count(entry.sets), "set"), "detail" : `${count(entry.work)}s on, ${count(entry.rest)}s off` }),
+          "minutes" : entry => ranFor(entry, count(entry.sets) * (count(entry.work) + count(entry.rest)) - count(entry.rest)) },
         // a run on the screen is a game, not training
         { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/",
           "line" : gapsSession, "keep" : entry => entry.input === "tindeq", "minutes" : entry => count(entry.time) / 60 }

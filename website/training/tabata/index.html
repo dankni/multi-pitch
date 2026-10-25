@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="A Tabata interval timer for climbing training. Set the work, the rest and the number of sets, and it counts you through them and remembers your settings.">
+	<link rel="manifest" href="/training/manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Training">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
+	<link href="/training/common/fontello.css" rel="stylesheet" />
+	<link href="/training/common/style.css" rel="stylesheet" />
+	<link href="/training/common/workout.css" rel="stylesheet" />
+	<link href="/training/tabata/style.css" rel="stylesheet" />
+	<script src="/training/common/functions.js" ></script>
+	<script src="/training/common/bottom-nav.js" defer></script>
+	<script src="/training/common/workout.js" ></script>
+	<script src="/training/tabata/main.js" ></script>
+    <title>Tabata Timer</title>
+  </head>
+
+  <body data-state="idle">
+	<nav>
+		<div class="left-nav">
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
+		</div>
+		<h1>Tabata</h1>
+		<div class="right-nav">
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
+			<button type="button" id="sound" class="icon-button demo-icon icon-volume-high" data-action="toggleSound" aria-label="Toggle sound"></button>
+		</div>
+	</nav>
+	<button id="primaryButton" data-action="toggleSession"><i class="demo-icon icon-play"></i>START SESSION</button>
+	<button class="secondary" id="reset" data-action="reset"><i class="demo-icon icon-ccw"></i>RESET</button>
+	<div id="data">
+		<h3 id="elapsed">03:50</h3>
+	</div>
+	<!-- remembered in localStorage, so the next session starts where this one was set -->
+	<div id="setup">
+		<div class="setting">
+			<span class="setting-name" id="workLabel">Work</span>
+			<div class="stepper" role="group" aria-labelledby="workLabel">
+				<button type="button" data-action="stepSetting" data-setting="work" data-step="-1" aria-label="Less work">&minus;</button>
+				<output id="workValue" aria-live="polite">20s</output>
+				<button type="button" data-action="stepSetting" data-setting="work" data-step="1" aria-label="More work">+</button>
+			</div>
+		</div>
+		<div class="setting">
+			<span class="setting-name" id="restLabel">Rest</span>
+			<div class="stepper" role="group" aria-labelledby="restLabel">
+				<button type="button" data-action="stepSetting" data-setting="rest" data-step="-1" aria-label="Less rest">&minus;</button>
+				<output id="restValue" aria-live="polite">10s</output>
+				<button type="button" data-action="stepSetting" data-setting="rest" data-step="1" aria-label="More rest">+</button>
+			</div>
+		</div>
+		<div class="setting">
+			<span class="setting-name" id="setsLabel">Sets</span>
+			<div class="stepper" role="group" aria-labelledby="setsLabel">
+				<button type="button" data-action="stepSetting" data-setting="sets" data-step="-1" aria-label="Fewer sets">&minus;</button>
+				<output id="setsValue" aria-live="polite">8</output>
+				<button type="button" data-action="stepSetting" data-setting="sets" data-step="1" aria-label="More sets">+</button>
+			</div>
+		</div>
+	</div>
+	<div class="holder">
+		<section id="first" hidden>
+			<div class="now">
+				<p class="task" id="first_task"></p>
+				<p class="rep" id="first_rep"></p>
+			</div>
+			<p class="count" id="first_count"></p>
+		</section>
+		<div id="endingDiv" class="ending"></div>
+	</div>
+	<!-- the whole session to scale, filled in from the settings and as it goes -->
+	<div class="timeline" id="timeline" role="progressbar" aria-label="Session" aria-valuemin="0">
+		<div class="track" id="todo"></div>
+		<div class="track" id="done"></div>
+	</div>
+	<aside id="about" class="overlay">
+		<h2>Tabata</h2>
+		<p>Short, hard efforts with short rests. The classic is 20 seconds of work and 10 seconds of rest, eight times: four minutes in all.</p>
+		<p>Set the work, the rest and the number of sets before you start. The screen goes green while you work, and red with a beep a second for the last three seconds of each rest. Your settings are remembered for next time.</p>
+		<hr />
+		<h2>Activity Log</h2>
+		<div id="log"></div>
+		<br />
+		<hr />
+		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
+	</aside>
+
+	<aside id="settings" class="overlay">
+		<h2>Settings</h2>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleDebug" id="debugMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-bug"></i> Debug/Preview Mode <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
+			<span class="label-content">
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleVoiceOff" id="voiceOff"/>
+			<span class="label-content">
+				<i class="icon-note toggle-icon" aria-hidden="true"></i> Voice disabled <span class="switch-state"></span>
+			</span>
+		</label>
+		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
+	</aside>
+  </body>
+</html>

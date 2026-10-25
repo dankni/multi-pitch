@@ -6,7 +6,7 @@
    When you change any app, bump CACHE_VERSION, or installed copies keep serving
    the old files. */
 
-const CACHE_VERSION = 'v167';
+const CACHE_VERSION = 'v168';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -83,6 +83,10 @@ const SHELL = [
     '/training/nohangs/img/half-crimp.webp',
     '/training/nohangs/img/front-3.webp',
     '/training/nohangs/img/middle-2.webp',
+
+    '/training/tabata/',
+    '/training/tabata/style.css',
+    '/training/tabata/main.js',
 
     '/training/gaps/',
     '/training/gaps/style.css',
