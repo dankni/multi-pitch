@@ -3023,11 +3023,11 @@ describe('Training apps', function () {
         it('puts the page and the version in the feedback email subject', () => {
             cy.visit(overviewUrl);
             cy.get('#about a[href^="mailto:"]')
-                .should('have.attr', 'href', 'mailto:admin@multi-pitch.com?subject=Feedback%3A%20Climbing%20Training%20Apps');
+                .should('have.attr', 'href', 'mailto:multi-pitch@outlook.com?subject=Feedback%3A%20Climbing%20Training%20Apps');
             cy.window().then((win) => win.caches.open('training-v99'));
             cy.visit(appUrl + '/training/loft/');
             cy.get('#about a[href^="mailto:"]')
-                .should('have.attr', 'href', 'mailto:admin@multi-pitch.com?subject=Feedback%3A%20Loft%20Climb%20Tracker%20(v99)');
+                .should('have.attr', 'href', 'mailto:multi-pitch@outlook.com?subject=Feedback%3A%20Loft%20Climb%20Tracker%20(v99)');
             cy.window().then((win) => win.caches.delete('training-v99'));
         });
 
