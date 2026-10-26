@@ -25,6 +25,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Tabata | Routine saved | Info | 5.2 s | SAVE in repeater mode, with a name not saved before | tabata/main.js | Yes | |
 | Tabata | Routine updated | Info | 5.2 s | SAVE in repeater mode, with the name of a routine already saved: its settings are replaced | tabata/main.js | Yes | Names match whatever their capitals |
 | Tabata | Reset the session to open a routine | Warning | 5.2 s | A routine tapped under the cog while a session is under way | tabata/main.js | Yes | |
+| Twister | Browser or device doesn't support voice recognition. Try Chrome on Android. | Warning | Until closed | The page opens in a browser without speech recognition | loft/main.js | Yes | Text, with its link, is the `#noVoiceToast` template in loft/index.html |
 | Progress | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored and the page reloads | progress/backup.js | Yes | |
 | Progress | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | progress/backup.js | Yes | |
 | Progress | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | progress/backup.js | Yes | |

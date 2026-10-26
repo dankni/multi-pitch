@@ -59,6 +59,8 @@
 		<p>
 			Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move. Settings below can be used to customise the colors available. Feedback welcome: <a href="mailto:multi-pitch@outlook.com">multi-pitch@outlook.com</a>.
 		</p>
+		<!-- the warning toast where the browser can't listen, as the Tindeq Arcade's -->
+		<template id="noVoiceToast">Browser or device doesn't <a href="https://caniuse.com/speech-recognition" target="_blank" rel="noopener">support voice recognition</a>. Try Chrome on Android.</template>
 		<hr />
 		<h2>Activity Log</h2>
 		<p id="stats"></p>
@@ -106,8 +108,5 @@
 		</label>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
-	<footer id="browserSupport">
-		<p><span class="warn-icon" aria-hidden="true">⚠︎</span> Browser or device doesn't <a href="https://caniuse.com/speech-recognition" target="blank">support voice recognition</a>. Try Chome on Android. </p>
-	</footer>
   </body>
 </html>

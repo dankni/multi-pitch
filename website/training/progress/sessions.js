@@ -235,13 +235,18 @@
         showNote(button, session.comment, session.unrated ? "" : sessionStars(session), "Note from " + session.date);
     });
 
-    let month = new Date().toISOString().slice(0, 7);
-    let monthsSessions = sessions.filter(session => session.date.slice(0, 7) === month);
-    // time trained this month, from the apps that keep it - nothing said with none
-    let trained = sessionLength({ "minutes" : Math.round(monthsSessions.reduce((total, session) => total + (session.minutes || 0), 0)) });
-    let climbed = monthsSessions.reduce((total, session) => total + (session.climbs || 0), 0);
-    document.getElementById("sessionsStats").innerText = ["This month", plural(monthsSessions.length, "session"),
-        trained ? trained + " trained" : "", plural(climbed, "climb") + " done"].filter(part => part !== "").join(" · ");
+    // "Last 30 days · 6 sessions · 1h 49m trained · 5 climbs done", today and the
+    // days before it - the time trained from the apps that keep it, and nothing
+    // said of it with none
+    function periodLine(days){
+        let since = new Date(Date.parse(today()) - (days - 1) * 86400000).toISOString().slice(0, 10);
+        let inPeriod = sessions.filter(session => session.date >= since);
+        let trained = sessionLength({ "minutes" : Math.round(inPeriod.reduce((total, session) => total + (session.minutes || 0), 0)) });
+        let climbed = inPeriod.reduce((total, session) => total + (session.climbs || 0), 0);
+        return ["Last " + days + " days", plural(inPeriod.length, "session"), trained ? trained + " trained" : "", plural(climbed, "climb") + " done"]
+            .filter(part => part !== "").join(" · ");
+    }
+    document.getElementById("sessionsStats").innerText = periodLine(30) + "\n" + periodLine(7);
 
     /* The last 30 days' time trained, a kind of training a segment of one bar by
        its share - always in this order and colour, so each keeps its place - and

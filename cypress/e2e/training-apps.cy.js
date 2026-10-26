@@ -473,6 +473,23 @@ describe('Training apps', function () {
             cy.tick(2000); // and some time on the clock
         }
 
+        it('says in a warning toast when the browser cannot listen, as the Tindeq Arcade does', () => {
+            cy.visit(loftUrl, {
+                onBeforeLoad(win) {
+                    Object.defineProperty(win, 'SpeechRecognition', { configurable: true, value: undefined });
+                    Object.defineProperty(win, 'webkitSpeechRecognition', { configurable: true, value: undefined });
+                }
+            });
+            cy.tick(100);   // the toast fades in on a timer
+            cy.get('.toast.warn').should('be.visible').and('contain', "Browser or device doesn't support voice recognition. Try Chrome on Android.")
+                .find('a').should('have.attr', 'href', 'https://caniuse.com/speech-recognition');
+            cy.tick(10000);
+            cy.get('.toast.warn').should('be.visible');   // until closed
+            visitLoft();
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+        });
+
         it('only offers reset while the session is paused', () => {
             visitLoft();
             startAndCountIn();
@@ -2628,11 +2645,11 @@ describe('Training apps', function () {
             cy.get('#sportFigure').should('be.visible');
         });
 
-        it('adds up the time trained this month from each app, in its own units', () => {
+        it('adds up the time trained in the last 30 and 7 days from each app, in its own units', () => {
             visitWith({
                 boulderLog: [
                     { id: 1, date: '2026-09-13', climbs: ['V2'], rating: 3, minutes: 45 },
-                    { id: 2, date: '2026-08-20', climbs: ['V2'], rating: 3, minutes: 100 }   // last month
+                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 100 }   // over 30 days ago
                 ],
                 lapTimerLog: [{ id: 3, date: '2026-09-10', total: 30 * 60000, laps: 3, rating: 0 }],   // ms
                 loftLog: [{ id: 4, date: '2026-09-02', seconds: 900, moves: 20, rating: 0 }],          // seconds
@@ -2641,7 +2658,9 @@ describe('Training apps', function () {
                 tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }]                    // from before it was timed
             });
             // 45 + 30 + 15 + 9.5 + 9 2/3 minutes; a boulder, 3 laps and a trad climb
-            cy.get('#sessionsStats').should('have.text', 'This month · 6 sessions · 1h 49m trained · 5 climbs done');
+            // the last 7 days, from the 7th: the boulder and the laps
+            cy.get('#sessionsStats').invoke('prop', 'innerText')
+                .should('equal', 'Last 30 days · 6 sessions · 1h 49m trained · 5 climbs done\nLast 7 days · 2 sessions · 1h 15m trained · 4 climbs done');
         });
 
         it('splits the last 30 days of time trained into climbing, fingerboard and other', () => {
@@ -2724,9 +2743,9 @@ describe('Training apps', function () {
             cy.get('#timeSplit').should('not.be.visible');
         });
 
-        it('says nothing of time trained when no session this month kept any', () => {
+        it('says nothing of time trained when no session in the last 30 days kept any', () => {
             visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
-            cy.get('#sessionsStats').should('have.text', 'This month · 1 session · 1 climb done');
+            cy.get('#sessionsStats').invoke('prop', 'innerText').should('equal', 'Last 30 days · 1 session · 1 climb done\nLast 7 days · 0 sessions · 0 climbs done');
         });
 
         it('saves how long a No Hangs session ran', () => {

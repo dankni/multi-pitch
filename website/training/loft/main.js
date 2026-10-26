@@ -253,5 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadColours();
     showTradMode();
     drawSessionLog(logView);
-    document.getElementById("browserSupport").hidden = recognition !== null;
+    if(recognition === null){
+        toast(document.getElementById("noVoiceToast"), null, true, true);
+    }
 });
