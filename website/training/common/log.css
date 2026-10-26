@@ -119,6 +119,35 @@
 .grade-row.done .grade-add {
     border-left-color: var(--c, var(--primary));
 }
+/* A gym's hold colours (the gym session's Boulderworld Belfast): the colour of
+   the circuit itself, so the same climbed or not, softened into the tile, as a
+   strip over the edge that can be two colours (--circuit, then --circuit-low),
+   with a hairline so white and black show on a tile of either theme */
+.grade-row.hold .grade-add {
+    border-left-color: transparent;
+}
+.grade-row.hold .grade-add::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -8px;
+    width: 8px;
+    border-radius: 8px 0 0 8px;
+    background: linear-gradient(color-mix(in srgb, var(--circuit) 60%, var(--tile)) 50%,
+                                color-mix(in srgb, var(--circuit-low, var(--circuit)) 60%, var(--tile)) 50%);
+    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.6);
+}
+/* the hold colours of common/style.css, under a name of their own, as a .route
+   tile sets its own --hold */
+.grade-row.hold-orange-blue { --circuit: #ff851b; --circuit-low: #0074d9; }
+.grade-row.hold-white       { --circuit: #e8e8e8; }
+.grade-row.hold-green       { --circuit: #2ecc40; }
+.grade-row.hold-yellow      { --circuit: #ffd400; }
+.grade-row.hold-purple      { --circuit: #8e3cc8; }
+.grade-row.hold-red         { --circuit: #ff4136; }
+.grade-row.hold-black       { --circuit: #2b2b2b; }
+.grade-row.hold-pink        { --circuit: #ff6fcf; }
 .grade-count {
     position: absolute;
     top: 50%;

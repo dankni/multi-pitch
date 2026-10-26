@@ -27,6 +27,22 @@ function sportStarts(){
     return sportGrades().indexOf("7c") + 1;
 }
 
+/* Boulderworld Belfast sets its circuits a colour a grade: with it on under the
+   cog, each V grade's tile wears its circuit's colour - V0 both of its two, and
+   V7 up pink - in place of the easy to very hard bands */
+const boulderworldKey = "boulderBoulderworld";
+const boulderworldHolds = { "V0" : "orange-blue", "V1" : "white", "V2" : "green", "V3" : "yellow", "V4" : "purple", "V5" : "red", "V6" : "black" };
+
+function boulderworld(){
+    return localStorage.getItem(boulderworldKey) === "true";
+}
+function boulderworldBand(grade){
+    return { "cls" : "hold hold-" + (boulderworldHolds[grade] || "pink") };
+}
+function boulderBand(){
+    return boulderworld() ? boulderworldBand : gradeBands.boulder;
+}
+
 const app = {
     "logKey" : "boulderLog",
     "currentKey" : "boulderCurrent",
@@ -37,7 +53,7 @@ const app = {
     // ladder's order says which of 4+ and 4c is harder, whichever are on it.
     "ladders" : {
         "boulder" : { "list" : "climbs", "shown" : "shown",      "names" : grades.map(grade => grade.v),
-                      "starts" : 11, "noun" : "boulder", "band" : gradeBands.boulder },
+                      "starts" : 11, "noun" : "boulder", "band" : boulderBand() },
         "sport"   : { "list" : "sport",  "shown" : "sportShown", "names" : sportGrades(),
                       "order" : gymSportOrder, "starts" : sportStarts(), "noun" : "sport climb",
                       "band" : gradeBands.sport }
@@ -60,6 +76,7 @@ const app = {
         loadGradeSystem();
         document.getElementById("splitLow").checked = splitLowGrades();
         document.getElementById("plusGrades").checked = plusGrades();
+        document.getElementById("boulderworld").checked = boulderworld();
     },
     "logView" : {
         "key" : "boulderLog",
@@ -94,6 +111,12 @@ function toggleSplitLow(input){
 function togglePlusGrades(input){
     localStorage.setItem(plusKey, input.checked);
     rebuildSportLadder();
+}
+
+function toggleBoulderworld(input){
+    localStorage.setItem(boulderworldKey, input.checked);
+    app.ladders.boulder.band = boulderBand();
+    if(session !== null){ drawGrades(); }
 }
 
 function rebuildSportLadder(){

@@ -1790,6 +1790,32 @@ describe('Training apps', function () {
             cy.get('#row-V3 .grade-count').should('have.text', '2');
         });
 
+        it('wears the Boulderworld Belfast circuit colours on the V grades when switched on', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-V3').should('have.class', 'band-medium').and('not.have.class', 'hold');
+            cy.get('#boulderworld').should('not.be.checked').check({ force: true });
+            cy.get('#row-V0').should('have.class', 'hold-orange-blue').and('not.have.class', 'band-easy');
+            cy.get('#row-V1').should('have.class', 'hold-white');
+            cy.get('#row-V2').should('have.class', 'hold-green');
+            cy.get('#row-V3').should('have.class', 'hold-yellow');
+            cy.get('#row-V4').should('have.class', 'hold-purple');
+            cy.get('#row-V5').should('have.class', 'hold-red');
+            cy.get('#row-V6').should('have.class', 'hold-black');
+            cy.get('#row-V7').should('have.class', 'hold-pink');
+            cy.get('#row-V10').should('have.class', 'hold-pink');
+            cy.get('#row-V3 .grade-add').click();   // still the circuit colour once climbed
+            cy.get('#row-V3').should('have.class', 'hold-yellow');
+            cy.reload();
+            cy.get('#boulderworld').should('be.checked');
+            cy.get('#row-V3').should('have.class', 'hold-yellow');
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('.grade-row.hold').should('not.exist');   // the sport ladder keeps its bands
+            cy.get('label[for="tab-boulder"]').click();
+            cy.get('#boulderworld').uncheck({ force: true });
+            cy.get('#row-V3').should('have.class', 'band-medium').and('not.have.class', 'hold');
+        });
+
         it('shows the last three taps and how long ago behind Show recent logs', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();

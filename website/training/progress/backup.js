@@ -12,7 +12,7 @@ const backupFormat = "multi-pitch training apps";
 const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "loftLog", "rockRingsLog", "tradLog", "noHangsLog", "tabataLog", "gapsLog"];
 
 // stored as the apps wrote them, strings and all
-const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "tradGradeSystem", "enduranceWall", "enduranceRest",
+const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "enduranceWall", "enduranceRest",
     "enduranceGrade", "enduranceStyle", "lapTimerGrade", "colours", "tradMode", "difficulty", "gapsMaxPull", "gapsClimber", "tabataSettings", "tabataOneSecond", "tabataRepeaterMode", "tabataRepeaters", "tabataRoutines",
     "preventSleep", "overviewRange", "progressHidden", "seenSettings", "trainingLastApp"];
 
