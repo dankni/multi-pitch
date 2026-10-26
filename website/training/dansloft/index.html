@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- a hidden app: unlinked, out of the sitemap, and added from the Apps page's cog -->
+	<meta name="robots" content="noindex, nofollow">
+	<link rel="manifest" href="/training/manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Training">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
+	<link href="/training/common/fontello.css" rel="stylesheet" />
+	<link href="/training/common/style.css" rel="stylesheet" />
+	<link href="/training/common/log.css" rel="stylesheet" />
+	<link href="/training/dansloft/style.css" rel="stylesheet" />
+	<script src="/training/common/functions.js" ></script>
+	<script src="/training/common/bottom-nav.js" defer></script>
+	<script src="/training/common/dansloft-routes.js" ></script>
+	<script src="/training/common/records.js" ></script>
+	<script src="/training/common/log.js" ></script>
+	<script src="/training/dansloft/main.js" ></script>
+    <title>Dans Loft</title>
+  </head>
+
+  <body data-state="idle">
+	<nav>
+		<div class="left-nav">
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
+		</div>
+		<h1>Dans Loft</h1>
+		<div class="right-nav">
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
+		</div>
+	</nav>
+
+	<button id="primaryButton" data-action="startSession"><i class="demo-icon icon-play"></i>START SESSION</button>
+	<button class="secondary" id="discard" data-action="discardSession"><i class="demo-icon icon-cancel"></i>DISCARD</button>
+
+	<div class="holder" id="sessionHolder">
+		<div id="sessionBar">
+			<label for="sessionDate">Session date</label>
+			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
+			<!-- once FINISH is tapped: when it started and finished, to put right by hand -->
+			<div class="session-times">
+				<label>Started <input type="time" class="field" id="sessionStart" data-change="setSessionTime" /></label>
+				<label>Finished <input type="time" class="field" id="sessionFinish" data-change="setSessionTime" /></label>
+				<span class="session-length" id="sessionLengthShown"></span>
+			</div>
+			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">climbs</span></h3>
+			<p id="summary">Nothing logged yet</p>
+			<details class="recent-logs" id="recentDetails">
+				<summary>Show recent logs</summary>
+				<ol id="recentLogs"></ol>
+			</details>
+		</div>
+
+		<div id="loftRoutes">
+			<!-- JavaScript will populate this -->
+		</div>
+
+		<div id="endingDiv" class="ending"></div>
+
+		<button id="finishButton" data-action="openSavePanel"><i class="demo-icon icon-ok"></i>FINISH SESSION</button>
+	</div>
+
+	<!-- the i beside a route: where it starts and ends on the floor plan, and its notes -->
+	<aside id="routeInfo" class="overlay">
+		<h2 id="routeInfoTitle"></h2>
+		<svg id="plan" class="plan" viewBox="-40 -40 730 974" role="img" aria-labelledby="routeInfoTitle" data-action="placeOnPlan">
+			<path class="plan-wall" d="M218,894 H650 V0 H0 V210 H214 V246 H142 V714 H6 V894" />
+			<path class="plan-open" d="M6,894 H218" />
+			<polyline class="plan-flow" id="planFlow" points="" />
+			<g id="planMarks"></g>
+		</svg>
+		<p class="plan-key" id="planKey"></p>
+		<p class="route-notes" id="routeNotes"></p>
+
+		<!-- with ?edit on the url: tap the plan to place the start, the points the route
+		     passes through and the end, and write the notes -->
+		<div id="planEditor" hidden>
+			<div class="picker" role="radiogroup" aria-label="Tapping the plan places the">
+				<input type="radio" name="placing" class="nice-radios" id="place-start" value="start" checked />
+				<label for="place-start">Start</label>
+				<input type="radio" name="placing" class="nice-radios" id="place-path" value="path" />
+				<label for="place-path">Path</label>
+				<input type="radio" name="placing" class="nice-radios" id="place-end" value="end" />
+				<label for="place-end">End</label>
+			</div>
+			<textarea class="comment-field" id="notesField" rows="4" placeholder="Notes" data-input="setRouteNotes"></textarea>
+			<div class="button-stack">
+				<button type="button" class="quiet" id="undoPathPoint" data-action="undoPathPoint">UNDO PATH POINT</button>
+				<button type="button" data-action="copyLoftRoutes"><i class="demo-icon icon-share"></i>COPY ROUTES</button>
+				<button type="button" class="secondary" id="forgetEdits" data-action="forgetLoftEdits"><i class="demo-icon icon-trash"></i>FORGET EDITS</button>
+			</div>
+		</div>
+		<button type="button" class="icon-button close" data-action="hideRouteInfo" aria-label="Close route info"></button>
+	</aside>
+
+	<aside id="about" class="overlay">
+		<h2>About this application</h2>
+		<p>
+			Dans Bouldering Loft. Grading between routes is relative. Actual grades are
+			indicative only, many may be harder than graded.
+		</p>
+		<p>
+			All routes sit start. All routes end with matched hands on finish hold.
+		</p>
+		<hr />
+		<h2>Activity Log</h2>
+		<p id="stats"></p>
+		<div id="log"></div>
+		<br />
+		<hr />
+		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
+	</aside>
+
+	<aside id="settings" class="overlay">
+		<h2>Settings</h2>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="togglePreventSleep" id="preventSleep" checked />
+			<span class="label-content">
+				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
+			</span>
+		</label>
+		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
+	</aside>
+  </body>
+</html>

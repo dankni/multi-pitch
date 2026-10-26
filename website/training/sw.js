@@ -8,7 +8,7 @@
    the one before it for a big release (v180.0). It is the app version shown in
    the apps. */
 
-const CACHE_VERSION = 'v179.1';
+const CACHE_VERSION = 'v179.6';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -34,6 +34,7 @@ const SHELL = [
     '/training/common/ladder.js',
     '/training/common/records.js',
     '/training/common/gilford-routes.js',
+    '/training/common/dansloft-routes.js',
     '/training/common/ukc.js',
     '/training/common/bottom-nav.js',
     '/training/common/workout.js',
@@ -66,6 +67,10 @@ const SHELL = [
     '/training/loft/',
     '/training/loft/main.js',
     '/training/loft/style.css',
+
+    '/training/dansloft/',
+    '/training/dansloft/main.js',
+    '/training/dansloft/style.css',
 
     '/training/rings/',
     '/training/rings/style.css',

@@ -87,7 +87,10 @@ And the surfaces they sit on:
 
 Dark mode is CSS: every colour that changes is a variable at the top of `common/style.css`
 set with `light-dark(light, dark)`, so the page follows the phone's setting with no script.
-The dark mode switch overrides it for the visit with `.light` or `.dark` on `<body>`. A new
+The dark mode switch overrides it with `.light` or `.dark` on `<html>`, saved under
+`trainingTheme` so every app follows it, including ones open in other tabs. Switching to what
+the phone already shows forgets the override, so the phone's setting stays the default.
+`functions.js` applies it from the `<head>`, before the body draws. A new
 colour that changes with the theme goes in as a variable or a `light-dark()`, never as a
 `.dark` rule. Page `#111`, panel `#262626`, counter box `#363636`, tile `#2a2a2a`
 (`#383838` hovered), links `#8ec5ff`.
@@ -219,7 +222,9 @@ and `--chip-ink` to black or white, whichever can be read on it. Filled with the
 on, and the plain grey chip when off — the tick and cross carry that difference, so the off
 state needs no rim of its own. No swatch icon beside the word, since the chip is the swatch. Work the ink out rather than guessing it: the loft app's
 `inkFor()` reads a hex directly and hands a name to the browser to resolve. Always follow a picker with a hint line spelling out what the
-choice produces. Inside the settings panel, wrap a group in
+choice produces. A picker's track follows the theme: `#e8e8ec` with a `#94949b` edge and
+`#2b2b30` labels in light (blue on it at 4.2:1, the edge 3:1 on white), `#1a1a1d` with a
+`#636369` edge and white labels in dark. Inside an overlay it is always the dark one. Inside the settings panel, wrap a group in
 `<fieldset class="setting-group">` with a `<legend>` so it is announced as one choice.
 
 **Toggle** (`.switch-label` + `input[type=checkbox]`) — iOS-style switch, for one setting
@@ -229,7 +234,7 @@ Mode On*.
 
 **Fields** — `.field` is the date in the tick list and the colour box in the loft app,
 which used to be two different shapes. 36px tall, `font: inherit` at 15px, the tiles' focus
-ring, and the pickers' track in both themes — `--track` fill, 1px `--track-edge`, 12px radius,
+ring, and the pickers' dark track in both themes — `#1a1a1d` fill, 1px `#636369` edge, 12px radius,
 white ink — with `color-scheme: dark` so a date or time picker's icon reads on it. A field carries no margins; spacing comes from the row it sits in — `.field-row` for fields
 that are merely near each other, **`.field-group`** for fields that are one control: joined
 edges under a single border, as in the loft app's *colour name + swatch + ADD*. The group

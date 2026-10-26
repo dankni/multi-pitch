@@ -117,6 +117,11 @@
             line-height: 20px;
             opacity: 0.85;
         }
+        .hidden-app-field {
+            display: block;
+            width: 240px;
+            margin: 24px auto;
+        }
         .home-link, .home-link:visited {
             display: block;
             margin: 0 auto 40px;
@@ -137,10 +142,12 @@
     </style>
     <title>Climbing Training Apps</title>
   </head>
-  <body>
+  <!-- no cog hint here: the apps each have their own -->
+  <body data-cog-hint="off">
     <nav>
         <div class="left-nav">
             <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About these training apps"></button>
+            <button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
         </div>
         <h1>Training Apps</h1>
         <!-- empty, but it balances the left side so the title stays centred -->
@@ -223,7 +230,7 @@
                 </div>
             </a>
         </li>
-        <li>
+        <li id="ringsCard">
             <a class="app-card" href="/training/rings/">
                 <!-- AI generated SVG is a bit wonkey but good enough -->
                 <svg class="app-icon" viewBox="0 0 100 126" aria-hidden="true" focusable="false">
@@ -336,6 +343,19 @@
         <button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
     </aside>
 
+    <aside id="settings" class="overlay">
+        <h2>Settings</h2>
+        <label class="switch-label">
+            <input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
+            <span class="label-content">
+                <i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
+            </span>
+        </label>
+        <input type="text" class="field hidden-app-field" id="hiddenApp" placeholder="Add a hidden App" aria-label="Add a hidden App"
+            autocomplete="off" autocapitalize="off" spellcheck="false" data-input="addHiddenApp" data-change="noHiddenApp" />
+        <button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
+    </aside>
+
     <script>
     /* Local storage in use, against what a browser allows. There is no API for
        the limit: Chrome, Firefox and Safari all stop a site at about 5 million
@@ -377,5 +397,63 @@
     </script>
     <script src="/training/common/functions.js"></script>
     <script src="/training/common/bottom-nav.js" defer></script>
+    <script>
+    /* Apps left off this list until their name is typed under the cog, then on it
+       for good on this device. A name matches whatever its case and spacing. */
+    const hiddenAppsKey = "trainingHiddenApps";
+    const hiddenApps = {
+        "dansloft" : { "name" : "Dans Loft", "href" : "/training/dansloft/", "text" : "The routes on the loft wall.", "before" : "ringsCard",
+            // the loft's end wall under the roof; the long slope is 58 degrees off vertical
+            "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                <path fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round" d="M7,68 V55.2 L39,32 H43.4 L93,63 V68 Z"/>
+            </svg>` }
+    };
+
+    function addedHiddenApps(){
+        try {
+            let added = JSON.parse(localStorage.getItem(hiddenAppsKey));
+            return Array.isArray(added) ? added.filter(key => hiddenApps[key]) : [];
+        } catch(err){
+            return [];
+        }
+    }
+
+    function hiddenAppKey(typed){
+        return typed.toLowerCase().replace(/[^a-z]/g, "");
+    }
+
+    function drawHiddenApp(key){
+        let hidden = hiddenApps[key];
+        if(document.getElementById("app-" + key) !== null){ return; }
+        let card = document.createElement("li");
+        card.id = "app-" + key;
+        card.innerHTML = `<a class="app-card" href="${hidden.href}">${hidden.icon}
+            <div class="app-text"><h2>${hidden.name}</h2><p>${hidden.text}</p></div></a>`;
+        document.querySelector(".apps").insertBefore(card, document.getElementById(hidden.before));
+    }
+
+    // as it is typed, so it lands on the last letter
+    function addHiddenApp(field){
+        let key = hiddenAppKey(field.value);
+        if(!hiddenApps[key]){ return; }
+        field.value = "";
+        if(addedHiddenApps().includes(key)){
+            toast(hiddenApps[key].name + " is already in your apps");
+            return;
+        }
+        localStorage.setItem(hiddenAppsKey, JSON.stringify(addedHiddenApps().concat(key)));
+        drawHiddenApp(key);
+        toast(hiddenApps[key].name + " added to your apps");
+    }
+
+    // something else typed and left
+    function noHiddenApp(field){
+        if(field.value.trim() === ""){ return; }
+        field.value = "";
+        toast("No hidden app by that name");
+    }
+
+    addedHiddenApps().forEach(drawHiddenApp);
+    </script>
   </body>
 </html>

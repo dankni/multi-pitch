@@ -1,0 +1,122 @@
+/* One row a route: the tile, its minus and its i. The tile and the minus are the
+   gym session's, in common/log.css. */
+#loftRoutes {
+    display: grid;
+    gap: 8px;
+}
+.loft-row .grade-add {
+    border-left-color: transparent;
+}
+/* the route's hold colours down the edge, the same climbed or not, with a
+   hairline so white and black show on a tile of either theme */
+.loft-row .grade-add::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -8px;
+    width: 8px;
+    border-radius: 8px 0 0 8px;
+    background: var(--holds);
+    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.6);
+}
+.route-info {
+    flex: 0 0 auto;
+    width: 42px;
+    margin: 0;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 20px;
+}
+.holds-yellow       { --holds: #ffd400; }
+.holds-green-white  { --holds: linear-gradient(#2ecc40 50%, #f2f2f2 50%); }
+.holds-grey         { --holds: #9b9b9b; }
+.holds-sky-blue     { --holds: #7cc6f2; }
+.holds-orange       { --holds: #ff851b; }
+.holds-french-flags { --holds: linear-gradient(#0055a4 33.3%, #f2f2f2 33.3% 66.6%, #ef4135 66.6%); }
+.holds-pale-pink    { --holds: #f9c6d8; }
+.holds-white        { --holds: #f2f2f2; }
+.holds-fluro-pink   { --holds: #ff2fa0; }
+.holds-swirls       { --holds: repeating-linear-gradient(135deg, #ffd400 0 5px, #0074d9 5px 10px); }
+.holds-red          { --holds: #ff4136; }
+.holds-brown        { --holds: #8b5a2b; }
+.holds-blue         { --holds: #0074d9; }
+.holds-purple       { --holds: #8e3cc8; }
+.holds-black        { --holds: #2b2b2b; }
+
+/* The floor plan, white on the black of the panel */
+.plan {
+    display: block;
+    width: 100%;
+    max-height: 60vh;
+    margin: 16px auto 0;
+}
+.plan.editing {
+    cursor: crosshair;
+}
+.plan-wall, .plan-open {
+    fill: none;
+    stroke: #FFF;
+    stroke-width: 8;
+}
+.plan-open {
+    stroke-width: 5;
+    stroke-dasharray: 12 20;
+}
+/* the way the route goes: dots running from the start to the end */
+.plan-flow {
+    fill: none;
+    stroke: #FFF;
+    stroke-width: 14;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 0 36;
+    animation: plan-flow 1s linear infinite;
+}
+@keyframes plan-flow {
+    to { stroke-dashoffset: -36; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .plan-flow {
+        animation: none;
+    }
+}
+.plan-mark circle {
+    stroke: #FFF;
+    stroke-width: 4;
+}
+.plan-start circle { fill: #17812a; }
+.plan-end circle   { fill: #a13333; }
+.plan-mark text {
+    fill: #FFF;
+    font-family: 'Hind', sans-serif;
+    font-size: 34px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+.plan-key {
+    font-size: 14px;
+    opacity: 0.8;
+}
+.route-notes {
+    white-space: pre-line;
+}
+#planEditor {
+    margin-top: 20px;
+}
+#planEditor .comment-field {
+    width: 100%;
+}
+#planEditor .secondary {
+    display: inline-block;
+}
+@media (max-width: 380px) {
+    .loft-row .grade-add::before {
+        left: -6px;
+        width: 6px;
+    }
+    .route-info {
+        width: 36px;
+        font-size: 18px;
+    }
+}

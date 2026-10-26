@@ -7,14 +7,16 @@
 
    A kind's grades can come from more than one app: a sport grade beats the gym
    session's sport, the tick list's and the endurance app's. Their ladders are
-   common/grades.js and common/gilford-routes.js, read only when a kind is. */
+   common/grades.js, common/gilford-routes.js and common/dansloft-routes.js,
+   read only when a kind is. */
 const recordDays = 30;
 const dayMs = 86400000;
 
 const recordKinds = {
     "boulder" : {
         "rank" : grade => /^V\d+$/.test(grade) ? Number(grade.slice(1)) : -1,
-        "logs" : [["boulderLog", entry => entry.climbs]]
+        "logs" : [["boulderLog", entry => entry.climbs],
+                  ["dansLoftLog", entry => (Array.isArray(entry.climbs) ? entry.climbs : []).map(loftBoulderGrade)]]
     },
     "sport" : {
         "rank" : grade => gymSportOrder.indexOf(grade),

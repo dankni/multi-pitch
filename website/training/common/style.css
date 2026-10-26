@@ -21,7 +21,7 @@
 
 /* Colours. Each theme-dependent one is light-dark(light, dark): the page follows
    the phone's setting, and the dark mode switch overrides it with .light or .dark
-   on the body. */
+   on <html>. */
 :root {
     color-scheme: light dark;
     --column: 520px;   /* the width everything sits in */
@@ -34,9 +34,9 @@
     --tile: light-dark(#F9F9F9, #2a2a2a);
     --tile-ink: light-dark(#222, #eee);
     --tile-hover: light-dark(#ececec, #383838);
-    --field: var(--track);              /* fields wear the pickers' track, light or dark */
+    --field: #1a1a1d;              /* fields stay dark in either theme */
     --field-ink: #FFF;
-    --field-edge: var(--track-edge);
+    --field-edge: #636369;
     --placeholder: #a8a8ae;
     --quiet: light-dark(#e8f0fe, #16294a);
     --quiet-hover: light-dark(#d2e3fc, #203a66);
@@ -51,8 +51,12 @@
     --focus: #1a73e8;            /* 3:1 or better on a light tile and a dark one */
     --danger: #a13333;
     --off: #6b6b73;
-    --track: #1a1a1d;            /* --primary on it at 3.3:1, so the chosen one shows without its hue */
-    --track-edge: #636369;       /* 3:1 on the dark page and the overlays, where the track alone would vanish */
+    /* the pickers': --primary on the track at 4.2:1 light and 3.3:1 dark, so the
+       chosen one shows without its hue; the edge 3:1 on the page, where the track alone would vanish */
+    --track: light-dark(#e8e8ec, #1a1a1d);
+    --track-edge: light-dark(#94949b, #636369);
+    --track-ink: light-dark(#2b2b30, #FFF);
+    --track-hover: light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.1));
     --confirm: #17812a;
     --warn: #eda100;
     --card: #262626;             /* anything floating over the app: toast, note, hint */
@@ -68,8 +72,8 @@
 .band-medium   { --c: var(--band-medium); }
 .band-hard     { --c: var(--band-hard); }
 .band-vhard    { --c: var(--band-vhard); }
-body.light { color-scheme: light; }
-body.dark { color-scheme: dark; }
+:root.light { color-scheme: light; }
+:root.dark { color-scheme: dark; }
 
 /* A size includes its padding and border, everywhere */
 *, *::before, *::after {
@@ -517,6 +521,10 @@ input[type="checkbox"].nice-radios:checked + label:before {
     background-color: var(--track);
     box-shadow: inset 0 0 0 1px var(--track-edge), 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
+/* An overlay is black whatever the theme, so its pickers are always the dark ones */
+.overlay .picker:has(> [type="radio"]) {
+    color-scheme: dark;
+}
 /* out of the flex row, or each hidden radio takes a gap of its own */
 .picker:has(> [type="radio"]) > [type="radio"] {
     position: absolute;
@@ -527,6 +535,9 @@ input[type="checkbox"].nice-radios:checked + label:before {
     border-radius: 9px;
     background-color: transparent;
     box-shadow: none;
+}
+.picker:has(> [type="radio"]) > .nice-radios:not(:checked) + label {
+    color: var(--track-ink);
 }
 .picker:has(> [type="radio"]) > .nice-radios:checked + label::before {
     content: "";
@@ -541,7 +552,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
     box-shadow: none;
 }
 .picker:has(> [type="radio"]) > .nice-radios:not(:checked) + label:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--track-hover);
 }
 
 /* ================= Icons ================= */

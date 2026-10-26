@@ -15,6 +15,12 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Tick List | Half the routes on the wall ticked, nice one! | Info | 5.2 s | A tick takes the session to half the routes on the wall | gilford/main.js | Yes | |
 | Tick List | Nice work ticking the 7's | Info | 5.2 s | The last of the 7s is ticked | gilford/main.js | Yes | |
 | Tick List | Amazing! you ticked them all, that's the goal this app was made for | Info | 5.2 s | Every route on the wall is ticked | gilford/main.js | Yes | |
+| Dans Loft | Every route on the wall climbed, nice one! | Info | 5.2 s | A tap climbs the last route not yet climbed this session | dansloft/main.js | Yes | |
+| Dans Loft | Copied, ready to paste | Info | 5.2 s | COPY ROUTES in the route panel's edit mode (?edit), and the copy worked | dansloft/main.js | No | |
+| Dans Loft | Couldn't copy it | Warning | 5.2 s | COPY ROUTES, and the copy failed | dansloft/main.js | No | |
+| Apps page | Dans Loft added to your apps | Info | 5.2 s | Its name is typed in Add a hidden App, under the cog | index.html | Yes | Any case or spacing |
+| Apps page | Dans Loft is already in your apps | Info | 5.2 s | Its name is typed again once added | index.html | No | |
+| Apps page | No hidden app by that name | Info | 5.2 s | Something else is typed in Add a hidden App and the field is left | index.html | Yes | |
 | Tindeq Arcade | New high score | Info | 5.2 s | During a run, the score first passes the best | gaps/main.js | Yes | |
 | Tindeq Arcade | Copied, ready to paste | Info | 5.2 s | SHARE with no share sheet, and the copy worked | gaps/main.js | No | |
 | Tindeq Arcade | Couldn't copy it | Warning | 5.2 s | SHARE with no share sheet, and the copy failed | gaps/main.js | No | |
@@ -32,10 +38,10 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Progress | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored and the page reloads | progress/backup.js | Yes | |
 | Progress | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | progress/backup.js | Yes | |
 | Progress | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | progress/backup.js | Yes | |
-| Gym Session, Tick List, Outside | Wow, that's the highest grade we have seen you tick! Congrats. | Info | 5.2 s | A tick harder than any saved of its kind - boulder, sport or trad - and than the session's own earlier ticks | common/records.js | Yes | Sport counts the gym session, tick list and endurance together. Says nothing with nothing saved to beat. |
-| Gym Session, Tick List, Outside | That's the highest grade we have seen you tick this month! Congrats. | Info | 5.2 s | As above, but only against the last 30 days, when it isn't the hardest ever | common/records.js | Yes | Rolling 30 days, not the calendar month |
-| Gym Session, Lap Timer | Wow, that's your longest session ever. You're getting strong! | Info | 5.2 s | On FINISH, the climbs (gym) or laps (lap timer) are more than in any saved session | common/records.js | Yes | Not on a session reopened with the wrench, or a lap timer session typed in |
-| Gym Session, Lap Timer | That's your longest session this month. You're getting strong! | Info | 5.2 s | As above, on FINISH, but only against the last 30 days, when it isn't the longest ever | common/records.js | Yes | Rolling 30 days, not the calendar month |
+| Gym Session, Tick List, Outside, Dans Loft | Wow, that's the highest grade we have seen you tick! Congrats. | Info | 5.2 s | A tick harder than any saved of its kind - boulder, sport or trad - and than the session's own earlier ticks | common/records.js | Yes | Sport counts the gym session, tick list and endurance together; boulder counts the gym session and Dans Loft, a plus grade as its grade. Says nothing with nothing saved to beat. |
+| Gym Session, Tick List, Outside, Dans Loft | That's the highest grade we have seen you tick this month! Congrats. | Info | 5.2 s | As above, but only against the last 30 days, when it isn't the hardest ever | common/records.js | Yes | Rolling 30 days, not the calendar month |
+| Gym Session, Lap Timer, Dans Loft | Wow, that's your longest session ever. You're getting strong! | Info | 5.2 s | On FINISH, the climbs (gym) or laps (lap timer) are more than in any saved session | common/records.js | Yes | Not on a session reopened with the wrench, or a lap timer session typed in |
+| Gym Session, Lap Timer, Dans Loft | That's your longest session this month. You're getting strong! | Info | 5.2 s | As above, on FINISH, but only against the last 30 days, when it isn't the longest ever | common/records.js | Yes | Rolling 30 days, not the calendar month |
 
 ## Ideas
 
@@ -62,7 +68,8 @@ showing twice.
 | `toast(message, onTap)` | Action — stays until tapped or closed |
 | `toast(message, null, true)` | Info that stays until closed |
 | `toast(message, null, true, true)` | Warning that stays until closed |
-| `toast(message, null, false, true)` | Warning, gone after 5.2 s |
+| `toast(message, null, false, true)` | Warning, gone after 5.2 s |
+
 | `confirmToast(message, deed, onConfirm)` | Confirm - `onConfirm` only on the deed's button |
 
 `message` is text, or a `<template>` element when the toast needs a link.

@@ -2469,9 +2469,145 @@ describe('Training apps', function () {
         });
     });
 
+    describe('Dans Loft', function () {
+        const overviewUrl = appUrl + '/training/';
+        const loftUrl = appUrl + '/training/dansloft/';
+
+        it('stays off the apps list until its name is typed under the cog, then stays on it', () => {
+            cy.visit(overviewUrl);
+            cy.get('a[href="/training/dansloft/"]').should('not.exist');
+            cy.get('nav .icon-cog').click();
+            cy.get('#hiddenApp').should('have.attr', 'placeholder', 'Add a hidden App');
+            cy.get('#hiddenApp').type('nope').blur();
+            cy.tick(100);
+            cy.get('.toast').should('contain', 'No hidden app by that name');
+            cy.get('#hiddenApp').should('have.value', '').type('Dans Loft');
+            cy.tick(100);
+            cy.get('.toast').should('contain', 'Dans Loft added to your apps');
+            cy.get('#hiddenApp').should('have.value', '');
+            cy.get('.apps li#app-dansloft').next().should('have.id', 'ringsCard');
+            cy.reload();
+            cy.get('.apps li#app-dansloft a').should('have.attr', 'href', '/training/dansloft/').and('contain', 'Dans Loft');
+        });
+
+        it('counts each route as often as it is climbed, and takes one back', () => {
+            cy.visit(loftUrl);
+            cy.get('meta[name="robots"]').should('have.attr', 'content', 'noindex, nofollow');
+            cy.get('#primaryButton').click();
+            cy.get('#loftRoutes .loft-row').should('have.length', 16);
+            tap('#row-6 .grade-add', '#row-6 .grade-add', '#row-1 .grade-add');
+            cy.get('#row-6 .grade-count').should('have.text', '2');
+            cy.get('#climbCount').should('have.text', '3');
+            cy.get('#summary').should('have.text', 'Hardest: V3+ · 2 of 16 routes');
+            cy.get('#row-6 .grade-minus').click();
+            cy.get('#row-6 .grade-count').should('have.text', '1');
+            cy.get('#climbCount').should('have.text', '2');
+        });
+
+        it('says when a route is harder than any boulder saved, a plus as its grade', () => {
+            cy.visit(loftUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-01', climbs: ['V3'], rating: 0 }]));
+                }
+            });
+            cy.get('#primaryButton').click();
+            tap('#row-6 .grade-add');   // V3+, which is a V3
+            cy.tick(100);
+            cy.get('.toast').should('not.exist');
+            tap('#row-7 .grade-add');   // V4
+            cy.tick(100);
+            cy.get('.toast').should('contain', "Wow, that's the highest grade we have seen you tick! Congrats.");
+        });
+
+        it('says when every route on the wall has been climbed', () => {
+            cy.visit(loftUrl);
+            cy.get('#primaryButton').click();
+            tap(...Array.from({ length: 15 }, (_, i) => `#row-${i + 1} .grade-add`));
+            cy.tick(100);
+            cy.contains('.toast', 'Every route').should('not.exist');
+            tap('#row-16 .grade-add');
+            cy.tick(100);
+            cy.get('.toast').should('contain', 'Every route on the wall climbed, nice one!');
+        });
+
+        // A route as it would be before it was placed, for the tests that place one
+        const unplaced = (id) => (win) => win.localStorage.setItem('dansLoftDraft',
+            JSON.stringify({ [id]: { start: null, end: null, path: [], notes: '' } }));
+
+        it('shows a route on the floor plan from its i, with the way it goes', () => {
+            cy.visit(loftUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#row-6 .route-info').click();
+            cy.get('#routeInfo').should('be.visible');
+            cy.get('#routeInfoTitle').should('have.text', 'French Flags V3+');
+            cy.get('#plan .plan-wall').should('exist');
+            cy.get('#planMarks .plan-mark').should('have.length', 2);
+            cy.get('#planKey').should('have.text', 'S start · E end');
+            // start, every point of its path, and end
+            cy.window().then((win) => {
+                let route = win.getLoftRoute(6);
+                cy.get('#planFlow').invoke('attr', 'points').should('equal',
+                    [route.start, ...route.path, route.end].map((point) => point.join(',')).join(' '));
+            });
+            cy.get('#planEditor').should('not.be.visible');
+            cy.get('body').type('{esc}');
+            cy.get('#routeInfo').should('not.be.visible');
+        });
+
+        it('says when a route is not on the plan yet, and a tap does nothing outside edit mode', () => {
+            cy.visit(loftUrl, { onBeforeLoad: unplaced(6) });
+            cy.get('#primaryButton').click();
+            cy.get('#row-6 .route-info').click();
+            cy.get('#planKey').should('have.text', 'Start and end not marked yet');
+            cy.get('#plan').click(100, 100);
+            cy.get('#planMarks .plan-mark').should('not.exist');
+            cy.get('#planFlow').should('have.attr', 'points', '');
+        });
+
+        it('places the start and end and takes notes with ?edit, and keeps them', () => {
+            cy.visit(loftUrl + '?edit', { onBeforeLoad: unplaced(1) });
+            cy.get('#primaryButton').click();
+            cy.get('#row-1 .route-info').click();
+            cy.get('#planEditor').scrollIntoView().should('be.visible');
+            cy.get('#plan').click(60, 80);
+            cy.get('#planMarks .plan-start').should('exist');
+            // then the path, which shows once there is an end to run to
+            cy.get('#place-path').should('be.checked');
+            cy.get('#undoPathPoint').should('be.disabled');
+            cy.get('#plan').click(100, 200);
+            cy.get('#plan').click(150, 220);
+            cy.get('#planFlow').should('have.attr', 'points', '');
+            cy.get('#undoPathPoint').click();
+            cy.get('#place-end').click({ force: true });
+            cy.get('#plan').click(200, 300);
+            cy.get('#planMarks .plan-end').should('exist');
+            cy.get('#planKey').should('have.text', 'S start · E end');
+            cy.get('#planFlow').invoke('attr', 'points').should('match', /^(-?\d+,-?\d+ ){2}-?\d+,-?\d+$/);
+            cy.get('#notesField').type('Sit start');
+            cy.get('#routeNotes').scrollIntoView().should('be.visible').and('have.text', 'Sit start');
+            // and outside edit mode, from what was saved
+            cy.visit(loftUrl);
+            cy.get('#row-1 .route-info').click();
+            cy.get('#planMarks .plan-mark').should('have.length', 2);
+            cy.get('#planFlow').invoke('attr', 'points').should('match', /^(-?\d+,-?\d+ ){2}-?\d+,-?\d+$/);
+            cy.get('#routeNotes').should('have.text', 'Sit start');
+            cy.get('#planEditor').should('not.be.visible');
+        });
+
+        it('counts its climbs on the Progress boulder chart', () => {
+            cy.visit(appUrl + '/training/progress/', {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('dansLoftLog', JSON.stringify([{ id: 1, date: '2026-09-12', climbs: [6, 6, 14], rating: 0 }]));
+                }
+            });
+            cy.get('#boulderTotal').should('have.text', '3 boulders in the last year, 0 in the year before');
+        });
+    });
+
     describe('One app', function () {
         const pages = ['/training/', '/training/progress/', '/training/rings/', '/training/timer/',
-            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/', '/training/tabata/', '/training/gaps/'];
+            '/training/gilford/', '/training/boulder/', '/training/endurance/', '/training/loft/', '/training/trad/', '/training/nohangs/', '/training/tabata/', '/training/gaps/',
+            '/training/dansloft/'];
 
         it('installs as a single app covering every page', () => {
             cy.request(appUrl + '/training/manifest.json').its('body').should((manifest) => {
@@ -2503,6 +2639,29 @@ describe('Training apps', function () {
             cy.get('#about').should('not.be.visible');
             // and no cog hint on a page with no settings to point at
             cy.get('#cogHint').should('not.exist');
+        });
+
+        it('remembers dark mode across every app, and forgets it on going back to the phone\'s setting', () => {
+            // a phone set to light, whatever the machine running the test is
+            const lightPhone = (win) => {
+                let real = win.matchMedia.bind(win);
+                win.matchMedia = (query) => query.includes('prefers-color-scheme')
+                    ? { matches: false, addEventListener: () => {} }
+                    : real(query);
+            };
+            cy.visit(appUrl + '/training/timer/', { onBeforeLoad: lightPhone });
+            cy.get('html').should('not.have.class', 'dark').and('not.have.class', 'light');
+            cy.get('#darkMode').should('not.be.checked');
+            tap('#darkMode');
+            cy.get('html').should('have.class', 'dark');
+            cy.get('body').should('have.css', 'background-color', 'rgb(17, 17, 17)');
+
+            cy.visit(appUrl + '/training/boulder/', { onBeforeLoad: lightPhone });
+            cy.get('html').should('have.class', 'dark');
+            cy.get('#darkMode').should('be.checked');
+            tap('#darkMode');
+            cy.get('html').should('not.have.class', 'dark').and('not.have.class', 'light');
+            cy.window().then((win) => expect(win.localStorage.getItem('trainingTheme')).to.equal(null));
         });
 
         pages.forEach((page) => {

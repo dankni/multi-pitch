@@ -125,12 +125,19 @@
         return climbs;
     }
 
-    // The gym session's boulders, and a circuit logged at a grade as a boulder a lap
+    // The gym session's boulders, the loft wall's, and a circuit logged at a grade as a boulder a lap
     function boulderClimbs(logs){
         let climbs = [];
         entriesOf(logs, "boulderLog").forEach(entry => {
             list(entry.climbs).forEach(grade => {
                 if(boulderRung(grade) !== -1){ climbs.push({ "date" : entry.date, "grade" : grade }); }
+            });
+        });
+        // the loft wall's routes, a plus grade as the grade it is a shade of
+        entriesOf(logs, "dansLoftLog").forEach(entry => {
+            list(entry.climbs).forEach(id => {
+                let grade = typeof loftBoulderGrade === "function" ? loftBoulderGrade(id) : undefined;
+                if(grade){ climbs.push({ "date" : entry.date, "grade" : grade }); }
             });
         });
         entriesOf(logs, "lapTimerLog").forEach(entry => {
@@ -365,7 +372,7 @@
     /* The logs the charts are drawn from, as the apps saved them. A key someone
        has hand-edited into something that is not a list counts as empty rather
        than breaking the page. */
-    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog", "lapTimerLog"];
+    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog", "lapTimerLog", "dansLoftLog"];
 
     function readLogs(){
         let logs = {};

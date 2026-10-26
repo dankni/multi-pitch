@@ -27,6 +27,8 @@
         "endurance" : { "name" : "Endurance", "icon" : svg("0 0 100 100",
             `<path fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M6,56 H26 L36,28 L52,76 L62,50 L70,56 H94"/>`) },
         "loft" : { "name" : "Twister", "icon" : glyph("icon-mic") },
+        "dansloft" : { "name" : "Loft", "icon" : svg("0 0 100 100",
+            `<path fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round" d="M7,68 V55.2 L39,32 H43.4 L93,63 V68 Z"/>`) },
         "nohangs" : { "name" : "No Hangs", "icon" : svg("0 0 100 100",
             `<rect fill="currentColor" x="18" y="4" width="64" height="14" rx="3"/>
             <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">

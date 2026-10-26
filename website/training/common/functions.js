@@ -149,22 +149,51 @@ function toggleDebug(input){
 
 /* ================= Dark mode =================
    The page follows the phone's setting in CSS - light-dark() in style.css. The
-   switch overrides it for this visit with .light or .dark on the body. */
+   switch overrides it with .light or .dark on <html>, remembered across every
+   app. Choosing what the phone already shows forgets the override. Applied as
+   soon as this loads, in the <head>, so there is no flash of the other theme. */
+const themeKey = "trainingTheme";   // not the main site's "theme"
+
 function prefersDark(){
     return Boolean(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
 }
 
+function savedTheme(){
+    let theme = localStorage.getItem(themeKey);
+    return theme === "dark" || theme === "light" ? theme : null;
+}
+
+function isDark(){
+    let theme = savedTheme();
+    return theme === null ? prefersDark() : theme === "dark";
+}
+
+function applyTheme(){
+    let theme = savedTheme();
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.classList.toggle("light", theme === "light");
+    showDarkModeSetting(isDark());
+}
+
 function toggleDarkMode(input){
     let dark = input.checked;
-    document.body.classList.toggle("dark", dark);
-    document.body.classList.toggle("light", !dark);
-    showDarkModeSetting(dark);
+    if(dark === prefersDark()){
+        localStorage.removeItem(themeKey);
+    } else {
+        localStorage.setItem(themeKey, dark ? "dark" : "light");
+    }
+    applyTheme();
 }
 
 // Every dark mode switch on the page in step - the style guide has two
 function showDarkModeSetting(dark){
     document.querySelectorAll('[data-change="toggleDarkMode"]').forEach(box => { box.checked = dark; });
 }
+
+applyTheme();
+// another app open in another tab switched it, or the phone changed over
+window.addEventListener("storage", event => { if(event.key === themeKey){ applyTheme(); } });
+if(window.matchMedia){ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); }
 
 /* ================= Two tap confirm =================
    For a button that throws a session away. The first tap only arms it - it
@@ -737,7 +766,7 @@ const cogHintDelay = 700;
 const cogHintLife = 8000;
 
 function showCogHint(){
-    if(document.getElementById("settings") === null || localStorage.getItem(cogHintKey) === "true"){ return; }
+    if(document.getElementById("settings") === null || document.body.dataset.cogHint === "off" || localStorage.getItem(cogHintKey) === "true"){ return; }
     let hint = document.createElement("div");
     hint.id = "cogHint";
     hint.className = "hint-pop";
@@ -972,7 +1001,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadVibrateOffSetting();
     let recentDetails = document.getElementById("recentDetails");
     if(recentDetails !== null){ recentDetails.addEventListener("toggle", () => toggleRecent(recentDetails)); }
-    showDarkModeSetting(prefersDark());
+    showDarkModeSetting(isDark());
     showCogHint();
     registerServiceWorker();
     showAppVersion();

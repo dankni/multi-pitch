@@ -97,6 +97,9 @@
         { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/", "kind" : "Climbing",
           "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }),
           "climbs" : entry => list(entry.climbs).length },
+        { "key" : "dansLoftLog", "name" : "Dans Loft", "href" : "/training/dansloft/", "kind" : "Climbing",
+          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }),
+          "climbs" : entry => list(entry.climbs).length },
         { "key" : "enduranceLog", "name" : "Endurance", "href" : "/training/endurance/", "kind" : "Climbing",
           "line" : entry => ({ "title" : (styleNames[entry.style] || entry.style || "Endurance")
                                    + (entry.maxGrade ? " off " + entry.maxGrade : ""),
