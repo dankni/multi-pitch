@@ -271,6 +271,8 @@
             button.setAttribute("aria-expanded", String(open));
             button.classList.toggle("dim", index !== null && !open);
         });
+        // the legend is in the bar's order, so its items fade with their segments
+        document.querySelectorAll("#timeSplitLegend li").forEach((item, place) => item.classList.toggle("dim", index !== null && place !== index));
         let detail = document.getElementById("timeSplitDetail");
         detail.hidden = index === null;
         if(index === null){ return; }
@@ -379,7 +381,7 @@
                 let band = hardest[date];
                 if(count > 0){ days++; }
                 let kind = count === 0 ? "none" : band ? band.cls : "plain";
-                squares += `<rect class="day ${kind}" data-date="${date}" x="${(left + week * step).toFixed(1)}"`
+                squares += `<rect class="day ${kind}" data-date="${date}" style="--week: ${week}" x="${(left + week * step).toFixed(1)}"`
                     + ` y="${(top + day * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}" rx="2">`
                     + `<title>${escapeHtml(count === 0 ? logDate(date) + ": no sessions" : daySays(date))}</title></rect>`;
             }

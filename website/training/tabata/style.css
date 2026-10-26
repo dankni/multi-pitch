@@ -169,6 +169,3 @@ body:not([data-state="idle"]) .set-name-field,
     font-size: 13px;
     opacity: 0.8;
 }
-.routine-confirm {
-    white-space: nowrap;
-}

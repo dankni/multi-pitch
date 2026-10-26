@@ -4,9 +4,11 @@
    signal.
 
    When you change any app, bump CACHE_VERSION, or installed copies keep serving
-   the old files. */
+   the old files: the number after the dot for a change (v179.1, v179.2, v179.3),
+   the one before it for a big release (v180.0). It is the app version shown in
+   the apps. */
 
-const CACHE_VERSION = 'v177';
+const CACHE_VERSION = 'v179.1';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.

@@ -300,17 +300,16 @@
 .split-app-3 { --c: #008300; }
 .split-app-4 { --c: light-dark(#6250d6, #9085e9); }
 .split-app-5 { --c: light-dark(#e34948, #e66767); }
-.time-split figcaption {
+/* "Last 30 days · 37h 13m trained", and a kind's "Climbing · 36h 29m, by app" */
+.time-split figcaption, .split-title {
+    margin: 0 0 8px;
     font-weight: bold;
     font-size: 16px;
-}
-.time-split .sessions-note {
-    margin: 0 0 8px;
 }
 .split-bar {
     display: flex;
     gap: 2px;
-    height: 24px;
+    height: 18px;
 }
 .split-bar > * {
     flex-basis: 0;
@@ -331,9 +330,12 @@
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
-/* the others fade while one is open */
-.split-bar button.dim {
+/* the others fade while one is open, segments and legend both */
+.split-bar button.dim, .split-legend li.dim {
     opacity: 0.35;
+}
+.split-legend li {
+    transition: opacity 150ms ease;
 }
 .split-bar > :first-child {
     border-radius: 4px 0 0 4px;
@@ -348,6 +350,20 @@
     margin-top: 16px;
     padding-top: 12px;
     border-top: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
+}
+/* The calendar fills in a week at a time, left to right, and a time bar grows
+   in from the left - backwards, so each lets go once it has played */
+@keyframes split-grow {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .calendar .day {
+        animation: fade-in 0.35s calc(var(--week, 0) * 35ms) ease-out backwards;
+    }
+    .split-bar {
+        animation: split-grow 0.8s 0.2s ease-out backwards;
+    }
 }
 .split-legend {
     margin: 10px 0 0;

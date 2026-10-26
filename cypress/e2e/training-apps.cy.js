@@ -307,14 +307,37 @@ describe('Training apps', function () {
             cy.get('#addMissingLink').should('not.be.visible');
         });
 
-        it('deletes a logged session once the delete is confirmed', () => {
+        it('deletes a logged session once the delete is confirmed in a toast', () => {
             cy.visit(timerUrl);
             runSession(1);
             cy.get('#finishButton').click();
             cy.get('#saveSession').click();
             cy.get('#log .icon-trash').click();
-            cy.get('#log .icon-ok').click();
+            cy.tick(100);
+            cy.get('.toast.danger').should('be.visible').and('contain', 'Delete the session from');
+            cy.get('.toast.danger .toast-confirm').should('have.text', 'DELETE').click();
             cy.get('#log').should('contain', 'No sessions saved yet');
+        });
+
+        it('keeps a session when its delete is cancelled or the toast closed', () => {
+            cy.visit(timerUrl);
+            runSession(1);
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.get('#log .icon-trash').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-reject').click();
+            cy.tick(400);
+            cy.get('.toast.danger').should('not.exist');
+            cy.get('#log .icon-trash').should('have.length', 1);
+            cy.get('#log .icon-trash').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-close').click();
+            cy.tick(400);
+            cy.get('.toast.danger').should('not.exist');
+            cy.get('#log .icon-trash').should('have.length', 1);
+            cy.tick(10000);   // and it never goes ahead on its own
+            cy.get('#log .icon-trash').should('have.length', 1);
         });
     });
 
@@ -857,7 +880,13 @@ describe('Training apps', function () {
             cy.get('#routineList li').should('have.length', 2);
             cy.get('#routineList li').eq(0).should('contain', '6 × 11');
             cy.get('#routineList li').eq(1).find('.routine-bin').click();
-            cy.get('#routineList li').eq(1).find('.routine-confirm').should('be.visible').find('.icon-ok').click();
+            cy.tick(100);
+            cy.get('.toast.danger').should('contain', 'Delete the Short routine?').find('.toast-reject').click();
+            cy.tick(400);   // gone once it has faded
+            cy.get('#routineList li').should('have.length', 2);   // Cancel keeps it
+            cy.get('#routineList li').eq(1).find('.routine-bin').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-confirm').click();
             cy.get('#routineList li').should('have.length', 1).and('contain', 'Max hangs');
             cy.get('[data-action="hideSettings"]').click();
             // a routine is opened with repeater mode off too
@@ -2715,6 +2744,8 @@ describe('Training apps', function () {
             cy.get('#timeSplitBar button').eq(0).click();
             cy.get('#timeSplitBar button').eq(0).should('have.attr', 'aria-expanded', 'true').and('not.have.class', 'dim');
             cy.get('#timeSplitBar button').eq(1).should('have.class', 'dim');
+            cy.get('#timeSplitLegend li').eq(0).should('not.have.class', 'dim');
+            cy.get('#timeSplitLegend li').eq(1).should('have.class', 'dim');   // its key fades with it
             cy.get('#timeSplitDetail').should('be.visible');
             cy.get('#timeSplitDetailTitle').should('have.text', 'Climbing · 4h 30m, by app');
             cy.get('#timeSplitDetailBar span').should('have.length', 3);
@@ -2727,6 +2758,7 @@ describe('Training apps', function () {
             cy.get('#timeSplitBar button').eq(1).click();
             cy.get('#timeSplitDetail').should('not.be.visible');
             cy.get('#timeSplitBar button').should('not.have.class', 'dim');
+            cy.get('#timeSplitLegend li').should('not.have.class', 'dim');
             // anywhere else closes it, and so does Escape
             cy.get('#timeSplitBar button').eq(0).click();
             cy.get('#timeSplitDetail').should('be.visible');
@@ -3065,6 +3097,15 @@ describe('Training apps', function () {
             cy.window().then((win) => win.caches.delete('training-v99'));
         });
 
+        it('counts v179.10 after v179.9, and an older undotted version before both', () => {
+            const names = ['training-v177', 'training-v179.9', 'training-v179.10'];
+            cy.visit(overviewUrl);
+            cy.window().then((win) => Promise.all(names.map((name) => win.caches.open(name))));
+            cy.reload();
+            cy.get('#appVersion').should('have.text', 'App version: v179.10');
+            cy.window().then((win) => Promise.all(names.map((name) => win.caches.delete(name))));
+        });
+
         it('puts the page and the version in the feedback email subject', () => {
             cy.visit(overviewUrl);
             cy.get('#about a[href^="mailto:"]')
@@ -3222,6 +3263,9 @@ describe('Training apps', function () {
             it('can be removed again', () => {
                 choose(csv);
                 cy.contains('#tradFigure button', 'Remove').click();
+                cy.tick(100);
+                cy.get('.toast.danger').should('contain', 'Remove the imported UKC logbook from this device?');
+                cy.get('.toast.danger .toast-confirm').click();
                 cy.get('#performance').should('not.be.visible');
                 cy.get('#progressEmpty').should('be.visible');
                 cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));

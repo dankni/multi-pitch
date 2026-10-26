@@ -306,32 +306,25 @@ function openRoutine(button){
     hideSettings();
 }
 
-// The bin asks Sure? with a tick and a cross, as a session in the log does
+// The bin asks in a toast first, as a session in the log does. By name, as the
+// list could change while it asks.
 function askDeleteRoutine(button){
-    drawRoutines();
-    let row = document.querySelector(`#routineList [data-row="${button.dataset.routine}"]`);
-    row.querySelector(".routine-bin").hidden = true;
-    row.querySelector(".routine-confirm").hidden = false;
-}
-
-function deleteRoutine(button){
-    routines.splice(Number(button.dataset.routine), 1);
-    store(routinesKey, routines);
-    drawRoutines();
+    let name = routines[Number(button.dataset.routine)].name;
+    confirmToast("Delete the " + name + " routine?", "DELETE", () => {
+        routines = routines.filter(routine => routine.name !== name);
+        store(routinesKey, routines);
+        drawRoutines();
+    });
 }
 
 function drawRoutines(){
     document.getElementById("noRoutines").hidden = routines.length > 0;
     document.getElementById("routineList").innerHTML = routines.map((routine, index) => {
         let name = escapeHtml(routine.name);
-        return `<li data-row="${index}">
+        return `<li>
             <button type="button" class="link-button routine-open" data-action="openRoutine" data-routine="${index}">${name}</button>
             <span class="routine-detail">${routine.sets} × ${routine.reps} · ${routine.work}s / ${routine.rest}s</span>
             <button type="button" class="icon-button demo-icon icon-trash routine-bin" data-action="askDeleteRoutine" data-routine="${index}" aria-label="Delete ${name}"></button>
-            <span class="routine-confirm" hidden>Sure?
-                <button type="button" class="icon-button demo-icon icon-ok" data-action="deleteRoutine" data-routine="${index}" aria-label="Confirm delete ${name}"></button>
-                <button type="button" class="icon-button demo-icon icon-cancel" data-action="drawRoutines" aria-label="Cancel delete"></button>
-            </span>
         </li>`;
     }).join("");
 }

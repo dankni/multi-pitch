@@ -26,6 +26,9 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Tabata | Routine updated | Info | 5.2 s | SAVE in repeater mode, with the name of a routine already saved: its settings are replaced | tabata/main.js | Yes | Names match whatever their capitals |
 | Tabata | Reset the session to open a routine | Warning | 5.2 s | A routine tapped under the cog while a session is under way | tabata/main.js | Yes | |
 | Twister | Browser or device doesn't support voice recognition. Try Chrome on Android. | Warning | Until closed | The page opens in a browser without speech recognition | loft/main.js | Yes | Text, with its link, is the `#noVoiceToast` template in loft/index.html |
+| All apps that log | Delete the session from <date>? | Confirm | Until DELETE, Cancel or closed | The bin by a session in an app's log | common/functions.js | Yes | Only DELETE deletes |
+| Tabata | Delete the <name> routine? | Confirm | Until DELETE, Cancel or closed | The bin by a routine under the cog | tabata/main.js | Yes | Only DELETE deletes |
+| Outside, Progress | Remove the imported UKC logbook from this device? | Confirm | Until REMOVE, Cancel or closed | Remove by the UKC logbook | common/ukc.js | Yes | Only REMOVE removes; the page then reloads |
 | Progress | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored and the page reloads | progress/backup.js | Yes | |
 | Progress | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | progress/backup.js | Yes | |
 | Progress | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | progress/backup.js | Yes | |
@@ -44,7 +47,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 
 - **App** — the app the toast appears in. *All apps* = from common code on every page.
 - **Message** — the words on the toast, as written in the code.
-- **Kind** — *Info*: green edge and a smiley. *Warning*: orange edge and a warning sign. *Action*: the message is a button.
+- **Kind** — *Info*: green edge and a smiley. *Warning*: orange edge and a warning sign. *Action*: the message is a button. *Confirm*: a warning edged in red, with the deed and Cancel - only the deed does it.
 - **Stays up** — *5.2 s*: goes on its own. *Until closed*: stays until the cross is tapped. *Until tapped or closed*: an Action.
 - **Tested** — whether `cypress/e2e/training-apps.cy.js` checks it.
 
@@ -59,6 +62,7 @@ showing twice.
 | `toast(message, onTap)` | Action — stays until tapped or closed |
 | `toast(message, null, true)` | Info that stays until closed |
 | `toast(message, null, true, true)` | Warning that stays until closed |
-| `toast(message, null, false, true)` | Warning, gone after 5.2 s |
+| `toast(message, null, false, true)` | Warning, gone after 5.2 s |
+| `confirmToast(message, deed, onConfirm)` | Confirm - `onConfirm` only on the deed's button |
 
 `message` is text, or a `<template>` element when the toast needs a link.

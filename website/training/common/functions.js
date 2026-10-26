@@ -540,10 +540,7 @@ function sessionLogRow(entry){
     let date = logDate(entry.date);
     let note = logComment(entry) ? logButton("note", entry.id, "icon-note", "Read the note from " + date) : "";
     let edit = sessionLogView.onEdit && !entry.readOnly ? logButton("edit", entry.id, "icon-wrench", "Edit session " + date) : "";
-    let remove = entry.readOnly ? "" : " " + logButton("delete", entry.id, "icon-trash", "Delete session " + date).replace("<button", `<button id="delete${entry.id}"`)
-        + ` <span hidden id="confirm${entry.id}">Sure?
-            ${logButton("confirm", entry.id, "icon-ok", "Confirm delete")}${logButton("cancel", entry.id, "icon-cancel", "Cancel delete")}
-        </span>`;
+    let remove = entry.readOnly ? "" : " " + logButton("delete", entry.id, "icon-trash", "Delete session " + date);
     return `<tr>
         <td class="log-date">${when.day}${when.year === "" ? "" : `<br /><span class="log-year">${when.year}</span>`}</td>
         <td>${logTitle(entry)}${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
@@ -563,15 +560,11 @@ function logClicked(event){
         showNote(button, logComment(entry), logStars(entry), "Note from " + logDate(entry.date));
     }
     if(action === "edit"){ sessionLogView.onEdit(id); }
-    if(action === "delete" || action === "cancel"){ toggleConfirm(id); }
-    if(action === "confirm"){ removeLog(id); }
-}
-
-// Deleting takes two taps: the bin gives way to a tick and a cross
-function toggleConfirm(id){
-    let confirm = document.getElementById("confirm" + id);
-    confirm.hidden = !confirm.hidden;
-    document.getElementById("delete" + id).hidden = !confirm.hidden;
+    // asked in a toast first - see confirmToast()
+    if(action === "delete"){
+        let entry = sessionLogEntries().find(item => item.id === id);
+        confirmToast("Delete the session from " + logDate(entry.date) + "?", "DELETE", () => removeLog(id));
+    }
 }
 
 function removeLog(id){
@@ -786,8 +779,7 @@ function haptic(){
    text, or a <template> whose markup it shows - for a link. */
 const toastLife = 5200;
 
-function toast(message, onTap, sticky, warn){
-    const text = typeof message === "string" ? message : message.content.textContent.trim();
+function toastStack(){
     let stack = document.getElementById("toasts");
     if(stack === null){
         stack = document.createElement("div");
@@ -796,6 +788,12 @@ function toast(message, onTap, sticky, warn){
         stack.setAttribute("role", "status");   // announced as each arrives, without taking focus
         document.body.appendChild(stack);
     }
+    return stack;
+}
+
+function toast(message, onTap, sticky, warn){
+    const text = typeof message === "string" ? message : message.content.textContent.trim();
+    let stack = toastStack();
     let box = [...stack.children].find(card => card.dataset.message === text);
     if(box === undefined){
         box = document.createElement("div");
@@ -819,6 +817,28 @@ function toast(message, onTap, sticky, warn){
     }
     clearTimeout(box.timer);
     if(!onTap && !sticky){ box.timer = setTimeout(() => hideToast(box), toastLife); }
+}
+
+/* A warning that asks first, edged in red: the deed, and Cancel. Cancel or the
+   cross leave things as they were. One at a time - a second replaces the first. */
+function confirmToast(message, deed, onConfirm){
+    document.querySelectorAll(".toast.danger").forEach(hideToast);
+    let box = document.createElement("div");
+    box.className = "toast warn danger";
+    box.innerHTML = '<span class="toast-face" aria-hidden="true">⚠︎</span><span class="toast-text"></span>'
+        + '<button type="button" class="toast-close" aria-label="Cancel">×</button>'
+        + '<span class="toast-choices"><button type="button" class="toast-confirm"></button>'
+        + '<button type="button" class="toast-reject">Cancel</button></span>';
+    box.querySelector(".toast-text").innerText = message;
+    box.querySelector(".toast-confirm").innerText = deed;
+    box.querySelector(".toast-confirm").addEventListener("click", () => {
+        hideToast(box);
+        onConfirm();
+    });
+    box.querySelector(".toast-reject").addEventListener("click", () => hideToast(box));
+    box.querySelector(".toast-close").addEventListener("click", () => hideToast(box));
+    toastStack().appendChild(box);
+    setTimeout(() => box.classList.add("shown"), 20);
 }
 
 function hideToast(box){
@@ -886,13 +906,22 @@ function registerServiceWorker(){
     });
 }
 
-// The version installed on this device, from the service worker's cache name - or null
+/* The version installed on this device, from the service worker's cache name - or
+   null. Newest by part, so v179.10 is after v179.9, and v177 before both, for the
+   moment two are there as one takes over. */
+function newerFirst(a, b){
+    let x = a.slice(1).split(".").map(Number), y = b.slice(1).split(".").map(Number);
+    for(let i = 0; i < Math.max(x.length, y.length); i++){
+        if((y[i] || 0) !== (x[i] || 0)){ return (y[i] || 0) - (x[i] || 0); }
+    }
+    return 0;
+}
 function appVersion(){
     if(!("caches" in window)){ return Promise.resolve(null); }
     return caches.keys().then(names => {
-        let versions = names.map(name => /^training-(v\d+)$/.exec(name)).filter(match => match)
+        let versions = names.map(name => /^training-(v\d+(?:\.\d+)*)$/.exec(name)).filter(match => match)
             .map(match => match[1])
-            .sort((a, b) => Number(b.slice(1)) - Number(a.slice(1)));
+            .sort(newerFirst);
         return versions.length > 0 ? versions[0] : null;
     }).catch(() => null);
 }

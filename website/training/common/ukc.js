@@ -230,7 +230,8 @@ function importUkcFile(input){
 }
 
 function removeUkcLogbook(){
-    if(!confirm("Remove the imported UKC logbook from this device?")){ return; }
-    localStorage.removeItem(ukc.key);
-    location.reload();
+    confirmToast("Remove the imported UKC logbook from this device?", "REMOVE", () => {
+        localStorage.removeItem(ukc.key);
+        location.reload();
+    });
 }
