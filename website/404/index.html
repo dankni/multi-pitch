@@ -13,6 +13,9 @@
     <!-- Styles -->
     <link href="/css/style.css" rel="stylesheet" />
 
+    <!-- Scripts -->
+    <script src="/js/main.js" type="module"></script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE"></script>
     <script>
@@ -43,28 +46,31 @@
 
 </head>
 <body id="bdy">
-    <!-- Navbar -->
-    <nav>
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/img/logo/mp-logo-white.png" style="width:30px;" alt="multi-pitch logo" />
-            </a>
-            <ul>
-                <li>
-                    <a href="/#filters"
-                       onclick='window.scrollTo({top: window.innerHeight-55,behavior: "smooth"});return false;'>
-                        Find <span class="not-mobile">Your Climb</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/map/">Map <span class="not-mobile">View</span></a>
-                </li>
-                <li>
-                    <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<!-- Navbar -->
+<nav>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="/img/logo/mp-logo-white.png" alt="multi-pitch logo" />
+        </a>
+        <ul>
+            <li>
+                <a href="/">Find <span class="not-mobile">A Climb</span></a>
+            </li>
+            <li>
+                <a href="/map/">Map <span class="not-mobile">View</span></a>
+            </li>
+            <li>
+                <a href="/about/">About <span class="not-mobile">&amp; Contact Us</span></a>
+            </li>
+            <li>
+                <a href="/blog/"><span class="not-mobile">Our </span>Blog</a>
+            </li>
+            <li>
+                <a href="/training/" class="last-nav">Train<span class="not-small">ing</span><span class="not-mobile"> Tools</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
     <!-- Browser Support Check -->
     <div class="ie-warn" id="ie-warn">
@@ -109,20 +115,70 @@
             </section>
         </div>
     </main>
-    <!--Footer-->
-    <footer class="page-footer text-center font-small">
-        <div class="footer-copyright">
-
-            <a href="https://creativecommons.org/licenses/by/2.0/uk/" target="blank">&copy; 2019 Creative Commons</a> -
-            <a href="/privacy/">Privacy</a>
-            <button type="button" class="theme-toggle footer-theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
-                <svg class="tt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <svg class="tt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
-            </button>
+<!--Footer-->
+<footer class="page-footer text-center">
+    <section class="footer-image">
+        <div class="footer-image-filter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <h4><label for="mce-EMAIL">Subscribe to Email Updates</label></h4>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <form action="https://multi-pitch.us19.list-manage.com/subscribe/post?u=e6bb5a84231b4cc61f769f196&amp;id=1fadd83d1d"
+                         method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="blank">
+                            <input type="email" value="" name="EMAIL" id="mce-EMAIL" placeholder="email@domain.com" class="subscribe-input email" />
+                            <input  type="submit" aria-label="subscribe" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="subscribe-button" />
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+    </section>    
+    <section class="grey">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <video autoplay loop muted playsinline class="danger-gif" loading="lazy" aria-hidden="true">
+                        <source src="/img/other/danger/climb-danger.webm" type="video/webm"> 
+                        <source src="/img/other/danger/climb-danger.mp4" type="video/mp4">  
+                    </video>
+                    <h4>Rock Climbing is Dangerous</h4>
+                    <p style="min-height:90px">
+                        <strong>Do not use any information in this website to plan, attempt, or climb a particular route 
+                        unless you are willing to assume personal responsibility for all risks associated. Don't 
+                        treat this site as instruction.</strong> Rock climbing is an activity with a
+                        danger of personal injury or death. Participants should be aware of and accept these risks and be
+                        responsible for their own actions. If in doubt, don't climb.
+                        <a href="https://www.thebmc.co.uk/risk-and-safety" target="blank">
+                            <abbr title="British Mountaineering Council">BMC</abbr> Statement <i class=" icon-link-ext" aria-hidden="true"></i>
+                        </a>
+                    </p>
+                </div>
+            
+            </div>
+        </div>
+    </section>
+    <section class="footer-copyright">
+
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">&copy; 2026 Creative Commons</a> - 
+        <a href="/about/#contact">Contact</a> - <a href="/privacy/">Privacy</a>        
+        <button type="button" class="theme-toggle footer-theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
+            <svg class="tt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="tt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        </button>
+    </section>
+
+</footer>
+<div class="overlay" id="overlay"></div>
+<script>
+    window.performance.mark('html-end');
+</script>
     <style>
+        /* The background stays light in both themes, so the text does too */
+        #main {
+            color: #000;
+        }
         .row{
             text-align:center;
         }

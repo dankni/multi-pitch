@@ -88,7 +88,7 @@ function generate() {
         </url>
         <url>
             <loc>https://www.multi-pitch.com/privacy/</loc>
-            <lastmod>2026-10-26</lastmod>
+            <lastmod>2026-10-27</lastmod>
             <priority>0.3</priority>
         </url>
         <url>

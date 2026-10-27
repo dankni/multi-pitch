@@ -1526,7 +1526,6 @@ window.addEventListener('load', (event) => {
         import("./modules/rangeSliders.js");
     }
     
-    loadNonEssential("link", "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
     loadNonEssential("link", "/css/fontello.css");
 
     if(document.getElementById('tideHolder')){
