@@ -554,8 +554,10 @@ describe('Training apps', function () {
             cy.visit(appUrl + path, {
                 onBeforeLoad(win) {
                     win.spoken = [];
-                    // tones by frequency: the ping is the high one, the beeps the low
+                    // tones by frequency: the ping is the high one, the beeps the low.
+                    // The hum that keeps the stream open starts and stops with no time.
                     win.tones = [];
+                    win.humming = false;
                     win.AudioContext = function () {
                         let node = () => ({ connect: (next) => next, gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} } });
                         return {
@@ -563,8 +565,8 @@ describe('Training apps', function () {
                             createGain: node,
                             createOscillator: () => Object.assign(node(), {
                                 frequency: {},
-                                start() { win.tones.push(this.frequency.value); },
-                                stop() {}
+                                start(at) { at === undefined ? win.humming = true : win.tones.push(this.frequency.value); },
+                                stop(at) { if (at === undefined) { win.humming = false; } }
                             })
                         };
                     };
@@ -746,6 +748,7 @@ describe('Training apps', function () {
             cy.get('body').should('have.class', 'green');
             cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
             cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // work, rest, three beeps, work
+            cy.window().its('humming').should('equal', true);
 
             cy.tick(140000);
             cy.get('#elapsed').should('have.text', '00:00');
@@ -753,6 +756,7 @@ describe('Training apps', function () {
             cy.get('#timeline').should('have.attr', 'aria-valuenow', '170');
             cy.get('.done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
             cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
+            cy.window().its('humming').should('equal', false);
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
                 expect(JSON.parse(log)).to.have.length(1);

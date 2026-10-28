@@ -127,6 +127,7 @@ const soundOffKey = "soundOff";
 function toggleSound(){
     sound = !sound;
     localStorage.setItem(soundOffKey, JSON.stringify(!sound));
+    if(!sound){ stopHum(); }
     showSoundState();
 }
 
@@ -702,6 +703,27 @@ function tone(frequency, length, volume){
 // a bright ring for something done, a quiet tick for a count
 function ping(){ tone(1320, 0.7, 0.4); }
 function beep(){ tone(880, 0.12, 0.15); }
+
+/* Android drops a stream that goes quiet, and over Bluetooth the switch can pause
+   the music mid rest. A hum far too quiet to hear keeps it open while a clock runs;
+   not pure silence, which Chrome treats as no stream at all. */
+let hum = null;
+
+function startHum(){
+    if(!sound || audio === null || hum !== null){ return; }
+    let oscillator = audio.createOscillator();
+    let gain = audio.createGain();
+    gain.gain.value = 0.0001;
+    oscillator.connect(gain).connect(audio.destination);
+    oscillator.start();
+    hum = oscillator;
+}
+
+function stopHum(){
+    if(hum === null){ return; }
+    hum.stop();
+    hum = null;
+}
 
 /* A buzz to feel when the screen is out of sight - on whatever the phone allows,
    which is not an iPhone. Not silenced by the mute: that is for the noise, and

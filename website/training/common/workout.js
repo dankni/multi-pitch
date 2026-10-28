@@ -36,6 +36,7 @@ function startSession(){
     paused = false;
     if(countedIn){
         app.clock.start();
+        startHum();
         drawState("running");
         return;
     }
@@ -47,6 +48,7 @@ function startSession(){
         drawState("running");
         app.onGo();
         app.clock.start();
+        startHum();
         button.disabled = false;
     });
 }
@@ -54,6 +56,7 @@ function startSession(){
 function pauseSession(){
     paused = true;
     app.clock.stop();
+    stopHum();
     drawState("paused");
 }
 
@@ -61,6 +64,7 @@ function pauseSession(){
 function finishSession(){
     paused = true;
     app.clock.stop();
+    stopHum();
     releaseWakeLock();
     showSavePanel();
     drawState("finished");
@@ -68,6 +72,7 @@ function finishSession(){
 
 function reset(){
     releaseWakeLock();
+    stopHum();
     app.clock.reset();
     paused = true;
     countedIn = false;
