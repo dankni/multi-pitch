@@ -147,6 +147,30 @@ body:not([data-state="idle"]) .set-name-field,
     clip-path: inset(0 100% 0 0);
 }
 
+/* A rest's time, filling the foot of the screen in the countdown's red (.red) as it runs out */
+.rest-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    height: 4px;
+    transform: scaleX(0);
+    transform-origin: left;
+}
+.has-bottom-nav .rest-bar {
+    bottom: calc(58px + env(safe-area-inset-bottom));   /* on top of the nav */
+}
+.rest-bar.running {
+    animation: rest-bar var(--rest-length) linear forwards;
+}
+[data-state="paused"] .rest-bar {
+    animation-play-state: paused;
+}
+@keyframes rest-bar {
+    to { transform: scaleX(1); }
+}
+
 /* The routines under the cog: a link to open one, and a bin */
 .routine-list {
     margin: 0;

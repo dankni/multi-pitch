@@ -30,6 +30,9 @@ let routines = [];
 let repeaterMode = false;
 let oneSecond = false;   // the Use 1 second increments setting: work and rest step by 1, not 5
 const warningSeconds = 3;   // a rest goes red, a beep a second, this long before the next work
+const vibrateSeconds = 1;   // the phone buzzes this long before a work or a rest
+const goSoonBuzz = [200];            // one long one: go, as no hangs
+const stopSoonBuzz = [100, 80, 100]; // two short ones: stop
 
 const current = () => repeaterMode ? repeaters : tabata;
 const setsOf = () => repeaterMode ? repeaters.sets : 1;
@@ -75,6 +78,7 @@ app.onGo = () => {
 app.onReset = () => {
     showElapsed(totalSeconds());
     document.getElementById("first").hidden = true;
+    showRestBar(null);
     showProgress(0);
 };
 
@@ -90,7 +94,8 @@ app.logView = {
     "key" : app.logKey,
     "describe" : entry => typeof entry.setRest === "number"
         ? { "title" : escapeHtml(entry.routine || "Repeaters"), "detail" : `${plural(entry.sets, "set")} of ${entry.reps} · ${entry.work}s on, ${entry.rest}s off` }
-        : { "title" : plural(repsOf(entry), "rep"), "detail" : `${entry.work}s on, ${entry.rest}s off` }
+        : { "title" : plural(repsOf(entry), "rep"), "detail" : `${entry.work}s on, ${entry.rest}s off` },
+    "onEdit" : editSession   // its note, title, rating and kind - see common/workout.js
 };
 
 function setName(set){
@@ -109,6 +114,7 @@ function showSecond(seconds){
     document.getElementById("first_count").innerText = left;
 
     if(seconds === phase.start){
+        showRestBar(phase);
         let line = document.getElementById("first_set");
         document.getElementById("first").hidden = false;
         if(phase.kind === "work"){
@@ -140,13 +146,28 @@ function showSecond(seconds){
     if(phase.kind !== "work" && left <= warningSeconds){
         beep();
     }
+    if(left === vibrateSeconds){
+        vibrate(phase.kind === "work" ? stopSoonBuzz : goSoonBuzz);
+    }
+}
+
+// Across the foot of the screen through a rest, full as it ends; paused with the clock in CSS
+function showRestBar(phase){
+    let bar = document.getElementById("restBar");
+    bar.classList.remove("running");
+    bar.hidden = phase === null || phase.kind === "work" || phase.length === 0;
+    if(bar.hidden){ return; }
+    bar.style.setProperty("--rest-length", phase.length * (debug ? 0.1 : 1) + "s");   // as secondsClock
+    void bar.offsetWidth;   // or the animation won't start over
+    bar.classList.add("running");
 }
 
 function finish(){
     background("");
     document.getElementById("first").hidden = true;
+    showRestBar(null);
     speak("Done");
-    drawKindPicker();
+    drawKindPicker(repeaterMode ? "Fingerboard" : "Other");
     finishSession();
 }
 
@@ -154,8 +175,7 @@ function finish(){
    saved: repeaters are fingerboard sessions and a classic Tabata other, unless changed */
 const sessionKinds = ["Climbing", "Fingerboard", "Other"];
 
-function drawKindPicker(){
-    let chosen = repeaterMode ? "Fingerboard" : "Other";
+function drawKindPicker(chosen){
     let picker = document.getElementById("kindPicker") || document.createElement("fieldset");
     picker.id = "kindPicker";
     picker.className = "setting-group";
@@ -169,6 +189,11 @@ function chosenKind(){
     let checked = document.querySelector('input[name="sessionKind"]:checked');
     return checked === null ? undefined : checked.value;
 }
+
+// A saved session reopened from the log: saved before it had a kind, as the progress page counts it
+app.onEditOpen = entry => drawKindPicker(sessionKinds.includes(entry.kind) ? entry.kind
+    : typeof entry.setRest === "number" ? "Fingerboard" : "Other");
+app.editEntry = () => ({ "kind" : chosenKind() });
 
 /* ================= Settings ================= */
 

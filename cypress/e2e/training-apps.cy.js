@@ -563,6 +563,7 @@ describe('Training apps', function () {
                         return {
                             state: 'running', currentTime: 0, destination: {},
                             createGain: node,
+                            createDynamicsCompressor: () => Object.assign(node(), { threshold: {}, ratio: {}, attack: {}, release: {} }),
                             createOscillator: () => Object.assign(node(), {
                                 frequency: {},
                                 start(at) { at === undefined ? win.humming = true : win.tones.push(this.frequency.value); },
@@ -660,7 +661,7 @@ describe('Training apps', function () {
             cy.get('#hangs tr').first().should('have.class', 'current');
             cy.get('#hangs .pip').first().should('have.class', 'hanging');
 
-            cy.window().its('tones').should('deep.equal', [1320]);   // a ping as the hang starts
+            cy.window().its('tones').should('deep.equal', [1760]);   // a ping as the hang starts
             cy.tick(10000);
             cy.get('#first_task').should('have.text', 'Rest, then');
             cy.get('#first_count').should('have.text', '20');
@@ -668,12 +669,12 @@ describe('Training apps', function () {
             cy.get('#hangs .pip.done').should('have.length', 1);
             cy.get('#hangs .pip.hanging').should('not.exist');
             cy.get('body').should('not.have.class', 'green');
-            cy.window().its('tones').should('deep.equal', [1320, 1320]);   // and as it ends
+            cy.window().its('tones').should('deep.equal', [1760, 1760]);   // and as it ends
             cy.tick(15000);
             cy.get('body').should('have.class', 'red');
             cy.tick(5000);
             cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
-            cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // three beeps to go, then the next hang's ping
+            cy.window().its('tones').should('deep.equal', [1760, 1760, 1320, 1320, 1320, 1760]);   // three beeps to go, then the next hang's ping
 
             // the rest after a grip's last hang greys it out and lights the next
             cy.tick(135000);
@@ -737,17 +738,27 @@ describe('Training apps', function () {
             cy.get('#first_rep').should('have.text', 'Rep 1 of 6');
             cy.get('body').should('have.class', 'green');
             cy.get('#timeline').should('have.attr', 'aria-valuetext', 'Rep 1 of 6');
-            cy.tick(20000);
+            cy.get('#restBar').should('not.be.visible');
+            cy.tick(19000);
+            cy.window().its('buzzes').should('deep.equal', [[100, 80, 100]]);   // stop soon
+            cy.tick(1000);
             cy.get('#first_task').should('have.text', 'Rest, then');
             cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
             cy.get('body').should('not.have.class', 'green');
             cy.get('#timeline').should('have.attr', 'aria-valuenow', '20');
+            // a red bar along the foot, filling through the 10 second rest
+            cy.get('#restBar').should('be.visible').and('have.class', 'running').and('have.class', 'red')
+                .and('have.attr', 'style').and('contain', '--rest-length: 10s');
+            cy.get('#restBar').invoke('outerHeight').should('equal', 4);
             cy.tick(7000);
             cy.get('body').should('have.class', 'red');
-            cy.tick(3000);
+            cy.tick(2000);
+            cy.window().its('buzzes').should('deep.equal', [[100, 80, 100], [200]]);   // go soon
+            cy.tick(1000);
             cy.get('body').should('have.class', 'green');
+            cy.get('#restBar').should('not.be.visible');
             cy.get('#first_rep').should('have.text', 'Rep 2 of 6');
-            cy.window().its('tones').should('deep.equal', [1320, 1320, 880, 880, 880, 1320]);   // work, rest, three beeps, work
+            cy.window().its('tones').should('deep.equal', [1760, 1760, 1320, 1320, 1320, 1760]);   // work, rest, three beeps, work
             cy.window().its('humming').should('equal', true);
 
             cy.tick(140000);
@@ -757,6 +768,7 @@ describe('Training apps', function () {
             cy.get('.done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
             cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
             cy.window().its('humming').should('equal', false);
+            cy.get('#restBar').should('not.be.visible');
             cy.get('#kind-Other').should('be.checked');   // a classic Tabata counts as other unless changed
             cy.get('label[for="kind-Climbing"]').click();
             cy.get('#saveSession').click();
@@ -921,6 +933,37 @@ describe('Training apps', function () {
             cy.get('#repsValue').should('have.text', '6');
             cy.get('#workValue').should('have.text', '30s');
             cy.get('#log').should('contain', '8 reps');
+        });
+
+        it('tabata edits a saved session’s rating, note, title and kind, and nothing else', () => {
+            const saved = { id: 1, date: '2026-09-11', work: 7, rest: 3, reps: 10, sets: 6, setRest: 240, seconds: 1500, rating: 2, comment: 'Tired' };
+            visitWorkout('/training/tabata/');
+            cy.window().then((win) => win.localStorage.setItem('tabataLog', JSON.stringify([saved])));
+            visitWorkout('/training/tabata/');   // a fresh visit, the stubs and all
+            cy.get('#log [data-log="edit"]').click({ force: true });
+            cy.get('#endingDiv').should('be.visible');
+            cy.get('#saveSession').should('have.text', 'UPDATE SESSION');
+            cy.get('#sessionComment').should('have.value', 'Tired');
+            cy.get('.star-holder .active').should('have.length', 2);
+            cy.get('#kind-Fingerboard').should('be.checked');   // repeaters, saved before it had a kind
+            cy.get('#sessionComment').clear().type('Strong today');
+            cy.get('#sessionTitle').type('Half crimp');
+            cy.get('#star4').click();
+            cy.get('label[for="kind-Climbing"]').click();
+            cy.get('#saveSession').click();
+            cy.get('body').should('have.attr', 'data-state', 'idle');
+            cy.get('#saveSession').should('have.text', 'SAVE SESSION');
+            cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
+                expect(JSON.parse(log)).to.deep.equal([Object.assign({}, saved,
+                    { rating: 4, comment: 'Strong today', title: 'Half crimp', kind: 'Climbing' })]);
+            });
+            // not mid-session
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.get('#log [data-log="edit"]').click({ force: true });
+            cy.tick(100);
+            cy.get('.toast.warn').should('contain', 'Reset the session to edit a saved one');
+            cy.get('body').should('have.attr', 'data-state', 'running');
         });
     });
 

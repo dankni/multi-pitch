@@ -31,6 +31,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Tabata | Routine saved | Info | 5.2 s | SAVE in repeater mode, with a name not saved before | tabata/main.js | Yes | |
 | Tabata | Routine updated | Info | 5.2 s | SAVE in repeater mode, with the name of a routine already saved: its settings are replaced | tabata/main.js | Yes | Names match whatever their capitals |
 | Tabata | Reset the session to open a routine | Warning | 5.2 s | A routine tapped under the cog while a session is under way | tabata/main.js | Yes | |
+| Tabata | Reset the session to edit a saved one | Warning | 5.2 s | The wrench by a saved session while one is under way or waiting to be saved | common/workout.js | Yes | |
 | Twister | Browser or device doesn't support voice recognition. Try Chrome on Android. | Warning | Until closed | The page opens in a browser without speech recognition | loft/main.js | Yes | Text, with its link, is the `#noVoiceToast` template in loft/index.html |
 | All apps that log | Delete the session from <date>? | Confirm | Until DELETE, Cancel or closed | The bin by a session in an app's log | common/functions.js | Yes | Only DELETE deletes |
 | Tabata | Delete the <name> routine? | Confirm | Until DELETE, Cancel or closed | The bin by a routine under the cog | tabata/main.js | Yes | Only DELETE deletes |

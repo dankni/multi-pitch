@@ -104,6 +104,7 @@
 	</div>
 	<!-- the whole session to scale, filled in from the settings and as it goes -->
 	<div class="timeline" id="timeline" role="progressbar" aria-label="Session" aria-valuemin="0"></div>
+	<div class="rest-bar red" id="restBar" aria-hidden="true" hidden></div>
 	<aside id="about" class="overlay">
 		<h2>Tabata</h2>
 		<p>Short, hard efforts with short rests. The classic is 20 seconds of work and 10 seconds of rest, eight times: four minutes in all.</p>
@@ -147,6 +148,12 @@
 			<input type="checkbox" data-change="toggleVoiceOff" id="voiceOff"/>
 			<span class="label-content">
 				<i class="icon-note toggle-icon" aria-hidden="true"></i> Voice disabled <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleVibrateOff" id="vibrateOff"/>
+			<span class="label-content">
+				<i class="icon-vibrate toggle-icon" aria-hidden="true"></i> Vibration disabled <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">

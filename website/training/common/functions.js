@@ -679,30 +679,41 @@ function speak(text, onStart){
 /* Tones, made with Web Audio so there are no files to cache. A browser only
    lets the sound start from a tap, so a start button calls unlockAudio(). */
 let audio = null;
+let squash = null;   // the tones' compressor, so they can be loud without clipping
 
 function unlockAudio(){
     let Context = window.AudioContext || window.webkitAudioContext;
-    if(audio === null && Context){ audio = new Context(); }
+    if(audio === null && Context){
+        audio = new Context();
+        squash = audio.createDynamicsCompressor();
+        squash.threshold.value = -24;
+        squash.ratio.value = 12;
+        squash.attack.value = 0.003;
+        squash.release.value = 0.25;
+        squash.connect(audio.destination);
+    }
     if(audio !== null && audio.state === "suspended"){ audio.resume(); }
 }
 
-// frequency in Hz, length in seconds, volume 0 to 1, fading out
+/* frequency in Hz, length in seconds, volume 0 to 1, fading out. A triangle,
+   not a sine: its overtones are what carry over music in headphones. */
 function tone(frequency, length, volume){
     if(!sound || audio === null){ return; }
     let oscillator = audio.createOscillator();
     let gain = audio.createGain();
     let now = audio.currentTime;
+    oscillator.type = "triangle";
     oscillator.frequency.value = frequency;
     gain.gain.setValueAtTime(volume, now);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + length);
-    oscillator.connect(gain).connect(audio.destination);
+    oscillator.connect(gain).connect(squash);
     oscillator.start(now);
     oscillator.stop(now + length);
 }
 
-// a bright ring for something done, a quiet tick for a count
-function ping(){ tone(1320, 0.7, 0.4); }
-function beep(){ tone(880, 0.12, 0.15); }
+// a bright ring for something done, a quieter tick for a count
+function ping(){ tone(1760, 0.7, 0.9); }
+function beep(){ tone(1320, 0.12, 0.5); }
 
 /* Android drops a stream that goes quiet, and over Bluetooth the switch can pause
    the music mid rest. A hum far too quiet to hear keeps it open while a clock runs;
