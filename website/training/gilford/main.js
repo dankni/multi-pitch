@@ -5,6 +5,30 @@ const app = {
     "logKey" : "gilfordLog",
     "currentKey" : "gilfordCurrent",
     "timed" : true,
+    "watchKey" : "gilfordWatch",
+    // On the watch (common/watch.js): a panel's three routes at a time, ticked there as here
+    "watch" : {
+        "state" : () => {
+            let state = { "m" : "panel", "s" : session === null ? "idle" : document.body.dataset.state };
+            if(session !== null){
+                state.id = session.id;
+                state.P = panelNumbers().map(number => routes.filter(route => route.section === number).map(route =>
+                    [route.id, route.grade, session.climbs.includes(route.id) ? 1 : 0, ...watchColour("route hold-" + route.colour.toLowerCase())]));
+                state.n = session.climbs.length;
+                state.of = routes.length;
+            }
+            return state;
+        },
+        // which way it is to end up, so a tick that waited on the watch isn't undone by another
+        "receive" : message => {
+            if(message.t === "finish" && document.body.dataset.state === "running"){ openSavePanel(); }
+            let button = document.getElementById("route" + message.r);
+            if(session !== null && message.t === "tick" && button !== null && session.climbs.includes(message.r) !== Boolean(message.on)){
+                toggleClimb(button);
+            }
+        },
+        "active" : () => session !== null
+    },
     "newSession" : () => ({ "climbs" : [] }),
     "fromEntry" : entry => ({ "climbs" : entry.climbs.slice() }),
     "toEntry" : from => ({ "climbs" : from.climbs.slice() }),
@@ -12,6 +36,7 @@ const app = {
     "draw" : () => {
         drawRoutes();
         updateSummary();
+        drawRecent();
     },
     "logView" : {
         "key" : "gilfordLog",
@@ -57,10 +82,12 @@ function toggleClimb(button){
     button.classList.toggle("ticked", position === -1);
     button.setAttribute("aria-pressed", position === -1);
     if(position === -1){ haptic(); }   // a tick, not taking one back
+    let route = getRoute(id);
+    noteRecent(`${route.colour} ${route.grade} ${position === -1 ? "ticked" : "taken back"}`);
     keepSession();
     updateSummary();
     cheer(before);
-    if(position === -1){ cheerGrade("sport", getRoute(id).grade, earlier); }   // see common/records.js
+    if(position === -1){ cheerGrade("sport", route.grade, earlier); }   // see common/records.js
 }
 
 // Everything this tap completed gets its say, the biggest last
@@ -77,9 +104,12 @@ function cheer(before){
 }
 
 // A row of tiles per panel on the wall
+function panelNumbers(){
+    return [...new Set(routes.map(route => route.section))];
+}
+
 function drawRoutes(){
-    let panels = [...new Set(routes.map(route => route.section))];
-    document.getElementById("routes").innerHTML = panels.map(number =>
+    document.getElementById("routes").innerHTML = panelNumbers().map(number =>
         `<section class="section-block">
             <span class="section-number" aria-hidden="true"><small>Panel</small>${number}</span>
             ${routes.filter(route => route.section === number).map(route => {
@@ -98,6 +128,6 @@ function drawRoutes(){
 function updateSummary(){
     document.getElementById("tickCount").innerText = session.climbs.length;
     document.getElementById("summary").innerText = session.climbs.length === 0
-        ? "Nothing ticked yet"
+        ? ""
         : `Hardest: ${hardestGrade(session.climbs)}`;
 }

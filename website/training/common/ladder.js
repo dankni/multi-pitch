@@ -2,12 +2,13 @@
    bouldering and sport ladders, and trad's one. Runs inside common/log.js; the
    app adds to its `app`:
 
-     ladders  : { name : { list, shown, names, starts, noun, order, band } } - the
+     ladders  : { name : { list, shown, names, starts, noun, order, band, title } } - the
                 session field a ladder's climbs go in, the one saying how many
                 rungs are on show, its grades easiest first, how many a session
                 starts with, what one climb is called, and optionally every grade
                 it has ever had, easiest first, to find the hardest by, and the
-                gradeBands function for a tile's edge,
+                gradeBands function for a tile's edge, and a title for the
+                watch (common/watch.js) where the plural noun won't do,
      grades   : a row per grade naming it in each system,
      gradeKey : the system a session stores a grade by,
      systems  : { name : { main, also } } - the system a grade is called by, and
@@ -129,15 +130,26 @@ function drawLadder(){
 
 // the picker above the gym's ladders
 function setLadder(input){
-    if(session === null || !app.ladders[input.value]){ return; }
-    session.tab = input.value;
+    showLadder(input.value);
+}
+
+// also from the watch
+function showLadder(name){
+    if(session === null || !app.ladders[name]){ return; }
+    session.tab = name;
+    let tab = document.getElementById("tab-" + name);
+    if(tab !== null){ tab.checked = true; }
     keepSession();
     drawGrades();
     updateSummary();
 }
 
 function addClimb(button){
-    let name = button.dataset.grade;
+    addGrade(button.dataset.grade);
+}
+
+// also from the watch, when its tile may be on the other ladder
+function addGrade(name){
     let ladder = ladderOf(name);
     if(session === null || ladder === undefined){ return; }
     let earlier = climbsOn(ladder).slice();
@@ -146,7 +158,8 @@ function addClimb(button){
     keepSession();
     drawGradeRow(name);
     // the redrawn tile, found by id: as a selector the + in 5+ or 6a+ is CSS
-    flash(document.getElementById("row-" + name).querySelector(".grade-add"));
+    let row = document.getElementById("row-" + name);
+    flash(row === null ? null : row.querySelector(".grade-add"));
     updateSummary();
     // a ladder is named for its kind of climb - see common/records.js
     if(recordKinds[ladder]){ cheerGrade(ladder, name, earlier); }
@@ -154,7 +167,10 @@ function addClimb(button){
 
 // one tap too many, or a climb that turned out to be the one next to it
 function removeClimb(button){
-    let name = button.dataset.grade;
+    removeGrade(button.dataset.grade);
+}
+
+function removeGrade(name){
     let ladder = ladderOf(name);
     if(session === null || ladder === undefined){ return; }
     let list = climbsOn(ladder);
@@ -220,11 +236,10 @@ function updateSummary(){
     let ladder = currentLadder();
     let climbs = climbsOn(ladder);
     let others = ladderNames().filter(name => name !== ladder && climbsOn(name).length > 0)
-        .map(name => ` · ${plural(climbsOn(name).length, app.ladders[name].noun)}`).join("");
+        .map(name => plural(climbsOn(name).length, app.ladders[name].noun));
     document.getElementById("climbCount").innerText = climbs.length;
     document.getElementById("countNoun").innerText = app.ladders[ladder].noun + (climbs.length === 1 ? "" : "s");
-    document.getElementById("summary").innerText =
-        (climbs.length === 0 ? "Nothing logged yet" : `Hardest: ${hardestGrade(ladder, climbs)}`) + others;
+    document.getElementById("summary").innerText = joinDetail([climbs.length === 0 ? "" : `Hardest: ${hardestGrade(ladder, climbs)}`, ...others]);
 }
 
 /* Which system a grade is called by, under the cog */
@@ -232,6 +247,7 @@ function setGradeSystem(input){
     gradeSystem = input.value;
     localStorage.setItem(app.systemKey, gradeSystem);
     if(session !== null){
+        keepSession();   // for the watch, which names grades the same way
         drawGrades();
         updateSummary();
     }
@@ -244,3 +260,34 @@ function loadGradeSystem(){
     let radio = document.getElementById("system-" + gradeSystem);
     if(radio !== null){ radio.checked = true; }
 }
+
+/* On the watch (common/watch.js), an app's `app.watch`: the ladders as far as
+   they are on show here, named as here, and what is tapped there tapped here */
+const ladderWatch = {
+    "state" : () => {
+        let state = { "m" : "ladder", "s" : session === null ? "idle" : document.body.dataset.state };
+        if(session !== null){
+            state.id = session.id;
+            state.l = currentLadder();
+            state.L = ladderNames().map(name => {
+                let ladder = app.ladders[name];
+                return { "k" : name, "n" : ladder.title || ladder.noun + "s",
+                         "r" : ladder.names.slice(0, shownGrades(name)).map(grade =>
+                             [grade, shownName(grade), countOf(grade), ...watchColour("grade-row " + (ladder.band ? ladder.band(grade).cls : ""))]) };
+            });
+        }
+        return state;
+    },
+    "receive" : message => {
+        if(message.t === "finish" && document.body.dataset.state === "running"){ openSavePanel(); }
+        if(session === null){ return; }
+        if(message.t === "add"){ addGrade(message.g); }
+        else if(message.t === "undo"){ removeGrade(message.g); }
+        else if(message.t === "tab"){ showLadder(message.l); }
+        else if(message.t === "harder"){
+            showLadder(message.l);
+            harder();
+        }
+    },
+    "active" : () => session !== null
+};

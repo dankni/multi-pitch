@@ -158,33 +158,33 @@
 		</fieldset>
 		<!-- what the mode picked does, as a tab under the picker -->
 		<div class="mode-about" id="about-adventure">
-			<p class="progressor-tips">Run and climb as far as you can. Each wall asks for its own pull, from 2 kg up to your max - most of them around half. Jump for coins, dodge the wasps.</p>
+			<p class="device-tips">Run and climb as far as you can. Each wall asks for its own pull, from 2 kg up to your max - most of them around half. Jump for coins, dodge the wasps.</p>
 		</div>
 		<div class="mode-about" id="about-maxHang" hidden>
-			<p class="progressor-tips">A max hang session: each hang on one arm, then the other, then a rest. Set the max pull to the most you can hold for 10 s.</p>
-			<ol class="progressor-steps" id="routineSteps"></ol>
+			<p class="device-tips">A max hang session: each hang on one arm, then the other, then a rest. Set the max pull to the most you can hold for 10 s.</p>
+			<ol class="device-steps" id="routineSteps"></ol>
 		</div>
 		<fieldset class="setting-group progressor-setup">
 			<legend>Tindeq Progressor</legend>
-			<p class="progressor-status" id="progressorStatus" data-status="off" role="status">
+			<p class="device-status" id="progressorStatus" data-status="off" role="status">
 				<span class="status-dot" aria-hidden="true"></span><span id="progressorStatusText">Not connected</span>
 			</p>
-			<p class="progressor-detail" id="progressorDetail" hidden></p>
-			<p class="progressor-error" id="progressorError" hidden></p>
-			<div class="progressor-buttons">
+			<p class="device-detail" id="progressorDetail" hidden></p>
+			<p class="device-error" id="progressorError" hidden></p>
+			<div class="device-buttons">
 				<button type="button" class="quiet" id="settingsConnect" data-action="connectProgressor">Connect</button>
 				<button type="button" class="quiet" id="disconnect" data-action="disconnectProgressor" hidden>Disconnect</button>
 				<button type="button" class="quiet" id="tare" data-action="tareProgressor" hidden>Zero it</button>
 			</div>
-			<ol class="progressor-steps" id="progressorSteps">
+			<ol class="device-steps" id="progressorSteps">
 				<li>Switch the Progressor on with its button.</li>
 				<li>Hang it with nothing pulling on it, so it zeroes at 0 kg.</li>
 				<li>Tap Connect and choose the Progressor in the list.</li>
 				<li>Pull on it and watch the kg move.</li>
 			</ol>
-			<p class="progressor-tips" id="progressorTips">Not in the list? Check Bluetooth is on, and that the Tindeq app isn't connected to it - it talks to one app at a time. It switches itself off after 10 minutes without use.</p>
-			<p class="progressor-tips" id="bluetoothOff" hidden>Bluetooth looks to be off on this device.</p>
-			<p class="progressor-tips" id="noBluetoothSettings" hidden>This browser can't connect to a Progressor. It needs Chrome or Edge on Android or a computer. unfortunatly iPhone's don't support this via a browser. You can play by holding the screen instead.</p>
+			<p class="device-tips" id="progressorTips">Not in the list? Check Bluetooth is on, and that the Tindeq app isn't connected to it - it talks to one app at a time. It switches itself off after 10 minutes without use.</p>
+			<p class="device-tips" id="bluetoothOff" hidden>Bluetooth looks to be off on this device.</p>
+			<p class="device-tips" id="noBluetoothSettings" hidden>This browser can't connect to a Progressor. It needs Chrome or Edge on Android or a computer. unfortunatly iPhone's don't support this via a browser. You can play by holding the screen instead.</p>
 		</fieldset>
 		<label class="switch-label">
 			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>

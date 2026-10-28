@@ -27,6 +27,8 @@
 	<script src="/training/common/log.js" ></script>
 	<script src="/training/common/ladder.js" ></script>
 	<script src="/training/boulder/main.js" ></script>
+	<script src="/training/common/bangle.js" ></script>
+	<script src="/training/common/watch.js" ></script>
     <title>Gym Session</title>
   </head>
 
@@ -47,16 +49,20 @@
 
 	<div class="holder" id="sessionHolder">
 		<div id="sessionBar">
-			<label for="sessionDate">Session date</label>
-			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
+			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" aria-label="Session date" />
 			<!-- once FINISH is tapped: when it started and finished, to put right by hand -->
 			<div class="session-times">
 				<label>Started <input type="time" class="field" id="sessionStart" data-change="setSessionTime" /></label>
 				<label>Finished <input type="time" class="field" id="sessionFinish" data-change="setSessionTime" /></label>
 				<span class="session-length" id="sessionLengthShown"></span>
 			</div>
+			<!-- with the watch switched on under the cog - see common/watch.js -->
+			<div class="watch-bar" id="watchBar" hidden></div>
+			<template id="watchHelpText">
+				<p>Swipe Left / Right to change grades.<br>Swipe Up / Down to open menu.<br>Press button or long press screen to track grade.</p>
+			</template>
 			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">boulders</span></h3>
-			<p id="summary">Nothing logged yet</p>
+			<p id="summary"></p>
 			<details class="recent-logs" id="recentDetails">
 				<summary>Show recent logs</summary>
 				<ol id="recentLogs"></ol>
@@ -145,6 +151,7 @@
 				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
 			</span>
 		</label>
+		<div id="watchSetting"></div>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>

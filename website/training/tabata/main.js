@@ -98,6 +98,25 @@ app.logView = {
     "onEdit" : editSession   // its note, title, rating and kind - see common/workout.js
 };
 
+/* On the watch (common/watch.js): work or rest and what is left of it, sent as
+   each starts and as the session starts, pauses and stops - the watch counts down */
+app.watchKey = "tabataWatch";
+app.watch = {
+    "state" : () => {
+        let state = { "m" : "interval", "s" : document.body.dataset.state };
+        let seconds = app.clock.seconds;
+        let phase = countedIn ? plan.find(each => seconds < each.start + each.length) : undefined;
+        if(phase){
+            state.k = phase.kind === "work" ? "work" : "rest";
+            state.p = plan.indexOf(phase);
+            state.left = phase.start + phase.length - seconds;
+        }
+        return state;
+    },
+    "receive" : () => {},
+    "active" : () => countedIn
+};
+
 function setName(set){
     return (repeaters.setNames[set] || "").trim();
 }
@@ -139,6 +158,7 @@ function showSecond(seconds){
             if(setName(phase.set + 1)){ speak("Next, " + setName(phase.set + 1)); }
         }
         line.hidden = !repeaterMode || line.textContent === "";
+        if(app.onState){ app.onState(); }
     }
     if(phase.kind !== "work" && left === Math.min(warningSeconds, phase.length)){
         background("red");

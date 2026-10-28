@@ -23,6 +23,8 @@
 	<script src="/training/common/bottom-nav.js" defer></script>
 	<script src="/training/common/workout.js" ></script>
 	<script src="/training/tabata/main.js" ></script>
+	<script src="/training/common/bangle.js" ></script>
+	<script src="/training/common/watch.js" ></script>
     <title>Tabata Timer</title>
   </head>
 
@@ -40,6 +42,8 @@
 	</nav>
 	<button id="primaryButton" data-action="toggleSession"><i class="demo-icon icon-play"></i>START SESSION</button>
 	<button class="secondary" id="reset" data-action="reset"><i class="demo-icon icon-ccw"></i>RESET</button>
+	<!-- with the watch switched on under the cog - see common/watch.js -->
+	<div class="watch-bar" id="watchBar" hidden></div>
 	<div id="data">
 		<h3 id="elapsed">03:50</h3>
 	</div>
@@ -167,6 +171,7 @@
 			<p id="noRoutines">Name a routine and tap SAVE, and it's kept here to open again.</p>
 			<ul class="routine-list" id="routineList"></ul>
 		</fieldset>
+		<div id="watchSetting"></div>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>

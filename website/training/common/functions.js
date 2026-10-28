@@ -263,6 +263,7 @@ function saveCurrent(key, current){
 
 function keepSession(){
     saveCurrent(app.currentKey, session);
+    if(app.onKept){ app.onKept(); }
 }
 
 function restoreSession(){
@@ -371,8 +372,7 @@ function drawRecent(){
     let list = document.getElementById("recentLogs");
     if(list === null){ return; }
     let recent = session !== null && Array.isArray(session.recent) ? session.recent : [];
-    list.innerHTML = recent.length === 0 ? "<li>Nothing logged yet</li>"
-        : recent.map(item => `<li>${escapeHtml(item.text)} <span class="recent-ago">${timeAgo(item.at)}</span></li>`).join("");
+    list.innerHTML = recent.map(item => `<li>${escapeHtml(item.text)} <span class="recent-ago">${timeAgo(item.at)}</span></li>`).join("");
 }
 
 // the "ago"s count on only while it is open

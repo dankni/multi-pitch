@@ -147,7 +147,7 @@ function updateSummary(){
     document.getElementById("climbCount").innerText = climbs.length;
     document.getElementById("countNoun").innerText = climbs.length === 1 ? "climb" : "climbs";
     document.getElementById("summary").innerText = climbs.length === 0
-        ? "Nothing logged yet"
+        ? ""
         : `Hardest: ${hardestGrade(climbs)} · ${routesDone(climbs)}`;
 }
 

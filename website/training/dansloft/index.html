@@ -46,8 +46,7 @@
 
 	<div class="holder" id="sessionHolder">
 		<div id="sessionBar">
-			<label for="sessionDate">Session date</label>
-			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
+			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" aria-label="Session date" />
 			<!-- once FINISH is tapped: when it started and finished, to put right by hand -->
 			<div class="session-times">
 				<label>Started <input type="time" class="field" id="sessionStart" data-change="setSessionTime" /></label>
@@ -55,7 +54,7 @@
 				<span class="session-length" id="sessionLengthShown"></span>
 			</div>
 			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">climbs</span></h3>
-			<p id="summary">Nothing logged yet</p>
+			<p id="summary"></p>
 			<details class="recent-logs" id="recentDetails">
 				<summary>Show recent logs</summary>
 				<ol id="recentLogs"></ol>

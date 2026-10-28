@@ -37,11 +37,13 @@ const app = {
     "currentKey" : "tradCurrent",
     "systemKey" : "tradGradeSystem",
     "timed" : true,   // START to FINISH - the day out, walk in and all
+    "watchKey" : "tradWatch",
+    "watch" : ladderWatch,
     "defaultSystem" : "british",
     // M to E3 to start with, as far as E11 - the hardest trad route there is
     "ladders" : {
         "trad" : { "list" : "climbs", "shown" : "shown", "names" : grades.map(grade => grade.brit),
-                   "starts" : 11, "noun" : "trad climb", "band" : gradeBands.trad }
+                   "starts" : 11, "noun" : "trad climb", "title" : "Trad", "band" : gradeBands.trad }
     },
     "grades" : grades,
     "gradeKey" : "brit",

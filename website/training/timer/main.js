@@ -11,7 +11,15 @@
 
 const app = {
     "logKey" : "lapTimerLog",
-    "currentKey" : "lapTimerCurrent"
+    "currentKey" : "lapTimerCurrent",
+    "watchKey" : "lapTimerWatch",
+    // On the watch (common/watch.js): the clock and laps, and a lap from it
+    "watch" : {
+        "state" : () => ({ "m" : "lap", "s" : document.body.dataset.state, "e" : elapsed(),
+                           "n" : session === null ? 0 : session.laps, "g" : session === null ? "" : session.grade || "" }),
+        "receive" : message => { if(message.t === "lap"){ recordLap(); } },
+        "active" : () => session !== null
+    }
 };
 
 const gradeKey = "lapTimerGrade";
@@ -210,6 +218,7 @@ function drawAll(){
     document.getElementById("lapButton").disabled = !running;
     document.getElementById("finishButton").disabled = saving;
     drawRecent();
+    if(app.onState){ app.onState(); }
 }
 
 // Space to lap and Escape to pause, when no button or field has the key

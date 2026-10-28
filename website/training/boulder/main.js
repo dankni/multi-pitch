@@ -48,14 +48,16 @@ const app = {
     "currentKey" : "boulderCurrent",
     "systemKey" : "boulderGradeSystem",
     "timed" : true,
+    "watchKey" : "boulderWatch",
+    "watch" : ladderWatch,
     "defaultSystem" : "hueco",
     // V0 to V10 and 4 to 7c to start with, as far as V17 and 9c. The sport
     // ladder's order says which of 4+ and 4c is harder, whichever are on it.
     "ladders" : {
         "boulder" : { "list" : "climbs", "shown" : "shown",      "names" : grades.map(grade => grade.v),
-                      "starts" : 11, "noun" : "boulder", "band" : boulderBand() },
+                      "starts" : 11, "noun" : "boulder", "title" : "Bouldering", "band" : boulderBand() },
         "sport"   : { "list" : "sport",  "shown" : "sportShown", "names" : sportGrades(),
-                      "order" : gymSportOrder, "starts" : sportStarts(), "noun" : "sport climb",
+                      "order" : gymSportOrder, "starts" : sportStarts(), "noun" : "sport climb", "title" : "Sport",
                       "band" : gradeBands.sport }
     },
     "grades" : grades,
@@ -116,7 +118,10 @@ function togglePlusGrades(input){
 function toggleBoulderworld(input){
     localStorage.setItem(boulderworldKey, input.checked);
     app.ladders.boulder.band = boulderBand();
-    if(session !== null){ drawGrades(); }
+    if(session !== null){
+        keepSession();   // for the watch, which wears the same colours
+        drawGrades();
+    }
 }
 
 function rebuildSportLadder(){

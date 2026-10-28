@@ -36,6 +36,63 @@ describe('Training apps', function () {
     }
     const times = (count, selector) => Array(count).fill(selector);
 
+    // A stand-in Bangle.js: each line written to it is run. An expression
+    // asked for is answered by `answer` and kept in `asked`, anything else
+    // in `ran`; opening Climb Log says up, and hi says what `hi` gives.
+    function fakeBangle(win, answer = () => 1, hi = () => [{ t: 'hello' }]) {
+        win.ran = [];
+        win.asked = [];
+        let tx = new win.EventTarget();
+        tx.startNotifications = () => Promise.resolve();
+        win.watchSays = (message) => {
+            tx.value = new win.DataView(new win.TextEncoder().encode('>' + JSON.stringify(message) + '\r\n').buffer);
+            tx.dispatchEvent(new win.Event('characteristicvaluechanged'));
+        };
+        const later = (messages) => Promise.resolve().then(() => messages.forEach(win.watchSays));
+        let typed = '';
+        let rx = { writeValue: (bytes) => {
+            typed += new win.TextDecoder().decode(bytes);
+            let lines = typed.split('\n');
+            typed = lines.pop();
+            lines.forEach((line) => {
+                line = line.replace(/^[\x03\x10]+/, '');
+                let asking = line.match(/^Bluetooth\.println\(JSON\.stringify\(\{t:"r",i:(\d+),v:\((.*)\)\}\)\)$/);
+                if (asking) {
+                    win.asked.push(asking[2]);
+                    later([{ t: 'r', i: Number(asking[1]), v: answer(asking[2]) }]);
+                    return;
+                }
+                win.ran.push(line);
+                if (line === 'load("mplog.app.js")') { later([{ t: 'up' }]); }
+                if (line === 'mplog({t:"hi"})') { later(hi()); }
+            });
+            return Promise.resolve();
+        } };
+        let service = { getCharacteristic: (uuid) => Promise.resolve(uuid.startsWith('6e400003') ? tx : rx) };
+        let device = new win.EventTarget();
+        device.name = 'Bangle.js 1a2b';
+        device.gatt = {
+            connected: false,
+            connect: () => { device.gatt.connected = true; return Promise.resolve({ getPrimaryService: () => Promise.resolve(service) }); },
+            disconnect: () => { device.gatt.connected = false; device.dispatchEvent(new win.Event('gattserverdisconnected')); }
+        };
+        win.bangleDevice = device;
+        Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+            value: { requestDevice: () => Promise.resolve(device) } });
+    }
+
+    // what the phone last sent Climb Log to show
+    function lastState(win) {
+        let sent = win.ran.filter((line) => line.startsWith('if(global.mplog)mplog('));
+        return JSON.parse(sent[sent.length - 1].slice('if(global.mplog)mplog('.length, -1));
+    }
+
+    // switched on under the cog, which connects it
+    function connectWatch() {
+        cy.get('#useWatch').check({ force: true });
+        cy.get('#watchStatusText').should('have.text', 'Watch connected');
+    }
+
     beforeEach(() => {
         cy.clearLocalStorage();
         stubAnalytics();
@@ -44,6 +101,22 @@ describe('Training apps', function () {
 
     describe('Lap timer', function () {
         const timerUrl = appUrl + '/training/timer/';
+
+        it('shows the clock and laps on the watch, and laps from it', () => {
+            cy.visit(timerUrl, { onBeforeLoad: (win) => { win.localStorage.setItem('lapTimerGrade', 'V4'); fakeBangle(win); } });
+            connectWatch();   // before a session, as the bar is always there
+            cy.get('#watchHelp').should('not.exist');
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'idle', e: 0, n: 0, g: '' }));
+            cy.get('#primaryButton').click();
+            cy.tick(5000);
+            cy.window().then((win) => win.watchSays({ t: 'lap' }));
+            cy.get('#lapCount').should('have.text', '1');
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4' }));
+            cy.get('#primaryButton').click();
+            cy.window().then((win) => win.watchSays({ t: 'lap' }));   // paused: no lap
+            cy.get('#lapCount').should('have.text', '1');
+            cy.window().should((win) => expect(lastState(win)).to.include({ s: 'paused', n: 1 }));
+        });
 
         it('shows the recent laps, with the grade when there is one', () => {
             cy.visit(timerUrl, { onBeforeLoad: (win) => win.localStorage.setItem('lapTimerGrade', 'V4') });
@@ -344,6 +417,31 @@ describe('Training apps', function () {
     describe('Gilford tick list', function () {
         const gilfordUrl = appUrl + '/training/gilford/';
 
+        it('shows the three routes of a panel on the watch, and ticks them from it', () => {
+            cy.visit(gilfordUrl, { onBeforeLoad: fakeBangle });
+            cy.get('#primaryButton').click();
+            connectWatch();
+            cy.window().should((win) => {
+                let state = lastState(win);
+                expect(state).to.include({ m: 'panel', s: 'running', n: 0, of: 24 });
+                expect(state.P).to.have.length(8);
+                expect(state.P[2]).to.deep.equal([[7, '4+', 0, '#ffd400', '#000'], [8, '6a+', 0, '#ff851b', '#000'], [9, '6c', 0, '#2ecc40', '#000']]);
+            });
+            cy.window().then((win) => { win.watchSays({ t: 'tick', r: 7, on: 1 }); win.watchSays({ t: 'tick', r: 12, on: 1 }); });
+            cy.get('#tickCount').should('have.text', '2');
+            cy.get('#route7').should('have.attr', 'aria-pressed', 'true');
+            cy.window().then((win) => { win.watchSays({ t: 'tick', r: 12, on: 1 }); win.watchSays({ t: 'tick', r: 7, on: 0 }); });   // already ticked, then taken back
+            cy.get('#tickCount').should('have.text', '1');
+            // in the recent logs, as the gym does
+            cy.contains('summary', 'Show recent logs').click();
+            cy.get('#recentLogs li').should('have.length', 3);
+            cy.get('#recentLogs li').eq(0).should('contain', 'Yellow 4+ taken back');
+            cy.get('#recentLogs li').eq(1).should('contain', 'Blue 7a ticked');
+            cy.window().should((win) => expect(lastState(win).P[3][2]).to.deep.equal([12, '7a', 1, '#0074d9', '#fff']));
+            cy.window().then((win) => win.watchSays({ t: 'finish' }));
+            cy.get('body').should('have.attr', 'data-state', 'saving');
+        });
+
         it('ticks climbs and counts them', () => {
             cy.visit(gilfordUrl);
             cy.get('#primaryButton').click();
@@ -550,7 +648,7 @@ describe('Training apps', function () {
     // Rock rings and no hangs share common/workout.js. A voice that starts at once
     // makes the count in exactly three seconds, and keeps what was said.
     describe('Workouts run to a clock', function () {
-        function visitWorkout(path) {
+        function visitWorkout(path, before) {
             cy.visit(appUrl + path, {
                 onBeforeLoad(win) {
                     win.spoken = [];
@@ -579,9 +677,27 @@ describe('Training apps', function () {
                         cancel: () => {},
                         speak: (utterance) => { win.spoken.push(utterance.text); utterance.onstart(); }
                     } });
+                    if (before) { before(win); }
                 }
             });
         }
+
+        it('tabata shows work or rest on the watch and what is left of it', () => {
+            visitWorkout('/training/tabata/', fakeBangle);
+            connectWatch();
+            cy.get('#watchHelp').should('not.exist');
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'interval', s: 'idle' }));
+            cy.get('#primaryButton').click();
+            cy.tick(3000);
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'interval', s: 'running', k: 'work', p: 0, left: 20 }));
+            cy.tick(20000);
+            cy.window().should((win) => expect(lastState(win)).to.include({ s: 'running', k: 'rest', p: 1, left: 10 }));
+            cy.tick(4000);
+            cy.get('#primaryButton').click();
+            cy.window().should((win) => expect(lastState(win)).to.include({ s: 'paused', k: 'rest', left: 6 }));
+            cy.get('#reset').click();
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'interval', s: 'idle' }));
+        });
 
         it('rock rings puts up each minute in turn', () => {
             visitWorkout('/training/rings/');
@@ -2063,7 +2179,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('#recentDetails').should('not.have.attr', 'open');
             cy.contains('summary', 'Show recent logs').click();
-            cy.get('#recentLogs li').should('have.length', 1).and('have.text', 'Nothing logged yet');
+            cy.get('#recentLogs li').should('have.length', 0);
             cy.get('#row-V1 .grade-add').click();
             cy.tick(1000);
             cy.get('#row-V2 .grade-add').click();
@@ -2480,6 +2596,127 @@ describe('Training apps', function () {
                 expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0].minutes).to.equal(180);
             });
         });
+
+        describe('On a Bangle.js watch', function () {
+            function connect() {
+                cy.get('#primaryButton').click();
+                cy.get('#watchBar').should('not.be.visible');   // until switched on under the cog
+                connectWatch();
+                cy.get('#watchSwitch').should('be.checked');
+            }
+
+            it('puts Climb Log on the watch, opens it and sends the grades', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win, (expression) => expression.includes('mplog.info') ? undefined : 1) });
+                connect();
+                cy.window().then((win) => {
+                    expect(win.asked.some((expression) => expression.startsWith('require("Storage").write("mplog.app.js",'))).to.equal(true);
+                    expect(win.asked.some((expression) => expression.startsWith('require("Storage").write("mplog.info",'))).to.equal(true);
+                    expect(win.ran).to.include('load("mplog.app.js")');
+                    let state = lastState(win);
+                    expect(state).to.include({ s: 'running', l: 'boulder' });
+                    expect(state.L.map((ladder) => ladder.n)).to.deep.equal(['Bouldering', 'Sport']);
+                    expect(state.L[0].r).to.have.length(11);
+                    expect(state.L[0].r[3]).to.deep.equal(['V3', 'V3', 0, '#eda100', '#000']);   // in the medium band's colour
+                });
+                // help, under the setting, with the battery asked for as it connected
+                cy.get('#watchHelpButton').should('not.exist');
+                cy.get('[data-action="openSettings"]').click();
+                cy.get('#watchHelp').should('be.visible').and('contain', 'Swipe Up / Down to open menu.');
+                cy.get('#watchBattery').should('have.text', 'Battery 1%');
+                cy.get('#watchVersion').invoke('text').should('match', /^Climb Log [0-9a-z.]+$/);   // the app version, as the watch's menu shows it
+                cy.window().its('asked').should('include', 'E.getBattery()');
+                cy.get('#useWatch').uncheck({ force: true });
+                cy.get('#watchHelp').should('not.be.visible');
+                cy.get('#useWatch').check({ force: true });
+                cy.get('#watchStatusText').should('have.text', 'Watch connected');
+                cy.get('[data-action="hideSettings"]').click();
+
+                // named as the phone names them
+                cy.get('#system-font').check({ force: true });
+                cy.window().should((win) => expect(lastState(win).L[0].r[3].slice(0, 3)).to.deep.equal(['V3', 'f6A', 0]));
+                // and the Boulderworld circuit's, when that is on
+                cy.get('#boulderworld').check({ force: true });
+                cy.window().should((win) => expect(lastState(win).L[0].r[3].slice(3)).to.deep.equal(['#ffd400', '#000']));
+            });
+
+            it('ticks, takes back and switches ladder from the watch, and finishes there', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
+                connect();
+                cy.window().then((win) => { win.watchSays({ t: 'add', g: 'V3' }); win.watchSays({ t: 'add', g: 'V3' }); win.watchSays({ t: 'add', g: 'V5' }); });
+                cy.get('#row-V3 .grade-count').should('have.text', '2');
+                cy.get('#climbCount').should('have.text', '3');
+                cy.window().should((win) => expect(lastState(win).L[0].r[5].slice(0, 3)).to.deep.equal(['V5', 'V5', 1]));
+                cy.window().then((win) => win.watchSays({ t: 'undo', g: 'V5' }));
+                cy.get('#climbCount').should('have.text', '2');
+
+                cy.window().then((win) => win.watchSays({ t: 'tab', l: 'sport' }));
+                cy.get('#tab-sport').should('be.checked');
+                cy.window().then((win) => { win.watchSays({ t: 'add', g: '6a' }); win.watchSays({ t: 'harder', l: 'sport' }); });
+                cy.get('#row-6a .grade-count').should('have.text', '1');
+                cy.window().should((win) => {
+                    let state = lastState(win);
+                    expect(state.l).to.equal('sport');
+                    expect(state.L[1].r.map((row) => row[0])).to.include('8a');   // one past 7c
+                });
+
+                cy.window().then((win) => win.watchSays({ t: 'finish' }));
+                cy.get('body').should('have.attr', 'data-state', 'saving');
+                cy.window().should((win) => expect(lastState(win).s).to.equal('saving'));
+                cy.get('#saveSession').click();
+                cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'ladder', s: 'idle' }));
+                cy.window().then((win) => {
+                    let saved = JSON.parse(win.localStorage.getItem('boulderLog'))[0];
+                    expect(saved.climbs).to.deep.equal(['V3', 'V3']);
+                    expect(saved.sport).to.deep.equal(['6a']);
+                });
+            });
+
+            it('leaves Climb Log as it is when it is already on and open, and takes what waited there', () => {
+                cy.request(appUrl + '/training/watch/mplog.app.js').then((response) => {
+                    cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win,
+                        (expression) => expression.includes('mplog.info') ? { hash: win.sourceHash(response.body), version: win.eval('watchVersion') } : 1,
+                        () => [{ t: 'add', g: 'V4' }, { t: 'hello' }]) });
+                });
+                connect();
+                cy.get('#row-V4 .grade-count').should('have.text', '1');
+                cy.window().then((win) => {
+                    expect(win.asked.some((expression) => expression.includes('Storage").write('))).to.equal(false);
+                    expect(win.ran).not.to.include('load("mplog.app.js")');
+                    expect(win.ran).to.include('mplog({t:"hi"})');
+                });
+            });
+
+            it('says when the watch drops out, and tries it again', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
+                connect();
+                cy.window().then((win) => {
+                    win.bangleDevice.gatt.connected = false;
+                    win.bangleDevice.dispatchEvent(new win.Event('gattserverdisconnected'));
+                });
+                cy.get('.toast').should('contain', 'The watch disconnected');
+                cy.get('#watchStatusText').should('have.text', 'Watch dropped out, trying again');
+                cy.tick(10000);
+                cy.get('#watchStatusText').should('have.text', 'Watch connected');
+
+                // and not once disconnected on purpose
+                cy.get('#watchSwitch').uncheck({ force: true });
+                cy.get('#watchStatusText').should('have.text', 'Watch not connected');
+                cy.get('#watchSwitch').should('not.be.checked');
+                cy.get('#watchSwitch').check({ force: true });   // and back on from the switch
+                cy.get('#watchStatusText').should('have.text', 'Watch connected');
+            });
+
+            it('says when the browser cannot connect to a watch', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true, value: undefined }) });
+                cy.get('#primaryButton').click();
+                cy.get('#useWatch').check({ force: true });
+                cy.get('#watchBar').should('not.be.visible');
+                cy.get('#noBluetoothWatch').should('not.have.attr', 'hidden');
+                cy.get('#watchSupported a').should('have.attr', 'href', 'https://thepihut.com/products/bangle-js-2');
+                cy.get('#useWatch').uncheck({ force: true });
+                cy.get('#watchSupported').should('have.attr', 'hidden');
+            });
+        });
     });
 
     describe('Endurance', function () {
@@ -2529,6 +2766,21 @@ describe('Training apps', function () {
 
     describe('Trad climbing', function () {
         const tradUrl = appUrl + '/training/trad/';
+
+        it('ticks the climbs from the watch, as the gym does', () => {
+            cy.visit(tradUrl, { onBeforeLoad: fakeBangle });
+            cy.get('#primaryButton').click();
+            connectWatch();
+            cy.window().should((win) => {
+                let state = lastState(win);
+                expect(state).to.include({ m: 'ladder', s: 'running', l: 'trad' });
+                expect(state.L[0].n).to.equal('Trad');
+                expect(state.L[0].r[5].slice(0, 3)).to.deep.equal(['HS', 'HS', 0]);
+            });
+            cy.window().then((win) => win.watchSays({ t: 'add', g: 'HS' }));
+            cy.get('#row-HS .grade-count').should('have.text', '1');
+            cy.get('#watchHelp').should('contain', 'Swipe Left / Right to change grades.');
+        });
 
         it('counts the climbs and names the hardest', () => {
             cy.visit(tradUrl);

@@ -1310,3 +1310,102 @@ a.bottom-nav-item:focus-visible {
 .has-bottom-nav footer {
     bottom: calc(58px + env(safe-area-inset-bottom));
 }
+
+/* A Bluetooth device under the cog - the Progressor, the watch: a dot for how
+   it is, then what to do */
+.device-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 18px;
+}
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--off);
+}
+[data-status="connecting"] .status-dot {
+    background: var(--band-medium);
+    animation: status-pulse 1s ease-in-out infinite alternate;
+}
+[data-status="connected"] .status-dot {
+    background: #4cd964;
+}
+@keyframes status-pulse {
+    to { opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-status="connecting"] .status-dot {
+        animation: none;
+    }
+}
+.device-detail, .device-error {
+    margin: 6px 0 0;
+    font-size: 14px;
+}
+.device-error {
+    color: #ff8a80;
+}
+.device-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.device-buttons button {
+    margin-top: 12px;
+}
+.device-steps {
+    margin: 16px auto 0;
+    padding-left: 22px;
+    max-width: 320px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.device-tips {
+    margin: 10px auto 0;
+    max-width: 320px;
+    font-size: 14px;
+    text-align: left;
+    opacity: 0.8;
+}
+
+/* The watch, switched on under the cog - see common/watch.js */
+.watch-bar {
+    margin-top: 10px;
+}
+/* its connection as a switch, the status its label */
+.watch-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+.watch-line .switch-label {
+    min-width: 0;
+    margin: 0;
+}
+.watch-line .label-content {
+    width: auto;
+    margin-left: 8px;
+}
+/* how to use it, under the setting, always open */
+.watch-help {
+    max-width: 320px;
+    margin: 12px auto 0;
+    padding: 4px 14px 12px;
+    border: 1px solid var(--off);
+    border-radius: 8px;
+    text-align: center;
+}
+.watch-help p {
+    margin: 8px 0 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+#watchSupported {
+    text-align: center;
+}

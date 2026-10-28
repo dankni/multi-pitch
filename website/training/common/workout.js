@@ -13,7 +13,9 @@
 
    What is on screen follows body[data-state] - idle, counting (the three, two,
    one), running, paused or finished - and data-saving once the save panel is up.
-   See common/workout.css. */
+   See common/workout.css.
+
+   app.onState, if set, is called on each change of state - common/watch.js sets it. */
 
 let paused = true;
 let countedIn = false;
@@ -28,6 +30,7 @@ function drawState(state){
     document.getElementById("primaryButton").innerHTML = paused
         ? `<i class="demo-icon icon-play"></i>${countedIn ? "RESUME" : "START SESSION"}`
         : '<i class="demo-icon icon-pause"></i>PAUSE';
+    if(app.onState){ app.onState(); }   // the watch - see common/watch.js
 }
 
 function showSavePanel(){

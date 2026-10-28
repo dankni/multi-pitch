@@ -14,6 +14,7 @@
          onLoad     : () => set up before a session is picked back up (optional),
          onOpen     : () => anything else when a session opens (optional),
          onSaved    : () => anything else once one is saved (optional),
+         onKept     : () => anything else on each change to it (optional; common/watch.js sets it),
          logView    : what drawSessionLog() is given,
          timed      : true to save start, finish and minutes (optional)
      };

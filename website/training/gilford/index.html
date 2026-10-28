@@ -26,6 +26,8 @@
 	<script src="/training/common/records.js" ></script>
 	<script src="/training/common/log.js" ></script>
 	<script src="/training/gilford/main.js" ></script>
+	<script src="/training/common/bangle.js" ></script>
+	<script src="/training/common/watch.js" ></script>
     <title>Gilford Wall Tick List</title>
   </head>
 
@@ -46,16 +48,21 @@
 
 	<div class="holder" id="sessionHolder">
 		<div id="sessionBar">
-			<label for="sessionDate">Session date</label>
-			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" />
+			<input type="date" class="field" id="sessionDate" data-change="setSessionDate" aria-label="Session date" />
 			<!-- once FINISH is tapped: when it started and finished, to put right by hand -->
 			<div class="session-times">
 				<label>Started <input type="time" class="field" id="sessionStart" data-change="setSessionTime" /></label>
 				<label>Finished <input type="time" class="field" id="sessionFinish" data-change="setSessionTime" /></label>
 				<span class="session-length" id="sessionLengthShown"></span>
 			</div>
+			<!-- with the watch switched on under the cog - see common/watch.js -->
+			<div class="watch-bar" id="watchBar" hidden></div>
 			<h3><span id="tickCount">0</span> <span class="of">/ 24</span></h3>
-			<p id="summary">Nothing ticked yet</p>
+			<p id="summary"></p>
+			<details class="recent-logs" id="recentDetails">
+				<summary>Show recent logs</summary>
+				<ol id="recentLogs"></ol>
+			</details>
 		</div>
 
 		<div id="routes">
@@ -102,6 +109,7 @@
 				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
 			</span>
 		</label>
+		<div id="watchSetting"></div>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>
