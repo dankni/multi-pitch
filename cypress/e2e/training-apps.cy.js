@@ -1239,6 +1239,152 @@ describe('Training apps', function () {
             });
         });
 
+        /* Level 2 with Math.random() at 0: walls of 2 s, 6 m high, 54 m of flat before each, and in
+           the first flat gaps 0.8 m wide from 6 m, 12.8 m and every 6.8 m on. The runner's middle is
+           past the first's lip at 2.2 s; a gap takes 0.6 s to fall, 0.4 s hanging and 1.2 s to climb out. */
+        const level2 = (win) => win.localStorage.setItem('gapsStartLevel', '2');
+        const gapsAre = (win) => win.eval('game.gaps.map(gap => [gap.from, gap.to])');
+
+        it('starts on level 2 from the cog: short walls, long flats with gaps in, no wasps', () => {
+            visitGaps();
+            cy.get('nav .icon-cog').click();
+            cy.get('#level-1').should('be.checked');
+            cy.get('label[for="level-2"]').click();
+            cy.window().its('localStorage').invoke('getItem', 'gapsStartLevel').should('equal', '2');
+            cy.window().then((win) => {
+                expect(win.eval('game.level')).to.equal(2);
+                expect(win.eval('game.walls[0].seconds')).to.equal(2);
+                expect(win.eval('game.walls[0].edge')).to.equal(54);
+                expect(gapsAre(win)[0][0]).to.equal(6);
+                expect(gapsAre(win)[0][1]).to.be.closeTo(6.8, 0.001);
+                expect(gapsAre(win)[1][0]).to.be.closeTo(12.8, 0.001);
+                expect(win.eval('game.walls.some(wall => wall.wasps.length > 0)')).to.equal(false);
+            });
+            // not for the max hang routine
+            cy.get('label[for="mode-maxHang"]').click();
+            cy.get('#startLevel').should('not.be.visible');
+            cy.window().then((win) => expect(win.eval('game.level')).to.equal(1));
+        });
+
+        it('falls in a gap not jumped for half a heart, climbs out the far side and waits there for a pull', () => {
+            visitGaps(level2);
+            start();
+            play(2500);
+            gameIs('inGap');
+            play(500);
+            cy.get('#lives img[src$="heart-half.png"]').should('have.length', 1);
+            cy.window().then((win) => {
+                expect(win.eval('runnerPose().face')).to.equal('worried');
+                // flickering, as for a sting
+                expect(win.eval('game.time - game.stungAt')).to.be.below(win.eval('stingSafe'));
+            });
+            play(2000);
+            gameIs('waiting');
+            cy.window().then((win) => expect(win.eval('game.x - handsAhead')).to.be.closeTo(6.8, 0.001));
+            play(3000);
+            gameIs('waiting');
+            pullToStart();
+            gameIs('running');
+            // the last half heart, down the next
+            cy.window().then((win) => win.eval('game.lives = 0.5'));
+            play(4000);
+            stateIs('over');
+            cy.get('#overStats').invoke('text').should('contain', 'Level2');
+        });
+
+        it('jumps a gap on a pull just before it', () => {
+            visitGaps(level2);
+            start();
+            play(1800);
+            hold();
+            play(1000);
+            letGo();
+            gameIs('running');
+            cy.get('#lives img[src$="heart-full.png"]').should('have.length', 2);
+            cy.window().then((win) => expect(win.eval('game.x - handsAhead')).to.be.above(6.8));
+        });
+
+        // Stood on top of the tenth wall, as clear() leaves it
+        const tenthWall = (win) => win.eval(`(() => { let wall = game.walls[0]; game.cleared = 9; game.x = wall.topEdge;
+            game.y = game.high = wall.top; clear(wall); })()`);
+
+        it('stops after ten walls for a level, and a tap of the screen carries on with level 1', () => {
+            visitGaps();
+            start();
+            cy.window().then(tenthWall);
+            stateIs('choosing');
+            cy.get('#levelChoice button').first().should('be.visible').and('have.text', 'Level 1or tap the screen');
+            cy.get('#levelChoice button').last().should('have.text', 'Level 2');
+            cy.get('#primaryButton').should('not.be.visible');
+            // paused and back to the choice
+            cy.get('#pause').click();
+            stateIs('paused');
+            cy.get('#resume').click();
+            stateIs('choosing');
+            // nothing picks a level for its first 3 s, so a press then carries on with nothing
+            play(100);
+            cy.get('#levelChoice button').should('be.disabled');
+            cy.get('#course').trigger('pointerdown', 'left');
+            play(100);
+            letGo();
+            gameIs('choosing');
+            play(2900);
+            cy.get('#levelChoice button').should('not.be.disabled');
+            // anywhere off the buttons
+            cy.get('#course').trigger('pointerdown', 'left');
+            cy.wait(50);
+            play(100);
+            letGo();
+            stateIs('running');
+            cy.window().then((win) => {
+                expect(win.eval('game.level')).to.equal(1);
+                expect(win.eval('game.gaps.length')).to.equal(0);
+            });
+        });
+
+        it('makes the walls still to come level 2 ones when its button is tapped', () => {
+            visitGaps();
+            start();
+            cy.window().then(tenthWall);
+            play(3100);
+            cy.get('#levelChoice button').last().click();
+            stateIs('running');
+            cy.window().then((win) => {
+                expect(win.eval('game.level')).to.equal(2);
+                expect(win.eval('game.walls[1].seconds')).to.equal(2);
+                expect(win.eval('game.walls[1].edge - game.walls[0].topEdge')).to.be.closeTo(54, 0.001);
+                // worth double: 6 m of its kg
+                expect(win.eval('game.walls[1].pointsAtTop - game.walls[0].pointsAtTop')).to.be.closeTo(win.eval('6 * game.walls[1].kg * 10 * 2'), 0.001);
+                expect(win.eval('game.gaps[0].from - game.walls[0].topEdge')).to.be.closeTo(6, 0.001);
+                // level 1's coins ahead gone, not left with level 2's on top of them
+                let ahead = win.eval('game.coins.filter(coin => coin.x >= game.walls[0].topEdge).map(coin => coin.x)');
+                expect(new Set(ahead).size).to.equal(ahead.length);
+            });
+        });
+
+        it('picks a level on a Progressor by a pull held in its band, once the pull from the wall is let go', () => {
+            visitGaps(fakeProgressor);
+            cy.get('#connect').click();
+            cy.get('#force').should('be.visible');
+            start();
+            cy.window().then((win) => win.sendKg(7));
+            cy.window().then(tenthWall);
+            cy.get('#levelChoice button').first().should('have.text', 'Level 1Hold 5-8 kg');
+            cy.get('#levelChoice button').last().should('have.text', 'Level 2Hold 10-13 kg');
+            // still the pull it topped out with, past the 3 s nothing can be picked
+            play(3500);
+            gameIs('choosing');
+            cy.window().then((win) => win.sendKg(0));
+            play(100);
+            cy.window().then((win) => win.sendKg(11));
+            play(1000);
+            gameIs('choosing');
+            cy.get('#levelChoice button').last().invoke('attr', 'style').should('match', /--held: (4|5)\d/);
+            play(1100);
+            stateIs('running');
+            cy.window().then((win) => expect(win.eval('game.level')).to.equal(2));
+        });
+
         // With Math.random() at 0 the first coin is over the ground 6 m in, 2.1 m up:
         // the runner's middle is under it at 2.17 s
         it('takes a coin for 100 points, jumping for it', () => {

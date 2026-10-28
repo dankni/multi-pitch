@@ -1423,15 +1423,17 @@ window.clearFilters = function(){
  STATE MACHINE
  **/
 // need to handle history.onPopstate ie. user presses back OR forwards which makes it tricky!
-window.onpopstate = function (event) {  
-    if(location.hash){
-        return; // anchor link like #go-to-id
-    }
+window.onpopstate = function (event) {
     const lightboxOverlay = document.getElementById('lightbox-overlay');
     if (lightboxOverlay && lightboxOverlay.style.display !== 'none') {
-        if (typeof window.hideLightBox === 'function') {
-            window.hideLightBox();
-        }
+        window.hideLightBox?.(); // back from the lightbox only closes it, the page beneath stays
+        return;
+    }
+    if (event.state?.lightbox) {
+        return; // forward onto the entry of a lightbox since closed
+    }
+    if(location.hash){
+        return; // anchor link like #go-to-id
     }
     let pageToLoad = document.location.pathname;
     if(pageToLoad === '/' && document.getElementById('overlay').style.display === 'block'){ 

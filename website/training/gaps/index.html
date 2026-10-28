@@ -65,6 +65,11 @@
 				<dl class="run-stats" id="overStats"></dl>
 			</div>
 			<h2 class="paused-title">Paused</h2>
+			<!-- after the tenth wall: a button a level, filling as its pull is held -->
+			<div class="level-choice" id="levelChoice">
+				<button type="button" data-action="chooseLevel" data-level="1">Level 1<small></small></button>
+				<button type="button" data-action="chooseLevel" data-level="2">Level 2<small></small></button>
+			</div>
 			<label class="warm-up" id="warmUp" hidden><input type="checkbox" id="warmedUp" data-change="setWarmedUp" /> I've done a general warm-up</label>
 			<button type="button" id="primaryButton" data-action="startGame"><i class="demo-icon icon-play"></i>START</button>
 			<button type="button" id="resume" data-action="togglePause"><i class="demo-icon icon-play"></i>RESUME</button>
@@ -133,6 +138,15 @@
 				<label for="mode-adventure">Adventure</label>
 				<input type="radio" name="mode" class="nice-radios" id="mode-maxHang" value="maxHang" data-change="setMode" />
 				<label for="mode-maxHang">Max hang</label>
+			</div>
+		</fieldset>
+		<fieldset class="setting-group" id="startLevel">
+			<legend>Start on</legend>
+			<div class="picker">
+				<input type="radio" name="startLevel" class="nice-radios" id="level-1" value="1" data-change="setStartLevel" checked />
+				<label for="level-1">Level 1</label>
+				<input type="radio" name="startLevel" class="nice-radios" id="level-2" value="2" data-change="setStartLevel" />
+				<label for="level-2">Level 2</label>
 			</div>
 		</fieldset>
 		<fieldset class="setting-group">

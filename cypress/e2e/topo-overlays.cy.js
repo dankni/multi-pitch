@@ -169,6 +169,26 @@ describe('Topo overlay attribute toggles', function () {
         cy.get('#lightbox-overlay').should('not.be.visible');
     });
 
+    it('closes only the zoom viewer on back, then the card on a second back', () => {
+        cy.visit(appUrl);
+        cy.get('div[data-climb-id="7"] a.open-tile').click();
+        cy.get('#climbIdMeta[content="7"]');
+        cy.get('#topoHolder a').click();
+        cy.get('#lightbox-overlay').should('be.visible');
+        cy.go('back');
+        cy.get('#lightbox-overlay').should('not.be.visible');
+        cy.get('#overlay').should('be.visible');
+        cy.location('pathname').should('include', '/climbs/');
+        // closing with the button also steps back, so the next back leaves the card
+        cy.get('#topoHolder a').click();
+        cy.get('#lightbox-close').click();
+        cy.get('#lightbox-overlay').should('not.be.visible');
+        cy.get('#overlay').should('be.visible');
+        cy.go('back');
+        cy.get('#overlay').should('not.be.visible');
+        cy.location('pathname').should('eq', '/');
+    });
+
     it('opens the drawn topo at the photo\'s full resolution in the zoom viewer', () => {
         openTopo(7);
         cy.get('#topoHolder a').click();

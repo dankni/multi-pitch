@@ -21,6 +21,13 @@
    screen. No voice, only beeps: what to do is written over the runner.
    Distances are in metres and times in seconds; the course scrolls past a
    runner who stays put on screen.
+   After levelUpWalls the runner stops to pick a level, from chooseWait in: on a Progressor, a pull
+   held in one of levelBands for chooseHold, or a button, or a tap of the screen
+   for level 1. Level 2's rock is grey and its walls about half as high but
+   worth double, with far longer flats between them that have gaps in to jump.
+   Falling in a gap costs half a heart: the runner catches its far side, climbs
+   out and waits there for a pull to run on. No wasps or mushrooms there, but
+   still coins.
    Under the cog, the game can be swapped for a max hang routine (routine). */
 
 const app = { "logKey" : "gapsLog" };
@@ -79,6 +86,26 @@ const walkSpeed = 2;         // m/s, walking back from a wall fallen from
 const walkStride = 0.8;
 const restartBack = 2 * runSpeed;    // before the wall fallen from, to run at it again
 const forceStep = 0.1;       // seconds between the Progressor readings kept for the graph
+
+// Level 2
+const startLevelKey = "gapsStartLevel";
+const levelUpWalls = 10;
+const levelBands = { 1 : [5, 8], 2 : [10, 13] };   // kg, on a Progressor
+const chooseWait = 3;        // seconds before either level can be picked, so nothing picks one by default
+const chooseHold = 2;        // seconds a band's pull is held to pick its level
+const shortestPull2 = 2;
+const longestPull2 = 5;
+const shortestFlat2 = 18 * runSpeed;
+const longestFlat2 = 24 * runSpeed;
+const worth2 = 2;            // times a level 1 wall's points
+const gapClear = 6;          // metres clear of a wall's top before the first gap, and at the least between gaps
+const gapBefore = 8;         // clear of the next wall's foot, past the walk back after a fall
+const narrowestGap = 0.8;
+const widestGap = 1.2;
+const gapLip = 0.15;         // how far over its edge the feet go before falling in
+const gapDepth = 3.5;        // how far down the runner catches its far side
+const gapClimbSpeed = 3;     // m/s, climbing out
+let startLevel = 1;
 
 /* What's on screen, in metres: the course fills the space between the navs.
    18 across, or more on a wide screen so the runner never gets huge - but no
@@ -154,7 +181,7 @@ app.logView = {
     // the rest of a run behind the note button
     "comment" : entry => joinDetail(entry.routine ? [plural(entry.walls, "hang"), "max pull set to " + entry.maxPull + " kg",
                                                      clock(entry.time) + " long", entry.input !== "tindeq" ? "held the screen" : "Progressor"]
-                                   : [plural(entry.walls ?? entry.gaps, "wall"), entry.coins ? plural(entry.coins, "coin") : "",
+                                   : [entry.level === 2 ? "level 2" : "", plural(entry.walls ?? entry.gaps, "wall"), entry.coins ? plural(entry.coins, "coin") : "",
                                      Math.round(Number(entry.seconds ?? entry.metres) || 0) + " s of pull",
                                      entry.time !== undefined ? clock(entry.time) + " played" : "",
                                      entry.input !== "tindeq" ? "held the screen" : entry.peakKg !== undefined ? "max pull " + entry.peakKg + " kg" : "Progressor"]),
@@ -244,7 +271,14 @@ function newGame(){
         "stopped" : false,   // at the foot of a routine's wall, waiting for its pull
         "beaten" : false,
         "peakKg" : 0,        // the most the Progressor read in the run
-        "input" : input      // a Progressor dropped mid run makes it a run on the screen
+        "input" : input,     // a Progressor dropped mid run makes it a run on the screen
+        "level" : maxHang ? 1 : startLevel,
+        "gaps" : [],         // { from, to, ground } in the flats of level 2
+        "gap" : null,        // the one fallen in
+        "armed" : false,     // picking a level: the pull has dropped below both bands since
+        "choiceBand" : 0,    // the level whose band the pull is in
+        "choiceHeld" : 0,    // seconds it has been
+        "choosingFor" : 0    // seconds since the level choice came up
     };
     extendCourse();
     if(game.hangs){ game.routineTotal = routineLeft(); }
@@ -263,18 +297,24 @@ function extendCourse(){
         let hang = game.hangs ? game.hangs[count] : null;
         if(game.hangs && !hang){ return; }
         let last = game.walls[count - 1];
-        let seconds = hang ? hang.seconds : shortestPull + Math.floor(Math.random() * (longestPull - shortestPull + 1));
-        let edge = (last ? last.topEdge : 0) + (count === 0 ? firstRunIn : hang ? hangGap : restBefore(count));
+        let level2 = !hang && game.level === 2;
+        let seconds = hang ? hang.seconds : level2 ? shortestPull2 + Math.floor(Math.random() * (longestPull2 - shortestPull2 + 1))
+            : shortestPull + Math.floor(Math.random() * (longestPull - shortestPull + 1));
+        let flatFrom = last ? last.topEdge : 0;
+        let rest = level2 ? shortestFlat2 + Math.random() * (longestFlat2 - shortestFlat2) : count === 0 ? firstRunIn : hang ? hangGap : restBefore(count);
+        let edge = flatFrom + rest;
         let base = last ? last.top : 0;
         let height = seconds * climbSpeed;
         let kg = hang ? hang.kg : wallKg(count);
-        let pointsAtTop = (last ? last.pointsAtTop : 0) + height * kg * pointsPerKgMetre;
+        let worth = level2 ? worth2 : 1;
+        let pointsAtTop = (last ? last.pointsAtTop : 0) + height * kg * pointsPerKgMetre * worth;
         let wall = { "edge" : edge, "base" : base, "top" : base + height, "seconds" : seconds, "kg" : kg, "pointsAtTop" : pointsAtTop,
-                     "hang" : hang, "wasps" : [] };
+                     "hang" : hang, "wasps" : [], "rest" : rest, "worth" : worth };
         shapeWall(wall);
-        if(!hang && count >= warmUpWalls){ placeWasps(wall, seconds); }
+        if(!hang && !level2 && count >= warmUpWalls){ placeWasps(wall, seconds); }
         game.walls.push(wall);
-        if(!hang){ placeCoins((last ? last.topEdge : 0) + 6, edge - 8, base); }
+        if(level2){ placeGaps(flatFrom + gapClear, edge - gapBefore, base); }
+        if(!hang){ placeCoins(flatFrom + 6, edge - 8, base); }
     }
 }
 
@@ -330,14 +370,37 @@ function easeWalls(from){
         let wall = game.walls[n];
         let last = game.walls[n - 1];
         if(n < from + warmUpWalls){ wall.kg = Math.min(wall.kg, most); }
-        if(n > from){ wall.edge = last.topEdge + restBefore(n); }
-        wall.pointsAtTop = (last ? last.pointsAtTop : 0) + (wall.top - wall.base) * wall.kg * pointsPerKgMetre;
+        if(n > from){ wall.edge = last.topEdge + wall.rest; }
+        wall.pointsAtTop = (last ? last.pointsAtTop : 0) + (wall.top - wall.base) * wall.kg * pointsPerKgMetre * wall.worth;
         shapeWall(wall);
     }
-    game.coins.forEach(coin => {
-        let ahead = wasEdges.findIndex(edge => edge > coin.x);
-        if(ahead >= 0){ coin.x += game.walls[ahead].edge - wasEdges[ahead]; }
+    let moved = at => {
+        let ahead = wasEdges.findIndex(edge => edge > at);
+        return ahead >= 0 ? game.walls[ahead].edge - wasEdges[ahead] : 0;
+    };
+    game.coins.forEach(coin => { coin.x += moved(coin.x); });
+    game.gaps.forEach(gap => {
+        let by = moved(gap.from);
+        gap.from += by;
+        gap.to += by;
     });
+}
+
+// Gaps along a flat of level 2, each at least gapClear past the one before
+function placeGaps(from, to, ground){
+    let at = from + Math.random() * gapClear;
+    for(;;){
+        let width = narrowestGap + Math.random() * (widestGap - narrowestGap);
+        if(at + width > to){ return; }
+        game.gaps.push({ "from" : at, "to" : at + width, "ground" : ground });
+        at += width + gapClear + Math.random() * gapClear;
+    }
+}
+
+// The gap the feet are over, past its lip
+function gapUnder(){
+    let middle = game.x - handsAhead;
+    return game.gaps.find(gap => middle > gap.from + gapLip && middle < gap.to - gapLip);
 }
 
 // On the way to a wall, clear of both ends: half the time a coin, a tenth two
@@ -443,6 +506,14 @@ function update(seconds){
         waitStep();
         return;
     }
+    if(game.state === "choosing"){
+        chooseStep(seconds);
+        return;
+    }
+    if(game.state === "inGap"){
+        gapStep(seconds);
+        return;
+    }
     if(!["running", "climbing"].includes(game.state)){ return; }
     if(game.restLeft > 0){ countRest(seconds); }
 
@@ -458,7 +529,7 @@ function update(seconds){
         // only height not climbed before scores, so a wall climbed again after a fall doesn't
         let up = Math.min(game.y, wall.top);
         if(up > game.high){
-            game.points += (up - game.high) * wall.kg * pointsPerKgMetre;
+            game.points += (up - game.high) * wall.kg * pointsPerKgMetre * wall.worth;
             game.high = up;
         }
     }
@@ -486,6 +557,11 @@ function update(seconds){
             game.airSpeed = jumpSpeed;
         }
         takeCoins();
+        let gap = game.air === 0 ? gapUnder() : null;
+        if(gap){
+            fallInGap(gap);
+            return;
+        }
     }
     if(game.state === "climbing"){
         game.onWall = game.onWall || game.x >= hold;
@@ -518,6 +594,114 @@ function clear(wall){
     game.next++;
     extendCourse();
     if(wall.hang){ showScore(); }
+    if(!wall.hang && game.level === 1 && game.cleared === levelUpWalls){
+        game.state = "choosing";
+        game.choosingFor = 0;
+        game.armed = false;
+        game.choiceBand = 0;
+        game.choiceHeld = 0;
+        game.wasJumping = jumping();   // a pull held from the wall doesn't pick
+        showChoice();
+        showState("choosing");
+    }
+}
+
+/* Picking the level, stood on the tenth wall, from chooseWait in: on a Progressor, a
+   band's pull held for chooseHold once the pull has dropped below them both; on the
+   screen, a press for level 1 */
+function chooseStep(seconds){
+    game.choosingFor += seconds;
+    showChoice();
+    if(!canChoose()){
+        game.wasJumping = jumping();
+        return;
+    }
+    if(!progressor.connected){
+        let jump = jumping();
+        if(jump && !game.wasJumping){ chooseLevel(1); }
+        game.wasJumping = jump;
+        return;
+    }
+    let kg = progressor.kg;
+    game.armed = game.armed || kg < levelBands[1][0];
+    let band = game.armed ? [1, 2].find(level => kg >= levelBands[level][0] && kg <= levelBands[level][1]) ?? 0 : 0;
+    game.choiceHeld = band && band === game.choiceBand ? game.choiceHeld + seconds : 0;
+    game.choiceBand = band;
+    if(band && game.choiceHeld >= chooseHold){ chooseLevel(band); }
+}
+
+const canChoose = () => game.choosingFor >= chooseWait;
+
+// A level's button, or its number
+function chooseLevel(choice){
+    if(!game || game.state !== "choosing" || game.paused || !canChoose()){ return; }
+    if(Number(choice.dataset ? choice.dataset.level : choice) === 2){ startLevel2(); }
+    game.state = "running";
+    game.wasJumping = jumping();
+    ping();
+    showState("running");
+}
+
+// The walls not yet reached, and what is on the flat before them, made again for level 2
+function startLevel2(){
+    game.level = 2;
+    let from = game.walls[game.next - 1].topEdge;
+    game.walls.length = game.next;
+    game.coins = game.coins.filter(coin => coin.x < from);
+    game.gaps = [];
+    extendCourse();
+}
+
+// The level's buttons, each with the pull that picks it filling as it is held
+function showChoice(){
+    let tindeq = progressor.connected;
+    document.querySelectorAll("#levelChoice button").forEach(button => {
+        let level = Number(button.dataset.level);
+        let [low, high] = levelBands[level];
+        let hint = tindeq ? "Hold " + low + "-" + high + " kg" : level === 1 ? "or tap the screen" : "";
+        let hintText = button.querySelector("small");
+        if(hintText.textContent !== hint){ hintText.textContent = hint; }
+        let held = game.choiceBand === level ? Math.min(100, game.choiceHeld / chooseHold * 100) : 0;
+        button.style.setProperty("--held", held + "%");
+        button.disabled = !canChoose();
+    });
+}
+
+function fallInGap(gap){
+    game.state = "inGap";
+    game.gap = gap;
+    game.cause = "gap";
+    game.fallen = 0;
+    game.speed = 0;
+    game.landed = null;
+}
+
+/* Down, carried on to the far side, which it catches with half a heart gone; a
+   moment hanging there, then up it, to wait on the top for a pull */
+function gapStep(seconds){
+    let gap = game.gap;
+    game.fallen += seconds;
+    if(game.landed === null){
+        game.speed += fallAccel * seconds;
+        game.y = Math.max(gap.ground - gapDepth, game.y - game.speed * seconds);
+        game.x = Math.min(gap.to - wallHug + handsAhead, game.x + runSpeed * seconds);
+        if(game.y > gap.ground - gapDepth){ return; }
+        game.landed = game.fallen;
+        game.x = gap.to - wallHug + handsAhead;
+        game.stungAt = game.time;   // flickering, as a sting does
+        game.lives -= 0.5;
+        showLives();
+        beep();
+        if(game.lives <= 0){ endGame(); }
+        return;
+    }
+    if(game.fallen < game.landed + lieSeconds){ return; }
+    game.y = Math.min(gap.ground, game.y + gapClimbSpeed * seconds);
+    if(game.y < gap.ground){ return; }
+    game.x = gap.to + handsAhead;
+    game.state = "waiting";
+    game.wasJumping = jumping();   // a pull held from before doesn't start it
+    beep();
 }
 
 // The routine's rest, its last three seconds beeped
@@ -661,7 +845,7 @@ function togglePause(){
     game.paused = !game.paused;
     lastFrame = Date.now();   // no catching up on the time paused
     game.paused ? releaseWakeLock() : requestWakeLock();
-    showState(game.paused ? "paused" : "running");
+    showState(game.paused ? "paused" : game.state === "choosing" ? "choosing" : "running");
 }
 
 function endGame(){
@@ -701,12 +885,12 @@ function finishGame(tindeq){
     if(score > 0){
         saveToLog(app.logKey, { "id" : Date.now(), "date" : today(), "score" : score, "seconds" : game.seconds,
                                 "time" : Math.round(game.time), "walls" : game.cleared, "coins" : game.collected, "input" : game.input, "maxPull" : game.maxPull,
-                                ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}) });
+                                ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}), ...(game.level === 2 ? { "level" : 2 } : {}) });
         showLogKind(game.input);
     }
     document.getElementById("overBest").hidden = !(score > best);
     return [["Score", points(score)], ["Time", clock(game.time)], ["Walls", game.cleared], ["Coins", game.collected],
-            ["Climbed", Math.round(game.high) + " m"], ["Pulled", Math.round(game.climbed) + " s"]];
+            ["Climbed", Math.round(game.high) + " m"], ["Pulled", Math.round(game.climbed) + " s"], ...(game.level === 2 ? [["Level", 2]] : [])];
 }
 
 function showScore(){
@@ -811,6 +995,24 @@ const art = {};
     art[name].src = "/training/gaps/img/" + name + ".png";
 });
 const drawn = image => image.complete && image.naturalWidth > 0;
+
+// Level 2's rock: the earth with its colour taken out, made the first time it's wanted
+let greyed = null;
+function greyEarth(){
+    if(greyed){ return greyed; }
+    greyed = document.createElement("canvas");
+    greyed.width = art.earth.naturalWidth;
+    greyed.height = art.earth.naturalHeight;
+    let pen = greyed.getContext("2d");
+    pen.drawImage(art.earth, 0, 0);
+    let pixels = pen.getImageData(0, 0, greyed.width, greyed.height);
+    let colours = pixels.data;
+    for(let n = 0; n < colours.length; n += 4){
+        colours[n] = colours[n + 1] = colours[n + 2] = 0.3 * colours[n] + 0.59 * colours[n + 1] + 0.11 * colours[n + 2];
+    }
+    pen.putImageData(pixels, 0, 0);
+    return greyed;
+}
 const earthTile = 1.5;       // metres across the earth's pattern
 const grassDepth = 0.22;     // metres of grass on the ground
 const sceneryStep = 3;       // metres between places a rock or a tuft might be
@@ -831,13 +1033,15 @@ function draw(){
     let scale = width / viewWidth;   // px a metre
     let left = game.x - runnerAt;
     let right = left + viewWidth;
-    // the view follows the runner up and down
+    let level2 = game.level === 2;
+    // the view follows the runner up and down - down a gap, to a metre short of its bottom
+    let eye = game.cause === "gap" ? Math.max(game.y, game.gap.ground - gapDepth + 1) : game.y;
     let screenX = at => (at - left) * scale;
-    let screenY = up => height * feetLine - (up - game.y) * scale;
+    let screenY = up => height * feetLine - (up - eye) * scale;
 
     // the sky behind, the hills in it sinking a little as the runner climbs
     board.parentElement.style.backgroundPosition = Math.round(-left * scale * skyDrift) + "px calc(100% + "
-        + Math.round(Math.min(height * 0.4, game.y * scale * 0.05)) + "px)";
+        + Math.round(Math.min(height * 0.4, eye * scale * 0.05)) + "px)";
 
     let pen = board.getContext("2d");
     pen.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -870,15 +1074,15 @@ function draw(){
     outline.forEach(([at, up]) => pen.lineTo(screenX(at), screenY(up)));
     pen.lineTo(screenX(to), Math.max(height, screenY(0)) + 1);
     pen.lineTo(screenX(from), Math.max(height, screenY(0)) + 1);
-    pen.fillStyle = "#c49262";
+    pen.fillStyle = level2 ? "#9a9a9a" : "#c49262";
     if(drawn(art.earth)){
-        let earth = pen.createPattern(art.earth, "repeat");
+        let earth = pen.createPattern(level2 ? greyEarth() : art.earth, "repeat");
         let size = earthTile * scale / art.earth.naturalWidth;
         earth.setTransform(new DOMMatrix([size, 0, 0, size, screenX(0), screenY(0)]));
         pen.fillStyle = earth;
     }
     pen.fill();
-    pen.strokeStyle = "#a0703f";
+    pen.strokeStyle = level2 ? "#6e6e6e" : "#a0703f";
     pen.lineWidth = 2;
     faces.forEach(points => {
         pen.beginPath();
@@ -892,14 +1096,31 @@ function draw(){
         pen.fillRect(screenX(fromAt), screenY(up), (toAt - fromAt) * scale, Math.max(2, 0.04 * scale));
     });
 
-    // now and then on the flat, a tuft of grass, a rock or a mushroom, red or brown
+    // level 2's gaps, the sky through them, with their sides showing
+    let inViewGaps = game.gaps.filter(gap => gap.to > left - 1 && gap.from < right + 1);
+    inViewGaps.forEach(gap => {
+        let x = screenX(gap.from);
+        let width = (gap.to - gap.from) * scale;
+        let top = screenY(gap.ground);
+        pen.clearRect(x, top, width, height - top);
+        pen.strokeStyle = "#6e6e6e";
+        pen.beginPath();
+        pen.moveTo(x, top);
+        pen.lineTo(x, height);
+        pen.moveTo(x + width, top);
+        pen.lineTo(x + width, height);
+        pen.stroke();
+    });
+
+    // now and then on the flat, a tuft of grass, a rock or a mushroom, red or brown - none on level 2
     for(let n = Math.floor((left - 1) / sceneryStep); n * sceneryStep < right + 1; n++){
         let chance = scatter(n);
         if(chance > 0.35){ continue; }
         let at = (n + chance) * sceneryStep;
         // clear of the walls; the first and last flats run on past the screen's edges, so scroll off them
         let flat = flats.find(([fromAt, toAt], i) => at > (i === 0 ? -Infinity : fromAt + 1.2) && at < (i === flats.length - 1 ? Infinity : toAt - 1.2));
-        let image = chance < 0.1 ? art[scatter(n + 0.5) < 0.75 ? "mushroom-red" : "mushroom-brown"] : chance < 0.22 ? art.grass : art.rock;
+        let image = chance < 0.1 && !level2 ? art[scatter(n + 0.5) < 0.75 ? "mushroom-red" : "mushroom-brown"] : chance < 0.22 ? art.grass : art.rock;
+        if(inViewGaps.some(gap => at > gap.from - 0.8 && at < gap.to + 0.8)){ continue; }
         if(!flat || !drawn(image)){ continue; }
         let size = (image === art.rock || image === art.grass ? (image === art.rock ? 1.2 : 1) : 1.3) * scale;
         pen.drawImage(image, screenX(at) - size / 2, screenY(flat[2]) - size + 0.06 * scale, size, size);
@@ -968,12 +1189,14 @@ function draw(){
         arcadeText(pen, "Pull " + wall.kg + " kg", screenX(runnerX), overhead, "#ffd84a");
     } else if(game.state === "running" && wall.edge - game.x <= warnAhead && !pulling()){
         arcadeText(pen, "Pull!", screenX(runnerX), overhead, danger);
+    } else if(game.state === "running" && game.air === 0 && game.gaps.some(gap => gap.from > runnerX && gap.from - runnerX <= runSpeed)){
+        arcadeText(pen, "Jump!", screenX(runnerX), overhead, "#ffd84a");
     }
     if(game.state === "recovering"){
         arcadeText(pen, "Switch arm", screenX(runnerX), feet - runnerHeight * scale - 12, "#ffd84a");
     }
     if(game.state === "waiting"){
-        arcadeText(pen, "Switch arm", screenX(runnerX), feet - runnerHeight * scale - 34, "#ffd84a");
+        if(game.cause !== "gap"){ arcadeText(pen, "Switch arm", screenX(runnerX), feet - runnerHeight * scale - 34, "#ffd84a"); }
         arcadeText(pen, startWords(), screenX(runnerX), feet - runnerHeight * scale - 12, "#ffd84a");
     }
 }
@@ -1057,6 +1280,12 @@ function runnerPose(){
     }
     if(game.state === "climbing"){
         return game.onWall ? { ...climbPose(game.y / climbStride), "lean" : wall.slant } : leapPose();
+    }
+    // down a gap feet first, hanging off its far side a moment, then climbing it
+    if(game.cause === "gap" && game.state !== "waiting"){
+        if(game.landed === null){ return { ...jumpPose(), "face" : "worried" }; }
+        if(game.state === "over" || game.fallen < game.landed + lieSeconds){ return hangPose; }
+        return climbPose(game.y / climbStride);
     }
     if(game.state === "falling" || (game.state === "over" && game.cause)){
         return fallPose(game.fallen);
@@ -1352,6 +1581,21 @@ function setMaxPull(input){
     showForce();
 }
 
+// Level 1, or straight onto level 2 to try it, from the next run on
+function loadStartLevel(){
+    startLevel = localStorage.getItem(startLevelKey) === "2" ? 2 : 1;
+    document.getElementById("level-" + startLevel).checked = true;
+}
+
+function setStartLevel(input){
+    startLevel = Number(input.value);
+    localStorage.setItem(startLevelKey, startLevel);
+    if(game.state === "ready"){
+        newGame();
+        draw();
+    }
+}
+
 // Adventure or the max hang routine, from the next run on: one under way keeps to what it started as
 function loadMode(){
     maxHang = localStorage.getItem(maxHangKey) === "true";
@@ -1386,6 +1630,7 @@ function showWarmUp(){
 function showMode(){
     document.getElementById("about-adventure").hidden = maxHang;
     document.getElementById("about-maxHang").hidden = !maxHang;
+    document.getElementById("startLevel").hidden = maxHang;
     document.getElementById("routineSteps").innerHTML = routine.map(step =>
         `<li>${step.name}: ${Math.max(leastKg, Math.round(maxPull * step.share))} kg for ${step.seconds} s`
         + `${step.reps > 1 ? " × " + step.reps : ""}, rest ${clock(step.rest)}</li>`).join("");
@@ -1394,6 +1639,7 @@ function showMode(){
 
 document.addEventListener("DOMContentLoaded", () => {
     loadMaxPull();
+    loadStartLevel();
     loadMode();
     loadClimber();
     progressor.onChange = connectionChanged;

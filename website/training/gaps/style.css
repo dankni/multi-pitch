@@ -127,7 +127,7 @@
     display: none;
     right: 68px;
 }
-[data-state="running"] #pause {
+:is([data-state="running"], [data-state="choosing"]) #pause {
     display: block;
 }
 
@@ -442,7 +442,31 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
     display: none;
 }
 
-/* What is on screen follows body[data-state]: idle, running, paused or over */
+/* After the tenth wall, a button a level: green fills it as its pull is held */
+.level-choice {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+}
+[data-state="choosing"] .level-choice {
+    display: flex;
+}
+.level-choice button {
+    --held: 0%;
+    background: linear-gradient(90deg, #4cd964 var(--held), var(--arcade-gold) var(--held));
+}
+.level-choice small {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+.level-choice small:empty {
+    display: none;
+}
+
+/* What is on screen follows body[data-state]: idle, running, choosing, paused or over */
 .over, .paused-title, #resume, .over-buttons {
     display: none;
 }
@@ -453,7 +477,7 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
     display: flex;
 }
 [data-state="paused"] #share, [data-state="paused"] #forceButton,
-:is([data-state="running"], [data-state="paused"], [data-state="over"]) :is(#primaryButton, #connect, .pull-hint, .warm-up) {
+:is([data-state="running"], [data-state="choosing"], [data-state="paused"], [data-state="over"]) :is(#primaryButton, #connect, .pull-hint, .warm-up) {
     display: none;
 }
 .over {

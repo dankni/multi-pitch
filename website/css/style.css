@@ -1167,9 +1167,6 @@ position: relative;
   margin:0 auto;
   display: block;
 }
-a:focus .crag-hero{
-  filter:grayscale(0.6);
-}
 .no-results{
   min-height:300px;
   text-align:center;

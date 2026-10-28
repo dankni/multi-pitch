@@ -219,6 +219,12 @@ function openLightBox(img, alt) {
 
     if (!overlayElement || overlayElement.style.display === 'none' || !overlayElement.style.display) {
         triggerElement = document.activeElement; // only on first open, not re-entrant calls
+        // an entry for back to close; main.js's popstate does the closing
+        if (history.state?.lightbox) {
+            history.replaceState({ lightbox: true }, '', location.href);
+        } else {
+            history.pushState({ lightbox: true }, '', location.href);
+        }
     }
 
     const overlay = getLightboxOverlay();
@@ -233,6 +239,10 @@ function openLightBox(img, alt) {
 }
 
 function hideLightBox() {
+    if (history.state?.lightbox) {
+        history.back(); // popstate calls back in here, with the state below
+        return;
+    }
     const overlay = getLightboxOverlay();
     const closeBtn = getLightboxCloseButton();
 
