@@ -232,10 +232,12 @@
     margin-bottom: 0;
 }
 /* The calendar of days climbed: a day in its hardest grade's band colour,
-   plain for sessions with no grade, and faint for none */
+   blue for a workout with no grade, plain for other sessions with none, and
+   faint for none. A timed day's opacity is set on it, by how long. */
 .sessions {
     --day-none: light-dark(#ebedf0, #262626);
     --day-plain: light-dark(#a9b4c2, #5b6573);
+    --day-workout: light-dark(#2a78d6, #3987e5);
 }
 .calendar {
     display: block;
@@ -253,6 +255,7 @@
 .calendar .none { cursor: default; }
 .calendar .none { fill: var(--day-none); fill-opacity: 1; }
 .calendar .plain { fill: var(--day-plain); fill-opacity: 1; }
+.calendar .workout { fill: var(--day-workout); fill-opacity: 1; }
 /* The weeks on show, between the arrows back and forward through the year */
 .calendar-nav {
     display: flex;

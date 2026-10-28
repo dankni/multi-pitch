@@ -757,10 +757,12 @@ describe('Training apps', function () {
             cy.get('.done').should('have.attr', 'style').and('contain', 'inset(0px 0% 0px 0px)');   // all of it solid
             cy.window().its('spoken').should('include', 'Last one').and('include', 'Done');
             cy.window().its('humming').should('equal', false);
+            cy.get('#kind-Other').should('be.checked');   // a classic Tabata counts as other unless changed
+            cy.get('label[for="kind-Climbing"]').click();
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
                 expect(JSON.parse(log)).to.have.length(1);
-                expect(JSON.parse(log)[0]).to.include({ work: 20, rest: 10, reps: 6 });
+                expect(JSON.parse(log)[0]).to.include({ work: 20, rest: 10, reps: 6, kind: 'Climbing' });
             });
             cy.get('#reset').click();
             cy.get('#setup').should('be.visible');
@@ -849,9 +851,10 @@ describe('Training apps', function () {
             cy.tick(17000);
             cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#endingDiv').should('be.visible');
+            cy.get('#kind-Fingerboard').should('be.checked');
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
-                expect(JSON.parse(log)[0]).to.include({ work: 7, rest: 3, reps: 2, sets: 2, setRest: 240 });
+                expect(JSON.parse(log)[0]).to.include({ work: 7, rest: 3, reps: 2, sets: 2, setRest: 240, kind: 'Fingerboard' });
             });
             cy.get('#log').should('contain', 'Repeaters').and('contain', '2 sets of 2 · 7s on, 3s off');
         });
@@ -3039,6 +3042,38 @@ describe('Training apps', function () {
                 .and('have.attr', 'title', 'Fingerboard 33% · 35 min (Tabata 20 min, No Hangs 10 min, Rock Rings 5 min)');
             cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3')
                 .and('have.attr', 'title', 'Other 67% · 1h 10m (Tindeq Arcade 1h 00m, Tabata 10 min)');
+        });
+
+        it('counts a Tabata as whatever it was saved as', () => {
+            const day = '2026-09-10';
+            visitWith({
+                tabataLog: [
+                    { id: 1, date: day, routine: 'Max hangs', work: 7, rest: 3, reps: 10, sets: 2, setRest: 240, seconds: 1200, rating: 0, kind: 'Other' },
+                    { id: 2, date: day, work: 20, rest: 10, reps: 8, seconds: 600, rating: 0, kind: 'Climbing' }
+                ]
+            });
+            cy.get('#timeSplitBar button').should('have.length', 2);
+            cy.get('#timeSplitBar button').eq(0).should('have.class', 'split-1').and('have.attr', 'title', 'Climbing 33% · 10 min (Tabata 10 min)');
+            cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3').and('have.attr', 'title', 'Other 67% · 20 min (Tabata 20 min)');
+        });
+
+        it('colours a workout day blue and darkens a day by how long it trained', () => {
+            visitWith({
+                rockRingsLog: [{ id: 1, date: '2026-09-01', difficulty: 'easy', seconds: 300, rating: 0 }],
+                tabataLog: [
+                    { id: 2, date: '2026-09-02', work: 20, rest: 10, reps: 8, seconds: 2100, rating: 0, kind: 'Fingerboard' },
+                    { id: 3, date: '2026-09-03', work: 20, rest: 10, reps: 8, seconds: 4200, rating: 0, kind: 'Other' }
+                ],
+                boulderLog: [{ id: 4, date: '2026-09-04', climbs: ['V2'], rating: 0 }]
+            });
+            cy.get('#sessionCalendar rect[data-date="2026-09-01"]').should('have.class', 'workout')
+                .and('have.attr', 'style').and('contain', 'fill-opacity: 0.30');   // 5 minutes, the faintest
+            cy.get('#sessionCalendar rect[data-date="2026-09-02"]').should('have.class', 'workout')
+                .and('have.attr', 'style').and('contain', 'fill-opacity: 0.65');   // 35 minutes, half way
+            cy.get('#sessionCalendar rect[data-date="2026-09-03"]').should('have.class', 'plain')
+                .and('have.attr', 'style').and('contain', 'fill-opacity: 1.00');   // over an hour
+            cy.get('#sessionCalendar rect[data-date="2026-09-04"]').should('have.class', 'band-easy')
+                .and('have.attr', 'style').and('not.contain', 'fill-opacity');   // no time kept
         });
 
         it('opens a bar of the apps in a kind when it is tapped, and closes it again', () => {

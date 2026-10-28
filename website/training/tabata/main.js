@@ -78,10 +78,10 @@ app.onReset = () => {
     showProgress(0);
 };
 
-app.logEntry = () => repeaterMode
+app.logEntry = () => Object.assign(repeaterMode
     ? { "routine" : repeaters.name.trim() || undefined, "work" : repeaters.work, "rest" : repeaters.rest,
         "reps" : repeaters.reps, "sets" : repeaters.sets, "setRest" : repeaters.setRest }
-    : { "work" : tabata.work, "rest" : tabata.rest, "reps" : tabata.reps };
+    : { "work" : tabata.work, "rest" : tabata.rest, "reps" : tabata.reps }, { "kind" : chosenKind() });
 
 // saved before reps were called reps, a session's reps were its "sets"
 const repsOf = entry => typeof entry.reps === "number" ? entry.reps : entry.sets;
@@ -146,7 +146,28 @@ function finish(){
     background("");
     document.getElementById("first").hidden = true;
     speak("Done");
+    drawKindPicker();
     finishSession();
+}
+
+/* What the session counts as on the progress page's time split, chosen as it is
+   saved: repeaters are fingerboard sessions and a classic Tabata other, unless changed */
+const sessionKinds = ["Climbing", "Fingerboard", "Other"];
+
+function drawKindPicker(){
+    let chosen = repeaterMode ? "Fingerboard" : "Other";
+    let picker = document.getElementById("kindPicker") || document.createElement("fieldset");
+    picker.id = "kindPicker";
+    picker.className = "setting-group";
+    picker.innerHTML = "<legend>Count it as</legend><div class=\"picker\">" + sessionKinds.map(kind =>
+        `<input type="radio" name="sessionKind" class="nice-radios" id="kind-${kind}" value="${kind}"${kind === chosen ? " checked" : ""} />`
+        + `<label for="kind-${kind}">${kind}</label>`).join("") + "</div>";
+    document.getElementById("endingDiv").insertBefore(picker, document.getElementById("saveSession"));
+}
+
+function chosenKind(){
+    let checked = document.querySelector('input[name="sessionKind"]:checked');
+    return checked === null ? undefined : checked.value;
 }
 
 /* ================= Settings ================= */

@@ -5,6 +5,7 @@
    short, since its own log has the whole of it. */
 (function(){
     const showAtMost = 25;
+    const kinds = ["Climbing", "Fingerboard", "Other"];   // the time split's, in its order
 
     // V grades by their number: V9 is below V10, which it isn't as text
     function hardestV(climbs){
@@ -122,8 +123,8 @@
           "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
           "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
         { "key" : "tabataLog", "name" : "Tabata", "href" : "/training/tabata/",
-          // repeaters are fingerboard sessions, a classic Tabata is not
-          "kind" : entry => typeof entry.setRest === "number" ? "Fingerboard" : "Other",
+          // as chosen when saved; before that, repeaters are fingerboard sessions and a classic Tabata is not
+          "kind" : entry => kinds.includes(entry.kind) ? entry.kind : typeof entry.setRest === "number" ? "Fingerboard" : "Other",
           "line" : tabataSession, "minutes" : entry => ranFor(entry, tabataSeconds(entry)) },
         // a run on the screen is a game, not training
         { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/", "kind" : "Other",
@@ -255,7 +256,6 @@
        its share - always in this order and colour, so each keeps its place - and
        the apps in it, biggest first, in its hover text. Tapping a segment opens a
        bar of its apps under it; tapping it again, or anywhere else, closes it. */
-    const kinds = ["Climbing", "Fingerboard", "Other"];
     const minutesText = minutes => sessionLength({ "minutes" : Math.max(1, Math.round(minutes)) });
     const shareText = share => share < 1 ? "<1%" : Math.round(share) + "%";
     let splitParts = [];
@@ -347,6 +347,13 @@
             session.app.name + ": " + session.title + (session.detail ? " · " + session.detail : ""))).join("\n");
     }
     const hardest = typeof hardestBands === "function" ? hardestBands() : {};
+
+    // a day with no grade in it, blue for rock rings, or a tabata counted as climbing or fingerboard
+    const isWorkout = session => session.app.key === "rockRingsLog" || (session.app.key === "tabataLog" && session.kind !== "Other");
+
+    // a timed day darker the longer it trained: faintest to 10 minutes, solid from an hour
+    const shadeFrom = 10, shadeTo = 60, faintest = 0.3;
+    const timeOpacity = minutes => faintest + (1 - faintest) * Math.min(1, Math.max(0, (minutes - shadeFrom) / (shadeTo - shadeFrom)));
     const dayLength = 86400000;
     const calendarWeeks = 18;
     const calendarPages = 3;
@@ -380,11 +387,14 @@
             lastMonth = month;
             for(let day = 0; day < 7 && monday + day * dayLength <= last; day++){
                 let date = new Date(monday + day * dayLength).toISOString().slice(0, 10);
-                let count = (perDay[date] || []).length;
+                let daySessions = perDay[date] || [];
+                let count = daySessions.length;
                 let band = hardest[date];
                 if(count > 0){ days++; }
-                let kind = count === 0 ? "none" : band ? band.cls : "plain";
-                squares += `<rect class="day ${kind}" data-date="${date}" style="--week: ${week}" x="${(left + week * step).toFixed(1)}"`
+                let kind = count === 0 ? "none" : band ? band.cls : daySessions.some(isWorkout) ? "workout" : "plain";
+                let minutes = daySessions.reduce((total, session) => total + (session.minutes || 0), 0);
+                let shade = minutes > 0 ? `; fill-opacity: ${timeOpacity(minutes).toFixed(2)}` : "";
+                squares += `<rect class="day ${kind}" data-date="${date}" style="--week: ${week}${shade}" x="${(left + week * step).toFixed(1)}"`
                     + ` y="${(top + day * step).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}" rx="2">`
                     + `<title>${escapeHtml(count === 0 ? logDate(date) + ": no sessions" : daySays(date))}</title></rect>`;
             }
