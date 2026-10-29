@@ -283,6 +283,16 @@
     min-width: 0;
     padding: 8px 12px;
 }
+/* the overlay's own blue, as it is dark in either theme */
+.heart-note .heart-share {
+    color: #8FC2FF;
+}
+.heart-note .heart-share:hover, .heart-note .heart-share:focus {
+    color: #C4DEFF;
+}
+.heart-share .demo-icon {
+    margin-left: 0;
+}
 .heart-note {
     max-width: 450px;
     margin: 12px auto;

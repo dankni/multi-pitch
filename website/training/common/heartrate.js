@@ -88,6 +88,64 @@ function hideHeartRate(){
     closeOverlay("heartRate");
 }
 
+/* The chart as a PNG on the overlay's black. An SVG drawn as an image has no
+   stylesheet, so each part's colours and sizes are written onto a copy of it. */
+const heartImageStyles = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linecap", "stroke-linejoin", "font-size", "font-family"];
+
+function heartChartImage(){
+    let svg = document.querySelector("#heartChart svg");
+    if(svg === null){ return Promise.resolve(null); }
+    let copy = svg.cloneNode(true);
+    let shown = svg.querySelectorAll("*");
+    copy.querySelectorAll("*").forEach((part, index) => {
+        let style = getComputedStyle(shown[index]);
+        heartImageStyles.forEach(name => part.setAttribute(name, style.getPropertyValue(name)));
+    });
+    let box = svg.viewBox.baseVal;
+    const pad = 16, scale = 2;
+    copy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    copy.setAttribute("width", box.width);
+    copy.setAttribute("height", box.height);
+    let url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copy)], { "type" : "image/svg+xml" }));
+    return new Promise(resolve => {
+        let image = new Image();
+        image.onload = () => {
+            let canvas = document.createElement("canvas");
+            canvas.width = (box.width + pad * 2) * scale;
+            canvas.height = (box.height + pad * 2) * scale;
+            let pen = canvas.getContext("2d");
+            pen.scale(scale, scale);
+            pen.fillStyle = "#000";
+            pen.fillRect(0, 0, box.width + pad * 2, box.height + pad * 2);
+            pen.drawImage(image, pad, pad, box.width, box.height);
+            URL.revokeObjectURL(url);
+            canvas.toBlob(resolve, "image/png");
+        };
+        image.onerror = () => {
+            URL.revokeObjectURL(url);
+            resolve(null);
+        };
+        image.src = url;
+    });
+}
+
+// to the share sheet where it takes images, a download where it doesn't
+async function shareHeartRate(){
+    let blob = await heartChartImage();
+    if(blob === null){ return; }
+    let file = new File([blob], `heart-rate-${session === null ? today() : session.date}.png`, { "type" : "image/png" });
+    if(typeof gtag === "function"){ gtag("event", "heart_rate_shared", { "app" : document.title }); }
+    if(navigator.canShare && navigator.canShare({ "files" : [file] })){
+        navigator.share({ "files" : [file], "title" : "Heart rate" }).catch(() => {});   // closing the sheet is a rejection too
+        return;
+    }
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(file);
+    link.download = file.name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
 function heartAge(){
     let age = Number(localStorage.getItem(heartAgeKey));
     return heartAges.includes(age) ? age : null;
@@ -179,7 +237,7 @@ function drawHeartMarkup(){
         <aside id="heartRate" class="overlay">
             <h2>Heart rate</h2>
             <div class="heart-chart-holder" id="heartChart"></div>
-            <p class="heart-note">Heart rate data not saved to log, take a screenshot to keep it.</p>
+            <p class="heart-note">Heart rate data not saved to log. Take a screenshot, or <button type="button" class="link-button heart-share" id="shareHeartRate" data-action="shareHeartRate"><i class="demo-icon icon-share"></i>share it (even with yourself).</button></p>
             <fieldset class="setting-group">
                 <legend>Age:</legend>
                 <div class="picker heart-ages" role="radiogroup" aria-label="Age">

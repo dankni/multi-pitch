@@ -2723,7 +2723,7 @@ describe('Training apps', function () {
                 cy.window().then((win) => { win.gtag = cy.stub().as('gtag'); });
                 cy.get('#showHeartRate').click();
                 cy.get('@gtag').should('have.been.calledWith', 'event', 'heart_rate_viewed', { app: 'Gym Session' });
-                cy.get('#heartRate').should('be.visible').and('contain', 'take a screenshot to keep it');
+                cy.get('#heartRate').should('be.visible').and('contain', 'Take a screenshot, or share it (even with yourself).');
                 cy.get('#heartChart polyline.beats').should('have.length', 1).invoke('attr', 'points').then((points) => {
                     let ys = points.split(' ').map((point) => Number(point.split(',')[1]));
                     expect(ys).to.have.length(3);
@@ -2736,6 +2736,21 @@ describe('Training apps', function () {
                 cy.get('#heartChart .zone-label').should((labels) => expect([...labels].map((label) => label.textContent))
                     .to.deep.equal(['Max 180', 'Hard 153', 'Moderate 126', 'Light 90']));
                 cy.window().then((win) => expect(win.localStorage.getItem('heartRateAge')).to.equal('40'));
+
+                // as a picture, to the share sheet
+                cy.window().then((win) => {
+                    Object.defineProperty(win.navigator, 'canShare', { configurable: true, value: () => true });
+                    Object.defineProperty(win.navigator, 'share', { configurable: true, value: cy.stub().as('share').resolves() });
+                });
+                cy.get('#shareHeartRate').click();
+                cy.get('@share').should((share) => {
+                    expect(share).to.have.been.calledOnce;
+                    let file = share.firstCall.args[0].files[0];
+                    expect(file.type).to.equal('image/png');
+                    expect(file.name).to.match(/^heart-rate-\d{4}-\d{2}-\d{2}\.png$/);
+                    expect(file.size).to.be.greaterThan(1000);
+                });
+                cy.get('@gtag').should('have.been.calledWith', 'event', 'heart_rate_shared', { app: 'Gym Session' });
                 cy.get('[data-action="hideHeartRate"]').click();
 
                 cy.get('#finishButton').click();
