@@ -8,6 +8,9 @@
      state   : () => what Climb Log shows, its mode in m - see mplog.app.js
      receive : message => act on what the watch sent
      active  : () => whether a session is under way, to try a dropped watch again
+   and optionally `app.heart` (common/heartrate.js), for the heart rate:
+     wanted  : () => whether the watch is to read it now, sent as h
+     receive : message => a reading, {t:"hr", b, a}
    The page gives an empty #watchBar and #watchSetting, filled here, and
    optionally a <template id="watchHelpText">, shown under the setting with the
    watch's battery. It is sent from
@@ -29,6 +32,7 @@ function watchWanted(){
 
 function toggleWatch(input){
     localStorage.setItem(app.watchKey, input.checked);
+    if(input.checked && !bangle.supported){ toast("This browser can't connect to a watch.", null, false, true); }
     // the tap on the switch is what lets the browser show its picker
     if(input.checked){ connectWatch(); }
     else { disconnectWatch(); }
@@ -45,12 +49,12 @@ function switchWatch(input){
 }
 
 /* A tile's colour as this page draws it - a Boulderworld circuit, a hold, a
-   grade band - and black or white to write on it, for the watch to draw the same */
+   loft route's holds, a grade band - and black or white to write on it, for the watch to draw the same */
 function watchColour(classes){
     let probe = document.createElement("span");
     probe.className = classes;
     probe.hidden = true;
-    probe.style.color = "var(--circuit, var(--hold, var(--c, currentColor)))";
+    probe.style.color = "var(--circuit, var(--hold, var(--holds-first, var(--holds, var(--c, currentColor)))))";
     document.body.appendChild(probe);
     let [red, green, blue] = getComputedStyle(probe).color.match(/[\d.]+/g).map(Number);
     probe.remove();
@@ -129,7 +133,7 @@ function pushWatch(){
     if(!watchReady || watchPush !== null){ return; }
     watchPush = bangle.idle().then(() => {
         watchPush = null;
-        return bangle.run(`if(global.mplog)mplog(${JSON.stringify(Object.assign({ "t" : "state" }, app.watch.state()))})`);
+        return bangle.run(`if(global.mplog)mplog(${JSON.stringify(Object.assign({ "t" : "state" }, app.watch.state(), app.heart && app.heart.wanted() ? { "h" : 1 } : {}))})`);
     });
 }
 
@@ -141,6 +145,8 @@ function fromWatch(message){
         drawWatchBattery();
         return pushWatch();
     }
+    // a reading every few seconds changes nothing the watch shows
+    if(message.t === "hr"){ return app.heart && app.heart.receive(message); }
     app.watch.receive(message);
     pushWatch();
 }

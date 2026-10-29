@@ -26,6 +26,9 @@
 	<script src="/training/common/records.js" ></script>
 	<script src="/training/common/log.js" ></script>
 	<script src="/training/dansloft/main.js" ></script>
+	<script src="/training/common/bangle.js" ></script>
+	<script src="/training/common/watch.js" ></script>
+	<script src="/training/common/heartrate.js" ></script>
     <title>Dans Loft</title>
   </head>
 
@@ -53,6 +56,11 @@
 				<label>Finished <input type="time" class="field" id="sessionFinish" data-change="setSessionTime" /></label>
 				<span class="session-length" id="sessionLengthShown"></span>
 			</div>
+			<!-- with the watch switched on under the cog - see common/watch.js -->
+			<div class="watch-bar" id="watchBar" hidden></div>
+			<template id="watchHelpText">
+				<p>Swipe Left / Right to change grades.<br>Swipe Up / Down to open menu.<br>Press button or long press screen to track grade.</p>
+			</template>
 			<h3><span id="climbCount">0</span> <span class="of" id="countNoun">climbs</span></h3>
 			<p id="summary"></p>
 			<details class="recent-logs" id="recentDetails">
@@ -135,6 +143,7 @@
 				<i class="demo-icon icon-sun"></i> Prevent Screen Sleep <span class="switch-state"></span>
 			</span>
 		</label>
+		<div id="watchSetting"></div>
 		<button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
 	</aside>
   </body>

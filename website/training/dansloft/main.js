@@ -16,6 +16,26 @@ const app = {
     "logKey" : "dansLoftLog",
     "currentKey" : "dansLoftCurrent",
     "timed" : true,
+    "watchKey" : "dansLoftWatch",
+    // On the watch (common/watch.js): the routes as one ladder, ticked there as the gym's grades are
+    "watch" : {
+        "state" : () => {
+            let state = { "m" : "ladder", "s" : session === null ? "idle" : document.body.dataset.state };
+            if(session !== null){
+                state.id = session.id;
+                state.l = "loft";
+                state.L = [{ "k" : "loft", "n" : "Loft",
+                             "r" : loftRoutes.map(route => [route.id, route.grade, countOf(route.id), ...watchColour("holds-" + route.holds)]) }];
+            }
+            return state;
+        },
+        "receive" : message => {
+            if(message.t === "finish" && document.body.dataset.state === "running"){ openSavePanel(); }
+            if(message.t === "add"){ addLoftRoute(Number(message.g)); }
+            else if(message.t === "undo"){ removeLoftRoute(Number(message.g)); }
+        },
+        "active" : () => session !== null
+    },
     "newSession" : () => ({ "climbs" : [] }),
     "fromEntry" : entry => ({ "climbs" : entry.climbs.slice() }),
     "toEntry" : from => ({ "climbs" : from.climbs.slice() }),
@@ -86,12 +106,18 @@ function allClimbed(){
 }
 
 function addLoftClimb(button){
-    let route = getLoftRoute(Number(button.dataset.route));
+    addLoftRoute(Number(button.dataset.route));
+}
+
+// also from the watch
+function addLoftRoute(id){
+    let route = getLoftRoute(id);
     if(session === null || route === undefined){ return; }
     let earlier = session.climbs.map(loftBoulderGrade);
     let wasAll = allClimbed();
     session.climbs.push(route.id);
     noteRecent(`${route.colour} ${route.grade} tapped`);
+    heartTick(route.id, route.grade);
     keepSession();
     drawRow(route);
     flash(document.getElementById("row-" + route.id).querySelector(".grade-add"));
@@ -102,12 +128,17 @@ function addLoftClimb(button){
 
 // one tap too many
 function removeLoftClimb(button){
-    let route = getLoftRoute(Number(button.dataset.route));
+    removeLoftRoute(Number(button.dataset.route));
+}
+
+function removeLoftRoute(id){
+    let route = getLoftRoute(id);
     if(session === null || route === undefined){ return; }
     let position = session.climbs.lastIndexOf(route.id);
     if(position === -1){ return; }
     session.climbs.splice(position, 1);
     noteRecent(`${route.colour} ${route.grade} taken back`);
+    heartUntick(route.id);
     keepSession();
     drawRow(route);
     updateSummary();

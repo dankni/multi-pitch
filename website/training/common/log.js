@@ -49,6 +49,7 @@ function openSession(){
     document.getElementById("sessionDate").value = session.date;
     document.getElementById("saveSession").innerText = session.editing ? "UPDATE SESSION" : "SAVE SESSION";
     disarmReset();
+    openHeart();   // common/heartrate.js
     if(app.onOpen){ app.onOpen(); }
     app.draw();
     setStar(session.rating);
@@ -67,6 +68,7 @@ function keepComment(){
 
 function closeSession(){
     session = null;
+    forgetHeart();
     resetSavePanel();
     keepSession();
     showState("idle");

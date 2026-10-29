@@ -155,6 +155,7 @@ function addGrade(name){
     let earlier = climbsOn(ladder).slice();
     climbsOn(ladder).push(name);
     noteRecent(shownName(name) + " tapped");
+    heartTick(name, shownName(name));
     keepSession();
     drawGradeRow(name);
     // the redrawn tile, found by id: as a selector the + in 5+ or 6a+ is CSS
@@ -178,6 +179,7 @@ function removeGrade(name){
     if(position === -1){ return; }
     list.splice(position, 1);
     noteRecent(shownName(name) + " taken back");
+    heartUntick(name);
     keepSession();
     drawGradeRow(name);
     updateSummary();

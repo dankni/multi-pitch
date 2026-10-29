@@ -2706,12 +2706,54 @@ describe('Training apps', function () {
                 cy.get('#watchStatusText').should('have.text', 'Watch connected');
             });
 
+            it('charts the heart rate the watch reads against the climbs, and keeps it out of the log', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
+                connect();
+                cy.window().should((win) => expect(lastState(win).h).to.equal(1));
+                cy.get('#showHeartRate').should('not.be.visible');
+                cy.tick(60000);
+                cy.window().then((win) => win.watchSays({ t: 'hr', b: 92, a: 0 }));
+                cy.get('#row-V3 .grade-add').click();
+                cy.tick(60000);
+                // the second read 30 seconds ago, while the phone was away
+                cy.window().then((win) => { win.watchSays({ t: 'hr', b: 150, a: 0 }); win.watchSays({ t: 'hr', b: 120, a: 30 }); });
+                cy.get('#showHeartRate').should('be.visible').and('have.text', 'Show heart rate');
+
+                cy.window().then((win) => { win.gtag = cy.stub().as('gtag'); });
+                cy.get('#showHeartRate').click();
+                cy.get('@gtag').should('have.been.calledWith', 'event', 'heart_rate_viewed', { app: 'Gym Session' });
+                cy.get('#heartRate').should('be.visible').and('contain', 'take a screenshot to keep it');
+                cy.get('#heartChart polyline.beats').should('have.length', 1).invoke('attr', 'points').then((points) => {
+                    let ys = points.split(' ').map((point) => Number(point.split(',')[1]));
+                    expect(ys).to.have.length(3);
+                    expect(ys[0]).to.be.greaterThan(ys[1]);   // in time order, 92 then 120
+                    expect(ys[1]).to.be.greaterThan(ys[2]);
+                });
+                cy.get('#heartChart .climb-label').should('have.text', 'V3');
+                cy.get('#heartChart .zone').should('not.exist');
+                cy.get('#heartAge-40').check({ force: true });
+                cy.get('#heartChart .zone-label').should((labels) => expect([...labels].map((label) => label.textContent))
+                    .to.deep.equal(['Max 180', 'Hard 153', 'Moderate 126', 'Light 90']));
+                cy.window().then((win) => expect(win.localStorage.getItem('heartRateAge')).to.equal('40'));
+                cy.get('[data-action="hideHeartRate"]').click();
+
+                cy.get('#finishButton').click();
+                cy.get('#showHeartRate').should('be.visible');   // at the end too
+                cy.window().should((win) => expect(lastState(win)).to.include({ s: 'saving', h: 1 }));
+                cy.get('#saveSession').click();
+                cy.window().then((win) => {
+                    expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null);
+                    expect(Object.keys(JSON.parse(win.localStorage.getItem('boulderLog'))[0])).not.to.include('beats');
+                });
+            });
+
             it('says when the browser cannot connect to a watch', () => {
                 cy.visit(boulderUrl, { onBeforeLoad: (win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true, value: undefined }) });
                 cy.get('#primaryButton').click();
                 cy.get('#useWatch').check({ force: true });
                 cy.get('#watchBar').should('not.be.visible');
                 cy.get('#noBluetoothWatch').should('not.have.attr', 'hidden');
+                cy.get('.toast.warn').should('contain', "This browser can't connect to a watch.");
                 cy.get('#watchSupported a').should('have.attr', 'href', 'https://thepihut.com/products/bangle-js-2');
                 cy.get('#useWatch').uncheck({ force: true });
                 cy.get('#watchSupported').should('have.attr', 'hidden');
@@ -2950,6 +2992,28 @@ describe('Training apps', function () {
             cy.get('#row-6 .grade-minus').click();
             cy.get('#row-6 .grade-count').should('have.text', '1');
             cy.get('#climbCount').should('have.text', '2');
+        });
+
+        it('ticks its routes from the watch, as the gym does', () => {
+            cy.visit(loftUrl, { onBeforeLoad: fakeBangle });
+            cy.get('#primaryButton').click();
+            connectWatch();
+            cy.window().should((win) => {
+                let state = lastState(win);
+                expect(state).to.include({ m: 'ladder', s: 'running', l: 'loft', h: 1 });
+                expect(state.L[0].n).to.equal('Loft');
+                expect(state.L[0].r).to.have.length(16);
+                expect(state.L[0].r[0]).to.deep.equal([1, 'V0', 0, '#ffd400', '#000']);
+                expect(state.L[0].r[1].slice(3)).to.deep.equal(['#2ecc40', '#000']);   // green and white, by its first colour
+            });
+            cy.window().then((win) => { win.watchSays({ t: 'add', g: 6 }); win.watchSays({ t: 'add', g: 6 }); win.watchSays({ t: 'add', g: 1 }); });
+            cy.get('#row-6 .grade-count').should('have.text', '2');
+            cy.window().then((win) => win.watchSays({ t: 'undo', g: 6 }));
+            cy.get('#climbCount').should('have.text', '2');
+            cy.window().should((win) => expect(lastState(win).L[0].r.find((row) => row[0] === 6).slice(0, 3)).to.deep.equal([6, 'V3+', 1]));
+            cy.get('#watchHelp').should('contain', 'Swipe Left / Right to change grades.');
+            cy.window().then((win) => win.watchSays({ t: 'finish' }));
+            cy.get('body').should('have.attr', 'data-state', 'saving');
         });
 
         it('says when a route is harder than any boulder saved, a plus as its grade', () => {

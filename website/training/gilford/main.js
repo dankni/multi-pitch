@@ -84,6 +84,7 @@ function toggleClimb(button){
     if(position === -1){ haptic(); }   // a tick, not taking one back
     let route = getRoute(id);
     noteRecent(`${route.colour} ${route.grade} ${position === -1 ? "ticked" : "taken back"}`);
+    position === -1 ? heartTick(id, route.grade) : heartUntick(id);
     keepSession();
     updateSummary();
     cheer(before);

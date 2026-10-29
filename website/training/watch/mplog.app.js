@@ -1,7 +1,7 @@
 /* Climb Log for Bangle.js 2. The phone's training app connects, installs this
    and opens it, then sends what to show with mplog({t:"state", m, ...}), m the
    mode:
-     ladder   - the gym and outside: one grade at a time, in its colour on the
+     ladder   - the gym, outside and the loft: one grade at a time, in its colour on the
                 phone. Tap the right or left half, or swipe left or right, to
                 go harder or easier; press the button or hold the screen to tick
                 it; swipe up or down for undo, the other ladder and finish.
@@ -13,8 +13,11 @@
      interval - tabata: work or rest and the time left, with a buzz as each starts,
                 and the screen woken and red for the last seconds of a rest.
    What the phone hasn't had yet waits in mplog.json until it connects again.
+   With h in the state, a running session's heart rate is read and sent every
+   few seconds; readings taken while the phone is away wait in memory, with how
+   long ago they were read once it is back.
 
-   To the phone, a line of JSON each: add, undo, tab, harder, tick, finish, lap, then
+   To the phone, a line of JSON each: add, undo, tab, harder, tick, finish, lap, hr, then
    up when the app opens and hello once what waited has gone. Kept to ES5 and
    ASCII: the phone uploads it as it is. */
 var storage = require("Storage");
@@ -37,6 +40,12 @@ var heldAt = 0;                    // when a hold last went off, so lifting from
 var tappedAt = 0;                  // the last tap, so one reported twice only counts once
 var longPress = 600;               // ms held still that does what the button does
 var still = 12;                    // px a finger can wander and still be a tap or a hold
+var heartOn = false;               // the heart rate monitor is powered for the session
+var beatAt = 0;                    // when the last reading was taken
+var beatEvery = 5;                 // s between readings
+var beatSure = 50;                 // the confidence, out of 100, a reading needs
+var beats = [];                    // [when, bpm] read while the phone was away
+var beatsKept = 720;               // an hour of them, the latest
 
 function keep(){
   storage.writeJSON(file, { state : state, stateAt : stateAt, queue : queue, mine : mine, pick : pick });
@@ -388,6 +397,23 @@ function showInterval(){
   if(state.s === "running"){ ticker = setInterval(drawInterval, 1000); }
 }
 
+/* ================= heart rate ================= */
+
+function setHeart(){
+  var on = !!(state && state.h && state.s === "running" && (mode() === "ladder" || mode() === "panel"));
+  if(on === heartOn){ return; }
+  heartOn = on;
+  Bangle.setHRMPower(on ? 1 : 0, "mplog");
+}
+
+Bangle.on("HRM", function(hrm){
+  if(!heartOn || hrm.confidence < beatSure || getTime() - beatAt < beatEvery){ return; }
+  beatAt = getTime();
+  if(linked){ return tell({ t : "hr", b : hrm.bpm, a : 0 }); }
+  beats.push([beatAt, hrm.bpm]);
+  if(beats.length > beatsKept){ beats.shift(); }
+});
+
 /* ================= all ================= */
 
 function show(){
@@ -414,6 +440,8 @@ function sync(){
   queue.forEach(tell);
   queue = [];
   keep();
+  beats.forEach(function(beat){ tell({ t : "hr", b : beat[1], a : Math.round(getTime() - beat[0]) }); });
+  beats = [];
   tell({ t : "hello" });
 }
 
@@ -429,6 +457,7 @@ global.mplog = function(msg){
   state = msg;
   stateAt = getTime();
   keep();
+  setHeart();
   var same = was && (was.m || "ladder") === mode() && was.s === state.s;
   if(mode() === "interval" && state.s === "running" && (!same || was.p !== state.p)){ phaseBuzz(); }
   var menus = mode() === "ladder" || mode() === "panel";
@@ -448,5 +477,6 @@ NRF.on("disconnect", function(){ linked = false; });
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+setHeart();
 show();
 if(NRF.getSecurityStatus().connected){ tell({ t : "up" }); }

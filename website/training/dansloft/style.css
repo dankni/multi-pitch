@@ -29,15 +29,16 @@
     font-size: 20px;
 }
 .holds-yellow       { --holds: #ffd400; }
-.holds-green-white  { --holds: linear-gradient(#2ecc40 50%, #f2f2f2 50%); }
+/* --holds-first is a gradient's first colour, for the watch (common/watch.js) */
+.holds-green-white  { --holds: linear-gradient(#2ecc40 50%, #f2f2f2 50%); --holds-first: #2ecc40; }
 .holds-grey         { --holds: #9b9b9b; }
 .holds-sky-blue     { --holds: #7cc6f2; }
 .holds-orange       { --holds: #ff851b; }
-.holds-french-flags { --holds: linear-gradient(#0055a4 33.3%, #f2f2f2 33.3% 66.6%, #ef4135 66.6%); }
+.holds-french-flags { --holds: linear-gradient(#0055a4 33.3%, #f2f2f2 33.3% 66.6%, #ef4135 66.6%); --holds-first: #0055a4; }
 .holds-pale-pink    { --holds: #f9c6d8; }
 .holds-white        { --holds: #f2f2f2; }
 .holds-fluro-pink   { --holds: #ff2fa0; }
-.holds-swirls       { --holds: repeating-linear-gradient(135deg, #ffd400 0 5px, #0074d9 5px 10px); }
+.holds-swirls       { --holds: repeating-linear-gradient(135deg, #ffd400 0 5px, #0074d9 5px 10px); --holds-first: #ffd400; }
 .holds-red          { --holds: #ff4136; }
 .holds-brown        { --holds: #8b5a2b; }
 .holds-blue         { --holds: #0074d9; }

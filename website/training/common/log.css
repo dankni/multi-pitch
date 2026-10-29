@@ -201,3 +201,58 @@
         padding: 6px 4px;
     }
 }
+
+/* Heart rate from the watch - common/heartrate.js. The overlay is dark in either theme. */
+.heart-link {
+    display: block;
+    margin: 16px auto 0;
+    color: var(--link);
+}
+.heart-link[hidden] {
+    display: none;
+}
+.heart-chart-holder {
+    width: 90%;
+    max-width: var(--column);
+    margin: 16px auto 0;
+}
+.heart-chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+.heart-chart text {
+    font-family: 'Hind', sans-serif;
+    font-size: 11px;
+    fill: #bdbdbd;
+}
+.heart-chart .grid { stroke: rgba(255, 255, 255, 0.14); }
+.heart-chart .axis { stroke: #bdbdbd; }
+.heart-chart .beats {
+    fill: none;
+    stroke: #ff5a5f;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+.heart-chart .climb {
+    stroke: #8FC2FF;
+    stroke-dasharray: 2 3;
+}
+.heart-chart .climb-label { fill: #8FC2FF; }
+.heart-chart .zone {
+    stroke: var(--zone);
+    stroke-dasharray: 6 4;
+}
+.heart-chart .zone-label { fill: var(--zone); }
+.zone-max      { --zone: #e25550; }
+.zone-hard     { --zone: #eda100; }
+.zone-moderate { --zone: #2ecc40; }
+.zone-light    { --zone: #7cc6f2; }
+.heart-note {
+    max-width: 450px;
+    margin: 12px auto;
+    font-size: 14px;
+    opacity: 0.8;
+}
