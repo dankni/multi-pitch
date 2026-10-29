@@ -8,7 +8,7 @@
    the one before it for a big release (v180.0). It is the app version shown in
    the apps. */
 
-const CACHE_VERSION = 'v179.29';
+const CACHE_VERSION = 'v179.31';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.

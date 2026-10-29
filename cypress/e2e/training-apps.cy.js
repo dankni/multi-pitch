@@ -2718,6 +2718,7 @@ describe('Training apps', function () {
                 // the second read 30 seconds ago, while the phone was away
                 cy.window().then((win) => { win.watchSays({ t: 'hr', b: 150, a: 0 }); win.watchSays({ t: 'hr', b: 120, a: 30 }); });
                 cy.get('#showHeartRate').should('be.visible').and('have.text', 'Show heart rate');
+                cy.get('#recentDetails').next().should('have.id', 'showHeartRate');   // to its right
 
                 cy.window().then((win) => { win.gtag = cy.stub().as('gtag'); });
                 cy.get('#showHeartRate').click();

@@ -203,12 +203,37 @@
 }
 
 /* Heart rate from the watch - common/heartrate.js. The overlay is dark in either theme. */
+.session-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: var(--column);
+    margin: 8px auto 0;
+    font-size: 14px;
+}
+.session-links .recent-logs {
+    margin: 0;
+}
+.session-links > ol {
+    flex-basis: 100%;
+    margin: 2px 0 0;
+    padding: 0;
+    list-style: none;
+}
+.session-links > ol li {
+    padding: 2px 0;
+}
+.session-links:has(> details:not([open])) > ol {
+    display: none;
+}
 .heart-link {
-    display: block;
-    margin: 16px auto 0;
+    padding: 6px 10px;
+    font-size: 14px;
     color: var(--link);
 }
-.heart-link[hidden] {
+.heart-link[hidden],
+[data-missing] .heart-link {
     display: none;
 }
 .heart-chart-holder {
@@ -250,6 +275,14 @@
 .zone-hard     { --zone: #eda100; }
 .zone-moderate { --zone: #2ecc40; }
 .zone-light    { --zone: #7cc6f2; }
+/* six two-digit chips, narrow enough for one row on a phone */
+.setting-group .heart-ages {
+    flex-wrap: nowrap;
+}
+.heart-ages > .nice-radios + label {
+    min-width: 0;
+    padding: 8px 12px;
+}
 .heart-note {
     max-width: 450px;
     margin: 12px auto;

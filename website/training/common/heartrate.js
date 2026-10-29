@@ -2,7 +2,7 @@
    the watch (common/watch.js) while it is connected. Each reading and when each
    climb was ticked are kept beside the session under app.currentKey + "Heart",
    so a reload keeps them, but never saved to the log. Once there is a reading,
-   a link under the session draws them, with the heart rate zones for the age
+   a link beside Show recent logs draws them, with the heart rate zones for the age
    picked under the chart. log.js opens and forgets them with the session;
    ladder.js and the apps call heartTick() and heartUntick(). */
 
@@ -164,10 +164,16 @@ function drawHeartChart(){
 }
 
 function drawHeartMarkup(){
-    let holder = document.getElementById("sessionHolder");
-    if(holder === null){ return; }
-    holder.insertAdjacentHTML("beforeend",
+    // to the right of Show recent logs, whose list moves out under the pair
+    let recent = document.getElementById("recentDetails");
+    if(recent === null){ return; }
+    let links = document.createElement("div");
+    links.className = "session-links";
+    recent.before(links);
+    links.append(recent);
+    links.insertAdjacentHTML("beforeend",
         `<button type="button" class="link-button heart-link" id="showHeartRate" data-action="showHeartRate" hidden>Show heart rate</button>`);
+    links.append(document.getElementById("recentLogs"));
     let age = heartAge();
     document.body.insertAdjacentHTML("beforeend", `
         <aside id="heartRate" class="overlay">
@@ -176,7 +182,7 @@ function drawHeartMarkup(){
             <p class="heart-note">Heart rate data not saved to log, take a screenshot to keep it.</p>
             <fieldset class="setting-group">
                 <legend>Age:</legend>
-                <div class="picker" role="radiogroup" aria-label="Age">
+                <div class="picker heart-ages" role="radiogroup" aria-label="Age">
                     ${heartAges.map(each => `<input type="radio" name="heartAge" class="nice-radios" id="heartAge-${each}" value="${each}" data-change="setHeartAge"${each === age ? " checked" : ""} />
                     <label for="heartAge-${each}">${each}</label>`).join("")}
                 </div>
