@@ -400,7 +400,7 @@ function showInterval(){
 /* ================= heart rate ================= */
 
 function setHeart(){
-  var on = !!(state && state.h && state.s === "running" && (mode() === "ladder" || mode() === "panel"));
+  var on = !!(state && state.h && state.s === "running" && mode() !== "interval");
   if(on === heartOn){ return; }
   heartOn = on;
   Bangle.setHRMPower(on ? 1 : 0, "mplog");

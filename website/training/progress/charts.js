@@ -1,5 +1,5 @@
 /* The progress page's charts: sport climbs, boulders and trad climbs by grade,
-   from the apps' logs and an imported UKC logbook, as plain SVG strings. The
+   from the apps' logs and an imported UKC logbook, drawn by common/charts.js. The
    year, 30 and 7 day views draw the period before as a line across each bar.
    Days are the UTC yyyy-mm-dd the apps store, compared as strings. A bar's colour
    says how hard its grade is; the grade is written under it. */
@@ -25,34 +25,34 @@
     const bands = gradeBands.bands;
     const sportBand = gradeBands.sport, boulderBand = gradeBands.boulder, tradBand = gradeBands.trad;
 
-    // 5 to 7b always, as the Gilford wall grades them; anything else once climbed
-    const sportAlways = ["5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
+    /* Every climb of a kind: each app's saved sessions, read by entryClimbs() in
+       common/charts.js, and an imported UKC logbook's. A trad session merged with
+       UKC counts its day's trad climbs once, whichever has more, and ukc.climbs()
+       leaves them out (see common/ukc.js) */
+    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog", "lapTimerLog", "dansLoftLog"];
+    const onLadder = {
+        "sport" : grade => sportLadder.includes(grade),
+        "boulder" : grade => boulderRung(grade) !== -1,
+        "trad" : grade => tradLadder.includes(grade)
+    };
 
-    function boulderRung(grade){
-        let rung = Number(String(grade).replace("V", ""));
-        return /^V\d+$/.test(grade) && isFinite(rung) ? rung : -1;
-    }
-
-    // British adjectival grades: VD to E2 always, the rest once climbed
-    const tradAlways = ["VD", "S", "HS", "VS", "HVS", "E1", "E2"];
-
-    /* Every trad climb: the trad app's sessions, and an imported UKC logbook's
-       trad climbs. A session merged with UKC counts its day's trad climbs once,
-       whichever has more, and ukc.climbs() leaves them out (see common/ukc.js) */
-    function tradClimbs(logs){
+    function climbsOfKind(logs, kind){
         let climbs = [];
-        entriesOf(logs, "tradLog").forEach(entry => {
-            list(ukc.session(entry).climbs).forEach(grade => {
-                if(tradLadder.includes(grade)){ climbs.push({ "date" : entry.date, "grade" : grade }); }
+        logKeys.forEach(key => entriesOf(logs, key).forEach(entry => {
+            let read = key === "tradLog" ? Object.assign({}, entry, { "climbs" : ukc.session(entry).climbs }) : entry;
+            entryClimbs(key, read).forEach(climb => {
+                if(climb.kind === kind){ climbs.push({ "date" : entry.date, "grade" : climb.grade }); }
             });
-        });
+        }));
         ukc.climbs().forEach(climb => {
-            if(climb.type === "trad" && tradLadder.includes(climb.grade)){
-                climbs.push({ "date" : climb.date, "grade" : climb.grade });
-            }
+            if(climb.type === kind && onLadder[kind](climb.grade)){ climbs.push({ "date" : climb.date, "grade" : climb.grade }); }
         });
         return climbs;
     }
+
+    const sportClimbs = logs => climbsOfKind(logs, "sport");
+    const boulderClimbs = logs => climbsOfKind(logs, "boulder");
+    const tradClimbs = logs => climbsOfKind(logs, "trad");
 
     /* Days and windows */
 
@@ -93,160 +93,7 @@
         return list(logs[key]).filter(entry => entry && typeof entry.date === "string");
     }
 
-    // Every sport climb with a known grade: tick list routes looked up on the
-    // wall, endurance sessions saved since they started keeping their grades, and
-    // the sport climbs in a UKC logbook
-    function sportClimbs(logs){
-        let climbs = [];
-        entriesOf(logs, "gilfordLog").forEach(entry => {
-            list(entry.climbs).forEach(id => {
-                let route = typeof getRoute === "function" ? getRoute(id) : undefined;
-                if(route){ climbs.push({ "date" : entry.date, "grade" : route.grade }); }
-            });
-        });
-        entriesOf(logs, "enduranceLog").forEach(entry => {
-            list(entry.grades).forEach(grade => {
-                if(typeof grade === "string"){ climbs.push({ "date" : entry.date, "grade" : grade }); }
-            });
-        });
-        // sport climbs from a gym session - 4c as 4+ and so on, if its low grades were split out
-        entriesOf(logs, "boulderLog").forEach(entry => {
-            list(entry.sport).forEach(tapped => {
-                let grade = typeof tapped === "string" ? ukc.sportGrade(tapped) : null;
-                if(grade !== null){ climbs.push({ "date" : entry.date, "grade" : grade }); }
-            });
-        });
-        // and sport climbs from an imported UKC logbook
-        ukc.climbs().forEach(climb => {
-            if(climb.type === "sport" && sportLadder.includes(climb.grade)){
-                climbs.push({ "date" : climb.date, "grade" : climb.grade });
-            }
-        });
-        return climbs;
-    }
-
-    // The gym session's boulders, the loft wall's, and a circuit logged at a grade as a boulder a lap
-    function boulderClimbs(logs){
-        let climbs = [];
-        entriesOf(logs, "boulderLog").forEach(entry => {
-            list(entry.climbs).forEach(grade => {
-                if(boulderRung(grade) !== -1){ climbs.push({ "date" : entry.date, "grade" : grade }); }
-            });
-        });
-        // the loft wall's routes, a plus grade as the grade it is a shade of
-        entriesOf(logs, "dansLoftLog").forEach(entry => {
-            list(entry.climbs).forEach(id => {
-                let grade = typeof loftBoulderGrade === "function" ? loftBoulderGrade(id) : undefined;
-                if(grade){ climbs.push({ "date" : entry.date, "grade" : grade }); }
-            });
-        });
-        entriesOf(logs, "lapTimerLog").forEach(entry => {
-            if(boulderRung(entry.grade) === -1){ return; }
-            for(let lap = 0; lap < Math.floor(Number(entry.laps) || 0); lap++){
-                climbs.push({ "date" : entry.date, "grade" : entry.grade });
-            }
-        });
-        // and the boulders in an imported UKC logbook
-        ukc.climbs().forEach(climb => {
-            if(climb.type === "boulder" && boulderRung(climb.grade) !== -1){
-                climbs.push({ "date" : climb.date, "grade" : climb.grade });
-            }
-        });
-        return climbs;
-    }
-
     /* Drawing */
-
-    // 1, 2 or 5 times a power of ten - whole numbers only, a count is never 2.5
-    function niceStep(rough){
-        if(rough <= 1){ return 1; }
-        let power = Math.pow(10, Math.floor(Math.log10(rough)));
-        let scaled = rough / power;
-        return (scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 5 ? 5 : 10) * power;
-    }
-
-    // A column with its top corners rounded and its foot square on the baseline
-    function columnPath(x, y, width, height){
-        let r = Math.min(4, width / 2, height);
-        return `M${x},${y + height}V${y + r}Q${x},${y} ${x + r},${y}H${x + width - r}`
-            + `Q${x + width},${y} ${x + width},${y + r}V${y + height}Z`;
-    }
-
-    /* One column chart.
-
-       columns : [{ label, title, value, cls, before }]
-
-       Where there is a period to compare with, `before` is its count, drawn as a thin line across the bar at that
-       height - enough to see up or down at a glance without a second bar
-       competing with the first. */
-    function columnChart(groups, ariaLabel){
-        const width = chartWidth, height = 200;
-        const left = 26, right = 4, top = 16, bottom = 22;
-        const plotWidth = width - left - right, plotHeight = height - top - bottom;
-
-        let most = 0;
-        groups.forEach(group => { most = Math.max(most, group.value, group.before || 0); });
-        let step = niceStep(most / 4);
-        let ceiling = Math.max(step, Math.ceil(most / step) * step);
-        let yOf = value => top + plotHeight - (value / ceiling) * plotHeight;
-
-        let svg = `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(ariaLabel)}">`;
-
-        // grid and y labels, behind everything
-        for(let tick = 0; tick <= ceiling; tick += step){
-            let y = yOf(tick);
-            svg += `<line class="${tick === 0 ? "axis" : "grid"}" x1="${left}" x2="${width - right}" y1="${y}" y2="${y}" />`
-                + `<text class="tick" x="${left - 6}" y="${y + 4}" text-anchor="end">${tick}</text>`;
-        }
-
-        let slot = plotWidth / groups.length;
-        // a grade label needs about 20px; short of that - a lot of grades on a
-        // phone - every other one is shown, or every third...
-        let labelEvery = Math.max(1, Math.ceil(groups.length / Math.floor(plotWidth / 20)));
-        let barWidth = Math.min(40, slot * 0.66);
-
-        groups.forEach((group, index) => {
-            let x = left + slot * index + (slot - barWidth) / 2;
-            let centre = x + barWidth / 2;
-            let total = group.value;
-
-            svg += `<g class="column" style="--i:${index}"><title>${escapeHtml(group.title)}</title>`
-                + `<rect class="hit" x="${left + slot * index}" y="${top}" width="${slot}" height="${plotHeight}" />`;
-
-            if(total > 0){
-                svg += `<path class="bar ${group.cls}" d="${columnPath(x, yOf(total), barWidth, yOf(0) - yOf(total))}" />`;
-            }
-
-            // the period before, a little wider than the bar so it shows over it
-            if(group.before){
-                let y = yOf(group.before);
-                svg += `<line class="before" x1="${x - 3}" x2="${x + barWidth + 3}" y1="${y}" y2="${y}" />`;
-            }
-
-            // the count sits on its bar, unless the line would run through it -
-            // then above the line, so it never reads as the line's number
-            if(total > 0 && barWidth >= 8){
-                let y = yOf(total) - 5;
-                let line = group.before > total ? yOf(group.before) : null;
-                if(line !== null && y - line < 14){ y = line - 5; }
-                svg += `<text class="count" x="${centre}" y="${y}" text-anchor="middle">${total}</text>`;
-            }
-
-            if(index % labelEvery === 0){
-                svg += `<text class="label" x="${centre}" y="${height - bottom + 15}" text-anchor="middle">${escapeHtml(group.label)}</text>`;
-            }
-            svg += `</g>`;
-        });
-
-        return svg + `</svg>`;
-    }
-
-    function legend(items){
-        if(items.length === 0){ return ""; }
-        return `<p class="legend">` + items.map(item =>
-            `<span class="legend-item"><span class="swatch ${item.cls}" aria-hidden="true"></span>${escapeHtml(item.name)}</span>`
-        ).join("") + `</p>`;
-    }
 
     // the key to the line, where there is one
     function beforeLegend(range){
@@ -294,28 +141,8 @@
         total.innerText = summary;
 
         let described = groups.map(group => group.label + " " + group.value).join(", ");
-        return columnChart(groups, summary + ". By grade: " + described + ".")
-            + legend(beforeLegend(range));
-    }
-
-    // 5 to 7b always, anything else on the ladder only once it has been climbed
-    function sportColumns(present){
-        let columns = sportLadder.filter(grade => sportAlways.includes(grade) || present.includes(grade));
-        let offLadder = [...new Set(present.filter(grade => !sportLadder.includes(grade)))];
-        return columns.concat(offLadder);
-    }
-
-    // V0 to V8 always, and on up to the hardest one climbed
-    function boulderColumns(present){
-        let hardest = present.reduce((max, grade) => Math.max(max, boulderRung(grade)), 8);
-        let columns = [];
-        for(let rung = 0; rung <= hardest; rung++){ columns.push("V" + rung); }
-        return columns;
-    }
-
-    // VD to E2 always, anything else on the ladder only once it has been climbed
-    function tradColumns(present){
-        return tradLadder.filter(grade => tradAlways.includes(grade) || present.includes(grade));
+        return columnChart(groups, summary + ". By grade: " + described + ".", chartWidth)
+            + chartLegend(beforeLegend(range));
     }
 
     // Whether there is any trad to chart: a trad app session, or a UKC logbook
@@ -372,8 +199,6 @@
     /* The logs the charts are drawn from, as the apps saved them. A key someone
        has hand-edited into something that is not a list counts as empty rather
        than breaking the page. */
-    const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog", "lapTimerLog", "dansLoftLog"];
-
     function readLogs(){
         let logs = {};
         logKeys.forEach(key => {

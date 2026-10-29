@@ -14,10 +14,17 @@
    The page gives an empty #watchBar and #watchSetting, filled here, and
    optionally a <template id="watchHelpText">, shown under the setting with the
    watch's battery. It is sent from
-   app.onKept (common/functions.js) and app.onState, which an app calls itself. */
+   app.onKept (common/functions.js) and app.onState, which an app calls itself.
+
+   Where there is app.heart, a heart rate monitor (common/hrm.js) can be picked
+   under the cog in place of the Bangle - one or the other, never both. It only
+   reads the heart rate, kept to one reading every hrmEvery. */
 
 const watchApp = "/training/watch/mplog.app.js";
 const watchRetryWait = 10000;
+const watchDeviceKey = "trainingWatchDevice";   // bangle or hrm, the same in every app
+const hrmEvery = 5000;   // ms between readings kept, as the Bangle sends them
+const watchHrm = typeof hrm === "undefined" ? null : hrm;   // only the apps with heart rate load it
 
 let watchReady = false;     // Climb Log is open on the watch and has said hello
 let watchStage = "";        // what setting it up is up to
@@ -25,9 +32,28 @@ let watchRetrying = false;
 let watchPush = null;
 let watchWasConnected = false;
 let watchVersion = "";      // the app version Climb Log was put there with, as its menu shows it
+let hrmBeatAt = 0;
 
 function watchWanted(){
     return localStorage.getItem(app.watchKey) === "true";
+}
+
+function watchDevice(){
+    return app.heart && watchHrm !== null && localStorage.getItem(watchDeviceKey) === "hrm" ? "hrm" : "bangle";
+}
+
+function watchLink(){
+    return watchDevice() === "hrm" ? watchHrm : bangle;
+}
+
+// the tap on the picker lets the browser show its device picker for the new one
+function setWatchDevice(input){
+    let was = watchLink();
+    localStorage.setItem(watchDeviceKey, input.value);
+    watchRetrying = false;
+    if(was !== watchLink()){ was.disconnect(); }
+    if(watchWanted()){ connectWatch(); }
+    drawWatch();
 }
 
 function toggleWatch(input){
@@ -40,7 +66,7 @@ function toggleWatch(input){
 }
 
 function connectWatch(){
-    bangle.connect();
+    watchLink().connect();
 }
 
 // the switch beside the status
@@ -65,7 +91,7 @@ function watchColour(classes){
 function disconnectWatch(){
     watchRetrying = false;
     // a connected one is redrawn once it has gone, or its switch would flick back on
-    if(bangle.connected){ bangle.disconnect(); }
+    if(watchLink().connected){ watchLink().disconnect(); }
     else { drawWatch(); }
 }
 
@@ -153,7 +179,7 @@ function fromWatch(message){
 
 function retryWatch(){
     setTimeout(() => {
-        if(watchRetrying && app.watch.active() && bangle.status === "off"){ bangle.reconnect(); }
+        if(watchRetrying && app.watch.active() && watchLink().status === "off"){ watchLink().reconnect(); }
     }, watchRetryWait);
 }
 
@@ -171,12 +197,29 @@ function watchChanged(){
     drawWatch();
 }
 
+function hrmChanged(){
+    if(watchHrm.connected){ watchRetrying = false; }
+    else if(watchHrm.status === "off" && watchRetrying){ retryWatch(); }
+    drawWatch();
+}
+
+// only while the session runs, as the Bangle only reads it then
+function fromHrm(bpm){
+    if(!app.heart.wanted() || document.body.dataset.state !== "running" || Date.now() - hrmBeatAt < hrmEvery){ return; }
+    hrmBeatAt = Date.now();
+    app.heart.receive({ "t" : "hr", "b" : bpm, "a" : 0 });
+}
+
 function watchDropped(){
     if(!app.watch.active()){ return; }
     watchRetrying = true;
     retryWatch();
     toast("The watch disconnected");
     drawWatch();
+}
+
+function hrmOffered(){
+    return Boolean(app.heart) && watchHrm !== null;
 }
 
 function drawWatchMarkup(){
@@ -195,7 +238,15 @@ function drawWatchMarkup(){
                 Connect watch <span class="switch-state"></span>
             </span>
         </label>
-        <p class="device-tips" id="watchSupported" hidden>Supported watches: <a href="https://thepihut.com/products/bangle-js-2" target="_blank" rel="noopener">Bangle.js 2</a></p>
+        <p class="device-tips" id="watchSupported" hidden>Supported watches: <a href="https://thepihut.com/products/bangle-js-2" target="_blank" rel="noopener">Bangle.js 2</a>${hrmOffered() ? ", Fitbit Air (beta)" : ""}</p>
+        ${hrmOffered() ? `<div id="watchDevices" hidden>
+            <div class="picker" role="radiogroup" aria-label="Watch">
+                <input type="radio" name="watchDevice" class="nice-radios" id="watchDevice-bangle" value="bangle" data-change="setWatchDevice" />
+                <label for="watchDevice-bangle">Bangle.js 2</label>
+                <input type="radio" name="watchDevice" class="nice-radios" id="watchDevice-hrm" value="hrm" data-change="setWatchDevice" />
+                <label for="watchDevice-hrm">Fitbit Air (beta)</label>
+            </div>
+        </div>` : ""}
         <p class="device-tips" id="watchVersion" hidden></p>
         ${help === null ? "" : `<div class="watch-help" id="watchHelp" hidden>
             <p id="watchBattery" hidden></p>
@@ -205,22 +256,29 @@ function drawWatchMarkup(){
 }
 
 const watchWords = { "off" : "Watch not connected", "connecting" : "Connecting to the watch…", "connected" : "Watch connected" };
+const hrmWords = { "off" : "Fitbit Air not connected", "connecting" : "Connecting to the Fitbit Air…", "connected" : "Fitbit Air connected" };
 
 function drawWatch(){
-    let status = bangle.connected && !watchReady ? "connecting" : bangle.status;
-    let text = watchStage || watchWords[status];
+    let link = watchLink();
+    let status = link === bangle && bangle.connected && !watchReady ? "connecting" : link.status;
+    let text = (link === bangle && watchStage) || (link === bangle ? watchWords : hrmWords)[status];
     if(status === "off" && watchRetrying){ text = "Watch dropped out, trying again"; }
-    else if(status === "off" && bangle.error !== ""){ text = "Couldn't connect: " + bangle.error; }
+    else if(status === "off" && link.error !== ""){ text = "Couldn't connect: " + link.error; }
     document.getElementById("watchBar").hidden = !watchWanted() || !bangle.supported;
     document.getElementById("watchStatusText").innerText = text;
     // on while connected or on the way to it
-    document.getElementById("watchSwitch").checked = bangle.status !== "off" || watchRetrying;
+    document.getElementById("watchSwitch").checked = link.status !== "off" || watchRetrying;
     let help = document.getElementById("watchHelp");
     if(help !== null){
-        help.hidden = !watchWanted();
+        help.hidden = !watchWanted() || link !== bangle;   // the help is the Bangle's
         if(!watchReady){ document.getElementById("watchBattery").hidden = true; }
     }
     document.getElementById("watchSupported").hidden = !watchWanted();
+    let devices = document.getElementById("watchDevices");
+    if(devices !== null){
+        devices.hidden = !watchWanted();
+        document.getElementById("watchDevice-" + watchDevice()).checked = true;
+    }
     let version = document.getElementById("watchVersion");
     version.hidden = !watchWanted() || !watchReady;
     version.innerText = "Climb Log " + watchVersion;
@@ -232,6 +290,11 @@ app.onState = pushWatch;
 bangle.onMessage = fromWatch;
 bangle.onChange = watchChanged;
 bangle.onDrop = watchDropped;
+if(watchHrm !== null){
+    watchHrm.onChange = hrmChanged;
+    watchHrm.onDrop = watchDropped;
+    watchHrm.onBeat = fromHrm;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     drawWatchMarkup();

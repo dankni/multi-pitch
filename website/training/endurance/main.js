@@ -8,7 +8,9 @@
 
 const app = {
     "logKey" : "enduranceLog",
-    "currentKey" : "enduranceCurrent"
+    "currentKey" : "enduranceCurrent",
+    // for the summary at FINISH (common/summary.js): the grades, as saveSession() saves them
+    "summaryEntry" : () => ({ "grades" : climbsDone().map(climb => climb.grade) })
 };
 const wallKey = "enduranceWall";
 const restKey = "enduranceRest";
@@ -171,6 +173,7 @@ function closeSession(){
     stopRestTicker();
     session = null;
     saving = false;
+    closeSummary();
     keepSession();
     releaseWakeLock();
     resetSavePanel();
@@ -259,7 +262,13 @@ function openSavePanel(){
     keepSession();
     saving = true;
     drawAll();
-    document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
+    openSummary();   // common/summary.js
+}
+
+// back from the summary, where the session was
+function resumeSession(){
+    saving = false;
+    drawAll();
 }
 
 const logView = {

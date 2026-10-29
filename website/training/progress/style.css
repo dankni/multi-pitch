@@ -88,11 +88,8 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-/* The period before is a thin line across each bar in the page ink, quieter than the bars */
 .performance {
-    --ink-muted: light-dark(#5c5c63, #a8a8ae);
-    --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
-    --before: light-dark(#2b2b30, #e8e8e8);
+    --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));   /* for .chart-empty; the charts are in common/charts.css */
     width: 90%;
     max-width: var(--column);
     margin: 20px auto 30px;
@@ -128,37 +125,6 @@
 .performance .sessions-note {
     margin: 0 0 6px;
 }
-.chart {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-}
-.chart text {
-    font-family: 'Hind', sans-serif;
-    font-size: 11px;
-    fill: var(--ink-muted);
-}
-.chart .count {
-    fill: currentColor;
-    font-weight: bold;
-}
-.chart .label {
-    fill: currentColor;
-}
-.chart .grid { stroke: var(--grid); }
-.chart .axis { stroke: var(--ink-muted); }
-.chart .before {
-    stroke: var(--before);
-    stroke-width: 2;
-    stroke-linecap: round;
-    opacity: 0.75;
-}
-.chart .hit { fill: transparent; }
-.chart .column:hover .hit { fill: var(--grid); }
-.chart .bar {
-    fill: var(--c);
-}
 /* see growOnFirstSight() */
 .chart .bar {
     transform-box: fill-box;
@@ -176,37 +142,6 @@
 }
 @keyframes grow { from { transform: scaleY(0); } }
 @keyframes fade-in { from { opacity: 0; } }
-.legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px 14px;
-    margin: 6px 0 0;
-    font-size: 13px;
-}
-.legend-item {
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-}
-.swatch {
-    display: inline-block;
-    width: 11px;
-    height: 11px;
-    margin-right: 5px;
-    border-radius: 3px;
-    border: 1.5px solid var(--c);
-    background: var(--c);
-}
-/* the line, as it looks on the chart */
-.swatch.before {
-    height: 2px;
-    width: 14px;
-    border: 0;
-    border-radius: 1px;
-    background: var(--before);
-    opacity: 0.75;
-}
 .chart-empty {
     margin: 10px 0;
     padding: 24px 12px;

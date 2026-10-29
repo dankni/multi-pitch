@@ -19,7 +19,9 @@ const app = {
                            "n" : session === null ? 0 : session.laps, "g" : session === null ? "" : session.grade || "" }),
         "receive" : message => { if(message.t === "lap"){ recordLap(); } },
         "active" : () => session !== null
-    }
+    },
+    // for the summary at FINISH (common/summary.js), as saveSession() saves it
+    "summaryEntry" : () => ({ "laps" : session.laps, "grade" : session.grade || undefined })
 };
 
 const gradeKey = "lapTimerGrade";
@@ -75,6 +77,7 @@ function startTimer(){
     delete session.missing;   // clocked from here on, not typed in
     requestWakeLock();
     keepSession();
+    openHeart();   // common/heartrate.js
     disarmReset();
     startTicking();
     drawAll();
@@ -104,6 +107,7 @@ function recordLap(){
     if(!isRunning()){ return; }
     session.laps = session.laps + 1;
     noteRecent((session.grade ? session.grade + " lap " : "Lap ") + session.laps + " tapped");
+    heartTick(session.laps, "Lap " + session.laps);
     keepSession();
     flash(document.getElementById("lapButton"));
     drawAll();
@@ -117,6 +121,8 @@ function clearSession(){
     stopTicking();
     session = null;
     saving = false;
+    closeSummary();
+    forgetHeart();
     keepSession();
     releaseWakeLock();
     disarmReset();
@@ -163,7 +169,15 @@ function openSavePanel(){
     drawAll();
     // on FINISH, not for one being typed in - see common/records.js
     if(!session.missing){ cheerLongest(app.logKey, session.laps, entry => entry.laps); }
-    document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
+    // one being typed in is saved below its fields, with nothing to sum up
+    if(session.missing){ document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" }); }
+    else { openSummary(); }
+}
+
+// back from the summary, paused
+function resumeSession(){
+    saving = false;
+    drawAll();
 }
 
 const logView = {
@@ -236,6 +250,7 @@ document.addEventListener("keydown", event => {
 document.addEventListener("DOMContentLoaded", () => {
     drawGradePicker();
     if(restoreSession()){
+        openHeart();
         if(isRunning()){
             requestWakeLock();
             startTicking();

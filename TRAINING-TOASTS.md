@@ -12,7 +12,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 |---|---|---|---|---|---|---|---|
 | All apps | There's a new version - tap to reload | Action | Until tapped or closed | A new version of the apps takes over while a page is open | common/functions.js | Yes | |
 | Gym Session, Outside | You wish! Less clicking more climbing | Info | 5.2 s | Tapping harder past the top of the grade ladder | common/ladder.js | Yes | |
-| Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | The watch disconnected | Info | 5.2 s | The Bangle.js watch drops out mid session without being disconnected in the app; it is tried again every 10 s | common/watch.js | Yes | |
+| Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | The watch disconnected | Info | 5.2 s | The Bangle.js watch, or the Fitbit Air picked in its place, drops out mid session without being disconnected in the app; it is tried again every 10 s | common/watch.js | Yes | |
 | Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | This browser can't connect to a watch. | Warning | 5.2 s | Connect watch is switched on under the cog in a browser without Web Bluetooth | common/watch.js | Yes | |
 | Tick List | Half the routes on the wall ticked, nice one! | Info | 5.2 s | A tick takes the session to half the routes on the wall | gilford/main.js | Yes | |
 | Tick List | Nice work ticking the 7's | Info | 5.2 s | The last of the 7s is ticked | gilford/main.js | Yes | |

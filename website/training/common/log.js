@@ -68,6 +68,7 @@ function keepComment(){
 
 function closeSession(){
     session = null;
+    closeSummary();
     forgetHeart();
     resetSavePanel();
     keepSession();
@@ -120,7 +121,12 @@ function openSavePanel(){
     // the longest session is said once it is done, and not again on a reopened one - see common/records.js
     if(app.sessionSize && !session.editing){ cheerLongest(app.logKey, app.sessionSize(session), app.sessionSize); }
     showState("saving");
-    document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
+    openSummary();   // common/summary.js
+}
+
+// back from the summary, to climb on
+function resumeSession(){
+    showState("running");
 }
 
 function saveSession(){

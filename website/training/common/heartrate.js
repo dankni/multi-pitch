@@ -65,7 +65,7 @@ function heartUntick(key){
 function heartBeat(message){
     let bpm = Number(message.b);
     let at = Date.now() - (Number(message.a) || 0) * 1000;
-    if(!heartWanted() || heart === null || !(bpm > 0) || at < session.start){ return; }
+    if(!heartWanted() || heart === null || !(bpm > 0) || at < (session.start || session.id)){ return; }
     heart.beats.push([at, bpm]);
     if(heart.beats.length > 1 && heart.beats[heart.beats.length - 2][0] > at){ heart.beats.sort((a, b) => a[0] - b[0]); }
     keepHeart();
@@ -75,7 +75,7 @@ app.heart = { "wanted" : heartWanted, "receive" : heartBeat };
 
 function drawHeartLink(){
     let link = document.getElementById("showHeartRate");
-    if(link !== null){ link.hidden = heart === null || heart.beats.length === 0; }
+    if(link !== null){ link.hidden = !hasHeartRate(); }
 }
 
 function showHeartRate(){
@@ -88,62 +88,25 @@ function hideHeartRate(){
     closeOverlay("heartRate");
 }
 
-/* The chart as a PNG on the overlay's black. An SVG drawn as an image has no
-   stylesheet, so each part's colours and sizes are written onto a copy of it. */
-const heartImageStyles = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linecap", "stroke-linejoin", "font-size", "font-family"];
-
-function heartChartImage(){
-    let svg = document.querySelector("#heartChart svg");
-    if(svg === null){ return Promise.resolve(null); }
-    let copy = svg.cloneNode(true);
-    let shown = svg.querySelectorAll("*");
-    copy.querySelectorAll("*").forEach((part, index) => {
-        let style = getComputedStyle(shown[index]);
-        heartImageStyles.forEach(name => part.setAttribute(name, style.getPropertyValue(name)));
-    });
-    let box = svg.viewBox.baseVal;
-    const pad = 16, scale = 2;
-    copy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    copy.setAttribute("width", box.width);
-    copy.setAttribute("height", box.height);
-    let url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copy)], { "type" : "image/svg+xml" }));
-    return new Promise(resolve => {
-        let image = new Image();
-        image.onload = () => {
-            let canvas = document.createElement("canvas");
-            canvas.width = (box.width + pad * 2) * scale;
-            canvas.height = (box.height + pad * 2) * scale;
-            let pen = canvas.getContext("2d");
-            pen.scale(scale, scale);
-            pen.fillStyle = "#000";
-            pen.fillRect(0, 0, box.width + pad * 2, box.height + pad * 2);
-            pen.drawImage(image, pad, pad, box.width, box.height);
-            URL.revokeObjectURL(url);
-            canvas.toBlob(resolve, "image/png");
-        };
-        image.onerror = () => {
-            URL.revokeObjectURL(url);
-            resolve(null);
-        };
-        image.src = url;
-    });
+function hasHeartRate(){
+    return heart !== null && heart.beats.length > 0;
 }
 
-// to the share sheet where it takes images, a download where it doesn't
+// The chart as a PNG on the overlay's black - see svgImage() in common/charts.js
 async function shareHeartRate(){
-    let blob = await heartChartImage();
-    if(blob === null){ return; }
-    let file = new File([blob], `heart-rate-${session === null ? today() : session.date}.png`, { "type" : "image/png" });
-    if(typeof gtag === "function"){ gtag("event", "heart_rate_shared", { "app" : document.title }); }
-    if(navigator.canShare && navigator.canShare({ "files" : [file] })){
-        navigator.share({ "files" : [file], "title" : "Heart rate" }).catch(() => {});   // closing the sheet is a rejection too
-        return;
-    }
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(file);
-    link.download = file.name;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    let svg = document.querySelector("#heartChart svg");
+    let image = svg === null ? null : await svgImage(svg);
+    if(image === null){ return; }
+    const pad = 16, scale = 2;
+    let canvas = document.createElement("canvas");
+    canvas.width = (image.width + pad * 2) * scale;
+    canvas.height = (image.height + pad * 2) * scale;
+    let pen = canvas.getContext("2d");
+    pen.scale(scale, scale);
+    pen.fillStyle = "#000";
+    pen.fillRect(0, 0, image.width + pad * 2, image.height + pad * 2);
+    pen.drawImage(image, pad, pad, image.width, image.height);
+    shareImage(canvas, `heart-rate-${session === null ? today() : session.date}.png`, "heart_rate_shared");
 }
 
 function heartAge(){
@@ -154,6 +117,7 @@ function heartAge(){
 function setHeartAge(input){
     localStorage.setItem(heartAgeKey, input.value);
     drawHeartChart();
+    if(typeof drawSummary === "function"){ drawSummary(); }   // common/summary.js draws it too
 }
 
 // minutes in as 5m, 1h or 1h30
@@ -163,11 +127,18 @@ function heartElapsed(minutes){
     return Math.floor(minutes / 60) + "h" + (rest === 0 ? "" : String(rest).padStart(2, "0"));
 }
 
-// Drawn at the width it is shown at, as the progress charts are, so its labels stay 11px
 function drawHeartChart(){
     let holder = document.getElementById("heartChart");
-    if(holder === null || heart === null || heart.beats.length === 0){ return; }
-    const width = Math.round(holder.clientWidth) || 320, height = 240;
+    if(holder === null || !hasHeartRate()){ return; }
+    holder.innerHTML = heartChartSvg(Math.round(holder.clientWidth) || 320);
+}
+
+/* The chart, here and in the summary (common/summary.js), drawn at the width it
+   is shown at, as the progress charts are, so its labels stay 11px. "" with no
+   readings. A session's start is its id where it keeps no start of its own. */
+function heartChartSvg(width){
+    if(!hasHeartRate()){ return ""; }
+    const height = 240;
     const left = 30, right = 78, top = 10, bottom = 22;
     const plotWidth = width - left - right, plotHeight = height - top - bottom;
 
@@ -179,7 +150,7 @@ function drawHeartChart(){
     let high = Math.ceil((Math.max(...bpms) + 5) / step) * step;
     let yOf = bpm => top + plotHeight - (bpm - low) / (high - low) * plotHeight;
 
-    let start = Math.min(session.start, heart.beats[0][0]);
+    let start = Math.min(session.start || session.id, heart.beats[0][0]);
     let end = Math.max(heart.beats[heart.beats.length - 1][0], session.finish || Date.now(), start + 60000);
     let xOf = at => left + (at - start) / (end - start) * plotWidth;
 
@@ -218,7 +189,7 @@ function drawHeartChart(){
     });
     svg += runs.map(run => `<polyline class="beats" points="${run.join(" ")}" />`).join("");
 
-    holder.innerHTML = svg + `</svg>`;
+    return svg + `</svg>`;
 }
 
 function drawHeartMarkup(){

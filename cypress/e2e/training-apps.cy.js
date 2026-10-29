@@ -81,6 +81,31 @@ describe('Training apps', function () {
             value: { requestDevice: () => Promise.resolve(device) } });
     }
 
+    // A stand-in heart rate monitor beside the Bangle: the browser's picker gives
+    // it when asked for the heart rate service, and hrmSays sends a reading
+    function fakeHrm(win) {
+        let measurement = new win.EventTarget();
+        measurement.startNotifications = () => Promise.resolve();
+        win.hrmSays = (bpm, wide) => {
+            measurement.value = new win.DataView(new win.Uint8Array(wide ? [1, bpm & 255, bpm >> 8] : [0, bpm]).buffer);
+            measurement.dispatchEvent(new win.Event('characteristicvaluechanged'));
+        };
+        let device = new win.EventTarget();
+        device.name = 'Fitbit Air';
+        device.gatt = {
+            connected: false,
+            connect: () => {
+                device.gatt.connected = true;
+                return Promise.resolve({ getPrimaryService: () => Promise.resolve({ getCharacteristic: () => Promise.resolve(measurement) }) });
+            },
+            disconnect: () => { device.gatt.connected = false; device.dispatchEvent(new win.Event('gattserverdisconnected')); }
+        };
+        win.hrmDevice = device;
+        let bangle = win.navigator.bluetooth.requestDevice;
+        Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+            value: { requestDevice: (options) => options.filters.some((filter) => filter.services) ? Promise.resolve(device) : bangle(options) } });
+    }
+
     // what the phone last sent Climb Log to show
     function lastState(win) {
         let sent = win.ran.filter((line) => line.startsWith('if(global.mplog)mplog('));
@@ -111,7 +136,7 @@ describe('Training apps', function () {
             cy.tick(5000);
             cy.window().then((win) => win.watchSays({ t: 'lap' }));
             cy.get('#lapCount').should('have.text', '1');
-            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4' }));
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4', h: 1 }));
             cy.get('#primaryButton').click();
             cy.window().then((win) => win.watchSays({ t: 'lap' }));   // paused: no lap
             cy.get('#lapCount').should('have.text', '1');
@@ -159,6 +184,23 @@ describe('Training apps', function () {
             cy.tick(100);
             cy.get('.toast').should('have.length', 1)
                 .and('contain', "That's your longest session this month. You're getting strong!");
+        });
+
+        it('sums up a session at a grade as a boulder a lap at FINISH, against the last one', () => {
+            cy.visit(timerUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('lapTimerGrade', 'V4');
+                    win.localStorage.setItem('lapTimerLog', JSON.stringify([{ id: 1, date: '2026-09-10', total: 60000, laps: 3, grade: 'V4', rating: 0 }]));
+                }
+            });
+            runSession(2);
+            cy.get('#finishButton').click();
+            cy.get('#finishSummary').should('be.visible');
+            cy.get('#summaryName').should('have.text', 'Lap Timer');
+            cy.get('#summaryClimbs .summary-total').should('have.text', '2 boulders · 3 last session');
+            cy.get('[data-action="backToSession"]').click();
+            cy.get('body').should('have.attr', 'data-state', 'paused');
+            cy.get('#finishSummary').should('not.be.visible');
         });
 
         it('says on FINISH when a session has the most laps ever', () => {
@@ -2597,6 +2639,61 @@ describe('Training apps', function () {
             });
         });
 
+        it('sums up the session at FINISH against the last one, back to it from the cross, and shares the lot', () => {
+            cy.visit(boulderUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('boulderLog', JSON.stringify([
+                        { id: 1, date: '2026-09-01', climbs: ['V3', 'V3', 'V5'], sport: [], rating: 0 },
+                        { id: 2, date: '2026-08-01', climbs: ['V1'], rating: 0 }
+                    ]));
+                }
+            });
+            cy.get('#primaryButton').click();
+            tap('#row-V3 .grade-add', '#row-V4 .grade-add');
+            cy.get('#finishButton').click();
+            cy.get('#finishSummary').should('be.visible');
+            cy.get('#summaryName').should('have.text', 'Gym Session');
+            cy.get('#summaryHeart').should('be.empty');   // no watch
+            cy.get('#summaryClimbs figure').should('have.length', 1);   // no sport climbs, now or last time
+            cy.get('#summaryClimbs figcaption').should('have.text', 'Bouldering');
+            cy.get('#summaryClimbs .summary-total').should('have.text', '2 boulders · 3 last session');   // the 1 Sep one, not August's
+            cy.get('#summaryClimbs .bar').should('have.length', 2);
+            cy.get('#summaryClimbs line.before').should('have.length', 2);   // V3 and V5 last time
+            cy.get('#summaryClimbs .legend').should('contain', 'Last session');
+            cy.get('#summarySave #saveSession').scrollIntoView().should('be.visible');
+            cy.get('#summarySave #sessionStart').should('exist');
+
+            cy.get('[data-action="backToSession"]').click();
+            cy.get('body').should('have.attr', 'data-state', 'running');
+            cy.get('#sessionHolder #endingDiv').should('exist');
+            cy.get('#sessionBar .session-times').should('exist');
+            tap('#row-V4 .grade-add');
+            cy.get('#finishButton').click();
+            cy.get('#summaryClimbs .summary-total').should('have.text', '3 boulders · 3 last session');
+
+            cy.get('#sessionTitle').type('Crimpy');
+            cy.get('#star4').click();
+            cy.window().then((win) => {
+                win.gtag = cy.stub().as('gtag');
+                Object.defineProperty(win.navigator, 'canShare', { configurable: true, value: () => true });
+                Object.defineProperty(win.navigator, 'share', { configurable: true, value: cy.stub().as('share').resolves() });
+            });
+            cy.get('#shareSummary').click();
+            cy.get('@share').should((share) => {
+                expect(share).to.have.been.calledOnce;
+                let file = share.firstCall.args[0].files[0];
+                expect(file.type).to.equal('image/png');
+                expect(file.name).to.equal('gym-session-2026-09-13.png');
+                expect(file.size).to.be.greaterThan(1000);
+            });
+            cy.get('@gtag').should('have.been.calledWith', 'event', 'summary_shared', { app: 'Gym Session' });
+
+            cy.get('#saveSession').click();
+            cy.get('#finishSummary').should('not.be.visible');
+            cy.get('#sessionHolder #endingDiv').should('exist');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('boulderLog'))).to.have.length(3));
+        });
+
         describe('On a Bangle.js watch', function () {
             function connect() {
                 cy.get('#primaryButton').click();
@@ -2621,7 +2718,7 @@ describe('Training apps', function () {
                 // help, under the setting, with the battery asked for as it connected
                 cy.get('#watchHelpButton').should('not.exist');
                 cy.get('[data-action="openSettings"]').click();
-                cy.get('#watchHelp').should('be.visible').and('contain', 'Swipe Up / Down to open menu.');
+                cy.get('#watchHelp').scrollIntoView().should('be.visible').and('contain', 'Swipe Up / Down to open menu.');
                 cy.get('#watchBattery').should('have.text', 'Battery 1%');
                 cy.get('#watchVersion').invoke('text').should('match', /^Climb Log [0-9a-z.]+$/);   // the app version, as the watch's menu shows it
                 cy.window().its('asked').should('include', 'E.getBattery()');
@@ -2755,12 +2852,49 @@ describe('Training apps', function () {
 
                 cy.get('#finishButton').click();
                 cy.get('#showHeartRate').should('be.visible');   // at the end too
+                cy.get('#summaryHeart figcaption').should('have.text', 'Heart rate');   // and in the summary
+                cy.get('#summaryHeart polyline.beats').should('have.length', 1);
+                cy.get('#summaryHeart .climb-label').should('have.text', 'V3');
                 cy.window().should((win) => expect(lastState(win)).to.include({ s: 'saving', h: 1 }));
                 cy.get('#saveSession').click();
                 cy.window().then((win) => {
                     expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null);
                     expect(Object.keys(JSON.parse(win.localStorage.getItem('boulderLog'))[0])).not.to.include('beats');
                 });
+            });
+
+            it('reads the heart rate from a Fitbit Air in place of the watch, one or the other', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => { fakeBangle(win); fakeHrm(win); } });
+                connect();
+                cy.get('#watchSupported').should('have.text', 'Supported watches: Bangle.js 2, Fitbit Air (beta)');
+                cy.get('#watchDevice-bangle').should('be.checked');
+
+                cy.get('#watchDevice-hrm').check({ force: true });
+                cy.get('#watchStatusText').should('have.text', 'Fitbit Air connected');
+                cy.window().should((win) => expect(win.bangleDevice.gatt.connected).to.equal(false));
+                cy.get('#watchHelp').should('not.be.visible');   // the Bangle's
+
+                // one reading every 5 seconds, as the Bangle sends them; a 16-bit one read as such
+                cy.window().then((win) => { win.hrmSays(120); win.hrmSays(130); });
+                cy.get('#showHeartRate').should('be.visible');
+                cy.tick(5000);
+                cy.window().then((win) => win.hrmSays(150, true));
+                cy.window().should((win) => expect(JSON.parse(win.localStorage.getItem('boulderCurrentHeart')).beats.map((beat) => beat[1])).to.deep.equal([120, 150]));
+
+                // dropped out, and tried again
+                cy.window().then((win) => {
+                    win.hrmDevice.gatt.connected = false;
+                    win.hrmDevice.dispatchEvent(new win.Event('gattserverdisconnected'));
+                });
+                cy.get('.toast').should('contain', 'The watch disconnected');
+                cy.tick(10000);
+                cy.get('#watchStatusText').should('have.text', 'Fitbit Air connected');
+
+                // back to the Bangle, which the monitor makes way for
+                cy.get('#watchDevice-bangle').check({ force: true });
+                cy.get('#watchStatusText').should('have.text', 'Watch connected');
+                cy.window().should((win) => expect(win.hrmDevice.gatt.connected).to.equal(false));
+                cy.window().then((win) => expect(win.localStorage.getItem('trainingWatchDevice')).to.equal('bangle'));
             });
 
             it('says when the browser cannot connect to a watch', () => {
@@ -2801,6 +2935,21 @@ describe('Training apps', function () {
                 expect(saved.grades).to.have.length(16);
                 saved.grades.forEach((grade) => expect(grade).to.match(/^[4-7][abc]?\+?$/));
             });
+        });
+
+        it('sums up the session at FINISH by grade, with no heart rate to show', () => {
+            cy.visit(enduranceUrl);
+            cy.get('#primaryButton').click();
+            tickAll(4);                          // the warm up
+            cy.get('#finishButton').click();
+            cy.get('#finishSummary').should('be.visible');
+            cy.get('#summaryName').should('have.text', 'Endurance');
+            cy.get('#summaryHeart').should('be.empty');
+            cy.get('#summaryClimbs figcaption').should('have.text', 'Sport');
+            cy.get('#summaryClimbs .summary-total').should('have.text', '4 climbs');
+            cy.get('#summaryClimbs .legend').should('not.exist');   // nothing before it to compare with
+            cy.get('#saveSession').click();
+            cy.get('#finishSummary').should('not.be.visible');
         });
 
         it('finishes at any point, counting what was ticked', () => {

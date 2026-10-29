@@ -1,0 +1,29 @@
+/* The summary at FINISH - common/summary.js. Dark in either theme, as the
+   overlays are, so its charts take their dark colours too. */
+.summary {
+    color-scheme: dark;
+    padding-bottom: 40px;   /* SHARE clear of the foot of the screen */
+}
+.summary-figure {
+    margin: 18px 0 6px;
+}
+.summary-figure figcaption {
+    font-weight: bold;
+    font-size: 16px;
+}
+.summary-total {
+    margin: 2px 0 6px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+/* the save panel and a log.js app's times, moved in from the app */
+#summarySave .ending {
+    display: block;
+    width: 100%;
+}
+#summarySave .session-times {
+    display: flex;
+}
+#summarySave .session-times label {
+    font-size: 14px;
+}
