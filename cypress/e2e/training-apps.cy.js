@@ -3771,6 +3771,39 @@ describe('Training apps', function () {
             });
         });
 
+        it('reorders the apps from a long press, and keeps the order once saved', () => {
+            cy.visit(overviewUrl);
+            cy.get('#saveOrder').should('not.be.visible');
+            cy.get('.apps li').eq(0).find('.app-card').trigger('pointerdown', { button: 0 });
+            cy.tick(500);
+            cy.get('body').should('have.class', 'reordering');
+            cy.get('.apps .drag-handle').should('have.length', 10).first().should('have.attr', 'aria-label', 'Move Gym Session');
+            cy.get('#saveOrder').should('be.visible').and('have.text', 'Save order');
+            cy.document().trigger('pointerup');
+            cy.get('.apps li').eq(1).find('.app-card').click();   // goes nowhere while reordering
+            cy.location('pathname').should('eq', '/training/');
+
+            // dragged by its handle onto the third card
+            cy.get('.apps li').eq(2).then(([target]) => {
+                let box = target.getBoundingClientRect();
+                cy.get('.apps li').eq(0).find('.drag-handle').trigger('pointerdown', { pointerId: 1, scrollBehavior: false });
+                cy.get('.apps').trigger('pointermove', { clientX: box.left + box.width / 2, clientY: box.top + box.height / 2, scrollBehavior: false });
+                cy.document().trigger('pointerup');
+            });
+            cy.get('.apps li').eq(2).should('contain', 'Gym Session');
+            cy.get('.apps li').eq(2).find('.drag-handle').focus().trigger('keydown', { key: 'ArrowUp' });
+            cy.get('.apps li').eq(1).should('contain', 'Gym Session');
+
+            cy.get('#saveOrder').click();
+            cy.get('body').should('not.have.class', 'reordering');
+            cy.get('.apps .drag-handle').should('not.exist');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingAppOrder')).slice(0, 2))
+                .to.deep.equal(['/training/gilford/', '/training/boulder/']));
+            cy.reload();
+            cy.get('.apps li').eq(1).should('contain', 'Gym Session');
+            cy.get('.apps li').eq(0).should('contain', 'Gilford Wall');
+        });
+
         it('says how much local storage is in use', () => {
             cy.visit(overviewUrl, {
                 onBeforeLoad(win) {

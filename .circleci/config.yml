@@ -1,54 +1,100 @@
 version: 2.1
-jobs:
-  build:
+
+executors:
+  node:
     docker:
       - image: cypress/base:22.21.0 # Node 22, matching the lambdas' nodejs22.x runtime
     working_directory: /tmp/multipitch
+
+commands:
+  install:
+    steps:
+      # npm ci starts from an empty node_modules, so what is worth keeping is npm's download cache and the Cypress binary
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "package-lock.json" }}
+            - v2-dependencies-
+      - run:
+          name: Install local dependencies
+          command: npm ci
+      - save_cache:
+          key: v2-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache/Cypress
+
+# test, webp and lambdas run side by side; deploy waits for all three
+jobs:
+  test:
+    executor: node
     steps:
       - checkout
-      # Log the current branch
       - run:
           name: Show current branch
           command: echo ${CIRCLE_BRANCH}
-      # Restore local dependencies from cache
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
-            - v1-dependencies-
-      # Install project dependencies
+      - install
+      # everything but the webp images, which no spec needs
       - run:
-          name: Install local dependencies
-          command: npm install
-      # Generate all the data dependencies, that's it: js date, climbs folder, sitemap and webp images
-      - run:
-          name: Build all data, js date, climbs folder, sitemap and webp images
-          command: npm run generate-all
-      # Cache local dependencies if they don't exist
-      - save_cache:
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
-          paths:
-            - "node_modules"
-            - "/root/.cache/Cypress"
-            - "~/.cache/Cypress"
-            - "cypress/*"
-      # Test the source code
+          name: Build the climb pages, sitemap, blog and content pages
+          command: npm run generate-pages
       - run:
           name: Run Tests
           command: npm run test
-      # Lambda suites run on the same Node 22 the lambdas use in AWS (nodejs22.x)
+      - store_artifacts:
+          path: /tmp/multipitch/cypress/videos
+          destination: artifact-file
+      # what generate-pages wrote, for deploy
+      - persist_to_workspace:
+          root: .
+          paths:
+            - website/index.html
+            - website/climbs
+            - website/sitemap.xml
+            - website/blog
+            - website/climbing-grades
+
+  webp:
+    executor: node
+    environment:
+      CYPRESS_INSTALL_BINARY: 0   # no tests here
+    steps:
+      - checkout
+      - install
+      # the last build's .webp files and the hashes of the sources they were made from,
+      # so only new or changed images are converted - see generateWebP.js
+      - restore_cache:
+          keys:
+            - v1-webp-
+      - run:
+          name: Restore the cached webp images
+          command: if [ -f /tmp/webp-cache/webp.tar ]; then tar -xf /tmp/webp-cache/webp.tar; fi
+      - run:
+          name: Build the webp images
+          command: npm run generate-webp
+      - run:
+          name: Pack the webp images
+          command: mkdir -p /tmp/webp-cache && find website/img -name '*.webp' | tar -cf /tmp/webp-cache/webp.tar -T - .webp-hashes.json
+      # a new cache only when an image has changed
+      - save_cache:
+          key: v1-webp-{{ checksum ".webp-hashes.json" }}
+          paths:
+            - /tmp/webp-cache
+      - persist_to_workspace:
+          root: /tmp/webp-cache
+          paths:
+            - webp.tar
+
+  # Lambda suites run on the same Node 22 the lambdas use in AWS (nodejs22.x)
+  lambdas:
+    executor: node
+    steps:
+      - checkout
       - run:
           name: Weather lambda tests
           command: cd lambda-node/get-weather && npm ci && npm test
       - run:
           name: Tides lambda tests
           command: cd lambda-node/get-tides && npm ci && npm test
-      - store_artifacts:
-          path: /tmp/multipitch/cypress/videos
-          destination: artifact-file
-      - save_cache:
-          key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - website
 
   deploy:
     working_directory: /tmp/multipitch
@@ -56,14 +102,21 @@ jobs:
       - image: cimg/aws:2026.07.1
     steps:
       - checkout
-      # build folder that needs to be deployed
-      - restore_cache:
-          key: v1-website-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-      # Deploy to the S3
+      # the generated pages over the checkout, and webp.tar beside it
+      - attach_workspace:
+          at: /tmp/multipitch
       - run:
-          name: Deploy to S3
-          # note: --exclude paths are relative to the sync source (website/), not the repo root
-          command: aws s3 sync website s3://www.multi-pitch.com --delete
+          name: Unpack the webp images
+          command: tar -xf webp.tar && rm webp.tar
+      # Images by size alone, as the checkout makes every file look newer than its copy in the bucket.
+      # A new one is cached for a month; one already there keeps what it has.
+      # note: --exclude / --include paths are relative to the sync source (website/), not the repo root
+      - run:
+          name: Deploy images to S3
+          command: aws s3 sync website s3://www.multi-pitch.com --delete --size-only --exclude "*" --include "*.jpg" --include "*.webp" --include "*.png" --cache-control max-age=2629746
+      - run:
+          name: Deploy everything else to S3
+          command: aws s3 sync website s3://www.multi-pitch.com --delete --exclude "*.jpg" --exclude "*.webp" --exclude "*.png"
       - run:
           name: Add a file to know which version was deployed
           command: |
@@ -75,23 +128,30 @@ jobs:
           name: Invalidate CloudFront
           command: aws cloudfront create-invalidation --distribution-id E1WJUCQRX8PD1F --path "/*"
       - run:
-          name: Set Image Cache MaxAge
-          command: aws s3 cp s3://www.multi-pitch.com/ s3://www.multi-pitch.com/ --exclude "*" --include "*.jpg" --include "*.webp"  --include "*.png" --recursive --metadata-directive REPLACE --cache-control max-age=2629746
-      - run:
           name: Print website url
           command: echo "www.multi-pitch.com"
 
 workflows:
   build_and_deploy:
     jobs:
-      - build:
-          filters:  # required since `deploy` has tag filters AND requires `build`
+      # tag filters are required on every job deploy requires, since deploy has them
+      - test:
+          filters:
             tags:
               only: /^v.*/
-
+      - webp:
+          filters:
+            tags:
+              only: /^v.*/
+      - lambdas:
+          filters:
+            tags:
+              only: /^v.*/
       - deploy:
           requires:
-            - build
+            - test
+            - webp
+            - lambdas
           filters:
             tags:
               only: /^v.*/

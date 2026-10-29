@@ -117,6 +117,80 @@
             line-height: 20px;
             opacity: 0.85;
         }
+        /* Reordering: a long press on a card sets them all wobbling, with a handle
+           on each to drag it by, until Save order */
+        .apps > li {
+            position: relative;
+        }
+        .app-card {
+            -webkit-touch-callout: none;   /* no link preview on a long press */
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        @keyframes wobble {
+            from { transform: rotate(-0.35deg); }
+            to   { transform: rotate(0.35deg); }
+        }
+        .reordering .apps > li {
+            animation: wobble 280ms ease-in-out infinite alternate;
+        }
+        .reordering .apps > li:nth-child(even) {
+            animation-duration: 320ms;
+            animation-delay: -140ms;
+        }
+        .reordering .apps > li.dragging {
+            animation: none;
+            transform: scale(1.03);
+            z-index: 1;
+        }
+        .dragging .app-card {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+        }
+        .reordering .app-card {
+            padding-right: 56px;
+            cursor: default;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reordering .apps > li {
+                animation: none;
+            }
+        }
+        .apps .drag-handle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 52px;
+            margin: 0;
+            font-size: 24px;
+            color: light-dark(#555, #121212);
+            touch-action: none;   /* a drag here moves the card, not the page */
+            cursor: grab;
+        }
+        .apps .dragging .drag-handle {
+            cursor: grabbing;
+        }
+        /* held above the bottom nav while the list scrolls under it */
+        .save-order {
+            position: sticky;
+            bottom: calc(58px + env(safe-area-inset-bottom) + 12px);
+            z-index: 2;
+            display: block;
+            margin: -20px auto 40px;
+            padding: 10px 22px;
+            border-radius: 22px;
+            font-size: 16px;
+            background: var(--card);
+            color: #8FC2FF;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .save-order:hover, .save-order:focus, .save-order:active {
+            background: var(--card);
+            color: #C4DEFF;
+        }
+        .save-order[hidden] {
+            display: none;
+        }
         .hidden-app-field {
             display: block;
             width: 240px;
@@ -308,6 +382,7 @@
             </a>
         </li>
     </ul>
+    <button type="button" class="link-button save-order" id="saveOrder" data-action="saveAppOrder" hidden>Save order</button>
 
     <!-- filled in by the script below; with no JavaScript there is nothing to measure -->
     <p class="page-foot" id="storageUse"></p>
@@ -443,6 +518,7 @@
         }
         localStorage.setItem(hiddenAppsKey, JSON.stringify(addedHiddenApps().concat(key)));
         drawHiddenApp(key);
+        applyAppOrder();
         toast(hiddenApps[key].name + " added to your apps");
     }
 
@@ -454,6 +530,151 @@
     }
 
     addedHiddenApps().forEach(drawHiddenApp);
+
+    /* The cards in an order of your own: a long press sets them wobbling, each
+       with a handle to drag it up or down by (or move with the arrow keys), and
+       Save order keeps it on this device. A card is known by its link; one not
+       in the saved order - a new app - goes after those that are. */
+    const appOrderKey = "trainingAppOrder";
+    const appPress = 500;      // ms held still that starts reordering
+    const appPressSlop = 10;   // px a finger can wander in that time
+    const appEdge = 70;        // px from the top, or the bottom nav, that scrolls the page while dragging
+    let appPressTimer = null;
+    let appPressFrom = null;
+    let appDrag = null;        // { card, x, y } while a card is being dragged
+
+    const appList = document.querySelector(".apps");
+
+    function appCards(){
+        return [...appList.children];
+    }
+
+    function appCardKey(card){
+        return card.querySelector(".app-card").getAttribute("href");
+    }
+
+    function savedAppOrder(){
+        try {
+            let order = JSON.parse(localStorage.getItem(appOrderKey));
+            return Array.isArray(order) ? order : [];
+        } catch(err){
+            return [];
+        }
+    }
+
+    function applyAppOrder(){
+        let order = savedAppOrder();
+        if(order.length === 0){ return; }
+        let cards = appCards();
+        let placed = order.map(key => cards.find(card => appCardKey(card) === key)).filter(card => card);
+        placed.concat(cards.filter(card => !placed.includes(card))).forEach(card => appList.appendChild(card));
+    }
+
+    function reordering(){
+        return document.body.classList.contains("reordering");
+    }
+
+    function startReorder(){
+        if(reordering()){ return; }
+        document.body.classList.add("reordering");
+        appCards().forEach(card => card.insertAdjacentHTML("beforeend",
+            `<button type="button" class="icon-button demo-icon icon-menu drag-handle" aria-label="Move ${card.querySelector("h2").textContent}"></button>`));
+        document.getElementById("saveOrder").hidden = false;
+        haptic();
+    }
+
+    function saveAppOrder(){
+        localStorage.setItem(appOrderKey, JSON.stringify(appCards().map(appCardKey)));
+        document.body.classList.remove("reordering");
+        appList.querySelectorAll(".drag-handle").forEach(handle => handle.remove());
+        document.getElementById("saveOrder").hidden = true;
+    }
+
+    function cancelAppPress(){
+        clearTimeout(appPressTimer);
+        appPressTimer = null;
+    }
+
+    // into the place of the card under the finger, the rest moving along
+    function dragAppCard(){
+        let { card, x, y } = appDrag;
+        let cards = appCards();
+        let over = cards.find(other => {
+            let box = other.getBoundingClientRect();
+            return other !== card && x >= box.left && x <= box.right && y >= box.top && y <= box.bottom;
+        });
+        if(over === undefined){ return; }
+        cards.indexOf(over) > cards.indexOf(card) ? over.after(card) : over.before(card);
+    }
+
+    function scrollAppEdge(){
+        if(appDrag === null){ return; }
+        let by = appDrag.y < appEdge ? -8 : appDrag.y > innerHeight - 58 - appEdge ? 8 : 0;
+        if(by !== 0){
+            scrollBy(0, by);
+            dragAppCard();
+        }
+        requestAnimationFrame(scrollAppEdge);
+    }
+
+    function endAppDrag(){
+        cancelAppPress();
+        if(appDrag === null){ return; }
+        appDrag.card.classList.remove("dragging");
+        appDrag = null;
+    }
+
+    appList.addEventListener("pointerdown", event => {
+        let handle = event.target.closest(".drag-handle");
+        if(handle !== null){
+            event.preventDefault();
+            try { handle.setPointerCapture(event.pointerId); } catch(err){}   // a pointer already gone
+            appDrag = { "card" : handle.closest("li"), "x" : event.clientX, "y" : event.clientY };
+            appDrag.card.classList.add("dragging");
+            requestAnimationFrame(scrollAppEdge);
+            return;
+        }
+        if(reordering() || event.button > 0 || event.target.closest(".app-card") === null){ return; }
+        appPressFrom = [event.clientX, event.clientY];
+        appPressTimer = setTimeout(() => {
+            appPressTimer = null;
+            startReorder();
+        }, appPress);
+    });
+
+    appList.addEventListener("pointermove", event => {
+        if(appDrag !== null){
+            appDrag.x = event.clientX;
+            appDrag.y = event.clientY;
+            dragAppCard();
+        } else if(appPressTimer !== null && Math.hypot(event.clientX - appPressFrom[0], event.clientY - appPressFrom[1]) > appPressSlop){
+            cancelAppPress();
+        }
+    });
+
+    ["pointerup", "pointercancel"].forEach(type => document.addEventListener(type, endAppDrag));
+
+    // while reordering a tap on a card goes nowhere, nor does the tap that ended the long press
+    appList.addEventListener("click", event => {
+        if(reordering() && event.target.closest(".app-card") !== null){ event.preventDefault(); }
+    }, true);
+
+    appList.addEventListener("contextmenu", event => {
+        if(appPressTimer !== null || reordering()){ event.preventDefault(); }
+    });
+
+    appList.addEventListener("keydown", event => {
+        let handle = event.target.closest(".drag-handle");
+        if(handle === null){ return; }
+        let card = handle.closest("li");
+        if(event.key === "ArrowUp" && card.previousElementSibling !== null){ card.previousElementSibling.before(card); }
+        else if(event.key === "ArrowDown" && card.nextElementSibling !== null){ card.nextElementSibling.after(card); }
+        else { return; }
+        event.preventDefault();
+        handle.focus();
+    });
+
+    applyAppOrder();
     </script>
   </body>
 </html>

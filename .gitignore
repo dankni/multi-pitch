@@ -85,3 +85,6 @@ cypress/screenshots
 
 # Before/after screenshots belong in the PR they prove, not the repo
 docs/**/*.png
+
+# which source each .webp was made from - see generateWebP.js
+.webp-hashes.json
