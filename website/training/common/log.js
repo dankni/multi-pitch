@@ -48,6 +48,7 @@ function openSession(){
     showState("running");
     document.getElementById("sessionDate").value = session.date;
     document.getElementById("saveSession").innerText = session.editing ? "UPDATE SESSION" : "SAVE SESSION";
+    document.getElementById("discard").innerHTML = `<i class="demo-icon icon-cancel"></i>${session.editing ? "CANCEL EDIT" : "DISCARD"}`;
     // a reopened session shows its start and finish from the off, to put right - or put in, if it has none
     document.body.toggleAttribute("data-editing", session.editing === true);
     if(app.timed && session.editing){ drawSessionTimes(); }

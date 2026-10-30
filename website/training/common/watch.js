@@ -238,13 +238,13 @@ function drawWatchMarkup(){
                 Connect watch <span class="switch-state"></span>
             </span>
         </label>
-        <p class="device-tips" id="watchSupported" hidden>Supported watches: <a href="https://thepihut.com/products/bangle-js-2" target="_blank" rel="noopener">Bangle.js 2</a>${hrmOffered() ? ", Fitbit Air (beta)" : ""}</p>
+        <p class="device-tips" id="watchSupported" hidden>Supported watches: <a href="https://thepihut.com/products/bangle-js-2" target="_blank" rel="noopener">Bangle.js 2</a>${hrmOffered() ? ", Heart Rate Monitor (beta)" : ""}</p>
         ${hrmOffered() ? `<div id="watchDevices" hidden>
             <div class="picker" role="radiogroup" aria-label="Watch">
                 <input type="radio" name="watchDevice" class="nice-radios" id="watchDevice-bangle" value="bangle" data-change="setWatchDevice" />
                 <label for="watchDevice-bangle">Bangle.js 2</label>
                 <input type="radio" name="watchDevice" class="nice-radios" id="watchDevice-hrm" value="hrm" data-change="setWatchDevice" />
-                <label for="watchDevice-hrm">Fitbit Air (beta)</label>
+                <label for="watchDevice-hrm">Heart Rate Monitor (beta)</label>
             </div>
         </div>` : ""}
         <p class="device-tips" id="watchVersion" hidden></p>
@@ -256,7 +256,7 @@ function drawWatchMarkup(){
 }
 
 const watchWords = { "off" : "Watch not connected", "connecting" : "Connecting to the watch…", "connected" : "Watch connected" };
-const hrmWords = { "off" : "Fitbit Air not connected", "connecting" : "Connecting to the Fitbit Air…", "connected" : "Fitbit Air connected" };
+const hrmWords = { "off" : "Heart rate monitor not connected", "connecting" : "Connecting to the heart rate monitor…", "connected" : "Heart rate monitor connected" };
 
 function drawWatch(){
     let link = watchLink();

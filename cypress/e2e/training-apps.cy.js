@@ -605,7 +605,7 @@ describe('Training apps', function () {
             cy.get('#route7').should('have.attr', 'aria-pressed', 'true');
             cy.get('#saveSession').should('have.text', 'UPDATE SESSION');
             // the reopened session must not arrive with a stale SURE? on the button
-            cy.get('#discard').should('contain', 'DISCARD');
+            cy.get('#discard').should('have.text', 'CANCEL EDIT');
         });
     });
 
@@ -2652,6 +2652,7 @@ describe('Training apps', function () {
             });
             cy.get('[data-action="openInfoBox"]').click();
             cy.get('#log .icon-wrench').click();
+            cy.get('#discard').should('have.text', 'CANCEL EDIT');   // a saved session is only being edited, not thrown away
             cy.get('#sessionStart').should('be.visible').and('have.value', '');
             cy.get('#sessionFinish').should('have.value', '');
             cy.get('#sessionStart').invoke('val', '18:00').trigger('change');
@@ -2660,6 +2661,9 @@ describe('Training apps', function () {
             cy.get('#finishButton').click();
             cy.get('#saveSession').click();
             cy.get('#sessionStart').should('not.be.visible');   // gone with the session
+            cy.get('[data-action="hideAbout"]').click();
+            cy.get('#primaryButton').click();
+            cy.get('#discard').should('have.text', 'DISCARD');   // and a new one discards
             cy.window().then((win) => {
                 let saved = JSON.parse(win.localStorage.getItem('boulderLog'))[0];
                 expect(saved.minutes).to.equal(105);
@@ -2893,14 +2897,14 @@ describe('Training apps', function () {
                 });
             });
 
-            it('reads the heart rate from a Fitbit Air in place of the watch, one or the other', () => {
+            it('reads the heart rate from a heart rate monitor in place of the watch, one or the other', () => {
                 cy.visit(boulderUrl, { onBeforeLoad: (win) => { fakeBangle(win); fakeHrm(win); } });
                 connect();
-                cy.get('#watchSupported').should('have.text', 'Supported watches: Bangle.js 2, Fitbit Air (beta)');
+                cy.get('#watchSupported').should('have.text', 'Supported watches: Bangle.js 2, Heart Rate Monitor (beta)');
                 cy.get('#watchDevice-bangle').should('be.checked');
 
                 cy.get('#watchDevice-hrm').check({ force: true });
-                cy.get('#watchStatusText').should('have.text', 'Fitbit Air connected');
+                cy.get('#watchStatusText').should('have.text', 'Heart rate monitor connected');
                 cy.window().should((win) => expect(win.bangleDevice.gatt.connected).to.equal(false));
                 cy.get('#watchHelp').should('not.be.visible');   // the Bangle's
 
@@ -2918,7 +2922,7 @@ describe('Training apps', function () {
                 });
                 cy.get('.toast').should('contain', 'The watch disconnected');
                 cy.tick(10000);
-                cy.get('#watchStatusText').should('have.text', 'Fitbit Air connected');
+                cy.get('#watchStatusText').should('have.text', 'Heart rate monitor connected');
 
                 // back to the Bangle, which the monitor makes way for
                 cy.get('#watchDevice-bangle').check({ force: true });
@@ -3630,9 +3634,9 @@ describe('Training apps', function () {
                 boulderLog: [{ id: 4, date: '2026-09-04', climbs: ['V2'], rating: 0 }]
             });
             cy.get('#sessionCalendar rect[data-date="2026-09-01"]').should('have.class', 'workout')
-                .and('have.attr', 'style').and('contain', 'fill-opacity: 0.30');   // 5 minutes, the faintest
+                .and('have.attr', 'style').and('contain', 'fill-opacity: 0.45');   // 5 minutes, the faintest
             cy.get('#sessionCalendar rect[data-date="2026-09-02"]').should('have.class', 'workout')
-                .and('have.attr', 'style').and('contain', 'fill-opacity: 0.65');   // 35 minutes, half way
+                .and('have.attr', 'style').and('contain', 'fill-opacity: 0.73');   // 35 minutes, half way
             cy.get('#sessionCalendar rect[data-date="2026-09-03"]').should('have.class', 'plain')
                 .and('have.attr', 'style').and('contain', 'fill-opacity: 1.00');   // over an hour
             cy.get('#sessionCalendar rect[data-date="2026-09-04"]').should('have.class', 'band-easy')

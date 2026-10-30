@@ -1,6 +1,7 @@
 /* A heart rate monitor over Web Bluetooth - the standard Heart Rate service,
-   which chest straps send and, in beta here, the Fitbit Air. Chrome and Edge,
-   not iOS. Each reading goes to onBeat as a bpm; common/watch.js connects it in
+   which chest straps and the Fitbit Air send - offered in beta as Heart Rate
+   Monitor. Chrome and Edge, not iOS. Each reading goes to onBeat as a bpm;
+   common/watch.js connects it in
    place of the Bangle. Shaped like common/bangle.js, so it can stand in for it. */
 
 const hrm = (function(){

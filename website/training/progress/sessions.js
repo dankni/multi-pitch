@@ -352,7 +352,7 @@
     const isWorkout = session => session.app.key === "rockRingsLog" || (session.app.key === "tabataLog" && session.kind !== "Other");
 
     // a timed day darker the longer it trained: faintest to 10 minutes, solid from an hour
-    const shadeFrom = 10, shadeTo = 60, faintest = 0.3;
+    const shadeFrom = 10, shadeTo = 60, faintest = 0.45;
     const timeOpacity = minutes => faintest + (1 - faintest) * Math.min(1, Math.max(0, (minutes - shadeFrom) / (shadeTo - shadeFrom)));
     const dayLength = 86400000;
     const calendarWeeks = 18;
