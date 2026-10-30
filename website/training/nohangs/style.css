@@ -1,6 +1,6 @@
 /* A little smaller than the rings app's, so "Half Crimp · Front 2" fits a phone's line */
 #first .task {
-    font-size: 24px;
+    font-size: var(--t-xl);
     margin-bottom: 4px;
 }
 
@@ -13,7 +13,7 @@
     text-align: left;
 }
 .hangs td {
-    padding: 10px 12px;
+    padding: 12px 12px;
     transition: opacity 0.3s ease;
 }
 .hangs tr {
@@ -36,7 +36,7 @@
     display: inline-block;
     width: 12px;
     height: 12px;
-    margin-left: 5px;
+    margin-left: 4px;
     border: 2px solid currentColor;
     border-radius: 50%;
     vertical-align: middle;
@@ -65,7 +65,7 @@
 }
 .grips img {
     display: block;
-    margin: 0 auto 6px;
+    margin: 0 auto 8px;
 }
 .routine {
     width: 100%;

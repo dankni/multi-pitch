@@ -3,7 +3,7 @@
 /* The small print under a heading or a chart */
 .sessions-note {
     margin: 0 0 12px;
-    font-size: 13px;
+    font-size: var(--t-sm);
     line-height: 1.4;
     opacity: 0.75;
 }

@@ -30,13 +30,14 @@
     display: block;
     width: 100%;
     margin: 16px auto 12px;
-    padding: 12px;
+    padding: 16px;
     background: var(--panel);
     color: var(--strong);
-    border-radius: 5px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
 }
 #sessionBar label {
-    font-size: 14px;
+    font-size: var(--t-sm);
     margin-right: 8px;
 }
 /* Started and finished, once there is a finish to show */
@@ -45,8 +46,8 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 6px 14px;
-    margin-top: 10px;
+    gap: 8px 16px;
+    margin-top: 12px;
 }
 [data-state="saving"] .session-times {
     display: flex;
@@ -55,24 +56,25 @@
     margin-right: 0;
 }
 .session-times .field {
-    margin-left: 6px;
+    margin-left: 8px;
 }
 .session-length {
-    font-size: 14px;
+    font-size: var(--t-sm);
     opacity: 0.8;
 }
 #sessionBar h3 {
     font-size: 44px;
-    margin: 10px 0 0;
+    margin: 12px 0 0;
 }
 #sessionBar .of {
-    font-size: 20px;
-    opacity: 0.6;
+    font-size: var(--t-lg);
+    font-weight: 500;
+    color: var(--ink-2);
 }
 #summary {
     margin: 4px 0 0;
-    font-size: 16px;
-    opacity: 0.8;
+    font-size: var(--t-md);
+    color: var(--ink-2);
 }
 
 /* ================= The ladder =================
@@ -87,7 +89,7 @@
 .grade-row {
     display: flex;
     align-items: stretch;
-    gap: 6px;
+    gap: 8px;
     margin: 0;
 }
 .grade-add {
@@ -99,41 +101,42 @@
     justify-content: center;
     min-height: 56px;
     margin: 0;
-    padding: 6px 42px 6px 9px;
-    border-left: 8px solid transparent;
-    border-radius: 8px;
+    padding: 8px 40px 8px 16px;
+    border-radius: var(--r-md);
     font-family: 'Hind', sans-serif;
-    font-size: 15px;
+    font-size: var(--t-sm);
+    font-weight: 400;
     letter-spacing: 0;
     text-align: left;
     text-transform: none;
 }
 .grade-row .route-grade {
-    font-size: 20px;
+    font-size: var(--t-lg);
+    font-weight: 600;
     line-height: 1.1;
 }
-/* band colour, faint until climbed; blue if the ladder has no bands */
-.grade-add {
-    border-left-color: color-mix(in srgb, var(--c, transparent) 30%, transparent);
+/* band colour as a stripe down the inside edge, faint until climbed; blue if the ladder has no bands */
+.grade-add, .grade-add:hover, .grade-add:focus {
+    box-shadow: inset 6px 0 0 color-mix(in srgb, var(--c, transparent) 35%, transparent);
 }
 .grade-row.done .grade-add {
-    border-left-color: var(--c, var(--primary));
+    box-shadow: inset 6px 0 0 var(--c, var(--primary));
 }
 /* A gym's hold colours (the gym session's Boulderworld Belfast): the colour of
    the circuit itself, so the same climbed or not, softened into the tile, as a
-   strip over the edge that can be two colours (--circuit, then --circuit-low),
+   strip down the inside edge that can be two colours (--circuit, then --circuit-low),
    with a hairline so white and black show on a tile of either theme */
 .grade-row.hold .grade-add {
-    border-left-color: transparent;
+    box-shadow: none;
 }
 .grade-row.hold .grade-add::before {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    left: -8px;
-    width: 8px;
-    border-radius: 8px 0 0 8px;
+    left: 0;
+    width: 6px;
+    border-radius: calc(var(--r-md) - 1px) 0 0 calc(var(--r-md) - 1px);
     background: linear-gradient(color-mix(in srgb, var(--circuit) 60%, var(--tile)) 50%,
                                 color-mix(in srgb, var(--circuit-low, var(--circuit)) 60%, var(--tile)) 50%);
     box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.6);
@@ -153,51 +156,57 @@
     top: 50%;
     right: 9px;
     transform: translateY(-50%);
-    font-size: 24px;
-    font-weight: bold;
+    font-size: var(--t-xl);
+    font-weight: 700;
     line-height: 1;
 }
-.grade-minus {
+/* neutral, so the only colour along a row is what was climbed */
+.grade-minus, .grade-minus:hover, .grade-minus:focus {
     flex: 0 0 auto;
-    width: 42px;
+    width: 40px;
     margin: 0;
     padding: 0;
-    border-radius: 8px;
-    font-size: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: var(--t-lg);
     line-height: 1;
+}
+.grade-minus:hover {
+    background: var(--tile-hover);
 }
 .grade-harder {
     min-height: 56px;
     margin: 0;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 15px;
+    padding: 8px 12px;
+    border-radius: var(--r-md);
+    font-size: var(--t-sm);
 }
 @media (max-width: 380px) {
     #grades {
-        gap: 6px;
+        gap: 8px;
     }
     .grade-add {
-        font-size: 14px;
-        padding: 6px 32px 6px 7px;
-        border-left-width: 6px;
+        font-size: var(--t-sm);
+        padding: 8px 32px 8px 12px;
     }
     .grade-row .route-grade {
-        font-size: 18px;
+        font-size: var(--t-md);
     }
     .route-colour {
-        font-size: 11px;
+        font-size: var(--t-xs);
     }
-    .grade-minus {
+    .grade-minus, .grade-minus:hover, .grade-minus:focus {
         width: 36px;
-        font-size: 20px;
+        font-size: var(--t-lg);
     }
     .grade-count {
         right: 7px;
-        font-size: 20px;
+        font-size: var(--t-lg);
     }
     .grade-harder {
-        font-size: 14px;
-        padding: 6px 4px;
+        font-size: var(--t-sm);
+        padding: 8px 4px;
     }
 }

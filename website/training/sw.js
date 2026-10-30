@@ -8,7 +8,7 @@
    the one before it for a big release (v180.0). It is the app version shown in
    the apps. */
 
-const CACHE_VERSION = 'v180.0';
+const CACHE_VERSION = 'v181.0';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -51,6 +51,12 @@ const SHELL = [
     '/training/watch/mplog.app.js',
     '/training/common/font/hind-400-latin.woff2',
     '/training/common/font/hind-400-latin-ext.woff2',
+    '/training/common/font/hind-500-latin.woff2',
+    '/training/common/font/hind-500-latin-ext.woff2',
+    '/training/common/font/hind-600-latin.woff2',
+    '/training/common/font/hind-600-latin-ext.woff2',
+    '/training/common/font/hind-700-latin.woff2',
+    '/training/common/font/hind-700-latin-ext.woff2',
     '/training/common/font/fontello.woff2',
     '/training/common/font/fontello.woff',
     '/training/common/font/fontello.ttf',

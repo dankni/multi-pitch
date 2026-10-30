@@ -2687,6 +2687,8 @@ describe('Training apps', function () {
                 expect(file.size).to.be.greaterThan(1000);
             });
             cy.get('@gtag').should('have.been.calledWith', 'event', 'summary_shared', { app: 'Gym Session' });
+            cy.get('#finishSummary h2 .summary-share-icon').should('have.attr', 'aria-label', 'Share the summary').click();   // the same, by the title
+            cy.get('@share').should('have.been.calledTwice');
 
             cy.get('#saveSession').click();
             cy.get('#finishSummary').should('not.be.visible');
@@ -3331,7 +3333,7 @@ describe('Training apps', function () {
             cy.get('#darkMode').should('not.be.checked');
             tap('#darkMode');
             cy.get('html').should('have.class', 'dark');
-            cy.get('body').should('have.css', 'background-color', 'rgb(17, 17, 17)');
+            cy.get('body').should('have.css', 'background-color', 'rgb(14, 16, 19)');
 
             cy.visit(appUrl + '/training/boulder/', { onBeforeLoad: lightPhone });
             cy.get('html').should('have.class', 'dark');

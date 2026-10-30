@@ -14,7 +14,7 @@
 }
 .chart text {
     font-family: 'Hind', sans-serif;
-    font-size: 11px;
+    font-size: var(--t-xs);
     fill: var(--ink-muted);
 }
 .chart .count {
@@ -41,9 +41,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 4px 14px;
-    margin: 6px 0 0;
-    font-size: 13px;
+    gap: 4px 16px;
+    margin: 8px 0 0;
+    font-size: var(--t-sm);
 }
 .legend-item {
     display: inline-flex;
@@ -54,7 +54,7 @@
     display: inline-block;
     width: 11px;
     height: 11px;
-    margin-right: 5px;
+    margin-right: 4px;
     border-radius: 3px;
     border: 1.5px solid var(--c);
     background: var(--c);

@@ -29,14 +29,14 @@
         .apps {
             width: 90%;
             max-width: var(--wide);
-            margin: 30px auto 40px;
+            margin: 32px auto 40px;
             padding: 0;
             list-style: none;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             /* every row as tall as the tallest card, so the cards all match */
             grid-auto-rows: 1fr;
-            gap: 10px;
+            gap: 12px;
         }
         @media (max-width: 600px) {
             .apps {
@@ -49,29 +49,43 @@
             height: 100%;   /* the two cards in a row match, whatever their text */
             text-align: left;
             text-decoration: none;
-            color: light-dark(currentColor, #121212);
-            background: light-dark(#F9F9F9, #BFBDBD);
-            border-radius: 5px;
-            padding: 12px 18px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--r-lg);
+            padding: 16px;
+        }
+        /* each icon on a tile of the quiet blue, the glyphs and the drawn ones alike */
+        .app-card .demo-icon, .app-card .app-icon {
+            flex: 0 0 auto;
+            box-sizing: border-box;
+            width: 48px;
+            height: 48px;
+            margin: 0 16px 0 0;
+            border-radius: var(--r-md);
+            background: var(--quiet);
+            color: var(--link);
         }
         .app-card .demo-icon {
-            font-size: 34px;
-            /* ink rather than a fill, so it wants the darker blue: 6.8:1 on the
-               card, and it still holds up on the grey card in dark mode */
-            color: #0053ba;
-            flex: 0 0 auto;
-            margin-right: 16px;
+            display: grid;
+            place-items: center;
+            font-size: 26px;
         }
-        /* Two cards use a drawn icon rather than a font glyph, so they are sized
-           and spaced to sit in the same column as the rest. The glyphs carry a
-           .2em left margin of their own, hence the 7px here. */
+        .app-card .demo-icon::before {
+            margin: 0;
+        }
         .app-card .app-icon {
-            width: 32px;
-            height: 32px;
-            flex: 0 0 auto;
-            margin-left: 7px;
-            margin-right: 16px;
-            color: #0053ba;
+            padding: 8px;
+        }
+        .app-card::after {
+            content: "›";
+            margin-left: auto;
+            padding-left: 12px;
+            font-size: var(--t-xl);
+            color: var(--ink-2);
+        }
+        .reordering .app-card::after {
+            content: none;
         }
         /* The icons fade in one card after another as the page opens. It's only
            the icons, so the cards and their words are there to read and tap from
@@ -105,7 +119,8 @@
         }
         .app-card h2 {
             margin: 0 0 4px 0;
-            font-size: 18px;
+            font-size: var(--t-md);
+            font-weight: 600;
             line-height: 24px;
         }
         /* Line heights in whole pixels, so every card - and so every row of the
@@ -113,9 +128,9 @@
            108.1875px and every card after the first began part way into a pixel. */
         .app-card p {
             margin: 0;
-            font-size: 14px;
+            font-size: var(--t-sm);
             line-height: 20px;
-            opacity: 0.85;
+            color: var(--ink-2);
         }
         /* Reordering: a long press on a card sets them all wobbling, with a handle
            on each to drag it by, until Save order */
@@ -144,7 +159,7 @@
             z-index: 1;
         }
         .dragging .app-card {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+            box-shadow: var(--e2);
         }
         .reordering .app-card {
             padding-right: 56px;
@@ -162,8 +177,8 @@
             bottom: 0;
             width: 52px;
             margin: 0;
-            font-size: 24px;
-            color: light-dark(#555, #121212);
+            font-size: var(--t-xl);
+            color: var(--ink-2);
             touch-action: none;   /* a drag here moves the card, not the page */
             cursor: grab;
         }
@@ -177,16 +192,17 @@
             z-index: 2;
             display: block;
             margin: -20px auto 40px;
-            padding: 10px 22px;
-            border-radius: 22px;
-            font-size: 16px;
+            padding: 12px 24px;
+            border: 1px solid var(--line);
+            border-radius: var(--r-pill);
+            font-size: var(--t-md);
             background: var(--card);
-            color: #8FC2FF;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            color: var(--link);
+            box-shadow: var(--e2);
         }
         .save-order:hover, .save-order:focus, .save-order:active {
             background: var(--card);
-            color: #C4DEFF;
+            color: var(--link-hover);
         }
         .save-order[hidden] {
             display: none;
@@ -199,7 +215,7 @@
         .home-link, .home-link:visited {
             display: block;
             margin: 0 auto 40px;
-            font-size: 14px;
+            font-size: var(--t-sm);
             color: var(--link);
         }
         .home-link:hover, .home-link:focus {
@@ -210,7 +226,7 @@
            and which version of the apps is installed */
         .page-foot {
             margin: 0 auto 12px;
-            font-size: 14px;
+            font-size: var(--t-sm);
             opacity: 0.8;
         }
     </style>

@@ -92,7 +92,7 @@ function hasHeartRate(){
     return heart !== null && heart.beats.length > 0;
 }
 
-// The chart as a PNG on the overlay's black - see svgImage() in common/charts.js
+// The chart as a PNG on the sheet's own colour - see svgImage() in common/charts.js
 async function shareHeartRate(){
     let svg = document.querySelector("#heartChart svg");
     let image = svg === null ? null : await svgImage(svg);
@@ -103,7 +103,7 @@ async function shareHeartRate(){
     canvas.height = (image.height + pad * 2) * scale;
     let pen = canvas.getContext("2d");
     pen.scale(scale, scale);
-    pen.fillStyle = "#000";
+    pen.fillStyle = getComputedStyle(document.getElementById("heartRate")).backgroundColor;
     pen.fillRect(0, 0, image.width + pad * 2, image.height + pad * 2);
     pen.drawImage(image, pad, pad, image.width, image.height);
     shareImage(canvas, `heart-rate-${session === null ? today() : session.date}.png`, "heart_rate_shared");

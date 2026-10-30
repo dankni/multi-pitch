@@ -130,25 +130,38 @@ async function shareSummary(){
     let inner = width - pad * 2;
     let probe = document.createElement("canvas").getContext("2d");
     let font = (size, weight) => `${weight || "normal"} ${size}px Hind, sans-serif`;
+    // in the colours of the sheet on screen, whichever theme it is in
+    let panel = document.getElementById("finishSummary");
+    let sheet = getComputedStyle(panel);
+    // a variable reads back as written - light-dark() and all - so through an element
+    let resolve = colour => {
+        let probe = document.createElement("span");
+        probe.style.color = colour;
+        panel.appendChild(probe);
+        let value = getComputedStyle(probe).color;
+        probe.remove();
+        return value;
+    };
+    let ink = sheet.color, muted = resolve("var(--ink-2)"), amber = resolve("var(--warn-ink)");
 
     // laid out first, to know how tall to make the canvas
     let parts = [];
-    parts.push({ "text" : summaryName(), "font" : font(24, "bold"), "colour" : "#fff", "height" : 30 });
-    parts.push({ "text" : logDate(session.date), "font" : font(15), "colour" : "#bdbdbd", "height" : 22 });
+    parts.push({ "text" : summaryName(), "font" : font(24, 600), "colour" : ink, "height" : 30 });
+    parts.push({ "text" : logDate(session.date), "font" : font(15), "colour" : muted, "height" : 22 });
     images.forEach((image, index) => {
         if(image === null){ return; }
         parts.push({ "gap" : gap });
-        parts.push({ "text" : captions[index][0], "font" : font(16, "bold"), "colour" : "#fff", "height" : 22 });
-        if(captions[index][1]){ parts.push({ "text" : captions[index][1], "font" : font(13), "colour" : "#bdbdbd", "height" : 18 }); }
+        parts.push({ "text" : captions[index][0], "font" : font(16, 600), "colour" : ink, "height" : 22 });
+        if(captions[index][1]){ parts.push({ "text" : captions[index][1], "font" : font(13), "colour" : muted, "height" : 18 }); }
         parts.push({ "image" : image, "height" : image.height + 6 });
     });
     let title = sessionTitle.trim();
     if(title || sessionComment.trim() || sessionRating > 0){ parts.push({ "gap" : gap }); }
-    if(title){ parts.push({ "text" : title, "font" : font(18, "bold"), "colour" : "#fff", "height" : 26 }); }
-    if(sessionRating > 0){ parts.push({ "text" : "★".repeat(sessionRating) + "☆".repeat(5 - sessionRating), "font" : font(22), "colour" : "#eda100", "height" : 30 }); }
+    if(title){ parts.push({ "text" : title, "font" : font(18, 600), "colour" : ink, "height" : 26 }); }
+    if(sessionRating > 0){ parts.push({ "text" : "★".repeat(sessionRating) + "☆".repeat(5 - sessionRating), "font" : font(22), "colour" : amber, "height" : 30 }); }
     if(sessionComment.trim()){
         probe.font = font(15);
-        wrapText(probe, sessionComment.trim(), inner).forEach(line => parts.push({ "text" : line, "font" : font(15), "colour" : "#e8e8e8", "height" : 21 }));
+        wrapText(probe, sessionComment.trim(), inner).forEach(line => parts.push({ "text" : line, "font" : font(15), "colour" : ink, "height" : 21 }));
     }
     let height = pad * 2 + parts.reduce((total, part) => total + (part.gap || part.height), 0);
 
@@ -157,7 +170,7 @@ async function shareSummary(){
     canvas.height = height * scale;
     let pen = canvas.getContext("2d");
     pen.scale(scale, scale);
-    pen.fillStyle = "#000";
+    pen.fillStyle = sheet.backgroundColor;
     pen.fillRect(0, 0, width, height);
     pen.textAlign = "center";
     pen.textBaseline = "top";
@@ -178,7 +191,7 @@ async function shareSummary(){
 function drawSummaryMarkup(){
     document.body.insertAdjacentHTML("beforeend", `
         <aside id="finishSummary" class="overlay summary">
-            <h2 id="summaryName"></h2>
+            <h2><span id="summaryName"></span><button type="button" class="icon-button demo-icon icon-share summary-share-icon" data-action="shareSummary" aria-label="Share the summary"></button></h2>
             <div id="summaryCharts">
                 <div id="summaryHeart"></div>
                 <div id="summaryClimbs"></div>

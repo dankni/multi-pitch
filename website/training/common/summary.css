@@ -1,29 +1,40 @@
-/* The summary at FINISH - common/summary.js. Dark in either theme, as the
-   overlays are, so its charts take their dark colours too. */
+/* The summary at FINISH - common/summary.js */
 .summary {
-    color-scheme: dark;
     padding-bottom: 40px;   /* SHARE clear of the foot of the screen */
 }
 .summary-figure {
-    margin: 18px 0 6px;
+    margin: 20px 0 8px;
 }
 .summary-figure figcaption {
     font-weight: bold;
-    font-size: 16px;
+    font-size: var(--t-md);
 }
 .summary-total {
-    margin: 2px 0 6px;
-    font-size: 14px;
-    opacity: 0.8;
+    margin: 2px 0 8px;
+    font-size: var(--t-sm);
+    color: var(--ink-2);
 }
 /* the save panel and a log.js app's times, moved in from the app */
 #summarySave .ending {
     display: block;
     width: 100%;
+    margin-bottom: 0;
+}
+/* SHARE close under SAVE SESSION, as the save panel spaces its own */
+.summary .button-stack {
+    margin-top: 0;
+}
+#shareSummary {
+    margin-top: 12px;
+}
+.summary-share-icon {
+    margin-left: 12px;
+    font-size: var(--t-lg);
+    vertical-align: middle;
 }
 #summarySave .session-times {
     display: flex;
 }
 #summarySave .session-times label {
-    font-size: 14px;
+    font-size: var(--t-sm);
 }

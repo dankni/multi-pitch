@@ -25,7 +25,7 @@ body:not([data-state="idle"]) #addMissingLink {
     margin-bottom: 40px;
 }
 .missing-numbers {
-    margin-top: 10px;
+    margin-top: 12px;
 }
 .missing-numbers .field {
     width: 72px;

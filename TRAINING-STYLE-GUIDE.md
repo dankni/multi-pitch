@@ -57,6 +57,18 @@ still writes for itself is its own geometry and layout: how big its tiles are, w
 clock sits. Components are marked **shared** or **copy** on the live page; before adding a
 rule, check the page for one that already exists.
 
+## Tokens
+
+Every size, space, corner and shadow comes from a variable at the top of
+`common/style.css`. Reach for one of these before writing a number of your own:
+
+| Kind | Tokens |
+|---|---|
+| Spacing, a 4px scale | `--s1` 4 · `--s2` 8 · `--s3` 12 · `--s4` 16 · `--s5` 24 · `--s6` 32 · `--s7` 48. Every margin, padding and gap is a multiple of 4; stacks of siblings use `gap` rather than a margin on each |
+| Radius | `--r-sm` 6px fields · `--r-md` 10px buttons and tiles · `--r-lg` 16px panels, cards and pop-ups · `--r-pill` chips, pickers and switches |
+| Type | `--t-xs` 12 · `--t-sm` 14 · `--t-md` 16 · `--t-lg` 20 · `--t-xl` 24. Clocks and big counts keep sizes of their own |
+| Shadow | `--e1` for something lifted a little (a chosen chip, a switch's knob) and `--e2` for something floating over the app (a toast, a note, a hint). Nothing else casts one |
+
 ## Colour
 
 One blue carries every interactive element. Red means *this destroys something*. The
@@ -69,21 +81,25 @@ page behind it — those two rules decided the values, not taste:
 |---|---|---|
 | `#0b6ad6` | Primary — buttons, checked radios and toggles, a ticked plain tile | 5.2 |
 | `#0053ba` | Pressed/hover, and link text on white | 7.1 |
-| `#e8f0fe` + `#0053ba` ink | Quiet action — the lesser of two buttons. A tint, not a fill, with a `#1a73e8` border to give it an edge, and `#16294a` + white ink in dark mode | 6.2 light, 14.5 dark |
+| `#e8f0fe` + `#0053ba` ink | Quiet action — the lesser of two buttons. A tint, not a fill, and `#16294a` + white ink in dark mode | 6.2 light, 14.5 dark |
 | `#6b6b73` | Off — unchecked radio labels, the toggle track, an unearned star | 5.3 |
 | `#17812a` | Confirmation flash | 5.0 |
 | `#1a73e8` | Focus ring — the one blue that clears 3:1 on a light tile and a dark one | — |
-| `#a13333` | Destructive: border and label of `.secondary`, on `rgba(255,255,255,.85)` (hover `#fdeeee`) | 6.9 light, 5.0 dark |
-| `#9bbde8` | Disabled. Fails AA on purpose: disabled controls are exempt, and it has to read as unavailable | 1.9 |
+| `--danger-ink` `#a13333` / `#ff8f8a` | Destructive: border and label of `.secondary` on its `--surface` fill (hover `--danger-soft`) | 6.9 light, 7.9 dark |
+| `--disabled` + `--disabled-ink` | Disabled: a muted surface and label. Below AA on purpose: disabled controls are exempt, and it has to read as unavailable | — |
+| `--confirm-ink` `#17812a` / `#4cd964` | The green as a glyph or text: a toast's face, a connected dot | 5.0 light, 9.6 dark |
+| `--warn-ink` `#a87600` / `#eda100` | The amber as a glyph: a rated star, the warning face. `--warn` itself stays for fills and the medium band | 4.0 light, 7.0 dark (against 3:1) |
 
 And the surfaces they sit on:
 
 | Token | Use |
 |---|---|
-| `#121212` | Nav bar |
-| `#F9F9F9` | Panel and tile |
-| `#cfcfcf` | Counter box |
-| `rgba(0,0,0,0.98)` | The about panel, over everything |
+| `#121212` | Nav bar and bottom nav, dark in both themes |
+| `--page` `#f4f6f8` / `#0e1013` | The page, faintly blue so a white surface shows on it |
+| `--surface` `#fff` / `#181a1f` | Panels, tiles, cards, and the overlays |
+| `--surface-2` `#e2e6ec` / `#0b0c0f` | Set into a surface, a step darker than it: counter boxes, picker tracks, the minus beside a grade |
+| `--line` | The hairline round a surface, which is what separates it rather than a shadow |
+| `--text`, `--ink-2` | Text (`#14171c` / `#f5f6f8`), and quieter text (`#555b66` / `#b8bdc6`, 6.4:1 light, 9.2:1 dark) in place of `opacity` |
 
 Dark mode is CSS: every colour that changes is a variable at the top of `common/style.css`
 set with `light-dark(light, dark)`, so the page follows the phone's setting with no script.
@@ -92,8 +108,8 @@ The dark mode switch overrides it with `.light` or `.dark` on `<html>`, saved un
 the phone already shows forgets the override, so the phone's setting stays the default.
 `functions.js` applies it from the `<head>`, before the body draws. A new
 colour that changes with the theme goes in as a variable or a `light-dark()`, never as a
-`.dark` rule. Page `#111`, panel `#262626`, counter box `#363636`, tile `#2a2a2a`
-(`#383838` hovered), links `#8ec5ff`.
+`.dark` rule. Links are `--link`, `#0b4fbf` and `#8FC2FF`; a colour typed straight into a
+rule is a bug waiting for the next change, so name it once at the top and use the name.
 
 `.red` / `.orange` / `.yellow` / `.green` set the whole background for the countdown and
 for "working" states, each with a dark-mode variant. Set them through `background("red")`,
@@ -107,14 +123,16 @@ endurance app, and they are data, not decoration — don't repurpose them.
 
 ## Type
 
-`'Hind', sans-serif`, centred. The scale is short on purpose: a title, a heading, a number,
-body, a hint.
+`'Hind', sans-serif`, centred, everywhere — buttons included. Hind is self-hosted at four
+weights: 400 for text, 500 for small labels, 600 for headings, buttons and chips, 700 for
+numbers. With only 400 the browser fakes bold, so ship the weight before you use it. The
+scale is short on purpose: a title, a heading, a number, body, a hint.
 
-- `nav h1` 22px, 18px below 380px — the app's name, once.
-- `h2` — section headings and the stage you are in. Capitalised by the shared sheet.
-- `h3` — *the number*. 60px shared, and apps override it: 28px in a counter box, 44px for
-  the Gilford tick count, 60px for a rest clock (48px below 380px).
-- Body 16px; hint lines 14–15px at `opacity: .8`.
+- `nav h1` 20px (`--t-lg`), 16px below 380px — the app's name, once.
+- `h2` — 24px (`--t-xl`), section headings and the stage you are in. Capitalised by the shared sheet.
+- `h3` — *the number*. 56px shared, and apps override it: 28px in a counter box, 44px for the
+  Gilford tick count, 60px for a rest clock (48px below 380px).
+- Body 16px; hint lines 14px in `--ink-2`.
 
 Any number that changes on a tick gets tabular figures, or the digits jitter and the clock
 appears to dance:
@@ -143,7 +161,10 @@ turns twice as the page loads to show where the settings are.
 starts or repeats something. One per screen. Use `disabled` when the action exists but isn't available yet
 (LAP before the clock runs); hide it when it doesn't belong on the screen at all.
 
-**Secondary button** (`.secondary`) is the destructive one: an `#a13333` outline and label on `rgba(255,255,255,.85)` — never a red fill, so it never looks like the thing you are meant to press. The fill is left slightly transparent so it sits on the page instead of punching a white hole in it; in dark mode that blends to `#dbdbdb`, where the label still reads at 5:1. The hover, `#fdeeee`, is opaque on purpose: at 85% the dark page bleeds through and drags a pale pink under AA. It
+**Every button** is 48px tall, `--r-md` corners, Hind 600 at 16px with a little letter-spacing, and
+spaced by the `gap` of the stack it is in — `.button-stack` puts 12px between buttons.
+
+**Secondary button** (`.secondary`) is the destructive one: a `--danger-ink` outline and label on a solid `--surface` fill — never a red fill, so it never looks like the thing you are meant to press, and solid so it still reads when a workout turns the screen green, red or orange. Its hover is the `--danger-soft` tint. It
 ships `display: none` because it only appears once there is a session worth protecting. It
 is **always** two taps — `confirmReset(buttonId, worthKeeping, onConfirm)` swaps the label
 to SURE? and disarms itself after four seconds. Call `disarmReset()` if you hide the button
@@ -152,10 +173,9 @@ again.
 **Quiet action** (`.quiet`) — the lesser of two real choices (ANOTHER SET beside FINISH
 SESSION, the minus beside a grade in the bouldering app): a
 pale `#e8f0fe` tint with `#0053ba` ink, so the solid primary beside it is plainly the
-louder one. It needs three things the primary does not: a `1px #1a73e8` border, because
-`#e8f0fe` is 1.15:1 against a white page and would otherwise have no edge; its own hover
-(`#d2e3fc`), since the shared `button:hover` would fill it solid; and its own focus ring,
-since the shared one is white and invisible on a tint. In dark mode it inverts — `#16294a` with a white label — because the light tint reads at
+louder one. It needs two things the primary does not: its own hover (`#d2e3fc`), since the
+shared `button:hover` would fill it solid; and its own focus ring, since the shared one is
+white and invisible on a tint. In dark mode it inverts — `#16294a` with a white label — because the light tint reads at
 16:1 on a `#111` page and would shout louder than the primary. The label is white rather
 than the pale blue that mirrors the light version: 14.5:1 against 8:1, and what makes the
 button quiet is its fill sitting close to the page, not a dimmed label.
@@ -168,13 +188,11 @@ cover: a tap that did nothing, and why — HARDER in the bouldering app, once th
 run out at V17. A ☺ (U+263A, not a glyph added to the font for one use), the message, and a
 cross; along the bottom, gone in five seconds on its own.
 
-The card is `#262626` with `#E8E8E8` on it — the same grey the note pop-up wears, since
-both are things sitting on top of an app rather than part of one. A single grey cannot be
-lighter than a white page *and* darker than a `#111` one, so it has an edge instead: the
-3px `#17812a` rule along the top — the confirmation green, because a toast is the app
-answering you — and a hairline of white at 18%, which does nothing over a light page and
-lifts the card off a dark one. The face takes `#2ecc40`, the palette's other green: `#17812a`
-reads 3:1 on that card, which carries a 3px rule but leaves a face muddy.
+The card is `--card` — white in light mode, `#23262c` in dark, a step lighter than the dark
+surface — the same card the note pop-up wears, since both sit on top of an app rather than
+being part of one. It has the `--line` hairline, `--r-lg` corners and the `--e2` shadow, and
+the 3px `#17812a` rule along the top — the confirmation green, because a toast is the app
+answering you. The face takes `--confirm-ink`.
 
 A warning (`toast(…, null, true, true)`, `.toast.warn`) — the browser can't do what the app
 needs — swaps both greens for `--warn` (`#eda100`) and the face for a ⚠ (U+26A0 + U+FE0E, so
@@ -196,8 +214,9 @@ stacking a copy. It says something and asks
 nothing back — anything that needs a decision is a panel or a two-tap confirm, and anything
 the app *did* do is the flash, not a sentence about it.
 
-**Panel.** A bare `<section>` — full width, 5px radius, `#F9F9F9`. Cap it at 520px and
-centre it.
+**Panel.** A bare `<section>` — full width, `--surface` with the `--line` hairline and
+`--r-lg` corners. Cap it at 520px and centre it. A `<section>` that is only a grouping sets
+`background: none; border: 0`.
 
 **Counter boxes** (`.box`) — two to four, 45% wide with 2% margins, label above, number
 below.
@@ -209,7 +228,7 @@ show. Ticked state is a class *and* `aria-pressed` — and the tick glyph, so it
 on colour alone.
 
 **Chips** (`.nice-radios`) — the real control is hidden and its label is the button;
-uppercase, 65px minimum. Radios for one-of-several (a grade, a difficulty, a rest length),
+in its own case, 14px Hind 600, pill-shaped, 40px minimum. Radios for one-of-several (a grade, a difficulty, a rest length),
 **checkboxes for a set** — the loft app's hold colours are the same chip, ten of them
 wrapping across the panel rather than ten switches stacked down it. A checkbox chip carries a **tick when it is in the set and a cross when it is not** — drawn
 from the icon font by `:before`, so nothing is redrawn on a toggle. A radio chip needs none
@@ -222,20 +241,20 @@ and `--chip-ink` to black or white, whichever can be read on it. Filled with the
 on, and the plain grey chip when off — the tick and cross carry that difference, so the off
 state needs no rim of its own. No swatch icon beside the word, since the chip is the swatch. Work the ink out rather than guessing it: the loft app's
 `inkFor()` reads a hex directly and hands a name to the browser to resolve. Always follow a picker with a hint line spelling out what the
-choice produces. A picker's track follows the theme: `#e8e8ec` with a `#94949b` edge and
-`#2b2b30` labels in light (blue on it at 4.2:1, the edge 3:1 on white), `#1a1a1d` with a
-`#636369` edge and white labels in dark. Inside an overlay it is always the dark one. Inside the settings panel, wrap a group in
+choice produces. A picker's track is a pill of `--surface-2` with a 3:1 edge
+(`#8a8f99` light, `#636369` dark) and `--text` labels, the chosen chip filled blue. Inside the settings panel, wrap a group in
 `<fieldset class="setting-group">` with a `<legend>` so it is announced as one choice.
 
-**Toggle** (`.switch-label` + `input[type=checkbox]`) — iOS-style switch, for one setting
+**Toggle** (`.switch-label` + `input[type=checkbox]`) — a 44 × 26 switch, for one setting
 that is on or off (dark mode, trad mode). A set of things is chips, not a column of
-switches. Lives under the cog, and its label always ends in its own state word: *Dark
-Mode On*.
+switches. Lives under the cog, where a run of them is a list: the name on the left, its
+own state word (*On*, *Off*) and the switch on the right, a hairline between rows and the
+run rounded at both ends. The markup is unchanged — input first — and CSS orders it.
 
 **Fields** — `.field` is the date in the tick list and the colour box in the loft app,
-which used to be two different shapes. 36px tall, `font: inherit` at 15px, the tiles' focus
-ring, and the pickers' dark track in both themes — `#1a1a1d` fill, 1px `#636369` edge, 12px radius,
-white ink — with `color-scheme: dark` so a date or time picker's icon reads on it. A field carries no margins; spacing comes from the row it sits in — `.field-row` for fields
+which used to be two different shapes. 40px tall, `font: inherit` at 16px (any smaller and
+iOS zooms in on it), the tiles' focus ring, and the theme's surface — `--field` fill, a 1px
+3:1 `--field-edge`, `--r-sm` corners, `--text` ink. A field carries no margins; spacing comes from the row it sits in — `.field-row` for fields
 that are merely near each other, **`.field-group`** for fields that are one control: joined
 edges under a single border, as in the loft app's *colour name + swatch + ADD*. The group
 takes the focus ring, so a ring is never drawn inside it on top of its neighbours.
@@ -303,8 +322,8 @@ the part that changes every session on top, the part that changes once a year un
 Anything read rather than seen — a delete label, say — gets the whole thing on one line from
 `logDate()`.
 
-**Overlays** — two per app, both `<aside class="overlay">`, both full-screen black sheets
-over the session, and only one up at a time. `openOverlay(id)` and `closeOverlay(id)` in
+**Overlays** — two per app, both `<aside class="overlay">`, both full-screen sheets of
+`--surface` over the session, following the theme like everything else, and only one up at a time. `openOverlay(id)` and `closeOverlay(id)` in
 `functions.js` run them (`openInfoBox()`, `hideAbout()`, `openSettings()`,
 `hideSettings()` are the names the markup uses).
 
@@ -314,8 +333,7 @@ over the session, and only one up at a time. `openOverlay(id)` and `closeOverlay
    what it does with your data.
 2. Links — whatever this app links out to (*Github Page*, a plan, a PDF), with
    `icon-link-ext` after anything that leaves the site. The app list is not one of them - it
-   is *Apps* in the bottom nav. On an overlay the quiet action always wears
-   its dark treatment (`.overlay .quiet`), because the panel is black in both themes. They
+   is *Apps* in the bottom nav. They
    go in a `<p class="panel-links">`, which puts one to a line with 18px around each: they
    are hit with a thumb rather than aimed at, and a `<br />` leaves nothing to aim at. No
    `<br />` inside it — the margin does the spacing.
@@ -384,7 +402,8 @@ borrow one for a second job.
   own; if a new wrapper needs one, add it to that rule rather than writing another 520.
   That includes the activity log: its table sits in the column like everything else.
 - One breakpoint, **380px**: shrink the clock, tiles and nav; never rearrange them.
-- Radii: 4px buttons and inputs, 5px panels, 8px tiles, 20px toggles.
+- Radii: `--r-sm` 6px fields, `--r-md` 10px buttons and tiles, `--r-lg` 16px panels and
+  cards, `--r-pill` chips, pickers and switches.
 - Motion is feedback, not decoration: `scale(0.99)` on press, 150–300ms on hover and
   shadow, 0.5s on a background change. Nothing slides or bounces.
 - `requestWakeLock()` when a session starts and `releaseWakeLock()` when it ends — not
@@ -606,5 +625,5 @@ Don't build on these, and don't be surprised by them:
 |---|---|
 | ~~`#log { max-width: 300px }`~~ | Gone. From when the log was a short list of lines; being an id it quietly beat the column rule and squeezed the session table into 300px |
 | ~~`.ring`, `.task`, `#preview`, `#next`, `#color`, `.slim`, `.active`, `.shrink`~~ | Gone: the rings and loft rules moved into those apps, and the rest were unused |
-| `button { font-family: sans-serif }` | Buttons miss out on 'Hind'. Left alone because changing it moves every label in every app |
+| ~~`button { font-family: sans-serif }`~~ | Gone: buttons are in Hind, at 600 |
 | `.icon-ok { margin-right: 40px }` | Once the log's spacing, now landing on every tick icon including the one inside a FINISH SESSION button. Left alone for that reason; the log table scopes it away, so do the same where it bites |

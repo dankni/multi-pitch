@@ -1,7 +1,8 @@
 /* The training apps' shared stylesheet. The live reference for every component
    is /training/style-guide/, and the reasoning is in TRAINING-STYLE-GUIDE.md. */
 
-/* Hind, served from here rather than Google so the apps work offline */
+/* Hind, served from here rather than Google so the apps work offline: 400 for
+   text, 500 for small labels, 600 for headings and buttons, 700 for numbers */
 @font-face {
     font-family: 'Hind';
     font-style: normal;
@@ -19,6 +20,55 @@
     unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('font/hind-500-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('font/hind-500-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('font/hind-600-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('font/hind-600-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('font/hind-700-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Hind';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('font/hind-700-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 /* Colours. Each theme-dependent one is light-dark(light, dark): the page follows
    the phone's setting, and the dark mode switch overrides it with .light or .dark
    on <html>. */
@@ -26,18 +76,46 @@
     color-scheme: light dark;
     --column: 520px;   /* the width everything sits in */
 
-    --page: light-dark(#fff, #111);
-    --text: light-dark(#000, #E8E8E8);
+    /* Spacing steps of 4px, and everything spaced by them */
+    --s1: 4px;
+    --s2: 8px;
+    --s3: 12px;
+    --s4: 16px;
+    --s5: 24px;
+    --s6: 32px;
+    --s7: 48px;
+    /* One radius for each kind of thing */
+    --r-sm: 6px;       /* fields */
+    --r-md: 10px;      /* buttons and tiles */
+    --r-lg: 16px;      /* panels, cards and pop-ups */
+    --r-pill: 999px;   /* chips, pickers and switches */
+    /* The type scale. Clocks and counts keep sizes of their own. */
+    --t-xs: 12px;
+    --t-sm: 14px;
+    --t-md: 16px;
+    --t-lg: 20px;
+    --t-xl: 24px;
+    /* Two shadows: lifted a little (a chosen chip, a switch's knob), and floating over the app */
+    --e1: 0 1px 2px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.1);
+    --e2: 0 12px 32px rgba(16, 24, 40, 0.28);
+
+    /* Surfaces: a faintly blue page, and white or near-black on it with a hairline edge */
+    --page: light-dark(#f4f6f8, #0e1013);
+    --surface: light-dark(#ffffff, #181a1f);     /* panels, tiles, cards and the overlays */
+    --surface-2: light-dark(#e2e6ec, #0b0c0f);   /* set into a surface, darker than it: counter boxes, tracks, the minus */
+    --line: light-dark(rgba(16, 24, 40, 0.12), rgba(255, 255, 255, 0.1));
+    --text: light-dark(#14171c, #f5f6f8);
+    --ink-2: light-dark(#555b66, #b8bdc6);       /* quieter text: 6.4:1 and 9.2:1 */
     --strong: light-dark(currentColor, #FFF);   /* headings and labels, white in the dark */
-    --panel: light-dark(#F9F9F9, #262626);
-    --box: light-dark(#cfcfcf, #363636);
-    --tile: light-dark(#F9F9F9, #2a2a2a);
-    --tile-ink: light-dark(#222, #eee);
-    --tile-hover: light-dark(#ececec, #383838);
-    --field: #1a1a1d;              /* fields stay dark in either theme */
-    --field-ink: #FFF;
-    --field-edge: #636369;
-    --placeholder: #a8a8ae;
+    --panel: var(--surface);
+    --box: var(--surface-2);
+    --tile: var(--surface);
+    --tile-ink: var(--text);
+    --tile-hover: light-dark(#f7f8fa, #1f2227);
+    --field: var(--surface);
+    --field-ink: var(--text);
+    --field-edge: light-dark(#80858f, #6b7079);   /* 3.4:1 or better round a field, either theme */
+    --placeholder: var(--ink-2);
     --quiet: light-dark(#e8f0fe, #16294a);
     --quiet-hover: light-dark(#d2e3fc, #203a66);
     --quiet-ink: light-dark(#0053ba, #FFF);
@@ -46,21 +124,31 @@
     --nav-edge: light-dark(#121212, #666);
 
     --nav: #121212;
+    --nav-ink: #FFFFFF;
+    --nav-current: #8FC2FF;
+    --nav-hover: #C4DEFF;
+    --on-accent: #FFFFFF;        /* text and icons on the blue, the green and the red */
     --primary: #0b6ad6;          /* white label at 5.2:1 */
     --primary-pressed: #0053ba;
     --focus: #1a73e8;            /* 3:1 or better on a light tile and a dark one */
     --danger: #a13333;
+    --danger-ink: light-dark(#a13333, #ff8f8a);   /* destructive text: 7.1:1 and 7.7:1 */
+    --danger-soft: light-dark(#fdeeee, #3a1f1f);
+    --disabled: light-dark(#e3e6eb, #2a2d33);
+    --disabled-ink: light-dark(#7b808a, #7d828c);
     --off: #6b6b73;
     /* the pickers': --primary on the track at 4.2:1 light and 3.3:1 dark, so the
        chosen one shows without its hue; the edge 3:1 on the page, where the track alone would vanish */
-    --track: light-dark(#e8e8ec, #1a1a1d);
-    --track-edge: light-dark(#94949b, #636369);
-    --track-ink: light-dark(#2b2b30, #FFF);
+    --track: var(--surface-2);
+    --track-edge: light-dark(#80858f, #636369);
+    --track-ink: var(--text);
     --track-hover: light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.1));
     --confirm: #17812a;
-    --warn: #eda100;
-    --card: #262626;             /* anything floating over the app: toast, note, hint */
-    --card-ink: #E8E8E8;
+    --confirm-ink: light-dark(#17812a, #4cd964);   /* the green as a glyph or text: 5.0:1 and 9.6:1 */
+    --warn: #eda100;             /* the amber: warnings and the medium band */
+    --warn-ink: light-dark(#a87600, #eda100);   /* the amber as a glyph - stars, the warning face: 4.0:1 and 7.0:1 */
+    --card: light-dark(#ffffff, #23262c);   /* anything floating over the app: toast, note, hint */
+    --card-ink: var(--text);
 
     /* gradeBands in grades.js; a band class sets --c */
     --band-easy: light-dark(#2a9d4a, #248a3c);
@@ -95,9 +183,9 @@ body {
 }
 /* No width: a block fills the row by itself, padding included */
 nav {
-    font-size: 22px;
+    font-size: var(--t-lg);
     background-color: var(--nav);
-    color: #FFFFFF;
+    color: var(--nav-ink);
     margin: 0;
     padding: 6px 0;
     height: 58px;
@@ -120,7 +208,8 @@ hr {
     min-height: 100%;
 }
 h1 {
-    font-size: 22px;
+    font-size: var(--t-lg);
+    font-weight: 600;
     display: inline-block;
     margin: 0 auto;
     padding: 6px 0;
@@ -128,67 +217,75 @@ h1 {
 h2 {
     text-transform: capitalize;
     display: block;
-    margin: 20px 0 0 0;
+    margin: 24px 0 0 0;
+    font-size: var(--t-xl);
+    font-weight: 600;
+    line-height: 1.25;
 }
 h3 {
-    font-size: 60px;
+    font-size: 56px;
+    font-weight: 700;
     margin: 0;
     color: var(--strong);
 }
 
 /* ================= Buttons ================= */
+/* 48px tall whatever the label, in Hind like everything else */
 button {
-    margin: 25px auto 0;
+    margin: 24px auto 0;
     display: inline-block;
-    border: none;
-    padding: 1rem 2rem;
+    min-height: 48px;
+    border: 1px solid transparent;
+    padding: 12px 24px;
     text-decoration: none;
     background: var(--primary);
-    color: #ffffff;
-    font-family: sans-serif;
-    font-size: 1rem;
+    color: var(--on-accent);
+    font-family: inherit;
+    font-size: var(--t-md);
+    font-weight: 600;
+    line-height: 20px;
     cursor: pointer;
     text-align: center;
     transition: background 250ms ease-in-out, transform 150ms ease;
     -webkit-appearance: none;
     -moz-appearance: none;
-    border-radius: 4px;
+    border-radius: var(--r-md);
     text-transform: capitalize;
-    letter-spacing: 1px;
+    letter-spacing: 0.05em;
 }
 button:hover, button:focus {
     background: var(--primary-pressed);
 }
 button:disabled, button:disabled:hover, button:disabled:focus {
-    background: #9bbde8;
+    background: var(--disabled);
+    color: var(--disabled-ink);
     cursor: default;
 }
 button:disabled:active {
     transform: none;
 }
 button:focus {
-    outline: 1px solid #fff;
+    outline: 1px solid var(--on-accent);
     outline-offset: -4px;
 }
 button:active {
     transform: scale(0.99);
 }
-/* The destructive one: outline and label, so it never looks like the thing to press */
+/* The destructive one: outline and label, so it never looks like the thing to press.
+   A solid surface behind it, so it reads on the workouts' green, red and orange too. */
 .secondary {
-    border: 2px solid var(--danger);
-    color: var(--danger);
-    background: rgba(255, 255, 255, 0.85);
+    border-color: currentColor;
+    color: var(--danger-ink);
+    background: var(--surface);
     display: none;
 }
 .secondary:hover, .secondary:focus {
-    background: #fdeeee;
+    background: var(--danger-soft);
 }
-/* The quieter of two choices: a tint with the blue as ink. The border is its
-   only edge against a white page. */
+/* The quieter of two choices: a tint with the blue as ink */
 .quiet {
     background: var(--quiet);
     color: var(--quiet-ink);
-    border: 1px solid var(--focus);
 }
 .quiet:hover, .quiet:focus {
     background: var(--quiet-hover);
@@ -200,31 +297,24 @@ button:active {
 }
 .quiet:disabled, .quiet:disabled:hover, .quiet:disabled:focus {
     background: transparent;
-    border-color: #c9c9c9;
-    color: #9b9b9b;
+    border-color: var(--line);
+    color: var(--disabled-ink);
 }
-/* Buttons one above another, centred, each as wide as the widest */
+/* Buttons one above another, centred, each as wide as the widest, 12px apart */
 .button-stack {
     display: grid;
     justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
 }
 .button-stack > button {
-    margin-left: 0;
-    margin-right: 0;
-}
-/* An overlay is black whatever the theme, so its quiet buttons are always the dark ones */
-.overlay .quiet {
-    background: #16294a;
-    color: #FFFFFF;
-}
-.overlay .quiet:hover, .overlay .quiet:focus {
-    background: #203a66;
-    color: #FFFFFF;
+    margin: 0;
 }
 /* A button that is only an icon - the nav's, the stars, the log's - with none of
    the look above. Before the icon rules, so they can size and place it. */
 .icon-button {
     box-sizing: content-box;   /* as the <i> it replaces: padding adds to the target */
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -237,6 +327,7 @@ button:active {
 }
 /* A button that reads as a link: an action in a sentence, like "Remove" */
 .link-button {
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -246,6 +337,7 @@ button:active {
     letter-spacing: normal;
     text-transform: none;
     text-decoration: underline;
+    text-underline-offset: 3px;
 }
 /* Only the look is undone on hover, focus and press - never the size, or an
    icon placed by a rule of its own would lose its padding and jump */
@@ -271,7 +363,8 @@ button:active {
 section {
     display: inline-block;
     width: 100%;
-    border-radius: 5px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
     background: var(--panel);
     margin-bottom: 12px;
     transition: all 0.2s ease;
@@ -290,8 +383,8 @@ section {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    background-color: rgba(0, 0, 0, 0.98);
-    color: #FFF;
+    background-color: var(--surface);
+    color: var(--text);
     display: none;
     padding: 0;
     z-index: 4;
@@ -303,7 +396,7 @@ section {
     overflow: hidden;
 }
 .overlay a {
-    color: #FFF;
+    color: var(--link);
 }
 .overlay p, .overlay h2 {
     margin-top: 20px;
@@ -311,10 +404,6 @@ section {
 }
 .overlay h2 {
     margin-top: 60px;
-}
-/* Every overlay reads white at full strength - it gets read at arm's length */
-.overlay, .overlay .switch-label, .overlay .label-content {
-    color: #FFFFFF;
 }
 /* The cross, fixed so it is still there at the bottom of a long panel */
 .close {
@@ -335,7 +424,7 @@ section {
     content: ' ';
     height: 33px;
     width: 2px;
-    background-color: #FFF;
+    background-color: currentColor;
 }
 .close:before {
     transform: rotate(45deg);
@@ -347,7 +436,7 @@ section {
 .panel-links a {
     display: block;
     width: fit-content;
-    margin: 18px auto;
+    margin: 20px auto;
     padding: 4px 0;
 }
 
@@ -355,7 +444,7 @@ section {
    A group is a fieldset, so a row of radios is announced as the one choice it is */
 .setting-group {
     margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     padding: 0;
     border: 0;
     text-align: center;
@@ -363,7 +452,7 @@ section {
 .setting-group legend {
     margin: 0 auto;
     padding: 0 0 8px;
-    font-size: 16px;
+    font-size: var(--t-md);
 }
 /* flex, so the whitespace between labels can't push the row off centre */
 .setting-group .picker {
@@ -371,7 +460,7 @@ section {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
 }
 .setting-group .picker label {
     margin: 0;
@@ -380,7 +469,51 @@ section {
 .switch-label {
     min-width: 280px;
     display: block;
-    margin: 10px auto;
+    margin: 12px auto;
+}
+/* Under the cog, a list: the name on the left, On or Off and the switch on the
+   right, a hairline between rows, and a run of them rounded at its two ends */
+.overlay .switch-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    min-height: 52px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-top-width: 0;
+    background: var(--surface);
+    text-align: left;
+    cursor: pointer;
+}
+.overlay :not(.switch-label) + .switch-label, .overlay .switch-label:first-child {
+    margin-top: 24px;
+    border-top-width: 1px;
+    border-top-left-radius: var(--r-lg);
+    border-top-right-radius: var(--r-lg);
+}
+.overlay .switch-label:not(:has(+ .switch-label)) {
+    margin-bottom: 24px;
+    border-bottom-left-radius: var(--r-lg);
+    border-bottom-right-radius: var(--r-lg);
+}
+.overlay .switch-label > input {
+    order: 2;
+    flex: 0 0 auto;
+}
+.overlay .switch-label .label-content {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+}
+.overlay .switch-state {
+    margin-left: auto;
+    font-size: var(--t-sm);
+    color: var(--ink-2);
 }
 label .label-content {
     width: 210px;
@@ -402,35 +535,39 @@ input:checked + .label-content .switch-state::after {
 }
 input[type=checkbox]:not(.nice-radios) {
     position: relative;
-    width: 51px;
-    height: 31px;
+    width: 44px;
+    height: 26px;
+    margin: 0;
+    vertical-align: middle;
     -webkit-appearance: none;
     appearance: none;
     background: var(--off);
     outline: none;
     cursor: pointer;
-    border-radius: 20px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: var(--r-pill);
     transition: background 300ms linear;
-    margin-bottom: -10px;
 }
 input[type=checkbox]:not(.nice-radios)::before {
     position: absolute;
     content: "";
-    width: 27px;
-    height: 27px;
+    width: 22px;
+    height: 22px;
     top: 2px;
     left: 2px;
-    border-radius: 20px;
+    border-radius: 50%;
     background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--e1);
     transition: left 300ms;
 }
 input[type=checkbox]:not(.nice-radios):checked {
     background: var(--primary);
 }
 input[type=checkbox]:not(.nice-radios):checked::before {
-    left: 22px;
+    left: 20px;
+}
+input[type=checkbox]:not(.nice-radios):focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
 }
 
 /* Chips: the real radio or checkbox is hidden, its label is what you see */
@@ -452,18 +589,19 @@ input[type="checkbox"].nice-radios {
 .nice-radios:not(:checked) + label {
     position: relative;
     display: inline-block;
-    padding: 8px;
-    font-size: 12px;
-    letter-spacing: 1px;
+    padding: 8px 12px;
+    font-size: var(--t-sm);
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0;
     text-align: center;
-    border-radius: 4px;
-    text-transform: uppercase;
-    color: #FFF;
+    border-radius: var(--r-pill);
+    color: var(--on-accent);
     transition: box-shadow 150ms ease;
-    min-width: 65px;
-    box-sizing: content-box;   /* 65px of label, whatever the padding */
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    min-width: 40px;
+    box-sizing: content-box;   /* 40px of label, whatever the padding */
+    margin-bottom: 12px;
+    box-shadow: var(--e1);
 }
 .nice-radios:checked + label {
     background-color: var(--primary);
@@ -476,7 +614,7 @@ input[type="checkbox"].nice-radios {
 .nice-radios:checked + label:hover,
 .nice-radios:not(:checked) + label:hover,
 [type="radio"]:hover + label {
-    box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: var(--e2);
     cursor: pointer;
     transition: box-shadow 300ms ease;
 }
@@ -498,7 +636,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .nice-radios:checked + .colour-chip {
     background-color: var(--chip);
     color: var(--chip-ink);
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), inset 0 0 0 1px var(--chip-ink);
+    box-shadow: var(--e1), inset 0 0 0 1px var(--chip-ink);
 }
 
 /* ================= Pickers =================
@@ -515,15 +653,11 @@ input[type="checkbox"].nice-radios:checked + label:before {
     width: fit-content;
     max-width: 100%;
     box-sizing: border-box;
-    margin: 0 auto 10px;
+    margin: 0 auto 12px;
     padding: 3px;
-    border-radius: 12px;   /* the chips' 9px plus the padding, so the two curves run parallel */
+    border-radius: 20px;   /* a pill on one row, a rounded panel once it wraps */
     background-color: var(--track);
-    box-shadow: inset 0 0 0 1px var(--track-edge), 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-}
-/* An overlay is black whatever the theme, so its pickers are always the dark ones */
-.overlay .picker:has(> [type="radio"]) {
-    color-scheme: dark;
+    box-shadow: inset 0 0 0 1px var(--track-edge);
 }
 /* out of the flex row, or each hidden radio takes a gap of its own */
 .picker:has(> [type="radio"]) > [type="radio"] {
@@ -532,7 +666,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
 .picker:has(> [type="radio"]) > .nice-radios + label {
     margin: 0;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--r-pill);
     background-color: transparent;
     box-shadow: none;
 }
@@ -546,7 +680,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
     z-index: -1;
     border-radius: inherit;
     background-color: var(--primary);
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: var(--e1);
 }
 .picker:has(> [type="radio"]) > .nice-radios + label:hover {
     box-shadow: none;
@@ -645,7 +779,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     margin-right: 40px;
 }
 .icon-ok, .icon-cancel {
-    font-size: 16px;
+    font-size: var(--t-md);
 }
 
 /* ================= Pop-ups =================
@@ -661,14 +795,15 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     z-index: 5;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     max-width: 266px;
     padding: 8px;
-    border-radius: 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
     background: var(--card);
     color: var(--card-ink);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-    font-size: 14px;
+    box-shadow: var(--e2);
+    font-size: var(--t-sm);
     line-height: 1.25;
     text-align: left;
     cursor: pointer;
@@ -714,16 +849,16 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 .toast {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     min-height: 70px;
-    padding: 11px 10px 12px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 12px 12px 12px 16px;
+    border: 1px solid var(--line);
     border-top: 3px solid var(--confirm);
-    border-radius: 6px;
+    border-radius: var(--r-lg);
     background: var(--card);
     color: var(--card-ink);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-    font-size: 16px;
+    box-shadow: var(--e2);
+    font-size: var(--t-md);
     line-height: 1.35;
     text-align: left;
     transform: translateY(-10px);
@@ -738,8 +873,8 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 .toast-face {
     flex: 0 0 auto;
-    color: #2ecc40;
-    font-size: 20px;
+    color: var(--confirm-ink);
+    font-size: var(--t-lg);
     line-height: 1.2;
 }
 .toast-text {
@@ -749,11 +884,11 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
    the deed and Cancel on a row of their own under the words */
 .toast.warn.danger {   /* over .toast.warn below */
     flex-wrap: wrap;
-    border-color: #e5484d;
-    border-top-color: #e5484d;
+    border-color: var(--danger-ink);
+    border-top-color: var(--danger-ink);
 }
 .toast.warn.danger .toast-face {
-    color: #ff6b6f;
+    color: var(--danger-ink);
 }
 .toast-choices {
     display: flex;
@@ -762,31 +897,33 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     flex-basis: 100%;
 }
 .toast-choices button {
+    min-height: 0;
     margin: 0;
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 8px 16px;
+    font-size: var(--t-sm);
 }
 .toast-choices .toast-confirm {
-    background: #c53030;
-    color: #fff;
+    background: var(--danger);
+    color: var(--on-accent);
 }
 .toast-choices .toast-reject {
     background: transparent;
     color: var(--card-ink);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    border-color: var(--field-edge);
 }
 /* A warning: orange where a toast is green */
 .toast.warn {
     border-top-color: var(--warn);
 }
 .toast.warn .toast-face {
-    color: var(--warn);
+    color: var(--warn-ink);
 }
 .toast-text a {
     color: inherit;
 }
 /* A toast with something to do: the message is the button, underlined */
 .toast-action, .toast-action:hover, .toast-action:focus {
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -801,23 +938,24 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 .toast-close {
     flex: 0 0 auto;
+    min-height: 0;
     margin: -2px 0 0;
     padding: 0 4px;
     border: 0;
-    border-radius: 4px;
+    border-radius: var(--r-sm);
     background: none;
-    color: #b9b9b9;
-    font-size: 20px;
+    color: var(--ink-2);
+    font-size: var(--t-lg);
     line-height: 1.2;
     letter-spacing: 0;
     text-transform: none;
 }
 .toast-close:hover, .toast-close:focus {
     background: none;
-    color: #FFFFFF;
+    color: var(--text);
 }
 .toast-close:focus {
-    outline: 1px solid #b9b9b9;
+    outline: 1px solid var(--ink-2);
     outline-offset: 1px;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -834,18 +972,19 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     position: fixed;
     z-index: 10;
     max-width: 284px;
-    padding: 10px 12px;
-    border-radius: 6px;
+    padding: 12px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
     background: var(--card);
     color: var(--card-ink);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-    font-size: 14px;
+    box-shadow: var(--e2);
+    font-size: var(--t-sm);
     line-height: 1.35;
     text-align: left;
 }
 .comment-pop-stars {
-    margin: 0 0 6px;
-    font-size: 13px;
+    margin: 0 0 8px;
+    font-size: var(--t-sm);
 }
 .comment-pop-text {
     margin: 0;
@@ -863,8 +1002,9 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     display: block;
 }
 .save-title {
-    margin: 42px auto 0;
-    font-size: 16px;
+    margin: 40px auto 0;
+    font-size: var(--t-md);
+    font-weight: 600;
     color: var(--strong);
 }
 .star-holder {
@@ -876,13 +1016,13 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     color: var(--off);
 }
 .icon-star.active {
-    color: #FFD700;
+    color: var(--warn-ink);
 }
 .icon-star:hover {
-    color: #FFED85;
+    color: color-mix(in srgb, var(--warn-ink) 70%, var(--surface));
 }
 .save-session-button {
-    margin-top: 10px;
+    margin-top: 12px;
 }
 /* The note to go with a session, with its count underneath */
 .comment-field {
@@ -890,13 +1030,13 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     width: 100%;
     max-width: var(--column);
     margin: 12px auto 0;
-    padding: 8px 10px;
+    padding: 12px 12px;
     border: 1px solid var(--field-edge);
-    border-radius: 12px;
+    border-radius: var(--r-sm);
     background: var(--field);
     color: var(--field-ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: var(--t-md);   /* 16px or more, or iOS zooms in on it */
     line-height: 1.4;
     resize: vertical;
 }
@@ -909,7 +1049,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 .comment-count {
     margin: 4px auto 0;
-    font-size: 12px;
+    font-size: var(--t-xs);
     opacity: 0.7;
 }
 .comment-count.full {
@@ -921,34 +1061,32 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 /* ================= The activity log =================
    drawSessionLog() in functions.js draws every app's into #log, in the info panel */
 #log {
-    background: rgba(0, 0, 0, 0.98);
     display: block;
     text-align: left;
     padding: 4px 12px;
-    border-radius: 5px;
 }
 #log p {
     margin: 12px auto;
-    font-size: 15px;
+    font-size: var(--t-sm);
     line-height: 1.5;
 }
 #stats {
-    font-size: 14px;
+    font-size: var(--t-sm);
     opacity: 0.8;
 }
 .log-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: var(--t-sm);
     text-align: left;
 }
 .log-table th {
-    padding: 6px 4px;
-    font-size: 11px;
-    font-weight: normal;
-    letter-spacing: 1px;
+    padding: 8px 4px;
+    font-size: var(--t-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    opacity: 0.7;
+    color: var(--ink-2);
 }
 .log-table td {
     padding: 8px 4px;
@@ -956,39 +1094,39 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 /* a faint stripe a row, enough to follow one across on a phone */
 .log-table tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.08);
+    background: light-dark(rgba(16, 24, 40, 0.04), rgba(255, 255, 255, 0.06));
 }
 .log-date {
     white-space: nowrap;
 }
 .log-year {
-    font-size: 12px;
+    font-size: var(--t-xs);
     opacity: 0.7;
 }
 .log-detail {
-    font-size: 13px;
+    font-size: var(--t-sm);
     opacity: 0.8;
 }
 /* A session's own title, if it was given one */
 .log-title {
-    font-size: 13px;
-    font-weight: bold;
+    font-size: var(--t-sm);
+    font-weight: 600;
 }
 .log-rating {
     white-space: nowrap;
-    font-size: 13px;
+    font-size: var(--t-sm);
 }
 .tindeq-mark {
     width: 1.3em;
     height: 1.3em;
-    margin-left: 6px;
+    margin-left: 8px;
     vertical-align: -0.3em;
     color: var(--primary);
 }
 .log-actions {
     white-space: nowrap;
     text-align: right;
-    font-size: 13px;
+    font-size: var(--t-sm);
 }
 .log-table .demo-icon {
     margin: 0 0 0 4px;
@@ -1001,7 +1139,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 /* 13px glyphs padded out to a thumb-sized target, without spreading the rows */
 .log-actions .demo-icon {
     display: inline-block;
-    padding: 12px 9px;
+    padding: 12px 8px;
     margin: -12px 0;
 }
 .log-actions .icon-note {
@@ -1018,13 +1156,14 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     display: inline-block;
     width: 45%;
     margin: 2%;
-    border-radius: 5px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
     background: var(--box);
     height: 120px;
 }
 .box h3 {
     font-size: 28px;
-    margin: 28px 14px;
+    margin: 28px 16px;
 }
 /* Anything that counts, so the digits don't jitter as it runs */
 .tabular {
@@ -1051,6 +1190,7 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     --ink: #111111;
     background: var(--tile);
     color: var(--tile-ink);
+    border: 1px solid var(--line);
 }
 .hold-yellow { --hold: #ffd400; --ink: #1a1600; }
 .hold-white  { --hold: #e8e8e8; --ink: #222222; }
@@ -1077,12 +1217,17 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 /* see flash() in functions.js; after the tile's own hover and focus, which it beats */
 .flash, .flash:hover, .flash:focus {
     background: var(--confirm);
-    color: #ffffff;
+    color: var(--on-accent);
     transform: scale(0.99);
 }
 .route-colour {
-    font-size: 13px;
-    opacity: 0.75;
+    font-size: var(--t-sm);
+    font-weight: 500;
+    color: var(--ink-2);
+}
+.route.ticked .route-colour {
+    color: inherit;
+    opacity: 0.8;
 }
 .route.ticked .tick {
     opacity: 1;
@@ -1093,12 +1238,12 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 .recent-logs {
     max-width: var(--column);
     margin: 8px auto 0;
-    font-size: 14px;
+    font-size: var(--t-sm);
     text-align: center;
 }
 .recent-logs summary {
     display: inline-block;
-    padding: 6px 10px;
+    padding: 8px 12px;
     color: var(--link);
     text-decoration: underline;
     cursor: pointer;
@@ -1123,19 +1268,15 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 }
 
 /* ================= Fields ================= */
-.field, .comment-field {
-    color-scheme: dark;   /* the date and time pickers' icons and pop-ups, on the dark track */
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-}
 .field {
-    height: 36px;
-    padding: 6px 10px;
+    height: 40px;
+    padding: 8px 12px;
     border: 1px solid var(--field-edge);
-    border-radius: 12px;
+    border-radius: var(--r-sm);
     background: var(--field);
     color: var(--field-ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: var(--t-md);   /* 16px or more, or iOS zooms in on it */
 }
 .field:focus {
     outline: 2px solid var(--focus);
@@ -1153,12 +1294,11 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     max-width: 100%;
     margin: 12px auto;
     border: 1px solid var(--field-edge);
-    border-radius: 12px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    border-radius: var(--r-sm);
     overflow: hidden;
 }
 .field-group .field {
-    height: 36px;
+    height: 40px;
     border: 0;
     border-radius: 0;
     box-shadow: none;
@@ -1168,11 +1308,12 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
     border-left: 1px solid var(--field-edge);
 }
 .field-group button {
-    height: 36px;
+    height: 40px;
+    min-height: 0;
     margin: 0;
-    padding: 0 1rem;
+    padding: 0 16px;
     border-radius: 0;
-    font-size: 0.9rem;
+    font-size: var(--t-sm);
 }
 .field-colour {
     width: 52px;
@@ -1189,13 +1330,14 @@ nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon
 .field-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
     align-items: center;
 }
 .field-row button {
+    min-height: 40px;
     margin: 0;
-    padding: 0.5rem 1rem;
+    padding: 8px 16px;
 }
 
 /* ================= The countdown =================
@@ -1219,13 +1361,13 @@ body.red, body.orange, body.yellow {
 /* A narrow phone, or a zoomed-in screen: shrink things, never rearrange them */
 @media (max-width: 380px) {
     h3 {
-        font-size: 46px;
+        font-size: 48px;
     }
     h1 {
-        font-size: 18px;
+        font-size: var(--t-md);
     }
     nav {
-        font-size: 14px;
+        font-size: var(--t-sm);
         height: 52px;
         padding: 6px 6px 0 3px;
     }
@@ -1233,18 +1375,17 @@ body.red, body.orange, body.yellow {
         width: 80px;
     }
     button {
-        font-size: 16px;
-        padding: 0.8rem 1.2rem;
+        padding: 12px 16px;
         margin-right: 8px;
     }
     .overlay {
-        font-size: 14px;
+        font-size: var(--t-sm);
     }
     .box {
         height: 110px;
     }
     .box h3 {
-        font-size: 24px;
+        font-size: var(--t-xl);
         margin: 24px 8px;
     }
     .log-rating {
@@ -1265,9 +1406,9 @@ body.red, body.orange, body.yellow {
     height: calc(58px + env(safe-area-inset-bottom));
     padding: 0 0 env(safe-area-inset-bottom);
     background: var(--nav);
-    border-top: 1px solid #333;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     border-bottom: 0;
-    font-size: 11px;
+    font-size: var(--t-xs);
 }
 .bottom-nav-item {
     flex: 1 1 0;
@@ -1276,19 +1417,19 @@ body.red, body.orange, body.yellow {
     align-items: center;
     justify-content: center;
     gap: 3px;
-    color: #FFFFFF;
+    color: var(--nav-ink);
     text-decoration: none;
-    font-size: 11px;
+    font-size: var(--t-xs);
     letter-spacing: 0.5px;
 }
 .bottom-nav-item.current {
-    color: #8FC2FF;
+    color: var(--nav-current);
 }
 a.bottom-nav-item:hover, a.bottom-nav-item:focus {
-    color: #C4DEFF;
+    color: var(--nav-hover);
 }
 a.bottom-nav-item:focus-visible {
-    outline: 2px solid #8FC2FF;
+    outline: 2px solid var(--nav-current);
     outline-offset: -4px;
 }
 /* as specific as the nav icon rules above, which would float it */
@@ -1298,7 +1439,7 @@ a.bottom-nav-item:focus-visible {
     width: auto;
     margin: 0;
     padding: 0;
-    font-size: 20px;
+    font-size: var(--t-lg);
     line-height: 22px;
 }
 .bottom-nav .bottom-nav-icon:before {
@@ -1319,7 +1460,7 @@ a.bottom-nav-item:focus-visible {
     justify-content: center;
     gap: 8px;
     margin: 0;
-    font-size: 18px;
+    font-size: var(--t-md);
 }
 .status-dot {
     width: 12px;
@@ -1332,7 +1473,7 @@ a.bottom-nav-item:focus-visible {
     animation: status-pulse 1s ease-in-out infinite alternate;
 }
 [data-status="connected"] .status-dot {
-    background: #4cd964;
+    background: var(--confirm-ink);
 }
 @keyframes status-pulse {
     to { opacity: 0.3; }
@@ -1343,46 +1484,46 @@ a.bottom-nav-item:focus-visible {
     }
 }
 .device-detail, .device-error {
-    margin: 6px 0 0;
-    font-size: 14px;
+    margin: 8px 0 0;
+    font-size: var(--t-sm);
 }
 .device-error {
-    color: #ff8a80;
+    color: var(--danger-ink);
 }
 .device-buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
 }
 .device-buttons button {
     margin-top: 12px;
 }
 .device-steps {
     margin: 16px auto 0;
-    padding-left: 22px;
+    padding-left: 24px;
     max-width: 320px;
     text-align: left;
-    font-size: 15px;
+    font-size: var(--t-sm);
     line-height: 1.5;
 }
 .device-tips {
-    margin: 10px auto 0;
+    margin: 12px auto 0;
     max-width: 320px;
-    font-size: 14px;
+    font-size: var(--t-sm);
     text-align: left;
     opacity: 0.8;
 }
 
 /* The watch, switched on under the cog - see common/watch.js */
 .watch-bar {
-    margin-top: 10px;
+    margin-top: 12px;
 }
 /* its connection as a switch, the status its label */
 .watch-line {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 16px;
 }
 .watch-line .switch-label {
     min-width: 0;
@@ -1396,14 +1537,14 @@ a.bottom-nav-item:focus-visible {
 .watch-help {
     max-width: 320px;
     margin: 12px auto 0;
-    padding: 4px 14px 12px;
-    border: 1px solid var(--off);
-    border-radius: 8px;
+    padding: 4px 16px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
     text-align: center;
 }
 .watch-help p {
     margin: 8px 0 0;
-    font-size: 15px;
+    font-size: var(--t-sm);
     line-height: 1.5;
 }
 #watchSupported {
