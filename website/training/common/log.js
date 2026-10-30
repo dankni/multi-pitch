@@ -48,6 +48,9 @@ function openSession(){
     showState("running");
     document.getElementById("sessionDate").value = session.date;
     document.getElementById("saveSession").innerText = session.editing ? "UPDATE SESSION" : "SAVE SESSION";
+    // a reopened session shows its start and finish from the off, to put right - or put in, if it has none
+    document.body.toggleAttribute("data-editing", session.editing === true);
+    if(app.timed && session.editing){ drawSessionTimes(); }
     disarmReset();
     openHeart();   // common/heartrate.js
     if(app.onOpen){ app.onOpen(); }
@@ -72,6 +75,7 @@ function closeSession(){
     forgetHeart();
     resetSavePanel();
     keepSession();
+    document.body.removeAttribute("data-editing");
     showState("idle");
     releaseWakeLock();
 }

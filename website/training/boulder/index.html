@@ -144,7 +144,17 @@
 		<label class="switch-label">
 			<input type="checkbox" data-change="toggleBoulderworld" id="boulderworld"/>
 			<span class="label-content">
-				Boulderworld Belfast <span class="switch-state"></span>
+				<!-- Boulderworld's planet: its ring tilted across it, the back of the ring hidden behind -->
+				<svg class="toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+					<mask id="boulderworldRingBack"><rect width="16" height="16" fill="#fff"/><circle cx="8" cy="8" r="4.6" fill="#000"/></mask>
+					<g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+						<circle cx="8" cy="8" r="4.2"/>
+						<g transform="rotate(-38 8 8)">
+							<path d="M1,8 A7,1.9 0 0 1 15,8" mask="url(#boulderworldRingBack)"/>
+							<path d="M1,8 A7,1.9 0 0 0 15,8"/>
+						</g>
+					</g>
+				</svg> Boulderworld Belfast <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">

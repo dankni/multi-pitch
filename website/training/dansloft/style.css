@@ -4,22 +4,7 @@
     display: grid;
     gap: 8px;
 }
-.loft-row .grade-add, .loft-row .grade-add:hover, .loft-row .grade-add:focus {
-    box-shadow: none;
-}
-/* the route's hold colours down the inside edge, the same climbed or not, with a
-   hairline so white and black show on a tile of either theme */
-.loft-row .grade-add::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 6px;
-    border-radius: calc(var(--r-md) - 1px) 0 0 calc(var(--r-md) - 1px);
-    background: var(--holds);
-    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.6);
-}
+/* the route's hold colours are its stripe, the same climbed or not - see .loft-row in common/log.css */
 .route-info {
     flex: 0 0 auto;
     width: 42px;

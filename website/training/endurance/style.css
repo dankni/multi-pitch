@@ -62,19 +62,21 @@ body:not([data-state="idle"]) #discard {
     justify-content: center;
     min-height: 64px;
     margin: 0 0 8px;
-    padding: 12px 40px 12px 12px;
-    border-left: 10px solid var(--hold);
+    padding: 12px 40px 12px 20px;
     border-radius: var(--r-md);
+    /* the hold colour as a stripe down the inside edge, curved with the corners as the gym's grades are */
+    --stripe: 8px;
+    box-shadow: inset var(--stripe) 0 0 var(--hold);
     font-family: 'Hind', sans-serif;
     font-size: var(--t-sm);
     letter-spacing: 0;
     text-align: left;
     text-transform: none;
 }
-/* With the Gilford wall off there is no hold colour, so a ticked climb takes the blue */
+/* With the Gilford wall off there is no hold colour: the stripe is the grade's
+   band instead (gradeBands in common/grades.js), and a ticked climb takes the blue */
 .route.plain {
-    border-left-color: transparent;
-    padding-left: 24px;
+    --hold: var(--c, transparent);
 }
 .route.plain .route-grade {
     font-size: var(--t-xl);
@@ -82,7 +84,6 @@ body:not([data-state="idle"]) #discard {
 .route.plain.ticked {
     background: var(--primary);
     color: var(--on-accent);
-    border-left-color: #00397f;
     box-shadow: none;
 }
 .route-grade {

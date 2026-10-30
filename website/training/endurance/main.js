@@ -368,7 +368,7 @@ function drawClimbs(){
         let detail = [laps ? `Lap ${index + 1}` : null, onWall ? `${climb.colour} &middot; panel ${climb.section}` : null]
             .filter(part => part !== null).join(" &middot; ");
         return `<button type="button" id="climb${index}" data-action="toggleClimb" data-index="${index}"
-            class="route ${onWall ? "hold-" + climb.colour.toLowerCase() : "plain"}${ticked ? " ticked" : ""}"
+            class="route ${onWall ? "hold-" + climb.colour.toLowerCase() : "plain " + gradeBands.sport(climb.grade).cls}${ticked ? " ticked" : ""}"
             aria-pressed="${ticked}"
             aria-label="${laps ? `Lap ${index + 1}, ` : ""}${onWall ? `${climb.colour} ${climb.grade}, panel ${climb.section}` : climb.grade}">
             ${detail === "" ? "" : `<span class="route-colour">${detail}</span>`}

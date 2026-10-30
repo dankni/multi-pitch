@@ -40,7 +40,7 @@
     font-size: var(--t-sm);
     margin-right: 8px;
 }
-/* Started and finished, once there is a finish to show */
+/* Started and finished, once there is a finish to show - or from the off in a reopened session */
 .session-times {
     display: none;
     flex-wrap: wrap;
@@ -49,7 +49,8 @@
     gap: 8px 16px;
     margin-top: 12px;
 }
-[data-state="saving"] .session-times {
+[data-state="saving"] .session-times,
+[data-editing] .session-times {
     display: flex;
 }
 #sessionBar .session-times label {
@@ -101,7 +102,7 @@
     justify-content: center;
     min-height: 56px;
     margin: 0;
-    padding: 8px 40px 8px 16px;
+    padding: 8px 40px 8px 20px;
     border-radius: var(--r-md);
     font-family: 'Hind', sans-serif;
     font-size: var(--t-sm);
@@ -115,31 +116,57 @@
     font-weight: 600;
     line-height: 1.1;
 }
-/* band colour as a stripe down the inside edge, faint until climbed; blue if the ladder has no bands */
+/* band colour as a stripe down the inside edge, faint until climbed; blue if the ladder has no bands.
+   An inset shadow, so its inner edge follows the tile's rounded corners. */
+.grade-add {
+    --stripe: 8px;
+}
 .grade-add, .grade-add:hover, .grade-add:focus {
-    box-shadow: inset 6px 0 0 color-mix(in srgb, var(--c, transparent) 35%, transparent);
+    box-shadow: inset var(--stripe) 0 0 color-mix(in srgb, var(--c, transparent) 35%, transparent);
 }
 .grade-row.done .grade-add {
-    box-shadow: inset 6px 0 0 var(--c, var(--primary));
+    box-shadow: inset var(--stripe) 0 0 var(--c, var(--primary));
 }
-/* A gym's hold colours (the gym session's Boulderworld Belfast): the colour of
-   the circuit itself, so the same climbed or not, softened into the tile, as a
-   strip down the inside edge that can be two colours (--circuit, then --circuit-low),
-   with a hairline so white and black show on a tile of either theme */
-.grade-row.hold .grade-add {
+/* A stripe that can be more than one colour - a gym's circuit colours (the gym
+   session's Boulderworld Belfast, --circuit then --circuit-low, softened into the
+   tile), a loft route's holds: --stripe-fill fills the left of the tile, under a
+   copy of the tile's own background set in by --stripe with the same rounded
+   corners, so what shows has a band's curved inner edge. A hairline along that
+   edge lets white and black show on a tile of either theme. */
+.grade-row.hold .grade-add, .grade-row.hold .grade-add:hover, .grade-row.hold .grade-add:focus,
+.loft-row .grade-add, .loft-row .grade-add:hover, .loft-row .grade-add:focus {
     box-shadow: none;
+    isolation: isolate;   /* the two layers below sit under the tile's text, not under the page */
 }
-.grade-row.hold .grade-add::before {
+.grade-row.hold .grade-add::before, .loft-row .grade-add::before,
+.grade-row.hold .grade-add::after, .loft-row .grade-add::after {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
+    pointer-events: none;
+}
+.grade-row.hold .grade-add::before, .loft-row .grade-add::before {
     left: 0;
-    width: 6px;
+    width: calc(var(--stripe) + var(--r-md));
+    z-index: -2;
     border-radius: calc(var(--r-md) - 1px) 0 0 calc(var(--r-md) - 1px);
-    background: linear-gradient(color-mix(in srgb, var(--circuit) 60%, var(--tile)) 50%,
-                                color-mix(in srgb, var(--circuit-low, var(--circuit)) 60%, var(--tile)) 50%);
-    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.6);
+    background: var(--stripe-fill);
+}
+.grade-row.hold .grade-add::after, .loft-row .grade-add::after {
+    left: var(--stripe);
+    right: 0;
+    z-index: -1;
+    border-radius: calc(var(--r-md) - 1px);
+    background: inherit;   /* the tile's, hovered or flashed as it is */
+    box-shadow: -1px 0 0 rgba(128, 128, 128, 0.6);
+}
+.grade-row.hold {
+    --stripe-fill: linear-gradient(color-mix(in srgb, var(--circuit) 60%, var(--tile)) 50%,
+                                   color-mix(in srgb, var(--circuit-low, var(--circuit)) 60%, var(--tile)) 50%);
+}
+.loft-row {
+    --stripe-fill: var(--holds);
 }
 /* the hold colours of common/style.css, under a name of their own, as a .route
    tile sets its own --hold */
@@ -189,7 +216,7 @@
     }
     .grade-add {
         font-size: var(--t-sm);
-        padding: 8px 32px 8px 12px;
+        padding: 8px 32px 8px 16px;
     }
     .grade-row .route-grade {
         font-size: var(--t-md);

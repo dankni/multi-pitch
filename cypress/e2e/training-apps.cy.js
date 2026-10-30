@@ -2627,15 +2627,43 @@ describe('Training apps', function () {
                 expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0].minutes).to.equal(135);
             });
             cy.get('#log .icon-wrench').click();
-            cy.get('#finishButton').click();
-            cy.get('#sessionStart').should('have.value', '10:00');
+            // reopened, they are there to put right straight away, not only at FINISH
+            cy.get('#sessionBar #sessionStart').should('be.visible').and('have.value', '10:00');
             cy.get('#sessionFinish').should('have.value', '12:15');
+            cy.get('#sessionLengthShown').should('have.text', '2h 15m');
+            cy.get('#sessionStart').invoke('val', '10:30').trigger('change');
+            cy.get('#finishButton').click();
+            cy.get('#sessionStart').should('have.value', '10:30');
+            cy.get('#sessionStart').invoke('val', '10:00').trigger('change');
             cy.get('#sessionFinish').invoke('val', '09:30').trigger('change');   // before the start: the next morning
             cy.get('#sessionLengthShown').should('have.text', '23h 30m');
             cy.get('#sessionFinish').invoke('val', '13:00').trigger('change');
             cy.get('#saveSession').click();
             cy.window().then((win) => {
                 expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0].minutes).to.equal(180);
+            });
+        });
+
+        it('takes a start and finish for a reopened session that was saved without them', () => {
+            cy.visit(boulderUrl, {
+                onBeforeLoad(win) {
+                    win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-01', climbs: ['V3'], sport: [], rating: 0 }]));
+                }
+            });
+            cy.get('[data-action="openInfoBox"]').click();
+            cy.get('#log .icon-wrench').click();
+            cy.get('#sessionStart').should('be.visible').and('have.value', '');
+            cy.get('#sessionFinish').should('have.value', '');
+            cy.get('#sessionStart').invoke('val', '18:00').trigger('change');
+            cy.get('#sessionFinish').invoke('val', '19:45').trigger('change');
+            cy.get('#sessionLengthShown').should('have.text', '1h 45m');
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.get('#sessionStart').should('not.be.visible');   // gone with the session
+            cy.window().then((win) => {
+                let saved = JSON.parse(win.localStorage.getItem('boulderLog'))[0];
+                expect(saved.minutes).to.equal(105);
+                expect(saved.start).to.equal(Date.parse('2026-09-01T18:00'));
             });
         });
 
@@ -2936,6 +2964,15 @@ describe('Training apps', function () {
                 expect(saved.climbs).to.equal(16);
                 expect(saved.grades).to.have.length(16);
                 saved.grades.forEach((grade) => expect(grade).to.match(/^[4-7][abc]?\+?$/));
+            });
+        });
+
+        it('marks each climb with its grade band when the Gilford wall is off', () => {
+            cy.visit(enduranceUrl, { onBeforeLoad: (win) => win.localStorage.setItem('enduranceWall', 'false') });
+            cy.get('#primaryButton').click();
+            cy.get('#climbs .route').each(($climb) => {
+                expect($climb).to.have.class('plain');
+                expect($climb.attr('class')).to.match(/\bband-(easy|medium|hard|vhard)\b/);
             });
         });
 
