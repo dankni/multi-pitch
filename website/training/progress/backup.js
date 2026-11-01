@@ -14,7 +14,7 @@ const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "
 // stored as the apps wrote them, strings and all
 const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "enduranceWall", "enduranceRest",
     "enduranceGrade", "enduranceStyle", "lapTimerGrade", "colours", "tradMode", "difficulty", "gapsMaxPull", "gapsClimber", "tabataSettings", "tabataOneSecond", "tabataRepeaterMode", "tabataRepeaters", "tabataRoutines",
-    "preventSleep", "overviewRange", "progressHidden", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingTheme", "dansLoftDraft"];
+    "preventSleep", "overviewRange", "progressHidden", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingRemovedApps", "trainingTheme", "dansLoftDraft"];
 
 function backupData(){
     let data = { "backup" : backupFormat, "version" : 1, "saved" : today(), "logs" : {}, "settings" : {} };

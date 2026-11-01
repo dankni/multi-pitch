@@ -163,7 +163,7 @@
             box-shadow: var(--e2);
         }
         .reordering .app-card {
-            padding-right: 56px;
+            padding-right: 100px;
             cursor: default;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -186,6 +186,16 @@
         .apps .dragging .drag-handle {
             cursor: grabbing;
         }
+        .apps .remove-app {
+            position: absolute;
+            top: 0;
+            right: 52px;
+            bottom: 0;
+            width: 44px;
+            margin: 0;
+            font-size: var(--t-lg);
+            color: var(--ink-2);
+        }
         /* held above the bottom nav while the list scrolls under it */
         .save-order {
             position: sticky;
@@ -207,6 +217,29 @@
         }
         .save-order[hidden] {
             display: none;
+        }
+        .removed-apps {
+            margin: 24px auto;
+            text-align: center;
+        }
+        .removed-apps summary {
+            display: inline-block;
+            padding: 8px 12px;
+            color: var(--link);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .removed-apps summary::-webkit-details-marker {
+            display: none;
+        }
+        .removed-apps ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .removed-apps .link-button {
+            padding: 8px 12px;
+            color: var(--link);
         }
         .hidden-app-field {
             display: block;
@@ -412,7 +445,7 @@
         <h2>About</h2>
         <p>
             I made this as a simple tool to track my climbing progress.
-            It will be free forever for anyone to use. 
+            It will be <strong>free forever for anyone</strong> to use. 
             All the tools run in the browser, work offline once 
             loaded and keep everything on your own device using local storage. 
             You can also save them to your phone's homescreen and they will load offline. 
@@ -445,6 +478,10 @@
         </label>
         <input type="text" class="field hidden-app-field" id="hiddenApp" placeholder="Add a hidden App" aria-label="Add a hidden App"
             autocomplete="off" autocapitalize="off" spellcheck="false" data-input="addHiddenApp" data-change="noHiddenApp" />
+        <details class="removed-apps" id="removedApps" hidden>
+            <summary>Add removed apps</summary>
+            <ul id="removedAppList"></ul>
+        </details>
         <button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
     </aside>
 
@@ -536,6 +573,7 @@
         localStorage.setItem(hiddenAppsKey, JSON.stringify(addedHiddenApps().concat(key)));
         drawHiddenApp(key);
         applyAppOrder();
+        applyRemovedApps();
         toast(hiddenApps[key].name + " added to your apps");
     }
 
@@ -562,6 +600,8 @@
 
     const appList = document.querySelector(".apps");
 
+    const removedAppsKey = "trainingRemovedApps";
+
     function appCards(){
         return [...appList.children];
     }
@@ -587,6 +627,45 @@
         placed.concat(cards.filter(card => !placed.includes(card))).forEach(card => appList.appendChild(card));
     }
 
+    // removed cards stay in the list, hidden, so they keep their place in the order
+    function removedApps(){
+        try {
+            let removed = JSON.parse(localStorage.getItem(removedAppsKey));
+            return Array.isArray(removed) ? removed : [];
+        } catch(err){
+            return [];
+        }
+    }
+
+    function applyRemovedApps(){
+        let removed = removedApps();
+        let list = document.getElementById("removedAppList");
+        list.innerHTML = "";
+        appCards().forEach(card => {
+            card.hidden = removed.includes(appCardKey(card));
+            if(!card.hidden){ return; }
+            let item = document.createElement("li");
+            item.innerHTML = `<button type="button" class="link-button" data-action="restoreApp"></button>`;
+            item.firstChild.dataset.app = appCardKey(card);
+            item.firstChild.textContent = card.querySelector("h2").textContent;
+            list.appendChild(item);
+        });
+        document.getElementById("removedApps").hidden = list.children.length === 0;
+    }
+
+    function removeApp(button){
+        let key = appCardKey(button.closest("li"));
+        confirmToast("Are you sure? Removed apps can be re-added using the cog", "REMOVE", () => {
+            localStorage.setItem(removedAppsKey, JSON.stringify(removedApps().filter(other => other !== key).concat(key)));
+            applyRemovedApps();
+        });
+    }
+
+    function restoreApp(button){
+        localStorage.setItem(removedAppsKey, JSON.stringify(removedApps().filter(key => key !== button.dataset.app)));
+        applyRemovedApps();
+    }
+
     function reordering(){
         return document.body.classList.contains("reordering");
     }
@@ -595,7 +674,8 @@
         if(reordering()){ return; }
         document.body.classList.add("reordering");
         appCards().forEach(card => card.insertAdjacentHTML("beforeend",
-            `<button type="button" class="icon-button demo-icon icon-menu drag-handle" aria-label="Move ${card.querySelector("h2").textContent}"></button>`));
+            `<button type="button" class="icon-button demo-icon icon-cancel remove-app" data-action="removeApp" aria-label="Remove ${card.querySelector("h2").textContent}"></button>
+            <button type="button" class="icon-button demo-icon icon-menu drag-handle" aria-label="Move ${card.querySelector("h2").textContent}"></button>`));
         document.getElementById("saveOrder").hidden = false;
         haptic();
     }
@@ -603,7 +683,7 @@
     function saveAppOrder(){
         localStorage.setItem(appOrderKey, JSON.stringify(appCards().map(appCardKey)));
         document.body.classList.remove("reordering");
-        appList.querySelectorAll(".drag-handle").forEach(handle => handle.remove());
+        appList.querySelectorAll(".drag-handle, .remove-app").forEach(button => button.remove());
         document.getElementById("saveOrder").hidden = true;
     }
 
@@ -684,14 +764,17 @@
         let handle = event.target.closest(".drag-handle");
         if(handle === null){ return; }
         let card = handle.closest("li");
-        if(event.key === "ArrowUp" && card.previousElementSibling !== null){ card.previousElementSibling.before(card); }
-        else if(event.key === "ArrowDown" && card.nextElementSibling !== null){ card.nextElementSibling.after(card); }
+        let shown = appCards().filter(other => !other.hidden);
+        let at = shown.indexOf(card);
+        if(event.key === "ArrowUp" && at > 0){ shown[at - 1].before(card); }
+        else if(event.key === "ArrowDown" && at < shown.length - 1){ shown[at + 1].after(card); }
         else { return; }
         event.preventDefault();
         handle.focus();
     });
 
     applyAppOrder();
+    applyRemovedApps();
     </script>
   </body>
 </html>

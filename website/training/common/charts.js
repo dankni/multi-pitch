@@ -111,10 +111,10 @@ function sportColumns(present){
     return columns.concat(offLadder);
 }
 
-// V0 to V8 always, and on up to the hardest one climbed
+// V0 to V8 always, and on up to the hardest one climbed; VB once climbed
 function boulderColumns(present){
     let hardest = present.reduce((max, grade) => Math.max(max, boulderRung(grade)), 8);
-    let columns = [];
+    let columns = present.includes("VB") ? ["VB"] : [];
     for(let rung = 0; rung <= hardest; rung++){ columns.push("V" + rung); }
     return columns;
 }
@@ -150,7 +150,7 @@ function entryClimbs(logKey, entry){
     } else if(logKey === "enduranceLog"){
         list(entry.grades).forEach(grade => { if(typeof grade === "string"){ add("sport", grade); } });
     } else if(logKey === "boulderLog"){
-        list(entry.climbs).forEach(grade => { if(boulderRung(grade) !== -1){ add("boulder", grade); } });
+        list(entry.climbs).forEach(grade => { if(grade === "VB" || boulderRung(grade) !== -1){ add("boulder", grade); } });
         list(entry.sport).forEach(tapped => {
             if(typeof tapped === "string" && typeof ukc !== "undefined"){ add("sport", ukc.sportGrade(tapped)); }
         });

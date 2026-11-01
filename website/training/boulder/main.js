@@ -5,8 +5,10 @@
    Boulders are in `climbs`, as they were before sport was added, so older
    sessions and the progress charts that read them are unchanged. */
 
-// The bouldering ladder: V, Font and British, from common/grades.js
-const grades = boulderGradeTable;
+// The bouldering ladder: V, Font and British, from common/grades.js, with VB
+// below V0 while low grades are split out
+const grades = [{ "v" : "VB", "font" : "f3", "brit" : "3c" }].concat(boulderGradeTable);
+const boulderOrder = grades.map(grade => grade.v);
 
 // The sport ladder, from common/grades.js: 4 to 5+, or 4a to 5c once split out,
 // and 6a up with or without the plus grades
@@ -18,6 +20,13 @@ function splitLowGrades(){
 }
 function plusGrades(){
     return localStorage.getItem(plusKey) === "true";
+}
+function boulderGrades(){
+    return splitLowGrades() ? boulderOrder : boulderOrder.slice(1);
+}
+// V0 to V10 to start with
+function boulderStarts(){
+    return boulderGrades().indexOf("V10") + 1;
 }
 function sportGrades(){
     return (splitLowGrades() ? gymSportLowSplit : gymSportLow).concat(plusGrades() ? gymSportHigherPlus : gymSportHigher);
@@ -31,7 +40,7 @@ function sportStarts(){
    cog, each V grade's tile wears its circuit's colour - V0 both of its two, and
    V7 up pink - in place of the easy to very hard bands */
 const boulderworldKey = "boulderBoulderworld";
-const boulderworldHolds = { "V0" : "orange-blue", "V1" : "white", "V2" : "green", "V3" : "yellow", "V4" : "purple", "V5" : "red", "V6" : "black" };
+const boulderworldHolds = { "VB" : "orange-blue", "V0" : "orange-blue", "V1" : "white", "V2" : "green", "V3" : "yellow", "V4" : "purple", "V5" : "red", "V6" : "black" };
 
 function boulderworld(){
     return localStorage.getItem(boulderworldKey) === "true";
@@ -54,8 +63,9 @@ const app = {
     // V0 to V10 and 4 to 7c to start with, as far as V17 and 9c. The sport
     // ladder's order says which of 4+ and 4c is harder, whichever are on it.
     "ladders" : {
-        "boulder" : { "list" : "climbs", "shown" : "shown",      "names" : grades.map(grade => grade.v),
-                      "starts" : 11, "noun" : "boulder", "title" : "Bouldering", "band" : boulderBand() },
+        "boulder" : { "list" : "climbs", "shown" : "shown",      "names" : boulderGrades(),
+                      "order" : boulderOrder, "starts" : boulderStarts(), "noun" : "boulder", "title" : "Bouldering",
+                      "band" : boulderBand() },
         "sport"   : { "list" : "sport",  "shown" : "sportShown", "names" : sportGrades(),
                       "order" : gymSportOrder, "starts" : sportStarts(), "noun" : "sport climb", "title" : "Sport",
                       "band" : gradeBands.sport }
@@ -107,6 +117,7 @@ const app = {
    grades as tapped, and the ladder on show still reaches the grade it did. */
 function toggleSplitLow(input){
     localStorage.setItem(splitKey, input.checked);
+    rebuildBoulderLadder();
     rebuildSportLadder();
 }
 
@@ -121,6 +132,16 @@ function toggleBoulderworld(input){
     if(session !== null){
         keepSession();   // for the watch, which wears the same colours
         drawGrades();
+    }
+}
+
+function rebuildBoulderLadder(){
+    let boulder = app.ladders.boulder;
+    let reach = boulderOrder.indexOf(boulder.names[shownGrades("boulder") - 1]);
+    boulder.names = boulderGrades();
+    boulder.starts = boulderStarts();
+    if(session !== null){
+        session.shown = boulder.names.filter(grade => boulderOrder.indexOf(grade) <= reach).length;
     }
 }
 

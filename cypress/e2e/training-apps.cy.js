@@ -653,37 +653,23 @@ describe('Training apps', function () {
             cy.get('.toast').should('not.exist');
         });
 
-        it('only offers reset while the session is paused', () => {
+        // the two tap reset is common/functions.js's, tested in full on the lap timer
+        it('offers reset only while paused, disarms it after a few seconds, and clears the session on a second tap', () => {
             visitLoft();
             startAndCountIn();
             cy.get('#reset').should('not.be.visible');
-            cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#reset').should('be.visible');
-        });
-
-        it('keeps the session on the first reset tap and clears it on the second', () => {
-            visitLoft();
-            startAndCountIn();
             cy.get('#elapsed').should('not.have.text', '00:00');
             cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#reset').click();
+            cy.get('#reset').should('be.visible').click();
             cy.get('#reset').should('contain', 'SURE?');
-            cy.get('#elapsed').should('not.have.text', '00:00'); // nothing lost yet
+            cy.tick(4000);
+            cy.get('#reset').should('contain', 'RESET');
+            cy.get('#elapsed').should('not.have.text', '00:00'); // nothing lost
+            cy.get('#reset').click();
             cy.get('#reset').click();
             cy.get('#elapsed').should('have.text', '00:00');
             cy.get('#moves').should('have.text', '0');
             cy.get('#primaryButton').should('contain', 'START');
-        });
-
-        it('disarms reset after a few seconds without a second tap', () => {
-            visitLoft();
-            startAndCountIn();
-            cy.get('#primaryButton').click(); // PAUSE
-            cy.get('#reset').click();
-            cy.get('#reset').should('contain', 'SURE?');
-            cy.tick(4000);
-            cy.get('#reset').should('contain', 'RESET');
-            cy.get('#elapsed').should('not.have.text', '00:00');
         });
     });
 
@@ -1313,7 +1299,15 @@ describe('Training apps', function () {
             play(30000);
             gameIs('running');
             cy.window().then((win) => expect(win.eval('game.restLeft')).to.be.within(25, 35));
-            play(1500000);
+            // on to the foot of the last hang, the pull still held, rather than playing 25 minutes through
+            cy.window().then((win) => win.eval(`
+                game.x = 1e6;
+                extendCourse();
+                game.next = game.cleared = game.hangs.length - 1;
+                game.restLeft = 0;
+                game.y = game.high = game.walls[game.next].base;
+                game.x = game.walls[game.next].edge - 1;`));
+            play(12000);
             stateIs('over');
             cy.get('.over h2').should('have.text', 'Routine done');
             cy.get('#timer').should('have.text', '100% · 0:00 left');
@@ -2216,6 +2210,25 @@ describe('Training apps', function () {
             cy.get('#row-V3').should('have.class', 'band-medium').and('not.have.class', 'hold');
         });
 
+        it('puts VB below V0 while low grades are split out', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#grades .route-grade').first().should('have.text', 'VB');
+            cy.get('#grades .route-grade').last().should('have.text', 'V10');
+            cy.get('#row-VB').should('have.class', 'band-easy');
+            cy.get('#boulderworld').check({ force: true });
+            cy.get('#row-VB').should('have.class', 'hold-orange-blue');
+            cy.get('#row-VB .grade-add').click();
+            cy.get('#summary').should('contain', 'VB');
+            cy.get('#splitLow').uncheck({ force: true });
+            cy.get('#row-VB').should('not.exist');
+            cy.get('#grades .route-grade').first().should('have.text', 'V0');
+            cy.get('#grades .route-grade').last().should('have.text', 'V10');
+            cy.get('#splitLow').check({ force: true });
+            cy.get('#grades .route-grade').first().should('have.text', 'VB');
+            cy.get('#row-VB .grade-count').should('have.text', '1');
+        });
+
         it('shows the last three taps and how long ago behind Show recent logs', () => {
             cy.visit(boulderUrl);
             cy.get('#primaryButton').click();
@@ -2746,8 +2759,8 @@ describe('Training apps', function () {
                     let state = lastState(win);
                     expect(state).to.include({ s: 'running', l: 'boulder' });
                     expect(state.L.map((ladder) => ladder.n)).to.deep.equal(['Bouldering', 'Sport']);
-                    expect(state.L[0].r).to.have.length(11);
-                    expect(state.L[0].r[3]).to.deep.equal(['V3', 'V3', 0, '#eda100', '#000']);   // in the medium band's colour
+                    expect(state.L[0].r).to.have.length(12);   // VB to V10
+                    expect(state.L[0].r[4]).to.deep.equal(['V3', 'V3', 0, '#eda100', '#000']);   // in the medium band's colour
                 });
                 // help, under the setting, with the battery asked for as it connected
                 cy.get('#watchHelpButton').should('not.exist');
@@ -2764,10 +2777,10 @@ describe('Training apps', function () {
 
                 // named as the phone names them
                 cy.get('#system-font').check({ force: true });
-                cy.window().should((win) => expect(lastState(win).L[0].r[3].slice(0, 3)).to.deep.equal(['V3', 'f6A', 0]));
+                cy.window().should((win) => expect(lastState(win).L[0].r[4].slice(0, 3)).to.deep.equal(['V3', 'f6A', 0]));
                 // and the Boulderworld circuit's, when that is on
                 cy.get('#boulderworld').check({ force: true });
-                cy.window().should((win) => expect(lastState(win).L[0].r[3].slice(3)).to.deep.equal(['#ffd400', '#000']));
+                cy.window().should((win) => expect(lastState(win).L[0].r[4].slice(3)).to.deep.equal(['#ffd400', '#000']));
             });
 
             it('ticks, takes back and switches ladder from the watch, and finishes there', () => {
@@ -2776,7 +2789,7 @@ describe('Training apps', function () {
                 cy.window().then((win) => { win.watchSays({ t: 'add', g: 'V3' }); win.watchSays({ t: 'add', g: 'V3' }); win.watchSays({ t: 'add', g: 'V5' }); });
                 cy.get('#row-V3 .grade-count').should('have.text', '2');
                 cy.get('#climbCount').should('have.text', '3');
-                cy.window().should((win) => expect(lastState(win).L[0].r[5].slice(0, 3)).to.deep.equal(['V5', 'V5', 1]));
+                cy.window().should((win) => expect(lastState(win).L[0].r[6].slice(0, 3)).to.deep.equal(['V5', 'V5', 1]));
                 cy.window().then((win) => win.watchSays({ t: 'undo', g: 'V5' }));
                 cy.get('#climbCount').should('have.text', '2');
 
@@ -3385,20 +3398,15 @@ describe('Training apps', function () {
         });
 
         pages.forEach((page) => {
-            it('gives ' + page + ' the shared manifest and a full screen button', () => {
-                cy.visit(appUrl + page);
+            // The host serves /training/timer as well as /training/timer/, without a
+            // redirect - every stylesheet and script has to load either way
+            it('gives ' + page + ' the shared manifest and a full screen button, styled and running without its trailing slash', () => {
+                cy.visit(appUrl + page.replace(/\/$/, ''));
                 cy.get('link[rel="manifest"]').should('have.attr', 'href', '/training/manifest.json');
                 cy.get('meta[name="apple-mobile-web-app-title"]').should('have.attr', 'content', 'Training');
                 cy.get('#fullscreen').should('be.visible').and('have.class', 'icon-resize-full');
-            });
-
-            // The host serves /training/timer as well as /training/timer/, without a
-            // redirect - every stylesheet and script has to load either way
-            it('styles and runs ' + page + ' without its trailing slash', () => {
-                cy.visit(appUrl + page.replace(/\/$/, ''));
                 cy.get('nav').should('have.css', 'background-color', 'rgb(18, 18, 18)');
                 cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
-                cy.get('#fullscreen').should('be.visible');
             });
         });
     });
@@ -4009,6 +4017,34 @@ describe('Training apps', function () {
             cy.reload();
             cy.get('.apps li').eq(1).should('contain', 'Gym Session');
             cy.get('.apps li').eq(0).should('contain', 'Gilford Wall');
+        });
+
+        it('removes apps while reordering, and adds them back from the cog', () => {
+            cy.visit(overviewUrl);
+            cy.get('#removedApps').should('not.be.visible');
+            cy.get('.apps li').eq(0).find('.app-card').trigger('pointerdown', { button: 0 });
+            cy.tick(500);
+            cy.document().trigger('pointerup');
+            cy.get('.apps .remove-app').first().should('have.attr', 'aria-label', 'Remove Gym Session').click();
+            cy.tick(50);
+            cy.get('.toast.danger').should('contain', 'Are you sure? Removed apps can be re-added using the cog');
+            cy.get('.toast.danger .toast-reject').click();
+            cy.get('.apps li').eq(0).should('be.visible');
+            cy.get('.apps .remove-app').first().click();
+            cy.tick(50);
+            cy.get('.toast.danger.shown .toast-confirm').should('have.text', 'REMOVE').click();
+            cy.get('.apps li').eq(0).should('not.be.visible');
+            cy.get('.apps li:visible').first().should('contain', 'Gilford Wall');
+            cy.get('#saveOrder').click();
+            cy.reload();
+            cy.get('.apps li:visible').should('have.length', 9).first().should('contain', 'Gilford Wall');
+            cy.get('nav .icon-cog').click();
+            cy.contains('summary', 'Add removed apps').click();
+            cy.get('#removedAppList button').should('have.length', 1).and('have.text', 'Gym Session').click();
+            cy.get('#removedAppList button').should('not.exist');
+            cy.get('#removedApps').should('not.be.visible');
+            cy.get('.apps li:visible').should('have.length', 10).first().should('contain', 'Gym Session');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingRemovedApps'))).to.deep.equal([]));
         });
 
         it('says how much local storage is in use', () => {

@@ -22,6 +22,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Dans Loft | Couldn't copy it | Warning | 5.2 s | COPY ROUTES, and the copy failed | dansloft/main.js | No | |
 | Apps page | Dans Loft added to your apps | Info | 5.2 s | Its name is typed in Add a hidden App, under the cog | index.html | Yes | Any case or spacing |
 | Apps page | Dans Loft is already in your apps | Info | 5.2 s | Its name is typed again once added | index.html | No | |
+| Apps page | Are you sure? Removed apps can be re-added using the cog | Confirm | Until REMOVE, Cancel or closed | The × on a card while reordering | index.html | Yes | Only REMOVE removes |
 | Apps page | No hidden app by that name | Info | 5.2 s | Something else is typed in Add a hidden App and the field is left | index.html | Yes | |
 | Tindeq Arcade | New high score | Info | 5.2 s | During a run, the score first passes the best | gaps/main.js | Yes | |
 | Tindeq Arcade | Copied, ready to paste | Info | 5.2 s | SHARE with no share sheet, and the copy worked | gaps/main.js | No | |
