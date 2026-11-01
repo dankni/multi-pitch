@@ -109,11 +109,24 @@
 	<!-- the whole session to scale, filled in from the settings and as it goes -->
 	<div class="timeline" id="timeline" role="progressbar" aria-label="Session" aria-valuemin="0"></div>
 	<div class="rest-bar red" id="restBar" aria-hidden="true" hidden></div>
+
 	<aside id="about" class="overlay">
 		<h2>Tabata</h2>
-		<p>Short, hard efforts with short rests. The classic is 20 seconds of work and 10 seconds of rest, eight times: four minutes in all.</p>
-		<p>Set the work, the rest and the number of reps before you start. The screen goes green while you work, and red with a beep a second for the last three seconds of each rest. Your settings are remembered for next time.</p>
-		<p>Repeater mode, under the cog, adds sets of those reps with a longer rest between them: a track for each set, which you can name. Name the whole routine and tap SAVE to keep it; your routines are listed under the cog. To change one, open it, adjust it and save it with the same name.</p>
+		<p>
+			A classic work-then-rest timer. Tabata is typically 20 seconds of work and
+			10 seconds of rest, eight times (four minutes in all), but you can adjust it
+			to suit your needs.
+		</p>
+		<p>
+			Your settings are remembered for next time.
+		</p>
+		<p>
+			Repeater mode, under the settings cog, can be used for more classic climbing
+			repeater fingerboard training. It allows you to do sets with a longer rest
+			between them. The app lets you name each set and the whole routine. You can
+			SAVE to keep it; your routines are listed under the settings cog. To change
+			one, open it, adjust it and save it with the same name, or make a new one.
+		</p>
 		<hr />
 		<h2>Activity Log</h2>
 		<div id="log"></div>
@@ -125,19 +138,19 @@
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
 		<label class="switch-label">
-			<input type="checkbox" data-change="toggleOneSecond" id="oneSecond"/>
+			<input type="checkbox" data-change="toggleOneSecond" id="oneSecond" />
 			<span class="label-content">
 				Use 1 second increments <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" data-change="toggleDebug" id="debugMode"/>
+			<input type="checkbox" data-change="toggleDebug" id="debugMode" />
 			<span class="label-content">
 				<i class="demo-icon icon-bug"></i> Debug/Preview Mode <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode" />
 			<span class="label-content">
 				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
 			</span>
@@ -149,19 +162,19 @@
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" data-change="toggleVoiceOff" id="voiceOff"/>
+			<input type="checkbox" data-change="toggleVoiceOff" id="voiceOff" />
 			<span class="label-content">
 				<i class="icon-note toggle-icon" aria-hidden="true"></i> Voice disabled <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" data-change="toggleVibrateOff" id="vibrateOff"/>
+			<input type="checkbox" data-change="toggleVibrateOff" id="vibrateOff" />
 			<span class="label-content">
 				<i class="icon-vibrate toggle-icon" aria-hidden="true"></i> Vibration disabled <span class="switch-state"></span>
 			</span>
 		</label>
 		<label class="switch-label">
-			<input type="checkbox" data-change="toggleRepeaterMode" id="repeaterMode"/>
+			<input type="checkbox" data-change="toggleRepeaterMode" id="repeaterMode" />
 			<span class="label-content">
 				Repeater mode <span class="switch-state"></span>
 			</span>

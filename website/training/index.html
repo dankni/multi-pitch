@@ -241,6 +241,16 @@
             padding: 8px 12px;
             color: var(--link);
         }
+        .install-help svg {
+            width: 1.2em;
+            height: 1.2em;
+            vertical-align: -0.25em;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
         .hidden-app-field {
             display: block;
             width: 240px;
@@ -447,8 +457,7 @@
             I made this as a simple tool to track my climbing progress.
             It will be <strong>free forever for anyone</strong> to use. 
             All the tools run in the browser, work offline once 
-            loaded and keep everything on your own device using local storage. 
-            You can also save them to your phone's homescreen and they will load offline. 
+            loaded and keep everything on your own device using local storage.
         </p>
         <p>
             I built the original version by hand but have now used AI to add new 
@@ -459,6 +468,23 @@
             Feedback and suggested features welcome. If you enjoy it I'd love to hear. 
             <a href="mailto:multi-pitch@outlook.com">multi-pitch@outlook.com</a>
         </p>
+        <!-- Adding the apps to the home screen, for the phone this is, or a word of it on a computer -->
+        <div class="install-help" id="installHelp" hidden>
+            <p data-platform="ios">
+                Add the apps to your home screen: in Safari, tap Share
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 9H6v11h12V9h-2M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg>
+                then <strong>Add to Home Screen</strong>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>.
+            </p>
+            <p data-platform="android">
+                Add the apps to your home screen: in Chrome, tap the menu <strong aria-hidden="true">&#8942;</strong>
+                then <strong>Add to Home screen</strong> or <strong>Install app</strong>.
+            </p>
+            <p data-platform="computer">
+                You can also save them to your phone's homescreen and they will load offline.
+            </p>
+            <p><button type="button" class="quiet" id="installApp" data-action="installApp" hidden>Add to home screen</button></p>
+        </div>
         <hr />
         <p class="panel-links">
             <a href="https://github.com/dankni/multi-pitch/tree/master/website/training" target="_blank">
@@ -775,6 +801,46 @@
 
     applyAppOrder();
     applyRemovedApps();
+
+    /* How to add the apps to the home screen, on an iPhone or iPad, or on Android -
+       where Chrome also offers a button that does it - and on a computer, that a
+       phone can. Not once opened from the home screen. */
+    const installPlatform = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios"
+        : /Android/.test(navigator.userAgent) ? "android" : "computer";
+    const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    let installPrompt = null;
+
+    function showInstallHelp(){
+        let help = document.getElementById("installHelp");
+        let shown = 0;
+        help.querySelectorAll("[data-platform]").forEach(line => {
+            line.hidden = line.dataset.platform !== installPlatform || line.textContent.trim() === "";
+            if(!line.hidden){ shown++; }
+        });
+        let button = document.getElementById("installApp");
+        button.hidden = installPlatform !== "android" || installPrompt === null;
+        help.hidden = installed || (shown === 0 && button.hidden);
+    }
+
+    function installApp(){
+        if(installPrompt === null){ return; }
+        installPrompt.prompt();
+        installPrompt.userChoice.finally(() => {
+            installPrompt = null;
+            showInstallHelp();
+        });
+    }
+
+    window.addEventListener("beforeinstallprompt", event => {
+        event.preventDefault();   // the button offers it instead
+        installPrompt = event;
+        showInstallHelp();
+    });
+    window.addEventListener("appinstalled", () => {
+        installPrompt = null;
+        showInstallHelp();
+    });
+    showInstallHelp();
     </script>
   </body>
 </html>

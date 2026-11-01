@@ -4047,6 +4047,57 @@ describe('Training apps', function () {
             cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingRemovedApps'))).to.deep.equal([]));
         });
 
+        it('says how to add the apps to the home screen for an iPhone or Android, that a phone can on a computer, and nothing once added', () => {
+            const visitAs = (agent, standalone) => cy.visit(overviewUrl, {
+                onBeforeLoad(win) {
+                    if (agent) { Object.defineProperty(win.navigator, 'userAgent', { value: agent, configurable: true }); }
+                    if (standalone) { win.navigator.standalone = true; }
+                }
+            });
+            // words of its own, so the test doesn't follow the wording
+            const withWords = () => cy.window().then((win) => {
+                win.document.querySelector('[data-platform="ios"]').textContent = 'On an iPhone';
+                win.document.querySelector('[data-platform="android"]').textContent = 'On Android';
+                win.showInstallHelp();
+            });
+            const iPhone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
+            const android = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36';
+
+            // a computer: that a phone can, and no button
+            visitAs();
+            cy.get('#installHelp').should('not.have.attr', 'hidden');
+            cy.get('[data-platform="computer"]').should('contain', 'homescreen').and('not.have.attr', 'hidden');
+            cy.get('[data-platform="ios"], [data-platform="android"]').should('have.attr', 'hidden');
+            cy.get('#installApp').should('have.attr', 'hidden');
+
+            visitAs(iPhone);
+            withWords();
+            cy.get('#installHelp').should('not.have.attr', 'hidden');
+            cy.get('[data-platform="ios"]').should('not.have.attr', 'hidden');
+            cy.get('[data-platform="android"], [data-platform="computer"]').should('have.attr', 'hidden');
+            cy.get('#installApp').should('have.attr', 'hidden');
+
+            visitAs(android);
+            withWords();
+            cy.get('[data-platform="android"]').should('not.have.attr', 'hidden');
+            cy.get('[data-platform="ios"]').should('have.attr', 'hidden');
+            cy.get('#installApp').should('have.attr', 'hidden');   // until Chrome offers it
+            cy.window().then((win) => {
+                let offer = new win.Event('beforeinstallprompt');
+                offer.prompt = cy.stub().as('prompt');
+                offer.userChoice = Promise.resolve({ outcome: 'accepted' });
+                win.dispatchEvent(offer);
+            });
+            cy.get('nav .icon-info').click();
+            cy.get('#installApp').should('be.visible').and('have.text', 'Add to home screen').click();
+            cy.get('@prompt').should('have.been.calledOnce');
+            cy.get('#installApp').should('have.attr', 'hidden');
+
+            visitAs(iPhone, true);
+            withWords();
+            cy.get('#installHelp').should('have.attr', 'hidden');   // opened from the home screen
+        });
+
         it('says how much local storage is in use', () => {
             cy.visit(overviewUrl, {
                 onBeforeLoad(win) {
