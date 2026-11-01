@@ -786,6 +786,9 @@ nav .account-button svg {
     width: 1.1em;
     height: 1.1em;
 }
+nav .account-button.signed-in svg * {
+    fill: currentColor;
+}
 .icon-trash {
     margin-left: 8px;
 }

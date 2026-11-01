@@ -402,6 +402,7 @@ function accountField(id){
 }
 
 function showAccount(){
+    showSignedIn();
     let login = document.getElementById("accountLogin");
     if(login === null){ return; }
     let backup = login.parentNode.querySelector(".backup");

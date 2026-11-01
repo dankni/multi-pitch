@@ -1068,9 +1068,18 @@ function addAccountButton(){
     button.type = "button";
     button.className = "icon-button account-button";
     button.dataset.action = "openAccount";
-    button.setAttribute("aria-label", "Account and backup");
     button.innerHTML = personIcon;
     side.prepend(button);   // floated right, so first is furthest right
+    showSignedIn();
+}
+
+// Filled in while signed in, and said so
+function showSignedIn(){
+    let button = document.querySelector("nav .account-button");
+    if(button === null){ return; }
+    let signedIn = localStorage.getItem(accountRefreshKey) !== null;
+    button.classList.toggle("signed-in", signedIn);
+    button.setAttribute("aria-label", signedIn ? "Account and backup, signed in" : "Account and backup");
 }
 
 // A restored backup file reloads the page, and says what it added once it has

@@ -4134,6 +4134,9 @@ describe('Training apps', function () {
                 // the backup folds away, and the account says so
                 cy.get('#accountHeading').should('have.text', 'Signed in');
                 cy.get('#accountEmailShown').should('have.text', 'climber@example.com');
+                // the person in the nav is filled in, and says so
+                cy.get('nav .account-button').should('have.class', 'signed-in').and('have.attr', 'aria-label', 'Account and backup, signed in');
+                cy.get('nav .account-button circle').should('have.css', 'fill').and('not.eq', 'none');
                 cy.get('#backupDetails').should('not.have.attr', 'open');
                 cy.get('#backupDetails summary').click();
                 cy.get('#backupDetails').should('have.attr', 'open');
@@ -4142,6 +4145,7 @@ describe('Training apps', function () {
                 cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
                 cy.get('#account > section').first().should('have.id', 'accountLogin');   // still, signed out
                 cy.get('#accountHeading').should('have.text', 'Create an account or sign in');
+                cy.get('nav .account-button').should('not.have.class', 'signed-in').and('have.attr', 'aria-label', 'Account and backup');
                 cy.get('#backupDetails').should('have.attr', 'open');
             });
 
