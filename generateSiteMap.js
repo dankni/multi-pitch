@@ -28,7 +28,7 @@ const gradesContent = JSON.parse(fs.readFileSync('./website/climbing-grades/cont
 // JSON source, so their dates live here - bump one when you change that app.
 const trainingPages = [
     { url: '/training/', lastUpdated: '2026-10-30', priority: '0.7' },
-    { url: '/training/progress/', lastUpdated: '2026-10-30', priority: '0.6' },
+    { url: '/training/progress/', lastUpdated: '2026-11-01', priority: '0.6' },
     { url: '/training/loft/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/rings/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/nohangs/', lastUpdated: '2026-10-30', priority: '0.6' },
@@ -88,7 +88,7 @@ function generate() {
         </url>
         <url>
             <loc>https://www.multi-pitch.com/privacy/</loc>
-            <lastmod>2026-10-27</lastmod>
+            <lastmod>2026-11-01</lastmod>
             <priority>0.3</priority>
         </url>
         <url>

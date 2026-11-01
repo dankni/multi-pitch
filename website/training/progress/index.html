@@ -25,7 +25,7 @@
   <body>
     <nav>
         <div class="left-nav">
-            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Back up your sessions and see rough grade conversions"></button>
+            <button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="Rough grade conversions"></button>
             <button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
         </div>
         <h1>Progress</h1>
@@ -105,29 +105,13 @@
         <h2 class="log-heading">Activity Log</h2>
         <div id="allLogs"></div>
         <p class="sessions-note" id="sessionsFoot">
-            Read off this device only &ndash; the apps never upload anything. Open an app to
-            add to, edit or delete one of its sessions.
+            Read off this device only &ndash; by default, the apps never upload anything. You can
+            <button type="button" class="link-button" data-action="openAccount">create a free account</button> to back up your data. Open an app to add to, edit or delete one
+            of its sessions.
         </p>
     </section>
 
     <aside id="about" class="overlay">
-        <h2>Back up</h2>
-        <p>
-            Your sessions only live on this device. Save a backup file of every app's log and
-            settings, and restore it here to put them back &ndash; on this phone or a new one.
-            Restoring adds what's missing and keeps what's already here. Your UKC logbook isn't
-            included: import it again from UKC.
-        </p>
-        <p class="backup-actions">
-            <button type="button" data-action="downloadBackup">
-                <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v10M3.5 7.5 8 12l4.5-4.5M2 14.5h12"/></svg>SAVE
-            </button>
-            <button type="button" class="quiet" data-action="chooseBackupFile">
-                <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 14V4M3.5 8.5 8 4l4.5 4.5M2 1.5h12"/></svg>RESTORE
-            </button>
-        </p>
-        <input type="file" id="backupFile" accept=".json,application/json" hidden data-change="importBackupFile" />
-
         <h2>Rough Grade Conversion</h2>
         <div class="picker range-picker conversion-picker" role="radiogroup" aria-label="Rough grade conversion for">
             <input type="radio" name="conversions" class="nice-radios" id="conversions-boulder" value="boulder" data-change="showConversions" checked />
@@ -225,7 +209,6 @@
     <script src="/training/progress/charts.js"></script>
     <script src="/training/progress/sessions.js"></script>
     <script src="/training/progress/settings.js"></script>
-    <script src="/training/progress/backup.js"></script>
     <script src="/training/progress/conversions.js"></script>
   </body>
 </html>

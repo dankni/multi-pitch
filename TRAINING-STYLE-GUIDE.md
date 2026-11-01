@@ -151,8 +151,9 @@ engine: `speak("Rest")`, `speak("Set 2")`.
 
 ## Components
 
-**Nav bar.** Info and cog on the left, app name centre, fullscreen and (only if the app
-speaks) sound on the right. Nothing else, and no back link — the way out is *Apps* in the
+**Nav bar.** Info and cog on the left, app name centre, fullscreen, (only if the app
+speaks) sound and, furthest right, the person for the account and backup file (added by
+`functions.js`, so no page writes it). Nothing else, and no back link — the way out is *Apps* in the
 bottom nav. The fullscreen icon is hidden until `functions.js`
 confirms support. The i and the cog are a thumb's width each with a gap between, and the cog
 turns twice as the page loads to show where the settings are.

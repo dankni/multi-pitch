@@ -1098,7 +1098,10 @@ describe('Training apps', function () {
             cy.get('body').should('have.attr', 'data-state', 'idle');
             cy.get('#saveSession').should('have.text', 'SAVE SESSION');
             cy.window().its('localStorage').invoke('getItem', 'tabataLog').then((log) => {
-                expect(JSON.parse(log)).to.deep.equal([Object.assign({}, saved,
+                let entries = JSON.parse(log);
+                expect(entries[0].updated).to.be.a('number');   // when it was last saved, for a sync to compare
+                delete entries[0].updated;
+                expect(entries).to.deep.equal([Object.assign({}, saved,
                     { rating: 4, comment: 'Strong today', title: 'Half crimp', kind: 'Climbing' })]);
             });
             // not mid-session
@@ -2765,7 +2768,7 @@ describe('Training apps', function () {
                 // help, under the setting, with the battery asked for as it connected
                 cy.get('#watchHelpButton').should('not.exist');
                 cy.get('[data-action="openSettings"]').click();
-                cy.get('#watchHelp').scrollIntoView().should('be.visible').and('contain', 'Swipe Up / Down to open menu.');
+                cy.get('#watchHelp').scrollIntoView().should('be.visible').and('contain', 'Swipe up / down to open the menu.');
                 cy.get('#watchBattery').should('have.text', 'Battery 1%');
                 cy.get('#watchVersion').invoke('text').should('match', /^Climb Log [0-9a-z.]+$/);   // the app version, as the watch's menu shows it
                 cy.window().its('asked').should('include', 'E.getBattery()');
@@ -3042,7 +3045,7 @@ describe('Training apps', function () {
             });
             cy.window().then((win) => win.watchSays({ t: 'add', g: 'HS' }));
             cy.get('#row-HS .grade-count').should('have.text', '1');
-            cy.get('#watchHelp').should('contain', 'Swipe Left / Right to change grades.');
+            cy.get('#watchHelp').should('contain', 'Swipe left / right to change grades.');
         });
 
         it('counts the climbs and names the hardest', () => {
@@ -3232,7 +3235,7 @@ describe('Training apps', function () {
             cy.window().then((win) => win.watchSays({ t: 'undo', g: 6 }));
             cy.get('#climbCount').should('have.text', '2');
             cy.window().should((win) => expect(lastState(win).L[0].r.find((row) => row[0] === 6).slice(0, 3)).to.deep.equal([6, 'V3+', 1]));
-            cy.get('#watchHelp').should('contain', 'Swipe Left / Right to change grades.');
+            cy.get('#watchHelp').should('contain', 'Swipe left / right to change grades.');
             cy.window().then((win) => win.watchSays({ t: 'finish' }));
             cy.get('body').should('have.attr', 'data-state', 'saving');
         });
@@ -3917,7 +3920,7 @@ describe('Training apps', function () {
             }
 
             function restore(backup) {
-                cy.get('nav .icon-info').click();
+                cy.get('nav .account-button').click();
                 cy.get('#backupFile').selectFile({ contents: Cypress.Buffer.from(typeof backup === 'string' ? backup : JSON.stringify(backup)),
                     fileName: 'training-backup.json' }, { force: true });
             }
@@ -3927,9 +3930,9 @@ describe('Training apps', function () {
                     win.localStorage.setItem('tabataLog', JSON.stringify([{ id: 2, date: '2026-09-11', work: 20, rest: 10, sets: 8 }]));
                     win.localStorage.setItem('tabataSettings', JSON.stringify({ work: 30, rest: 15, sets: 6 }));
                 });
-                cy.get('nav .icon-info').click();
-                cy.get('#about').should('be.visible');
-                cy.contains('#about button', 'SAVE').click();
+                cy.get('nav .account-button').click();
+                cy.get('#account').should('be.visible');
+                cy.contains('#account button', 'SAVE').click();
                 cy.readFile('cypress/downloads/training-backup-2026-09-13.json').then((backup) => {
                     expect(backup.backup).to.equal('multi-pitch training apps');
                     expect(backup.logs.boulderLog).to.deep.equal([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3 }]);
@@ -3983,6 +3986,295 @@ describe('Training apps', function () {
                 cy.tick(100);
                 cy.get('.toast').should('contain', "Couldn't restore that file");
                 cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('boulderLog'))).to.have.length(1));
+            });
+
+            it('merges two backups: newer edits win, deletes win, settings go as a block', () => {
+                visitSeeded();
+                cy.get('nav .account-button').click();   // loads common/backup.js
+                cy.get('#account').should('have.class', 'open');
+                cy.window().then((win) => {
+                    const backup = (logs, more) => Object.assign({ backup: 'multi-pitch training apps', version: 2, logs: logs, settings: {} }, more);
+                    let merged = win.mergeBackup(
+                        backup({ boulderLog: [{ id: 1, date: '2026-09-01', climbs: ['V1'], updated: 200 },
+                                              { id: 2, date: '2026-09-02', climbs: ['V2'], updated: 100 },
+                                              { id: 3, date: '2026-09-03', climbs: ['V3'] }] },
+                            { settings: { boulderGradeSystem: 'font', tradGradeSystem: 'british' }, settingsSaved: 50 }),
+                        backup({ boulderLog: [{ id: 1, date: '2026-09-01', climbs: ['V9'], updated: 100 },   // older edit
+                                              { id: 2, date: '2026-09-02', climbs: ['V8'], updated: 300 },   // newer edit
+                                              { id: 3, date: '2026-09-03', climbs: ['V7'], updated: 300 },   // edited, but deleted here
+                                              { id: 4, date: '2026-09-04', climbs: ['V4'] },                // only there
+                                              { id: 5, climbs: ['V5'] }] },                                 // no date: not a session
+                            { settings: { boulderGradeSystem: 'hueco', enduranceWall: 'x' }, settingsSaved: 90,
+                              deleted: [{ key: 'boulderLog', id: 3, at: sessionDate.getTime() }, { key: 'boulderLog', id: 9, at: sessionDate.getTime() - 200 * 86400000 }] }));
+                    expect(merged.version).to.equal(2);
+                    expect(merged.logs.boulderLog.map((entry) => entry.id + ':' + entry.climbs[0])).to.deep.equal(['1:V1', '2:V8', '4:V4']);
+                    expect(merged.settings).to.deep.equal({ boulderGradeSystem: 'hueco', tradGradeSystem: 'british', enduranceWall: 'x' });
+                    expect(merged.settingsSaved).to.equal(90);
+                    expect(merged.deleted.map((mark) => mark.id)).to.deep.equal([3]);   // the 200 day old one is let go
+                    // undated settings, like a version 1 file's, only fill in
+                    let filled = win.mergeBackup(backup({}, { settings: { boulderGradeSystem: 'font' } }),
+                        backup({}, { settings: { boulderGradeSystem: 'hueco', tradGradeSystem: 'uiaa' } }));
+                    expect(filled.settings).to.deep.equal({ boulderGradeSystem: 'font', tradGradeSystem: 'uiaa' });
+                });
+            });
+        });
+
+        describe('Account', function () {
+            const identity = 'eu-west-1:0000-test';
+            let calls;
+            let stored;   // the account's copy, as DynamoDB holds it
+            let putFails;
+
+            // Cognito, the identity pool and DynamoDB, answered here so no run touches AWS
+            function stubAws() {
+                calls = [];
+                stored = null;
+                putFails = 0;
+                cy.intercept({ method: 'OPTIONS', hostname: /\.amazonaws\.com$/ }, { statusCode: 204, headers: {
+                    'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST',
+                    'access-control-allow-headers': 'content-type,x-amz-target,x-amz-date,x-amz-security-token,x-amz-content-sha256,authorization' } });
+                cy.intercept({ method: 'POST', hostname: /\.amazonaws\.com$/ }, (req) => {
+                    let target = req.headers['x-amz-target'].split('.').pop();
+                    let body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+                    calls.push({ target: target, body: body, signed: Boolean(req.headers.authorization) });
+                    const answer = (reply) => req.reply({ statusCode: 200, headers: { 'access-control-allow-origin': '*' }, body: reply });
+                    const refuse = (type) => req.reply({ statusCode: 400, headers: { 'access-control-allow-origin': '*' }, body: { __type: type, message: type } });
+                    const tokens = { AuthenticationResult: { IdToken: 'id-token', AccessToken: 'access-token', RefreshToken: 'refresh-token', ExpiresIn: 3600 } };
+                    switch (target) {
+                        case 'InitiateAuth': return answer(tokens);
+                        case 'GetId': return answer({ IdentityId: identity });
+                        case 'GetCredentialsForIdentity': return answer({ IdentityId: identity, Credentials: {
+                            AccessKeyId: 'AKIDTEST', SecretKey: 'secret', SessionToken: 'session', Expiration: sessionDate.getTime() / 1000 + 3600 } });
+                        case 'GetItem': return answer(stored ? { Item: stored } : {});
+                        case 'PutItem':
+                            if (putFails > 0) {
+                                putFails--;
+                                return refuse('com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException');
+                            }
+                            stored = body.Item;
+                            return answer({});
+                        case 'DeleteItem': stored = null; return answer({});
+                        default: return answer({});
+                    }
+                });
+            }
+
+            // The account's copy, packed as the page packs it
+            function storeRemote(win, logs, version) {
+                return win.gzip(JSON.stringify({ backup: 'multi-pitch training apps', version: 2, logs: logs, settings: {} }))
+                    .then((packed) => { stored = { id: { S: identity }, data: { B: win.toBase64(packed) }, version: { N: String(version) } }; });
+            }
+
+            function remoteBackup(win) {
+                return win.gunzip(stored.data.B).then((text) => JSON.parse(text));
+            }
+
+            function visitAccount(extra) {
+                stubAws();
+                cy.visit(progressUrl, {
+                    onBeforeLoad(win) {
+                        win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'] }]));
+                        if (extra) { extra(win); }
+                    }
+                });
+                cy.get('nav .account-button').click();
+            }
+
+            function signIn() {
+                cy.get('#accountEmail').clear().type('climber@example.com');
+                cy.get('#accountPassword').clear().type('Password123');
+                cy.contains('#account button', 'SIGN IN').click();
+            }
+
+            it('is behind the person on every page', () => {
+                stubAws();
+                cy.visit(appUrl + '/training/boulder/');
+                cy.get('nav .right-nav > :first-child').should('have.class', 'account-button').and('have.attr', 'aria-label', 'Account and backup');
+                cy.get('nav .account-button').click();
+                cy.get('#account').should('have.class', 'open');
+                cy.get('#account .backup').should('be.visible').and('contain', 'Old Fashioned Back up');
+                cy.get('#accountLogin').should('be.visible');
+                cy.get('[data-account="out"] a[href="/privacy/"]').should('have.text', 'Privacy policy');
+                cy.get('#account .close').click();
+                cy.get('#account').should('not.have.class', 'open');
+            });
+
+            it('opens from the free account link on the progress page', () => {
+                stubAws();
+                cy.visit(progressUrl, { onBeforeLoad(win) { win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'] }])); } });
+                cy.contains('#sessionsFoot button', 'create a free account').click();
+                cy.get('#account').should('have.class', 'open');
+                cy.get('#accountLogin').should('be.visible');
+            });
+
+            it('puts the account above the backup once this device has signed in', () => {
+                visitAccount();
+                cy.get('#account > section').first().should('have.class', 'backup');
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.get('#account > section').first().should('have.id', 'accountLogin');
+                cy.contains('#account button', 'SIGN OUT').click();
+                cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
+                cy.get('#account > section').first().should('have.id', 'accountLogin');   // still, signed out
+            });
+
+            it('edges a wrong email or password in red, and sends nothing until they are right', () => {
+                visitAccount();
+                cy.get('#accountEmail').type('climber@example');
+                cy.contains('#account button', 'SIGN IN').click();
+                // --danger-ink, light or dark
+                const red = (el) => expect(['rgb(161, 51, 51)', 'rgb(255, 143, 138)']).to.include(getComputedStyle(el[0]).borderTopColor);
+                cy.get('#accountEmail').should('have.attr', 'aria-invalid', 'true').and(red);
+                cy.get('#accountPassword').should('have.attr', 'aria-invalid', 'true');
+                cy.get('[data-account="out"] .password-field').should(red);
+                cy.then(() => expect(calls).to.have.length(0));
+                cy.get('#accountEmail').type('.com');
+                cy.get('#accountEmail').should('not.have.attr', 'aria-invalid');
+                cy.get('#accountPassword').type('x');
+                cy.get('#accountPassword').should('not.have.attr', 'aria-invalid');
+                // a new password stays red until it meets the rules
+                cy.contains('#account button', 'SIGN UP').click();
+                cy.get('#accountPassword').should('have.attr', 'aria-invalid', 'true');
+                cy.then(() => expect(calls).to.have.length(0));
+                cy.contains('#account button', 'Forgot password').click();
+                cy.then(() => expect(calls.map((call) => call.target)).to.deep.equal(['ForgotPassword']));
+            });
+
+            it('shows the password on request, and holds back a sign up short of the rules', () => {
+                visitAccount();
+                cy.get('#account .password-rules').first().should('not.be.visible');
+                cy.get('#accountEmail').type('climber@example.com');
+                cy.get('#accountPassword').type('password');
+                cy.get('#account .password-rules').first().find('.met').should('have.length', 1);   // lowercase
+                cy.get('[data-account="out"] .show-password').click().should('have.attr', 'aria-pressed', 'true');
+                cy.get('#accountPassword').should('have.attr', 'type', 'text');
+                cy.contains('#account button', 'SIGN UP').click();
+                cy.then(() => expect(calls.filter((call) => call.target === 'SignUp')).to.have.length(0));
+                cy.get('#accountPassword').type('Climb1!');
+                cy.get('#account .password-rules').first().find('.met').should('have.length', 4);
+                cy.get('[data-account="out"] .show-password').click();
+                cy.get('#accountPassword').should('have.attr', 'type', 'password');
+                cy.contains('#account button', 'SIGN UP').click();
+                cy.get('[data-account="code"]').should('not.have.attr', 'hidden');
+                cy.then(() => expect(calls.find((call) => call.target === 'SignUp').body.Password).to.equal('passwordClimb1!'));
+            });
+
+            it('signs in, merges the account copy in, and writes the merge back', () => {
+                visitAccount((win) => win.localStorage.setItem('syncDeleted', JSON.stringify([{ key: 'boulderLog', id: 3, at: sessionDate.getTime() }])));
+                cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
+                cy.window().then((win) => storeRemote(win, { boulderLog: [{ id: 2, date: '2026-09-11', climbs: ['V5'] },
+                    { id: 3, date: '2026-09-12', climbs: ['V6'] }], tradLog: [{ id: 4, date: '2026-09-09', climbs: [] }] }, 3));
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.get('#accountEmailShown').should('have.text', 'climber@example.com');
+                cy.get('#accountLastSynced').should('contain', 'Last synced');
+                cy.window().then((win) => {
+                    expect(win.localStorage.getItem('accountRefresh')).to.equal('refresh-token');
+                    expect(win.localStorage.getItem('accountIdentity')).to.equal(identity);
+                    // the deleted one stays deleted
+                    expect(JSON.parse(win.localStorage.getItem('boulderLog')).map((entry) => entry.id)).to.deep.equal([1, 2]);
+                    expect(JSON.parse(win.localStorage.getItem('tradLog'))).to.have.length(1);
+                    let put = calls.find((call) => call.target === 'PutItem');
+                    expect(put.signed).to.equal(true);
+                    expect(put.body.Key).to.equal(undefined);
+                    expect(put.body.Item.id.S).to.equal(identity);
+                    expect(put.body.Item.version.N).to.equal('4');
+                    expect(put.body.ConditionExpression).to.equal('version = :seen');
+                    expect(put.body.ExpressionAttributeValues[':seen'].N).to.equal('3');
+                    return remoteBackup(win);
+                }).then((remote) => {
+                    expect(remote.logs.boulderLog.map((entry) => entry.id)).to.deep.equal([1, 2]);
+                    expect(remote.deleted.map((mark) => mark.id)).to.deep.equal([3]);
+                });
+                cy.tick(100);
+                cy.get('.toast').should('contain', 'Synced - tap to reload');
+            });
+
+            it('reads and merges again when another phone wrote first', () => {
+                visitAccount();
+                cy.window().then((win) => storeRemote(win, { boulderLog: [{ id: 2, date: '2026-09-11', climbs: ['V5'] }] }, 1));
+                cy.then(() => { putFails = 1; });
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.window().then((win) => {
+                    expect(calls.filter((call) => call.target === 'GetItem')).to.have.length(2);
+                    expect(calls.filter((call) => call.target === 'PutItem')).to.have.length(2);
+                    return remoteBackup(win);
+                }).then((remote) => expect(remote.logs.boulderLog.map((entry) => entry.id)).to.deep.equal([1, 2]));
+            });
+
+            it('writes nothing when the account copy already matches', () => {
+                visitAccount();
+                cy.window().then((win) => storeRemote(win, { boulderLog: [{ id: 1, date: '2026-09-10', climbs: ['V2'] }] }, 5));
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.then(() => expect(calls.filter((call) => call.target === 'PutItem')).to.have.length(0));
+            });
+
+            it('first write only lands if there is still no copy', () => {
+                visitAccount();
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.then(() => {
+                    let put = calls.find((call) => call.target === 'PutItem');
+                    expect(put.body.ConditionExpression).to.equal('attribute_not_exists(id)');
+                    expect(put.body.Item.version.N).to.equal('1');
+                });
+            });
+
+            it('syncs from an app a few seconds after a session is deleted', () => {
+                stubAws();
+                cy.visit(appUrl + '/training/boulder/', {
+                    onBeforeLoad(win) {
+                        win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'] }, { id: 2, date: '2026-09-11', climbs: ['V3'] }]));
+                        win.localStorage.setItem('accountRefresh', 'refresh-token');
+                        win.localStorage.setItem('accountIdentity', identity);
+                    }
+                });
+                // the sync on load
+                cy.window().should((win) => expect(win.localStorage.getItem('accountLastSync')).not.to.equal(null));
+                cy.then(() => { calls = []; });
+                cy.get('nav .icon-info').click();
+                cy.get('#log [data-log="delete"]').first().click({ force: true });
+                cy.tick(100);
+                cy.get('.toast.danger .toast-confirm').should('have.text', 'DELETE').click();
+                cy.window().then((win) => {
+                    expect(JSON.parse(win.localStorage.getItem('syncDeleted')).map((mark) => mark.id)).to.have.length(1);
+                    expect(calls).to.have.length(0);
+                });
+                cy.tick(5000);
+                cy.window().should(() => expect(calls.filter((call) => call.target === 'PutItem')).to.have.length(1));
+                cy.window().then((win) => remoteBackup(win)).then((remote) => {
+                    expect(remote.logs.boulderLog).to.have.length(1);
+                    expect(remote.deleted).to.have.length(1);
+                });
+            });
+
+            it('signs out, and deletes the account, keeping the sessions here', () => {
+                visitAccount();
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.contains('#account button', 'Delete account').click();
+                cy.tick(100);
+                cy.get('.toast.danger .toast-confirm').should('have.text', 'DELETE').click();
+                cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
+                cy.window().then((win) => {
+                    expect(calls.some((call) => call.target === 'DeleteItem' && call.body.Key.id.S === identity)).to.equal(true);
+                    expect(calls.find((call) => call.target === 'DeleteUser').body.AccessToken).to.equal('access-token');
+                    expect(win.localStorage.getItem('accountRefresh')).to.equal(null);
+                    expect(win.localStorage.getItem('accountIdentity')).to.equal(null);
+                    expect(JSON.parse(win.localStorage.getItem('boulderLog'))).to.have.length(1);
+                    expect(stored).to.equal(null);
+                });
+                signIn();
+                cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
+                cy.contains('#account button', 'SIGN OUT').click();
+                cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
+                cy.window().then((win) => {
+                    expect(calls.find((call) => call.target === 'RevokeToken').body.Token).to.equal('refresh-token');
+                    expect(win.localStorage.getItem('accountRefresh')).to.equal(null);
+                    expect(JSON.parse(win.localStorage.getItem('boulderLog'))).to.have.length(1);
+                });
             });
         });
 

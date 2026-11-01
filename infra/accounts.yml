@@ -1,0 +1,156 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Training app accounts - a Cognito user pool to sign in, an identity pool that
+  swaps the sign in for an hour's AWS keys, and a DynamoDB table holding one
+  backup per person, which those keys can reach and nothing else.
+  Deploy: aws cloudformation deploy --template-file infra/accounts.yml
+  --stack-name multi-pitch-accounts --capabilities CAPABILITY_IAM
+  --profile multipitch --region eu-west-1
+
+Parameters:
+  ReadUnits:
+    Type: Number
+    Default: 10
+    Description: Table read capacity. The always-free tier is 25 across the account.
+  WriteUnits:
+    Type: Number
+    Default: 10
+    Description: Table write capacity. The always-free tier is 25 across the account.
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      UserPoolName: multi-pitch-training
+      UserPoolTier: ESSENTIALS
+      DeletionProtection: ACTIVE
+      UsernameAttributes: [email]
+      UsernameConfiguration:
+        CaseSensitive: false
+      AutoVerifiedAttributes: [email]
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      # a changed email only takes over once its code is entered
+      UserAttributeUpdateSettings:
+        AttributesRequireVerificationBeforeUpdate: [email]
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 10
+          RequireLowercase: true
+          RequireUppercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          TemporaryPasswordValidityDays: 7
+        SignInPolicy:
+          AllowedFirstAuthFactors: [PASSWORD]
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: training-apps
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows: [ALLOW_USER_AUTH, ALLOW_REFRESH_TOKEN_AUTH]
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      AuthSessionValidity: 3
+      # the most Cognito allows, so an installed app stays signed in
+      RefreshTokenValidity: 3650
+      AccessTokenValidity: 60
+      IdTokenValidity: 60
+      TokenValidityUnits:
+        RefreshToken: days
+        AccessToken: minutes
+        IdToken: minutes
+
+  IdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: multi_pitch_training
+      AllowUnauthenticatedIdentities: false
+      AllowClassicFlow: false
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt UserPool.ProviderName
+          # a signed out or deleted user's tokens get no keys
+          ServerSideTokenCheck: true
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: multi-pitch-training-users
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref ReadUnits
+        WriteCapacityUnits: !Ref WriteUnits
+      DeletionProtectionEnabled: true
+      # the undo for a bad merge, at well under a penny a month
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  SignedInRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud: !Ref IdentityPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr: authenticated
+      Policies:
+        - PolicyName: own-backup-only
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # AWS fills in the identity id, so a changed key is refused
+              - Effect: Allow
+                Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:DeleteItem]
+                Resource: !GetAtt Table.Arn
+                Condition:
+                  ForAllValues:StringEquals:
+                    dynamodb:LeadingKeys: ["${cognito-identity.amazonaws.com:sub}"]
+
+  IdentityPoolRoles:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        authenticated: !GetAtt SignedInRole.Arn
+
+# None of these are secrets; they go in website/training/common/account.js
+Outputs:
+  UserPoolId:
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+  IdentityPoolId:
+    Value: !Ref IdentityPool
+  TableName:
+    Value: !Ref Table

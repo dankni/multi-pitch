@@ -63,21 +63,22 @@
 	<div class="container privacy">
 	  <section>
 		<h1>Privacy Policy</h1>
-		<p><em>Last updated 27 October 2026</em></p>
+		<p><em>Last updated 1 November 2026</em></p>
 
 		<h2>Who we are</h2>
 		<p>
-			multi-pitch.com is a hobby site run by Dan and Michel in the UK (see <a href="/about/">About</a>).
+			multi-pitch.com is run by Dan and Michel in the UK (see <a href="/about/">About</a>).
 			We are responsible for the personal data described here. For anything about your data, email
 			<strong>multi-pitch@outlook.com</strong>.
 		</p>
 
 		<h2>The short version</h2>
 		<ul>
-			<li>We don't sell your data, show adverts or ask you to create an account.</li>
+			<li>We don't sell your data, show adverts or force you to create an account.</li>
 			<li>We use Google Analytics to see which pages are used, which sets cookies.</li>
 			<li>If you sign up for email updates, Mailchimp holds your email address.</li>
-			<li>Everything you log in the <a href="/training/">training apps</a> stays on your device.</li>
+			<li>Everything you log in the <a href="/training/">training apps</a> stays on your device, unless you create an account to back it up.</li>
+			<li>If you choose to create an account, we will never sell or share your data.</li>
 		</ul>
 
 		<h2>What we collect</h2>
@@ -100,6 +101,38 @@
 			updates and tells us whether they are opened. We only use it for those emails. Every email has
 			an unsubscribe link, and you can ask us to delete your address at any time.
 		</p>
+		<h3>Training app accounts (optional)</h3>
+		<p>
+			You don't need an account to use the training apps. If you create one, we hold:
+		</p>
+		<ul>
+			<li>
+				<strong>Your email address and password</strong>, held by Amazon Cognito, which handles signing
+				in. We never see your password. Cognito sends the codes that confirm your email and reset your
+				password.
+			</li>
+			<li>
+				<strong>A copy of your training data</strong>: the same logs, notes, ratings and settings a backup
+				file holds, plus a list of sessions you've deleted (so they aren't brought back). It is stored,
+				compressed, in Amazon DynamoDB, and kept in step with each device you sign in on. Your UKC
+				logbook, heart rate readings and any session still in progress are not included.
+			</li>
+		</ul>
+		<p>
+			Both are stored by Amazon Web Services in Ireland (eu-west-1). Only your own sign-in can read or
+			change your copy; no other user can reach it. We use it only to keep your devices in step. We don't
+			look at it, analyse it, or share it.
+		</p>
+		<p>
+			While you're signed in, the training apps don't load Google Analytics.
+		</p>
+		<p>
+			<strong>Signing out</strong> removes the account from that device; your training data stays on it.
+			<strong>Deleting your account</strong> (in the account panel) deletes your copy and your email
+			address straight away. AWS keeps automatic restore points of the table for up to 35 days, so a copy
+			can remain there for up to 35 days after you delete it. We keep your data until you delete your
+			account.
+		</p>
 		<h3>When you email us</h3>
 		<p>
 			We keep your email and our reply so we can answer you, and delete them when they are no longer
@@ -121,8 +154,10 @@
 			<li>Your choices, such as light or dark theme, grade system and filters.</li>
 			<li>
 				In the training apps: every session you log, its notes, your settings and saved routines.
-				We never receive these. A backup file is saved to your own device, and only goes where you
-				put it. Clearing your browser's data for the site deletes them.
+				Unless you create an account, we never receive these. A backup file is saved to your own device,
+				and only goes where you put it. Clearing your browser's data for the site deletes them from this
+				device, but not from your account. If you're signed in, the browser also keeps a sign-in token so
+				you stay signed in until you sign out.
 			</li>
 		</ul>
 
@@ -147,7 +182,8 @@
 		<p>
 			Under UK data protection law you can ask us for a copy of the personal data we hold about you,
 			ask us to correct or delete it, or object to how we use it. We only hold your email address if you have
-			subscribed or emailed us. You can unsubscribe any time or email us if you prefer. If you are unhappy with how
+			subscribed, emailed us or created an account, and your training data only if you have created an
+			account. You can delete your account yourself at any time from the account panel. You can unsubscribe any time or email us if you prefer. If you are unhappy with how
 			we handle your data, you can complain to the
 			<a href="https://ico.org.uk/make-a-complaint/" target="blank" rel="noopener">Information Commissioner's Office</a>.
 		</p>

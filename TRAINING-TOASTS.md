@@ -39,9 +39,17 @@ newest at the top. Sources are under `website/training/` — search the file for
 | All apps that log | Delete the session from <date>? | Confirm | Until DELETE, Cancel or closed | The bin by a session in an app's log | common/functions.js | Yes | Only DELETE deletes |
 | Tabata | Delete the <name> routine? | Confirm | Until DELETE, Cancel or closed | The bin by a routine under the cog | tabata/main.js | Yes | Only DELETE deletes |
 | Outside, Progress | Remove the imported UKC logbook from this device? | Confirm | Until REMOVE, Cancel or closed | Remove by the UKC logbook | common/ukc.js | Yes | Only REMOVE removes; the page then reloads |
-| Progress | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored and the page reloads | progress/backup.js | Yes | |
-| Progress | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | progress/backup.js | Yes | |
-| Progress | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | progress/backup.js | Yes | |
+| All apps | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored from the person in the nav and the page reloads | common/backup.js | Yes | |
+| All apps | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | common/backup.js | Yes | |
+| All apps | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | common/backup.js | Yes | |
+| Progress | Synced - tap to reload | Action | Until tapped or closed | A sync adds sessions from the account while the progress page is open | common/account.js | Yes | In an app, its log redraws instead |
+| All apps | Delete your account? | Confirm | Until DELETE, Cancel or closed | Delete account in the account panel | common/account.js | Yes | Only DELETE deletes; the sessions stay on the phone |
+| All apps | &lt;AWS's own message&gt; | Warning | 5.2 s | Sign in, sign up, a code or a password reset is refused, e.g. a wrong password or a used email | common/account.js | No | Cognito's wording, not ours |
+| All apps, signed in | Couldn't connect | Warning | 5.2 s | An account button is tapped with no connection | common/account.js | No | A sync in the background says nothing offline |
+| All apps, signed in | Signed out - sign in again to sync | Warning | Until closed | The account's sign in has expired, been revoked or deleted elsewhere | common/account.js | No | |
+| All apps, signed in | Too much to sync | Warning | 5.2 s | The backup, gzipped, is past DynamoDB's 400 KB item limit | common/account.js | No | |
+| All apps, signed in | Couldn't sync - try again | Warning | 5.2 s | Three tries in a row lose the race to another phone's write | common/account.js | No | |
+| All apps, signed in | The synced copy can't be read | Warning | 5.2 s | The account's copy isn't a training apps backup | common/account.js | No | |
 | Gym Session, Tick List, Outside, Dans Loft | Wow, that's the highest grade we have seen you tick! Congrats. | Info | 5.2 s | A tick harder than any saved of its kind - boulder, sport or trad - and than the session's own earlier ticks | common/records.js | Yes | Sport counts the gym session, tick list and endurance together; boulder counts the gym session and Dans Loft, a plus grade as its grade. Says nothing with nothing saved to beat. |
 | Gym Session, Tick List, Outside, Dans Loft | That's the highest grade we have seen you tick this month! Congrats. | Info | 5.2 s | As above, but only against the last 30 days, when it isn't the hardest ever | common/records.js | Yes | Rolling 30 days, not the calendar month |
 | Gym Session, Lap Timer, Dans Loft | Wow, that's your longest session ever. You're getting strong! | Info | 5.2 s | On FINISH, the climbs (gym) or laps (lap timer) are more than in any saved session | common/records.js | Yes | Not on a session reopened with the wrench, or a lap timer session typed in |

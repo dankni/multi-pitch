@@ -272,12 +272,27 @@ function restoreSession(){
     return session;
 }
 
-// A new entry joins the log; an edited one replaces the one it came from
+// A new entry joins the log; an edited one replaces the one it came from.
+// updated decides which copy wins when two phones have both - see common/backup.js
 function saveToLog(key, entry){
     let log = getLog(key);
+    entry.updated = Date.now();
     let existing = log.findIndex(item => item.id === entry.id);
     existing === -1 ? log.push(entry) : log[existing] = entry;
     setLog(key, log);
+    if(typeof syncSoon === "function"){ syncSoon(); }
+}
+
+// Deleted sessions, kept a while so a merge doesn't bring them back
+const deletedKey = "syncDeleted";
+const deletedDays = 180;
+
+function noteDeleted(key, id){
+    let cutoff = Date.now() - deletedDays * 86400000;
+    let marks = getLog(deletedKey).filter(mark => mark.at > cutoff);
+    marks.push({ "key" : key, "id" : id, "at" : Date.now() });
+    setLog(deletedKey, marks);
+    if(typeof syncSoon === "function"){ syncSoon(); }
 }
 
 function plural(count, noun){
@@ -599,6 +614,7 @@ function logClicked(event){
 
 function removeLog(id){
     setLog(sessionLogView.key, getLog(sessionLogView.key).filter(entry => entry.id !== id));
+    noteDeleted(sessionLogView.key, id);
     drawSessionLog();
 }
 
@@ -912,7 +928,7 @@ function hideToast(box){
 /* ================= Overlays =================
    Info behind the i, settings behind the cog. One at a time; CSS holds the page
    still behind whichever is open. */
-const overlays = ["about", "settings"];
+const overlays = ["about", "settings", "account"];
 
 function openOverlay(id){
     let panel = document.getElementById(id);
@@ -937,6 +953,7 @@ function isOpen(id){
 }
 
 function openInfoBox(){ openOverlay("about"); }
+function hideAccount(){ closeOverlay("account"); }
 function hideAbout(){ closeOverlay("about"); }
 function openSettings(){ openOverlay("settings"); }
 function hideSettings(){ closeOverlay("settings"); }
@@ -1010,9 +1027,64 @@ function tagFeedbackLinks(){
     });
 }
 
-// Off on a page with <body data-analytics="off">, such as the style guide
+/* The account and the backup file, behind the person at the top right of every
+   page. Their scripts load when it is first tapped - or straight away when signed
+   in, so every page syncs. */
+const accountRefreshKey = "accountRefresh";
+let accountLoading = null;
+
+function loadAccount(){
+    if(accountLoading === null){
+        accountLoading = new Promise(resolve => {
+            ["aws4fetch.js", "backup.js", "account.js"].forEach(file => {
+                let tag = document.createElement("script");
+                tag.src = "/training/common/" + file;
+                tag.async = false;   // in order
+                if(file === "account.js"){ tag.onload = resolve; }
+                document.body.appendChild(tag);
+            });
+        });
+    }
+    return accountLoading;
+}
+
+function openAccount(){
+    loadAccount().then(() => {
+        drawAccountPanel();
+        openOverlay("account");
+    });
+}
+
+const personIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">'
+    + '<circle cx="8" cy="5" r="3"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/></g></svg>';
+
+function addAccountButton(){
+    let side = document.querySelector("nav .right-nav");
+    if(side === null){ return; }
+    let button = document.createElement("button");
+    button.type = "button";
+    button.className = "icon-button account-button";
+    button.dataset.action = "openAccount";
+    button.setAttribute("aria-label", "Account and backup");
+    button.innerHTML = personIcon;
+    side.prepend(button);   // floated right, so first is furthest right
+}
+
+// A restored backup file reloads the page, and says what it added once it has
+const restoredKey = "backupRestored";
+
+function showRestored(){
+    let message = sessionStorage.getItem(restoredKey);
+    if(message !== null){
+        sessionStorage.removeItem(restoredKey);
+        toast(message);
+    }
+}
+
+// Off on a page with <body data-analytics="off">, such as the style guide, and
+// when signed in, so no third-party script shares a page with the account's token
 function loadAnalytics(){
-    if(document.body.dataset.analytics === "off"){ return; }
+    if(document.body.dataset.analytics === "off" || localStorage.getItem(accountRefreshKey) !== null){ return; }
     let tag = document.createElement("script");
     tag.src = "https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE";
     tag.async = true;
@@ -1042,5 +1114,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // hidden where the browser can't go full screen, which an iPhone can't
     let full = document.getElementById("fullscreen");
     if(full !== null && document.documentElement.requestFullscreen){ full.hidden = false; }
+    addAccountButton();
+    showRestored();
+    if(localStorage.getItem(accountRefreshKey) !== null){ loadAccount(); }
     loadAnalytics();
 });
