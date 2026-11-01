@@ -1058,8 +1058,11 @@ function openAccount(){
     });
 }
 
-const personIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">'
-    + '<circle cx="8" cy="5" r="3"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/></g></svg>';
+// outlined, and solid while signed in
+const personIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g class="person-outline" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">'
+    + '<circle cx="8" cy="5" r="3"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/></g>'
+    + '<g class="person-solid" fill="currentColor"><circle cx="8" cy="4.75" r="3.5"/>'
+    + '<path d="M1.2 15.2c0-3.7 3-6.1 6.8-6.1s6.8 2.4 6.8 6.1c0 .45-.35.8-.8.8H2c-.45 0-.8-.35-.8-.8z"/></g></svg>';
 
 function addAccountButton(){
     let side = document.querySelector("nav .right-nav");

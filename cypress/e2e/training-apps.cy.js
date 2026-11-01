@@ -4138,7 +4138,8 @@ describe('Training apps', function () {
                 cy.get('#accountEmailShown').should('have.text', 'climber@example.com');
                 // the person in the nav is filled in, and says so
                 cy.get('nav .account-button').should('have.class', 'signed-in').and('have.attr', 'aria-label', 'Account and backup, signed in');
-                cy.get('nav .account-button circle').should('have.css', 'fill').and('not.eq', 'none');
+                cy.get('nav .account-button .person-solid').should('be.visible');
+                cy.get('nav .account-button .person-outline').should('not.be.visible');
                 cy.get('#backupDetails').should('not.have.attr', 'open');
                 cy.get('#backupDetails summary').click();
                 cy.get('#backupDetails').should('have.attr', 'open');
@@ -4148,6 +4149,7 @@ describe('Training apps', function () {
                 cy.get('#account > section').first().should('have.id', 'accountLogin');   // still, signed out
                 cy.get('#accountHeading').should('have.text', 'Create an account or sign in');
                 cy.get('nav .account-button').should('not.have.class', 'signed-in').and('have.attr', 'aria-label', 'Account and backup');
+                cy.get('nav .account-button .person-outline').should('be.visible');
                 cy.get('#backupDetails').should('have.attr', 'open');
             });
 
@@ -4469,7 +4471,7 @@ describe('Training apps', function () {
             cy.window().then((win) => win.caches.open('training-v99'));
             cy.visit(appUrl + '/training/loft/');
             cy.get('#about a[href^="mailto:"]')
-                .should('have.attr', 'href', 'mailto:multi-pitch@outlook.com?subject=Feedback%3A%20Loft%20Climb%20Tracker%20(v99)');
+                .should('have.attr', 'href', 'mailto:multi-pitch@outlook.com?subject=Feedback%3A%20Climb%20Twister%20(v99)');
             cy.window().then((win) => win.caches.delete('training-v99'));
         });
 

@@ -1,4 +1,4 @@
-/* Climbing Twister, for the loft wall: say "next" and it calls out a limb and a
+/* Climb Twister, for the loft wall: say "next" and it calls out a limb and a
    hold colour to move it to. Trad mode now and then says to place gear, or to
    build a belay.
 

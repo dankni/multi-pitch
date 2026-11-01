@@ -242,17 +242,22 @@ function showSynced(){
 }
 
 /* ================= The panel =================
-   An overlay behind the person in the nav, built the first time it is opened, in
-   the settings panels' manner: a title, then groups, each a small heading over a
-   card. The account - signed out, waiting for an emailed code, or signed in, one
-   at a time - then the backup file, then the UKC logbook. Once this device has
-   ever signed in, the account comes first. */
+   An overlay behind the person in the nav, built the first time it is opened: a
+   column of cards, each headed by an icon, its title and, where it has them, its
+   status and a chevron to fold it. The account - signed out, waiting for an
+   emailed code, or signed in, one at a time - then the backup file, then the UKC
+   logbook, then, signed in, deleting the account. Once this device has ever
+   signed in, the account comes first. */
 
 // an open eye, struck through while the password shows
 const eyeIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">'
     + '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.25"/><path class="eye-slash" d="M2.5 13.5 13.5 2.5"/></g></svg>';
 
 const showPassword = `<button type="button" class="show-password" data-action="togglePasswordShown" aria-label="Show password" aria-pressed="false">${eyeIcon}</button>`;
+
+const backupIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 13.5h11"/></svg>';
+const ukcIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 2.5h7l3 3v8H3z"/><path d="M5.5 8h5M5.5 11h5"/></svg>';
+const chevron = '<svg class="account-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
 
 // what infra/accounts.yml asks of a new password, ticked off as it is typed
 const passwordRulesList = `<ul class="password-rules" hidden>
@@ -265,9 +270,12 @@ const passwordRulesList = `<ul class="password-rules" hidden>
 const accountPanel = `<aside id="account" class="overlay">
     <h2>Account</h2>
     <section class="account-group" id="accountLogin">
-        <h3 class="account-label" id="accountHeading">Create an account or sign in</h3>
         <div class="account-card">
-            <form class="account-form" data-account="out">
+            <div class="account-head">
+                <span class="account-icon person">${personIcon}</span>
+                <h3 class="account-label" id="accountHeading">Create an account or sign in</h3>
+            </div>
+            <form class="account-body account-form" data-account="out">
                 <input type="email" class="field" id="accountEmail" autocomplete="username" placeholder="Email" aria-label="Email" data-input="checkEmail" />
                 <div class="field-group password-field">
                     <input type="password" class="field" id="accountPassword" autocomplete="current-password" placeholder="Password" aria-label="Password" data-input="checkPassword" />
@@ -283,7 +291,7 @@ const accountPanel = `<aside id="account" class="overlay">
                     <a class="link-button" href="/privacy/" target="_blank" rel="noopener">Privacy policy</a>
                 </p>
             </form>
-            <form class="account-form" data-account="code" hidden>
+            <form class="account-body account-form" data-account="code" hidden>
                 <input type="text" class="field" id="accountCodeField" inputmode="numeric" autocomplete="one-time-code" placeholder="Code" aria-label="Code" data-input="clearInvalid" />
                 <div class="field-group password-field" id="accountNewPasswordGroup" hidden>
                     <input type="password" class="field" id="accountNewPassword" autocomplete="new-password" placeholder="New password" aria-label="New password" data-input="checkPassword" />
@@ -298,21 +306,20 @@ const accountPanel = `<aside id="account" class="overlay">
                     <button type="button" class="link-button" data-action="resendAccountCode">Resend code</button>
                 </p>
             </form>
-            <div data-account="in" hidden>
-                <ul class="account-rows">
-                    <li><span id="accountEmailShown"></span><button type="button" class="link-button" data-action="signOutAccount">Sign out</button></li>
-                    <li><span id="accountLastSynced"></span><button type="button" class="link-button" data-action="syncAccount">Sync now</button></li>
-                </ul>
-                <p class="account-links">
-                    <button type="button" class="link-button" data-action="deleteAccount">Delete account</button>
-                </p>
-            </div>
+            <ul class="account-rows" data-account="in" hidden>
+                <li><span id="accountEmailShown"></span><button type="button" class="link-button" data-action="signOutAccount">Sign out</button></li>
+                <li><span id="accountLastSynced"></span><button type="button" class="link-button" data-action="syncAccount">Sync now</button></li>
+            </ul>
         </div>
     </section>
     <section class="account-group backup">
-        <details id="backupDetails" open>
-            <summary><h3 class="account-label">Old Fashioned Back up</h3></summary>
-            <div class="account-card">
+        <details class="account-card" id="backupDetails" open>
+            <summary class="account-head">
+                <span class="account-icon">${backupIcon}</span>
+                <h3 class="account-label">Old Fashioned Back up</h3>
+                ${chevron}
+            </summary>
+            <div class="account-body">
                 <p>
                     By default, your sessions only live in this browser. Save a backup of everything (logs and settings)
                     and restore it here to put it back, or to move it to a new device or browser. Restoring adds what's
@@ -332,9 +339,14 @@ const accountPanel = `<aside id="account" class="overlay">
     </section>
     <!-- the same import as the Outside Climbing app's and the progress page's, from common/ukc.js -->
     <section class="account-group folds">
-        <details id="ukcDetails">
-            <summary><h3 class="account-label">UKC logbook</h3></summary>
-            <div class="account-card">
+        <details class="account-card" id="ukcDetails">
+            <summary class="account-head">
+                <span class="account-icon">${ukcIcon}</span>
+                <h3 class="account-label">UKC logbook</h3>
+                <span class="account-status" id="accountUkcImported"></span>
+                ${chevron}
+            </summary>
+            <div class="account-body">
                 <p>
                     Download the CSV from your
                     <a href="https://www.ukclimbing.com/logbook/" target="_blank">UKC logbook (DLOG format)</a>
@@ -348,11 +360,13 @@ const accountPanel = `<aside id="account" class="overlay">
                     <button type="button" class="quiet" data-action="chooseAccountUkcFile">Upload UKC Logbook CSV</button>
                 </p>
                 <p class="account-links" id="accountUkcStatus" hidden>
-                    <span id="accountUkcImported"></span>
                     <button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
                 </p>
             </div>
         </details>
+    </section>
+    <section class="account-group" id="accountDelete" hidden>
+        <button type="button" class="account-card account-delete" data-action="deleteAccount">Delete account</button>
     </section>
     <button type="button" class="icon-button close" data-action="hideAccount" aria-label="Close account panel"></button>
 </aside>`;
@@ -373,7 +387,7 @@ let backupFolded = false;
 
 function showBackup(){
     let details = document.getElementById("backupDetails");
-    details.parentNode.classList.toggle("folds", signedIn());
+    details.closest(".account-group").classList.toggle("folds", signedIn());
     details.querySelector("summary").tabIndex = signedIn() ? 0 : -1;
     if(!signedIn()){
         details.open = true;
@@ -391,6 +405,7 @@ function chooseAccountUkcFile(){
 function showUkc(){
     let logbook = ukc.load();
     document.getElementById("accountUkcStatus").hidden = logbook === null;
+    document.getElementById("accountUkcImported").innerText = "";
     if(logbook === null){ return; }
     let day = new Date(logbook.imported + "T12:00:00");
     document.getElementById("accountUkcImported").innerText = "Imported "
@@ -415,6 +430,8 @@ function showAccount(){
     showUkc();
     let part = signedIn() ? "in" : accountCode !== null ? "code" : "out";
     login.querySelectorAll("[data-account]").forEach(box => { box.hidden = box.dataset.account !== part; });
+    login.classList.toggle("signed-in", signedIn());
+    document.getElementById("accountDelete").hidden = !signedIn();
     document.getElementById("accountHeading").innerText = signedIn() ? "Signed in" : "Create an account or sign in";
     document.getElementById("accountNewPasswordGroup").hidden = !(accountCode && accountCode.reset);
     checkPassword(document.getElementById("accountPassword"));
