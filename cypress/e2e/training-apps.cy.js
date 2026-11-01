@@ -4099,6 +4099,22 @@ describe('Training apps', function () {
                 cy.get('#account').should('not.have.class', 'open');
             });
 
+            it('imports a UKC logbook from any app, loading what it needs', () => {
+                stubAws();
+                cy.visit(appUrl + '/training/rings/');   // no grades.js or ukc.js of its own
+                cy.get('nav .account-button').click();
+                cy.get('#accountUkcStatus').should('not.be.visible');
+                cy.get('#accountUkcFile').selectFile({ contents: Cypress.Buffer.from([
+                    'Name,Grade,Style,Partner(empty),Notes,Date,Crag,County,Region,Country,Pitches,Type',
+                    '"Hound Dog","HVS 5a","TR O/S",,,12/Sep/26,"Moorhill Quarry","Co. Down","Northern Ireland","Northern Ireland",1,Trad'
+                ].join('\r\n')), fileName: 'dankni_Logbook_DLOG.csv' }, { force: true });
+                cy.location('pathname').should('eq', '/training/progress/');
+                cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', 'Hound Dog');
+                cy.get('nav .account-button').click();
+                cy.get('#accountUkcStatus').should('not.have.attr', 'hidden');
+                cy.get('#accountUkcImported').should('contain', 'Imported');
+            });
+
             it('opens from the free account link on the progress page', () => {
                 stubAws();
                 cy.visit(progressUrl, { onBeforeLoad(win) { win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'] }])); } });
@@ -4110,12 +4126,23 @@ describe('Training apps', function () {
             it('puts the account above the backup once this device has signed in', () => {
                 visitAccount();
                 cy.get('#account > section').first().should('have.class', 'backup');
+                cy.get('#backupDetails').should('have.attr', 'open');
+                cy.get('#accountHeading').should('have.text', 'Create an account or sign in');
                 signIn();
                 cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
                 cy.get('#account > section').first().should('have.id', 'accountLogin');
-                cy.contains('#account button', 'SIGN OUT').click();
+                // the backup folds away, and the account says so
+                cy.get('#accountHeading').should('have.text', 'Signed in');
+                cy.get('#accountEmailShown').should('have.text', 'climber@example.com');
+                cy.get('#backupDetails').should('not.have.attr', 'open');
+                cy.get('#backupDetails summary').click();
+                cy.get('#backupDetails').should('have.attr', 'open');
+                cy.contains('#account button', 'SAVE').should('be.visible');
+                cy.contains('#account button', 'Sign out').click();
                 cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
                 cy.get('#account > section').first().should('have.id', 'accountLogin');   // still, signed out
+                cy.get('#accountHeading').should('have.text', 'Create an account or sign in');
+                cy.get('#backupDetails').should('have.attr', 'open');
             });
 
             it('edges a wrong email or password in red, and sends nothing until they are right', () => {
@@ -4268,7 +4295,7 @@ describe('Training apps', function () {
                 });
                 signIn();
                 cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
-                cy.contains('#account button', 'SIGN OUT').click();
+                cy.contains('#account button', 'Sign out').click();
                 cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
                 cy.window().then((win) => {
                     expect(calls.find((call) => call.target === 'RevokeToken').body.Token).to.equal('refresh-token');

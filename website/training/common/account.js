@@ -242,10 +242,11 @@ function showSynced(){
 }
 
 /* ================= The panel =================
-   An overlay behind the person in the nav, built the first time it is opened:
-   the backup file, and the account - signed out, waiting for an emailed code, or
-   signed in, one at a time. Once this device has ever signed in, the account
-   comes first. */
+   An overlay behind the person in the nav, built the first time it is opened, in
+   the settings panels' manner: a title, then groups, each a small heading over a
+   card. The account - signed out, waiting for an emailed code, or signed in, one
+   at a time - then the backup file, then the UKC logbook. Once this device has
+   ever signed in, the account comes first. */
 
 // an open eye, struck through while the password shows
 const eyeIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">'
@@ -255,71 +256,103 @@ const showPassword = `<button type="button" class="show-password" data-action="t
 
 // what infra/accounts.yml asks of a new password, ticked off as it is typed
 const passwordRulesList = `<ul class="password-rules" hidden>
-                <li data-rule="length">10+ characters</li>
-                <li data-rule="lower">Lowercase</li>
-                <li data-rule="upper">Uppercase</li>
-                <li data-rule="number">Number</li>
-            </ul>`;
+                    <li data-rule="length">10+ characters</li>
+                    <li data-rule="lower">Lowercase</li>
+                    <li data-rule="upper">Uppercase</li>
+                    <li data-rule="number">Number</li>
+                </ul>`;
 
 const accountPanel = `<aside id="account" class="overlay">
-    <section class="backup">
-        <h2>Old Fashioned Back up</h2>
-        <p>
-            By default, your sessions only live in this browser. Save a backup of everything (logs and settings)
-            and restore it here to put it back, or to move it to a new device or browser. Restoring adds what's
-            missing and keeps what's already here. Your UKC logbook isn't included: import it again from UKC.
-        </p>
-        <p class="backup-actions">
-            <button type="button" data-action="downloadBackup">
-                <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v10M3.5 7.5 8 12l4.5-4.5M2 14.5h12"/></svg>SAVE
-            </button>
-            <button type="button" class="quiet" data-action="chooseBackupFile">
-                <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 14V4M3.5 8.5 8 4l4.5 4.5M2 1.5h12"/></svg>RESTORE
-            </button>
-        </p>
-        <input type="file" id="backupFile" accept=".json,application/json" hidden data-change="importBackupFile" />
-    </section>
-    <section class="account" id="accountLogin">
-        <h2>Account</h2>
-        <p>Create an account or sign in.</p>
-        <form class="account-form" data-account="out">
-            <input type="email" class="field" id="accountEmail" autocomplete="username" placeholder="Email" aria-label="Email" data-input="checkEmail" />
-            <div class="field-group password-field">
-                <input type="password" class="field" id="accountPassword" autocomplete="current-password" placeholder="Password" aria-label="Password" data-input="checkPassword" />
-                ${showPassword}
+    <h2>Account</h2>
+    <section class="account-group" id="accountLogin">
+        <h3 class="account-label" id="accountHeading">Create an account or sign in</h3>
+        <div class="account-card">
+            <form class="account-form" data-account="out">
+                <input type="email" class="field" id="accountEmail" autocomplete="username" placeholder="Email" aria-label="Email" data-input="checkEmail" />
+                <div class="field-group password-field">
+                    <input type="password" class="field" id="accountPassword" autocomplete="current-password" placeholder="Password" aria-label="Password" data-input="checkPassword" />
+                    ${showPassword}
+                </div>
+                ${passwordRulesList}
+                <p class="backup-actions">
+                    <button type="button" data-action="signInAccount">SIGN IN</button>
+                    <button type="button" class="quiet" data-action="signUpAccount">SIGN UP</button>
+                </p>
+                <p class="account-links">
+                    <button type="button" class="link-button" data-action="forgotPassword">Forgot password</button>
+                    <a class="link-button" href="/privacy/" target="_blank" rel="noopener">Privacy policy</a>
+                </p>
+            </form>
+            <form class="account-form" data-account="code" hidden>
+                <input type="text" class="field" id="accountCodeField" inputmode="numeric" autocomplete="one-time-code" placeholder="Code" aria-label="Code" data-input="clearInvalid" />
+                <div class="field-group password-field" id="accountNewPasswordGroup" hidden>
+                    <input type="password" class="field" id="accountNewPassword" autocomplete="new-password" placeholder="New password" aria-label="New password" data-input="checkPassword" />
+                    ${showPassword}
+                </div>
+                ${passwordRulesList}
+                <p class="backup-actions">
+                    <button type="button" data-action="confirmAccountCode">CONFIRM</button>
+                    <button type="button" class="quiet" data-action="cancelAccountCode">CANCEL</button>
+                </p>
+                <p class="account-links">
+                    <button type="button" class="link-button" data-action="resendAccountCode">Resend code</button>
+                </p>
+            </form>
+            <div data-account="in" hidden>
+                <ul class="account-rows">
+                    <li><span id="accountEmailShown"></span><button type="button" class="link-button" data-action="signOutAccount">Sign out</button></li>
+                    <li><span id="accountLastSynced"></span><button type="button" class="link-button" data-action="syncAccount">Sync now</button></li>
+                </ul>
+                <p class="account-links">
+                    <button type="button" class="link-button" data-action="deleteAccount">Delete account</button>
+                </p>
             </div>
-            ${passwordRulesList}
-            <p class="backup-actions">
-                <button type="button" data-action="signInAccount">SIGN IN</button>
-                <button type="button" class="quiet" data-action="signUpAccount">SIGN UP</button>
-            </p>
-            <p class="account-links">
-                <button type="button" class="link-button" data-action="forgotPassword">Forgot password</button>
-                <a class="link-button" href="/privacy/" target="_blank" rel="noopener">Privacy policy</a>
-            </p>
-        </form>
-        <form class="account-form" data-account="code" hidden>
-            <input type="text" class="field" id="accountCodeField" inputmode="numeric" autocomplete="one-time-code" placeholder="Code" aria-label="Code" data-input="clearInvalid" />
-            <div class="field-group password-field" id="accountNewPasswordGroup" hidden>
-                <input type="password" class="field" id="accountNewPassword" autocomplete="new-password" placeholder="New password" aria-label="New password" data-input="checkPassword" />
-                ${showPassword}
-            </div>
-            ${passwordRulesList}
-            <p class="backup-actions">
-                <button type="button" data-action="confirmAccountCode">CONFIRM</button>
-                <button type="button" class="quiet" data-action="cancelAccountCode">CANCEL</button>
-            </p>
-            <button type="button" class="link-button" data-action="resendAccountCode">Resend code</button>
-        </form>
-        <div class="account-form" data-account="in" hidden>
-            <p id="accountEmailShown"></p>
-            <p class="account-note" id="accountLastSynced"></p>
-            <p class="backup-actions">
-                <button type="button" data-action="syncAccount">SYNC NOW</button>
-                <button type="button" class="quiet" data-action="signOutAccount">SIGN OUT</button>
-            </p>
-            <button type="button" class="link-button" data-action="deleteAccount">Delete account</button>
         </div>
+    </section>
+    <section class="account-group backup">
+        <details id="backupDetails" open>
+            <summary><h3 class="account-label">Old Fashioned Back up</h3></summary>
+            <div class="account-card">
+                <p>
+                    By default, your sessions only live in this browser. Save a backup of everything (logs and settings)
+                    and restore it here to put it back, or to move it to a new device or browser. Restoring adds what's
+                    missing and keeps what's already here. Your UKC logbook isn't included: import it again from UKC.
+                </p>
+                <p class="backup-actions">
+                    <button type="button" data-action="downloadBackup">
+                        <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v10M3.5 7.5 8 12l4.5-4.5M2 14.5h12"/></svg>SAVE
+                    </button>
+                    <button type="button" class="quiet" data-action="chooseBackupFile">
+                        <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 14V4M3.5 8.5 8 4l4.5 4.5M2 1.5h12"/></svg>RESTORE
+                    </button>
+                </p>
+                <input type="file" id="backupFile" accept=".json,application/json" hidden data-change="importBackupFile" />
+            </div>
+        </details>
+    </section>
+    <!-- the same import as the Outside Climbing app's and the progress page's, from common/ukc.js -->
+    <section class="account-group folds">
+        <details id="ukcDetails">
+            <summary><h3 class="account-label">UKC logbook</h3></summary>
+            <div class="account-card">
+                <p>
+                    Download the CSV from your
+                    <a href="https://www.ukclimbing.com/logbook/" target="_blank">UKC logbook (DLOG format)</a>
+                    and upload it here. Your trad and
+                    sport climbs are then added to the charts and session logs. Any data is stored
+                    on this device only. Uploading a CSV replaces the last one, so always download all data.
+                    Your CSV is never uploaded anywhere.
+                </p>
+                <input type="file" id="accountUkcFile" accept=".csv,text/csv" hidden data-change="importUkcFile" />
+                <p class="backup-actions">
+                    <button type="button" class="quiet" data-action="chooseAccountUkcFile">Upload UKC Logbook CSV</button>
+                </p>
+                <p class="account-links" id="accountUkcStatus" hidden>
+                    <span id="accountUkcImported"></span>
+                    <button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
+                </p>
+            </div>
+        </details>
     </section>
     <button type="button" class="icon-button close" data-action="hideAccount" aria-label="Close account panel"></button>
 </aside>`;
@@ -327,8 +360,41 @@ const accountPanel = `<aside id="account" class="overlay">
 function drawAccountPanel(){
     if(document.getElementById("account") === null){
         document.body.insertAdjacentHTML("beforeend", accountPanel);
+        // only folds while signed in
+        let details = document.getElementById("backupDetails");
+        details.addEventListener("toggle", () => { if(!signedIn() && !details.open){ details.open = true; } });
     }
     showAccount();
+}
+
+// Signed in, the backup file is the lesser way to keep sessions: folded away, once
+// each time the account is signed in, and left as it is put after that
+let backupFolded = false;
+
+function showBackup(){
+    let details = document.getElementById("backupDetails");
+    details.parentNode.classList.toggle("folds", signedIn());
+    details.querySelector("summary").tabIndex = signedIn() ? 0 : -1;
+    if(!signedIn()){
+        details.open = true;
+        backupFolded = false;
+    } else if(!backupFolded){
+        details.open = false;
+        backupFolded = true;
+    }
+}
+
+function chooseAccountUkcFile(){
+    document.getElementById("accountUkcFile").click();
+}
+
+function showUkc(){
+    let logbook = ukc.load();
+    document.getElementById("accountUkcStatus").hidden = logbook === null;
+    if(logbook === null){ return; }
+    let day = new Date(logbook.imported + "T12:00:00");
+    document.getElementById("accountUkcImported").innerText = "Imported "
+        + (isNaN(day) ? logbook.imported : day.toLocaleDateString([], { "dateStyle" : "medium" }));
 }
 
 function accountField(id){
@@ -344,8 +410,11 @@ function showAccount(){
     } else {
         backup.after(login);
     }
+    showBackup();
+    showUkc();
     let part = signedIn() ? "in" : accountCode !== null ? "code" : "out";
     login.querySelectorAll("[data-account]").forEach(box => { box.hidden = box.dataset.account !== part; });
+    document.getElementById("accountHeading").innerText = signedIn() ? "Signed in" : "Create an account or sign in";
     document.getElementById("accountNewPasswordGroup").hidden = !(accountCode && accountCode.reset);
     checkPassword(document.getElementById("accountPassword"));
     checkPassword(document.getElementById("accountNewPassword"));

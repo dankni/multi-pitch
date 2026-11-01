@@ -182,7 +182,13 @@ body {
     color: var(--text);
 }
 /* No width: a block fills the row by itself, padding included */
+/* Three columns: the icons either side never wrap, the sides share what the title
+   leaves so it stays centred, and a title too long for a narrow or zoomed screen
+   is cut short rather than pushing the icons onto a second line */
 nav {
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+    align-items: start;
     font-size: var(--t-lg);
     background-color: var(--nav);
     color: var(--nav-ink);
@@ -191,20 +197,17 @@ nav {
     height: 58px;
     border-bottom: 1px solid var(--nav-edge);
 }
+nav h1 {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 hr {
     max-width: 50%;
     opacity: 0.8;
 }
-/* Both sides the same width and as tall as the bar, so the title stays centred
-   even when one side is empty */
-.left-nav {
-    float: left;
-    width: 120px;
-    min-height: 100%;
-}
-.right-nav {
-    float: right;
-    width: 120px;
+.left-nav, .right-nav {
     min-height: 100%;
 }
 h1 {
@@ -1279,14 +1282,71 @@ nav .account-button svg {
 }
 
 /* ================= Account =================
-   The overlay behind the person in the nav (common/account.js): the backup file
-   and the account, each in a panel of its own. */
-/* Save and restore side by side, each with its arrow: down onto the phone, up from it */
-.backup-actions {
+   The overlay behind the person in the nav (common/account.js), laid out as the
+   settings panels are: a title, then groups, each a small heading over a card. */
+/* one column, as on a phone - a section is otherwise an inline-block, and two sit side by side */
+.overlay .account-group {
+    display: block;
+    margin: 0 auto var(--s5);
+    border: 0;
+    background: none;
+}
+.overlay .account-label {
+    margin: 0 0 var(--s2);
+    font-size: var(--t-md);
+    font-weight: 600;
+    text-align: center;
+}
+.account-card {
+    padding: var(--s4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    text-align: left;
+}
+.overlay .account-card p {
+    margin: 0 0 var(--s4);
+}
+.overlay .account-card p:last-child {
+    margin-bottom: 0;
+}
+/* A group whose heading is its summary folds, with a chevron, while it has .folds:
+   the UKC logbook always, the backup only signed in */
+.account-group summary {
+    list-style: none;
+    pointer-events: none;
+}
+.account-group summary::-webkit-details-marker {
+    display: none;
+}
+.account-group.folds summary {
+    cursor: pointer;
+    pointer-events: auto;
+}
+.account-group summary:focus:not(:focus-visible) {
+    outline: none;
+}
+.account-group.folds .account-label::after {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-left: var(--s2);
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-3px) rotate(45deg);
+}
+.account-group.folds details[open] .account-label::after {
+    transform: translateY(1px) rotate(-135deg);
+}
+/* Two buttons side by side, each with its arrow where it has one */
+.overlay .backup-actions {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: var(--s3);
 }
 .backup-actions button {
     flex: 1 1 0;
@@ -1294,10 +1354,15 @@ nav .account-button svg {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--s2);
     margin: 0;
     padding-left: 1rem;
     padding-right: 1rem;
+}
+/* one on its own is as wide as its label */
+.backup-actions button:only-child {
+    flex: 0 1 auto;
+    max-width: none;
 }
 .backup-actions .arrow {
     flex: 0 0 auto;
@@ -1309,42 +1374,50 @@ nav .account-button svg {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.account-note {
-    font-size: var(--t-sm);
-    opacity: 0.75;
-}
-.backup, .account {
-    padding: var(--s4);
-}
-.backup {
-    margin-top: var(--s7);
-}
-.overlay .backup h2, .overlay .account h2 {
-    margin-top: 0;
-}
-/* The account: fields stacked full width, the buttons as the backup's */
+/* The account: fields stacked full width */
 .account-form {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: var(--s3);
-    max-width: 380px;
-    margin: 0 auto;
 }
-/* blue, as the privacy link beside them is */
-.account-form .link-button {
-    align-self: center;
-    color: var(--link);
+.overlay .account-form p {
+    margin: 0;
 }
-.account-links {
+/* Quiet links under a card's buttons, blue as links are */
+.overlay .account-links {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: baseline;
     gap: var(--s2) var(--s5);
 }
-.account-form p {
-    margin: 0;
-    text-align: center;
+.account-card .link-button {
+    color: var(--link);
+}
+/* Signed in: rows as the settings' switches are, the deed on the right */
+.account-rows {
+    margin: calc(-1 * var(--s4)) calc(-1 * var(--s4)) var(--s4);
+    padding: 0;
+    list-style: none;
+}
+.account-rows li {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    min-height: 52px;
+    padding: var(--s2) var(--s4);
+    border-bottom: 1px solid var(--line);
+}
+.account-rows li > span {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.account-rows .link-button {
+    flex: 0 0 auto;
 }
 /* Password and its eye as one control, full width */
 .account-form .password-field {
@@ -1380,7 +1453,6 @@ nav .account-button svg {
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: var(--t-sm);
 }
 .password-rules li::before {
     content: "✗ ";
@@ -1399,7 +1471,6 @@ nav .account-button svg {
 .field-group:has(.field[aria-invalid="true"]):focus-within {
     outline-color: var(--danger-ink);
 }
-
 
 /* ================= Fields ================= */
 .field {
@@ -1504,9 +1575,17 @@ body.red, body.orange, body.yellow {
         font-size: var(--t-sm);
         height: 52px;
         padding: 6px 6px 0 3px;
+        column-gap: var(--s2);
     }
-    .left-nav, .right-nav {
-        width: 100px;
+    /* still a 32px target or more, so up to three a side and the title fit a zoomed phone */
+    nav .icon-menu, nav .icon-info, nav .icon-cog {
+        padding: 12px 8px;
+    }
+    nav .icon-info + .icon-cog {
+        margin-left: 4px;
+    }
+    nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon-volume-off, nav .account-button {
+        padding: 12px 8px 0 8px;
     }
     button {
         padding: 12px 16px;
@@ -1539,6 +1618,8 @@ body.red, body.orange, body.yellow {
     display: flex;
     height: calc(58px + env(safe-area-inset-bottom));
     padding: 0 0 env(safe-area-inset-bottom);
+    align-items: stretch;   /* not the top bar's: each item is the bar's full height, its icon and label centred */
+    gap: 0;
     background: var(--nav);
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     border-bottom: 0;

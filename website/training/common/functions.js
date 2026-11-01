@@ -1036,7 +1036,10 @@ let accountLoading = null;
 function loadAccount(){
     if(accountLoading === null){
         accountLoading = new Promise(resolve => {
-            ["aws4fetch.js", "backup.js", "account.js"].forEach(file => {
+            // the UKC import, and the grades it reads, on a page that has neither
+            let files = typeof ukc === "undefined" ? ["ukc.js"] : [];
+            if(typeof tradLadder === "undefined"){ files.unshift("grades.js"); }
+            files.concat(["aws4fetch.js", "backup.js", "account.js"]).forEach(file => {
                 let tag = document.createElement("script");
                 tag.src = "/training/common/" + file;
                 tag.async = false;   // in order

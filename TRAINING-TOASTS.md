@@ -38,7 +38,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Twister | Browser or device doesn't support voice recognition. Try Chrome on Android. | Warning | Until closed | The page opens in a browser without speech recognition | loft/main.js | Yes | Text, with its link, is the `#noVoiceToast` template in loft/index.html |
 | All apps that log | Delete the session from <date>? | Confirm | Until DELETE, Cancel or closed | The bin by a session in an app's log | common/functions.js | Yes | Only DELETE deletes |
 | Tabata | Delete the <name> routine? | Confirm | Until DELETE, Cancel or closed | The bin by a routine under the cog | tabata/main.js | Yes | Only DELETE deletes |
-| Outside, Progress | Remove the imported UKC logbook from this device? | Confirm | Until REMOVE, Cancel or closed | Remove by the UKC logbook | common/ukc.js | Yes | Only REMOVE removes; the page then reloads |
+| Outside, Progress, All apps (account panel) | Remove the imported UKC logbook from this device? | Confirm | Until REMOVE, Cancel or closed | Remove by the UKC logbook, or under it in the account panel | common/ukc.js | Yes | Only REMOVE removes; the page then reloads |
 | All apps | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored from the person in the nav and the page reloads | common/backup.js | Yes | |
 | All apps | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | common/backup.js | Yes | |
 | All apps | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | common/backup.js | Yes | |
