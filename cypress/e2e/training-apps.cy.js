@@ -4078,6 +4078,8 @@ describe('Training apps', function () {
                     }
                 });
                 cy.get('nav .account-button').click();
+                // account.js loads on the click
+                cy.get('#account').should('have.class', 'open');
             }
 
             function signIn() {
