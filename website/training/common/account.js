@@ -31,6 +31,8 @@ const itemLimit = 390000;   // a DynamoDB item tops out at 400 KB
 let accountTokens = null;   // { id, access, expires }
 let accountKeys = null;     // { accessKeyId, secretAccessKey, sessionToken, expires }
 let accountCode = null;     // { email, password, reset } while a code is awaited
+let accountTypedAt = 0;     // the first key into the form, for signUpAccount()'s bot check
+const signUpSlowest = 2000; // ms from it that a person needs to fill the form in
 
 function signedIn(){
     return localStorage.getItem(accountRefreshKey) !== null;
@@ -256,7 +258,11 @@ const eyeIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><
 const showPassword = `<button type="button" class="show-password" data-action="togglePasswordShown" aria-label="Show password" aria-pressed="false">${eyeIcon}</button>`;
 
 const backupIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 13.5h11"/></svg>';
-const ukcIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 2.5h7l3 3v8H3z"/><path d="M5.5 8h5M5.5 11h5"/></svg>';
+// UKC's logo
+const ukcIcon = '<svg class="ukc-logo" viewBox="0 0 457.9 167.8" aria-hidden="true" focusable="false">'
+    + '<path d="M454.3 53.8c-10.5-10.1-26.2-17.2-45.8-17.2-27.9 0-43.9 19.7-43.9 47.3 0 28.7 18.2 47.3 45.6 47.3 20.2 0 32.7-5.7 47.6-16.9v41.5c-16.5 9.6-32.2 12-49.5 12-53.2 0-87.1-34.7-87.1-83.9 0-49.4 34.7-83.9 87.1-83.9 17.4 0 32.5 2.7 46.1 10.4v43.4z"/>'
+    + '<path d="M269.7 2.8h49l-54.4 78.7 58.1 83.6h-49.8l-54.4-80.3zM174.9 2.8h42.4v162.3h-42.4z"/>'
+    + '<path d="M0 2.8h42.4v95c0 26.8 11.4 36.1 30.5 36.1 11.7 0 19.1-1.1 26.8-2.2V2.8h42.4v156.5c-14.5 4.4-47.6 8.5-69.2 8.5C34.2 167.8 0 153 0 106.9z"/></svg>';
 const chevron = '<svg class="account-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
 
 // what infra/accounts.yml asks of a new password, ticked off as it is typed
@@ -459,6 +465,7 @@ function emailOk(text){
 
 // Once marked, red until it is a real address
 function checkEmail(field){
+    if(!accountTypedAt){ accountTypedAt = Date.now(); }
     if(emailOk(field.value.trim())){ clearInvalid(field); }
 }
 
@@ -477,6 +484,8 @@ function passwordOk(text){
 // Each rule ticked as it is met, shown once something is typed. The sign in
 // password is right once there is one; a new one, once it meets the rules.
 function checkPassword(field){
+    // also called by showAccount(), where it isn't typing
+    if(!accountTypedAt && field.value !== ""){ accountTypedAt = Date.now(); }
     let rules = field.closest(".password-field").nextElementSibling;
     rules.hidden = field.value === "";
     rules.querySelectorAll("[data-rule]").forEach(item => {
@@ -546,6 +555,8 @@ function signInAccount(){
 function signUpAccount(){
     let email = accountField("accountEmail"), password = document.getElementById("accountPassword").value;
     if(!fieldsOk([["accountEmail", emailOk(email)], ["accountPassword", passwordOk(password)]])){ return; }
+    // a bot fills the fields without typing, or faster than anyone could
+    if(!accountTypedAt || Date.now() - accountTypedAt < signUpSlowest){ return; }
     accountBusy(async () => {
         await userPool("SignUp", { "Username" : email, "Password" : password, "UserAttributes" : [{ "Name" : "email", "Value" : email }] });
         accountCode = { "email" : email, "password" : password, "reset" : false };

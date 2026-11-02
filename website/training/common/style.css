@@ -1339,6 +1339,12 @@ nav .account-button svg {
 .account-icon .person-solid {
     stroke: none;
 }
+.account-icon .ukc-logo {
+    width: 24px;
+    height: 9px;
+    fill: currentColor;
+    stroke: none;
+}
 .signed-in .account-icon {
     background: var(--primary);
     color: var(--on-accent);

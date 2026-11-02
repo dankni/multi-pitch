@@ -203,6 +203,25 @@ describe('Training apps', function () {
             cy.get('#finishSummary').should('not.be.visible');
         });
 
+        it('saves at FINISH, saves the stars and note as they change, and takes it out again on a reset', () => {
+            cy.visit(timerUrl);
+            runSession(2);
+            cy.get('#finishButton').click();
+            const saved = (win) => JSON.parse(win.localStorage.getItem('lapTimerLog') || '[]');
+            cy.window().then((win) => expect(saved(win).map((entry) => entry.laps)).to.deep.equal([2]));
+            cy.get('#saveSession').should('have.text', 'DONE');
+            cy.get('#star4').click();
+            cy.get('#sessionComment').type('Pumped');
+            cy.window().then((win) => {
+                expect(saved(win)[0].rating).to.equal(4);
+                expect(saved(win)[0].comment).to.equal('Pumped');
+            });
+            cy.get('[data-action="backToSession"]').click();
+            cy.get('#saveSession').should('have.text', 'SAVE SESSION');
+            cy.get('[data-action="resetTimer"]').click().click();
+            cy.window().then((win) => expect(saved(win)).to.have.length(0));
+        });
+
         it('says on FINISH when a session has the most laps ever', () => {
             visitWithLaps();
             runSession(4);   // past the 3 of July
@@ -3377,7 +3396,7 @@ describe('Training apps', function () {
             cy.get('#cogHint').should('not.exist');
         });
 
-        it('remembers dark mode across every app, and forgets it on going back to the phone\'s setting', () => {
+        it('remembers dark mode across every app, and light too when the phone is light', () => {
             // a phone set to light, whatever the machine running the test is
             const lightPhone = (win) => {
                 let real = win.matchMedia.bind(win);
@@ -3396,8 +3415,8 @@ describe('Training apps', function () {
             cy.get('html').should('have.class', 'dark');
             cy.get('#darkMode').should('be.checked');
             tap('#darkMode');
-            cy.get('html').should('not.have.class', 'dark').and('not.have.class', 'light');
-            cy.window().then((win) => expect(win.localStorage.getItem('trainingTheme')).to.equal(null));
+            cy.get('html').should('not.have.class', 'dark').and('have.class', 'light');
+            cy.window().then((win) => expect(win.localStorage.getItem('trainingTheme')).to.equal('light'));
         });
 
         pages.forEach((page) => {
@@ -3579,7 +3598,7 @@ describe('Training apps', function () {
             // 45 + 30 + 15 + 9.5 + 9 2/3 minutes; a boulder, 3 laps and a trad climb
             // the last 7 days, from the 7th: the boulder and the laps
             cy.get('#sessionsStats').invoke('prop', 'innerText')
-                .should('equal', 'Last 30 days · 6 sessions · 1h 49m trained · 5 climbs done\nLast 7 days · 2 sessions · 1h 15m trained · 4 climbs done');
+                .should('equal', 'Last 30 days · 6 sessions · 1h 49m trained · 5 climbs\nLast 7 days · 2 sessions · 1h 15m trained · 4 climbs');
         });
 
         it('splits the last 30 days of time trained into climbing, fingerboard and other', () => {
@@ -3699,7 +3718,7 @@ describe('Training apps', function () {
 
         it('says nothing of time trained when no session in the last 30 days kept any', () => {
             visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
-            cy.get('#sessionsStats').invoke('prop', 'innerText').should('equal', 'Last 30 days · 1 session · 1 climb done\nLast 7 days · 0 sessions · 0 climbs done');
+            cy.get('#sessionsStats').invoke('prop', 'innerText').should('equal', 'Last 30 days · 1 session · 1 climb\nLast 7 days · 0 sessions · 0 climbs');
         });
 
         it('saves how long a No Hangs session ran', () => {
@@ -4189,9 +4208,20 @@ describe('Training apps', function () {
                 cy.get('#account .password-rules').first().find('.met').should('have.length', 4);
                 cy.get('[data-account="out"] .show-password').click();
                 cy.get('#accountPassword').should('have.attr', 'type', 'password');
+                cy.tick(2000);   // the bot check: no sign up within 2 s of the first key
                 cy.contains('#account button', 'SIGN UP').click();
                 cy.get('[data-account="code"]').should('not.have.attr', 'hidden');
                 cy.then(() => expect(calls.find((call) => call.target === 'SignUp').body.Password).to.equal('passwordClimb1!'));
+            });
+
+            it('sends no sign up from a form filled in without typing', () => {
+                visitAccount();
+                cy.get('#accountEmail').invoke('val', 'climber@example.com');
+                cy.get('#accountPassword').invoke('val', 'passwordClimb1!');
+                cy.tick(2000);
+                cy.contains('#account button', 'SIGN UP').click();
+                cy.get('[data-account="code"]').should('have.attr', 'hidden');
+                cy.then(() => expect(calls.filter((call) => call.target === 'SignUp')).to.have.length(0));
             });
 
             it('signs in, merges the account copy in, and writes the merge back', () => {

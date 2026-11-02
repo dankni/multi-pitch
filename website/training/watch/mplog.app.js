@@ -12,6 +12,7 @@
                 screen while LAP fills, to lap.
      interval - tabata: work or rest and the time left, with a buzz as each starts,
                 and the screen woken and red for the last seconds of a rest.
+   The time of day is in the widget bar, on every screen.
    What the phone hasn't had yet waits in mplog.json until it connects again.
    With h in the state, a running session's heart rate is read and sent every
    few seconds; readings taken while the phone is away wait in memory, with how
@@ -476,6 +477,19 @@ NRF.on("disconnect", function(){ linked = false; });
 
 g.clear();
 Bangle.loadWidgets();
+// the time of day, redrawn on the minute; after loadWidgets, which starts WIDGETS afresh
+WIDGETS.mplogtime = {
+  area : "tr",
+  width : 48,
+  draw : function(){
+    var d = new Date();
+    g.reset().clearRect(this.x, this.y, this.x + this.width - 1, this.y + 23);
+    g.setFont("Vector", 18).setFontAlign(0, 0).drawString(("0" + d.getHours()).substr(-2) + ":" + ("0" + d.getMinutes()).substr(-2), this.x + this.width / 2, this.y + 12);
+    if(this.next){ clearTimeout(this.next); }
+    this.next = setTimeout(function(){ WIDGETS.mplogtime.draw(); }, 60000 - Date.now() % 60000);
+  }
+};
+
 Bangle.drawWidgets();
 setHeart();
 show();

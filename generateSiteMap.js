@@ -28,17 +28,17 @@ const gradesContent = JSON.parse(fs.readFileSync('./website/climbing-grades/cont
 // JSON source, so their dates live here - bump one when you change that app.
 const trainingPages = [
     { url: '/training/', lastUpdated: '2026-10-30', priority: '0.7' },
-    { url: '/training/progress/', lastUpdated: '2026-11-01', priority: '0.6' },
+    { url: '/training/progress/', lastUpdated: '2026-11-02', priority: '0.6' },
     { url: '/training/loft/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/rings/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/nohangs/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/tabata/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/gaps/', lastUpdated: '2026-10-30', priority: '0.6' },
-    { url: '/training/gilford/', lastUpdated: '2026-10-30', priority: '0.6' },
-    { url: '/training/timer/', lastUpdated: '2026-10-30', priority: '0.6' },
-    { url: '/training/endurance/', lastUpdated: '2026-10-30', priority: '0.6' },
-    { url: '/training/boulder/', lastUpdated: '2026-10-30', priority: '0.6' },
-    { url: '/training/trad/', lastUpdated: '2026-10-30', priority: '0.6' }
+    { url: '/training/gilford/', lastUpdated: '2026-11-02', priority: '0.6' },
+    { url: '/training/timer/', lastUpdated: '2026-11-02', priority: '0.6' },
+    { url: '/training/endurance/', lastUpdated: '2026-11-02', priority: '0.6' },
+    { url: '/training/boulder/', lastUpdated: '2026-11-02', priority: '0.6' },
+    { url: '/training/trad/', lastUpdated: '2026-11-02', priority: '0.6' }
 ];
 
 function generate() {

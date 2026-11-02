@@ -151,7 +151,8 @@ function toggleDebug(input){
 /* ================= Dark mode =================
    The page follows the phone's setting in CSS - light-dark() in style.css. The
    switch overrides it with .light or .dark on <html>, remembered across every
-   app. Choosing what the phone already shows forgets the override. Applied as
+   app - even when it matches the phone, which may change over at night, and
+   which a missing key would let a sync fill back in from the account. Applied as
    soon as this loads, in the <head>, so there is no flash of the other theme. */
 const themeKey = "trainingTheme";   // not the main site's "theme"
 
@@ -177,12 +178,7 @@ function applyTheme(){
 }
 
 function toggleDarkMode(input){
-    let dark = input.checked;
-    if(dark === prefersDark()){
-        localStorage.removeItem(themeKey);
-    } else {
-        localStorage.setItem(themeKey, dark ? "dark" : "light");
-    }
+    localStorage.setItem(themeKey, input.checked ? "dark" : "light");
     applyTheme();
 }
 
@@ -420,8 +416,14 @@ function setStar(value){
     }
 }
 
+// on the summary these save as they change - see common/summary.js
+function storeChange(){
+    if(typeof storeFinished === "function"){ storeFinished(); }
+}
+
 function rate(star){
     setStar(Number(star.dataset.stars));
+    storeChange();
 }
 
 function drawSavePanel(){
@@ -443,6 +445,7 @@ function drawSavePanel(){
 
 function updateComment(field){
     setSessionComment(field.value);
+    storeChange();
 }
 
 // Also how an app hands a saved note back when it reopens a session
@@ -459,6 +462,7 @@ function setSessionComment(text){
 
 function updateTitle(field){
     setSessionTitle(field.value);
+    storeChange();
 }
 
 // Also how an app hands a saved title back when it reopens a session
@@ -1096,19 +1100,53 @@ function showRestored(){
     }
 }
 
-// Off on a page with <body data-analytics="off">, such as the style guide, and
-// when signed in, so no third-party script shares a page with the account's token
+const analyticsId = "G-XR0EG1VTTE";
+const analyticsClientKey = "analyticsClient";
+
+/* Signed in, no third-party script shares a page with the account's token: the
+   page view and the apps' own events go straight to GA with sendBeacon, under a
+   random id that has nothing to do with the account, with the page's path and
+   title and nothing else of the person's */
+function beaconAnalytics(){
+    let client = localStorage.getItem(analyticsClientKey);
+    if(client === null){
+        client = Math.floor(Math.random() * 2147483647) + "." + Math.floor(Date.now() / 1000);
+        localStorage.setItem(analyticsClientKey, client);
+    }
+    let visit = sessionStorage.getItem(analyticsClientKey) || String(Math.floor(Date.now() / 1000));
+    sessionStorage.setItem(analyticsClientKey, visit);
+    let first = true;
+    let send = (name, params) => {
+        let hit = new URLSearchParams({ "v" : "2", "tid" : analyticsId, "cid" : client, "sid" : visit, "sct" : "1", "seg" : "1",
+            "en" : name, "dl" : location.origin + location.pathname, "dt" : document.title, "ep.signed_in" : "yes" });
+        if(first){ hit.set("_ss", "1"); }
+        first = false;
+        Object.entries(params || {}).forEach(([key, value]) => {
+            if(typeof value === "number"){ hit.set("epn." + key, String(value)); }
+            else if(typeof value === "string"){ hit.set("ep." + key, value.slice(0, 100)); }
+        });
+        navigator.sendBeacon("https://www.google-analytics.com/g/collect?" + hit);
+    };
+    window.gtag = (command, name, params) => { if(command === "event"){ send(name, params); } };
+    send("page_view");
+}
+
+// Off on a page with <body data-analytics="off">, such as the style guide
 function loadAnalytics(){
-    if(document.body.dataset.analytics === "off" || localStorage.getItem(accountRefreshKey) !== null){ return; }
+    if(document.body.dataset.analytics === "off"){ return; }
+    if(localStorage.getItem(accountRefreshKey) !== null){
+        if(navigator.sendBeacon){ beaconAnalytics(); }
+        return;
+    }
     let tag = document.createElement("script");
-    tag.src = "https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE";
+    tag.src = "https://www.googletagmanager.com/gtag/js?id=" + analyticsId;
     tag.async = true;
     document.body.appendChild(tag);
     window.dataLayer = window.dataLayer || [];
     // global, as on the main site, so an app can send an event of its own
     window.gtag = function(){ dataLayer.push(arguments); };
     gtag("js", new Date());
-    gtag("config", "G-XR0EG1VTTE");
+    gtag("config", analyticsId);
 }
 
 /* Each of these looks for what it works on and does nothing without it, so a

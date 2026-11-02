@@ -6,12 +6,15 @@
    picture. A full screen panel, as the overlays are.
 
    An app calls openSummary() as it finishes and closeSummary() as the session
-   is saved or thrown away, and may give app.summaryEntry : () => the session as
+   is closed or thrown away. Opening it saves the session to the log, through the
+   app's storeSession(), and the stars, note and title save again as they change,
+   so the save button only closes it. The app may give app.summaryEntry : () => the session as
    its log would save it, for entryClimbs() - app.toEntry(session) otherwise.
    The cross goes back to the session through the app's own resumeSession(). */
 
 let summaryMoved = [];   // [element, the placeholder it came from]
 let summaryWidth = 0;    // what the charts were drawn at
+let summarySaveLabel = "";   // the save button's own, while it reads DONE
 
 function summaryEntry(){
     return app.summaryEntry ? app.summaryEntry() : app.toEntry(session);
@@ -80,13 +83,37 @@ function openSummary(){
         summaryMoved.push([element, placeholder]);
         save.appendChild(element);
     });
+    storeSession();
+    session.stored = true;
+    keepSession();
+    let button = document.getElementById("saveSession");
+    if(button !== null && button.innerText !== "DONE"){
+        summarySaveLabel = button.innerText;
+        button.innerText = "DONE";
+    }
     openOverlay("finishSummary");
     drawSummary();
+}
+
+// a change made on the summary, saved as it is made
+function storeFinished(){
+    if(session !== null && session.stored && isOpen("finishSummary")){ storeSession(); }
+}
+
+// Thrown away after the summary saved it: out of the log again, unless it was a saved one reopened
+function unstoreSession(){
+    if(session === null || !session.stored || session.editing){ return; }
+    setLog(app.logKey, getLog(app.logKey).filter(entry => entry.id !== session.id));
+    noteDeleted(app.logKey, session.id);
+    drawSessionLog();
 }
 
 function closeSummary(){
     summaryMoved.forEach(([element, placeholder]) => placeholder.replaceWith(element));
     summaryMoved = [];
+    let button = document.getElementById("saveSession");
+    if(button !== null && summarySaveLabel !== ""){ button.innerText = summarySaveLabel; }
+    summarySaveLabel = "";
     closeOverlay("finishSummary");
 }
 

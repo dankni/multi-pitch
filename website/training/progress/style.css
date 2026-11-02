@@ -141,7 +141,7 @@
     margin-bottom: 0;
 }
 /* The calendar of days climbed: a day in its hardest grade's band colour,
-   blue for a workout with no grade, plain for other sessions with none, and
+   blue for a workout or laps with no grade, plain for other sessions with none, and
    faint for none. A timed day's opacity is set on it, by how long. */
 .sessions {
     --day-none: light-dark(#ebedf0, #262626);

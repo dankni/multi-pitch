@@ -114,7 +114,10 @@ function recordLap(){
 }
 
 function resetTimer(){
-    confirmReset("reset", session !== null && (elapsed() > 0 || session.laps > 0), clearSession);
+    confirmReset("reset", session !== null && (elapsed() > 0 || session.laps > 0), () => {
+        unstoreSession();
+        clearSession();
+    });
 }
 
 function clearSession(){
@@ -193,7 +196,8 @@ const logView = {
     }
 };
 
-function saveSession(){
+// on FINISH, and again as the summary changes it
+function storeSession(){
     saveToLog(app.logKey, {
         // a missing session takes its place in the log by the day it was done
         "id" : session.missing ? Date.parse(session.date) + Date.now() % 86400000 : session.id,
@@ -205,6 +209,10 @@ function saveSession(){
         "comment" : sessionComment,
         "title" : titleToSave()
     });
+}
+
+function saveSession(){
+    storeSession();
     clearSession();
     drawSessionLog(logView);
     openInfoBox();

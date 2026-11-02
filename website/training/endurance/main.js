@@ -181,7 +181,10 @@ function closeSession(){
 }
 
 function discardSession(){
-    confirmReset("discard", session !== null && session.logged.length > 0, closeSession);
+    confirmReset("discard", session !== null && session.logged.length > 0, () => {
+        unstoreSession();
+        closeSession();
+    });
 }
 
 // By place in the list: with the wall off, two climbs can be the same grade
@@ -291,7 +294,8 @@ function setsDone(){
     return session.stage === "set" && session.ticked.length === 0 ? session.setNumber - 1 : session.setNumber;
 }
 
-function saveSession(){
+// on FINISH, and again as the summary changes it
+function storeSession(){
     let climbs = climbsDone();
     saveToLog(app.logKey, Object.assign({
         "id" : session.id,
@@ -307,6 +311,10 @@ function saveSession(){
         "comment" : sessionComment,
         "title" : titleToSave()
     }, sessionTiming(session)));
+}
+
+function saveSession(){
+    storeSession();
     closeSession();
     drawSessionLog(logView);
     openInfoBox();

@@ -86,6 +86,7 @@ function setSessionDate(input){
     if(session && input.value){
         session.date = input.value;
         keepSession();
+        storeChange();
     }
 }
 
@@ -113,6 +114,7 @@ function setSessionTime(){
     if(finish){ session.finish = Date.parse(session.date + "T" + finish); }
     if(session.start && session.finish && session.finish < session.start){ session.finish += 86400000; }
     keepSession();
+    storeChange();
     drawSessionTimes();
 }
 
@@ -134,9 +136,14 @@ function resumeSession(){
     showState("running");
 }
 
-function saveSession(){
+// on FINISH, and again as the summary changes it
+function storeSession(){
     saveToLog(app.logKey, Object.assign({ "id" : session.id, "date" : session.date }, timing(session), app.toEntry(session),
         { "rating" : session.rating, "comment" : sessionComment, "title" : titleToSave() }));
+}
+
+function saveSession(){
+    storeSession();
     closeSession();
     drawSessionLog();
     if(app.onSaved){ app.onSaved(); }
@@ -144,7 +151,10 @@ function saveSession(){
 }
 
 function discardSession(){
-    confirmReset("discard", session !== null && app.hasClimbs(session), closeSession);
+    confirmReset("discard", session !== null && app.hasClimbs(session), () => {
+        unstoreSession();
+        closeSession();
+    });
 }
 
 // Sessions here can be dated by hand, so the log is in date order rather than id order

@@ -239,7 +239,7 @@
         showNote(button, session.comment, session.unrated ? "" : sessionStars(session), "Note from " + session.date);
     });
 
-    // "Last 30 days · 6 sessions · 1h 49m trained · 5 climbs done", today and the
+    // "Last 30 days · 6 sessions · 1h 49m trained · 5 climbs", today and the
     // days before it - the time trained from the apps that keep it, and nothing
     // said of it with none
     function periodLine(days){
@@ -247,7 +247,7 @@
         let inPeriod = sessions.filter(session => session.date >= since);
         let trained = sessionLength({ "minutes" : Math.round(inPeriod.reduce((total, session) => total + (session.minutes || 0), 0)) });
         let climbed = inPeriod.reduce((total, session) => total + (session.climbs || 0), 0);
-        return ["Last " + days + " days", plural(inPeriod.length, "session"), trained ? trained + " trained" : "", plural(climbed, "climb") + " done"]
+        return ["Last " + days + " days", plural(inPeriod.length, "session"), trained ? trained + " trained" : "", plural(climbed, "climb")]
             .filter(part => part !== "").join(" · ");
     }
     document.getElementById("sessionsStats").innerText = periodLine(30) + "\n" + periodLine(7);
@@ -337,9 +337,9 @@
        colour of the hardest grade climbed that day - the charts' easy, medium,
        hard and very hard - or plain for a day with sessions but no grade in them.
        18 weeks at a time, about 120 days, with arrows back through three of them:
-       a year. */
+       a year. Tindeq sessions are left off it. */
     const perDay = {};
-    sessions.forEach(session => { (perDay[session.date] = perDay[session.date] || []).push(session); });
+    sessions.filter(session => !session.tindeq).forEach(session => { (perDay[session.date] = perDay[session.date] || []).push(session); });
 
     // A day's sessions as the log names them, a line each - its hover text, and what a tap shows
     function daySays(date){
@@ -348,8 +348,9 @@
     }
     const hardest = typeof hardestBands === "function" ? hardestBands() : {};
 
-    // a day with no grade in it, blue for rock rings, or a tabata counted as climbing or fingerboard
-    const isWorkout = session => session.app.key === "rockRingsLog" || (session.app.key === "tabataLog" && session.kind !== "Other");
+    // a day with no grade in it, blue for rock rings, laps with no grade, or a tabata counted as climbing or fingerboard
+    const isWorkout = session => session.app.key === "rockRingsLog" || session.app.key === "lapTimerLog"
+        || (session.app.key === "tabataLog" && session.kind !== "Other");
 
     // a timed day darker the longer it trained: faintest to 10 minutes, solid from an hour
     const shadeFrom = 10, shadeTo = 60, faintest = 0.45;
