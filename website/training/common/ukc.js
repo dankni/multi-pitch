@@ -235,3 +235,50 @@ function removeUkcLogbook(){
         location.reload();
     });
 }
+
+// UKC's logo
+const ukcIcon = '<svg class="ukc-logo" viewBox="0 0 457.9 167.8" aria-hidden="true" focusable="false">'
+    + '<path d="M454.3 53.8c-10.5-10.1-26.2-17.2-45.8-17.2-27.9 0-43.9 19.7-43.9 47.3 0 28.7 18.2 47.3 45.6 47.3 20.2 0 32.7-5.7 47.6-16.9v41.5c-16.5 9.6-32.2 12-49.5 12-53.2 0-87.1-34.7-87.1-83.9 0-49.4 34.7-83.9 87.1-83.9 17.4 0 32.5 2.7 46.1 10.4v43.4z"/>'
+    + '<path d="M269.7 2.8h49l-54.4 78.7 58.1 83.6h-49.8l-54.4-80.3zM174.9 2.8h42.4v162.3h-42.4z"/>'
+    + '<path d="M0 2.8h42.4v95c0 26.8 11.4 36.1 30.5 36.1 11.7 0 19.1-1.1 26.8-2.2V2.8h42.4v156.5c-14.5 4.4-47.6 8.5-69.2 8.5C34.2 167.8 0 153 0 106.9z"/></svg>';
+// a card's fold, here as ukc.js is always loaded before account.js
+const foldChevron = '<svg class="account-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
+
+/* The import as a folding card, in the account panel and the progress page's
+   settings, which can both be on one page - so its ids are given:
+   { details, file, choose, imported, status } */
+function ukcCard(ids){
+    return `<section class="account-group folds">
+        <details class="account-card" id="${ids.details}">
+            <summary class="account-head">
+                <span class="account-icon">${ukcIcon}</span>
+                <h3 class="account-label">UKC logbook</h3>
+                <span class="account-status" id="${ids.imported}"></span>
+                ${foldChevron}
+            </summary>
+            <div class="account-body">
+                <p>
+                    Download the CSV from your
+                    <a href="https://www.ukclimbing.com/logbook/" target="_blank">UKC logbook (DLOG format)</a>
+                    and upload it here. Your trad and
+                    sport climbs are then added to the charts and session logs. Any data is stored
+                    on this device only. Uploading a CSV replaces the last one, so always download all data.
+                    Your CSV is never uploaded anywhere.
+                </p>
+                <input type="file" id="${ids.file}" accept=".csv,text/csv" hidden data-change="importUkcFile" />
+                <p class="backup-actions">
+                    <button type="button" class="quiet" data-action="${ids.choose}">Upload UKC Logbook CSV</button>
+                </p>
+                <p class="account-links" id="${ids.status}" hidden>
+                    <button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
+                </p>
+            </div>
+        </details>
+    </section>`;
+}
+
+// "Imported 2 Nov 2026", for the card's head
+function ukcImportedOn(logbook){
+    let day = new Date(logbook.imported + "T12:00:00");
+    return "Imported " + (isNaN(day) ? logbook.imported : day.toLocaleDateString([], { "dateStyle" : "medium" }));
+}

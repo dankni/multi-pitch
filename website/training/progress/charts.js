@@ -6,6 +6,9 @@
 (function(){
     const day = 86400000;
 
+    document.getElementById("ukcSettingsCard").outerHTML = ukcCard({ "details" : "ukcSettingsDetails", "file" : "ukcFile",
+        "choose" : "chooseUkcFile", "imported" : "ukcSettingsImported", "status" : "ukcSettingsNote" });
+
     /* Charts are drawn at the pixel width they are shown at, not scaled from a
        fixed one - scaled down to a phone, 11px labels come out at 7. So they are
        redrawn when that width changes. */
@@ -158,6 +161,7 @@
         document.getElementById("ukcNote").hidden = logbook === null;
         document.getElementById("ukcSettingsNote").hidden = logbook === null;
         if(logbook === null){ return; }
+        document.getElementById("ukcSettingsImported").textContent = ukcImportedOn(logbook);
 
         let parts = String(logbook.imported).split("-");
         let month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(parts[1]) - 1];
@@ -167,7 +171,6 @@
             text += " " + plural(leftOut, "climb") + " left out, with no full date or a grade that could not be read.";
         }
         document.getElementById("ukcImported").textContent = text + " ";
-        document.getElementById("ukcSettingsImported").textContent = text + " ";
     }
 
     /* The page */

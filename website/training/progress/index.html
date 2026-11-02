@@ -181,21 +181,8 @@
                 <i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
             </span>
         </label>
-        <hr />
-        <h2>UKC logbook</h2>
-        <p>
-            Download the CSV from your
-            <a href="https://www.ukclimbing.com/logbook/" target="_blank">UKC logbook (DLOG format)</a>
-            and upload it here. Your trad and
-            sport climbs are then added to the charts and session logs. Any data is stored
-            on this device only. Uploading a CSV replaces the last one, so always download all data.
-            Your CSV is never uploaded anywhere.
-        </p>
-        <input type="file" id="ukcFile" accept=".csv,text/csv" hidden data-change="importUkcFile" />
-        <p><button class="quiet" data-action="chooseUkcFile">Upload UKC Logbook CSV</button></p>
-        <p id="ukcSettingsNote" hidden>
-            <span id="ukcSettingsImported"></span><button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
-        </p>
+        <!-- the account panel's UKC card, from common/ukc.js, drawn by charts.js -->
+        <div id="ukcSettingsCard"></div>
         <button type="button" class="icon-button close" data-action="hideSettings" aria-label="Close settings"></button>
     </aside>
 
