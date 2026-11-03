@@ -218,9 +218,14 @@
         .save-order[hidden] {
             display: none;
         }
-        .removed-apps {
+        .removed-apps, .overlay .reorder-apps {
             margin: 24px auto;
             text-align: center;
+        }
+        .reorder-apps .link-button {
+            padding: 8px 12px;
+            color: var(--link);
+            text-decoration: underline;
         }
         .removed-apps summary {
             display: inline-block;
@@ -533,6 +538,7 @@
                 <i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
             </span>
         </label>
+        <p class="reorder-apps"><button type="button" class="link-button" data-action="reorderApps">Re-order or remove apps</button></p>
         <input type="text" class="field hidden-app-field" id="hiddenApp" placeholder="Add a hidden App" aria-label="Add a hidden App"
             autocomplete="off" autocapitalize="off" spellcheck="false" data-input="addHiddenApp" data-change="noHiddenApp" />
         <details class="removed-apps" id="removedApps" hidden>
@@ -735,6 +741,12 @@
             <button type="button" class="icon-button demo-icon icon-menu drag-handle" aria-label="Move ${card.querySelector("h2").textContent}"></button>`));
         document.getElementById("saveOrder").hidden = false;
         haptic();
+    }
+
+    // the cog's way in, as a long press
+    function reorderApps(){
+        hideSettings();
+        startReorder();
     }
 
     function saveAppOrder(){

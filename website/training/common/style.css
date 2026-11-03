@@ -1332,8 +1332,8 @@ nav .account-button svg {
     width: 18px;
     height: 18px;
 }
-/* the account's own line icons; a page's app icon (common/bottom-nav.js) keeps its fills */
-.card-icon svg:not(.bottom-nav-icon) {
+/* the account's own line icons; a page's app icon (common/bottom-nav.js) and UKC's logo keep their fills */
+.card-icon svg:not(.bottom-nav-icon, .ukc-logo) {
     fill: none;
     stroke: currentColor;
     stroke-width: 1.6;
@@ -1403,8 +1403,13 @@ nav .account-button svg {
 .card-body:has(> #log) {
     padding: 0 0 var(--s2);
 }
-.card-body > #stats {
+/* all but the table inset as the rest of a card is: the stats, and the lap timer's and the arcade's extras */
+.overlay .card-body:has(> #log) > :not(#log) {
     margin: var(--s3) var(--s4) 0;
+}
+.overlay .card-body:has(> #log) > .picker:not(#log) {
+    margin-left: auto;
+    margin-right: auto;
 }
 .card-body > #log > p {
     margin: var(--s4);

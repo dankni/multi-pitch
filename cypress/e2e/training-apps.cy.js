@@ -4376,6 +4376,17 @@ describe('Training apps', function () {
             cy.get('.apps li').eq(0).should('contain', 'Gilford Wall');
         });
 
+        it('starts reordering from the cog, as a long press does', () => {
+            cy.visit(overviewUrl);
+            cy.get('nav .icon-cog').click();
+            cy.contains('#settings button', 'Re-order or remove apps').click();
+            cy.get('#settings').should('not.be.visible');
+            cy.get('body').should('have.class', 'reordering');
+            cy.get('.apps .drag-handle').should('have.length', 10);
+            cy.get('.apps .remove-app').should('have.length', 10);
+            cy.get('#saveOrder').should('be.visible');
+        });
+
         it('removes apps while reordering, and adds them back from the cog', () => {
             cy.visit(overviewUrl);
             cy.get('#removedApps').should('not.be.visible');

@@ -34,11 +34,11 @@ const trainingPages = [
     { url: '/training/nohangs/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/tabata/', lastUpdated: '2026-10-30', priority: '0.6' },
     { url: '/training/gaps/', lastUpdated: '2026-10-30', priority: '0.6' },
-    { url: '/training/gilford/', lastUpdated: '2026-11-02', priority: '0.6' },
-    { url: '/training/timer/', lastUpdated: '2026-11-02', priority: '0.6' },
-    { url: '/training/endurance/', lastUpdated: '2026-11-02', priority: '0.6' },
-    { url: '/training/boulder/', lastUpdated: '2026-11-02', priority: '0.6' },
-    { url: '/training/trad/', lastUpdated: '2026-11-02', priority: '0.6' }
+    { url: '/training/gilford/', lastUpdated: '2026-11-03', priority: '0.6' },
+    { url: '/training/timer/', lastUpdated: '2026-11-03', priority: '0.6' },
+    { url: '/training/endurance/', lastUpdated: '2026-11-03', priority: '0.6' },
+    { url: '/training/boulder/', lastUpdated: '2026-11-03', priority: '0.6' },
+    { url: '/training/trad/', lastUpdated: '2026-11-03', priority: '0.6' }
 ];
 
 function generate() {
