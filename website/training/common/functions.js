@@ -1020,6 +1020,36 @@ function showAppVersion(){
 }
 
 // Every mailto: gets a subject naming the page and the version
+/* ================= Cards =================
+   The fold on a card's head, and the contact card every info panel ends with -
+   or has where it holds a <div data-contact-card>, as the Apps page does */
+const foldChevron = '<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
+
+const contactCard = `<section class="card-group folds">
+    <details class="card" open>
+        <summary class="card-head">
+            <span class="card-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg></span>
+            <h3 class="card-label">Contact</h3>
+            ${foldChevron}
+        </summary>
+        <div class="card-body">
+            <p>Feedback and suggested features welcome. If you enjoy it I'd love to hear.</p>
+        </div>
+        <ul class="card-rows">
+            <li><span>Email</span><a href="mailto:multi-pitch@outlook.com">multi-pitch@outlook.com</a></li>
+            <li><span>Instagram</span><div class="card-row-links"><a href="https://www.instagram.com/dankni86/" target="_blank" rel="noopener">@dankni86</a> / <a href="https://www.instagram.com/micheluncini/" target="_blank" rel="noopener">@micheluncini</a></div></li>
+        </ul>
+    </details>
+</section>`;
+
+function drawContactCard(){
+    let about = document.getElementById("about");
+    if(about === null){ return; }
+    let spot = about.querySelector("[data-contact-card]");
+    if(spot !== null){ spot.outerHTML = contactCard; }
+    else { about.querySelector(".close").insertAdjacentHTML("beforebegin", contactCard); }
+}
+
 function tagFeedbackLinks(){
     let links = document.querySelectorAll('a[href^="mailto:"]');
     if(links.length === 0){ return; }
@@ -1163,6 +1193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showCogHint();
     registerServiceWorker();
     showAppVersion();
+    drawContactCard();
     tagFeedbackLinks();
     // hidden where the browser can't go full screen, which an iPhone can't
     let full = document.getElementById("fullscreen");

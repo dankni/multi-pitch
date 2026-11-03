@@ -84,24 +84,41 @@
 	<div id="endingDiv" class="ending"></div>
 
 	<aside id="about" class="overlay">
-		<h2>About this application</h2>
-		<p>
-			A stopwatch for lap training. Start the clock, then tap LAP every time you
-			finish a circuit, a set on the bouldering wall or a lap on a route. It keeps
-			the total time and the number of laps.
-		</p>
-		<p>
-			Sessions are saved on this device only, nothing is uploaded
-			anywhere. Press the space bar to lap and Escape to pause if you have a keyboard.
-		</p>
-		<p>Read about workouts related to this app on our blog <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-1">here</a> and <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-4">here</a>.</p>
-		<hr />
-		<h2>Activity Log</h2>
-		<p id="stats"></p>
-		<p><button type="button" id="addMissingLink" class="link-button" data-action="addMissingSession">Add a missing session</button></p>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">About this application</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>
+						A stopwatch for lap training. Start the clock, then tap LAP every time you
+						finish a circuit, a set on the bouldering wall or a lap on a route. It keeps
+						the total time and the number of laps.
+					</p>
+					<p>
+						Sessions are saved on this device only, nothing is uploaded
+						anywhere. Press the space bar to lap and Escape to pause if you have a keyboard.
+					</p>
+					<p>Read about workouts related to this app on our blog <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-1">here</a> and <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-4">here</a>.</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p id="stats"></p>
+					<p><button type="button" id="addMissingLink" class="link-button" data-action="addMissingSession">Add a missing session</button></p>
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

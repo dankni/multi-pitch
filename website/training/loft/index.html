@@ -55,16 +55,35 @@
 
 	<div id="endingDiv" class="ending"></div>
 	<aside id="about" class="overlay">
-		<h2>About this application</h2>
-		<p>
-			Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move. Settings below can be used to customise the colors available. Feedback welcome: <a href="mailto:multi-pitch@outlook.com">multi-pitch@outlook.com</a>.
-		</p>
-		<!-- the warning toast where the browser can't listen, as the Tindeq Arcade's -->
-		<template id="noVoiceToast">Browser or device doesn't <a href="https://caniuse.com/speech-recognition" target="_blank" rel="noopener">support voice recognition</a>. Try Chrome on Android.</template>
-		<hr />
-		<h2>Activity Log</h2>
-		<p id="stats"></p>
-		<div id="log"></div>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">About this application</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>
+						Designed for long endurance sessions. The keyword <strong>"NEXT"</strong> makes the app move on to the next random move. Settings below can be used to customise the colors available. Feedback welcome: <a href="mailto:multi-pitch@outlook.com">multi-pitch@outlook.com</a>.
+					</p>
+					<!-- the warning toast where the browser can't listen, as the Tindeq Arcade's -->
+					<template id="noVoiceToast">Browser or device doesn't <a href="https://caniuse.com/speech-recognition" target="_blank" rel="noopener">support voice recognition</a>. Try Chrome on Android.</template>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p id="stats"></p>
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

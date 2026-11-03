@@ -269,13 +269,13 @@ const passwordRulesList = `<ul class="password-rules" hidden>
 
 const accountPanel = `<aside id="account" class="overlay">
     <h2>Account</h2>
-    <section class="account-group" id="accountLogin">
-        <div class="account-card">
-            <div class="account-head">
-                <span class="account-icon person">${personIcon}</span>
-                <h3 class="account-label" id="accountHeading">Create an account or sign in</h3>
+    <section class="card-group" id="accountLogin">
+        <div class="card">
+            <div class="card-head">
+                <span class="card-icon person">${personIcon}</span>
+                <h3 class="card-label" id="accountHeading">Create an account or sign in</h3>
             </div>
-            <form class="account-body account-form" data-account="out">
+            <form class="card-body account-form" data-account="out">
                 <input type="email" class="field" id="accountEmail" autocomplete="username" placeholder="Email" aria-label="Email" data-input="checkEmail" />
                 <div class="field-group password-field">
                     <input type="password" class="field" id="accountPassword" autocomplete="current-password" placeholder="Password" aria-label="Password" data-input="checkPassword" />
@@ -286,12 +286,12 @@ const accountPanel = `<aside id="account" class="overlay">
                     <button type="button" data-action="signInAccount">SIGN IN</button>
                     <button type="button" class="quiet" data-action="signUpAccount">SIGN UP</button>
                 </p>
-                <p class="account-links">
+                <p class="card-links">
                     <button type="button" class="link-button" data-action="forgotPassword">Forgot password</button>
                     <a class="link-button" href="/privacy/" target="_blank" rel="noopener">Privacy policy</a>
                 </p>
             </form>
-            <form class="account-body account-form" data-account="code" hidden>
+            <form class="card-body account-form" data-account="code" hidden>
                 <input type="text" class="field" id="accountCodeField" inputmode="numeric" autocomplete="one-time-code" placeholder="Code" aria-label="Code" data-input="clearInvalid" />
                 <div class="field-group password-field" id="accountNewPasswordGroup" hidden>
                     <input type="password" class="field" id="accountNewPassword" autocomplete="new-password" placeholder="New password" aria-label="New password" data-input="checkPassword" />
@@ -302,24 +302,24 @@ const accountPanel = `<aside id="account" class="overlay">
                     <button type="button" data-action="confirmAccountCode">CONFIRM</button>
                     <button type="button" class="quiet" data-action="cancelAccountCode">CANCEL</button>
                 </p>
-                <p class="account-links">
+                <p class="card-links">
                     <button type="button" class="link-button" data-action="resendAccountCode">Resend code</button>
                 </p>
             </form>
-            <ul class="account-rows" data-account="in" hidden>
+            <ul class="card-rows" data-account="in" hidden>
                 <li><span id="accountEmailShown"></span><button type="button" class="link-button" data-action="signOutAccount">Sign out</button></li>
                 <li><span id="accountLastSynced"></span><button type="button" class="link-button" data-action="syncAccount">Sync now</button></li>
             </ul>
         </div>
     </section>
-    <section class="account-group backup">
-        <details class="account-card" id="backupDetails" open>
-            <summary class="account-head">
-                <span class="account-icon">${backupIcon}</span>
-                <h3 class="account-label">Old Fashioned Back up</h3>
+    <section class="card-group backup">
+        <details class="card" id="backupDetails" open>
+            <summary class="card-head">
+                <span class="card-icon">${backupIcon}</span>
+                <h3 class="card-label">Old Fashioned Back up</h3>
                 ${foldChevron}
             </summary>
-            <div class="account-body">
+            <div class="card-body">
                 <p>
                     By default, your sessions only live in this browser. Save a backup of everything (logs and settings)
                     and restore it here to put it back, or to move it to a new device or browser. Restoring adds what's
@@ -339,8 +339,8 @@ const accountPanel = `<aside id="account" class="overlay">
     </section>
     <!-- the same card as the progress page's settings, and the same import as the Outside Climbing app's, from common/ukc.js -->
     ${ukcCard({ "details" : "ukcDetails", "file" : "accountUkcFile", "choose" : "chooseAccountUkcFile", "imported" : "accountUkcImported", "status" : "accountUkcStatus" })}
-    <section class="account-group" id="accountDelete" hidden>
-        <button type="button" class="account-card account-delete" data-action="deleteAccount">Delete account</button>
+    <section class="card-group" id="accountDelete" hidden>
+        <button type="button" class="card account-delete" data-action="deleteAccount">Delete account</button>
     </section>
     <button type="button" class="icon-button close" data-action="hideAccount" aria-label="Close account panel"></button>
 </aside>`;
@@ -361,7 +361,7 @@ let backupFolded = false;
 
 function showBackup(){
     let details = document.getElementById("backupDetails");
-    details.closest(".account-group").classList.toggle("folds", signedIn());
+    details.closest(".card-group").classList.toggle("folds", signedIn());
     details.querySelector("summary").tabIndex = signedIn() ? 0 : -1;
     if(!signedIn()){
         details.open = true;

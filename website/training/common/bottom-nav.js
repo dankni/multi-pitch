@@ -93,6 +93,9 @@
             + appItem();
         document.body.appendChild(nav);
         document.documentElement.classList.add("has-bottom-nav");
+        // the info panel's first card wears the page's icon: the app's, the progress graph, or the i
+        let pageIcon = document.querySelector("#about [data-page-icon]");
+        if(pageIcon !== null){ pageIcon.innerHTML = here ? apps[here].icon : page === "progress" ? graphIcon : glyph("icon-info"); }
     }
 
     if(document.readyState === "loading"){

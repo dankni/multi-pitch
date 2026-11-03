@@ -95,31 +95,48 @@
 	</div>
 
 	<aside id="about" class="overlay">
-		<h2>About this application</h2>
-		<p>
-			Track your session at an indoor wall. Sessions are combined on the progress page.
-		</p>
-		<p>
-			Tap a grade to log it. Minus fixes mistaps. "Show recent logs" can be used if you
-			forget what you have tracked. You can add a title, notes and a star rating to
-			your session when you finish.
-		</p>
-		<p>
-			The wrench beside a saved session reopens it, so a session can be added to or
-			corrected later. You can also connect a heart rate monitor, which will log your
-			heart rate alongside the climbs you tap. A Bangle.js 2 watch will let you log
-			climbs from your watch as well.
-		</p>
-		<p>
-			By default, everything is stored on this device only: no account is needed and nothing
-			is uploaded anywhere. You can back up all your progress and restore it at any time.
-		</p>
-		<hr />
-		<h2>Activity Log</h2>
-		<p id="stats"></p>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">About this application</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>
+						Track your session at an indoor wall. Sessions are combined on the progress page.
+					</p>
+					<p>
+						Tap a grade to log it. Minus fixes mistaps. "Show recent logs" can be used if you
+						forget what you have tracked. You can add a title, notes and a star rating to
+						your session when you finish.
+					</p>
+					<p>
+						The wrench beside a saved session reopens it, so a session can be added to or
+						corrected later. You can also connect a heart rate monitor, which will log your
+						heart rate alongside the climbs you tap. A Bangle.js 2 watch will let you log
+						climbs from your watch as well.
+					</p>
+					<p>
+						By default, everything is stored on this device only: no account is needed and nothing
+						is uploaded anywhere. You can back up all your progress and restore it at any time.
+					</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p id="stats"></p>
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

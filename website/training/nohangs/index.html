@@ -55,36 +55,73 @@
 	<!-- every grip, filled in from the plan in main.js and marked off as the session goes -->
 	<table class="hangs" id="hangs"></table>
 	<aside id="about" class="overlay">
-		<h2>Sub-max "No Hangs"</h2>
-		<p>Emil Abrahamsen's daily no hang routine. Every rep is a 10 second hang and 20 seconds rest. Feet remain on the floor at all times. Exertion should be around 20% of max. Use an edge that is comfortable. Typically between 15mm and 30mm.</p>
-		<p>Read about workouts related to this app on our blog <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-8">here</a>.</p>
-		<h2>Examples</h2>
-		<div class="grips">
-			<figure>
-				<img src="/training/nohangs/img/open.webp" alt="" width="96" height="96" />
-				<figcaption>Open Hand</figcaption>
-			</figure>
-			<figure>
-				<img src="/training/nohangs/img/half-crimp.webp" alt="" width="96" height="96" />
-				<figcaption>Half Crimp</figcaption>
-			</figure>
-			<figure>
-				<img src="/training/nohangs/img/front-3.webp" alt="" width="96" height="96" />
-				<figcaption>Front 3</figcaption>
-			</figure>
-			<figure>
-				<img src="/training/nohangs/img/middle-2.webp" alt="" width="96" height="96" />
-				<figcaption>Middle 2</figcaption>
-			</figure>
-		</div>
-		<h2>The Routine</h2>
-		<!-- filled in from the plan in main.js -->
-		<table class="routine" id="routine"></table>
-		<hr />
-		<h2>Activity Log</h2>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">Sub-max "No Hangs"</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>Emil Abrahamsen's daily no hang routine. Every rep is a 10 second hang and 20 seconds rest. Feet remain on the floor at all times. Exertion should be around 20% of max. Use an edge that is comfortable. Typically between 15mm and 30mm.</p>
+					<p>Read about workouts related to this app on our blog <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-8">here</a>.</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></span>
+					<h3 class="card-label">Examples</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<div class="grips">
+						<figure>
+							<img src="/training/nohangs/img/open.webp" alt="" width="96" height="96" />
+							<figcaption>Open Hand</figcaption>
+						</figure>
+						<figure>
+							<img src="/training/nohangs/img/half-crimp.webp" alt="" width="96" height="96" />
+							<figcaption>Half Crimp</figcaption>
+						</figure>
+						<figure>
+							<img src="/training/nohangs/img/front-3.webp" alt="" width="96" height="96" />
+							<figcaption>Front 3</figcaption>
+						</figure>
+						<figure>
+							<img src="/training/nohangs/img/middle-2.webp" alt="" width="96" height="96" />
+							<figcaption>Middle 2</figcaption>
+						</figure>
+					</div>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M2 10h12M6 6.5v7"/></svg></span>
+					<h3 class="card-label">The Routine</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<!-- filled in from the plan in main.js -->
+					<table class="routine" id="routine"></table>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

@@ -241,6 +241,18 @@
             padding: 8px 12px;
             color: var(--link);
         }
+        .install-help:not([hidden]) {
+            display: flex;
+            flex-direction: column;
+            gap: var(--s4);
+            margin-top: var(--s4);
+        }
+        .overlay .install-help p {
+            margin: 0;
+        }
+        .install-help p:has(> [hidden]:only-child) {
+            display: none;
+        }
         .install-help svg {
             width: 1.2em;
             height: 1.2em;
@@ -452,45 +464,64 @@
     <a class="home-link" href="/">&larr; multi-pitch.com</a>
 
     <aside id="about" class="overlay">
-        <h2>About</h2>
-        <p>
-            I made this as a simple tool to track my climbing progress.
-            It will be <strong>free forever for anyone</strong> to use. 
-            All the tools run in the browser, work offline once 
-            loaded and keep everything on your own device using local storage.
-        </p>
-        <p>
-            I built the original version by hand but have now used AI to add new 
-            features. It's not perfect but runs more smoothly than some paid climbing 
-            apps (looking at you Crimpd, with sound out of sync with the timer).
-        </p>
-        <p> 
-            Feedback and suggested features welcome. If you enjoy it I'd love to hear. 
-            <a href="mailto:multi-pitch@outlook.com">multi-pitch@outlook.com</a>
-        </p>
-        <!-- Adding the apps to the home screen, for the phone this is, or a word of it on a computer -->
-        <div class="install-help" id="installHelp" hidden>
-            <p data-platform="ios">
-                Add the apps to your home screen: in Safari, tap Share
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 9H6v11h12V9h-2M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg>
-                then <strong>Add to Home Screen</strong>
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>.
-            </p>
-            <p data-platform="android">
-                Add the apps to your home screen: in Chrome, tap the menu <strong aria-hidden="true">&#8942;</strong>
-                then <strong>Add to Home screen</strong> or <strong>Install app</strong>.
-            </p>
-            <p data-platform="computer">
-                You can also save them to your phone's homescreen and they will load offline.
-            </p>
-            <p><button type="button" class="quiet" id="installApp" data-action="installApp" hidden>Add to home screen</button></p>
-        </div>
-        <hr />
-        <p class="panel-links">
-            <a href="https://github.com/dankni/multi-pitch/tree/master/website/training" target="_blank">
-                <i class="demo-icon icon-github"></i> Github Page <i class="demo-icon icon-link-ext"></i>
-            </a>
-        </p>
+        <section class="card-group folds">
+            <details class="card" open>
+                <summary class="card-head">
+                    <span class="card-icon" data-page-icon></span>
+                    <h3 class="card-label">About</h3>
+                    <svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+                </summary>
+                <div class="card-body">
+                    <p>
+                        I made this as a simple tool to track my climbing progress.
+                        It will be <strong>free forever for anyone</strong> to use. 
+                        All the tools run in the browser, work offline once 
+                        loaded and keep everything on your own device using local storage.
+                        You can create a free account to back up your data to the cloud 
+                        and share it between devices.
+                    </p>
+                    <p>
+                        I built the original version by hand but have now used AI to add new 
+                        features. It's not perfect but runs more smoothly than some paid climbing 
+                        apps (looking at you Crimpd, with sound out of sync with the timer).
+                    </p>
+                    <!-- Adding the apps to the home screen, for the phone this is, or a word of it on a computer -->
+                    <div class="install-help" id="installHelp" hidden>
+                        <p data-platform="ios">
+                            Add the apps to your home screen: in Safari, tap Share
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 9H6v11h12V9h-2M12 3v11M8.5 6.5 12 3l3.5 3.5"/></svg>
+                            then <strong>Add to Home Screen</strong>
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>.
+                        </p>
+                        <p data-platform="android">
+                            Add the apps to your home screen: in Chrome, tap the menu <strong aria-hidden="true">&#8942;</strong>
+                            then <strong>Add to Home screen</strong> or <strong>Install app</strong>.
+                        </p>
+                        <p data-platform="computer">
+                            You can also save them to your phone's homescreen and they will load offline.
+                        </p>
+                        <p><button type="button" class="quiet" id="installApp" data-action="installApp" hidden>Add to home screen</button></p>
+                    </div>
+                </div>
+            </details>
+        </section>
+        <!-- the contact card, from functions.js -->
+        <div data-contact-card></div>
+        <section class="card-group folds">
+            <details class="card" open>
+                <summary class="card-head">
+                    <span class="card-icon"><i class="demo-icon icon-github"></i></span>
+                    <h3 class="card-label">Software</h3>
+                    <svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+                </summary>
+                <div class="card-body">
+                    <p>The code is open source under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">Creative Commons Attribution - ShareAlike</a>.</p>
+                </div>
+                <ul class="card-rows">
+                    <li><a href="https://github.com/dankni/multi-pitch/tree/master/website/training" target="_blank">Github Page <i class="demo-icon icon-link-ext"></i></a></li>
+                </ul>
+            </details>
+        </section>
         <button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
     </aside>
 

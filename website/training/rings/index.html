@@ -65,24 +65,41 @@
 		<div id="endingDiv" class="ending"></div>
 	</div>
 	<aside id="about" class="overlay">
-		<h2>About this application</h2>
-		<p>
-			This app is based on the Metolius plan for use with their rock rings.
-			We are not in any way affiliated with Metolius. This application was 
-			built for personal use but is free to use for anyone that finds
-			it helpful.
-		</p>
-		<p class="panel-links">
-			<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="_blank">
-				metoliusclimbing.com plan <i class="demo-icon icon-link-ext"></i>
-			</a>
-		</p>
-		<p>Read about workouts related to this app on our blog <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-7">here</a>.</p>
-		<hr />
-		<h2>Activity Log</h2>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">About this application</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>
+						This app is based on the Metolius plan for use with their rock rings.
+						We are not in any way affiliated with Metolius. This application was 
+						built for personal use but is free to use for anyone that finds
+						it helpful.
+					</p>
+					<p class="panel-links">
+						<a href="https://www.metoliusclimbing.com/training_guide_rock_ring.html" target="_blank">
+							metoliusclimbing.com plan <i class="demo-icon icon-link-ext"></i>
+						</a>
+					</p>
+					<p>Read about workouts related to this app on our blog <a href="/blog/8-training-routines-to-boost-climbing-performance/#routine-7">here</a>.</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

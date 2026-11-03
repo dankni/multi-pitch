@@ -1289,17 +1289,18 @@ nav .account-button svg {
     display: none;
 }
 
-/* ================= Account =================
-   The overlay behind the person in the nav (common/account.js): a column of cards,
-   each headed by an icon, its title and, where it has them, its status and a chevron. */
+/* ================= Cards =================
+   The overlays' column of cards - the account panel (common/account.js) and the
+   info panels: each headed by an icon, its title and, where it has them, its
+   status and a chevron. An info panel's first card is its description, with no head. */
 /* one column, as on a phone - a section is otherwise an inline-block, and two sit side by side */
-.overlay .account-group {
+.overlay .card-group {
     display: block;
     margin: 0 auto var(--s4);
     border: 0;
     background: none;
 }
-.account-card {
+.card {
     display: block;
     overflow: hidden;
     border: 1px solid var(--line);
@@ -1308,7 +1309,7 @@ nav .account-button svg {
     color: var(--text);
     text-align: left;
 }
-.account-head {
+.card-head {
     display: flex;
     align-items: center;
     gap: var(--s3);
@@ -1316,7 +1317,7 @@ nav .account-button svg {
     padding: var(--s2) var(--s4);
     box-sizing: border-box;
 }
-.account-icon {
+.card-icon {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
@@ -1327,29 +1328,36 @@ nav .account-button svg {
     background: var(--quiet);
     color: var(--quiet-ink);
 }
-.account-icon svg {
+.card-icon svg {
     width: 18px;
     height: 18px;
+}
+/* the account's own line icons; a page's app icon (common/bottom-nav.js) keeps its fills */
+.card-icon svg:not(.bottom-nav-icon) {
     fill: none;
     stroke: currentColor;
     stroke-width: 1.6;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.account-icon .person-solid {
+.card-icon .person-solid {
     stroke: none;
 }
-.account-icon .ukc-logo {
+.card-icon .demo-icon {
+    margin: 0;
+    font-size: 16px;
+}
+.card-icon .ukc-logo {
     width: 24px;
     height: 9px;
     fill: currentColor;
     stroke: none;
 }
-.signed-in .account-icon {
+.signed-in .card-icon {
     background: var(--primary);
     color: var(--on-accent);
 }
-.overlay .account-label {
+.overlay .card-label {
     flex: 1 1 auto;
     min-width: 0;
     margin: 0;
@@ -1357,7 +1365,7 @@ nav .account-button svg {
     font-weight: 600;
     text-align: left;
 }
-.account-status {
+.card-status {
     flex: 0 1 auto;
     min-width: 0;
     overflow: hidden;
@@ -1366,35 +1374,64 @@ nav .account-button svg {
     font-size: var(--t-sm);
     color: var(--ink-2);
 }
-.account-body {
+.card-body {
     padding: var(--s4);
     border-top: 1px solid var(--line);
     font-size: var(--t-sm);
     line-height: 1.5;
 }
-.overlay .account-body p {
+.overlay .card-body p {
     margin: 0 0 var(--s4);
 }
-.overlay .account-body p:last-of-type {
+.overlay .card-body p:last-of-type {
     margin-bottom: 0;
+}
+/* an info panel opens on its first card, headed by the page's title, with no heading over it */
+.overlay > .card-group:first-child {
+    margin-top: 88px;
+}
+.card > .card-body:first-child {
+    border-top: 0;
+}
+.overlay .card-body > :last-child {
+    margin-bottom: 0;
+}
+.overlay .card-body .panel-links a {
+    margin: var(--s2) auto 0;
+}
+/* the activity log's table runs to the card's edges, its stats over it */
+.card-body:has(> #log) {
+    padding: 0 0 var(--s2);
+}
+.card-body > #stats {
+    margin: var(--s3) var(--s4) 0;
+}
+.card-body > #log > p {
+    margin: var(--s4);
+}
+.card-body .log-table th:first-child, .card-body .log-table td:first-child {
+    padding-left: var(--s4);
+}
+.card-body .log-table th:last-child, .card-body .log-table td:last-child {
+    padding-right: var(--s4);
 }
 /* A card whose head is its summary folds, the chevron turning, while it has .folds:
    the UKC logbook always, the backup only signed in */
-.account-group summary {
+.card-group summary {
     list-style: none;
     pointer-events: none;
 }
-.account-group summary::-webkit-details-marker {
+.card-group summary::-webkit-details-marker {
     display: none;
 }
-.account-group.folds summary {
+.card-group.folds summary {
     cursor: pointer;
     pointer-events: auto;
 }
-.account-group summary:focus:not(:focus-visible) {
+.card-group summary:focus:not(:focus-visible) {
     outline: none;
 }
-.account-chevron {
+.card-chevron {
     display: none;
     flex: 0 0 auto;
     width: 14px;
@@ -1406,10 +1443,10 @@ nav .account-button svg {
     stroke-linejoin: round;
     transition: transform 0.2s;
 }
-.folds .account-chevron {
+.folds .card-chevron {
     display: block;
 }
-details[open] .account-chevron {
+details[open] .card-chevron {
     transform: rotate(180deg);
 }
 /* Two buttons side by side, each with its arrow where it has one */
@@ -1454,24 +1491,24 @@ details[open] .account-chevron {
     margin: 0;
 }
 /* Quiet links under a card's buttons, blue as links are */
-.overlay .account-links {
+.overlay .card-links {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: baseline;
     gap: var(--s2) var(--s5);
 }
-.account-card .link-button {
+.card .link-button {
     color: var(--link);
 }
-/* Signed in: rows under the head, as the settings' switches are, the deed on the right */
-.account-rows {
+/* Rows under a card's head, as the settings' switches are, the deed on the right: the account signed in, the Apps page's contact links */
+.card-rows {
     margin: 0;
     padding: 0;
     list-style: none;
     font-size: var(--t-sm);
 }
-.account-rows li {
+.card-rows li {
     display: flex;
     align-items: center;
     gap: var(--s3);
@@ -1479,14 +1516,14 @@ details[open] .account-chevron {
     padding: var(--s2) var(--s4);
     border-top: 1px solid var(--line);
 }
-.account-rows li > span {
+.card-rows li > span {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.account-rows .link-button {
+.card-rows .link-button, .card-rows li > a, .card-row-links {
     flex: 0 0 auto;
 }
 /* Deleting the account, a card of its own at the foot */

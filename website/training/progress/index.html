@@ -112,19 +112,29 @@
     </section>
 
     <aside id="about" class="overlay">
-        <h2>Rough Grade Conversion</h2>
-        <div class="picker range-picker conversion-picker" role="radiogroup" aria-label="Rough grade conversion for">
-            <input type="radio" name="conversions" class="nice-radios" id="conversions-boulder" value="boulder" data-change="showConversions" checked />
-            <label for="conversions-boulder">Bouldering</label>
-            <input type="radio" name="conversions" class="nice-radios" id="conversions-route" value="route" data-change="showConversions" />
-            <label for="conversions-route">Routes</label>
-        </div>
-        <!-- Filled in by conversions.js from common/grades.js -->
-        <div id="boulderConversions"></div>
-        <div id="routeConversions" hidden></div>
-        <p class="sessions-note conversion-note">
-            Approximate Conversions
-        </p>
+        <section class="card-group folds">
+            <details class="card" open>
+                <summary class="card-head">
+                    <span class="card-icon" data-page-icon></span>
+                    <h3 class="card-label">Rough Grade Conversion</h3>
+                    <svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+                </summary>
+                <div class="card-body">
+                    <div class="picker range-picker conversion-picker" role="radiogroup" aria-label="Rough grade conversion for">
+                        <input type="radio" name="conversions" class="nice-radios" id="conversions-boulder" value="boulder" data-change="showConversions" checked />
+                        <label for="conversions-boulder">Bouldering</label>
+                        <input type="radio" name="conversions" class="nice-radios" id="conversions-route" value="route" data-change="showConversions" />
+                        <label for="conversions-route">Routes</label>
+                    </div>
+                    <!-- Filled in by conversions.js from common/grades.js -->
+                    <div id="boulderConversions"></div>
+                    <div id="routeConversions" hidden></div>
+                    <p class="sessions-note conversion-note">
+                        Approximate Conversions
+                    </p>
+                </div>
+            </details>
+        </section>
         <button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
     </aside>
 

@@ -94,23 +94,40 @@
 	</div>
 
 	<aside id="about" class="overlay">
-		<h2>Tindeq Arcade</h2>
-		<p>Connect a <a href="https://tindeq.com/" target="_blank" rel="noopener">Tindeq</a> device via Bluetooth. Pull the required force to climb the walls.</p>
-		<p>Set your max pull under the cog. Leave it hanging free while it connects, so it zeroes. It needs Chrome or Edge on Android or a computer. Unfortunately, iPhones don't support this via a browser. You can play by holding the screen instead.</p>
-		<template id="noBluetoothToast">This browser can't <a href="https://caniuse.com/web-bluetooth" target="_blank" rel="noopener">connect to a Tindeq Progressor</a>. Use Chrome or Edge on Android or a computer - or hold the screen to play.</template>
-		<p id="noBluetooth" hidden>This browser can't connect to a Progressor.</p>
-		<hr />
-		<h2>Activity Log</h2>
-		<div class="picker" id="logPicker" role="radiogroup" aria-label="Runs">
-			<input type="radio" name="logKind" class="nice-radios" id="log-tindeq" value="tindeq" data-change="setLogKind" checked />
-			<label for="log-tindeq">Tindeq</label>
-			<input type="radio" name="logKind" class="nice-radios" id="log-tap" value="tap" data-change="setLogKind" />
-			<label for="log-tap">Fake</label>
-		</div>
-		<p id="stats"></p>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">Tindeq Arcade</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>Connect a <a href="https://tindeq.com/" target="_blank" rel="noopener">Tindeq</a> device via Bluetooth. Pull the required force to climb the walls.</p>
+					<p>Set your max pull under the cog. Leave it hanging free while it connects, so it zeroes. It needs Chrome or Edge on Android or a computer. Unfortunately, iPhones don't support this via a browser. You can play by holding the screen instead.</p>
+					<template id="noBluetoothToast">This browser can't <a href="https://caniuse.com/web-bluetooth" target="_blank" rel="noopener">connect to a Tindeq Progressor</a>. Use Chrome or Edge on Android or a computer - or hold the screen to play.</template>
+					<p id="noBluetooth" hidden>This browser can't connect to a Progressor.</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<div class="picker" id="logPicker" role="radiogroup" aria-label="Runs">
+						<input type="radio" name="logKind" class="nice-radios" id="log-tindeq" value="tindeq" data-change="setLogKind" checked />
+						<label for="log-tindeq">Tindeq</label>
+						<input type="radio" name="logKind" class="nice-radios" id="log-tap" value="tap" data-change="setLogKind" />
+						<label for="log-tap">Fake</label>
+					</div>
+					<p id="stats"></p>
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

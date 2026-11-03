@@ -119,20 +119,37 @@
 	</aside>
 
 	<aside id="about" class="overlay">
-		<h2>About this application</h2>
-		<p>
-			Dan's Bouldering Loft. Grading between routes is relative. Actual grades are
-			indicative only, many may be harder than graded.
-		</p>
-		<p>
-			All routes sit start. All routes end with matched hands on finish hold.
-		</p>
-		<hr />
-		<h2>Activity Log</h2>
-		<p id="stats"></p>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">About this application</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>
+						Dan's Bouldering Loft. Grading between routes is relative. Actual grades are
+						indicative only, many may be harder than graded.
+					</p>
+					<p>
+						All routes sit start. All routes end with matched hands on finish hold.
+					</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p id="stats"></p>
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

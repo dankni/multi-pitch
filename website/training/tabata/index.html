@@ -111,27 +111,44 @@
 	<div class="rest-bar red" id="restBar" aria-hidden="true" hidden></div>
 
 	<aside id="about" class="overlay">
-		<h2>Tabata</h2>
-		<p>
-			A classic work-then-rest timer. Tabata is typically 20 seconds of work and
-			10 seconds of rest, eight times (four minutes in all), but you can adjust it
-			to suit your needs.
-		</p>
-		<p>
-			Your settings are remembered for next time.
-		</p>
-		<p>
-			Repeater mode, under the settings cog, can be used for more classic climbing
-			repeater fingerboard training. It allows you to do sets with a longer rest
-			between them. The app lets you name each set and the whole routine. You can
-			SAVE to keep it; your routines are listed under the settings cog. To change
-			one, open it, adjust it and save it with the same name, or make a new one.
-		</p>
-		<hr />
-		<h2>Activity Log</h2>
-		<div id="log"></div>
-		<br />
-		<hr />
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">Tabata</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>
+						A classic work-then-rest timer. Tabata is typically 20 seconds of work and
+						10 seconds of rest, eight times (four minutes in all), but you can adjust it
+						to suit your needs.
+					</p>
+					<p>
+						Your settings are remembered for next time.
+					</p>
+					<p>
+						Repeater mode, under the settings cog, can be used for more classic climbing
+						repeater fingerboard training. It allows you to do sets with a longer rest
+						between them. The app lets you name each set and the whole routine. You can
+						SAVE to keep it; your routines are listed under the settings cog. To change
+						one, open it, adjust it and save it with the same name, or make a new one.
+					</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
 		<button type="button" class="icon-button close" data-action="hideAbout" aria-label="Close info panel"></button>
 	</aside>
 

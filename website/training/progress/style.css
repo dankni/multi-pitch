@@ -58,7 +58,11 @@
     padding: 0.6rem 1.5rem;
 }
 .overlay .conversion-note {
-    margin: 16px auto 60px;
+    margin: 16px auto 0;
+}
+.conversion-picker.picker {
+    margin-left: auto;
+    margin-right: auto;
 }
 .performance {
     --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));   /* for .chart-empty; the charts are in common/charts.css */
