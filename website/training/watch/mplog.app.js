@@ -15,16 +15,18 @@
    The time of day is in the widget bar, on every screen.
    What the phone hasn't had yet waits in mplog.json until it connects again.
    With h in the state, a running session's heart rate is read and sent every
-   few seconds; readings taken while the phone is away wait in memory, with how
-   long ago they were read once it is back.
+   few seconds, and the barometer's altitude, averaged, every two; readings
+   taken while the phone is away wait in memory, with how long ago they were
+   read once it is back.
 
-   To the phone, a line of JSON each: add, undo, tab, harder, tick, finish, lap, hr, then
+   To the phone, a line of JSON each: add, undo, tab, harder, tick, finish, lap, hr, alt, then
    up when the app opens and hello once what waited has gone. Kept to ES5 and
    ASCII: the phone uploads it as it is. */
 var storage = require("Storage");
 var file = "mplog.json";
 var saved = storage.readJSON(file, 1) || {};
-var title = "Climb Log " + ((storage.readJSON("mplog.info", 1) || {}).version || "");   // the app version, as the phone's settings show it
+var version = (storage.readJSON("mplog.info", 1) || {}).version || "";
+var title = "Climb Log " + (/^\d/.test(version) ? "v" : "") + version;   // the app version, as the phone's settings show it
 var state = saved.state || null;   // the phone's last word
 var stateAt = saved.stateAt || 0;  // when it came, for a clock counted on from it
 var queue = saved.queue || [];
@@ -47,6 +49,12 @@ var beatEvery = 5;                 // s between readings
 var beatSure = 50;                 // the confidence, out of 100, a reading needs
 var beats = [];                    // [when, bpm] read while the phone was away
 var beatsKept = 720;               // an hour of them, the latest
+var heightSum = 0;                 // altitudes read since the last one sent, to average
+var heightCount = 0;
+var heightAt = 0;                  // when the last was sent
+var heightEvery = 2;               // s between them
+var heights = [];                  // [when, m] read while the phone was away
+var heightsKept = 1800;            // an hour of them, the latest
 
 function keep(){
   storage.writeJSON(file, { state : state, stateAt : stateAt, queue : queue, mine : mine, pick : pick });
@@ -405,6 +413,9 @@ function setHeart(){
   if(on === heartOn){ return; }
   heartOn = on;
   Bangle.setHRMPower(on ? 1 : 0, "mplog");
+  Bangle.setBarometerPower(on ? 1 : 0, "mplog");
+  heightSum = 0;
+  heightCount = 0;
 }
 
 Bangle.on("HRM", function(hrm){
@@ -413,6 +424,21 @@ Bangle.on("HRM", function(hrm){
   if(linked){ return tell({ t : "hr", b : hrm.bpm, a : 0 }); }
   beats.push([beatAt, hrm.bpm]);
   if(beats.length > beatsKept){ beats.shift(); }
+});
+
+// the altitude to a tenth of a metre, for the climbing up and down the phone adds up
+Bangle.on("pressure", function(e){
+  if(!heartOn || !isFinite(e.altitude)){ return; }
+  heightSum += e.altitude;
+  heightCount++;
+  if(getTime() - heightAt < heightEvery){ return; }
+  heightAt = getTime();
+  var m = Math.round(heightSum / heightCount * 10) / 10;
+  heightSum = 0;
+  heightCount = 0;
+  if(linked){ return tell({ t : "alt", m : m, a : 0 }); }
+  heights.push([heightAt, m]);
+  if(heights.length > heightsKept){ heights.shift(); }
 });
 
 /* ================= all ================= */
@@ -443,6 +469,8 @@ function sync(){
   keep();
   beats.forEach(function(beat){ tell({ t : "hr", b : beat[1], a : Math.round(getTime() - beat[0]) }); });
   beats = [];
+  heights.forEach(function(height){ tell({ t : "alt", m : height[1], a : Math.round(getTime() - height[0]) }); });
+  heights = [];
   tell({ t : "hello" });
 }
 

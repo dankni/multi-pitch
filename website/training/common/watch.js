@@ -11,6 +11,7 @@
    and optionally `app.heart` (common/heartrate.js), for the heart rate:
      wanted  : () => whether the watch is to read it now, sent as h
      receive : message => a reading, {t:"hr", b, a}
+     height  : message => an altitude, {t:"alt", m, a}
    The page gives an empty #watchBar and #watchSetting, filled here, and
    optionally a <template id="watchHelpText">, shown under the setting with the
    watch's battery. It is sent from
@@ -124,15 +125,17 @@ async function installWatchApp(){
     let source = await (await fetch(watchApp)).text();
     let hash = sourceHash(source);
     watchVersion = (await appVersion()) || hash;
+    // bare, as Bangle apps' versions are: the App Loader puts its own v in front
+    let version = watchVersion.replace(/^v/, "");
     let info = (await bangle.ask(`require("Storage").readJSON("mplog.info",1)||{}`)) || {};
-    if(info.hash === hash && info.version === watchVersion){ return false; }
+    if(info.hash === hash && info.version === version){ return false; }
     if(info.hash !== hash){
         await bangle.writeFile("mplog.app.js", source, done => setWatchStage(`Putting Climb Log on the watch ${Math.round(done * 100)}%`));
         // a tick, for the launcher
         await bangle.ask(`(function(){var b=Graphics.createArrayBuffer(48,48,1,{msb:true});b.fillPoly([4,26,11,19,19,27,37,7,44,14,19,40]);require("Storage").write("mplog.img",b.asImage("string"));return 1})()`);
     }
     await bangle.writeFile("mplog.info", JSON.stringify({ "id" : "mplog", "name" : "Climb Log", "type" : "app", "src" : "mplog.app.js", "icon" : "mplog.img",
-        "version" : watchVersion, "hash" : hash, "files" : "mplog.info,mplog.app.js,mplog.img", "data" : "mplog.json" }));
+        "version" : version, "hash" : hash, "files" : "mplog.info,mplog.app.js,mplog.img", "data" : "mplog.json" }));
     return true;
 }
 
@@ -173,6 +176,7 @@ function fromWatch(message){
     }
     // a reading every few seconds changes nothing the watch shows
     if(message.t === "hr"){ return app.heart && app.heart.receive(message); }
+    if(message.t === "alt"){ return app.heart && app.heart.height(message); }
     app.watch.receive(message);
     pushWatch();
 }

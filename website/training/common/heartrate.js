@@ -4,15 +4,17 @@
    so a reload keeps them, but never saved to the log. Once there is a reading,
    a link beside Show recent logs draws them, with the heart rate zones for the age
    picked under the chart. log.js opens and forgets them with the session;
-   ladder.js and the apps call heartTick() and heartUntick(). */
+   ladder.js and the apps call heartTick() and heartUntick(). The watch's
+   altitude is kept the same way, for the summary's elevation chart. */
 
 const heartAgeKey = "heartRateAge";
 const heartAges = [20, 30, 40, 50, 60, 70];
 // each zone's top, as a share of the age-predicted maximum of 220 less the age
 const heartZones = [["Max", 1, "max"], ["Hard", 0.85, "hard"], ["Moderate", 0.7, "moderate"], ["Light", 0.5, "light"]];
 const heartGap = 60000;   // ms without a reading that breaks the line
+const heightSwing = 1.5;  // m a climb up or down must pass to count: a 2m problem, past the barometer's wobble and an arm's swing
 
-let heart = null;   // { id, beats : [[at, bpm]], ticks : [[at, key, label]] }, for the session open
+let heart = null;   // { id, beats : [[at, bpm]], heights : [[at, m]], ticks : [[at, key, label]] }, for the session open
 
 overlays.push("heartRate");
 
@@ -29,6 +31,7 @@ function openHeart(){
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(heartKey())); } catch(err){}
     heart = saved && saved.id === session.id ? saved : { "id" : session.id, "beats" : [], "ticks" : [] };
+    if(!Array.isArray(heart.heights)){ heart.heights = []; }
     drawHeartLink();
 }
 
@@ -71,7 +74,99 @@ function heartBeat(message){
     keepHeart();
 }
 
-app.heart = { "wanted" : heartWanted, "receive" : heartBeat };
+// {t:"alt", m, a}: the altitude in metres, and how many seconds ago, as a beat
+function heartHeight(message){
+    let m = Number(message.m);
+    let at = Date.now() - (Number(message.a) || 0) * 1000;
+    if(!heartWanted() || heart === null || !isFinite(m) || at < (session.start || session.id)){ return; }
+    heart.heights.push([at, m]);
+    if(heart.heights.length > 1 && heart.heights[heart.heights.length - 2][0] > at){ heart.heights.sort((a, b) => a[0] - b[0]); }
+    keepHeart();
+}
+
+app.heart = { "wanted" : heartWanted, "receive" : heartBeat, "height" : heartHeight };
+
+function hasHeights(){
+    return heart !== null && heart.heights.length > 1;
+}
+
+// each reading the average of the ten seconds around it, or the noise reads as climbing
+const heightSmoothing = 2;   // readings either side
+function smoothHeights(){
+    return heart.heights.map(([at], index) => {
+        let near = heart.heights.slice(Math.max(0, index - heightSmoothing), index + heightSmoothing + 1);
+        return [at, near.reduce((total, point) => total + point[1], 0) / near.length];
+    });
+}
+
+/* Metres climbed up and down: a leg counts from one turn to the next, a turn
+   being where it goes back the other way by heightSwing or more */
+function heightTotals(){
+    let heights = smoothHeights();
+    let up = 0, down = 0, way = 0;
+    let turn = heights[0][1], peak = turn;
+    heights.forEach(([, m]) => {
+        if(way === 0){
+            if(Math.abs(m - turn) >= heightSwing){
+                way = Math.sign(m - turn);
+                peak = m;
+            }
+        } else if((m - peak) * way > 0){
+            peak = m;
+        } else if((peak - m) * way >= heightSwing){
+            way > 0 ? up += peak - turn : down += turn - peak;
+            turn = peak;
+            peak = m;
+            way = -way;
+        }
+    });
+    if(way > 0){ up += peak - turn; }
+    if(way < 0){ down += turn - peak; }
+    return { "up" : Math.round(up), "down" : Math.round(down) };
+}
+
+/* The elevation through the session, from its lowest point, drawn as the heart
+   rate is, with the climbs ticked on it. "" without two readings. */
+function heightChartSvg(width){
+    if(!hasHeights()){ return ""; }
+    const height = 200;
+    const left = 30, right = 12, top = 10, bottom = 22;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    let heights = smoothHeights();
+    let metres = heights.map(point => point[1]);
+    let base = Math.min(...metres);
+    let span = Math.max(...metres) - base;
+    let step = span > 40 ? 10 : span > 20 ? 5 : 2;
+    let high = Math.max(step, Math.ceil(span / step) * step);
+    let yOf = m => top + plotHeight - (m - base) / high * plotHeight;
+
+    let start = Math.min(session.start || session.id, heart.heights[0][0]);
+    let end = Math.max(heart.heights[heart.heights.length - 1][0], session.finish || Date.now(), start + 60000);
+    let xOf = at => left + (at - start) / (end - start) * plotWidth;
+
+    let svg = `<svg class="heart-chart height-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Elevation through the session">`;
+    for(let m = 0; m <= high; m += step){
+        let y = yOf(base + m);
+        svg += `<line class="${m === 0 ? "axis" : "grid"}" x1="${left}" x2="${left + plotWidth}" y1="${y}" y2="${y}" />`
+            + `<text x="${left - 5}" y="${y + 4}" text-anchor="end">${m}m</text>`;
+    }
+    let minutes = (end - start) / 60000;
+    let every = [1, 2, 5, 10, 15, 30, 60, 120].find(each => minutes / each <= plotWidth / 60) || 240;
+    for(let minute = 0; minute <= minutes; minute += every){
+        svg += `<text x="${xOf(start + minute * 60000)}" y="${height - 6}" text-anchor="middle">${heartElapsed(minute)}</text>`;
+    }
+    heart.ticks.forEach(([at]) => {
+        let x = xOf(at);
+        svg += `<line class="climb" x1="${x}" x2="${x}" y1="${top}" y2="${top + plotHeight}" />`;
+    });
+    let runs = [[]];
+    heights.forEach((point, index) => {
+        if(index > 0 && point[0] - heights[index - 1][0] > heartGap){ runs.push([]); }
+        runs[runs.length - 1].push(`${xOf(point[0]).toFixed(1)},${yOf(point[1]).toFixed(1)}`);
+    });
+    svg += runs.map(run => `<polyline class="heights" points="${run.join(" ")}" />`).join("");
+    return svg + `</svg>`;
+}
 
 function drawHeartLink(){
     let link = document.getElementById("showHeartRate");

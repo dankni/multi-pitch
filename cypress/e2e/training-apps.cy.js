@@ -2840,7 +2840,7 @@ describe('Training apps', function () {
             it('leaves Climb Log as it is when it is already on and open, and takes what waited there', () => {
                 cy.request(appUrl + '/training/watch/mplog.app.js').then((response) => {
                     cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win,
-                        (expression) => expression.includes('mplog.info') ? { hash: win.sourceHash(response.body), version: win.eval('watchVersion') } : 1,
+                        (expression) => expression.includes('mplog.info') ? { hash: win.sourceHash(response.body), version: win.eval('watchVersion').replace(/^v/, '') } : 1,
                         () => [{ t: 'add', g: 'V4' }, { t: 'hello' }]) });
                 });
                 connect();
@@ -2930,6 +2930,25 @@ describe('Training apps', function () {
                     expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null);
                     expect(Object.keys(JSON.parse(win.localStorage.getItem('boulderLog'))[0])).not.to.include('beats');
                 });
+            });
+
+            it('charts the elevation the watch reads at FINISH, with the metres climbed', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
+                connect();
+                cy.get('#row-V3 .grade-add').click();
+                cy.tick(300000);
+                // two 10m walls, a reading every 2 seconds, with a wobble at the foot well under the 1.5m that counts
+                const flat = (m, n) => Array(n).fill(m);
+                const climb = (from, to) => Array.from({ length: 20 }, (_, i) => from + (to - from) * (i + 1) / 20);
+                const wall = () => climb(100, 110).concat(flat(110, 10), climb(110, 100));
+                const metres = flat(100, 5).concat(wall(), [100.5], flat(100, 9), wall(), flat(100, 5));
+                cy.window().then((win) => metres.forEach((m, index) => win.watchSays({ t: 'alt', m: m, a: (metres.length - index) * 2 })));
+                cy.get('#finishButton').click();
+                cy.get('#summaryHeight figcaption').should('have.text', 'Elevation (beta)');
+                cy.get('#summaryHeight .summary-total').should('have.text', '20m up');
+                cy.get('#summaryHeight polyline.heights').should('have.length', 1);
+                cy.get('#saveSession').click();
+                cy.window().then((win) => expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null));
             });
 
             it('reads the heart rate from a heart rate monitor in place of the watch, one or the other', () => {

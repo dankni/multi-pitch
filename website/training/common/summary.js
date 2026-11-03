@@ -68,6 +68,10 @@ function drawSummary(){
     summaryWidth = width;
     let heartSvg = typeof heartChartSvg === "function" ? heartChartSvg(width) : "";
     document.getElementById("summaryHeart").innerHTML = heartSvg === "" ? "" : `<figure class="summary-figure"><figcaption>Heart rate</figcaption>${heartSvg}</figure>`;
+    let heightSvg = typeof heightChartSvg === "function" ? heightChartSvg(width) : "";
+    let totals = heightSvg === "" ? null : heightTotals();
+    document.getElementById("summaryHeight").innerHTML = heightSvg === "" ? ""
+        : `<figure class="summary-figure"><figcaption>Elevation (beta)</figcaption><p class="summary-total">${totals.up}m up</p>${heightSvg}</figure>`;
     document.getElementById("summaryClimbs").innerHTML = climbFigures(width);
 }
 
@@ -221,6 +225,7 @@ function drawSummaryMarkup(){
             <h2><span id="summaryName"></span><button type="button" class="icon-button demo-icon icon-share summary-share-icon" data-action="shareSummary" aria-label="Share the summary"></button></h2>
             <div id="summaryCharts">
                 <div id="summaryHeart"></div>
+                <div id="summaryHeight"></div>
                 <div id="summaryClimbs"></div>
             </div>
             <div id="summarySave"></div>
