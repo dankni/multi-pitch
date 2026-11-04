@@ -3566,8 +3566,11 @@ describe('Training apps', function () {
         it('pins the top nav over a page scrolled down, and leaves the page where it was', () => {
             cy.viewport(390, 400);
             cy.visit(appUrl + '/training/');
-            cy.window().then((win) => win.scrollTo(0, 300));
-            cy.window().its('scrollY').should('equal', 300);
+            // again until it takes: a slow machine may not have laid the page out at this size yet
+            cy.window().should((win) => {
+                win.scrollTo(0, 300);
+                expect(win.scrollY).to.equal(300);
+            });
             cy.document().then((doc) => doc.querySelector('nav .icon-info').click());
             cy.get('nav').should('be.visible').then(([nav]) => expect(nav.getBoundingClientRect().top).to.equal(0));
             cy.window().its('scrollY').should('equal', 300);
