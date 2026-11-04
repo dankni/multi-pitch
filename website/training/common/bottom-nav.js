@@ -91,6 +91,10 @@
         nav.innerHTML = item("/training/", menuIcon, "Apps", page === "overview")
             + item("/training/progress/", graphIcon, "Progress", page === "progress")
             + appItem();
+        // the page you are on: back to it, from a panel over it
+        nav.addEventListener("click", event => {
+            if(event.target.closest(".current")){ Object.keys(navPanels).forEach(closeOverlay); }
+        });
         document.body.appendChild(nav);
         document.documentElement.classList.add("has-bottom-nav");
         // the info panel's first card wears the page's icon: the app's, the progress graph, or the i

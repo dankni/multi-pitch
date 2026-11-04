@@ -268,6 +268,62 @@ function restoreSession(){
     return session;
 }
 
+// "iPhone" or "iPad", which can report itself as a Mac, or null
+function appleDevice(){
+    let agent = navigator.userAgent;
+    if(/iPhone|iPod/.test(agent)){ return "iPhone"; }
+    return /iPad/.test(agent) || (/Macintosh/.test(agent) && navigator.maxTouchPoints > 1) ? "iPad" : null;
+}
+
+/* The note that an iPhone or iPad can clear sessions, as a session is saved: in
+   any browser but not the home screen app, and signed out. A card on the summary
+   (common/summary.js), or this toast in an app with none. */
+function keepNoteDue(){
+    return appleDevice() !== null && navigator.standalone !== true && localStorage.getItem(accountRefreshKey) === null;
+}
+
+function keepNoteText(){
+    return `Your ${appleDevice()} can clear your sessions if you don't visit for a week.`;
+}
+
+const keepNoteLink = '<button type="button" class="link-button" data-action="keepNoteAccount">Create free account</button>';
+
+function keepNoteToast(){
+    if(!keepNoteDue()){ return; }
+    hideKeepNote();
+    let box = document.createElement("div");
+    box.id = "keepNote";
+    box.className = "toast warn keep-note";
+    box.innerHTML = `<span class="toast-face" aria-hidden="true">⚠︎</span><span class="toast-text">${keepNoteText()}</span>
+        <button type="button" class="toast-close" data-action="hideKeepNote" aria-label="Close">×</button>
+        <span class="keep-note-links">${keepNoteLink}</span>`;
+    toastStack().appendChild(box);
+    setTimeout(() => box.classList.add("shown"), 20);
+}
+
+function hideKeepNote(){
+    let note = document.getElementById("keepNote");
+    if(note !== null){ note.remove(); }
+}
+
+// at the sign up rather than the backup above it
+function keepNoteAccount(){
+    hideKeepNote();
+    loadAccount().then(() => {
+        drawAccountPanel();
+        openOverlay("account");
+        document.getElementById("accountLogin").scrollIntoView();
+    });
+}
+
+// iOS can clear a site's storage. Not asked elsewhere, as Firefox makes it a permission prompt
+let storageAsked = false;
+function askToKeepStorage(){
+    if(storageAsked || appleDevice() === null || !navigator.storage || !navigator.storage.persist){ return; }
+    storageAsked = true;
+    navigator.storage.persist().catch(() => {});
+}
+
 // A new entry joins the log; an edited one replaces the one it came from.
 // updated decides which copy wins when two phones have both - see common/backup.js
 function saveToLog(key, entry){
@@ -276,6 +332,7 @@ function saveToLog(key, entry){
     let existing = log.findIndex(item => item.id === entry.id);
     existing === -1 ? log.push(entry) : log[existing] = entry;
     setLog(key, log);
+    askToKeepStorage();
     if(typeof syncSoon === "function"){ syncSoon(); }
 }
 
@@ -934,6 +991,19 @@ function hideToast(box){
    still behind whichever is open. */
 const overlays = ["about", "settings", "account"];
 
+/* These three sit between the navs, which stay up, and close from the button that
+   opened them, the page's name, the current page's in the bottom nav, or Escape. */
+const navPanels = { "about" : "openInfoBox", "settings" : "openSettings", "account" : "openAccount" };
+
+function showNavPanel(){
+    let open = Object.keys(navPanels).filter(isOpen);
+    document.documentElement.classList.toggle("nav-panel", open.length > 0);
+    Object.keys(navPanels).forEach(id => {
+        let button = document.querySelector(`nav [data-action="${navPanels[id]}"]`);
+        if(button !== null){ button.setAttribute("aria-expanded", open.includes(id)); }
+    });
+}
+
 function openOverlay(id){
     let panel = document.getElementById(id);
     if(panel === null){ return; }
@@ -944,11 +1014,13 @@ function openOverlay(id){
     overlays.filter(other => other !== id).forEach(closeOverlay);
     panel.classList.add("open");
     panel.scrollTop = 0;
+    showNavPanel();
 }
 
 function closeOverlay(id){
     let panel = document.getElementById(id);
     if(panel !== null){ panel.classList.remove("open"); }
+    showNavPanel();
 }
 
 function isOpen(id){
@@ -956,11 +1028,21 @@ function isOpen(id){
     return panel !== null && panel.classList.contains("open");
 }
 
-function openInfoBox(){ openOverlay("about"); }
+// A tap on the nav is handed the button, and closes what that button opened
+function toggleOverlay(id, button){
+    button && isOpen(id) ? closeOverlay(id) : openOverlay(id);
+}
+
+function openInfoBox(button){ toggleOverlay("about", button); }
 function hideAccount(){ closeOverlay("account"); }
 function hideAbout(){ closeOverlay("about"); }
-function openSettings(){ openOverlay("settings"); }
+function openSettings(button){ toggleOverlay("settings", button); }
 function hideSettings(){ closeOverlay("settings"); }
+
+// the page's name in the nav: back to the page
+document.addEventListener("click", event => {
+    if(event.target.closest("nav h1")){ Object.keys(navPanels).forEach(closeOverlay); }
+});
 
 document.addEventListener("keydown", event => {
     if(event.code === "Escape"){
@@ -1047,7 +1129,7 @@ function drawContactCard(){
     if(about === null){ return; }
     let spot = about.querySelector("[data-contact-card]");
     if(spot !== null){ spot.outerHTML = contactCard; }
-    else { about.querySelector(".close").insertAdjacentHTML("beforebegin", contactCard); }
+    else { about.insertAdjacentHTML("beforeend", contactCard); }
 }
 
 function tagFeedbackLinks(){
@@ -1085,7 +1167,8 @@ function loadAccount(){
     return accountLoading;
 }
 
-function openAccount(){
+function openAccount(button){
+    if(button && isOpen("account")){ return closeOverlay("account"); }
     loadAccount().then(() => {
         drawAccountPanel();
         openOverlay("account");

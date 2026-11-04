@@ -230,6 +230,7 @@ function saveSession(){
     clearSession();
     drawSessionLog(logView);
     openInfoBox();
+    keepNoteToast();
 }
 
 function reset(){

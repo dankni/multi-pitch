@@ -212,10 +212,12 @@ function storeSession(){
 }
 
 function saveSession(){
+    let typedIn = session.missing;   // saved with no summary
     storeSession();
     clearSession();
     drawSessionLog(logView);
     openInfoBox();
+    if(typedIn){ keepNoteToast(); }
 }
 
 /* Drawing */

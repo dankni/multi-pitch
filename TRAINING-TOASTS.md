@@ -20,6 +20,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Dans Loft | Every route on the wall climbed, nice one! | Info | 5.2 s | A tap climbs the last route not yet climbed this session | dansloft/main.js | Yes | |
 | Dans Loft | Copied, ready to paste | Info | 5.2 s | COPY ROUTES in the route panel's edit mode (?edit), and the copy worked | dansloft/main.js | No | |
 | Dans Loft | Couldn't copy it | Warning | 5.2 s | COPY ROUTES, and the copy failed | dansloft/main.js | No | |
+| Twister, Rock Rings, No Hangs, Tabata, Tindeq Arcade, Lap Timer | Your iPhone (or iPad) can clear your sessions if you don't visit for a week. | Links | Until closed | A session is saved with no summary, on an iPhone or iPad, outside the home screen app and signed out: once a visit in the Arcade, and only a typed-in session in the Lap Timer | common/functions.js | Yes | The other apps show this as a card on the summary. Create free account opens the account panel |
 | Apps page | Dans Loft added to your apps | Info | 5.2 s | Its name is typed in Add a hidden App, under the cog | index.html | Yes | Any case or spacing |
 | Apps page | Dans Loft is already in your apps | Info | 5.2 s | Its name is typed again once added | index.html | No | |
 | Apps page | Are you sure? Removed apps can be re-added using the cog | Confirm | Until REMOVE, Cancel or closed | The × on a card while reordering | index.html | Yes | Only REMOVE removes |

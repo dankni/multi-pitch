@@ -395,6 +395,39 @@ section {
 .overlay.open {
     display: block;
 }
+/* Info, settings and the account sit between the navs, the top one pinned while they
+   are up as the page behind is held wherever it was scrolled to. Over a summary too. */
+#about, #settings, #account {
+    top: 58px;
+    height: auto;
+    bottom: 0;
+    z-index: 5;
+}
+.has-bottom-nav #about, .has-bottom-nav #settings, .has-bottom-nav #account {
+    bottom: calc(58px + env(safe-area-inset-bottom));
+}
+#settings > h2:first-child, #account > h2:first-child {
+    margin-top: var(--s5);
+}
+.nav-panel body {
+    padding-top: 58px;
+}
+.nav-panel nav:not(.bottom-nav) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+}
+.nav-panel .bottom-nav {
+    z-index: 5;
+}
+nav .icon-button[aria-expanded="true"] {
+    color: var(--nav-current);
+}
+.nav-panel .bottom-nav-item.current {
+    cursor: pointer;
+}
 :root:has(.overlay.open), :root:has(.overlay.open) body {
     overflow: hidden;
 }
@@ -912,6 +945,21 @@ nav .account-button svg {
 .toast.warn.danger .toast-face {
     color: var(--danger-ink);
 }
+.toast.keep-note {
+    flex-wrap: wrap;
+}
+/* the words in the room the icon and the cross leave, the links on a row under */
+.keep-note .toast-text {
+    flex: 1 1 0;
+    min-width: 0;
+}
+.keep-note-links {
+    flex-basis: 100%;
+    text-align: center;
+}
+.keep-note-links .link-button {
+    color: var(--link);
+}
 .toast-choices {
     display: flex;
     justify-content: flex-end;
@@ -1386,9 +1434,8 @@ nav .account-button svg {
 .overlay .card-body p:last-of-type {
     margin-bottom: 0;
 }
-/* an info panel opens on its first card, headed by the page's title, with no heading over it */
 .overlay > .card-group:first-child {
-    margin-top: 88px;
+    margin-top: var(--s5);
 }
 .card > .card-body:first-child {
     border-top: 0;

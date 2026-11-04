@@ -129,4 +129,5 @@ function saveSession(){
     document.body.removeAttribute("data-saving");
     resetSavePanel();
     drawSessionLog(app.logView);
+    keepNoteToast();
 }

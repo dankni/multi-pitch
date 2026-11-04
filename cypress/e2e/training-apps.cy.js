@@ -203,6 +203,116 @@ describe('Training apps', function () {
             cy.get('#finishSummary').should('not.be.visible');
         });
 
+        describe('the note that an iPhone can clear sessions', () => {
+            const iPhone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
+            const iPad = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
+
+            function visitOn(agent, extra, url) {
+                cy.visit(url || timerUrl, {
+                    onBeforeLoad(win) {
+                        Object.defineProperty(win.navigator, 'userAgent', { configurable: true, value: agent });
+                        Object.defineProperty(win.navigator, 'maxTouchPoints', { configurable: true, value: agent === iPad ? 5 : 0 });
+                        Object.defineProperty(win.navigator, 'storage', { configurable: true, value: { persist: cy.stub().as('persist').resolves(true) } });
+                        if (extra) { extra(win); }
+                    }
+                });
+            }
+
+            it('shows from the first session on an iPhone, and once a session after that', () => {
+                visitOn(iPhone);
+                runSession(1);
+                cy.get('#finishButton').click();
+                cy.get('#keepNote').should('be.visible').and('contain', "Your iPhone can clear your sessions if you don't visit for a week.");
+                cy.get('@persist').should('have.been.calledOnce');
+                cy.get('[data-action="backToSession"]').click();
+                cy.get('#keepNote').should('not.exist');
+                cy.get('#finishButton').click();
+                cy.get('#finishSummary').should('be.visible');
+                cy.get('#keepNote').should('not.exist');
+                cy.get('#saveSession').click();
+                cy.get('nav .icon-info').click();
+                runSession(1);
+                cy.get('#finishButton').click();
+                cy.get('#keepNote').should('be.visible');
+            });
+
+            it('says nothing on a session reopened from the log', () => {
+                visitOn(iPhone, (win) => win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 0 }])), appUrl + '/training/boulder/');
+                cy.get('nav .icon-info').click();
+                cy.get('#log .icon-wrench').click();
+                cy.get('#finishButton').click();
+                cy.get('#finishSummary').should('be.visible');
+                cy.get('#keepNote').should('not.exist');
+            });
+
+            it('names an iPad, even one reporting itself as a Mac', () => {
+                visitOn(iPad);
+                runSession(1);
+                cy.get('#finishButton').click();
+                cy.get('#keepNote').should('contain', 'Your iPad can clear');
+            });
+
+            ['loft', 'rings', 'nohangs', 'tabata'].forEach((name) => {
+                it('says it in a toast as ' + name + ' saves, there being no summary', () => {
+                    const url = appUrl + '/training/' + name + '/';
+                    visitOn(iPhone, null, url);
+                    cy.window().then((win) => win.saveSession());
+                    cy.tick(100);
+                    cy.get('#keepNote.toast').should('be.visible').and('contain', "Your iPhone can clear your sessions if you don't visit for a week.");
+                    cy.get('#keepNote .toast-close').click();
+                    cy.get('#keepNote').should('not.exist');
+                    cy.window().then((win) => win.saveSession());
+                    cy.tick(100);
+                    cy.contains('#keepNote button', 'Create free account').click();
+                    cy.get('#keepNote').should('not.exist');
+                    cy.get('#account').should('have.class', 'open');
+                    cy.visit(url);
+                    cy.window().then((win) => win.saveSession());
+                    cy.get('#keepNote').should('not.exist');
+                });
+            });
+
+            it('says it in a toast for a session typed in, there being no summary', () => {
+                visitOn(iPhone);
+                cy.window().then((win) => win.addMissingSession());
+                cy.get('#saveSession').click();
+                cy.tick(100);
+                cy.get('#keepNote.toast').should('be.visible');
+            });
+
+            it('opens the account over the summary, at the sign up', () => {
+                visitOn(iPhone);
+                cy.get('nav .account-button').click();   // the panel drawn before the summary
+                cy.get('#account').should('have.class', 'open');
+                cy.get('nav .account-button').click();
+                runSession(1);
+                cy.get('#finishButton').click();
+                cy.contains('#keepNote button', 'Create free account').click();
+                cy.get('#keepNote').should('not.exist');
+                cy.get('#account').should('have.class', 'open');
+                cy.get('#accountEmail').should('be.visible');
+                cy.get('nav .account-button').should('be.visible').click();   // the nav over the summary too
+                cy.get('#account').should('not.be.visible');
+                cy.get('#finishSummary').should('be.visible');
+            });
+
+            it('stays away in the home screen app, signed in and off Apple devices', () => {
+                const finish = () => {
+                    runSession(1);
+                    cy.get('#finishButton').click();
+                    cy.get('#finishSummary').should('be.visible');
+                    cy.get('#keepNote').should('not.exist');
+                };
+                visitOn(iPhone, (win) => { win.navigator.standalone = true; });
+                finish();
+                visitOn(iPhone);
+                cy.window().then((win) => win.localStorage.setItem('accountRefresh', 'token'));
+                finish();
+                cy.visit(timerUrl);
+                finish();
+            });
+        });
+
         it('saves at FINISH, saves the stars and note as they change, and takes it out again on a reset', () => {
             cy.visit(timerUrl);
             runSession(2);
@@ -1070,7 +1180,7 @@ describe('Training apps', function () {
             cy.tick(100);
             cy.get('.toast.danger .toast-confirm').click();
             cy.get('#routineList li').should('have.length', 1).and('contain', 'Max hangs');
-            cy.get('[data-action="hideSettings"]').click();
+            cy.get('nav .icon-cog').click();
             // a routine is opened with repeater mode off too
             cy.get('#repeaterMode').uncheck({ force: true });
             cy.get('[data-action="openSettings"]').click();
@@ -1229,7 +1339,7 @@ describe('Training apps', function () {
             cy.get('#sessionNote').should('be.visible').and('contain', '1 wall · 3 s of pull · 0:24 played · held the screen');
             cy.get('label[for="log-tindeq"]').click();
             cy.get('#log').should('contain', 'No sessions saved yet.');
-            cy.get('#about .close').click();
+            cy.get('nav .icon-info').click();
             // and back to the start screen for another
             cy.get('#restart').click();
             stateIs('idle');
@@ -1258,17 +1368,17 @@ describe('Training apps', function () {
             cy.get('#warmUp').should('not.be.visible');
             cy.get('nav .icon-cog').click();
             cy.get('#mode-adventure').should('be.checked');
-            cy.get('#about-adventure').should('be.visible');
+            cy.get('#about-adventure').scrollIntoView().should('be.visible');
             cy.get('#about-maxHang').should('not.be.visible');
             cy.get('label[for="mode-maxHang"]').click();
             cy.window().its('localStorage').invoke('getItem', 'gapsMaxHang').should('equal', 'true');
             cy.get('#about-adventure').should('not.be.visible');
-            cy.get('#about-maxHang').should('be.visible');
+            cy.get('#about-maxHang').scrollIntoView().should('be.visible');
             // its steps at this max pull, and again at a new one
             cy.get('#routineSteps li').should('have.length', 5).first().should('have.text', 'Warm-up 1: 10 kg for 10 s × 2, rest 1:00');
             cy.get('#maxPull').clear().type('40').trigger('change');
             cy.get('#routineSteps li').last().should('have.text', 'Max hang: 35 kg for 10 s × 5, rest 3:00');
-            cy.get('#settings .close').click();
+            cy.get('nav .icon-cog').click();
             cy.get('#warmUp').should('be.visible');
             cy.get('#score').should('have.text', 'Warm-up 1');
             cy.get('#best').should('have.text', '1 of 2 · Arm 1');
@@ -1964,6 +2074,21 @@ describe('Training apps', function () {
                 { score: 180, high_score: 180, new_high_score: true, walls: 1, max_pull: 20 });
         });
 
+        it('says an iPhone can clear sessions as a run saves itself, and clears it for the next run', () => {
+            visitGaps(steadyHold, (win) => Object.defineProperty(win.navigator, 'userAgent', { configurable: true, value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Safari/604.1' }));
+            start();
+            play(4500);
+            hold();
+            play(3600);
+            letGo();
+            play(9000);
+            secondLife();
+            stateIs('over');
+            cy.get('#keepNote').should('contain', 'Your iPhone can clear your sessions');
+            cy.get('#restart').click();
+            cy.get('#keepNote').should('not.exist');
+        });
+
         it('tells analytics nothing at the end of a run on the screen', () => {
             visitGaps();
             cy.window().then((win) => { win.gtag = cy.stub().as('gtag'); });
@@ -2374,7 +2499,7 @@ describe('Training apps', function () {
             cy.get('[id="row-5+"] .grade-add').click();
             cy.get('nav .icon-cog').click();
             cy.get('#splitLow').check({ force: true });
-            cy.get('#settings .close').click();
+            cy.get('nav .icon-cog').click();
             // the two it gains are on show, and 7c is still at the top
             cy.get('#grades .route-grade').then(($grades) => {
                 expect([...$grades].map((grade) => grade.textContent)).to.deep.equal(
@@ -2390,7 +2515,7 @@ describe('Training apps', function () {
             // and off again
             cy.get('nav .icon-cog').click();
             cy.get('#splitLow').uncheck({ force: true });
-            cy.get('#settings .close').click();
+            cy.get('nav .icon-cog').click();
             cy.get('#grades .route-grade').first().should('have.text', '4');
             cy.get('#grades .route-grade').should('have.length', 10);
         });
@@ -2401,7 +2526,7 @@ describe('Training apps', function () {
             cy.get('label[for="tab-sport"]').click();
             cy.get('nav .icon-cog').click();
             cy.get('#plusGrades').check({ force: true });
-            cy.get('#settings .close').click();
+            cy.get('nav .icon-cog').click();
             // still as far as 7c
             cy.get('#grades .route-grade').then(($grades) => {
                 expect([...$grades].map((grade) => grade.textContent)).to.deep.equal(
@@ -2414,7 +2539,7 @@ describe('Training apps', function () {
             // and off again: the 6b+ still counts
             cy.get('nav .icon-cog').click();
             cy.get('#plusGrades').uncheck({ force: true });
-            cy.get('#settings .close').click();
+            cy.get('nav .icon-cog').click();
             cy.get('#grades .route-grade').should('have.length', 12);
             cy.get('#climbCount').should('have.text', '2');
         });
@@ -2536,7 +2661,7 @@ describe('Training apps', function () {
             cy.get('#saveSession').click();
             cy.get('#log .icon-note').click();
             cy.get('.comment-pop').should('contain', 'Crimpy.');
-            cy.get('#about .close').click();
+            cy.get('nav .icon-info').click();
             cy.get('#primaryButton').click();
             cy.get('#sessionComment').should('have.value', '');
         });
@@ -2696,7 +2821,7 @@ describe('Training apps', function () {
             cy.get('#finishButton').click();
             cy.get('#saveSession').click();
             cy.get('#sessionStart').should('not.be.visible');   // gone with the session
-            cy.get('[data-action="hideAbout"]').click();
+            cy.get('nav .icon-info').click();
             cy.get('#primaryButton').click();
             cy.get('#discard').should('have.text', 'DISCARD');   // and a new one discards
             cy.window().then((win) => {
@@ -2795,7 +2920,7 @@ describe('Training apps', function () {
                 cy.get('#watchHelp').should('not.be.visible');
                 cy.get('#useWatch').check({ force: true });
                 cy.get('#watchStatusText').should('have.text', 'Watch connected');
-                cy.get('[data-action="hideSettings"]').click();
+                cy.get('nav .icon-cog').click();
 
                 // named as the phone names them
                 cy.get('#system-font').check({ force: true });
@@ -3403,6 +3528,51 @@ describe('Training apps', function () {
             cy.window().then((win) => { win.beforeReload = true; });
             cy.get('.toast-action').click();
             cy.window().should('not.have.property', 'beforeReload');
+        });
+
+        it('keeps both navs up over a panel, closing it from the button that opened it or the current page', () => {
+            cy.viewport(390, 700);
+            cy.visit(appUrl + '/training/boulder/');
+            cy.get('nav .icon-info').click();
+            cy.get('#about').should('be.visible');
+            cy.get('#about .close').should('not.exist');
+            cy.get('nav').should('be.visible');
+            cy.get('.bottom-nav').should('be.visible');
+            cy.get('nav .icon-info').should('have.attr', 'aria-expanded', 'true').and('have.css', 'color', 'rgb(143, 194, 255)');
+            cy.document().then((doc) => {
+                expect(doc.getElementById('about').getBoundingClientRect().top).to.equal(doc.querySelector('nav').getBoundingClientRect().bottom);
+                expect(doc.getElementById('about').getBoundingClientRect().bottom).to.equal(doc.querySelector('.bottom-nav').getBoundingClientRect().top);
+            });
+            // straight from one to the next
+            cy.get('nav .icon-cog').click();
+            cy.get('#settings').should('be.visible');
+            cy.get('#about').should('not.be.visible');
+            cy.get('nav .icon-info').should('have.attr', 'aria-expanded', 'false');
+            cy.get('nav .icon-cog').click();
+            cy.get('#settings').should('not.be.visible');
+            cy.get('nav .account-button').click();
+            cy.get('#account').should('be.visible');
+            cy.get('nav .account-button').click();
+            cy.get('#account').should('not.be.visible');
+            cy.get('html').should('not.have.class', 'nav-panel');
+            cy.get('nav .icon-info').click();
+            cy.get('.bottom-nav .current').click();
+            cy.get('#about').should('not.be.visible');
+            cy.get('nav .icon-cog').click();
+            cy.get('nav h1').click();
+            cy.get('#settings').should('not.be.visible');
+        });
+
+        it('pins the top nav over a page scrolled down, and leaves the page where it was', () => {
+            cy.viewport(390, 400);
+            cy.visit(appUrl + '/training/');
+            cy.window().then((win) => win.scrollTo(0, 300));
+            cy.window().its('scrollY').should('equal', 300);
+            cy.document().then((doc) => doc.querySelector('nav .icon-info').click());
+            cy.get('nav').should('be.visible').then(([nav]) => expect(nav.getBoundingClientRect().top).to.equal(0));
+            cy.window().its('scrollY').should('equal', 300);
+            cy.get('nav .icon-info').click();
+            cy.window().its('scrollY').should('equal', 300);
         });
 
         it('opens the overview info panel with the shared functions, and closes it on Escape', () => {
@@ -4135,7 +4305,7 @@ describe('Training apps', function () {
                 cy.get('#account .backup').should('be.visible').and('contain', 'Old Fashioned Back up');
                 cy.get('#accountLogin').should('be.visible');
                 cy.get('[data-account="out"] a[href="/privacy/"]').should('have.text', 'Privacy policy');
-                cy.get('#account .close').click();
+                cy.get('nav .account-button').click();
                 cy.get('#account').should('not.have.class', 'open');
             });
 

@@ -819,6 +819,7 @@ function readyStep(){
 
 function startGame(){
     if(!canStart()){ return; }
+    hideKeepNote();
     unlockAudio();
     requestWakeLock();
     newGame();
@@ -832,6 +833,7 @@ function startGame(){
 
 // Back to the start screen, for a new run
 function restartGame(){
+    hideKeepNote();
     newGame();
     game.wasJumping = jumping();
     showScore();
@@ -862,6 +864,13 @@ function endGame(){
     showState("over");
 }
 
+// a run saves itself every few minutes, so once a visit, and out of the way of the next
+let runNoted = false;
+function noteRunSaved(){
+    if(!runNoted){ keepNoteToast(); }
+    runNoted = true;
+}
+
 // Every hang done, logged with the game's runs but never scored against them
 function finishRoutine(tindeq){
     if(tindeq){ track("tindeq_arcade_max_hangs", { "max_pull" : game.maxPull }); }
@@ -869,6 +878,7 @@ function finishRoutine(tindeq){
                             "time" : Math.round(game.time), "walls" : game.cleared, "input" : game.input, "maxPull" : game.maxPull,
                             ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}) });
     showLogKind(game.input);
+    noteRunSaved();
     document.getElementById("overBest").hidden = true;
     return [["Time", clock(game.time)], ["Hangs", game.cleared], ["Pulled", Math.round(game.climbed) + " s"]];
 }
@@ -887,6 +897,7 @@ function finishGame(tindeq){
                                 "time" : Math.round(game.time), "walls" : game.cleared, "coins" : game.collected, "input" : game.input, "maxPull" : game.maxPull,
                                 ...(tindeq ? { "peakKg" : roundKg(game.peakKg) } : {}), ...(game.level === 2 ? { "level" : 2 } : {}) });
         showLogKind(game.input);
+        noteRunSaved();
     }
     document.getElementById("overBest").hidden = !(score > best);
     return [["Score", points(score)], ["Time", clock(game.time)], ["Walls", game.cleared], ["Coins", game.collected],

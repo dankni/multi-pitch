@@ -342,7 +342,6 @@ const accountPanel = `<aside id="account" class="overlay">
     <section class="card-group" id="accountDelete" hidden>
         <button type="button" class="card account-delete" data-action="deleteAccount">Delete account</button>
     </section>
-    <button type="button" class="icon-button close" data-action="hideAccount" aria-label="Close account panel"></button>
 </aside>`;
 
 function drawAccountPanel(){

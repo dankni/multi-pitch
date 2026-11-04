@@ -95,9 +95,26 @@ function openSummary(){
         summarySaveLabel = button.innerText;
         button.innerText = "DONE";
     }
+    showKeepNote();
     openOverlay("finishSummary");
     drawSummary();
 }
+
+// once a session, and not one reopened from the log; the apps with no summary use keepNoteToast()
+function showKeepNote(){
+    if(!keepNoteDue() || session.editing || session.keepNoted){ return; }
+    session.keepNoted = true;
+    keepSession();
+    document.querySelector("#finishSummary h2").insertAdjacentHTML("afterend", `<section class="card-group" id="keepNote">
+        <div class="card">
+            <div class="card-body">
+                <p>${keepNoteText()}</p>
+                <p class="keep-note-links">${keepNoteLink}</p>
+            </div>
+        </div>
+    </section>`);
+}
+
 
 // a change made on the summary, saved as it is made
 function storeFinished(){
@@ -118,6 +135,7 @@ function closeSummary(){
     let button = document.getElementById("saveSession");
     if(button !== null && summarySaveLabel !== ""){ button.innerText = summarySaveLabel; }
     summarySaveLabel = "";
+    hideKeepNote();
     closeOverlay("finishSummary");
 }
 
