@@ -1,0 +1,116 @@
+/* Max pull: the three boxes, the Progressor's trace and the days charted. The
+   fields, the switch and the chart are common/style.css's and charts.css's. */
+.pull-left  { --c: #e6b800; }
+.pull-right { --c: #0b6ad6; }
+.pull-hang  { --c: var(--danger-ink); }
+
+.pull-holder > #pullDate {
+    display: block;
+    margin: var(--s4) auto 0;
+}
+.pull-boxes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s2);
+    margin-top: var(--s4);
+}
+.pull-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s2);
+    padding: var(--s3);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--c);
+    border-radius: var(--r-lg);
+}
+.pull-box.pull-hang {
+    grid-column: 1 / -1;
+}
+.pull-name {
+    font-size: var(--t-md);
+    font-weight: 600;
+    color: var(--strong);
+}
+.pull-box .field-group {
+    margin: 0;
+}
+.pull-box .field {
+    width: 84px;
+    font-size: var(--t-lg);
+    font-weight: 700;
+    text-align: right;
+}
+/* one figure for the hang, or body and extra with their total */
+.hang-split {
+    display: none;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: var(--s2) var(--s4);
+}
+[data-split] .hang-split {
+    display: flex;
+}
+[data-split] .hang-whole {
+    display: none;
+}
+.pull-part {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s1);
+    font-size: var(--t-sm);
+    color: var(--ink-2);
+}
+.pull-total {
+    align-self: center;
+    font-size: var(--t-lg);
+    font-weight: 700;
+}
+
+.gauge-line-switch {
+    margin-top: var(--s4);
+}
+.gauge {
+    margin-top: var(--s3);
+    padding: var(--s3);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+}
+.gauge-figures {
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+    margin: var(--s3) 0 var(--s2);
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+}
+.gauge-figures small {
+    font-size: var(--t-md);
+    font-weight: 500;
+    color: var(--ink-2);
+}
+.gauge-best {
+    font-size: var(--t-xl);
+}
+.gauge-line {
+    fill: none;
+    stroke: var(--c);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+}
+.gauge-peak {
+    stroke: var(--c);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+}
+.chart .tick-right {
+    fill: var(--c);
+}
+.pull-history {
+    margin: var(--s5) 0 var(--s7);
+}

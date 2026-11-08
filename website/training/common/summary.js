@@ -40,9 +40,9 @@ function climbFigures(width){
     let last = lastSession();
     let before = last === null ? [] : entryClimbs(app.logKey, last);
     return Object.keys(climbKinds).filter(kind => now.concat(before).some(climb => climb.kind === kind)).map(kind => {
-        let { columns, band, noun, title } = climbKinds[kind];
-        let current = now.filter(climb => climb.kind === kind).map(climb => climb.grade);
-        let previous = before.filter(climb => climb.kind === kind).map(climb => climb.grade);
+        let { columns, shown, band, noun, title } = climbKinds[kind];
+        let current = now.filter(climb => climb.kind === kind).map(climb => shown(climb.grade));
+        let previous = before.filter(climb => climb.kind === kind).map(climb => shown(climb.grade));
         let count = (list, grade) => list.filter(each => each === grade).length;
         let groups = columns(current.concat(previous)).map(grade => ({
             "label" : grade,
@@ -100,19 +100,12 @@ function openSummary(){
     drawSummary();
 }
 
-// once a session, and not one reopened from the log; the apps with no summary use keepNoteToast()
+// once a session, and not one reopened from the log
 function showKeepNote(){
     if(!keepNoteDue() || session.editing || session.keepNoted){ return; }
     session.keepNoted = true;
     keepSession();
-    document.querySelector("#finishSummary h2").insertAdjacentHTML("afterend", `<section class="card-group" id="keepNote">
-        <div class="card">
-            <div class="card-body">
-                <p>${keepNoteText()}</p>
-                <p class="keep-note-links">${keepNoteLink}</p>
-            </div>
-        </div>
-    </section>`);
+    keepNoteToast();
 }
 
 

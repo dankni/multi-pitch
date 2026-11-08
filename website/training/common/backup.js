@@ -11,12 +11,12 @@
 
 const backupFormat = "multi-pitch training apps";
 
-const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "loftLog", "rockRingsLog", "tradLog", "noHangsLog", "tabataLog", "gapsLog", "dansLoftLog"];
+const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "loftLog", "rockRingsLog", "tradLog", "noHangsLog", "tabataLog", "gapsLog", "dansLoftLog", "maxPullLog"];
 
 // stored as the apps wrote them, strings and all
-const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "enduranceWall", "enduranceRest",
+const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "boulderTrackFalls", "tradTrackFalls", "gilfordTrackFalls", "dansLoftTrackFalls", "enduranceWall", "enduranceRest",
     "enduranceGrade", "enduranceStyle", "lapTimerGrade", "colours", "tradMode", "difficulty", "gapsMaxPull", "gapsClimber", "tabataSettings", "tabataOneSecond", "tabataRepeaterMode", "tabataRepeaters", "tabataRoutines",
-    "preventSleep", "overviewRange", "progressHidden", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingRemovedApps", "trainingTheme", "dansLoftDraft"];
+    "preventSleep", "overviewRange", "progressHidden", "progressBoulderGrades", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingRemovedApps", "trainingTheme", "dansLoftDraft", "maxPullSplitHang", "trainingTargets", "trainingWeekStart"];
 
 // when this phone's settings last changed, and what they were then
 const settingsSavedKey = "syncSettingsSaved";

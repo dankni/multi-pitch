@@ -26,6 +26,58 @@ const boulderGradeTable = [
     { "v" : "V17", "font" : "f9A",  "brit" : "7c" }
 ];
 
+/* Font one grade at a time, its plus grades too, each with the V grade it counts
+   as - two Font grades can share one. A boulder is kept in whichever it was
+   logged in. */
+const fontBoulderTable = [
+    { "font" : "f3",   "v" : "VB" },
+    { "font" : "f4",   "v" : "V0" },
+    { "font" : "f4+",  "v" : "V0" },
+    { "font" : "f5",   "v" : "V1" },
+    { "font" : "f5+",  "v" : "V2" },
+    { "font" : "f6A",  "v" : "V3" },
+    { "font" : "f6A+", "v" : "V3" },
+    { "font" : "f6B",  "v" : "V4" },
+    { "font" : "f6B+", "v" : "V4" },
+    { "font" : "f6C",  "v" : "V5" },
+    { "font" : "f6C+", "v" : "V5" },
+    { "font" : "f7A",  "v" : "V6" },
+    { "font" : "f7A+", "v" : "V7" },
+    { "font" : "f7B",  "v" : "V8" },
+    { "font" : "f7B+", "v" : "V8" },
+    { "font" : "f7C",  "v" : "V9" },
+    { "font" : "f7C+", "v" : "V10" },
+    { "font" : "f8A",  "v" : "V11" },
+    { "font" : "f8A+", "v" : "V12" },
+    { "font" : "f8B",  "v" : "V13" },
+    { "font" : "f8B+", "v" : "V14" },
+    { "font" : "f8C",  "v" : "V15" },
+    { "font" : "f8C+", "v" : "V16" },
+    { "font" : "f9A",  "v" : "V17" }
+];
+const fontBoulderOrder = fontBoulderTable.map(row => row.font);
+const vBoulderOrder = ["VB"].concat(boulderGradeTable.map(row => row.v));
+
+// A boulder grade as V, however it was logged - f6B+ is V4 - or "" for neither
+function boulderV(grade){
+    if(vBoulderOrder.includes(grade)){ return grade; }
+    let row = fontBoulderTable.find(each => each.font === grade);
+    return row ? row.v : "";
+}
+
+// And as Font: a V grade as the first Font grade that counts as it
+function boulderFont(grade){
+    if(fontBoulderOrder.includes(grade)){ return grade; }
+    let row = fontBoulderTable.find(each => each.v === grade);
+    return row ? row.font : "";
+}
+
+// V0 as 0 and so on, VB -1, anything else -2: to compare boulders logged in either
+function boulderNumber(grade){
+    let v = boulderV(grade);
+    return v === "" ? -2 : v === "VB" ? -1 : Number(v.slice(1));
+}
+
 /* The gym session's sport ladder: French, as a UK wall labels its routes, and
    all on the progress page's sport ladder. With "split out low grades" on, 4 to
    5+ are 4a to 5c, as the chart counts them - see ukc.sportGrade. "Show plus
@@ -78,7 +130,7 @@ const gradeBands = (function(){
     ];
 
     function boulder(grade){
-        let rung = /^V\d+$/.test(grade) ? Number(grade.slice(1)) : -1;
+        let rung = boulderNumber(grade);
         return bands[rung >= 8 ? 3 : rung >= 5 ? 2 : rung >= 3 ? 1 : 0];
     }
 

@@ -16,6 +16,7 @@ const app = {
     "logKey" : "dansLoftLog",
     "currentKey" : "dansLoftCurrent",
     "timed" : true,
+    "fallsKey" : "dansLoftTrackFalls",
     "watchKey" : "dansLoftWatch",
     // On the watch (common/watch.js): the routes as one ladder, ticked there as the gym's grades are
     "watch" : {
@@ -57,7 +58,7 @@ const app = {
         "describe" : entry => {
             let hardest = hardestGrade(entry.climbs);
             return { "title" : plural(entry.climbs.length, "climb"),
-                     "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", routesDone(entry.climbs), sessionLength(entry)]) };
+                     "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", routesDone(entry.climbs), fallsDetail(entry), sessionLength(entry)]) };
         },
         "stats" : log => {
             let total = log.reduce((count, entry) => count + entry.climbs.length, 0);
@@ -159,6 +160,7 @@ function routeRow(route){
         </button>
         <button type="button" class="quiet grade-minus" data-action="removeLoftClimb" data-route="${route.id}"
             aria-label="Take back a ${name}"${done === 0 ? " disabled" : ""}>&minus;</button>
+        ${fallsControl(route.id, name)}
         <button type="button" class="quiet route-info demo-icon icon-info" data-action="showRouteInfo" data-route="${route.id}"
             aria-label="Where the ${name} goes"></button>
     </div>`;

@@ -1658,7 +1658,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showConnection();
     showBluetoothOff();
     if(!progressor.supported){
-        toast(document.getElementById("noBluetoothToast"), null, true, true);
+        unsupportedToast(document.getElementById("noBluetoothToast"));
     }
     bindHolding();
     newGame();

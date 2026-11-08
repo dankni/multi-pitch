@@ -81,3 +81,18 @@
         font-size: var(--t-xs);
     }
 }
+
+/* A route and, while falls are tracked, its falls under it */
+.route-cell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s1);
+    min-width: 0;
+}
+.route-cell .route {
+    flex: 1 1 auto;
+}
+.route-cell .falls .falls-button {
+    flex: 1 1 0;
+    width: auto;
+}

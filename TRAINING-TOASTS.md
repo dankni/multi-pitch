@@ -13,14 +13,14 @@ newest at the top. Sources are under `website/training/` — search the file for
 | All apps | There's a new version - tap to reload | Action | Until tapped or closed | A new version of the apps takes over while a page is open | common/functions.js | Yes | |
 | Gym Session, Outside | You wish! Less clicking more climbing | Info | 5.2 s | Tapping harder past the top of the grade ladder | common/ladder.js | Yes | |
 | Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | The watch disconnected | Info | 5.2 s | The Bangle.js watch, or the heart rate monitor picked in its place, drops out mid session without being disconnected in the app; it is tried again every 10 s | common/watch.js | Yes | |
-| Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | This browser can't connect to a watch. | Warning | 5.2 s | Connect watch is switched on under the cog in a browser without Web Bluetooth | common/watch.js | Yes | |
+| Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | This browser can't connect to a watch. | Warning | Until closed | Connect watch is switched on under the cog in a browser without Web Bluetooth; the switch goes back off | common/watch.js | Yes | |
 | Tick List | Half the routes on the wall ticked, nice one! | Info | 5.2 s | A tick takes the session to half the routes on the wall | gilford/main.js | Yes | |
 | Tick List | Nice work ticking the 7's | Info | 5.2 s | The last of the 7s is ticked | gilford/main.js | Yes | |
 | Tick List | Amazing! you ticked them all, that's the goal this app was made for | Info | 5.2 s | Every route on the wall is ticked | gilford/main.js | Yes | |
 | Dans Loft | Every route on the wall climbed, nice one! | Info | 5.2 s | A tap climbs the last route not yet climbed this session | dansloft/main.js | Yes | |
 | Dans Loft | Copied, ready to paste | Info | 5.2 s | COPY ROUTES in the route panel's edit mode (?edit), and the copy worked | dansloft/main.js | No | |
 | Dans Loft | Couldn't copy it | Warning | 5.2 s | COPY ROUTES, and the copy failed | dansloft/main.js | No | |
-| Twister, Rock Rings, No Hangs, Tabata, Tindeq Arcade, Lap Timer | Your iPhone (or iPad) can clear your sessions if you don't visit for a week. | Links | Until closed | A session is saved with no summary, on an iPhone or iPad, outside the home screen app and signed out: once a visit in the Arcade, and only a typed-in session in the Lap Timer | common/functions.js | Yes | The other apps show this as a card on the summary. Create free account opens the account panel |
+| All apps that save sessions | Your iPhone (or iPad) can clear your sessions if you don't visit for a week. | Links | Until closed | A session is saved, on an iPhone or iPad, outside the home screen app and signed out: on the summary once a session (not one reopened with the wrench), once a visit in the Arcade, only a typed-in session in the Lap Timer, and each save in Max Pull | common/functions.js | Yes | Create free account opens the account panel |
 | Apps page | Dans Loft added to your apps | Info | 5.2 s | Its name is typed in Add a hidden App, under the cog | index.html | Yes | Any case or spacing |
 | Apps page | Dans Loft is already in your apps | Info | 5.2 s | Its name is typed again once added | index.html | No | |
 | Apps page | Are you sure? Removed apps can be re-added using the cog | Confirm | Until REMOVE, Cancel or closed | The × on a card while reordering | index.html | Yes | Only REMOVE removes |
@@ -30,13 +30,17 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Tindeq Arcade | Couldn't copy it | Warning | 5.2 s | SHARE with no share sheet, and the copy failed | gaps/main.js | No | |
 | Tindeq Arcade | Zeroed | Info | 5.2 s | Zeroing the Progressor from the cog | gaps/main.js | No | |
 | Tindeq Arcade | This browser can't connect to a Tindeq Progressor. Use Chrome or Edge on Android or a computer - or hold the screen to play. | Warning | Until closed | The page opens in a browser without Web Bluetooth | gaps/main.js | Yes | Text, with its link, is the `#noBluetoothToast` template in gaps/index.html |
-| Tindeq Arcade | The Progressor's battery is low | Warning | Until closed | The Progressor reports low power | gaps/progressor.js | No | |
-| Tindeq Arcade | The Progressor disconnected | Info | 5.2 s | The Progressor drops out without being disconnected in the app | gaps/progressor.js | Yes | |
+| Tindeq Arcade, Max Pull | The Progressor's battery is low | Warning | Until closed | The Progressor reports low power | gaps/progressor.js | No | |
+| Tindeq Arcade, Max Pull | The Progressor disconnected | Info | 5.2 s | The Progressor drops out without being disconnected in the app | gaps/progressor.js | Yes | |
+| Max Pull | This browser can't connect to a Tindeq Progressor. | Warning | Until closed | The Tindeq switch is turned on in a browser without Web Bluetooth; the switch goes back off | maxpull/main.js | Yes | |
+| Max Pull | Zeroed | Info | 5.2 s | Zero it, while the Progressor is connected | maxpull/main.js | No | |
+| No Hangs, Tabata | This device can't vibrate. | Warning | Until closed | Vibration disabled is switched off on a device without vibration; it stays on | common/functions.js | Yes | |
+| All apps (account panel) | Remove the target of <target>? | Confirm | Until REMOVE, Cancel or closed | The bin by a weekly target | common/targets.js | Yes | Only REMOVE removes |
 | Tabata | Routine saved | Info | 5.2 s | SAVE in repeater mode, with a name not saved before | tabata/main.js | Yes | |
 | Tabata | Routine updated | Info | 5.2 s | SAVE in repeater mode, with the name of a routine already saved: its settings are replaced | tabata/main.js | Yes | Names match whatever their capitals |
 | Tabata | Reset the session to open a routine | Warning | 5.2 s | A routine tapped under the cog while a session is under way | tabata/main.js | Yes | |
 | Tabata | Reset the session to edit a saved one | Warning | 5.2 s | The wrench by a saved session while one is under way or waiting to be saved | common/workout.js | Yes | |
-| Twister | Browser or device doesn't support voice recognition. Try Chrome on Android. | Warning | Until closed | The page opens in a browser without speech recognition | loft/main.js | Yes | Text, with its link, is the `#noVoiceToast` template in loft/index.html |
+| Twister | Browser or device doesn't support voice recognition. Try Chrome on Android. | Warning | Until closed | The page opens in a browser without speech recognition or a microphone, or listening is refused (no microphone, permission denied, the service or language unavailable) | loft/main.js | Yes | Text, with its link, is the `#noVoiceToast` template in loft/index.html |
 | All apps that log | Delete the session from <date>? | Confirm | Until DELETE, Cancel or closed | The bin by a session in an app's log | common/functions.js | Yes | Only DELETE deletes |
 | Tabata | Delete the <name> routine? | Confirm | Until DELETE, Cancel or closed | The bin by a routine under the cog | tabata/main.js | Yes | Only DELETE deletes |
 | Outside, Progress, All apps (account panel) | Remove the imported UKC logbook from this device? | Confirm | Until REMOVE, Cancel or closed | Remove by the UKC logbook, or under it in the account panel | common/ukc.js | Yes | Only REMOVE removes; the page then reloads |
@@ -44,7 +48,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | All apps | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | common/backup.js | Yes | |
 | All apps | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | common/backup.js | Yes | |
 | Progress | Synced - tap to reload | Action | Until tapped or closed | A sync adds sessions from the account while the progress page is open | common/account.js | Yes | In an app, its log redraws instead |
-| All apps | Delete your account? | Confirm | Until DELETE, Cancel or closed | Delete account in the account panel | common/account.js | Yes | Only DELETE deletes; the sessions stay on the phone |
+| All apps | Delete your account? | Confirm | Until DELETE, Cancel or closed | "delete", in any case, is typed in the field Delete account opens in the account panel | common/account.js | Yes | Only DELETE deletes; the sessions stay on the phone |
 | All apps | &lt;AWS's own message&gt; | Warning | 5.2 s | Sign in, sign up, a code or a password reset is refused, e.g. a wrong password or a used email | common/account.js | No | Cognito's wording, not ours |
 | All apps, signed in | Couldn't connect | Warning | 5.2 s | An account button is tapped with no connection | common/account.js | No | A sync in the background says nothing offline |
 | All apps, signed in | Signed out - sign in again to sync | Warning | Until closed | The account's sign in has expired, been revoked or deleted elsewhere | common/account.js | No | |

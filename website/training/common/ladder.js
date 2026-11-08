@@ -12,8 +12,13 @@
      grades   : a row per grade naming it in each system,
      gradeKey : the system a session stores a grade by,
      systems  : { name : { main, also } } - the system a grade is called by, and
-                the ones shown small beside it,
-     systemKey, defaultSystem.
+                the ones shown small beside it - or the one a row names as its
+                own `system`, whichever is picked,
+     systemKey, defaultSystem,
+     onSystem : () => anything else as the system is changed (optional).
+
+   A ladder's names and starts can be getters, for one that changes with the
+   session; its order then holds every name it can have.
 
    A grade with no row - the gym's sport grades - is shown by its name alone.
    HARDER adds a rung for that session only; the next starts back at `starts`. */
@@ -31,7 +36,7 @@ function currentLadder(){
 
 // grade names never clash between ladders
 function ladderOf(name){
-    return ladderNames().find(ladder => app.ladders[ladder].names.includes(name));
+    return ladderNames().find(ladder => (app.ladders[ladder].order || app.ladders[ladder].names).includes(name));
 }
 
 function climbsOn(ladder, from){
@@ -48,8 +53,12 @@ function gradeOf(name){
     return app.grades.find(grade => grade[app.gradeKey] === name);
 }
 
+function rowSystem(grade){
+    return app.systems[grade.system || gradeSystem];
+}
+
 function mainGrade(grade){
-    return grade[app.systems[gradeSystem].main];
+    return grade[rowSystem(grade).main];
 }
 
 // a grade as its tile shows it
@@ -59,7 +68,7 @@ function shownName(name){
 }
 
 function otherGrades(grade){
-    return app.systems[gradeSystem].also.map(system => grade[system]).join(" · ");
+    return rowSystem(grade).also.map(system => grade[system]).join(" · ");
 }
 
 function countOf(name){
@@ -216,6 +225,7 @@ function gradeRow(name){
         </button>
         <button type="button" class="quiet grade-minus" data-action="removeClimb" data-grade="${name}"
             aria-label="Take back a ${name} ${noun}"${done === 0 ? " disabled" : ""}>&minus;</button>
+        ${fallsControl(name, (grade ? mainGrade(grade) : name) + " " + noun)}
     </div>`;
 }
 
@@ -248,6 +258,7 @@ function updateSummary(){
 function setGradeSystem(input){
     gradeSystem = input.value;
     localStorage.setItem(app.systemKey, gradeSystem);
+    if(app.onSystem){ app.onSystem(); }
     if(session !== null){
         keepSession();   // for the watch, which names grades the same way
         drawGrades();

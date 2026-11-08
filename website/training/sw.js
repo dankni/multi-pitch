@@ -8,7 +8,7 @@
    the one before it for a big release (v180.0). It is the app version shown in
    the apps. */
 
-const CACHE_VERSION = 'v182.36';
+const CACHE_VERSION = 'v183.2';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -45,6 +45,8 @@ const SHELL = [
     '/training/common/hrm.js',
     '/training/common/watch.js',
     '/training/common/charts.js',
+    '/training/common/apps.js',
+    '/training/common/targets.js',
     '/training/common/charts.css',
     '/training/common/summary.js',
     '/training/common/summary.css',
@@ -133,6 +135,10 @@ const SHELL = [
     '/training/gaps/img/wasp-2.png',
     '/training/gaps/img/mushroom-brown.png',
     '/training/gaps/img/mushroom-red.png',
+
+    '/training/maxpull/',
+    '/training/maxpull/style.css',
+    '/training/maxpull/main.js',
 
     // the paper tracker the tick list links to
     '/gilford.pdf',

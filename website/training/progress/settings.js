@@ -29,5 +29,13 @@
         showParts();
     };
 
+    // Font or V on the bouldering chart - see common/charts.js
+    window.setBoulderChartGrades = function(input){
+        try { localStorage.setItem(boulderChartKey, input.value); } catch(err){ /* only a preference */ }
+        if(typeof window.redrawProgressCharts === "function"){ window.redrawProgressCharts(); }
+    };
+    let grades = document.getElementById("boulderChartGrades-" + (boulderChartFont() ? "font" : "hueco"));
+    if(grades){ grades.checked = true; }
+
     showParts();
 })();

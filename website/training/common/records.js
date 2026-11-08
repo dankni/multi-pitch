@@ -14,7 +14,7 @@ const dayMs = 86400000;
 
 const recordKinds = {
     "boulder" : {
-        "rank" : grade => /^V\d+$/.test(grade) ? Number(grade.slice(1)) : -1,
+        "rank" : grade => Math.max(-1, boulderNumber(grade)),
         "logs" : [["boulderLog", entry => entry.climbs],
                   ["dansLoftLog", entry => (Array.isArray(entry.climbs) ? entry.climbs : []).map(loftBoulderGrade)]]
     },

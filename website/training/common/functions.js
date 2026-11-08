@@ -574,6 +574,7 @@ function drawSessionLog(view){
         holder.dataset.listening = "true";
     }
     if(stats){ stats.innerText = log.length > 0 && sessionLogView.stats ? sessionLogView.stats(log) : ""; }
+    foldAboveLog(holder, log.length);
     if(log.length === 0){
         holder.innerHTML = "<p>No sessions saved yet.</p>";
         return;
@@ -589,6 +590,21 @@ function drawSessionLog(view){
         </thead>
         <tbody>${log.map(sessionLogRow).join("")}</tbody>
     </table>`;
+}
+
+/* With sessions in it, the log is what the info panel opens on: the cards above
+   it start folded, once a page load, and stay as they are put after that */
+let foldedAboveLog = false;
+
+function foldAboveLog(holder, count){
+    if(foldedAboveLog || count === 0){ return; }
+    foldedAboveLog = true;
+    let card = holder.closest("details.card");
+    let panel = holder.closest(".overlay");
+    if(card === null || panel === null){ return; }
+    panel.querySelectorAll("details.card").forEach(above => {
+        if(above.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING){ above.open = false; }
+    });
 }
 
 // yyyy-mm-dd as "12 Jan" over "2026"; anything else as it was stored
@@ -818,14 +834,21 @@ function stopHum(){
    the Vibration disabled setting is for this. */
 let vibrateOff = false;
 const vibrateOffKey = "vibrateOff";
+const canVibrate = typeof navigator.vibrate === "function";
 
+// with nothing to buzz, the switch stays on
 function toggleVibrateOff(input){
+    if(!canVibrate && !input.checked){
+        input.checked = true;
+        unsupportedToast("This device can't vibrate.");
+        return;
+    }
     vibrateOff = input.checked;
     localStorage.setItem(vibrateOffKey, JSON.stringify(vibrateOff));
 }
 
 function loadVibrateOffSetting(){
-    vibrateOff = localStorage.getItem(vibrateOffKey) === "true";
+    vibrateOff = !canVibrate || localStorage.getItem(vibrateOffKey) === "true";
     let box = document.getElementById("vibrateOff");
     if(box !== null){ box.checked = vibrateOff; }
 }
@@ -956,6 +979,11 @@ function toast(message, onTap, sticky, warn){
     }
     clearTimeout(box.timer);
     if(!onTap && !sticky){ box.timer = setTimeout(() => hideToast(box), toastLife); }
+}
+
+// The browser or device can't do what was asked: an orange warning, up until closed
+function unsupportedToast(message){
+    toast(message, null, true, true);
 }
 
 /* A warning that asks first, edged in red: the deed, and Cancel. Cancel or the
@@ -1152,9 +1180,10 @@ let accountLoading = null;
 function loadAccount(){
     if(accountLoading === null){
         accountLoading = new Promise(resolve => {
-            // the UKC import, and the grades it reads, on a page that has neither
-            let files = typeof ukc === "undefined" ? ["ukc.js"] : [];
-            if(typeof tradLadder === "undefined"){ files.unshift("grades.js"); }
+            // the UKC import and weekly targets, and what they read, on a page without them
+            let wanted = [["grades.js", typeof tradLadder], ["ukc.js", typeof ukc], ["gilford-routes.js", typeof getRoute], ["dansloft-routes.js", typeof loftBoulderGrade],
+                ["charts.js", typeof entryClimbs], ["apps.js", typeof trainingLogs], ["targets.js", typeof targetsCard]];
+            let files = wanted.filter(([, type]) => type === "undefined").map(([file]) => file);
             files.concat(["aws4fetch.js", "backup.js", "account.js"]).forEach(file => {
                 let tag = document.createElement("script");
                 tag.src = "/training/common/" + file;

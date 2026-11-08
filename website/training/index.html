@@ -596,7 +596,10 @@
             // the loft's end wall under the roof; the long slope is 58 degrees off vertical
             "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
                 <path fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round" d="M7,68 V55.2 L39,32 H43.4 L93,63 V68 Z"/>
-            </svg>` }
+            </svg>` },
+        // after the rest
+        "maxpull" : { "name" : "Max Pull", "href" : "/training/maxpull/", "text" : "", "before" : null,
+            "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"><path d="M14,72 A38,38 0 1 1 86,72"/><path d="M50,62 L68,36"/></g><circle fill="currentColor" cx="50" cy="62" r="7"/></svg>` }
     };
 
     function addedHiddenApps(){
@@ -618,8 +621,8 @@
         let card = document.createElement("li");
         card.id = "app-" + key;
         card.innerHTML = `<a class="app-card" href="${hidden.href}">${hidden.icon}
-            <div class="app-text"><h2>${hidden.name}</h2><p>${hidden.text}</p></div></a>`;
-        document.querySelector(".apps").insertBefore(card, document.getElementById(hidden.before));
+            <div class="app-text"><h2>${hidden.name}</h2>${hidden.text ? `<p>${hidden.text}</p>` : ""}</div></a>`;
+        document.querySelector(".apps").insertBefore(card, hidden.before ? document.getElementById(hidden.before) : null);
     }
 
     // as it is typed, so it lands on the last letter

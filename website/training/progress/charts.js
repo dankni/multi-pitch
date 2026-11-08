@@ -35,20 +35,22 @@
     const logKeys = ["boulderLog", "gilfordLog", "enduranceLog", "tradLog", "lapTimerLog", "dansLoftLog"];
     const onLadder = {
         "sport" : grade => sportLadder.includes(grade),
-        "boulder" : grade => boulderRung(grade) !== -1,
+        "boulder" : grade => boulderV(grade) !== "",
         "trad" : grade => tradLadder.includes(grade)
     };
 
+    // each grade as charted - a boulder in Font or V, as picked under the cog
     function climbsOfKind(logs, kind){
         let climbs = [];
+        let shown = climbKinds[kind].shown;
         logKeys.forEach(key => entriesOf(logs, key).forEach(entry => {
             let read = key === "tradLog" ? Object.assign({}, entry, { "climbs" : ukc.session(entry).climbs }) : entry;
             entryClimbs(key, read).forEach(climb => {
-                if(climb.kind === kind){ climbs.push({ "date" : entry.date, "grade" : climb.grade }); }
+                if(climb.kind === kind){ climbs.push({ "date" : entry.date, "grade" : shown(climb.grade) }); }
             });
         }));
         ukc.climbs().forEach(climb => {
-            if(climb.type === kind && onLadder[kind](climb.grade)){ climbs.push({ "date" : climb.date, "grade" : climb.grade }); }
+            if(climb.type === kind && onLadder[kind](climb.grade)){ climbs.push({ "date" : climb.date, "grade" : shown(climb.grade) }); }
         });
         return climbs;
     }
@@ -251,6 +253,8 @@
                 draw(logs);
             });
         });
+        // Font or V, as settings.js saves it
+        window.redrawProgressCharts = () => draw(logs);
 
         // shown first, so there is a width to draw to
         document.getElementById("performance").hidden = false;

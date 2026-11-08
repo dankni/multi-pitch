@@ -5,6 +5,7 @@ const app = {
     "logKey" : "gilfordLog",
     "currentKey" : "gilfordCurrent",
     "timed" : true,
+    "fallsKey" : "gilfordTrackFalls",
     "watchKey" : "gilfordWatch",
     // On the watch (common/watch.js): a panel's three routes at a time, ticked there as here
     "watch" : {
@@ -44,7 +45,7 @@ const app = {
         "onEdit" : editSession,
         "describe" : entry => {
             let hardest = hardestGrade(entry.climbs);
-            return { "title" : plural(entry.climbs.length, "climb"), "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", sessionLength(entry)]) };
+            return { "title" : plural(entry.climbs.length, "climb"), "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", fallsDetail(entry), sessionLength(entry)]) };
         },
         "stats" : log => {
             let total = log.reduce((count, entry) => count + entry.climbs.length, 0);
@@ -115,13 +116,13 @@ function drawRoutes(){
             <span class="section-number" aria-hidden="true"><small>Panel</small>${number}</span>
             ${routes.filter(route => route.section === number).map(route => {
                 let ticked = session.climbs.includes(route.id);
-                return `<button type="button" id="route${route.id}" data-action="toggleClimb" data-route="${route.id}"
+                return `<div class="route-cell"><button type="button" id="route${route.id}" data-action="toggleClimb" data-route="${route.id}"
                     class="route hold-${route.colour.toLowerCase()}${ticked ? " ticked" : ""}"
                     aria-pressed="${ticked}" aria-label="${route.colour} ${route.grade}, panel ${number}">
                     <span class="route-colour">${route.colour}</span>
                     <span class="route-grade">${route.grade}</span>
                     <i class="demo-icon icon-ok tick" aria-hidden="true"></i>
-                </button>`;
+                </button>${fallsControl(route.id, route.colour + " " + route.grade)}</div>`;
             }).join("")}
         </section>`).join("");
 }

@@ -139,6 +139,15 @@
 
     <aside id="settings" class="overlay">
         <h2>Settings</h2>
+        <fieldset class="setting-group">
+            <legend>Bouldering grades</legend>
+            <div class="picker" role="radiogroup" aria-label="Bouldering grades">
+                <input type="radio" name="boulderChartGrades" class="nice-radios" id="boulderChartGrades-font" value="font" data-change="setBoulderChartGrades" />
+                <label for="boulderChartGrades-font">Font</label>
+                <input type="radio" name="boulderChartGrades" class="nice-radios" id="boulderChartGrades-hueco" value="hueco" data-change="setBoulderChartGrades" checked />
+                <label for="boulderChartGrades-hueco">Hueco (V)</label>
+            </div>
+        </fieldset>
         <label class="switch-label">
             <input type="checkbox" data-change="toggleProgressPart" data-part="sportFigure" checked />
             <span class="label-content">
@@ -202,6 +211,7 @@
     <script src="/training/common/bottom-nav.js" defer></script>
     <script src="/training/common/charts.js"></script>
     <script src="/training/progress/charts.js"></script>
+    <script src="/training/common/apps.js"></script>
     <script src="/training/progress/sessions.js"></script>
     <script src="/training/progress/settings.js"></script>
     <script src="/training/progress/conversions.js"></script>

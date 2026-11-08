@@ -58,8 +58,11 @@ function setWatchDevice(input){
 }
 
 function toggleWatch(input){
+    if(input.checked && !watchLink().supported){
+        input.checked = false;
+        unsupportedToast("This browser can't connect to a watch.");
+    }
     localStorage.setItem(app.watchKey, input.checked);
-    if(input.checked && !bangle.supported){ toast("This browser can't connect to a watch.", null, false, true); }
     // the tap on the switch is what lets the browser show its picker
     if(input.checked){ connectWatch(); }
     else { disconnectWatch(); }

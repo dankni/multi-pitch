@@ -237,3 +237,59 @@
         padding: 8px 4px;
     }
 }
+
+/* ================= Falls =================
+   Red, by each climb while Track Attempts / Falls is on (body[data-falls]); the
+   ladder goes to one climb a line to make room. Filled once there is a fall. */
+[data-falls] #grades {
+    grid-template-columns: minmax(0, 1fr);
+}
+.falls {
+    display: flex;
+    align-items: stretch;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border: 1px solid var(--danger-ink);
+    border-radius: var(--r-md);
+    background: var(--danger-soft);
+    color: var(--danger-ink);
+}
+.falls-button, .falls-button:hover, .falls-button:focus {
+    width: 36px;
+    min-height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    font-size: var(--t-lg);
+    line-height: 1;
+}
+.falls-button:hover {
+    background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.falls-button:disabled {
+    opacity: 0.4;
+}
+.falls-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    font-size: var(--t-md);
+    font-weight: 700;
+    line-height: 1.1;
+}
+.falls-count small {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.falls.fell {
+    background: var(--danger);
+    color: var(--on-accent);
+}

@@ -81,6 +81,45 @@ describe('Training apps', function () {
             value: { requestDevice: () => Promise.resolve(device) } });
     }
 
+    // A stand-in Progressor: its data point fires what a test sends, and the
+    // control point keeps every command written to it
+    function fakeProgressor(win) {
+        win.written = [];
+        let data = new win.EventTarget();
+        data.startNotifications = () => Promise.resolve();
+        let control = { writeValue: (bytes) => { win.written.push(bytes[0]); return Promise.resolve(); } };
+        let service = { getCharacteristic: (uuid) => Promise.resolve(uuid.startsWith('7e4e1702') ? data : control) };
+        let device = new win.EventTarget();
+        device.name = 'Progressor_1234';
+        device.gatt = {
+            connected: false,
+            connect: () => { device.gatt.connected = true; return Promise.resolve({ getPrimaryService: () => Promise.resolve(service) }); },
+            disconnect: () => { device.gatt.connected = false; device.dispatchEvent(new win.Event('gattserverdisconnected')); }
+        };
+        win.progressorDevice = device;
+        // a reply to a command: code 0, four bytes, a uint32 of millivolts for the battery
+        win.sendBattery = (mv) => {
+            let packet = new DataView(new ArrayBuffer(6));
+            packet.setUint8(0, 0);
+            packet.setUint8(1, 4);
+            packet.setUint32(2, mv, true);
+            data.value = packet;
+            data.dispatchEvent(new win.Event('characteristicvaluechanged'));
+        };
+        // a weight notification: code 1, eight bytes, then kg and microseconds
+        win.sendKg = (kg) => {
+            let packet = new DataView(new ArrayBuffer(10));
+            packet.setUint8(0, 1);
+            packet.setUint8(1, 8);
+            packet.setFloat32(2, kg, true);
+            packet.setUint32(6, 123456, true);
+            data.value = packet;
+            data.dispatchEvent(new win.Event('characteristicvaluechanged'));
+        };
+        Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+            value: { requestDevice: () => Promise.resolve(device) } });
+    }
+
     // A stand-in heart rate monitor beside the Bangle: the browser's picker gives
     // it when asked for the heart rate service, and hrmSays sends a reading
     function fakeHrm(win) {
@@ -222,7 +261,8 @@ describe('Training apps', function () {
                 visitOn(iPhone);
                 runSession(1);
                 cy.get('#finishButton').click();
-                cy.get('#keepNote').should('be.visible').and('contain', "Your iPhone can clear your sessions if you don't visit for a week.");
+                cy.tick(100);
+                cy.get('#keepNote.toast.warn').should('be.visible').and('contain', "Your iPhone can clear your sessions if you don't visit for a week.");
                 cy.get('@persist').should('have.been.calledOnce');
                 cy.get('[data-action="backToSession"]').click();
                 cy.get('#keepNote').should('not.exist');
@@ -233,6 +273,7 @@ describe('Training apps', function () {
                 cy.get('nav .icon-info').click();
                 runSession(1);
                 cy.get('#finishButton').click();
+                cy.tick(100);
                 cy.get('#keepNote').should('be.visible');
             });
 
@@ -287,6 +328,7 @@ describe('Training apps', function () {
                 cy.get('nav .account-button').click();
                 runSession(1);
                 cy.get('#finishButton').click();
+                cy.tick(100);
                 cy.contains('#keepNote button', 'Create free account').click();
                 cy.get('#keepNote').should('not.exist');
                 cy.get('#account').should('have.class', 'open');
@@ -1799,45 +1841,6 @@ describe('Training apps', function () {
             cy.get('#maxPull').should('have.value', '25');
         });
 
-        // A stand-in Progressor: its data point fires what a test sends, and the
-        // control point keeps every command written to it
-        function fakeProgressor(win) {
-            win.written = [];
-            let data = new win.EventTarget();
-            data.startNotifications = () => Promise.resolve();
-            let control = { writeValue: (bytes) => { win.written.push(bytes[0]); return Promise.resolve(); } };
-            let service = { getCharacteristic: (uuid) => Promise.resolve(uuid.startsWith('7e4e1702') ? data : control) };
-            let device = new win.EventTarget();
-            device.name = 'Progressor_1234';
-            device.gatt = {
-                connected: false,
-                connect: () => { device.gatt.connected = true; return Promise.resolve({ getPrimaryService: () => Promise.resolve(service) }); },
-                disconnect: () => { device.gatt.connected = false; device.dispatchEvent(new win.Event('gattserverdisconnected')); }
-            };
-            win.progressorDevice = device;
-            // a reply to a command: code 0, four bytes, a uint32 of millivolts for the battery
-            win.sendBattery = (mv) => {
-                let packet = new DataView(new ArrayBuffer(6));
-                packet.setUint8(0, 0);
-                packet.setUint8(1, 4);
-                packet.setUint32(2, mv, true);
-                data.value = packet;
-                data.dispatchEvent(new win.Event('characteristicvaluechanged'));
-            };
-            // a weight notification: code 1, eight bytes, then kg and microseconds
-            win.sendKg = (kg) => {
-                let packet = new DataView(new ArrayBuffer(10));
-                packet.setUint8(0, 1);
-                packet.setUint8(1, 8);
-                packet.setFloat32(2, kg, true);
-                packet.setUint32(6, 123456, true);
-                data.value = packet;
-                data.dispatchEvent(new win.Event('characteristicvaluechanged'));
-            };
-            Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
-                value: { requestDevice: () => Promise.resolve(device) } });
-        }
-
         it('connects a Progressor, zeroes and starts it, and climbs on its pull', () => {
             visitGaps(fakeProgressor);
             cy.get('#connect').should('be.visible').click();
@@ -2229,6 +2232,49 @@ describe('Training apps', function () {
             cy.get('.toast').should('not.contain', 'disconnected');
         });
 
+        // A stand-in PullForce meter: it notifies kg as text
+        function fakePullForce(win) {
+            win.written = [];
+            let data = new win.EventTarget();
+            data.startNotifications = () => Promise.resolve();
+            let control = { writeValue: (bytes) => { win.written.push(bytes[0]); return Promise.resolve(); } };
+            let service = { getCharacteristic: (uuid) => Promise.resolve(uuid.startsWith('6e400002') ? data : control) };
+            let device = new win.EventTarget();
+            device.name = 'PullForce';
+            device.gatt = {
+                connected: false,
+                connect: () => { device.gatt.connected = true; return Promise.resolve({ getPrimaryService: () => Promise.resolve(service) }); },
+                disconnect: () => { device.gatt.connected = false; device.dispatchEvent(new win.Event('gattserverdisconnected')); }
+            };
+            win.sendText = (text) => {
+                data.value = new DataView(new win.TextEncoder().encode(text).buffer);
+                data.dispatchEvent(new win.Event('characteristicvaluechanged'));
+            };
+            Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+                value: { requestDevice: (options) => { win.pickerOptions = options; return Promise.resolve(device); } } });
+        }
+
+        it('connects a PullForce meter as well, zeroes it and reads its force', () => {
+            visitGaps(fakePullForce);
+            cy.get('nav .icon-cog').click();
+            cy.get('#settingsConnect').click();
+            cy.get('#progressorStatus').should('have.attr', 'data-status', 'connected');
+            cy.window().its('written').should('deep.equal', [116]);   // "t", and no start or battery
+            cy.window().then((win) => {
+                expect(win.pickerOptions.filters).to.deep.include({ namePrefix: 'Progressor' });
+                expect(win.pickerOptions.filters).to.deep.include({ services: ['6e400001-8a3c-4b7e-9f2d-1c5a7b3e9d01'] });
+                win.sendText('7.25');
+            });
+            cy.get('#progressorDetail').should('have.text', 'PullForce · reading 7.3 kg');
+
+            cy.get('#tare').click();
+            cy.window().its('written').should('deep.equal', [116, 116]);
+
+            cy.get('#disconnect').click();
+            cy.get('#progressorStatusText').should('have.text', 'Not connected');
+            cy.window().its('written').should('deep.equal', [116, 116]);
+        });
+
         it('says why a connection failed', () => {
             visitGaps((win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
                 value: { requestDevice: () => Promise.reject(Object.assign(new Error('Bluetooth adapter not available.'), { name: 'NotFoundError' })) } }));
@@ -2439,10 +2485,38 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('#row-V3 .route-grade').should('have.text', 'V3');
             cy.get('#system-font').check({ force: true });
-            cy.get('#row-V3 .route-grade').should('have.text', 'f6A');
-            cy.get('#row-V3 .route-colour').should('contain', 'V3');
+            cy.get('#row-V3').should('not.exist');
+            cy.get('#row-f6A .route-grade').should('have.text', 'f6A');
+            cy.get('#row-f6A .route-colour').should('contain', 'V3');
+            cy.get('#row-f6A\\+ .route-grade').should('have.text', 'f6A+');
+            cy.get('#row-f6A\\+ .route-colour').should('contain', 'V3');
             cy.get('#system-british').check({ force: true });
             cy.get('#row-V3 .route-grade').should('have.text', '5a');
+            // a boulder on it, the session keeps its ladder and is named the new way
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('#system-font').check({ force: true });
+            cy.get('#row-V3 .route-grade').should('have.text', 'f6A');
+        });
+
+        it('logs Font grades one by one, plus grades and all, and reopens a session on them', () => {
+            cy.visit(boulderUrl, { onBeforeLoad: (win) => win.localStorage.setItem('boulderGradeSystem', 'font') });
+            cy.get('#primaryButton').click();
+            cy.get('#row-f6B .grade-add').click();
+            cy.get('#row-f6B\\+ .grade-add').click();
+            cy.get('#row-f6B\\+ .grade-add').click();
+            cy.get('#climbCount').should('have.text', '3');
+            cy.get('#summary').should('contain', 'Hardest: f6B+');
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('boulderLog'))[0].climbs).to.deep.equal(['f6B', 'f6B+', 'f6B+']));
+            // reopened in V, it is still on Font's ladder as it was logged
+            cy.get('nav .icon-cog').click();
+            cy.get('#system-hueco').check({ force: true });
+            cy.get('nav .icon-cog').click();
+            cy.get('nav .icon-info').click();
+            cy.get('#log .icon-wrench').click();
+            cy.get('#row-f6B\\+ .grade-count').should('have.text', '2');
+            cy.get('#row-f6B\\+ .route-grade').should('have.text', 'f6B+');
         });
 
         // A session starts at V10; the ladder goes to V17, which is the hardest boulder
@@ -2924,10 +2998,10 @@ describe('Training apps', function () {
 
                 // named as the phone names them
                 cy.get('#system-font').check({ force: true });
-                cy.window().should((win) => expect(lastState(win).L[0].r[4].slice(0, 3)).to.deep.equal(['V3', 'f6A', 0]));
-                // and the Boulderworld circuit's, when that is on
+                cy.window().should((win) => expect(lastState(win).L[0].r[5].slice(0, 3)).to.deep.equal(['f6A', 'f6A', 0]));
+                // and the Boulderworld circuit's, when that is on, by the V grade it counts as
                 cy.get('#boulderworld').check({ force: true });
-                cy.window().should((win) => expect(lastState(win).L[0].r[4].slice(3)).to.deep.equal(['#ffd400', '#000']));
+                cy.window().should((win) => expect(lastState(win).L[0].r[5].slice(3)).to.deep.equal(['#ffd400', '#000']));
             });
 
             it('ticks, takes back and switches ladder from the watch, and finishes there', () => {
@@ -3114,12 +3188,11 @@ describe('Training apps', function () {
                 cy.visit(boulderUrl, { onBeforeLoad: (win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true, value: undefined }) });
                 cy.get('#primaryButton').click();
                 cy.get('#useWatch').check({ force: true });
+                cy.get('#useWatch').should('not.be.checked');
                 cy.get('#watchBar').should('not.be.visible');
-                cy.get('#noBluetoothWatch').should('not.have.attr', 'hidden');
-                cy.get('.toast.warn').should('contain', "This browser can't connect to a watch.");
-                cy.get('#watchSupported a').should('have.attr', 'href', 'https://thepihut.com/products/bangle-js-2');
-                cy.get('#useWatch').uncheck({ force: true });
-                cy.get('#watchSupported').should('have.attr', 'hidden');
+                cy.tick(6000);   // up until closed
+                cy.get('.toast.warn').should('be.visible').and('contain', "This browser can't connect to a watch.");
+                cy.window().then((win) => expect(win.localStorage.getItem('boulderWatch')).to.equal('false'));
             });
         });
     });
@@ -4512,7 +4585,12 @@ describe('Training apps', function () {
                 signIn();
                 cy.get('[data-account="in"]').should('not.have.attr', 'hidden');
                 cy.contains('#account button', 'Delete account').click();
+                cy.get('#accountDeleteField').should('be.visible').type('delet');
                 cy.tick(100);
+                cy.get('.toast.danger').should('not.exist');
+                cy.get('#accountDeleteField').type('E');
+                cy.tick(100);
+                cy.get('#accountDeleteField').should('not.be.visible');
                 cy.get('.toast.danger .toast-confirm').should('have.text', 'DELETE').click();
                 cy.get('[data-account="out"]').should('not.have.attr', 'hidden');
                 cy.window().then((win) => {
@@ -4862,6 +4940,276 @@ describe('Training apps', function () {
                 cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));
                 cy.get('#sessions').should('not.be.visible');
             });
+        });
+    });
+
+    describe('Attempts and falls', function () {
+        it('counts falls by each grade in the gym, one grade a line, and saves them with the session', () => {
+            cy.visit(appUrl + '/training/boulder/');
+            cy.get('#primaryButton').click();
+            cy.get('.falls').should('not.exist');
+            cy.get('nav .icon-cog').click();
+            cy.get('#trackFalls').check({ force: true });
+            cy.get('nav .icon-cog').click();
+            cy.get('#grades').should('have.css', 'grid-template-columns').and('not.contain', ' ');
+            cy.get('#falls-V3 [data-action="removeFall"]').should('be.disabled');
+            tap('#falls-V3 [data-action="addFall"]', '#falls-V3 [data-action="addFall"]', '#falls-V3 [data-action="addFall"]', '#falls-V3 [data-action="removeFall"]');
+            cy.get('#falls-V3').should('have.class', 'fell').find('.falls-count').should('contain', '2');
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('#finishButton').click();
+            cy.get('#saveSession').click();
+            cy.window().then((win) => {
+                let entry = JSON.parse(win.localStorage.getItem('boulderLog'))[0];
+                expect(entry.falls).to.deep.equal({ V3: 2 });
+                expect(entry.climbs).to.deep.equal(['V3']);
+                expect(win.localStorage.getItem('boulderTrackFalls')).to.equal('true');
+            });
+            cy.get('#log').should('contain', '2 falls');
+            // reopened, its falls come back with it
+            cy.get('#log .icon-wrench').click();
+            cy.get('#falls-V3 .falls-count').should('contain', '2');
+        });
+
+        it('puts the falls under each route on the tick list, and in Dans Loft and Outside', () => {
+            cy.visit(appUrl + '/training/gilford/', { onBeforeLoad: (win) => win.localStorage.setItem('gilfordTrackFalls', 'true') });
+            cy.get('#primaryButton').click();
+            cy.get('#route1').parent('.route-cell').find('[data-action="addFall"]').click();
+            cy.get('#falls-1 .falls-count').should('contain', '1');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('gilfordCurrent')).falls).to.deep.equal({ 1: 1 }));
+            ['dansloft', 'trad'].forEach((name) => {
+                cy.visit(appUrl + '/training/' + name + '/', { onBeforeLoad: (win) => win.localStorage.setItem(name === 'trad' ? 'tradTrackFalls' : 'dansLoftTrackFalls', 'true') });
+                cy.get('#primaryButton').click();
+                cy.get('.falls').should('have.length.greaterThan', 3);
+                cy.get('.falls [data-action="addFall"]').first().click();
+                cy.get('.falls.fell').should('have.length', 1);
+            });
+        });
+
+        it('leaves the falls off the watch', () => {
+            cy.visit(appUrl + '/training/boulder/', { onBeforeLoad: (win) => { win.localStorage.setItem('boulderTrackFalls', 'true'); fakeBangle(win); } });
+            cy.get('#primaryButton').click();
+            connectWatch();
+            cy.get('#falls-V3 [data-action="addFall"]').click();
+            cy.window().should((win) => expect(JSON.stringify(lastState(win))).not.to.contain('fall'));
+        });
+    });
+
+    describe('Things a device cannot do', function () {
+        it('keeps vibration off where the device cannot vibrate, and says why when it is switched on', () => {
+            cy.visit(appUrl + '/training/nohangs/', { onBeforeLoad: (win) => Object.defineProperty(win.navigator, 'vibrate', { configurable: true, value: undefined }) });
+            cy.get('#vibrateOff').should('be.checked');
+            cy.get('#vibrateOff').uncheck({ force: true });
+            cy.get('#vibrateOff').should('be.checked');
+            cy.tick(6000);   // up until closed
+            cy.get('.toast.warn').should('be.visible').and('contain', "This device can't vibrate.");
+        });
+
+        it('says Twister cannot listen where there is no microphone to hear through', () => {
+            cy.visit(appUrl + '/training/loft/', {
+                onBeforeLoad(win) {
+                    win.SpeechRecognition = function () { this.start = () => {}; this.abort = () => {}; };
+                    Object.defineProperty(win.navigator, 'mediaDevices', { configurable: true, value: undefined });
+                }
+            });
+            cy.tick(100);
+            cy.get('.toast.warn').should('be.visible').and('contain', "support voice recognition");
+        });
+
+        it('says so when the microphone is refused, and stops listening', () => {
+            cy.visit(appUrl + '/training/loft/', {
+                onBeforeLoad(win) {
+                    win.starts = 0;
+                    win.SpeechRecognition = function () {
+                        this.start = () => { win.starts++; this.onerror({ error: 'not-allowed' }); this.onend(); };
+                        this.abort = () => {};
+                    };
+                }
+            });
+            cy.tick(100);
+            cy.get('.toast.warn').should('not.exist');
+            cy.window().then((win) => win.listen && win.eval('paused = false; listen();'));
+            cy.tick(100);
+            cy.get('.toast.warn').should('be.visible').and('contain', "support voice recognition");
+            cy.window().its('starts').should('equal', 1);
+        });
+    });
+
+    describe('The info panel with sessions logged', function () {
+        it('opens on the log, the cards above it folded, and on the about card with none', () => {
+            cy.visit(appUrl + '/training/boulder/');
+            cy.get('nav .icon-info').click();
+            cy.get('#about details.card').first().should('have.attr', 'open');
+            cy.visit(appUrl + '/training/boulder/', { onBeforeLoad: (win) => win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'], rating: 0 }])) });
+            cy.get('nav .icon-info').click();
+            cy.get('#about details.card').first().should('not.have.attr', 'open');
+            cy.get('#log').closest('details').should('have.attr', 'open');
+        });
+    });
+
+    describe('Max pull', function () {
+        const maxPullUrl = appUrl + '/training/maxpull/';
+
+        it('saves one reading of each a day, typed in, and charts the days', () => {
+            cy.visit(maxPullUrl, { onBeforeLoad: (win) => win.localStorage.setItem('maxPullLog', JSON.stringify([{ id: 1, date: '2026-09-01', left: 30, right: 28, hang: 70 }])) });
+            cy.get('#pullDate').should('have.value', '2026-09-13');
+            cy.get('#pullLeft').type('35.5');
+            cy.get('#pullRight').type('33');
+            cy.get('#pullHang').type('82');
+            cy.get('#savePull').click();
+            cy.window().then((win) => {
+                let log = JSON.parse(win.localStorage.getItem('maxPullLog'));
+                expect(log).to.have.length(2);
+                expect(log[1]).to.include({ date: '2026-09-13', left: 35.5, right: 33, hang: 82 });
+            });
+            // the same day again replaces it, not a second reading
+            cy.get('#pullLeft').clear().type('36');
+            cy.get('#savePull').click();
+            cy.window().then((win) => {
+                let log = JSON.parse(win.localStorage.getItem('maxPullLog'));
+                expect(log).to.have.length(2);
+                expect(log[1].left).to.equal(36);
+            });
+            // three bars a day, the hang on its own axis
+            cy.get('#pullHistory .chart .column').should('have.length', 2);
+            cy.get('#pullHistory .bar.pull-left').should('have.length', 2);
+            cy.get('#pullHistory .bar.pull-right').should('have.length', 2);
+            cy.get('#pullHistory .bar.pull-hang').should('have.length', 2);
+            cy.get('#pullHistory .tick-right').should('exist');
+            // another day shows what it has
+            cy.get('#pullDate').type('2026-09-01').trigger('change');
+            cy.get('#pullLeft').should('have.value', '30');
+            cy.get('nav .icon-info').click();
+            cy.get('#log').should('contain', 'L 36 kg').and('contain', 'max hang 82 kg');
+            cy.get('#log .icon-star').should('not.exist');
+        });
+
+        it('splits the hang into body weight and extra when asked to', () => {
+            cy.visit(maxPullUrl);
+            cy.get('#pullBody').should('not.be.visible');
+            cy.get('nav .icon-cog').click();
+            cy.get('#splitHang').check({ force: true });
+            cy.get('nav .icon-cog').click();
+            cy.get('#pullHang').should('not.be.visible');
+            cy.get('#pullBody').type('70');
+            cy.get('#pullExtra').type('12.5');
+            cy.get('#pullHangTotal').should('have.text', '82.5 kg');
+            cy.get('#savePull').click();
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('maxPullLog'))[0]).to.include({ hang: 82.5, body: 70 }));
+        });
+
+        it('reads the arm picked off a Progressor, its best filling the box', () => {
+            cy.visit(maxPullUrl, { onBeforeLoad: fakeProgressor });
+            cy.get('#gauge').should('not.be.visible');
+            cy.get('#gaugeSwitch').check({ force: true });
+            cy.get('#gaugeStatusText').should('have.text', 'Tindeq connected');
+            cy.get('#gauge').should('be.visible');
+            cy.window().then((win) => { win.sendKg(20); win.sendKg(41.26); win.sendKg(12); });
+            cy.tick(50);
+            cy.get('#pullLeft').should('have.value', '41.3');
+            cy.get('#gaugePeak').should('have.text', '41.3');
+            cy.get('#gaugeNow').should('have.text', '12.0');
+            cy.get('#gaugeTrace polyline.gauge-line').should('exist');
+            cy.get('#gaugeKind-right').check({ force: true });
+            cy.window().then((win) => win.sendKg(38));
+            cy.get('#pullRight').should('have.value', '38');
+            cy.get('#pullLeft').should('have.value', '41.3');
+            cy.get('#gaugeKind-hang').check({ force: true });
+            cy.window().then((win) => win.sendKg(90));
+            cy.get('#pullHang').should('have.value', '90');
+            cy.get('#gaugeSwitch').uncheck({ force: true });
+            cy.get('#gauge').should('not.be.visible');
+        });
+
+        it('is hidden until "maxpull" is typed under the Apps page cog', () => {
+            cy.visit(appUrl + '/training/');
+            cy.get('.apps a[href="/training/maxpull/"]').should('not.exist');
+            cy.get('nav .icon-cog').click();
+            cy.get('#hiddenApp').type('Max Pull');
+            cy.get('.apps li').last().find('a').should('have.attr', 'href', '/training/maxpull/').and('contain', 'Max Pull');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingHiddenApps'))).to.deep.equal(['maxpull']));
+            cy.request(maxPullUrl).its('body').should('contain', 'noindex');
+        });
+
+        it('says when the browser cannot connect to a Progressor', () => {
+            cy.visit(maxPullUrl, { onBeforeLoad: (win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true, value: undefined }) });
+            cy.get('#gaugeSwitch').check({ force: true });
+            cy.get('#gaugeSwitch').should('not.be.checked');
+            cy.tick(6000);
+            cy.get('.toast.warn').should('be.visible').and('contain', "This browser can't connect to a Tindeq Progressor.");
+        });
+    });
+
+    describe('Weekly targets', function () {
+        // Sunday 13 Sep: a week from Monday is 7-13 Sep
+        const week = {
+            boulderLog: [{ id: 1, date: '2026-09-10', climbs: ['V2', 'V4', 'f6B+'], minutes: 90 },
+                         { id: 2, date: '2026-09-05', climbs: ['V6'], minutes: 60 }],
+            noHangsLog: [{ id: 3, date: '2026-09-12' }],
+            gapsLog: [{ id: 4, date: '2026-09-12', input: 'tindeq', time: 600 }],
+            maxPullLog: [{ id: 5, date: '2026-09-12', left: 40 }]
+        };
+
+        function visitTargets() {
+            cy.visit(appUrl + '/training/rings/', { onBeforeLoad: (win) => Object.keys(week).forEach((key) => win.localStorage.setItem(key, JSON.stringify(week[key]))) });
+            cy.get('nav .account-button').click();
+            cy.get('#targets').scrollIntoView().should('be.visible');
+        }
+
+        function setTarget(type, amount, more) {
+            cy.contains('#targets button', 'SET A TARGET').click();
+            cy.get('#targetType').select(type);
+            cy.get('#targetAmount').type(String(amount));
+            if (more) { more(); }
+            cy.contains('#targets button', 'SET TARGET').click();
+        }
+
+        it('counts sessions and hours this week, leaving out both Tindeq apps', () => {
+            visitTargets();
+            cy.get('#targetWeekStart').should('have.value', '1');
+            setTarget('sessions', 3);
+            cy.get('.target').eq(0).should('contain', '3 sessions').and('contain', '2 / 3');
+            setTarget('hours', 1.7);   // to the half hour
+            cy.get('.target').eq(1).should('contain', '1.5 hours').and('have.class', 'met').and('contain', 'Met');
+            // only the gym counting
+            setTarget('sessions', 1, () => cy.contains('.target-check', 'Gym Session').find('input').check());
+            cy.get('.target').eq(2).should('contain', 'Gym Session').and('have.class', 'met');
+            // from Saturday, the week is only the 12th and 13th
+            cy.get('#targetWeekStart').select('Saturday');
+            cy.get('.target').eq(0).should('contain', '1 / 3');
+            cy.window().then((win) => {
+                expect(JSON.parse(win.localStorage.getItem('trainingTargets'))).to.have.length(3);
+                expect(win.localStorage.getItem('trainingWeekStart')).to.equal('6');
+            });
+        });
+
+        it('counts climbs of a kind at a grade or harder, a Font grade as the V grade it is', () => {
+            visitTargets();
+            setTarget('climbs', 5);
+            cy.get('.target').eq(0).should('contain', '3 / 5');
+            setTarget('climbs', 2, () => {
+                cy.get('#targetAppsField').should('not.be.visible');
+                cy.get('#targetKind').select('boulder');
+                cy.get('#targetGrade').select('V4');
+            });
+            cy.get('.target').eq(1).should('contain', '2 boulders ≥ V4').and('have.class', 'met');
+            cy.get('.target').eq(1).find('.icon-trash').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-confirm').should('have.text', 'REMOVE').click();
+            cy.get('.target').should('have.length', 1);
+        });
+    });
+
+    describe('Bouldering grades on the progress page', function () {
+        it('charts boulders in V or Font, whichever they were logged in', () => {
+            cy.visit(appUrl + '/training/progress/', { onBeforeLoad: (win) => win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V3', 'f6A+', 'f6B'] }])) });
+            cy.get('#boulderChart').should('contain', 'V3').and('not.contain', 'f6A');
+            cy.get('#boulderChart title').contains('V3: 2').should('exist');
+            cy.get('nav .icon-cog').click();
+            cy.get('#boulderChartGrades-font').check({ force: true });
+            cy.get('#boulderChart title').contains('f6A: 1').should('exist');
+            cy.get('#boulderChart title').contains('f6A+: 1').should('exist');
+            cy.get('#boulderChart title').contains('f6B: 1').should('exist');
+            cy.window().then((win) => expect(win.localStorage.getItem('progressBoulderGrades')).to.equal('font'));
         });
     });
 });

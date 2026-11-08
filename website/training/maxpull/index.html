@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- hidden: on the Apps page only once "maxpull" is typed under its cog -->
+	<meta name="robots" content="noindex, nofollow">
+	<link rel="manifest" href="/training/manifest.json" />
+	<meta name="theme-color" content="#121212">
+	<!-- iOS has no manifest support worth the name: it wants these, and Add to
+	     Home Screen by hand from the share sheet -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Training">
+	<link rel="apple-touch-icon" href="/img/favicon/apple-icon-180x180.png">
+	<link rel="icon" href="/img/favicon/android-icon-192x192.png">
+	<link href="/training/common/fontello.css" rel="stylesheet" />
+	<link href="/training/common/style.css" rel="stylesheet" />
+	<link href="/training/common/charts.css" rel="stylesheet" />
+	<link href="/training/maxpull/style.css" rel="stylesheet" />
+	<script src="/training/common/functions.js" ></script>
+	<script src="/training/common/bottom-nav.js" defer></script>
+	<script src="/training/common/grades.js" ></script>
+	<script src="/training/common/charts.js" ></script>
+	<script src="/training/gaps/progressor.js" ></script>
+	<script src="/training/maxpull/main.js" ></script>
+    <title>Max Pull</title>
+  </head>
+
+  <body>
+	<nav>
+		<div class="left-nav">
+			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
+			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
+		</div>
+		<h1>Max Pull</h1>
+		<div class="right-nav">
+			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
+		</div>
+	</nav>
+
+	<div class="holder pull-holder">
+		<input type="date" class="field" id="pullDate" data-change="setPullDate" aria-label="Day" />
+
+		<div class="pull-boxes">
+			<label class="pull-box pull-left">
+				<span class="pull-name">Left arm</span>
+				<span class="field-group">
+					<input type="number" class="field" id="pullLeft" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+					<span class="unit">kg</span>
+				</span>
+			</label>
+			<label class="pull-box pull-right">
+				<span class="pull-name">Right arm</span>
+				<span class="field-group">
+					<input type="number" class="field" id="pullRight" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+					<span class="unit">kg</span>
+				</span>
+			</label>
+			<div class="pull-box pull-hang">
+				<label class="pull-name" for="pullHang">Max hang</label>
+				<span class="field-group hang-whole">
+					<input type="number" class="field" id="pullHang" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+					<span class="unit">kg</span>
+				</span>
+				<!-- with Split Body / Extra Weight on under the cog -->
+				<div class="hang-split">
+					<label class="pull-part">Body
+						<span class="field-group">
+							<input type="number" class="field" id="pullBody" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+							<span class="unit">kg</span>
+						</span>
+					</label>
+					<label class="pull-part">Extra
+						<span class="field-group">
+							<input type="number" class="field" id="pullExtra" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+							<span class="unit">kg</span>
+						</span>
+					</label>
+					<span class="pull-total" id="pullHangTotal"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="watch-line gauge-line-switch">
+			<label class="switch-label">
+				<input type="checkbox" id="gaugeSwitch" data-change="switchGauge" />
+				<span class="label-content" id="gaugeStatusText" role="status">Tindeq not connected</span>
+			</label>
+		</div>
+
+		<!-- while the Progressor is connected -->
+		<section class="gauge" id="gauge" hidden>
+			<div class="picker" role="radiogroup" aria-label="Pulling with">
+				<input type="radio" name="gaugeKind" class="nice-radios" id="gaugeKind-left" value="left" data-change="setGaugeKind" checked />
+				<label for="gaugeKind-left">Left</label>
+				<input type="radio" name="gaugeKind" class="nice-radios" id="gaugeKind-right" value="right" data-change="setGaugeKind" />
+				<label for="gaugeKind-right">Right</label>
+				<input type="radio" name="gaugeKind" class="nice-radios" id="gaugeKind-hang" value="hang" data-change="setGaugeKind" />
+				<label for="gaugeKind-hang">Max hang</label>
+			</div>
+			<p class="gauge-figures">
+				<span><span id="gaugeNow">0.0</span> <small>kg</small></span>
+				<span class="gauge-best">Max <span id="gaugePeak">0.0</span> <small>kg</small></span>
+			</p>
+			<div id="gaugeTrace"></div>
+			<button type="button" class="quiet" data-action="tareGauge">Zero it</button>
+		</section>
+
+		<button id="savePull" data-action="savePull"><i class="demo-icon icon-ok"></i>SAVE</button>
+
+		<figure class="pull-history" id="historyFigure" hidden>
+			<div id="pullHistory"></div>
+		</figure>
+	</div>
+
+	<aside id="about" class="overlay">
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><i class="demo-icon icon-menu"></i></span>
+					<h3 class="card-label">Activity Log</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p id="stats"></p>
+					<div id="log"></div>
+				</div>
+			</details>
+		</section>
+	</aside>
+
+	<aside id="settings" class="overlay">
+		<h2>Settings</h2>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleSplitHang" id="splitHang"/>
+			<span class="label-content">
+				<svg class="toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+					<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2.5v11M2.5 8h11"/>
+				</svg> Split Body / Extra Weight <span class="switch-state"></span>
+			</span>
+		</label>
+		<label class="switch-label">
+			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
+			<span class="label-content">
+				<i class="demo-icon icon-moon"></i> Dark Mode <span class="switch-state"></span>
+			</span>
+		</label>
+	</aside>
+  </body>
+</html>

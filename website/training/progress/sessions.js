@@ -7,24 +7,15 @@
     const showAtMost = 25;
     const kinds = ["Climbing", "Fingerboard", "Other"];   // the time split's, in its order
 
-    // V grades by their number: V9 is below V10, which it isn't as text
+    // V grades by their number: V9 is below V10, which it isn't as text. A Font grade as logged.
     function hardestV(climbs){
-        let hardest = climbs.reduce((max, name) => {
-            let rung = Number(String(name).replace("V", ""));
-            return isNaN(rung) ? max : Math.max(max, rung);
-        }, -1);
-        return hardest === -1 ? "" : "V" + hardest;
+        let hardest = climbs.reduce((max, name) => boulderNumber(name) > boulderNumber(max) ? name : max, "");
+        return boulderNumber(hardest) < 0 ? "" : hardest;
     }
 
     const styleNames = { "endurance" : "Endurance", "power" : "Power Endurance" };
 
-    // a missing field counts as nothing rather than as "undefined"
-    function count(value){
-        return typeof value === "number" && isFinite(value) ? value : 0;
-    }
-    function list(value){
-        return Array.isArray(value) ? value : [];
-    }
+    const count = logCount, list = logList;   // common/apps.js
 
     // The gym session's sport grades, from common/grades.js - 4+ and 6a don't sort as text
     const sportOrder = gymSportOrder;
@@ -66,11 +57,6 @@
                  "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", sessionLength(entry)]) };
     }
 
-    /* Reps of work and rest, or in repeater mode sets of them with a rest between.
-       Saved before reps were called reps, a session's reps were its "sets". */
-    function tabataReps(entry){
-        return count(typeof entry.reps === "number" ? entry.reps : entry.sets);
-    }
     function tabataSession(entry){
         let reps = tabataReps(entry);
         let onOff = `${count(entry.work)}s on, ${count(entry.rest)}s off`;
@@ -79,75 +65,41 @@
                 "detail" : plural(count(entry.sets), "set") + " of " + reps + " · " + onOff }
             : { "title" : plural(reps, "rep"), "detail" : onOff };
     }
-    // the whole session: no rest after a set's last rep, the rest between sets instead
-    function tabataSeconds(entry){
-        let sets = typeof entry.setRest === "number" ? Math.max(1, count(entry.sets)) : 1;
-        let reps = tabataReps(entry);
-        return sets * (reps * (count(entry.work) + count(entry.rest)) - count(entry.rest)) + (sets - 1) * count(entry.setRest);
-    }
-
-    // A fixed length workout's seconds on the clock when it was saved, or, saved
-    // before it kept them, the whole workout
-    function ranFor(entry, fullSeconds){
-        return (count(entry.seconds) || fullSeconds) / 60;
-    }
-
-    const apps = [
-        { "key" : "boulderLog", "name" : "Gym Session", "href" : "/training/boulder/",
-          "kind" : "Climbing", "line" : gymSession, "climbs" : entry => list(entry.climbs).length + list(entry.sport).length },
-        { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/", "kind" : "Climbing",
-          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }),
-          "climbs" : entry => list(entry.climbs).length },
-        { "key" : "dansLoftLog", "name" : "Dans Loft", "href" : "/training/dansloft/", "kind" : "Climbing",
-          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }),
-          "climbs" : entry => list(entry.climbs).length },
-        { "key" : "enduranceLog", "name" : "Endurance", "href" : "/training/endurance/", "kind" : "Climbing",
+    // how each app's session reads here; which count and their minutes and climbs are common/apps.js's
+    const lines = {
+        "boulderLog" : { "kind" : "Climbing", "line" : gymSession },
+        "gilfordLog" : { "kind" : "Climbing",
+          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }) },
+        "dansLoftLog" : { "kind" : "Climbing",
+          "line" : entry => ({ "title" : plural(list(entry.climbs).length, "climb"), "detail" : sessionLength(entry) }) },
+        "enduranceLog" : { "kind" : "Climbing",
           "line" : entry => ({ "title" : (styleNames[entry.style] || entry.style || "Endurance")
                                    + (entry.maxGrade ? " off " + entry.maxGrade : ""),
-                               "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }),
-          "climbs" : entry => count(entry.climbs) },
-        { "key" : "lapTimerLog", "name" : "Lap Timer", "href" : "/training/timer/", "kind" : "Climbing",
+                               "detail" : joinDetail([plural(count(entry.sets), "set"), count(entry.climbs) + " climbs", sessionLength(entry)]) }) },
+        "lapTimerLog" : { "kind" : "Climbing",
           "line" : entry => ({ "title" : plural(count(entry.laps), "lap") + (typeof entry.grade === "string" && entry.grade ? " of " + entry.grade : ""),
-                               "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }),
-          "minutes" : entry => count(entry.total) / 60000, "climbs" : entry => count(entry.laps) },
-        { "key" : "loftLog", "name" : "Twister", "href" : "/training/loft/", "kind" : "Other",
+                               "detail" : formatClock(count(entry.total) / 1000) + " on the clock" }) },
+        "loftLog" : { "kind" : "Other",
           "line" : entry => ({ "title" : plural(count(entry.moves), "move"),
-                               "detail" : formatClock(count(entry.seconds)) + " on the clock" }),
-          "minutes" : entry => count(entry.seconds) / 60 },
-        { "key" : "rockRingsLog", "name" : "Rock Rings", "href" : "/training/rings/", "kind" : "Fingerboard",
-          "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }),
-          "minutes" : entry => ranFor(entry, 10 * 60) },
-        { "key" : "tradLog", "name" : "Outside", "href" : "/training/trad/",
-          "kind" : "Climbing", "line" : tradSession, "climbs" : entry => list(ukc.session(entry).climbs).length },
-        { "key" : "noHangsLog", "name" : "No Hangs", "href" : "/training/nohangs/", "kind" : "Fingerboard",
-          "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }),
-          "minutes" : entry => ranFor(entry, 20 * 30 - 20) },   // 20 reps of a 10 s hang and 20 s rest, none after the last
-        { "key" : "tabataLog", "name" : "Tabata", "href" : "/training/tabata/",
-          // as chosen when saved; before that, repeaters are fingerboard sessions and a classic Tabata is not
-          "kind" : entry => kinds.includes(entry.kind) ? entry.kind : typeof entry.setRest === "number" ? "Fingerboard" : "Other",
-          "line" : tabataSession, "minutes" : entry => ranFor(entry, tabataSeconds(entry)) },
+                               "detail" : formatClock(count(entry.seconds)) + " on the clock" }) },
+        "rockRingsLog" : { "kind" : "Fingerboard",
+          "line" : entry => ({ "title" : (entry.difficulty || "original") + " workout", "detail" : "" }) },
+        "tradLog" : { "kind" : "Climbing", "line" : tradSession },
+        "noHangsLog" : { "kind" : "Fingerboard", "line" : () => ({ "title" : "Sub-max daily", "detail" : "" }) },
+        // as chosen when saved; before that, repeaters are fingerboard sessions and a classic Tabata is not
+        "tabataLog" : { "kind" : entry => kinds.includes(entry.kind) ? entry.kind : typeof entry.setRest === "number" ? "Fingerboard" : "Other",
+          "line" : tabataSession },
+        "maxPullLog" : { "kind" : "Fingerboard",
+          "line" : entry => ({ "title" : joinDetail([count(entry.left) ? "L " + entry.left + " kg" : "", count(entry.right) ? "R " + entry.right + " kg" : ""]),
+                               "detail" : count(entry.hang) ? "max hang " + entry.hang + " kg" : "", "unrated" : true }) },
         // a run on the screen is a game, not training
-        { "key" : "gapsLog", "name" : "Tindeq Arcade", "href" : "/training/gaps/", "kind" : "Other",
-          "line" : gapsSession, "keep" : entry => entry.input === "tindeq", "minutes" : entry => count(entry.time) / 60 }
-    ];
+        "gapsLog" : { "kind" : "Other", "line" : gapsSession }
+    };
+    const apps = trainingLogs.map(log => Object.assign({}, log, lines[log.key]));
 
-    /* How long a session took, in minutes. The timed apps save minutes; the lap
-       timer, Twister, the arcade and the two workouts say how long in their own
-       units, given as "minutes" above. An Outside session from before it was
-       timed, or a UKC day, counts for none. */
-    function minutesOf(app, entry){
-        return app.minutes ? app.minutes(entry) : count(entry.minutes);
-    }
-
+    // An Outside session from before it was timed, or a UKC day, counts for no minutes
     function readLog(app){
-        let saved;
-        try {
-            saved = JSON.parse(localStorage.getItem(app.key));
-        } catch(err){
-            return [];   // a hand-edited key is not worth a broken page
-        }
-        if(!Array.isArray(saved)){ return []; }
-        return saved.filter(entry => entry && entry.date && (!app.keep || app.keep(entry))).map(entry => {
+        return countedSessions(app).map(entry => {
             let described;
             try {
                 described = app.line(entry);
@@ -160,9 +112,9 @@
                 "app" : app,
                 "comment" : described.comment ?? (typeof entry.comment === "string" ? entry.comment : ""),
                 "rating" : count(entry.rating) || count(entry.score),
-                "minutes" : minutesOf(app, entry),
+                "minutes" : sessionMinutes(app, entry),
                 "kind" : typeof app.kind === "function" ? app.kind(entry) : app.kind,
-                "climbs" : app.climbs ? app.climbs(entry) : 0,
+                "climbs" : sessionClimbs(app, entry),
                 "unrated" : described.unrated === true,
                 "tindeq" : described.tindeq === true,
                 "title" : described.title,

@@ -247,8 +247,8 @@ function showSynced(){
    An overlay behind the person in the nav, built the first time it is opened: a
    column of cards, each headed by an icon, its title and, where it has them, its
    status and a chevron to fold it. The account - signed out, waiting for an
-   emailed code, or signed in, one at a time - then the backup file, then the UKC
-   logbook, then, signed in, deleting the account. Once this device has ever
+   emailed code, or signed in, one at a time - then the backup file, then weekly
+   targets, then the UKC logbook, then, signed in, deleting the account. Once this device has ever
    signed in, the account comes first. */
 
 // an open eye, struck through while the password shows
@@ -337,10 +337,14 @@ const accountPanel = `<aside id="account" class="overlay">
             </div>
         </details>
     </section>
+    <!-- from common/targets.js -->
+    ${targetsCard()}
     <!-- the same card as the progress page's settings, and the same import as the Outside Climbing app's, from common/ukc.js -->
     ${ukcCard({ "details" : "ukcDetails", "file" : "accountUkcFile", "choose" : "chooseAccountUkcFile", "imported" : "accountUkcImported", "status" : "accountUkcStatus" })}
     <section class="card-group" id="accountDelete" hidden>
         <button type="button" class="card account-delete" data-action="deleteAccount">Delete account</button>
+        <input type="text" class="field account-delete-field" id="accountDeleteField" autocomplete="off" autocapitalize="off" spellcheck="false"
+            placeholder="Type delete" aria-label="Type delete" data-input="deleteAccountTyped" hidden />
     </section>
 </aside>`;
 
@@ -397,10 +401,12 @@ function showAccount(){
     }
     showBackup();
     showUkc();
+    drawTargets();
     let part = signedIn() ? "in" : accountCode !== null ? "code" : "out";
     login.querySelectorAll("[data-account]").forEach(box => { box.hidden = box.dataset.account !== part; });
     login.classList.toggle("signed-in", signedIn());
     document.getElementById("accountDelete").hidden = !signedIn();
+    if(!signedIn()){ document.getElementById("accountDeleteField").hidden = true; }
     document.getElementById("accountHeading").innerText = signedIn() ? "Signed in" : "Create an account or sign in";
     document.getElementById("accountNewPasswordGroup").hidden = !(accountCode && accountCode.reset);
     checkPassword(document.getElementById("accountPassword"));
@@ -576,7 +582,17 @@ function signOutAccount(){
     userPool("RevokeToken", { "Token" : token }).catch(() => {});
 }
 
+// typed out first, then asked once more
 function deleteAccount(){
+    let field = document.getElementById("accountDeleteField");
+    field.hidden = false;
+    field.focus();
+}
+
+function deleteAccountTyped(field){
+    if(field.value.trim().toLowerCase() !== "delete"){ return; }
+    field.value = "";
+    field.hidden = true;
     confirmToast("Delete your account?", "DELETE", () => accountBusy(async () => {
         await dynamo("DeleteItem", { "Key" : { "id" : { "S" : localStorage.getItem(accountIdentityKey) } } });
         await userPool("DeleteUser", { "AccessToken" : (await freshTokens()).access });

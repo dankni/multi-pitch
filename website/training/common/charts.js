@@ -88,6 +88,69 @@ function columnChart(groups, ariaLabel, width){
     return svg + `</svg>`;
 }
 
+/* Columns side by side in each group, a colour a series, each series against the
+   axis it names - left or right - so two scales can share one chart.
+
+   groups : [{ label, title, values : { key : number } }]
+   series : [{ key, name, cls, axis }] */
+function groupedBarChart(groups, series, ariaLabel, width){
+    const height = 200;
+    const top = 16, bottom = 22, left = 30;
+    let sides = ["left", "right"].filter(side => series.some(each => each.axis === side));
+    let right = sides.includes("right") ? 30 : 4;
+    let plotWidth = width - left - right, plotHeight = height - top - bottom;
+
+    let scales = {};
+    sides.forEach(side => {
+        let most = 0;
+        groups.forEach(group => series.filter(each => each.axis === side).forEach(each => {
+            most = Math.max(most, Number(group.values[each.key]) || 0);
+        }));
+        let step = niceStep(most / 4);
+        scales[side] = { "step" : step, "ceiling" : Math.max(step, Math.ceil(most / step) * step) };
+    });
+    let yOf = (side, value) => top + plotHeight - (value / scales[side].ceiling) * plotHeight;
+
+    let svg = `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(ariaLabel)}">`;
+    // the grid is the first axis's; the other's ticks sit at their own heights
+    sides.forEach((side, index) => {
+        let { step, ceiling } = scales[side];
+        let cls = series.find(each => each.axis === side).cls;
+        for(let tick = 0; tick <= ceiling; tick += step){
+            let y = yOf(side, tick);
+            if(index === 0){
+                svg += `<line class="${tick === 0 ? "axis" : "grid"}" x1="${left}" x2="${width - right}" y1="${y}" y2="${y}" />`;
+            }
+            svg += side === "left"
+                ? `<text class="tick" x="${left - 6}" y="${y + 4}" text-anchor="end">${tick}</text>`
+                : `<text class="tick tick-right ${cls}" x="${width - right + 6}" y="${y + 4}" text-anchor="start">${tick}</text>`;
+        }
+    });
+
+    let slot = plotWidth / groups.length;
+    let labelEvery = Math.max(1, Math.ceil(groups.length / Math.floor(plotWidth / 44)));
+    let gap = 2;
+    let barWidth = Math.min(16, (slot * 0.8 - gap * (series.length - 1)) / series.length);
+    let groupWidth = barWidth * series.length + gap * (series.length - 1);
+
+    groups.forEach((group, index) => {
+        let start = left + slot * index + (slot - groupWidth) / 2;
+        svg += `<g class="column" style="--i:${index}"><title>${escapeHtml(group.title)}</title>`
+            + `<rect class="hit" x="${left + slot * index}" y="${top}" width="${slot}" height="${plotHeight}" />`;
+        series.forEach((each, at) => {
+            let value = Number(group.values[each.key]) || 0;
+            if(value <= 0){ return; }
+            let y = yOf(each.axis, value);
+            svg += `<path class="bar ${each.cls}" d="${columnPath(start + at * (barWidth + gap), y, barWidth, yOf(each.axis, 0) - y)}" />`;
+        });
+        if(index % labelEvery === 0){
+            svg += `<text class="label" x="${start + groupWidth / 2}" y="${height - bottom + 15}" text-anchor="middle">${escapeHtml(group.label)}</text>`;
+        }
+        svg += `</g>`;
+    });
+    return svg + `</svg>`;
+}
+
 function chartLegend(items){
     if(items.length === 0){ return ""; }
     return `<p class="legend">` + items.map(item =>
@@ -112,11 +175,34 @@ function sportColumns(present){
 }
 
 // V0 to V8 always, and on up to the hardest one climbed; VB once climbed
-function boulderColumns(present){
+function vColumns(present){
     let hardest = present.reduce((max, grade) => Math.max(max, boulderRung(grade)), 8);
     let columns = present.includes("VB") ? ["VB"] : [];
     for(let rung = 0; rung <= hardest; rung++){ columns.push("V" + rung); }
     return columns;
+}
+
+// f4 to f7B the same, f3 once climbed
+function fontColumns(present){
+    let hardest = present.reduce((max, grade) => Math.max(max, fontBoulderOrder.indexOf(grade)), fontBoulderOrder.indexOf("f7B"));
+    return fontBoulderOrder.slice(present.includes("f3") ? 0 : 1, hardest + 1);
+}
+
+/* Boulders are charted in Font or V, as picked on the progress page, whichever
+   they were logged in: a V grade as Font is the first Font grade that counts as
+   it, so the two only roughly agree */
+const boulderChartKey = "progressBoulderGrades";
+
+function boulderChartFont(){
+    return localStorage.getItem(boulderChartKey) === "font";
+}
+
+function boulderChartGrade(grade){
+    return boulderChartFont() ? boulderFont(grade) : boulderV(grade);
+}
+
+function boulderColumns(present){
+    return boulderChartFont() ? fontColumns(present) : vColumns(present);
 }
 
 // British adjectival grades: VD to E2 always, the rest once climbed
@@ -126,15 +212,16 @@ function tradColumns(present){
     return tradLadder.filter(grade => tradAlways.includes(grade) || present.includes(grade));
 }
 
-// Each kind of climb a chart is drawn for: its columns, its grade colours and what one is called
+// Each kind of climb a chart is drawn for: its columns, a grade as charted, its grade colours and what one is called
+const sameGrade = grade => grade;
 const climbKinds = {
-    "sport"   : { "columns" : sportColumns,   "band" : gradeBands.sport,   "noun" : "climb",      "title" : "Sport" },
-    "boulder" : { "columns" : boulderColumns, "band" : gradeBands.boulder, "noun" : "boulder",    "title" : "Bouldering" },
-    "trad"    : { "columns" : tradColumns,    "band" : gradeBands.trad,    "noun" : "trad climb", "title" : "Trad" }
+    "sport"   : { "columns" : sportColumns,   "shown" : sameGrade,         "band" : gradeBands.sport,   "noun" : "climb",      "title" : "Sport" },
+    "boulder" : { "columns" : boulderColumns, "shown" : boulderChartGrade, "band" : gradeBands.boulder, "noun" : "boulder",    "title" : "Bouldering" },
+    "trad"    : { "columns" : tradColumns,    "shown" : sameGrade,         "band" : gradeBands.trad,    "noun" : "trad climb", "title" : "Trad" }
 };
 
-/* The climbs in one saved session, as [{ kind, grade }], read defensively as a
-   hand-edited log could hold anything: tick list routes looked up on the wall,
+/* The climbs in one saved session, as [{ kind, grade }] with each grade as it was
+   logged, read defensively as a hand-edited log could hold anything: tick list routes looked up on the wall,
    endurance grades, a gym session's boulders and its sport climbs (4c as 4+ and
    so on), the loft's routes as the boulder grade a plus is a shade of, a
    circuit logged at a grade as a boulder a lap, and trad grades */
@@ -150,7 +237,7 @@ function entryClimbs(logKey, entry){
     } else if(logKey === "enduranceLog"){
         list(entry.grades).forEach(grade => { if(typeof grade === "string"){ add("sport", grade); } });
     } else if(logKey === "boulderLog"){
-        list(entry.climbs).forEach(grade => { if(grade === "VB" || boulderRung(grade) !== -1){ add("boulder", grade); } });
+        list(entry.climbs).forEach(grade => { if(boulderV(grade) !== ""){ add("boulder", grade); } });
         list(entry.sport).forEach(tapped => {
             if(typeof tapped === "string" && typeof ukc !== "undefined"){ add("sport", ukc.sportGrade(tapped)); }
         });

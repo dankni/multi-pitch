@@ -33,7 +33,7 @@ const trainingPages = [
     { url: '/training/rings/', lastUpdated: '2026-11-04', priority: '0.6' },
     { url: '/training/nohangs/', lastUpdated: '2026-11-04', priority: '0.6' },
     { url: '/training/tabata/', lastUpdated: '2026-11-04', priority: '0.6' },
-    { url: '/training/gaps/', lastUpdated: '2026-11-04', priority: '0.6' },
+    { url: '/training/gaps/', lastUpdated: '2026-11-05', priority: '0.6' },
     { url: '/training/gilford/', lastUpdated: '2026-11-04', priority: '0.6' },
     { url: '/training/timer/', lastUpdated: '2026-11-04', priority: '0.6' },
     { url: '/training/endurance/', lastUpdated: '2026-11-04', priority: '0.6' },

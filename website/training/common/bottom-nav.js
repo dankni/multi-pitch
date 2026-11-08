@@ -45,6 +45,7 @@
             <path fill="currentColor" d="M50,56 V30 A26,26 0 0 1 72.5,69 Z"/>`) },
         "gaps" : { "name" : "Tindeq Arcade", "icon" : svg("0 0 100 100",
             `<path fill="none" stroke="currentColor" stroke-width="8" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/>`) },
+        "maxpull" : { "name" : "Max Pull", "icon" : svg("0 0 100 100", `<g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"><path d="M14,72 A38,38 0 1 1 86,72"/><path d="M50,62 L68,36"/></g><circle fill="currentColor" cx="50" cy="62" r="7"/>`) },
         "trad" : { "name" : "Outside", "icon" : svg("0 0 100 100",
             `<g transform="rotate(30 50 50)">
                 <path fill="currentColor" fill-rule="evenodd" stroke="currentColor" stroke-width="4" stroke-linejoin="round" d="M39,5 Q50,0 61,5 L57,25 Q50,21 43,25 Z M46,9 Q50,7 54,9 V19 Q50,17 46,19 Z"/>

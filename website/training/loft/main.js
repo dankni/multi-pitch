@@ -41,10 +41,22 @@ if(recognition !== null){
     recognition.onresult = event => {
         if(event.results[0][0].transcript.includes("next")){ speak(chooseTask()); }
     };
+    // no microphone, or one this browser won't hear through: stop trying
+    recognition.onerror = event => {
+        if(!voiceFailures.includes(event.error)){ return; }
+        voiceBroken = true;
+        noVoiceWarning();
+    };
+}
+const voiceFailures = ["not-allowed", "service-not-allowed", "audio-capture", "language-not-supported"];
+let voiceBroken = recognition === null || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+function noVoiceWarning(){
+    unsupportedToast(document.getElementById("noVoiceToast"));
 }
 
 function listen(){
-    if(recognition !== null && !paused && !listening){ recognition.start(); }
+    if(!voiceBroken && !paused && !listening){ recognition.start(); }
 }
 
 /* Colours: a name to call out and a colour to paint with it. An older version
@@ -254,7 +266,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadColours();
     showTradMode();
     drawSessionLog(logView);
-    if(recognition === null){
-        toast(document.getElementById("noVoiceToast"), null, true, true);
-    }
+    if(voiceBroken){ noVoiceWarning(); }
 });
