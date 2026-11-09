@@ -1334,7 +1334,7 @@ describe('Training apps', function () {
             play(4000);
             gameIs('waiting');
             pullToStart(kg);
-            play(3500);
+            play(4500);
         }
 
         it('climbs a wall on a pull held from before it to the top, and runs into the next with none, twice', () => {
@@ -1346,11 +1346,11 @@ describe('Training apps', function () {
             play(4500);
             hold();
             play(3600);
-            // 9 m of a 2 kg wall
+            // 3 s of a 2 kg wall
             cy.get('#score').should('have.text', '180');
             letGo();
             stateIs('running');
-            play(9000);
+            play(10000);
             // the first fall: up again on the other arm, walking back from the wall
             gameIs('recovering');
             cy.window().then((win) => expect(win.eval('runnerPose().back')).to.equal(true));
@@ -1360,7 +1360,7 @@ describe('Training apps', function () {
             cy.get('#lives img[src$="heart-empty.png"]').should('have.length', 2);
             cy.get('.over h2').should('have.text', 'Game over');
             cy.get('#overBest').should('be.visible');
-            cy.get('#overStats').invoke('text').should('equal', 'Score180Time0:24Walls1Coins0Climbed9 mPulled3 s');
+            cy.get('#overStats').invoke('text').should('equal', 'Score180Time0:26Walls1Coins0Climbed7 mPulled3 s');
             cy.get('#best').should('have.text', 'High score 180');
             cy.get('#restart, #share').should('be.visible');
             cy.get('#primaryButton, #forceButton, #pause').should('not.be.visible');
@@ -1378,7 +1378,7 @@ describe('Training apps', function () {
             cy.get('#stats').should('contain.text', 'Highscore 180');
             cy.get('nav .icon-info').click();
             cy.get('#log .icon-note').click();
-            cy.get('#sessionNote').should('be.visible').and('contain', '1 wall · 3 s of pull · 0:24 played · held the screen');
+            cy.get('#sessionNote').should('be.visible').and('contain', '1 wall · 3 s of pull · 0:26 played · held the screen');
             cy.get('label[for="log-tindeq"]').click();
             cy.get('#log').should('contain', 'No sessions saved yet.');
             cy.get('nav .icon-info').click();
@@ -1452,7 +1452,7 @@ describe('Training apps', function () {
             play(1000);
             cy.window().then((win) => {
                 expect(win.eval('game.grip')).to.equal('over');
-                expect(win.eval('game.y')).to.be.within(11.5, 12.5);
+                expect(win.eval('game.y')).to.be.within(9, 10.2);
                 expect(win.eval('runnerPose().face')).to.equal('talk');
                 win.eval('stepFakeKg = () => { fakeKg = holding ? 5 : 0; }');
             });
@@ -1496,12 +1496,29 @@ describe('Training apps', function () {
             cy.window().then((win) => expect(win.eval('bestScore("tap")')).to.equal(0));
         });
 
+        it('climbs the first half second up a wall whatever the pull, then lets go without one', () => {
+            visitGaps();
+            cy.window().then((win) => {
+                win.eval('game.state = "climbing"; game.onWall = true; game.y = game.walls[0].base; game.x = faceAt(game.walls[0], game.y + handRise);');
+                for (let n = 0; n < 5; n++) { win.eval('update(0.1)'); }
+                expect(win.eval('game.state')).to.equal('climbing');
+                expect(win.eval('game.y - game.walls[0].base')).to.be.closeTo(1.2, 0.001);
+                for (let n = 0; n < 7; n++) { win.eval('update(0.1)'); }
+                expect(win.eval('game.state')).to.equal('falling');
+            });
+        });
+
         it('puts a wasp in each half of a long wall, and now and then a pair flying together', () => {
             visitGaps();
             cy.window().then((win) => {
                 let long = { base: 0, top: 30, wasps: [] };
                 win.eval('placeWasps')(long, 10);
-                expect(long.wasps.map((spot) => spot.up)).to.deep.equal([5.25, 20.25]);
+                // in each half of what is left above the 5 m at the foot no wasp comes down into
+                expect(long.wasps.map((spot) => spot.up)).to.deep.equal([9.705, 22.005000000000003]);
+                long.wasps.forEach((spot) => expect(spot.up - 0.4).to.be.at.least(5));
+                let low = { base: 0, top: 5, wasps: [] };
+                win.eval('placeWasps')(low, 10);
+                expect(low.wasps).to.have.length(0);
                 // a wasp, high on its spot, and a second there with it
                 let rolls = [0, 0.5, 0.5, 0.9];
                 win.Math.random = () => rolls.shift();
@@ -1790,21 +1807,22 @@ describe('Training apps', function () {
             cy.window().then((win) => expect(win.eval('game.air')).to.be.above(0));
         });
 
-        it('runs into the wall on a pull started too late, at it, and logs nothing for nothing climbed', () => {
+        it('climbs the grace up a wall reached with no pull, falls, and logs nothing for nothing pulled', () => {
             visitGaps(steadyHold);
             start();
             play(5300);
-            hold();
-            play(1500);
+            gameIs('climbing');
+            play(2500);
             gameIs('recovering');
-            // a pull held from before doesn't start it again
+            // a pull held from before the wait doesn't start it again
+            hold();
             play(4000);
             gameIs('waiting');
             letGo();
             play(100);
             gameIs('waiting');
             pullToStart();
-            play(3500);
+            play(4500);
             stateIs('over');
             cy.window().its('localStorage').invoke('getItem', 'gapsLog').should('be.null');
         });
@@ -1849,7 +1867,7 @@ describe('Training apps', function () {
             cy.get('#force').should('be.visible');
             cy.get('#pullHint').should('have.text', 'Pull 5 kg to start');
             cy.window().then((win) => win.sendKg(5));
-            cy.get('#forceText').should('have.text', '5.0 / 2 kg');
+            cy.get('#forceText').should('have.text', '5.0 kg');
             cy.get('#forceFill').should('have.class', 'over');
             cy.window().then((win) => win.sendKg(0));
 
@@ -1861,7 +1879,7 @@ describe('Training apps', function () {
             cy.get('#score').should('have.text', '180');
             cy.window().then((win) => win.sendKg(0.5));   // under half the wall's kg is letting go
             cy.wait(50);
-            play(9000);
+            play(10000);
             secondLife(6);
             cy.get('body').should('have.attr', 'data-state', 'over');
             savedLog().its(0).should('include', { input: 'tindeq', maxPull: 20, peakKg: 5 });
@@ -1897,7 +1915,7 @@ describe('Training apps', function () {
             start();
             play(4500);
             cy.window().then((win) => win.sendKg(8));   // under the 10 kg: still on the ground
-            cy.get('#forceText').should('have.text', '8.0 / 10 kg');
+            cy.get('#forceText').should('have.text', '8.0 kg');
             cy.get('#forceFill').should('not.have.class', 'over');
             play(400);
             cy.window().then((win) => expect(win.eval('game.state')).to.equal('running'));
@@ -1929,7 +1947,7 @@ describe('Training apps', function () {
             gameIs('waiting');
             pullToStart(5);
             gameIs('running');
-            play(3500);
+            play(4500);
             cy.get('body').should('have.attr', 'data-state', 'over');
         });
 
@@ -1981,7 +1999,7 @@ describe('Training apps', function () {
         it('stands a pull in for holding the screen, 1 kg up every tenth of a second held and down every one let go, and starts on 5 kg', () => {
             visitGaps();
             cy.get('#force').should('be.visible');
-            cy.get('#forceText').should('have.text', '0.0 / 2 kg');
+            cy.get('#forceText').should('have.text', '0.0 kg');
             hold();
             play(300);
             cy.window().then((win) => expect(win.eval('fakeKg')).to.be.closeTo(3, 0.2));   // to the last frame
@@ -1990,7 +2008,7 @@ describe('Training apps', function () {
             stateIs('running');
             play(3000);
             // no more than the gauge goes to: 5 kg over the max pull for its band, and 5 more
-            cy.get('#forceText').should('have.text', '30.0 / 2 kg');
+            cy.get('#forceText').should('have.text', '30.0 kg');
             letGo();
             play(200);
             cy.window().then((win) => expect(win.eval('fakeKg')).to.be.closeTo(28, 0.2));
@@ -2070,7 +2088,7 @@ describe('Training apps', function () {
             play(3600);
             cy.window().then((win) => win.sendKg(0));
             cy.wait(50);
-            play(9000);
+            play(10000);
             secondLife(6);
             stateIs('over');
             cy.get('@gtag').should('have.been.calledWith', 'event', 'tindeq_arcade_game_over',
@@ -2084,7 +2102,7 @@ describe('Training apps', function () {
             hold();
             play(3600);
             letGo();
-            play(9000);
+            play(10000);
             secondLife();
             stateIs('over');
             cy.get('#keepNote').should('contain', 'Your iPhone can clear your sessions');
@@ -2109,7 +2127,7 @@ describe('Training apps', function () {
             start();
             play(4500);
             hold();
-            play(1000);
+            play(2000);
             gameIs('falling');
         });
 
@@ -2310,7 +2328,7 @@ describe('Training apps', function () {
         // A best of 2 s on the device, logged in metres as before: the first 3 s wall beats it, so the flag is on its top
         it('flags the best on the device, and says when it is beaten', () => {
             visitGaps(steadyHold, (win) => win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', metres: 2, gaps: 1, input: 'tap', maxPull: 20 }])));
-            cy.window().then((win) => expect(win.eval('bestFlagAt()')).to.include({ edge: 15, top: 9 }));
+            cy.window().then((win) => expect(win.eval('bestFlagAt()')).to.have.property('top').closeTo(7.2, 0.001));
             start();
             play(4500);
             hold();
@@ -3700,6 +3718,16 @@ describe('Training apps', function () {
                 cy.get('nav').should('have.css', 'background-color', 'rgb(18, 18, 18)');
                 cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
             });
+        });
+
+        it('leaves the full screen button off in the home screen app, and where the browser has no full screen', () => {
+            cy.visit(appUrl + '/training/timer/', { onBeforeLoad(win) {
+                let matchMedia = win.matchMedia.bind(win);
+                win.matchMedia = (query) => query.includes('display-mode') ? { matches: true, addEventListener() {} } : matchMedia(query);
+            } });
+            cy.get('#fullscreen').should('not.be.visible');
+            cy.visit(appUrl + '/training/timer/', { onBeforeLoad: (win) => Object.defineProperty(win.document.documentElement, 'requestFullscreen', { configurable: true, value: undefined }) });
+            cy.get('#fullscreen').should('not.be.visible');
         });
     });
 

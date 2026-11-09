@@ -275,11 +275,16 @@ function appleDevice(){
     return /iPad/.test(agent) || (/Macintosh/.test(agent) && navigator.maxTouchPoints > 1) ? "iPad" : null;
 }
 
+// Opened from the home screen, where the app already fills the screen
+function installedApp(){
+    return navigator.standalone === true || Boolean(window.matchMedia && window.matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches);
+}
+
 /* The note that an iPhone or iPad can clear sessions, as a session is saved: in
    any browser but not the home screen app, and signed out. A card on the summary
    (common/summary.js), or this toast in an app with none. */
 function keepNoteDue(){
-    return appleDevice() !== null && navigator.standalone !== true && localStorage.getItem(accountRefreshKey) === null;
+    return appleDevice() !== null && !installedApp() && localStorage.getItem(accountRefreshKey) === null;
 }
 
 function keepNoteText(){
@@ -1307,9 +1312,9 @@ document.addEventListener("DOMContentLoaded", () => {
     showAppVersion();
     drawContactCard();
     tagFeedbackLinks();
-    // hidden where the browser can't go full screen, which an iPhone can't
+    // hidden where the browser can't go full screen, which an iPhone can't, and in the home screen app
     let full = document.getElementById("fullscreen");
-    if(full !== null && document.documentElement.requestFullscreen){ full.hidden = false; }
+    if(full !== null && document.documentElement.requestFullscreen && document.fullscreenEnabled !== false && !installedApp()){ full.hidden = false; }
     addAccountButton();
     showRestored();
     if(localStorage.getItem(accountRefreshKey) !== null){ loadAccount(); }

@@ -2,12 +2,13 @@
    (progressor.js), or holding the screen or the space bar. A pull close to a
    wall leaps the runner onto it, and holding it climbs; further out, a pull
    just jumps - on a Progressor, one of coinKg or more. Reach a wall without a
-   pull and you fall. On it, a pull from the wall's kg to tooMuch over it climbs;
+   pull and the runner gets on and climbs for wallGrace anyway. On it, a pull from the wall's kg to tooMuch over it climbs;
    more than that, or up to hangBelow under it, hangs off one arm; any less
-   hangs until dipGrace is up, then falls. Without a Progressor, holding the
+   hangs until dipGrace is up, then falls. The first wallGrace on a wall climbs
+   whatever the pull. Without a Progressor, holding the
    screen stands in for one, its pull rising fakeRate a second while held and
    falling as fast when not. Now and then a wasp, or a pair, flies round a spot on a wall - two spots on a long one:
-   touching it costs half a heart, so hang below it until it is out of the way. A wall is its seconds of climbing high,
+   touching it costs half a heart, so hang below it until it is out of the way. None comes down into a wall's first waspClear. A wall is its seconds of climbing high,
    so it wants that long a pull - and, on a Progressor, its own kg, which leans
    it: a slab for the lightest, overhanging at the max pull. The first
    warmUpWalls ask no more than warmUpShare of the max pull, and so do the
@@ -38,7 +39,8 @@ const defaultMaxPull = 20;
 const leastKg = 2;           // the lightest pull a wall asks for
 
 const runSpeed = 3;          // m/s
-const climbSpeed = runSpeed; // so a wall is as high as its seconds would run
+const climbSpeed = 2.4;      // m/s up a wall, so a wall is climbSpeed metres high a second of its pull
+const oldClimbSpeed = 3;     // what it was before scores were kept, for those runs
 const shortestPull = 3;
 const longestPull = 10;
 // The ground is set out in seconds of running, so the speed changes the metres, not the timing
@@ -56,15 +58,17 @@ const jumpFall = 14;         // m/s², bringing a jump back down
 const handRise = 1;          // how far above the feet the hands hold the wall
 const mostSlant = 0.15 * 90; // degrees off vertical: a slab for the lightest pull, overhanging for the max
 const dipGrace = 0.5;        // seconds out of a wall's kg band, hanging, before it counts as letting go
+const wallGrace = 0.5;       // seconds onto a wall that climb whatever the pull
 const hangBelow = 2;         // kg under a wall's that hangs rather than climbs - no lower than half its kg
 const tooMuch = 5;           // kg over a wall's that is too hard a pull
 const fakeRate = 10;         // kg a second, 1 every tenth
 // The gauge's top: room over a max pull wall for its band and for pulling too hard
 const gaugeKg = () => game.maxPull + 2 * tooMuch;
 const waspChance = 0.35;     // of a spot on a wall past the warm up having one
-const twoSpotSeconds = 7;    // a wall this long or longer has two spots
+const twoSpotRoom = 4;       // metres above waspClear that make room for two spots
 const pairChance = 0.2;      // of a spot's wasp having another with it
 const pairGap = 0.7;         // metres the second of a pair flies above the first
+const waspClear = 5;         // metres at the foot of a wall no wasp comes down into
 const pairLag = 0.04;        // of a turn it trails by
 const waspReach = 2;         // metres either way of its middle, along
 const waspOut = 2.2;         // its middle, out from the face: at its nearest it all but touches it
@@ -79,7 +83,7 @@ const fallAccel = 20;        // m/s², a quicker fall than gravity's
 const fallSeconds = 1;       // at the least, from letting go to it being over
 const lieSeconds = 0.4;      // on the ground after a long fall
 const stepMs = 20;           // the most time one update covers
-const pointsPerKgMetre = 10; // 8 m of a 10 kg wall is 800
+const pointsPerKgMetre = 10 * oldClimbSpeed / climbSpeed;   // a second of pull scoring as it did at 3 m/s
 const coinPoints = 100;      // about a metre of a middling wall
 const lives = 2;             // one an arm
 const walkSpeed = 2;         // m/s, walking back from a wall fallen from
@@ -213,9 +217,9 @@ function clock(seconds){
 }
 
 /* Runs from before the score was kept have their seconds of pull - or "metres"
-   at 1 m/s, the same number - which climb at climbSpeed */
+   at 1 m/s, the same number - which climbed at oldClimbSpeed */
 function entryScore(entry){
-    return typeof entry.score === "number" ? entry.score : (Number(entry.seconds ?? entry.metres) || 0) * climbSpeed;
+    return typeof entry.score === "number" ? entry.score : (Number(entry.seconds ?? entry.metres) || 0) * oldClimbSpeed;
 }
 
 // The walls climbed so far, metres times kg, and the coins
@@ -244,7 +248,7 @@ function newGame(){
         "fallen" : 0,        // seconds into a fall
         "speed" : 0,         // of the fall
         "landed" : null,     // seconds into the fall it hit the ground
-        "cause" : "",        // of the fall: "wall" ran into one, "off" let go of one, "sting" lost a heart to wasps
+        "cause" : "",        // of the fall: "off" let go of a wall, "sting" lost a heart to wasps
         "onWall" : false,    // climbing with hands on it, not still leaping
         "high" : 0,          // the highest the feet have climbed
         "points" : 0,        // for the climbing, so far
@@ -311,7 +315,7 @@ function extendCourse(){
         let wall = { "edge" : edge, "base" : base, "top" : base + height, "seconds" : seconds, "kg" : kg, "pointsAtTop" : pointsAtTop,
                      "hang" : hang, "wasps" : [], "rest" : rest, "worth" : worth };
         shapeWall(wall);
-        if(!hang && !level2 && count >= warmUpWalls){ placeWasps(wall, seconds); }
+        if(!hang && !level2 && count >= warmUpWalls){ placeWasps(wall); }
         game.walls.push(wall);
         if(level2){ placeGaps(flatFrom + gapClear, edge - gapBefore, base); }
         if(!hang){ placeCoins(flatFrom + 6, edge - 8, base); }
@@ -321,12 +325,14 @@ function extendCourse(){
 /* A spot for a wasp on a wall, or two on a long one, each in its own half so
    there is room to hang between them. Now and then a spot has a pair, flying
    together, so it is no harder to time past than one. */
-function placeWasps(wall, seconds){
-    let spots = seconds >= twoSpotSeconds ? 2 : 1;
-    let height = wall.top - wall.base;
+function placeWasps(wall){
+    let low = waspClear + waspBob;   // the lowest a spot can be, bobbing down to waspClear
+    let height = wall.top - wall.base - low;
+    if(height <= 0){ return; }
+    let spots = height >= twoSpotRoom ? 2 : 1;
     for(let n = 0; n < spots; n++){
         if(Math.random() >= waspChance){ continue; }
-        let up = height * (n + 0.35 + 0.3 * Math.random()) / spots;
+        let up = low + height * (n + 0.35 + 0.3 * Math.random()) / spots;
         let phase = Math.random();
         wall.wasps.push({ "up" : up, "phase" : phase });
         // 1 - random, so a test's Math.random() of 0 keeps to one
@@ -522,13 +528,18 @@ function update(seconds){
     let started = jump && !game.wasJumping;
     game.wasJumping = jump;
     game.grip = game.state === "climbing" ? grip() : "";
+    // just onto a wall, it climbs whatever the pull, so every wall gets a start
+    let graced = game.state === "climbing" && !wall.hang && game.y - wall.base < climbSpeed * wallGrace;
+    if(graced){ game.grip = "climb"; }
     game.low = game.grip === "off" ? game.low + seconds : 0;
     if(game.grip === "climb" || game.grip === "over"){
         game.y += climbSpeed * seconds;
-        game.climbed += seconds;
+        // the grace's free climb isn't a pull, so neither counts nor scores
+        let pulled = !graced || pullKg() >= needKg();
+        if(pulled){ game.climbed += seconds; }
         // only height not climbed before scores, so a wall climbed again after a fall doesn't
         let up = Math.min(game.y, wall.top);
-        if(up > game.high){
+        if(pulled && up > game.high){
             game.points += (up - game.high) * wall.kg * pointsPerKgMetre * wall.worth;
             game.high = up;
         }
@@ -543,16 +554,14 @@ function update(seconds){
     game.x = game.onWall ? hold : Math.min(hold, game.x + runSpeed * seconds);
     if(game.state === "running"){
         game.stopped = false;
-        if(pulling() && hold - game.x <= leapReach && game.restLeft === 0){
+        // a pull near a wall leaps onto it; reaching one without, the runner gets on anyway, for wallGrace
+        if((pulling() && hold - game.x <= leapReach && game.restLeft === 0) || (game.x >= hold && !wall.hang)){
             game.state = "climbing";
             game.y += game.air;
             land();
             game.low = 0;
-        } else if(game.x >= hold && wall.hang){
-            game.stopped = true;
         } else if(game.x >= hold){
-            fall("wall");
-            return;
+            game.stopped = true;
         } else if(started && game.air === 0 && !wall.hang){
             game.airSpeed = jumpSpeed;
         }
@@ -1372,7 +1381,7 @@ function showForce(){
     band.style.left = share(need) + "%";
     band.style.width = (share(need + tooMuch) - share(need)) + "%";
     document.getElementById("forceNeed").innerText = need + " kg";
-    document.getElementById("forceText").innerText = kg.toFixed(1) + " / " + need + " kg";
+    document.getElementById("forceText").innerText = kg.toFixed(1) + " kg";
     showDetail();
 }
 
