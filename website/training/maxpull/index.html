@@ -41,82 +41,112 @@
 		</div>
 	</nav>
 
-	<div class="holder pull-holder">
-		<input type="date" class="field" id="pullDate" data-change="setPullDate" aria-label="Day" />
+	<button id="primaryButton" data-action="startPull"><i class="demo-icon icon-play"></i>START SESSION</button>
+	<button class="secondary" id="discardPull" data-action="discardPull"><i class="demo-icon icon-cancel"></i>DISCARD</button>
 
-		<div class="pull-boxes">
-			<label class="pull-box pull-left">
-				<span class="pull-name">Left arm</span>
-				<span class="field-group">
-					<input type="number" class="field" id="pullLeft" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
-					<span class="unit">kg</span>
-				</span>
-			</label>
-			<label class="pull-box pull-right">
-				<span class="pull-name">Right arm</span>
-				<span class="field-group">
-					<input type="number" class="field" id="pullRight" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
-					<span class="unit">kg</span>
-				</span>
-			</label>
-			<div class="pull-box pull-hang">
-				<label class="pull-name" for="pullHang">Max hang</label>
-				<span class="field-group hang-whole">
-					<input type="number" class="field" id="pullHang" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
-					<span class="unit">kg</span>
-				</span>
-				<!-- with Split Body / Extra Weight on under the cog -->
-				<div class="hang-split">
-					<label class="pull-part">Body
+	<div class="holder pull-holder">
+		<div class="pull-session">
+			<div class="picker pull-mode" role="radiogroup" aria-label="Reading">
+				<input type="radio" name="pullMode" class="nice-radios" id="pullMode-manual" value="manual" data-change="setPullMode" />
+				<label for="pullMode-manual">Manual</label>
+				<input type="radio" name="pullMode" class="nice-radios" id="pullMode-loadcell" value="loadcell" data-change="setPullMode" />
+				<label for="pullMode-loadcell">Load cell</label>
+			</div>
+
+			<div class="watch-line gauge-line-switch">
+				<label class="switch-label">
+					<input type="checkbox" id="gaugeSwitch" data-change="switchGauge" />
+					<span class="label-content" id="gaugeStatusText" role="status">Tindeq not connected</span>
+				</label>
+			</div>
+
+			<!-- the session's day and edge, and its readings as the Gym app's grade tiles -->
+			<div class="pull-bar">
+				<input type="date" class="field" id="pullDate" data-change="setPullDate" aria-label="Day" />
+				<div class="pull-tiles">
+					<label class="pull-tile pull-edge">
+						<span class="pull-name">Edge</span>
 						<span class="field-group">
-							<input type="number" class="field" id="pullBody" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+							<input type="number" class="field" id="pullEdge" min="0" step="1" inputmode="numeric" data-change="setPullEdge" />
+							<span class="unit">mm</span>
+						</span>
+					</label>
+					<!-- load cell: the arm picked takes the readings, the other is greyed out; its field picks it -->
+					<input type="radio" name="pullArm" class="pull-radio" id="pullArm-left" value="left" data-change="setPullArm" />
+					<label class="pull-tile pull-left pull-arm" for="pullArm-left">
+						<span class="pull-name">Left arm</span>
+						<span class="field-group">
+							<input type="number" class="field" id="pullLeft" min="0" step="0.1" inputmode="decimal" data-input="keepDraft" aria-label="Left arm" />
 							<span class="unit">kg</span>
 						</span>
 					</label>
-					<label class="pull-part">Extra
+					<input type="radio" name="pullArm" class="pull-radio" id="pullArm-right" value="right" data-change="setPullArm" />
+					<label class="pull-tile pull-right pull-arm" for="pullArm-right">
+						<span class="pull-name">Right arm</span>
 						<span class="field-group">
-							<input type="number" class="field" id="pullExtra" min="0" step="0.1" inputmode="decimal" data-input="typedPull" />
+							<input type="number" class="field" id="pullRight" min="0" step="0.1" inputmode="decimal" data-input="keepDraft" aria-label="Right arm" />
 							<span class="unit">kg</span>
 						</span>
 					</label>
-					<span class="pull-total" id="pullHangTotal"></span>
+					<label class="pull-tile pull-hang">
+						<span class="pull-name">Max hang<small>Incremental Weight</small></span>
+						<span class="field-group">
+							<input type="number" class="field" id="pullHang" min="0" step="0.1" inputmode="decimal" data-input="keepDraft" />
+							<span class="unit">kg</span>
+						</span>
+					</label>
 				</div>
 			</div>
+
+			<!-- while the Progressor is connected -->
+			<section class="gauge" id="gauge" hidden>
+				<p class="gauge-figures">
+					<span><span id="gaugeNow">0.0</span> <small>kg</small></span>
+					<span class="gauge-best">Max <span id="gaugePeak">0.0</span> <small>kg</small></span>
+				</p>
+				<div id="gaugeTrace"></div>
+				<button type="button" class="quiet" data-action="tareGauge">Zero it</button>
+			</section>
+
+			<button id="savePull" data-action="savePull"><i class="demo-icon icon-ok"></i>FINISH &amp; SAVE</button>
 		</div>
-
-		<div class="watch-line gauge-line-switch">
-			<label class="switch-label">
-				<input type="checkbox" id="gaugeSwitch" data-change="switchGauge" />
-				<span class="label-content" id="gaugeStatusText" role="status">Tindeq not connected</span>
-			</label>
-		</div>
-
-		<!-- while the Progressor is connected -->
-		<section class="gauge" id="gauge" hidden>
-			<div class="picker" role="radiogroup" aria-label="Pulling with">
-				<input type="radio" name="gaugeKind" class="nice-radios" id="gaugeKind-left" value="left" data-change="setGaugeKind" checked />
-				<label for="gaugeKind-left">Left</label>
-				<input type="radio" name="gaugeKind" class="nice-radios" id="gaugeKind-right" value="right" data-change="setGaugeKind" />
-				<label for="gaugeKind-right">Right</label>
-				<input type="radio" name="gaugeKind" class="nice-radios" id="gaugeKind-hang" value="hang" data-change="setGaugeKind" />
-				<label for="gaugeKind-hang">Max hang</label>
-			</div>
-			<p class="gauge-figures">
-				<span><span id="gaugeNow">0.0</span> <small>kg</small></span>
-				<span class="gauge-best">Max <span id="gaugePeak">0.0</span> <small>kg</small></span>
-			</p>
-			<div id="gaugeTrace"></div>
-			<button type="button" class="quiet" data-action="tareGauge">Zero it</button>
-		</section>
-
-		<button id="savePull" data-action="savePull"><i class="demo-icon icon-ok"></i>SAVE</button>
 
 		<figure class="pull-history" id="historyFigure" hidden>
+			<!-- once more than one edge is logged -->
+			<div class="picker" id="chartEdges" role="radiogroup" aria-label="Edge" hidden></div>
 			<div id="pullHistory"></div>
 		</figure>
 	</div>
 
 	<aside id="about" class="overlay">
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon" data-page-icon></span>
+					<h3 class="card-label">Max Pull</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<p>Track the max pull per arm using a load cell like the Tindeq. Manual mode tracks weighted hangs up to your maximum.</p>
+				</div>
+			</details>
+		</section>
+		<section class="card-group folds">
+			<details class="card" open>
+				<summary class="card-head">
+					<span class="card-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="2" y="5" width="12" height="6" rx="1.5"/><path d="M8 2v3M8 11v3"/></svg></span>
+					<h3 class="card-label">Supported Load cells</h3>
+					<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>
+				</summary>
+				<div class="card-body">
+					<ul class="load-cells">
+						<li><a href="https://tindeq.com/" target="_blank" rel="noopener">Tindeq</a></li>
+						<li>Other (email us and we can add it)</li>
+						<li>DIY option (build your own from parts on AliExpress (~£50) and we can send the code to run it. <a href="mailto:multi-pitch@outlook.com">Email us</a> and we will help).</li>
+					</ul>
+				</div>
+			</details>
+		</section>
 		<section class="card-group folds">
 			<details class="card" open>
 				<summary class="card-head">
@@ -134,14 +164,6 @@
 
 	<aside id="settings" class="overlay">
 		<h2>Settings</h2>
-		<label class="switch-label">
-			<input type="checkbox" data-change="toggleSplitHang" id="splitHang"/>
-			<span class="label-content">
-				<svg class="toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-					<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 2.5v11M2.5 8h11"/>
-				</svg> Split Body / Extra Weight <span class="switch-state"></span>
-			</span>
-		</label>
 		<label class="switch-label">
 			<input type="checkbox" data-change="toggleDarkMode" id="darkMode"/>
 			<span class="label-content">

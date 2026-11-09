@@ -1,77 +1,102 @@
-/* Max pull: the three boxes, the Progressor's trace and the days charted. The
+/* Max pull: the tiles, the Progressor's trace and the days charted. The
    fields, the switch and the chart are common/style.css's and charts.css's. */
 .pull-left  { --c: #e6b800; }
 .pull-right { --c: #0b6ad6; }
-.pull-hang  { --c: var(--danger-ink); }
+.pull-hang  { --c: var(--confirm-ink); }
+.pull-edge  { --c: #9b9b9b; }
 
-.pull-holder > #pullDate {
-    display: block;
-    margin: var(--s4) auto 0;
-}
-.pull-boxes {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s2);
+.pull-session > .pull-mode {
     margin-top: var(--s4);
 }
-.pull-box {
+.gauge-line-switch {
+    margin-bottom: var(--s3);
+}
+
+/* The session, as the Gym app's bar: its day, edge and readings */
+.pull-bar {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--s2);
-    padding: var(--s3);
+    gap: var(--s3);
+    margin: var(--s3) 0;
+    padding: var(--s4);
     background: var(--panel);
+    color: var(--strong);
     border: 1px solid var(--line);
-    border-top: 4px solid var(--c);
     border-radius: var(--r-lg);
 }
-.pull-box.pull-hang {
-    grid-column: 1 / -1;
+
+/* A reading as a Gym grade tile: the colour down its edge, faint on the arm not picked */
+.pull-tiles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    width: 100%;
+    margin-top: var(--s2);
+}
+.pull-tiles > .pull-radio {
+    position: absolute;
+}
+.pull-tile {
+    --stripe: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s3);
+    min-height: 56px;
+    padding: var(--s2) var(--s2) var(--s2) var(--s5);
+    background: var(--tile);
+    color: var(--tile-ink);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    box-shadow: inset var(--stripe) 0 0 var(--c);
+    text-align: left;
+}
+.pull-arm {
+    cursor: pointer;
+    box-shadow: inset var(--stripe) 0 0 color-mix(in srgb, var(--c) 35%, transparent);
+}
+.pull-arm:hover {
+    background: var(--tile-hover);
+}
+/* the arm picked in full colour, the other faded right back */
+.pull-radio:checked + .pull-arm {
+    box-shadow: inset var(--stripe) 0 0 var(--c);
+}
+.pull-radio:not(:checked) + .pull-arm {
+    opacity: 0.45;
+}
+.pull-radio:focus-visible + .pull-arm {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
 }
 .pull-name {
-    font-size: var(--t-md);
+    display: flex;
+    flex-direction: column;
+    font-size: var(--t-lg);
     font-weight: 600;
-    color: var(--strong);
+    line-height: 1.1;
 }
-.pull-box .field-group {
+.pull-name small {
+    margin-top: var(--s1);
+    font-size: var(--t-sm);
+    font-weight: 400;
+    color: var(--ink-2);
+}
+.pull-tile .field-group {
     margin: 0;
 }
-.pull-box .field {
+/* kg and mm the same width, so the fields line up */
+.pull-tile .unit {
+    justify-content: center;
+    width: 2.5em;
+    padding: 0;
+}
+.pull-tile .field {
     width: 84px;
     font-size: var(--t-lg);
     font-weight: 700;
     text-align: right;
-}
-/* one figure for the hang, or body and extra with their total */
-.hang-split {
-    display: none;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: center;
-    gap: var(--s2) var(--s4);
-}
-[data-split] .hang-split {
-    display: flex;
-}
-[data-split] .hang-whole {
-    display: none;
-}
-.pull-part {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--s1);
-    font-size: var(--t-sm);
-    color: var(--ink-2);
-}
-.pull-total {
-    align-self: center;
-    font-size: var(--t-lg);
-    font-weight: 700;
-}
-
-.gauge-line-switch {
-    margin-top: var(--s4);
 }
 .gauge {
     margin-top: var(--s3);
@@ -113,4 +138,30 @@
 }
 .pull-history {
     margin: var(--s5) 0 var(--s7);
+}
+
+/* Manual is the hang, load cell the arms */
+[data-mode="manual"] .pull-arm,
+[data-mode="manual"] .gauge-line-switch,
+[data-mode="manual"] .gauge,
+[data-mode="loadcell"] .pull-tile.pull-hang {
+    display: none;
+}
+/* Idle is START and the chart; running is DISCARD at the top, the readings and SAVE closing them, as every app does */
+[data-state="running"] #primaryButton,
+[data-state="running"] .pull-history,
+body:not([data-state="running"]) .pull-session {
+    display: none;
+}
+[data-state="running"] #discardPull {
+    display: inline-block;
+}
+#savePull {
+    margin-bottom: 40px;
+}
+.pull-history #chartEdges {
+    margin-bottom: var(--s3);
+}
+.load-cells li + li {
+    margin-top: var(--s2);
 }

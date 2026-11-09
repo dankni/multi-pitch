@@ -5084,17 +5084,46 @@ describe('Training apps', function () {
 
         it('saves one reading of each a day, typed in, and charts the days', () => {
             cy.visit(maxPullUrl, { onBeforeLoad: (win) => win.localStorage.setItem('maxPullLog', JSON.stringify([{ id: 1, date: '2026-09-01', left: 30, right: 28, hang: 70 }])) });
+            // the chart and START to begin with
+            cy.get('#pullHistory .chart').should('be.visible');
+            cy.get('#pullLeft').should('not.be.visible');
+            cy.get('#discardPull').should('not.be.visible');
+            cy.get('#primaryButton').click();
+            cy.get('#pullHistory').should('not.be.visible');
+            cy.get('#discardPull').should('be.visible');
             cy.get('#pullDate').should('have.value', '2026-09-13');
+            // load cell to start with: the arms, the one not picked greyed out
+            cy.get('#pullMode-loadcell').should('be.checked');
+            cy.get('#pullHang').should('not.be.visible');
+            cy.get('#pullArm-left').should('be.checked');
             cy.get('#pullLeft').type('35.5');
-            cy.get('#pullRight').type('33');
+            // into the other arm's field picks it
+            cy.get('#pullRight').click().type('33');
+            cy.get('#pullArm-right').should('be.checked');
+            cy.get('#pullArm-left').check({ force: true });
+            cy.get('#pullArm-right').should('not.be.checked');
+            cy.get('#pullArm-right').check({ force: true });
+            cy.get('#pullMode-manual').check({ force: true });
+            cy.get('#pullLeft').should('not.be.visible');
+            cy.get('#gaugeSwitch').should('not.be.visible');
             cy.get('#pullHang').type('82');
             cy.get('#savePull').click();
             cy.window().then((win) => {
                 let log = JSON.parse(win.localStorage.getItem('maxPullLog'));
                 expect(log).to.have.length(2);
                 expect(log[1]).to.include({ date: '2026-09-13', left: 35.5, right: 33, hang: 82 });
+                expect(log[1]).not.to.have.property('edge');
+                expect(win.localStorage.getItem('maxPullMode')).to.equal('manual');
             });
+            // saved, it is back to the start
+            cy.get('#primaryButton').should('be.visible');
+            cy.get('#pullLeft').should('not.be.visible');
+            cy.window().then((win) => expect(win.localStorage.getItem('maxPullCurrent')).to.equal(null));
             // the same day again replaces it, not a second reading
+            cy.get('#primaryButton').click();
+            cy.get('#pullHang').should('have.value', '82');
+            cy.get('#pullMode-loadcell').check({ force: true });
+            cy.get('#pullArm-left').check({ force: true });
             cy.get('#pullLeft').clear().type('36');
             cy.get('#savePull').click();
             cy.window().then((win) => {
@@ -5108,7 +5137,9 @@ describe('Training apps', function () {
             cy.get('#pullHistory .bar.pull-right').should('have.length', 2);
             cy.get('#pullHistory .bar.pull-hang').should('have.length', 2);
             cy.get('#pullHistory .tick-right').should('exist');
+            cy.get('#chartEdges').should('not.be.visible');
             // another day shows what it has
+            cy.get('#primaryButton').click();
             cy.get('#pullDate').type('2026-09-01').trigger('change');
             cy.get('#pullLeft').should('have.value', '30');
             cy.get('nav .icon-info').click();
@@ -5116,22 +5147,113 @@ describe('Training apps', function () {
             cy.get('#log .icon-star').should('not.exist');
         });
 
-        it('splits the hang into body weight and extra when asked to', () => {
-            cy.visit(maxPullUrl);
-            cy.get('#pullBody').should('not.be.visible');
-            cy.get('nav .icon-cog').click();
-            cy.get('#splitHang').check({ force: true });
-            cy.get('nav .icon-cog').click();
-            cy.get('#pullHang').should('not.be.visible');
-            cy.get('#pullBody').type('70');
-            cy.get('#pullExtra').type('12.5');
-            cy.get('#pullHangTotal').should('have.text', '82.5 kg');
+        it('keeps a reading for each edge, and charts one edge at a time', () => {
+            cy.visit(maxPullUrl, { onBeforeLoad: (win) => win.localStorage.setItem('maxPullLog', JSON.stringify([
+                { id: 1, date: '2026-09-01', edge: 20, left: 30 },
+                { id: 2, date: '2026-09-02', left: 29 }])) });
+            cy.get('#primaryButton').click();
+            cy.get('#pullEdge').type('15').trigger('change');
+            cy.get('#pullLeft').type('25');
             cy.get('#savePull').click();
-            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('maxPullLog'))[0]).to.include({ hang: 82.5, body: 70 }));
+            cy.tick(1000);   // a new id
+            cy.get('#primaryButton').click();
+            cy.get('#pullEdge').clear().type('20').trigger('change');
+            // unsaved, so the boxes keep it
+            cy.get('#pullLeft').clear().type('31');
+            cy.get('#savePull').click();
+            cy.window().then((win) => {
+                let log = JSON.parse(win.localStorage.getItem('maxPullLog'));
+                expect(log).to.have.length(4);
+                expect(log.find((entry) => entry.edge === 15)).to.include({ date: '2026-09-13', left: 25 });
+                expect(log.filter((entry) => entry.edge === 20).map((entry) => entry.left)).to.deep.equal([30, 31]);
+                expect(win.localStorage.getItem('maxPullEdge')).to.equal('20');
+            });
+            // a saved edge shows its own readings
+            cy.get('#primaryButton').click();
+            cy.get('#pullEdge').clear().type('15').trigger('change');
+            cy.get('#pullLeft').should('have.value', '25');
+            cy.get('#discardPull').click();
+            cy.get('#chartEdges label').then((labels) => expect([...labels].map((label) => label.innerText)).to.deep.equal(['No edge', '15mm', '20mm']));
+            cy.get('#chartEdge-20').should('be.checked');
+            cy.get('#pullHistory .bar.pull-left').should('have.length', 2);
+            cy.get('#chartEdge-15').check({ force: true });
+            cy.get('#pullHistory .bar.pull-left').should('have.length', 1);
+            cy.get('#chartEdge-none').check({ force: true });
+            cy.get('#pullHistory .bar.pull-left').should('have.length', 1);
+            cy.get('nav .icon-info').click();
+            cy.get('#log').should('contain', '15mm edge');
+        });
+
+        it('discards what is not saved, once it is sure, back to the start', () => {
+            cy.visit(maxPullUrl, { onBeforeLoad: (win) => win.localStorage.setItem('maxPullLog', JSON.stringify([{ id: 1, date: '2026-09-13', left: 30 }])) });
+            cy.get('#primaryButton').click();
+            cy.get('#pullLeft').should('have.value', '30').clear().type('40');
+            // a reload picks the session back up
+            cy.reload();
+            cy.get('#pullLeft').should('be.visible').and('have.value', '40');
+            cy.get('#discardPull').click().should('contain', 'SURE?');
+            cy.get('#pullLeft').should('have.value', '40');
+            cy.get('#discardPull').click();
+            cy.get('#primaryButton').should('be.visible');
+            cy.get('#discardPull').should('not.be.visible');
+            cy.window().then((win) => {
+                expect(JSON.parse(win.localStorage.getItem('maxPullLog'))[0].left).to.equal(30);
+                expect(win.localStorage.getItem('maxPullCurrent')).to.equal(null);
+            });
+            cy.get('#primaryButton').click();
+            cy.get('#pullLeft').should('have.value', '30');
+            // nothing changed, so no SURE?
+            cy.get('#discardPull').click();
+            cy.get('#primaryButton').should('be.visible');
+        });
+
+        it('reopens a day from the log, its edge and day moving it', () => {
+            cy.visit(maxPullUrl, { onBeforeLoad: (win) => win.localStorage.setItem('maxPullLog', JSON.stringify([
+                { id: 1, date: '2026-09-01', left: 30, right: 28 },
+                { id: 2, date: '2026-09-02', edge: 20, hang: 70 }])) });
+            cy.get('nav .icon-info').click();
+            cy.get('#log [data-log="edit"][data-id="1"]').click();
+            cy.get('#pullLeft').should('be.visible').and('have.value', '30');
+            cy.get('#pullRight').should('have.value', '28');
+            cy.get('#savePull').should('contain', 'FINISH & SAVE');
+            cy.get('#discardPull').should('contain', 'CANCEL EDIT');
+            cy.get('#pullEdge').clear().type('15').trigger('change');
+            cy.get('#pullLeft').should('have.value', '30');
+            cy.get('#savePull').click();
+            cy.get('#primaryButton').should('be.visible');
+            cy.window().then((win) => {
+                let log = JSON.parse(win.localStorage.getItem('maxPullLog'));
+                expect(log).to.have.length(2);
+                expect(log[0]).to.include({ id: 1, date: '2026-09-01', edge: 15, left: 30, right: 28 });
+            });
+            // a hang alone reopens on Manual; moved onto a day that has its own, the two are one
+            cy.get('nav .icon-info').click();
+            cy.get('#log [data-log="edit"][data-id="2"]').click();
+            cy.get('#pullMode-manual').should('be.checked');
+            cy.get('#pullHang').should('have.value', '70');
+            cy.get('#pullDate').type('2026-09-01').trigger('change');
+            cy.get('#pullEdge').clear().type('15').trigger('change');
+            cy.get('#pullHang').should('have.value', '70');
+            cy.get('#savePull').click();
+            cy.window().then((win) => {
+                let log = JSON.parse(win.localStorage.getItem('maxPullLog'));
+                expect(log).to.have.length(1);
+                expect(log[0]).to.include({ id: 2, date: '2026-09-01', edge: 15, left: 30, right: 28, hang: 70 });
+            });
+            // cancelled, nothing moves
+            cy.get('nav .icon-info').click();
+            cy.get('#log [data-log="edit"][data-id="2"]').click();
+            cy.get('#pullEdge').clear().type('25').trigger('change');
+            cy.get('#discardPull').click().should('contain', 'SURE?');
+            cy.get('#discardPull').click();
+            cy.get('#primaryButton').should('be.visible');
+            cy.get('#discardPull').should('contain', 'DISCARD');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('maxPullLog'))[0].edge).to.equal(15));
         });
 
         it('reads the arm picked off a Progressor, its best filling the box', () => {
             cy.visit(maxPullUrl, { onBeforeLoad: fakeProgressor });
+            cy.get('#primaryButton').click();
             cy.get('#gauge').should('not.be.visible');
             cy.get('#gaugeSwitch').check({ force: true });
             cy.get('#gaugeStatusText').should('have.text', 'Tindeq connected');
@@ -5142,13 +5264,11 @@ describe('Training apps', function () {
             cy.get('#gaugePeak').should('have.text', '41.3');
             cy.get('#gaugeNow').should('have.text', '12.0');
             cy.get('#gaugeTrace polyline.gauge-line').should('exist');
-            cy.get('#gaugeKind-right').check({ force: true });
+            cy.get('#pullArm-right').check({ force: true });
             cy.window().then((win) => win.sendKg(38));
             cy.get('#pullRight').should('have.value', '38');
             cy.get('#pullLeft').should('have.value', '41.3');
-            cy.get('#gaugeKind-hang').check({ force: true });
-            cy.window().then((win) => win.sendKg(90));
-            cy.get('#pullHang').should('have.value', '90');
+            cy.window().then((win) => expect(win.localStorage.getItem('maxPullArm')).to.equal('right'));
             cy.get('#gaugeSwitch').uncheck({ force: true });
             cy.get('#gauge').should('not.be.visible');
         });
@@ -5158,13 +5278,14 @@ describe('Training apps', function () {
             cy.get('.apps a[href="/training/maxpull/"]').should('not.exist');
             cy.get('nav .icon-cog').click();
             cy.get('#hiddenApp').type('Max Pull');
-            cy.get('.apps li').last().find('a').should('have.attr', 'href', '/training/maxpull/').and('contain', 'Max Pull');
+            cy.get('.apps li').last().find('a').should('have.attr', 'href', '/training/maxpull/').and('contain', 'Max Pull').and('contain', 'Track your max pull per arm');
             cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingHiddenApps'))).to.deep.equal(['maxpull']));
             cy.request(maxPullUrl).its('body').should('contain', 'noindex');
         });
 
         it('says when the browser cannot connect to a Progressor', () => {
             cy.visit(maxPullUrl, { onBeforeLoad: (win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true, value: undefined }) });
+            cy.get('#primaryButton').click();
             cy.get('#gaugeSwitch').check({ force: true });
             cy.get('#gaugeSwitch').should('not.be.checked');
             cy.tick(6000);

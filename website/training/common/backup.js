@@ -16,7 +16,7 @@ const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "
 // stored as the apps wrote them, strings and all
 const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "boulderTrackFalls", "tradTrackFalls", "gilfordTrackFalls", "dansLoftTrackFalls", "enduranceWall", "enduranceRest",
     "enduranceGrade", "enduranceStyle", "lapTimerGrade", "colours", "tradMode", "difficulty", "gapsMaxPull", "gapsClimber", "tabataSettings", "tabataOneSecond", "tabataRepeaterMode", "tabataRepeaters", "tabataRoutines",
-    "preventSleep", "overviewRange", "progressHidden", "progressBoulderGrades", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingRemovedApps", "trainingTheme", "dansLoftDraft", "maxPullSplitHang", "trainingTargets", "trainingWeekStart"];
+    "preventSleep", "overviewRange", "progressHidden", "progressBoulderGrades", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingRemovedApps", "trainingTheme", "dansLoftDraft", "maxPullMode", "maxPullArm", "maxPullEdge", "trainingTargets", "trainingWeekStart"];
 
 // when this phone's settings last changed, and what they were then
 const settingsSavedKey = "syncSettingsSaved";
