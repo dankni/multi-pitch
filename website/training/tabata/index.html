@@ -29,16 +29,8 @@
   </head>
 
   <body data-state="idle">
-	<nav>
-		<div class="left-nav">
-			<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="About this training app"></button>
-			<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>
-		</div>
+	<nav data-info data-sound>
 		<h1>Tabata</h1>
-		<div class="right-nav">
-			<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>
-			<button type="button" id="sound" class="icon-button demo-icon icon-volume-high" data-action="toggleSound" aria-label="Toggle sound"></button>
-		</div>
 	</nav>
 	<button id="primaryButton" data-action="toggleSession"><i class="demo-icon icon-play"></i>START SESSION</button>
 	<button class="secondary" id="reset" data-action="reset"><i class="demo-icon icon-ccw"></i>RESET</button>

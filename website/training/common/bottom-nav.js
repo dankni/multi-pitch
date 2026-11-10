@@ -87,18 +87,32 @@
 
     function build(){
         let old = document.querySelector("nav.bottom-nav");
+        // the goals page keeps its button when reached with goals off, until switched off from there
+        let goals = goalsOn() || (old === null && page === "goals");
         let nav = document.createElement("nav");
         nav.className = "bottom-nav";
         nav.setAttribute("aria-label", "Training apps");
         nav.innerHTML = item("/training/", menuIcon, "Apps", page === "overview")
             + item("/training/progress/", graphIcon, "Progress", page === "progress")
-            + (page === "goals" || goalsOn() ? item("/training/goals/", svg("0 0 16 16", goalsIcon), "Goals", page === "goals") : "")
+            + (goals ? item("/training/goals/", svg("0 0 16 16", goalsIcon), "Goals", page === "goals").replace("bottom-nav-item", "bottom-nav-item goals-item") : "")
             + appItem();
-        if(old !== null){ return old.replaceWith(nav); }
         // the page you are on: back to it, from a panel over it
         nav.addEventListener("click", event => {
             if(event.target.closest(".current")){ Object.keys(navPanels).forEach(closeOverlay); }
         });
+        if(old !== null){
+            // Goals slides in or out as it is switched
+            let had = old.querySelector(".goals-item:not(.leaving)");
+            let still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if(had !== null && !goals && !still){
+                had.classList.add("leaving");
+                had.addEventListener("animationend", () => old.replaceWith(nav), { once: true });
+                return;
+            }
+            old.replaceWith(nav);
+            if(had === null && goals && !still){ nav.querySelector(".goals-item").classList.add("entering"); }
+            return;
+        }
         document.body.appendChild(nav);
         document.documentElement.classList.add("has-bottom-nav");
         // the info panel's first card wears the page's icon: the app's, the progress graph, or the i

@@ -5325,15 +5325,20 @@ describe('Training apps', function () {
             cy.get('nav .account-button').click();
             cy.get('#goalsOn').should('not.be.checked').check({ force: true });
             cy.get('.bottom-nav .bottom-nav-item').should('have.length', 4);
-            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Goals').and('have.attr', 'href', '/training/goals/');
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Goals').and('have.class', 'entering').and('have.attr', 'href', '/training/goals/');
             cy.window().then((win) => expect(win.localStorage.getItem('trainingGoalsOn')).to.equal('on'));
             cy.get('#goalsOn').uncheck({ force: true });
+            cy.get('.bottom-nav .goals-item').should('have.class', 'leaving');
             cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
             cy.get('#goalsOn').check({ force: true });
             cy.get('nav .account-button').click();
             cy.get('.bottom-nav .bottom-nav-item').eq(2).click();
             cy.location('pathname').should('eq', '/training/goals/');
             cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'current').and('contain', 'Goals');
+            cy.get('nav .account-button').click();
+            cy.get('#goalsOn').uncheck({ force: true });
+            cy.get('.bottom-nav .goals-item').should('have.class', 'leaving');
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3).and('not.contain', 'Goals');
         });
 
         it('says how each goal is going against the days gone, leaving out both Tindeq apps', () => {

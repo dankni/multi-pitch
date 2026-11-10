@@ -1867,6 +1867,27 @@ a.bottom-nav-item:focus-visible {
 .bottom-nav .bottom-nav-icon:before {
     margin: 0;
 }
+/* Goals grows in from nothing as it is switched on, and back as it goes */
+.bottom-nav-item.goals-item {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.bottom-nav-item.entering {
+    animation: nav-item-in 0.25s ease-out;
+}
+.bottom-nav-item.leaving {
+    animation: nav-item-in 0.25s ease-in reverse forwards;
+    pointer-events: none;
+}
+@keyframes nav-item-in {
+    from { flex-grow: 0; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .bottom-nav-item.entering, .bottom-nav-item.leaving {
+        animation: none;
+    }
+}
 .has-bottom-nav body {
     padding-bottom: calc(58px + env(safe-area-inset-bottom));
 }

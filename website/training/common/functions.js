@@ -106,6 +106,22 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
+/* ================= The nav bar =================
+   A page writes <nav data-info="its label" data-sound><h1>Name</h1></nav>, leaving
+   out data-info for no info button and data-sound in an app that never speaks */
+function drawTopNav(){
+    let nav = document.querySelector("body > nav:not(.bottom-nav)");
+    if(nav === null || nav.querySelector(".left-nav") !== null){ return; }
+    let info = nav.dataset.info;
+    let left = (info === undefined ? "" : `<button type="button" class="icon-button demo-icon icon-info" data-action="openInfoBox" aria-label="${info || "About this training app"}"></button>`)
+        + '<button type="button" class="icon-button demo-icon icon-cog" data-action="openSettings" aria-label="Settings"></button>';
+    let right = '<button type="button" id="fullscreen" class="icon-button demo-icon icon-resize-full" data-action="fullscreen" aria-label="Toggle fullscreen" hidden></button>'
+        + ("sound" in nav.dataset ? '<button type="button" id="sound" class="icon-button demo-icon icon-volume-high" data-action="toggleSound" aria-label="Toggle sound"></button>' : "");
+    nav.insertAdjacentHTML("afterbegin", `<div class="left-nav">${left}</div>`);
+    nav.insertAdjacentHTML("beforeend", `<div class="right-nav">${right}</div>`);
+}
+drawTopNav();   // already parsed where this loads at the end of the body
+
 /* ================= The nav bar's switches ================= */
 function fullscreen(){
     document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
@@ -1156,6 +1172,7 @@ function goalsOn(){
 function setGoalsOn(box){
     localStorage.setItem(goalsOnKey, box.checked ? "on" : "off");
     if(typeof drawBottomNav === "function"){ drawBottomNav(); }
+    if(typeof syncSoon === "function"){ syncSoon(); }
 }
 
 const foldChevron = '<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
@@ -1319,6 +1336,7 @@ function loadAnalytics(){
 /* Each of these looks for what it works on and does nothing without it, so a
    page with no save panel or settings loads this as safely as an app */
 document.addEventListener("DOMContentLoaded", () => {
+    drawTopNav();
     drawSavePanel();
     loadPreventSleepSetting();
     loadVoiceOffSetting();

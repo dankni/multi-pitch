@@ -112,6 +112,7 @@ function applyBackup(merged){
         if(localStorage.getItem(key) !== merged.settings[key]){ localStorage.setItem(key, merged.settings[key]); }
     });
     applyTheme();   // a sync doesn't reload the page
+    if(typeof drawBottomNav === "function"){ drawBottomNav(); }   // goals switched on or off elsewhere
     setLog(deletedKey, merged.deleted);
     localStorage.setItem(settingsSavedKey, String(merged.settingsSaved));
     if(localStorage.getItem(settingsSeenKey) !== null){ localStorage.setItem(settingsSeenKey, JSON.stringify(currentSettings())); }
