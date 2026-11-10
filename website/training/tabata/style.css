@@ -24,7 +24,7 @@ body:not([data-repeater]) .repeater-only {
 }
 .setting-name {
     font-size: var(--t-lg);
-    font-weight: bold;
+    font-weight: 600;
     color: var(--strong);
 }
 .stepper {
@@ -36,7 +36,7 @@ body:not([data-repeater]) .repeater-only {
     min-width: 64px;
     text-align: center;
     font-size: 28px;
-    font-weight: bold;
+    font-weight: 700;
     color: var(--strong);
     font-variant-numeric: tabular-nums;
 }
@@ -83,8 +83,6 @@ body:not([data-repeater]) .repeater-only {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 90%;
-    max-width: var(--column);
     margin: 24px auto;
 }
 .tracks {
@@ -109,7 +107,7 @@ body:not([data-repeater]) .repeater-only {
     opacity: 0.7;
 }
 .set-track.current .set-label {
-    font-weight: bold;
+    font-weight: 600;
     opacity: 1;
 }
 body:not([data-state="idle"]) .set-name-field,
@@ -160,7 +158,7 @@ body:not([data-state="idle"]) .set-name-field,
     transform-origin: left;
 }
 .has-bottom-nav .rest-bar {
-    bottom: calc(58px + env(safe-area-inset-bottom));   /* on top of the nav */
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));   /* on top of the nav */
 }
 .rest-bar.running {
     animation: rest-bar var(--rest-length) linear forwards;
@@ -186,11 +184,10 @@ body:not([data-state="idle"]) .set-name-field,
     gap: 4px 12px;
     margin-bottom: 8px;
 }
-.routine-open, .routine-open:hover, .routine-open:focus {
-    color: var(--link);   /* as .overlay a */
+.routine-open {
     font-size: var(--t-md);
 }
 .routine-detail {
     font-size: var(--t-sm);
-    opacity: 0.8;
+    color: var(--ink-2);
 }

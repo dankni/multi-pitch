@@ -1,9 +1,5 @@
 /* The progress page: the sessions' calendar, the charts, then the activity log. */
 
-/* switched off under the cog */
-.switched-off {
-    display: none;
-}
 /* the font icons' own margins wrapped the longer labels */
 #settings .label-content {
     width: 230px;
@@ -16,8 +12,6 @@
 }
 /* The way to import a UKC logbook, above everything until there is one */
 .ukc-prompt {
-    width: 90%;
-    max-width: var(--column);
     margin: 20px auto 0;
     font-size: var(--t-sm);
     opacity: 1;
@@ -38,13 +32,13 @@
 }
 .conversion-table .between {
     font-size: var(--t-xs);
-    opacity: 0.65;
+    color: var(--ink-2);
 }
 .conversion-table small {
     display: block;
     padding-left: 16px;   /* under the grade, past its swatch */
     font-size: var(--t-xs);
-    opacity: 0.75;
+    color: var(--ink-2);
 }
 .conversion-table abbr {
     text-decoration: none;
@@ -65,13 +59,7 @@
     margin-right: auto;
 }
 .performance {
-    --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));   /* for .chart-empty; the charts are in common/charts.css */
-    width: 90%;
-    max-width: var(--column);
     margin: 20px auto 32px;
-    background: none;
-    border: 0;
-    border-radius: 0;
 }
 /* Four ranges on one row, all the same size, up to a width that fits ALL TIME:
    four 90px chips, the gaps between them and the track's padding */
@@ -96,7 +84,7 @@
     margin: 20px 0 28px;
 }
 .performance figcaption {
-    font-weight: bold;
+    font-weight: 600;
     font-size: var(--t-md);
 }
 .performance .sessions-note {
@@ -130,12 +118,7 @@
 /* Every app's log on one page: the apps' .log-table, but on the page rather
    than in a black overlay, so the stripe and the star follow the theme */
 .sessions {
-    width: 90%;
-    max-width: var(--column);
     margin: 20px auto 12px;
-    background: none;
-    border: 0;
-    border-radius: 0;
 }
 .sessions h2 {
     margin: 0 0 8px;
@@ -180,23 +163,6 @@
 .calendar-key {
     margin: 0;
 }
-.calendar-arrow {
-    padding: 8px 12px;
-    border-radius: 4px;
-}
-.calendar-arrow svg {
-    display: block;
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-.calendar-nav .calendar-arrow:disabled {
-    visibility: hidden;   /* nothing further that way, but the row keeps its shape */
-}
 /* Time trained: one bar, climbing, fingerboard and other a segment each, with a
    2px gap of page between. The palette's first three categorical slots, light
    and dark, which tell apart side by side or not, checked against #fff and
@@ -219,7 +185,7 @@
 /* "Last 30 days · 37h 13m trained", and a kind's "Climbing · 36h 29m, by app" */
 .time-split figcaption, .split-title {
     margin: 0 0 8px;
-    font-weight: bold;
+    font-weight: 600;
     font-size: var(--t-md);
 }
 .split-bar {
@@ -265,7 +231,7 @@
 .split-detail {
     margin-top: 16px;
     padding-top: 12px;
-    border-top: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
+    border-top: 1px solid var(--grid);
 }
 /* The calendar fills in a week at a time, left to right, and a time bar grows
    in from the left - backwards, so each lets go once it has played */
@@ -273,12 +239,15 @@
     from { clip-path: inset(0 100% 0 0); }
     to   { clip-path: inset(0 0 0 0); }
 }
-@media (prefers-reduced-motion: no-preference) {
-    .calendar .day {
-        animation: fade-in 0.35s calc(var(--week, 0) * 35ms) ease-out backwards;
-    }
-    .split-bar {
-        animation: split-grow 0.8s 0.2s ease-out backwards;
+.calendar .day {
+    animation: fade-in 0.35s calc(var(--week, 0) * 35ms) ease-out backwards;
+}
+.split-bar {
+    animation: split-grow 0.8s 0.2s ease-out backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+    .calendar .day, .split-bar {
+        animation: none;
     }
 }
 .split-legend {
@@ -288,10 +257,6 @@
 }
 .sessions .log-table tbody tr:nth-child(even) {
     background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08));
-}
-/* the app's gold is 1.4:1 on a white page */
-.sessions .icon-star.active {
-    color: light-dark(#a97c00, #FFD700);
 }
 .log-app {
     white-space: nowrap;
@@ -310,7 +275,12 @@
 
 /* Side by side on a wide screen, top aligned */
 .performance, .sessions {
+    display: inline-block;
     vertical-align: top;
+}
+/* switched off under the cog - after the above, which it beats */
+.switched-off {
+    display: none;
 }
 @media (min-width: 1100px) {
     .performance, .sessions {

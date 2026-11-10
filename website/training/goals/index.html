@@ -25,19 +25,19 @@
         <h1>Goals</h1>
     </nav>
 
-    <main class="goals">
+    <main class="goals column">
         <!-- the month shown, the one either side to step to -->
         <div class="month-carousel">
-            <button type="button" class="month-step" id="goalBack" data-action="stepMonth" data-step="-1">
+            <button type="button" class="step-arrow" id="goalBack" data-action="stepMonth" data-step="-1">
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"/></svg><span id="goalMonthBefore"></span>
             </button>
             <h2 class="month-shown" id="goalMonth" aria-live="polite"></h2>
-            <button type="button" class="month-step" id="goalOn" data-action="stepMonth" data-step="1">
+            <button type="button" class="step-arrow" id="goalOn" data-action="stepMonth" data-step="1">
                 <span id="goalMonthAfter"></span><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5"/></svg>
             </button>
         </div>
 
-        <div class="goal-month" id="goalMonthPanel">
+        <div class="goal-month panel" id="goalMonthPanel">
             <ul class="goal-list" id="goalList"></ul>
             <form class="goal-form" id="goalForm" hidden>
                 <div class="field-row">
@@ -69,7 +69,7 @@
                 </p>
                 <p class="goal-cancel">
                     <button type="button" class="link-button" data-action="closeGoalForm">Cancel</button>
-                    <button type="button" class="link-button danger-link" id="removeGoalButton" data-action="removeGoal" hidden>Delete</button>
+                    <button type="button" class="link-button text-link danger-link" id="removeGoalButton" data-action="removeGoal" hidden>Delete</button>
                 </p>
             </form>
             <div id="addGoalLine">

@@ -6,8 +6,6 @@
 
 /* Every grip, a dot a rep: the one you're on stands out, and the ones done fade */
 .hangs {
-    width: 90%;
-    max-width: var(--column);
     margin: 24px auto;
     border-collapse: collapse;
     text-align: left;
@@ -26,7 +24,7 @@
     background: var(--panel);
     outline: 3px solid var(--primary);
     outline-offset: -3px;
-    font-weight: bold;
+    font-weight: 600;
 }
 .pips {
     white-space: nowrap;
@@ -45,9 +43,8 @@
     background: currentColor;
 }
 .pip.hanging {
-    --hang: light-dark(var(--confirm), #4cd964);
-    border-color: var(--hang);
-    background: var(--hang);
+    border-color: var(--confirm-ink);
+    background: var(--confirm-ink);
 }
 /* The example photos, each already cut to a circle: four across, or two by two on a phone */
 .grips {

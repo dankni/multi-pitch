@@ -16,25 +16,18 @@ body:not([data-state="idle"]) #discard {
 }
 
 /* Set up */
-/* The five grades on one line on a 320px phone: 52px chips where the default is 81px */
-#gradePicker .nice-radios + label {
-    min-width: 40px;
-    padding: 8px 8px;
-}
 .style-hint {
     font-size: var(--t-sm);
     line-height: 1.5;
-    opacity: 0.8;
     margin: 8px auto 0;
     max-width: 420px;
-    color: var(--strong);
+    color: var(--ink-2);
 }
 
 /* Which part of the session you are in, and the rest clock */
 #stageBar {
     margin: 16px auto 12px;
     padding: 16px 12px;
-    color: var(--strong);
 }
 #stageBar h2 {
     margin: 0;
@@ -47,7 +40,7 @@ body:not([data-state="idle"]) #discard {
 #stageHint {
     margin: 8px 0 0;
     font-size: var(--t-sm);
-    opacity: 0.8;
+    color: var(--ink-2);
 }
 
 /* Climbs to tick, one to a line */
@@ -55,23 +48,9 @@ body:not([data-state="idle"]) #discard {
     margin: 0 auto;
 }
 .route {
-    position: relative;
-    display: flex;
     width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 64px;
     margin: 0 0 8px;
     padding: 12px 40px 12px 20px;
-    border-radius: var(--r-md);
-    /* the hold colour as a stripe down the inside edge, curved with the corners as the gym's grades are */
-    --stripe: 8px;
-    box-shadow: inset var(--stripe) 0 0 var(--hold);
-    font-family: 'Hind', sans-serif;
-    font-size: var(--t-sm);
-    letter-spacing: 0;
-    text-align: left;
-    text-transform: none;
 }
 /* With the Gilford wall off there is no hold colour: the stripe is the grade's
    band instead (gradeBands in common/grades.js), and a ticked climb takes the blue */
@@ -85,10 +64,6 @@ body:not([data-state="idle"]) #discard {
     background: var(--primary);
     color: var(--on-accent);
     box-shadow: none;
-}
-.route-grade {
-    font-size: var(--t-lg);
-    line-height: 1.2;
 }
 .route .tick {
     position: absolute;
@@ -108,16 +83,9 @@ body:not([data-state="idle"]) #discard {
     padding: 8px 16px;
     font-size: var(--t-md);
     font-weight: 600;
-    color: var(--link);
-}
-#skipRest:hover, #skipRest:focus {
-    color: var(--link-hover);
 }
 [data-state="saving"] #finishButton {
     display: none;
-}
-#finishButton {
-    margin-bottom: 40px;
 }
 .overlay .switch-label .icon-ok {
     margin-right: 0;
@@ -128,13 +96,6 @@ body:not([data-state="idle"]) #discard {
         font-size: 48px;
     }
     #stageBar h2 {
-        font-size: var(--t-lg);
-    }
-    .route {
-        font-size: var(--t-sm);
-        min-height: 58px;
-    }
-    .route-grade {
         font-size: var(--t-lg);
     }
 }

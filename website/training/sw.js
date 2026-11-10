@@ -8,7 +8,7 @@
    the one before it for a big release (v180.0). It is the app version shown in
    the apps. */
 
-const CACHE_VERSION = 'v183.30';
+const CACHE_VERSION = 'v183.31';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -16,6 +16,7 @@ const SHELL = [
     // pages by their directory url: index.html is a redirect on some hosts, which addAll refuses
     '/training/',
     '/training/manifest.json',
+    '/training/overview.css',
     '/training/progress/',
     '/training/progress/charts.js',
     '/training/progress/sessions.js',

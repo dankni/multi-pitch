@@ -362,9 +362,9 @@
         calendar.innerHTML = `<svg class="calendar" width="${width.toFixed(1)}" viewBox="0 0 ${width.toFixed(1)} ${Math.ceil(top + 7 * step)}" role="img"`
             + ` aria-label="${span}: ${plural(days, "day")} climbed">${months}${weekdays}${squares}</svg>`
             + `<div class="calendar-nav" style="max-width: ${width.toFixed(1)}px">`
-            + `<button type="button" class="icon-button calendar-arrow" data-calendar="1" aria-label="Earlier weeks"${calendarPage === calendarPages - 1 ? " disabled" : ""}>${chevron("M10 3 5 8l5 5")}</button>`
+            + `<button type="button" class="step-arrow calendar-arrow" data-calendar="1" aria-label="Earlier weeks"${calendarPage === calendarPages - 1 ? " disabled" : ""}>${chevron("M10 3 5 8l5 5")}</button>`
             + `<p class="sessions-note calendar-key">${span} &middot; ${plural(days, "day")} climbed</p>`
-            + `<button type="button" class="icon-button calendar-arrow" data-calendar="-1" aria-label="Later weeks"${calendarPage === 0 ? " disabled" : ""}>${chevron("M6 3l5 5-5 5")}</button>`
+            + `<button type="button" class="step-arrow calendar-arrow" data-calendar="-1" aria-label="Later weeks"${calendarPage === 0 ? " disabled" : ""}>${chevron("M6 3l5 5-5 5")}</button>`
             + `</div>`;
     }
 

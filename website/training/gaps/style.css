@@ -1,4 +1,4 @@
-/* The game fills the screen between the two 58px navs: a sky that main.js
+/* The game fills the screen between the two navs: a sky that main.js
    moves along behind the course, the same in either theme, with the score,
    the buttons and what happened over it.
    All of it is arcade style - blocky capitals with a hard outline. That is the
@@ -11,8 +11,8 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: calc(100vh - 116px - env(safe-area-inset-bottom));
-    height: calc(100dvh - 116px - env(safe-area-inset-bottom));
+    height: calc(100vh - 2 * var(--nav-height) - env(safe-area-inset-bottom));
+    height: calc(100dvh - 2 * var(--nav-height) - env(safe-area-inset-bottom));
     background: #d0f4f7 url(img/sky.png) repeat-x;
     background-size: auto 100%;
     background-position: 0 100%;
@@ -20,7 +20,7 @@
 }
 .score, .screen, .force {
     font-family: ui-monospace, Menlo, Consolas, "Roboto Mono", "DejaVu Sans Mono", monospace;
-    font-weight: bold;
+    font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
     color: #fff;
@@ -451,15 +451,13 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
 #forceGraph svg {
     display: block;
     max-width: 100%;
-    font-size: 11px;
+    font-size: var(--t-xs);
 }
 #forceGraph text {
-    fill: currentColor;
-    opacity: 0.8;
+    fill: var(--ink-2);
 }
 #forceGraph .grid {
-    stroke: currentColor;
-    opacity: 0.15;
+    stroke: var(--grid);
 }
 #forceGraph polyline {
     fill: none;
@@ -467,15 +465,15 @@ body:has(.toast.warn.shown) #noBluetoothSettings {
     stroke-linejoin: round;
 }
 #forceGraph .arm-1 {
-    stroke: var(--band-easy);
-    color: var(--band-easy);
+    stroke: var(--arm-left);
+    color: var(--arm-left);
 }
 #forceGraph .arm-2 {
-    stroke: var(--band-hard);
-    color: var(--band-hard);
+    stroke: var(--arm-right);
+    color: var(--arm-right);
 }
 .force-key {
-    font-size: 14px;
+    font-size: var(--t-sm);
 }
 .force-key span::before {
     content: "";

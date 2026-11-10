@@ -388,7 +388,7 @@ function drawRoutines(){
     document.getElementById("routineList").innerHTML = routines.map((routine, index) => {
         let name = escapeHtml(routine.name);
         return `<li>
-            <button type="button" class="link-button routine-open" data-action="openRoutine" data-routine="${index}">${name}</button>
+            <button type="button" class="link-button text-link routine-open" data-action="openRoutine" data-routine="${index}">${name}</button>
             <span class="routine-detail">${routine.sets} × ${routine.reps} · ${routine.work}s / ${routine.rest}s</span>
             <button type="button" class="icon-button demo-icon icon-trash routine-bin" data-action="askDeleteRoutine" data-routine="${index}" aria-label="Delete ${name}"></button>
         </li>`;

@@ -1,9 +1,9 @@
 /* Max pull: the tiles, the Progressor's trace and the days charted. The
    fields, the switch and the chart are common/style.css's and charts.css's. */
-.pull-left  { --c: #e6b800; }
-.pull-right { --c: #0b6ad6; }
+.pull-left  { --c: var(--arm-left); }
+.pull-right { --c: var(--arm-right); }
 .pull-hang  { --c: var(--confirm-ink); }
-.pull-edge  { --c: #9b9b9b; }
+.pull-edge  { --c: var(--hold-grey); }
 
 .pull-session > .pull-mode {
     margin-top: var(--s4);
@@ -20,10 +20,6 @@
     gap: var(--s3);
     margin: var(--s3) 0;
     padding: var(--s4);
-    background: var(--panel);
-    color: var(--strong);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
 }
 
 /* A reading as a Gym grade tile: the colour down its edge, faint on the arm not picked */
@@ -101,9 +97,6 @@
 .gauge {
     margin-top: var(--s3);
     padding: var(--s3);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
 }
 .gauge-figures {
     display: flex;
@@ -155,9 +148,6 @@ body:not([data-state="running"]) .pull-session {
 }
 [data-state="running"] #discardPull {
     display: inline-block;
-}
-#savePull {
-    margin-bottom: 40px;
 }
 .pull-history #chartEdges {
     margin-bottom: var(--s3);

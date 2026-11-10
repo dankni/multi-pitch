@@ -21,9 +21,6 @@ body:not([data-state="idle"]) #addMissingLink {
 #actions button {
     display: none;
 }
-#finishButton {
-    margin-bottom: 40px;
-}
 .missing-numbers {
     margin-top: 12px;
 }

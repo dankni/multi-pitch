@@ -13,9 +13,6 @@
 [data-state="saving"] #discard {
     display: inline-block;
 }
-#finishButton {
-    margin-bottom: 40px;
-}
 /* the note can be written as you go; the stars and save wait for FINISH */
 [data-state="running"] #endingDiv {
     display: block;
@@ -31,10 +28,6 @@
     width: 100%;
     margin: 16px auto 12px;
     padding: 16px;
-    background: var(--panel);
-    color: var(--strong);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
 }
 #sessionBar label {
     font-size: var(--t-sm);
@@ -61,7 +54,7 @@
 }
 .session-length {
     font-size: var(--t-sm);
-    opacity: 0.8;
+    color: var(--ink-2);
 }
 #sessionBar h3 {
     font-size: 44px;
@@ -94,33 +87,11 @@
     margin: 0;
 }
 .grade-add {
-    position: relative;
     flex: 1 1 auto;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 56px;
-    margin: 0;
     padding: 8px 40px 8px 20px;
-    border-radius: var(--r-md);
-    font-family: 'Hind', sans-serif;
-    font-size: var(--t-sm);
-    font-weight: 400;
-    letter-spacing: 0;
-    text-align: left;
-    text-transform: none;
 }
-.grade-row .route-grade {
-    font-size: var(--t-lg);
-    font-weight: 600;
-    line-height: 1.1;
-}
-/* band colour as a stripe down the inside edge, faint until climbed; blue if the ladder has no bands.
-   An inset shadow, so its inner edge follows the tile's rounded corners. */
-.grade-add {
-    --stripe: 8px;
-}
+/* band colour as a stripe down the inside edge, faint until climbed; blue if the ladder has no bands */
 .grade-add, .grade-add:hover, .grade-add:focus {
     box-shadow: inset var(--stripe) 0 0 color-mix(in srgb, var(--c, transparent) 35%, transparent);
 }
@@ -170,14 +141,14 @@
 }
 /* the hold colours of common/style.css, under a name of their own, as a .route
    tile sets its own --hold */
-.grade-row.hold-orange-blue { --circuit: #ff851b; --circuit-low: #0074d9; }
-.grade-row.hold-white       { --circuit: #e8e8e8; }
-.grade-row.hold-green       { --circuit: #2ecc40; }
-.grade-row.hold-yellow      { --circuit: #ffd400; }
-.grade-row.hold-purple      { --circuit: #8e3cc8; }
-.grade-row.hold-red         { --circuit: #ff4136; }
-.grade-row.hold-black       { --circuit: #2b2b2b; }
-.grade-row.hold-pink        { --circuit: #ff6fcf; }
+.grade-row.hold-orange-blue { --circuit: var(--hold-orange); --circuit-low: var(--hold-blue); }
+.grade-row.hold-white       { --circuit: var(--hold-white); }
+.grade-row.hold-green       { --circuit: var(--hold-green); }
+.grade-row.hold-yellow      { --circuit: var(--hold-yellow); }
+.grade-row.hold-purple      { --circuit: var(--hold-purple); }
+.grade-row.hold-red         { --circuit: var(--hold-red); }
+.grade-row.hold-black       { --circuit: var(--hold-black); }
+.grade-row.hold-pink        { --circuit: var(--hold-pink); }
 .grade-count {
     position: absolute;
     top: 50%;
@@ -215,7 +186,6 @@
         gap: 8px;
     }
     .grade-add {
-        font-size: var(--t-sm);
         padding: 8px 32px 8px 16px;
     }
     .grade-row .route-grade {
@@ -284,7 +254,7 @@
     line-height: 1.1;
 }
 .falls-count small {
-    font-size: 9px;
+    font-size: var(--t-2xs);
     font-weight: 500;
     letter-spacing: 0.5px;
     text-transform: uppercase;

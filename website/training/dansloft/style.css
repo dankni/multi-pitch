@@ -13,22 +13,22 @@
     border-radius: var(--r-md);
     font-size: var(--t-lg);
 }
-.holds-yellow       { --holds: #ffd400; }
+.holds-yellow       { --holds: var(--hold-yellow); }
 /* --holds-first is a gradient's first colour, for the watch (common/watch.js) */
-.holds-green-white  { --holds: linear-gradient(#2ecc40 50%, #f2f2f2 50%); --holds-first: #2ecc40; }
-.holds-grey         { --holds: #9b9b9b; }
+.holds-green-white  { --holds: linear-gradient(var(--hold-green) 50%, var(--hold-white) 50%); --holds-first: var(--hold-green); }
+.holds-grey         { --holds: var(--hold-grey); }
 .holds-sky-blue     { --holds: #7cc6f2; }
-.holds-orange       { --holds: #ff851b; }
-.holds-french-flags { --holds: linear-gradient(#0055a4 33.3%, #f2f2f2 33.3% 66.6%, #ef4135 66.6%); --holds-first: #0055a4; }
+.holds-orange       { --holds: var(--hold-orange); }
+.holds-french-flags { --holds: linear-gradient(#0055a4 33.3%, var(--hold-white) 33.3% 66.6%, #ef4135 66.6%); --holds-first: #0055a4; }
 .holds-pale-pink    { --holds: #f9c6d8; }
-.holds-white        { --holds: #f2f2f2; }
+.holds-white        { --holds: var(--hold-white); }
 .holds-fluro-pink   { --holds: #ff2fa0; }
-.holds-swirls       { --holds: repeating-linear-gradient(135deg, #ffd400 0 5px, #0074d9 5px 10px); --holds-first: #ffd400; }
-.holds-red          { --holds: #ff4136; }
+.holds-swirls       { --holds: repeating-linear-gradient(135deg, var(--hold-yellow) 0 5px, var(--hold-blue) 5px 10px); --holds-first: var(--hold-yellow); }
+.holds-red          { --holds: var(--hold-red); }
 .holds-brown        { --holds: #8b5a2b; }
-.holds-blue         { --holds: #0074d9; }
-.holds-purple       { --holds: #8e3cc8; }
-.holds-black        { --holds: #2b2b2b; }
+.holds-blue         { --holds: var(--hold-blue); }
+.holds-purple       { --holds: var(--hold-purple); }
+.holds-black        { --holds: var(--hold-black); }
 
 /* The floor plan, in the panel's ink */
 .plan {
@@ -71,13 +71,13 @@
     stroke: var(--surface);
     stroke-width: 4;
 }
-.plan-start circle { fill: #17812a; }
-.plan-end circle   { fill: #a13333; }
+.plan-start circle { fill: var(--confirm); }
+.plan-end circle   { fill: var(--danger); }
 .plan-mark text {
     fill: var(--on-accent);
     font-family: 'Hind', sans-serif;
     font-size: 34px;
-    font-weight: bold;
+    font-weight: 700;
     text-anchor: middle;
 }
 .plan-key {

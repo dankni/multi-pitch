@@ -19,7 +19,7 @@
     display: block;
     width: 80px;
     height: 80px;
-    border-radius: 40px;
+    border-radius: 50%;
     margin: 0 auto 20px;
 }
 #newColour {

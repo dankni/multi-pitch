@@ -296,17 +296,17 @@ function drawHeartMarkup(){
     recent.before(links);
     links.append(recent);
     links.insertAdjacentHTML("beforeend",
-        `<button type="button" class="link-button heart-link" id="showHeartRate" data-action="showHeartRate" hidden>Show heart rate</button>`);
+        `<button type="button" class="link-button text-link heart-link" id="showHeartRate" data-action="showHeartRate" hidden>Show heart rate</button>`);
     links.append(document.getElementById("recentLogs"));
     let age = heartAge();
     document.body.insertAdjacentHTML("beforeend", `
         <aside id="heartRate" class="overlay">
             <h2>Heart rate</h2>
-            <div class="heart-chart-holder" id="heartChart"></div>
-            <p class="heart-note">Heart rate data not saved to log. Take a screenshot, or <button type="button" class="link-button heart-share" id="shareHeartRate" data-action="shareHeartRate"><i class="demo-icon icon-share"></i>share it (even with yourself).</button></p>
+            <div class="heart-chart-holder column" id="heartChart"></div>
+            <p class="heart-note">Heart rate data not saved to log. Take a screenshot, or <button type="button" class="link-button text-link heart-share" id="shareHeartRate" data-action="shareHeartRate"><i class="demo-icon icon-share"></i>share it (even with yourself).</button></p>
             <fieldset class="setting-group">
                 <legend>Age:</legend>
-                <div class="picker heart-ages" role="radiogroup" aria-label="Age">
+                <div class="picker compact heart-ages" role="radiogroup" aria-label="Age">
                     ${heartAges.map(each => `<input type="radio" name="heartAge" class="nice-radios" id="heartAge-${each}" value="${each}" data-change="setHeartAge"${each === age ? " checked" : ""} />
                     <label for="heartAge-${each}">${each}</label>`).join("")}
                 </div>

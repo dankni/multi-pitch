@@ -28,7 +28,7 @@
     </nav>
 
     <!-- Filled in by sessions.js, and hidden until there is something to put in it -->
-    <section class="sessions" id="sessions" hidden>
+    <section class="sessions column" id="sessions" hidden>
         <h2>Your sessions</h2>
         <p class="sessions-note" id="sessionsStats"></p>
         <div id="sessionCalendar"></div>
@@ -47,13 +47,13 @@
     </section>
 
     <!-- until a UKC logbook has been imported -->
-    <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
+    <p class="sessions-note ukc-prompt column" id="ukcPrompt" hidden>
         Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
     </p>
 
     <!-- Drawn by charts.js from the apps' logs and an imported UKC logbook, and
          hidden until there is something graded to draw -->
-    <section class="performance" id="performance" hidden>
+    <section class="performance column" id="performance" hidden>
         <div class="picker range-picker" role="radiogroup" aria-label="Time range">
             <input type="radio" name="overviewRange" class="nice-radios" id="range-all" value="all" />
             <label for="range-all">All time</label>
@@ -85,7 +85,7 @@
     </section>
 
     <!-- in place of the charts on a device with nothing graded logged yet -->
-    <section class="performance" id="progressEmpty" hidden>
+    <section class="performance column" id="progressEmpty" hidden>
         <p class="chart-empty">
             Nothing graded logged yet. Climbs from the Gym Session, Circuit Session,
             Gilford Wall, Endurance and Outside Climbing apps are charted here, and so is an
@@ -94,7 +94,7 @@
     </section>
 
     <!-- Filled in by sessions.js too, under the charts -->
-    <section class="sessions" id="activity" hidden>
+    <section class="sessions column" id="activity" hidden>
         <h2 class="log-heading">Activity Log</h2>
         <div id="allLogs"></div>
         <p class="sessions-note" id="sessionsFoot">

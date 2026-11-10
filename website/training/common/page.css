@@ -5,7 +5,7 @@
     margin: 0 0 12px;
     font-size: var(--t-sm);
     line-height: 1.4;
-    opacity: 0.75;
+    color: var(--ink-2);
 }
 .sessions-note a, .sessions-note .link-button {
     color: var(--link);

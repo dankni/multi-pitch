@@ -6,7 +6,7 @@
     margin: 20px 0 8px;
 }
 .summary-figure figcaption {
-    font-weight: bold;
+    font-weight: 600;
     font-size: var(--t-md);
 }
 .summary-total {

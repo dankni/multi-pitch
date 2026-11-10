@@ -6,9 +6,6 @@
     gap: 8px;
     width: 100%;
     margin: 0 auto 12px;
-    background: none;
-    border: 0;
-    border-radius: 0;
 }
 .section-number {
     display: flex;
@@ -16,38 +13,21 @@
     align-items: center;
     justify-content: center;
     font-size: var(--t-md);
-    font-weight: bold;
+    font-weight: 700;
     line-height: 1.1;
-    color: light-dark(#444, #e8e8e8);
+    color: var(--strong);
 }
 .section-number small {
     display: block;
-    font-size: 9px;
-    font-weight: normal;
+    font-size: var(--t-2xs);
+    font-weight: 400;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: var(--ink-2);
 }
 .route {
-    position: relative;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 62px;
-    margin: 0;
-    padding: 8px 8px 8px 12px;
-    border-left: 8px solid var(--hold);
-    border-radius: var(--r-md);
-    font-family: 'Hind', sans-serif;
-    font-size: var(--t-sm);
-    letter-spacing: 0;
-    text-align: left;
-    text-transform: none;
-}
-.route-grade {
-    font-size: var(--t-lg);
-    line-height: 1.1;
+    padding: 8px 8px 8px 20px;
 }
 .route .tick {
     position: absolute;
@@ -63,15 +43,13 @@
         gap: 8px;
     }
     .route {
-        font-size: var(--t-sm);
-        padding: 8px 4px 8px 8px;
-        border-left-width: 6px;
+        --stripe: 6px;
+        padding: 8px 4px 8px 14px;
     }
     .section-number {
         font-size: var(--t-sm);
     }
     .section-number small {
-        font-size: 8px;
         letter-spacing: 0;
     }
     .route-grade {

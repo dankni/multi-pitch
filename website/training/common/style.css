@@ -155,6 +155,26 @@
     --band-medium: #eda100;
     --band-hard: light-dark(#e34948, #e25550);
     --band-vhard: light-dark(#7b3fc4, #9170e6);
+
+    /* A gym's hold colours, the same in either theme */
+    --hold-yellow: #ffd400;
+    --hold-white: #e8e8e8;
+    --hold-grey: #9b9b9b;
+    --hold-orange: #ff851b;
+    --hold-red: #ff4136;
+    --hold-pink: #ff6fcf;
+    --hold-green: #2ecc40;
+    --hold-blue: #0074d9;
+    --hold-purple: #8e3cc8;
+    --hold-black: #2b2b2b;
+    /* The two arms on a Tindeq: left (or first) and right (or second) */
+    --arm-left: #e6b800;
+    --arm-right: #0b6ad6;
+
+    /* Chart gridlines and hairlines */
+    --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
+    --nav-height: 58px;
+    --t-2xs: 10px;   /* tiny capitals under a number */
 }
 .band-easy     { --c: var(--band-easy); }
 .band-medium   { --c: var(--band-medium); }
@@ -194,7 +214,7 @@ nav {
     color: var(--nav-ink);
     margin: 0;
     padding: 6px 0;
-    height: 58px;
+    height: var(--nav-height);
     border-bottom: 1px solid var(--nav-edge);
 }
 nav h1 {
@@ -356,20 +376,71 @@ button:active {
     outline-offset: 2px;
 }
 
+/* Back or on a step - a month, a page of weeks: a chevron, and its label if it
+   has one. Hidden at either end, keeping its room. */
+.step-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s1);
+    min-height: 44px;
+    margin: 0;
+    padding: 0 var(--s2);
+    background: none;
+    border: 0;
+    box-shadow: none;
+    color: var(--ink-2);
+    font-size: var(--t-md);
+    font-weight: 500;
+    letter-spacing: normal;
+}
+.step-arrow:hover, .step-arrow:focus, .step-arrow:focus-visible {
+    color: var(--text);
+    background: none;
+}
+.step-arrow:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+.step-arrow:disabled {
+    visibility: hidden;
+}
+.step-arrow svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* A button that reads as a link, in the link colour; a destructive one in red */
+.text-link, .text-link:focus {
+    color: var(--link);
+}
+.text-link:hover {
+    color: var(--link-hover);
+}
+.text-link.danger-link, .text-link.danger-link:hover, .text-link.danger-link:focus {
+    color: var(--danger-ink);
+}
+
 /* The column: everything with content in it, 90% of a phone and --column at most */
-.holder, .ending, #setup, #data, #actions, .overlay > *:not(.close) {
+.column, .holder, .ending, #setup, #data, #actions, .overlay > *:not(.close) {
     width: 90%;
     max-width: var(--column);
     margin-left: auto;
     margin-right: auto;
 }
-section {
+.panel {
     display: inline-block;
     width: 100%;
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
     background: var(--panel);
-    margin-bottom: 12px;
+    color: var(--strong);
+    margin-bottom: var(--s3);
     transition: all 0.2s ease;
 }
 
@@ -398,19 +469,19 @@ section {
 /* Info, settings and the account sit between the navs, the top one pinned while they
    are up as the page behind is held wherever it was scrolled to. Over a summary too. */
 #about, #settings, #account {
-    top: 58px;
+    top: var(--nav-height);
     height: auto;
     bottom: 0;
     z-index: 5;
 }
 .has-bottom-nav #about, .has-bottom-nav #settings, .has-bottom-nav #account {
-    bottom: calc(58px + env(safe-area-inset-bottom));
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 #settings > h2:first-child, #account > h2:first-child {
     margin-top: var(--s5);
 }
 .nav-panel body {
-    padding-top: 58px;
+    padding-top: var(--nav-height);
 }
 .nav-panel nav:not(.bottom-nav) {
     position: fixed;
@@ -723,6 +794,10 @@ input[type="checkbox"].nice-radios:checked + label:before {
 }
 .picker:has(> [type="radio"]) > .nice-radios:not(:checked) + label:hover {
     background-color: var(--track-hover);
+}
+/* chips as narrow as their labels, so a row of short ones fits a phone */
+.picker.compact > .nice-radios + label {
+    min-width: 0;
 }
 
 /* ================= Icons ================= */
@@ -1068,6 +1143,10 @@ nav .account-button svg {
     display: none;
     margin-bottom: 40px;
 }
+/* the primary button that closes what is being logged */
+#finishButton, #savePull {
+    margin-bottom: var(--s7);
+}
 [data-state="saving"] #endingDiv {
     display: block;
 }
@@ -1120,12 +1199,11 @@ nav .account-button svg {
 .comment-count {
     margin: 4px auto 0;
     font-size: var(--t-xs);
-    opacity: 0.7;
+    color: var(--ink-2);
 }
 .comment-count.full {
     color: var(--band-hard);
-    font-weight: bold;
-    opacity: 1;
+    font-weight: 700;
 }
 
 /* ================= The activity log =================
@@ -1254,23 +1332,43 @@ nav .account-button svg {
 }
 
 /* A tile you tap to say you climbed it. --hold is the hold colour down its edge,
-   --ink the text once it is ticked and filled with it. Each app sizes its own. */
+   --ink the text once it is ticked and filled with it. The stripe is an inset
+   shadow, so its inner edge follows the tile's rounded corners. Each app sets its padding. */
 .route {
     --hold: #cccccc;
     --ink: #111111;
+    --stripe: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 56px;
+    margin: 0;
     background: var(--tile);
     color: var(--tile-ink);
     border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    box-shadow: inset var(--stripe) 0 0 var(--hold);
+    font-size: var(--t-sm);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
 }
-.hold-yellow { --hold: #ffd400; --ink: #1a1600; }
-.hold-white  { --hold: #e8e8e8; --ink: #222222; }
-.hold-grey   { --hold: #9b9b9b; --ink: #111111; }
-.hold-orange { --hold: #ff851b; --ink: #2a1400; }
-.hold-red    { --hold: #ff4136; --ink: #ffffff; }
-.hold-pink   { --hold: #ff6fcf; --ink: #2c0020; }
-.hold-green  { --hold: #2ecc40; --ink: #06240c; }
-.hold-blue   { --hold: #0074d9; --ink: #ffffff; }
-.hold-black  { --hold: #2b2b2b; --ink: #ffffff; }
+.route-grade {
+    font-size: var(--t-lg);
+    font-weight: 600;
+    line-height: 1.1;
+}
+.hold-yellow { --hold: var(--hold-yellow); --ink: #1a1600; }
+.hold-white  { --hold: var(--hold-white); --ink: #222222; }
+.hold-grey   { --hold: var(--hold-grey); --ink: #111111; }
+.hold-orange { --hold: var(--hold-orange); --ink: #2a1400; }
+.hold-red    { --hold: var(--hold-red); --ink: #ffffff; }
+.hold-pink   { --hold: var(--hold-pink); --ink: #2c0020; }
+.hold-green  { --hold: var(--hold-green); --ink: #06240c; }
+.hold-blue   { --hold: var(--hold-blue); --ink: #ffffff; }
+.hold-black  { --hold: var(--hold-black); --ink: #ffffff; }
 .route:hover, .route:focus {
     background: var(--tile-hover);
 }
@@ -1341,12 +1439,9 @@ nav .account-button svg {
    The overlays' column of cards - the account panel (common/account.js) and the
    info panels: each headed by an icon, its title and, where it has them, its
    status and a chevron. An info panel's first card is its description, with no head. */
-/* one column, as on a phone - a section is otherwise an inline-block, and two sit side by side */
 .overlay .card-group {
     display: block;
     margin: 0 auto var(--s4);
-    border: 0;
-    background: none;
 }
 .card {
     display: block;
@@ -1823,7 +1918,7 @@ body.red, body.orange, body.yellow {
     bottom: 0;
     z-index: 3;   /* over the page, under the overlays and pop-ups */
     display: flex;
-    height: calc(58px + env(safe-area-inset-bottom));
+    height: calc(var(--nav-height) + env(safe-area-inset-bottom));
     padding: 0 0 env(safe-area-inset-bottom);
     align-items: stretch;   /* not the top bar's: each item is the bar's full height, its icon and label centred */
     gap: 0;
@@ -1889,10 +1984,10 @@ a.bottom-nav-item:focus-visible {
     }
 }
 .has-bottom-nav body {
-    padding-bottom: calc(58px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 .has-bottom-nav footer {
-    bottom: calc(58px + env(safe-area-inset-bottom));
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
 /* A Bluetooth device under the cog - the Progressor, the watch: a dot for how

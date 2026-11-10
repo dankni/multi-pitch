@@ -26,15 +26,12 @@
 .heart-link {
     padding: 8px 12px;
     font-size: var(--t-sm);
-    color: var(--link);
 }
 .heart-link[hidden],
 [data-missing] .heart-link {
     display: none;
 }
 .heart-chart-holder {
-    width: 90%;
-    max-width: var(--column);
     margin: 16px auto 0;
 }
 .heart-chart {
@@ -48,7 +45,7 @@
     font-size: var(--t-xs);
     fill: var(--ink-2);
 }
-.heart-chart .grid { stroke: var(--line); }
+.heart-chart .grid { stroke: var(--grid); }
 .heart-chart .axis { stroke: var(--ink-2); }
 .heart-chart .beats {
     fill: none;
@@ -81,16 +78,6 @@
 /* six two-digit chips, narrow enough for one row on a phone */
 .setting-group .heart-ages {
     flex-wrap: nowrap;
-}
-.heart-ages > .nice-radios + label {
-    min-width: 0;
-    padding: 8px 12px;
-}
-.heart-note .heart-share {
-    color: var(--link);
-}
-.heart-note .heart-share:hover, .heart-note .heart-share:focus {
-    color: var(--link-hover);
 }
 .heart-share .demo-icon {
     margin-left: 0;

@@ -1,8 +1,6 @@
 /* Goals (common/goals.js): the month carousel, then a panel of the month's goals,
    a row each with its bar under it, green once met */
 .goals {
-    width: 90%;
-    max-width: var(--column);
     margin: var(--s4) auto var(--s6);
 }
 
@@ -22,50 +20,17 @@
     font-size: var(--t-xl);
     font-weight: 700;
 }
-.month-step {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s1);
-    min-height: 44px;
-    margin: 0;
-    padding: 0 var(--s2);
-    background: none;
-    border: 0;
-    box-shadow: none;
-    color: var(--ink-2);
-    font-size: var(--t-md);
-    font-weight: 500;
-}
-.month-step:hover, .month-step:focus-visible {
-    color: var(--text);
-    background: none;
-}
 #goalBack {
     justify-self: start;
 }
 #goalOn {
     justify-self: end;
 }
-/* at either end of the range, keeping its room so the month stays centred */
-.month-step:disabled {
-    visibility: hidden;
-}
-.month-step svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
 
 .goal-month {
+    display: block;
+    margin: 0;
     padding: var(--s2) var(--s4) var(--s4);
-    background: var(--panel);
-    color: var(--strong);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
 }
 .goal-month[data-slide="on"] {
     animation: goal-slide-on 0.2s ease-out;
@@ -180,9 +145,6 @@
     justify-content: center;
     gap: var(--s5);
     margin: 0;
-}
-.goal-cancel .danger-link {
-    color: var(--danger-ink);
 }
 .goal-form {
     display: flex;

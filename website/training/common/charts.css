@@ -2,8 +2,6 @@
    summary's. The one before is a thin line across each bar in the page ink,
    quieter than the bars. */
 .chart, .legend {
-    --ink-muted: light-dark(#5c5c63, #a8a8ae);
-    --grid: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.14));
     --before: light-dark(#2b2b30, #e8e8e8);
 }
 .chart {
@@ -15,17 +13,17 @@
 .chart text {
     font-family: 'Hind', sans-serif;
     font-size: var(--t-xs);
-    fill: var(--ink-muted);
+    fill: var(--ink-2);
 }
 .chart .count {
     fill: currentColor;
-    font-weight: bold;
+    font-weight: 700;
 }
 .chart .label {
     fill: currentColor;
 }
 .chart .grid { stroke: var(--grid); }
-.chart .axis { stroke: var(--ink-muted); }
+.chart .axis { stroke: var(--ink-2); }
 .chart .before {
     stroke: var(--before);
     stroke-width: 2;
