@@ -247,8 +247,8 @@ function showSynced(){
    An overlay behind the person in the nav, built the first time it is opened: a
    column of cards, each headed by an icon, its title and, where it has them, its
    status and a chevron to fold it. The account - signed out, waiting for an
-   emailed code, or signed in, one at a time - then the backup file, then weekly
-   targets, then the UKC logbook, then, signed in, deleting the account. Once this device has ever
+   emailed code, or signed in, one at a time - then the backup file, then the goals
+   switch, then the UKC logbook, then, signed in, deleting the account. Once this device has ever
    signed in, the account comes first. */
 
 // an open eye, struck through while the password shows
@@ -337,8 +337,17 @@ const accountPanel = `<aside id="account" class="overlay">
             </div>
         </details>
     </section>
-    <!-- from common/targets.js -->
-    ${targetsCard()}
+    <!-- the goals page (common/goals.js) in the bottom nav -->
+    <section class="card-group">
+        <label class="switch-label card-switch">
+            <input type="checkbox" id="goalsOn" data-change="setGoalsOn" />
+            <span class="label-content">
+                <span class="card-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">${goalsIcon}</svg></span>
+                <span class="card-label">Goals</span>
+                <span class="switch-state"></span>
+            </span>
+        </label>
+    </section>
     <!-- the same card as the progress page's settings, and the same import as the Outside Climbing app's, from common/ukc.js -->
     ${ukcCard({ "details" : "ukcDetails", "file" : "accountUkcFile", "choose" : "chooseAccountUkcFile", "imported" : "accountUkcImported", "status" : "accountUkcStatus" })}
     <section class="card-group" id="accountDelete" hidden>
@@ -401,7 +410,7 @@ function showAccount(){
     }
     showBackup();
     showUkc();
-    drawTargets();
+    document.getElementById("goalsOn").checked = goalsOn();
     let part = signedIn() ? "in" : accountCode !== null ? "code" : "out";
     login.querySelectorAll("[data-account]").forEach(box => { box.hidden = box.dataset.account !== part; });
     login.classList.toggle("signed-in", signedIn());

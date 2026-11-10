@@ -5293,63 +5293,187 @@ describe('Training apps', function () {
         });
     });
 
-    describe('Weekly targets', function () {
-        // Sunday 13 Sep: a week from Monday is 7-13 Sep
-        const week = {
+    describe('Goals', function () {
+        // Sunday 13 Sep: 12 of September's 30 days gone
+        const logs = {
             boulderLog: [{ id: 1, date: '2026-09-10', climbs: ['V2', 'V4', 'f6B+'], minutes: 90 },
-                         { id: 2, date: '2026-09-05', climbs: ['V6'], minutes: 60 }],
+                         { id: 2, date: '2026-09-05', climbs: ['V6'], minutes: 60 },
+                         { id: 6, date: '2026-08-20', climbs: ['V3'], minutes: 60 }],
             noHangsLog: [{ id: 3, date: '2026-09-12' }],
             gapsLog: [{ id: 4, date: '2026-09-12', input: 'tindeq', time: 600 }],
             maxPullLog: [{ id: 5, date: '2026-09-12', left: 40 }]
         };
 
-        function visitTargets() {
-            cy.visit(appUrl + '/training/rings/', { onBeforeLoad: (win) => Object.keys(week).forEach((key) => win.localStorage.setItem(key, JSON.stringify(week[key]))) });
-            cy.get('nav .account-button').click();
-            cy.get('#targets').scrollIntoView().should('be.visible');
+        function visitGoals(more) {
+            cy.visit(appUrl + '/training/goals/', { onBeforeLoad: (win) => {
+                Object.keys(logs).forEach((key) => win.localStorage.setItem(key, JSON.stringify(logs[key])));
+                if (more) { more(win); }
+            } });
         }
 
-        function setTarget(type, amount, more) {
-            cy.contains('#targets button', 'SET A TARGET').click();
-            cy.get('#targetType').select(type);
-            cy.get('#targetAmount').type(String(amount));
+        function setGoal(type, amount, more) {
+            cy.contains('button', 'SET A GOAL').click();
+            cy.get('#goalType').select(type);
+            cy.get('#goalAmount').type(String(amount));
             if (more) { more(); }
-            cy.contains('#targets button', 'SET TARGET').click();
+            cy.contains('button', 'SET GOAL').click();
         }
 
-        it('counts sessions and hours this week, leaving out both Tindeq apps', () => {
-            visitTargets();
-            cy.get('#targetWeekStart').should('have.value', '1');
-            setTarget('sessions', 3);
-            cy.get('.target').eq(0).should('contain', '3 sessions').and('contain', '2 / 3');
-            setTarget('hours', 1.7);   // to the half hour
-            cy.get('.target').eq(1).should('contain', '1.5 hours').and('have.class', 'met').and('contain', 'Met');
+        it('is switched on in the account panel, which puts it in the bottom nav', () => {
+            cy.visit(appUrl + '/training/rings/');
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3).and('not.contain', 'Goals');
+            cy.get('nav .account-button').click();
+            cy.get('#goalsOn').should('not.be.checked').check({ force: true });
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 4);
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Goals').and('have.attr', 'href', '/training/goals/');
+            cy.window().then((win) => expect(win.localStorage.getItem('trainingGoalsOn')).to.equal('on'));
+            cy.get('#goalsOn').uncheck({ force: true });
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
+            cy.get('#goalsOn').check({ force: true });
+            cy.get('nav .account-button').click();
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).click();
+            cy.location('pathname').should('eq', '/training/goals/');
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'current').and('contain', 'Goals');
+        });
+
+        it('says how each goal is going against the days gone, leaving out both Tindeq apps', () => {
+            visitGoals();
+            cy.get('#goalMonth').should('have.text', 'Sep 26');
+            // back one month
+            cy.get('#goalMonthBefore').should('have.text', 'Aug 26');
+            setGoal('sessions', 5);
+            cy.get('.goal').eq(0).should('contain', '5 sessions').and('contain', '3 / 5').and('have.attr', 'data-pace', 'on').find('.goal-bar').should('have.attr', 'aria-valuetext', '3 / 5, On Track');
+            setGoal('sessions', 10);
+            cy.get('.goal').eq(1).should('have.attr', 'data-pace', 'behind').find('.goal-bar').should('have.attr', 'aria-valuetext', '3 / 10, A Bit Behind');
+            setGoal('sessions', 20);
+            cy.get('.goal').eq(2).should('have.attr', 'data-pace', 'far').find('.goal-bar').should('have.attr', 'aria-valuetext', '3 / 20, Very Behind');
+            setGoal('hours', 2.2);   // to the half hour
+            cy.get('.goal').eq(3).should('contain', '2 hours').and('have.class', 'met').and('contain', 'Met');
             // only the gym counting
-            setTarget('sessions', 1, () => cy.contains('.target-check', 'Gym Session').find('input').check());
-            cy.get('.target').eq(2).should('contain', 'Gym Session').and('have.class', 'met');
-            // from Saturday, the week is only the 12th and 13th
-            cy.get('#targetWeekStart').select('Saturday');
-            cy.get('.target').eq(0).should('contain', '1 / 3');
+            setGoal('sessions', 1, () => cy.contains('.goal-check', 'Gym Session').find('input').check());
+            cy.get('.goal').eq(4).should('contain', 'Gym Session').and('have.class', 'met');
+            setGoal('climbs', 3, () => {
+                cy.get('#goalAppsField').should('not.be.visible');
+                cy.get('#goalKind-boulder').check({ force: true });
+                cy.get('#goalGrade').select('V4');
+            });
+            cy.get('.goal').eq(5).should('contain', '3 boulders ≥ V4').and('have.class', 'met');
+            cy.get('.goal').eq(5).find('.icon-wrench').click(); cy.get('#removeGoalButton').should('be.visible').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-confirm').should('have.text', 'REMOVE').click();
+            cy.get('.goal').should('have.length', 5);
+            // the wrench changes a goal in place
+            cy.get('.goal').eq(4).find('.icon-wrench').click();
+            cy.get('#goalAmount').should('have.value', '1');
+            cy.contains('.goal-check', 'Gym Session').find('input').should('be.checked');
+            cy.get('#goalAmount').clear().type('4');
+            cy.contains('button', 'SAVE CHANGES').click();
+            cy.get('.goal').should('have.length', 5).eq(4).should('contain', '4 sessions').and('contain', '2 / 4');
+            cy.window().then((win) => expect(Object.keys(JSON.parse(win.localStorage.getItem('trainingGoals')))).to.deep.equal(['2026-09']));
+            // with no goals before this month, back only one
+            cy.get('#goalBack').click();
+            cy.get('#goalMonth').should('have.text', 'Aug 26');
+            cy.get('#goalBack').should('not.be.visible');
+        });
+
+        const twoMonths = JSON.stringify({
+            '2026-08': [{ id: 1, type: 'sessions', amount: 2 }],
+            '2026-09': [{ id: 2, type: 'sessions', amount: 6 }, { id: 3, type: 'climbs', amount: 50 }] });
+
+        it('leaves a month without its own goals empty, and any month can be changed', () => {
+            visitGoals((win) => win.localStorage.setItem('trainingGoals', twoMonths));
+            cy.get('#goalsCopy').should('not.be.checked');
+            cy.get('#copyGoalsLine').should('not.be.visible');
+            cy.get('#goalOn').click();
+            cy.get('#goalMonth').should('have.text', 'Oct 26');
+            cy.get('.goal').should('have.length', 0);
+            // a month ahead with none can copy the one before
+            cy.contains('#copyGoalsLine .link-button', 'Copy from last month').click();
+            cy.get('.goal').should('have.length', 2);
+            cy.get('#copyGoalsLine').should('not.be.visible');
+            cy.get('#goalOn').click();
+            cy.get('#goalMonth').should('have.text', 'Nov 26');
+            cy.get('#copyGoalsLine').should('be.visible');
+            cy.get('#goalOn').click();
+            cy.get('#goalMonth').should('have.text', 'Dec 26');
+            cy.get('#copyGoalsLine').should('not.be.visible');
+            cy.get('#goalBack').click();
+            cy.get('#goalBack').click();
+            // a month gone, no pace but still to change
+            cy.get('#goalBack').click();
+            cy.get('#goalBack').click();
+            cy.get('#goalMonth').should('have.text', 'Aug 26');
+            cy.get('#goalBack').should('not.be.visible');
+            cy.get('.goal').should('have.length', 1).and('contain', '1 / 2').and('not.have.attr', 'data-pace');
+            setGoal('sessions', 1);
+            cy.get('.goal').should('have.length', 2).eq(1).should('have.class', 'met');
+            cy.get('.goal').eq(0).find('.icon-wrench').click(); cy.get('#removeGoalButton').should('be.visible').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-confirm').click();
+            cy.get('.goal').should('have.length', 1);
+            // deleting only from editing, and the form's cancel
+            cy.get('.goal .icon-trash').should('not.exist');
+            cy.contains('button', 'SET A GOAL').click();
+            cy.get('#removeGoalButton').should('not.be.visible');
+            cy.get('#goalForm').contains('.link-button', 'Cancel').click();
+            cy.get('#goalForm').should('not.be.visible');
+            // copying forwards from the cog
+            cy.get('nav .icon-cog').click();
+            cy.get('#goalsCopy').check({ force: true });
+            cy.get('nav .icon-cog').click();
+            cy.get('#goalOn').click();
+            cy.get('#goalOn').click();
+            cy.get('#goalMonth').should('have.text', 'Oct 26');
+            cy.get('.goal').should('have.length', 2);
+            cy.window().then((win) => expect(win.localStorage.getItem('trainingGoalsCopy')).to.equal('on'));
+        });
+
+        it('copies a month forward until changed, with copying forwards on, and goes three months on', () => {
+            visitGoals((win) => {
+                win.localStorage.setItem('trainingGoals', twoMonths);
+                win.localStorage.setItem('trainingGoalsCopy', 'on');
+            });
+            cy.get('#goalOn').click();
+            // Oct carries Sep's, nothing done yet and no pace
+            cy.get('#goalMonth').should('have.text', 'Oct 26');
+            cy.get('.goal').should('have.length', 2).and('not.have.attr', 'data-pace');
+            cy.get('.goal').eq(0).should('contain', '0 / 6').and('not.have.class', 'none');
+            cy.get('.goal').eq(1).find('.icon-wrench').click(); cy.get('#removeGoalButton').should('be.visible').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-confirm').click();
+            cy.get('.goal').should('have.length', 1);
+            // Nov carries Oct's now, Sep keeps its own
+            cy.get('#goalOn').click();
+            cy.get('#goalMonth').should('have.text', 'Nov 26');
+            cy.get('.goal').should('have.length', 1);
+            cy.get('#goalOn').click();
+            cy.get('#goalMonth').should('have.text', 'Dec 26');
+            cy.get('#goalOn').should('not.be.visible');
             cy.window().then((win) => {
-                expect(JSON.parse(win.localStorage.getItem('trainingTargets'))).to.have.length(3);
-                expect(win.localStorage.getItem('trainingWeekStart')).to.equal('6');
+                let goals = JSON.parse(win.localStorage.getItem('trainingGoals'));
+                expect(goals['2026-09']).to.have.length(2);
+                expect(goals['2026-10']).to.have.length(1);
+                expect(goals['2026-11']).to.equal(undefined);
             });
         });
 
-        it('counts climbs of a kind at a grade or harder, a Font grade as the V grade it is', () => {
-            visitTargets();
-            setTarget('climbs', 5);
-            cy.get('.target').eq(0).should('contain', '3 / 5');
-            setTarget('climbs', 2, () => {
-                cy.get('#targetAppsField').should('not.be.visible');
-                cy.get('#targetKind').select('boulder');
-                cy.get('#targetGrade').select('V4');
+        it('shows a red stub for nothing done this month', () => {
+            visitGoals((win) => win.localStorage.setItem('trainingGoals', JSON.stringify({ '2026-09': [{ id: 1, type: 'climbs', amount: 4, kind: 'sport' }] })));
+            cy.get('.goal').should('contain', '0 / 4').and('have.class', 'none');
+            cy.get('.goal-bar span').should(($bar) => expect($bar[0].getBoundingClientRect().width).to.be.greaterThan(4));
+        });
+
+        it('turns weekly targets into this month\'s goals', () => {
+            const targets = JSON.stringify([{ id: 1, type: 'sessions', amount: 2 }, { id: 2, type: 'hours', amount: 1.5 }]);
+            cy.visit(appUrl + '/training/rings/', { onBeforeLoad: (win) => win.localStorage.setItem('trainingTargets', targets) });
+            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Goals').click();
+            cy.get('.goal').eq(0).should('contain', '9 sessions');
+            cy.get('.goal').eq(1).should('contain', '6.5 hours');
+            cy.window().then((win) => {
+                expect(win.localStorage.getItem('trainingTargets')).to.equal(null);
+                expect(win.localStorage.getItem('trainingWeekStart')).to.equal(null);
+                expect(Object.keys(JSON.parse(win.localStorage.getItem('trainingGoals')))).to.deep.equal(['2026-09']);
             });
-            cy.get('.target').eq(1).should('contain', '2 boulders ≥ V4').and('have.class', 'met');
-            cy.get('.target').eq(1).find('.icon-trash').click();
-            cy.tick(100);
-            cy.get('.toast.danger .toast-confirm').should('have.text', 'REMOVE').click();
-            cy.get('.target').should('have.length', 1);
         });
     });
 

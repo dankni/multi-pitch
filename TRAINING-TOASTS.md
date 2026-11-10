@@ -35,7 +35,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Max Pull | This browser can't connect to a Tindeq Progressor. | Warning | Until closed | The Tindeq switch is turned on in a browser without Web Bluetooth; the switch goes back off | maxpull/main.js | Yes | |
 | Max Pull | Zeroed | Info | 5.2 s | Zero it, while the Progressor is connected | maxpull/main.js | No | |
 | No Hangs, Tabata | This device can't vibrate. | Warning | Until closed | Vibration disabled is switched off on a device without vibration; it stays on | common/functions.js | Yes | |
-| All apps (account panel) | Remove the target of <target>? | Confirm | Until REMOVE, Cancel or closed | The bin by a weekly target | common/targets.js | Yes | Only REMOVE removes |
+| Goals page | Remove the goal of <goal>? | Confirm | Until REMOVE, Cancel or closed | Delete, editing a goal | common/goals.js | Yes | Only REMOVE removes |
 | Tabata | Routine saved | Info | 5.2 s | SAVE in repeater mode, with a name not saved before | tabata/main.js | Yes | |
 | Tabata | Routine updated | Info | 5.2 s | SAVE in repeater mode, with the name of a routine already saved: its settings are replaced | tabata/main.js | Yes | Names match whatever their capitals |
 | Tabata | Reset the session to open a routine | Warning | 5.2 s | A routine tapped under the cog while a session is under way | tabata/main.js | Yes | |

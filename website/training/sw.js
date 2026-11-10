@@ -8,7 +8,7 @@
    the one before it for a big release (v180.0). It is the app version shown in
    the apps. */
 
-const CACHE_VERSION = 'v183.17';
+const CACHE_VERSION = 'v183.26';
 const CACHE_NAME = 'training-' + CACHE_VERSION;
 
 // Everything an app needs with no network. Add to it when you add a file.
@@ -22,6 +22,8 @@ const SHELL = [
     '/training/progress/settings.js',
     '/training/progress/conversions.js',
     '/training/progress/style.css',
+    '/training/goals/',
+    '/training/goals/style.css',
 
     '/training/common/style.css',
     '/training/common/page.css',
@@ -46,7 +48,7 @@ const SHELL = [
     '/training/common/watch.js',
     '/training/common/charts.js',
     '/training/common/apps.js',
-    '/training/common/targets.js',
+    '/training/common/goals.js',
     '/training/common/charts.css',
     '/training/common/summary.js',
     '/training/common/summary.css',

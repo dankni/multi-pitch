@@ -1413,6 +1413,20 @@ nav .account-button svg {
     font-weight: 600;
     text-align: left;
 }
+/* a card that is only a switch, headed as the others are */
+.overlay .switch-label.card-switch {
+    min-height: 56px;
+    margin: 0;
+    padding: var(--s2) var(--s4);
+    border-width: 1px;
+    border-radius: var(--r-lg);
+}
+.overlay .card-switch .label-content {
+    gap: var(--s3);
+}
+.card-switch .card-label {
+    font-weight: 600;
+}
 .card-status {
     flex: 0 1 auto;
     min-width: 0;
@@ -1604,95 +1618,6 @@ details[open] .card-chevron {
     margin-top: var(--s3);
     border-color: var(--danger-ink);
     text-align: center;
-}
-/* Weekly targets (common/targets.js): a row each with its bar under it, green once met */
-.target-week {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--s2);
-}
-.target-list {
-    margin: var(--s3) 0 0;
-    padding: 0;
-    list-style: none;
-}
-.target {
-    padding: var(--s3) 0;
-    border-top: 1px solid var(--line);
-}
-.target-head {
-    display: flex;
-    align-items: center;
-    gap: var(--s3);
-}
-.target-name {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: var(--t-md);
-    font-weight: 600;
-}
-.target-detail {
-    display: block;
-    font-size: var(--t-xs);
-    font-weight: 400;
-    color: var(--ink-2);
-}
-.target-done {
-    flex: 0 0 auto;
-    font-weight: 700;
-}
-.target.met .target-done {
-    color: var(--confirm-ink);
-}
-.target-bar {
-    height: 8px;
-    margin-top: var(--s2);
-    overflow: hidden;
-    border-radius: var(--r-pill);
-    background: var(--surface-2);
-}
-.target-bar span {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--primary);
-}
-.target.met .target-bar span {
-    background: var(--confirm-ink);
-}
-.target-form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s3);
-    margin-top: var(--s3);
-}
-.target-amount {
-    width: 96px;
-}
-.target-apps {
-    margin: 0;
-    padding: var(--s2) var(--s3) var(--s3);
-    border: 1px solid var(--line);
-    border-radius: var(--r-md);
-}
-.target-apps legend {
-    padding: 0 var(--s1);
-    font-size: var(--t-sm);
-    color: var(--ink-2);
-}
-.target-checks {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s2) var(--s3);
-    margin-bottom: var(--s2);
-    text-align: left;
-}
-.target-check {
-    display: flex;
-    align-items: center;
-    gap: var(--s2);
-    font-size: var(--t-sm);
 }
 /* Password and its eye as one control, full width */
 .account-form .password-field {

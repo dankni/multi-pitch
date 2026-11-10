@@ -1,6 +1,6 @@
 /* Every app that keeps a log: its key, name and page, which of its sessions count,
    how long one took and how many climbs it held - for the progress page
-   (progress/sessions.js) and weekly targets (common/targets.js). */
+   (progress/sessions.js) and monthly goals (common/goals.js). */
 
 // a missing field counts as nothing rather than as "undefined"
 function logCount(value){

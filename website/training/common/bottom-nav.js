@@ -1,6 +1,6 @@
 /* The bar along the bottom of every training page: the app list, the progress
-   page, and the app last used - on this page, where you are rather than a link.
-   Its CSS is the "Bottom navigation" block at the end of common/style.css. */
+   page, goals once switched on, and the app last used - on this page, where you
+   are rather than a link. drawBottomNav() draws it again. Its CSS is the "Bottom navigation" block at the end of common/style.css. */
 (function(){
     const lastAppKey = "trainingLastApp";
 
@@ -58,8 +58,8 @@
     const graphIcon = svg("0 0 100 100",
         `<g fill="currentColor"><rect x="10" y="54" width="20" height="36" rx="3"/><rect x="40" y="32" width="20" height="58" rx="3"/><rect x="70" y="12" width="20" height="78" rx="3"/></g>`);
 
-    // /training/ is the overview, /training/progress/ the charts, and
-    // /training/timer/ and the rest are the apps
+    // /training/ is the overview, /training/progress/ the charts, /training/goals/
+    // the goals, and /training/timer/ and the rest are the apps
     let match = /^\/training\/([a-z]+)\//.exec(location.pathname);
     let page = match ? match[1] : "overview";
     let here = apps[page] ? page : null;   // the app this is, if it is one
@@ -86,12 +86,15 @@
     }
 
     function build(){
+        let old = document.querySelector("nav.bottom-nav");
         let nav = document.createElement("nav");
         nav.className = "bottom-nav";
         nav.setAttribute("aria-label", "Training apps");
         nav.innerHTML = item("/training/", menuIcon, "Apps", page === "overview")
             + item("/training/progress/", graphIcon, "Progress", page === "progress")
+            + (page === "goals" || goalsOn() ? item("/training/goals/", svg("0 0 16 16", goalsIcon), "Goals", page === "goals") : "")
             + appItem();
+        if(old !== null){ return old.replaceWith(nav); }
         // the page you are on: back to it, from a panel over it
         nav.addEventListener("click", event => {
             if(event.target.closest(".current")){ Object.keys(navPanels).forEach(closeOverlay); }
@@ -102,6 +105,8 @@
         let pageIcon = document.querySelector("#about [data-page-icon]");
         if(pageIcon !== null){ pageIcon.innerHTML = here ? apps[here].icon : page === "progress" ? graphIcon : glyph("icon-info"); }
     }
+
+    window.drawBottomNav = build;
 
     if(document.readyState === "loading"){
         document.addEventListener("DOMContentLoaded", build);

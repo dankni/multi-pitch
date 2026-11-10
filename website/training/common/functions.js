@@ -1138,6 +1138,26 @@ function showAppVersion(){
 /* ================= Cards =================
    The fold on a card's head, and the contact card every info panel ends with -
    or has where it holds a <div data-contact-card>, as the Apps page does */
+// Goals' target, in the bottom nav and by its switch in the account panel
+const goalsIcon = '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.25"/><circle cx="8" cy="8" r="3.25"/></g><circle cx="8" cy="8" r="1" fill="currentColor"/>';
+const goalsOnKey = "trainingGoalsOn";
+
+// Off until switched on, or on for anyone who had set weekly targets
+function goalsOn(){
+    let on = localStorage.getItem(goalsOnKey);
+    if(on === null){
+        let targets = null;
+        try { targets = JSON.parse(localStorage.getItem("trainingTargets")); } catch(err){ targets = null; }
+        return Array.isArray(targets) && targets.length > 0;
+    }
+    return on === "on";
+}
+
+function setGoalsOn(box){
+    localStorage.setItem(goalsOnKey, box.checked ? "on" : "off");
+    if(typeof drawBottomNav === "function"){ drawBottomNav(); }
+}
+
 const foldChevron = '<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
 
 const contactCard = `<section class="card-group folds">
@@ -1185,9 +1205,9 @@ let accountLoading = null;
 function loadAccount(){
     if(accountLoading === null){
         accountLoading = new Promise(resolve => {
-            // the UKC import and weekly targets, and what they read, on a page without them
+            // the UKC import, and what it reads, on a page without it
             let wanted = [["grades.js", typeof tradLadder], ["ukc.js", typeof ukc], ["gilford-routes.js", typeof getRoute], ["dansloft-routes.js", typeof loftBoulderGrade],
-                ["charts.js", typeof entryClimbs], ["apps.js", typeof trainingLogs], ["targets.js", typeof targetsCard]];
+                ["charts.js", typeof entryClimbs], ["apps.js", typeof trainingLogs]];
             let files = wanted.filter(([, type]) => type === "undefined").map(([file]) => file);
             files.concat(["aws4fetch.js", "backup.js", "account.js"]).forEach(file => {
                 let tag = document.createElement("script");
