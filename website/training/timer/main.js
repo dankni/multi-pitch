@@ -16,7 +16,8 @@ const app = {
     // On the watch (common/watch.js): the clock and laps, and a lap from it
     "watch" : {
         "state" : () => ({ "m" : "lap", "s" : document.body.dataset.state, "e" : elapsed(),
-                           "n" : session === null ? 0 : session.laps, "g" : session === null ? "" : session.grade || "" }),
+                           "n" : session === null ? 0 : session.laps, "g" : session === null ? "" : session.grade || "",
+                           "id" : session === null ? undefined : session.id }),
         "receive" : message => { if(message.t === "lap"){ recordLap(); } },
         "active" : () => session !== null
     },

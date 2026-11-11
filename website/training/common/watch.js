@@ -10,8 +10,9 @@
      active  : () => whether a session is under way, to try a dropped watch again
    and optionally `app.heart` (common/heartrate.js), for the heart rate:
      wanted  : () => whether the watch is to read it now, sent as h
-     receive : message => a reading, {t:"hr", b, a}
-     height  : message => an altitude, {t:"alt", m, a}
+     receive : message => a reading, {t:"hr", b, a, n}
+     height  : message => an altitude, {t:"alt", m, a, n}
+     missing : () => the readings to ask the watch for again, {id, hr, alt}, or null
    The page gives an empty #watchBar and #watchSetting, filled here, and
    optionally a <template id="watchHelpText">, shown under the setting with the
    watch's battery. It is sent from
@@ -138,7 +139,7 @@ async function installWatchApp(){
         await bangle.ask(`(function(){var b=Graphics.createArrayBuffer(48,48,1,{msb:true});b.fillPoly([4,26,11,19,19,27,37,7,44,14,19,40]);require("Storage").write("mplog.img",b.asImage("string"));return 1})()`);
     }
     await bangle.writeFile("mplog.info", JSON.stringify({ "id" : "mplog", "name" : "Climb Log", "type" : "app", "src" : "mplog.app.js", "icon" : "mplog.img",
-        "version" : version, "hash" : hash, "files" : "mplog.info,mplog.app.js,mplog.img", "data" : "mplog.json" }));
+        "version" : version, "hash" : hash, "files" : "mplog.info,mplog.app.js,mplog.img", "data" : "mplog.json,mplog.rec,mplog.recm.json" }));
     return true;
 }
 
@@ -151,7 +152,7 @@ async function setUpWatch(){
             setWatchStage("Opening Climb Log");
             bangle.run(`load("mplog.app.js")`);   // it says up once open
         } else {
-            bangle.run(`mplog({t:"hi"})`);
+            sayHi();
         }
     } catch(err){
         watchStage = "";
@@ -170,7 +171,7 @@ function pushWatch(){
 }
 
 function fromWatch(message){
-    if(message.t === "up"){ return bangle.run(`mplog({t:"hi"})`); }
+    if(message.t === "up"){ return sayHi(); }
     if(message.t === "hello"){
         watchReady = true;
         setWatchStage("");
@@ -183,6 +184,16 @@ function fromWatch(message){
     app.watch.receive(message);
     pushWatch();
 }
+
+// hi, with the readings missed - while the page slept, say - for the watch to send again
+function sayHi(){
+    let missing = app.heart && app.heart.missing ? app.heart.missing() : null;
+    return bangle.run(`mplog(${JSON.stringify(Object.assign({ "t" : "hi" }, missing || {}))})`);
+}
+
+document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible" && watchReady && bangle.connected && watchDevice() === "bangle"){ sayHi(); }
+});
 
 function retryWatch(){
     setTimeout(() => {

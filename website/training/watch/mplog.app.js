@@ -15,9 +15,11 @@
    The time of day is in the widget bar, on every screen.
    What the phone hasn't had yet waits in mplog.json until it connects again.
    With h in the state, a running session's heart rate is read and sent every
-   few seconds, and the barometer's altitude, averaged, every two; readings
-   taken while the phone is away wait in memory, with how long ago they were
-   read once it is back.
+   few seconds, and the barometer's altitude, averaged, every two. The last
+   hour of each is kept, numbered from 0 each session (n), and in mplog.rec as
+   the app closes, so the phone can ask again for any it missed - asleep, or
+   away - with mplog({t:"hi", id, hr, alt}): the session, and the first number
+   of each it lacks. They come with how many seconds ago they were read.
 
    To the phone, a line of JSON each: add, undo, tab, harder, tick, finish, lap, hr, alt, then
    up when the app opens and hello once what waited has gone. Kept to ES5 and
@@ -47,14 +49,49 @@ var heartOn = false;               // the heart rate monitor is powered for the 
 var beatAt = 0;                    // when the last reading was taken
 var beatEvery = 5;                 // s between readings
 var beatSure = 50;                 // the confidence, out of 100, a reading needs
-var beats = [];                    // [when, bpm] read while the phone was away
-var beatsKept = 720;               // an hour of them, the latest
+var beatsKept = 720;               // an hour of readings, the latest
 var heightSum = 0;                 // altitudes read since the last one sent, to average
 var heightCount = 0;
 var heightAt = 0;                  // when the last was sent
 var heightEvery = 2;               // s between them
-var heights = [];                  // [when, m] read while the phone was away
 var heightsKept = 1800;            // an hour of them, the latest
+// the readings, reading n at n % kept: when (s), then bpm or m. One buffer, so it saves as one file
+var rec = new ArrayBuffer(beatsKept * 5 + heightsKept * 8);
+var beatT = new Uint32Array(rec, 0, beatsKept);
+var heightT = new Uint32Array(rec, beatsKept * 4, heightsKept);
+var heightM = new Float32Array(rec, beatsKept * 4 + heightsKept * 4, heightsKept);
+var beatB = new Uint8Array(rec, beatsKept * 4 + heightsKept * 8, beatsKept);
+var recId = null;                  // the session they are from
+var beatN = 0;                     // the next reading's number
+var heightN = 0;
+var recFile = "mplog.rec";
+var recMeta = storage.readJSON("mplog.recm.json", 1);
+if(recMeta){
+  var kept = storage.readArrayBuffer(recFile);
+  if(kept && kept.byteLength === rec.byteLength){
+    new Uint8Array(rec).set(new Uint8Array(kept));
+    recId = recMeta.id;
+    beatN = recMeta.hr;
+    heightN = recMeta.alt;
+  }
+}
+// once read, gone: a crash would leave them older than the numbers
+storage.erase(recFile);
+storage.erase("mplog.recm.json");
+
+E.on("kill", function(){
+  if(recId === null){ return; }
+  storage.write(recFile, new Uint8Array(rec));
+  storage.writeJSON("mplog.recm.json", { id : recId, hr : beatN, alt : heightN });
+});
+
+// the readings so far are this session's, or start again for a new one
+function recFor(){
+  if(recId === state.id){ return; }
+  recId = state.id;
+  beatN = 0;
+  heightN = 0;
+}
 
 function keep(){
   storage.writeJSON(file, { state : state, stateAt : stateAt, queue : queue, mine : mine, pick : pick });
@@ -421,9 +458,12 @@ function setHeart(){
 Bangle.on("HRM", function(hrm){
   if(!heartOn || hrm.confidence < beatSure || getTime() - beatAt < beatEvery){ return; }
   beatAt = getTime();
-  if(linked){ return tell({ t : "hr", b : hrm.bpm, a : 0 }); }
-  beats.push([beatAt, hrm.bpm]);
-  if(beats.length > beatsKept){ beats.shift(); }
+  recFor();
+  var i = beatN % beatsKept;
+  beatT[i] = Math.round(beatAt);
+  beatB[i] = hrm.bpm;
+  if(linked){ tell({ t : "hr", b : hrm.bpm, a : 0, n : beatN }); }
+  beatN++;
 });
 
 // the altitude to a tenth of a metre, for the climbing up and down the phone adds up
@@ -436,10 +476,28 @@ Bangle.on("pressure", function(e){
   var m = Math.round(heightSum / heightCount * 10) / 10;
   heightSum = 0;
   heightCount = 0;
-  if(linked){ return tell({ t : "alt", m : m, a : 0 }); }
-  heights.push([heightAt, m]);
-  if(heights.length > heightsKept){ heights.shift(); }
+  recFor();
+  var i = heightN % heightsKept;
+  heightT[i] = Math.round(heightAt);
+  heightM[i] = m;
+  if(linked){ tell({ t : "alt", m : m, a : 0, n : heightN }); }
+  heightN++;
 });
+
+// what the phone lacks of this session's readings, from the first it asked for
+function resend(ask){
+  if(!ask || recId === null || ask.id !== recId){ return; }
+  var now = getTime();
+  var n, i;
+  for(n = Math.max(ask.hr | 0, beatN - beatsKept); n < beatN; n++){
+    i = n % beatsKept;
+    tell({ t : "hr", b : beatB[i], a : Math.round(now - beatT[i]), n : n });
+  }
+  for(n = Math.max(ask.alt | 0, heightN - heightsKept); n < heightN; n++){
+    i = n % heightsKept;
+    tell({ t : "alt", m : Math.round(heightM[i] * 10) / 10, a : Math.round(now - heightT[i]), n : n });
+  }
+}
 
 /* ================= all ================= */
 
@@ -461,21 +519,18 @@ function show(){
   else { showLadder(); }
 }
 
-// The phone has connected: what waited, then hello
-function sync(){
+// The phone has connected, or woken: what waited, the readings it lacks, then hello
+function sync(ask){
   linked = true;
   queue.forEach(tell);
   queue = [];
   keep();
-  beats.forEach(function(beat){ tell({ t : "hr", b : beat[1], a : Math.round(getTime() - beat[0]) }); });
-  beats = [];
-  heights.forEach(function(height){ tell({ t : "alt", m : height[1], a : Math.round(getTime() - height[0]) }); });
-  heights = [];
+  resend(ask);
   tell({ t : "hello" });
 }
 
 global.mplog = function(msg){
-  if(msg.t === "hi"){ return sync(); }
+  if(msg.t === "hi"){ return sync(msg); }
   if(msg.t !== "state"){ return; }
   var was = state;
   // a new session, or none, starts the watch clean: nothing to undo, from the first grade and panel

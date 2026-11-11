@@ -64,7 +64,7 @@ describe('Training apps', function () {
                 }
                 win.ran.push(line);
                 if (line === 'load("mplog.app.js")') { later([{ t: 'up' }]); }
-                if (line === 'mplog({t:"hi"})') { later(hi()); }
+                if (line.startsWith('mplog({"t":"hi"')) { later(hi()); }
             });
             return Promise.resolve();
         } };
@@ -175,7 +175,7 @@ describe('Training apps', function () {
             cy.tick(5000);
             cy.window().then((win) => win.watchSays({ t: 'lap' }));
             cy.get('#lapCount').should('have.text', '1');
-            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4', h: 1 }));
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4', id: win.eval('session.id'), h: 1 }));
             cy.get('#primaryButton').click();
             cy.window().then((win) => win.watchSays({ t: 'lap' }));   // paused: no lap
             cy.get('#lapCount').should('have.text', '1');
@@ -3106,7 +3106,7 @@ describe('Training apps', function () {
                 cy.window().then((win) => {
                     expect(win.asked.some((expression) => expression.includes('Storage").write('))).to.equal(false);
                     expect(win.ran).not.to.include('load("mplog.app.js")');
-                    expect(win.ran).to.include('mplog({t:"hi"})');
+                    expect(win.ran.some((line) => line.startsWith('mplog({"t":"hi"'))).to.equal(true);
                 });
             });
 
@@ -3207,6 +3207,27 @@ describe('Training apps', function () {
                 cy.get('#summaryHeight polyline.heights').should('have.length', 1);
                 cy.get('#saveSession').click();
                 cy.window().then((win) => expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null));
+            });
+
+            it('asks the watch again for the readings it missed as the page wakes, and keeps each once', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
+                connect();
+                cy.tick(60000);
+                cy.window().then((win) => { win.watchSays({ t: 'hr', b: 90, a: 0, n: 0 }); win.watchSays({ t: 'alt', m: 100, a: 0, n: 0 }); });
+                cy.tick(5000);
+                cy.window().then((win) => win.watchSays({ t: 'hr', b: 95, a: 0, n: 1 }));
+                cy.tick(10000);   // the one in between lost, as to a sleeping page
+                cy.window().then((win) => win.watchSays({ t: 'hr', b: 105, a: 0, n: 3 }));
+                cy.document().trigger('visibilitychange');
+                cy.window().should((win) => {
+                    let hi = win.ran.filter((line) => line.startsWith('mplog({"t":"hi"')).pop();
+                    expect(JSON.parse(hi.slice('mplog('.length, -1))).to.deep.equal({ t: 'hi', id: win.eval('session.id'), hr: 2, alt: 1 });
+                });
+                // sent again, and one it already had
+                cy.window().then((win) => { win.watchSays({ t: 'hr', b: 100, a: 5, n: 2 }); win.watchSays({ t: 'hr', b: 95, a: 10, n: 1 }); });
+                cy.window().should((win) => expect(win.eval('heart.beats.map((beat) => beat[2])')).to.deep.equal([0, 1, 2, 3]));
+                cy.tick(300);
+                cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('boulderCurrentHeart')).beats).to.have.length(4));
             });
 
             it('reads the heart rate from a heart rate monitor in place of the watch, one or the other', () => {

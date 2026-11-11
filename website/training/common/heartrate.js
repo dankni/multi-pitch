@@ -63,28 +63,60 @@ function heartUntick(key){
     keepHeart();
 }
 
-/* {t:"hr", b, a} from the watch: the bpm, and how many seconds ago it was read,
-   for one that waited there while the phone was away */
+/* A reading from the watch is numbered n from 0 each session, kept as [at, value, n],
+   so one sent again is known; heart.skip holds the numbers of those turned away.
+   A run sent again is kept once it has all come, not as each arrives. */
+let heartKeepTimer = null;
+
+function heartReading(list, kind, message, value, ok){
+    let at = Date.now() - (Number(message.a) || 0) * 1000;
+    let n = Number.isInteger(message.n) ? message.n : null;
+    if(!heartWanted() || heart === null){ return; }
+    if(n !== null && (list.some(reading => reading[2] === n) || heartSkipped(kind).includes(n))){ return; }
+    if(!ok(value) || at < (session.start || session.id)){
+        if(n !== null){ heartSkipped(kind).push(n); }
+        return;
+    }
+    let reading = n === null ? [at, value] : [at, value, n];
+    let index = list.length;
+    while(index > 0 && list[index - 1][0] > at){ index--; }
+    list.splice(index, 0, reading);
+    if(Number(message.a) > 0){
+        clearTimeout(heartKeepTimer);
+        heartKeepTimer = setTimeout(() => { if(heart !== null){ keepHeart(); } }, 300);
+    } else {
+        keepHeart();
+    }
+}
+
+function heartSkipped(kind){
+    if(!heart.skip){ heart.skip = { "hr" : [], "alt" : [] }; }
+    return heart.skip[kind];
+}
+
+// {t:"hr", b, a, n} from the watch: the bpm, how many seconds ago it was read, and its number
 function heartBeat(message){
-    let bpm = Number(message.b);
-    let at = Date.now() - (Number(message.a) || 0) * 1000;
-    if(!heartWanted() || heart === null || !(bpm > 0) || at < (session.start || session.id)){ return; }
-    heart.beats.push([at, bpm]);
-    if(heart.beats.length > 1 && heart.beats[heart.beats.length - 2][0] > at){ heart.beats.sort((a, b) => a[0] - b[0]); }
-    keepHeart();
+    heartReading(heart && heart.beats, "hr", message, Number(message.b), bpm => bpm > 0);
 }
 
-// {t:"alt", m, a}: the altitude in metres, and how many seconds ago, as a beat
+// {t:"alt", m, a, n}: the altitude in metres, as a beat
 function heartHeight(message){
-    let m = Number(message.m);
-    let at = Date.now() - (Number(message.a) || 0) * 1000;
-    if(!heartWanted() || heart === null || !isFinite(m) || at < (session.start || session.id)){ return; }
-    heart.heights.push([at, m]);
-    if(heart.heights.length > 1 && heart.heights[heart.heights.length - 2][0] > at){ heart.heights.sort((a, b) => a[0] - b[0]); }
-    keepHeart();
+    heartReading(heart && heart.heights, "alt", message, Number(message.m), isFinite);
 }
 
-app.heart = { "wanted" : heartWanted, "receive" : heartBeat, "height" : heartHeight };
+// What to ask the watch for again: the session, and the first number of each it hasn't had
+function heartMissing(){
+    if(!heartWanted() || heart === null){ return null; }
+    let first = (list, kind) => {
+        let had = new Set(list.map(reading => reading[2]).concat(heartSkipped(kind)));
+        let n = 0;
+        while(had.has(n)){ n++; }
+        return n;
+    };
+    return { "id" : session.id, "hr" : first(heart.beats, "hr"), "alt" : first(heart.heights, "alt") };
+}
+
+app.heart = { "wanted" : heartWanted, "receive" : heartBeat, "height" : heartHeight, "missing" : heartMissing };
 
 function hasHeights(){
     return heart !== null && heart.heights.length > 1;
