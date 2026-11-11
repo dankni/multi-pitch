@@ -2978,6 +2978,7 @@ describe('Training apps', function () {
             cy.get('#finishSummary').should('be.visible');
             cy.get('#summaryName').should('have.text', 'Gym Session');
             cy.get('#summaryHeart').should('be.empty');   // no watch
+            cy.get('#summaryCharts > div').first().should('have.id', 'summaryClimbs');   // above the heart rate
             cy.get('#summaryClimbs figure').should('have.length', 1);   // no sport climbs, now or last time
             cy.get('#summaryClimbs figcaption').should('have.text', 'Bouldering');
             cy.get('#summaryClimbs .summary-total').should('have.text', '2 boulders · 3 last session');   // the 1 Sep one, not August's

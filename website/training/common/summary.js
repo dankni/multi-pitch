@@ -1,7 +1,7 @@
-/* The summary a session opens on at FINISH: the app's name, the heart rate
-   (common/heartrate.js) where there is any, the climbs by grade against the last
-   session saved in the same app, drawn as the progress page draws them
-   (common/charts.js), then the save panel (#endingDiv, and a log.js app's
+/* The summary a session opens on at FINISH: the app's name, the climbs by grade
+   against the last session saved in the same app, drawn as the progress page
+   draws them (common/charts.js), the heart rate (common/heartrate.js) where
+   there is any, then the save panel (#endingDiv, and a log.js app's
    start and finish times) moved in under them, and a share of the lot as one
    picture. A full screen panel, as the overlays are.
 
@@ -235,9 +235,9 @@ function drawSummaryMarkup(){
         <aside id="finishSummary" class="overlay summary">
             <h2><span id="summaryName"></span><button type="button" class="icon-button demo-icon icon-share summary-share-icon" data-action="shareSummary" aria-label="Share the summary"></button></h2>
             <div id="summaryCharts">
+                <div id="summaryClimbs"></div>
                 <div id="summaryHeart"></div>
                 <div id="summaryHeight"></div>
-                <div id="summaryClimbs"></div>
             </div>
             <div id="summarySave"></div>
             <div class="button-stack">
