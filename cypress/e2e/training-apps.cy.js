@@ -175,7 +175,7 @@ describe('Training apps', function () {
             cy.tick(5000);
             cy.window().then((win) => win.watchSays({ t: 'lap' }));
             cy.get('#lapCount').should('have.text', '1');
-            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4', id: win.eval('session.id'), h: 1 }));
+            cy.window().should((win) => expect(lastState(win)).to.deep.equal({ t: 'state', m: 'lap', s: 'running', e: 5000, n: 1, g: 'V4', id: win.eval('session.id'), ev: 0, h: 1 }));
             cy.get('#primaryButton').click();
             cy.window().then((win) => win.watchSays({ t: 'lap' }));   // paused: no lap
             cy.get('#lapCount').should('have.text', '1');
@@ -3209,6 +3209,25 @@ describe('Training apps', function () {
                 cy.window().then((win) => expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null));
             });
 
+            it('acts on what the watch sends once each and in order, asking again past a gap', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
+                connect();
+                cy.window().then((win) => win.watchSays({ t: 'add', g: 'V4', q: 0 }));
+                cy.get('#row-V4 .grade-count').should('have.text', '1');
+                cy.window().should((win) => expect(lastState(win).ev).to.equal(1));   // so the watch can let it go
+                // the second lost to a sleeping page: the third waits for it
+                cy.window().then((win) => win.watchSays({ t: 'add', g: 'V4', q: 2 }));
+                cy.window().should((win) => {
+                    let hi = win.ran.filter((line) => line.startsWith('mplog({"t":"hi"')).pop();
+                    expect(JSON.parse(hi.slice('mplog('.length, -1))).to.include({ id: win.eval('session.id'), ev: 1 });
+                });
+                cy.get('#row-V4 .grade-count').should('have.text', '1');
+                cy.window().then((win) => ['1', '2', '0'].forEach((q) => win.watchSays({ t: 'add', g: 'V4', q: Number(q) })));
+                cy.get('#row-V4 .grade-count').should('have.text', '3');
+                // kept by session, through a reload
+                cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('watchNext'))).to.deep.equal({ id: win.eval('session.id'), next: 3 }));
+            });
+
             it('asks the watch again for the readings it missed as the page wakes, and keeps each once', () => {
                 cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
                 connect();
@@ -3221,7 +3240,7 @@ describe('Training apps', function () {
                 cy.document().trigger('visibilitychange');
                 cy.window().should((win) => {
                     let hi = win.ran.filter((line) => line.startsWith('mplog({"t":"hi"')).pop();
-                    expect(JSON.parse(hi.slice('mplog('.length, -1))).to.deep.equal({ t: 'hi', id: win.eval('session.id'), hr: 2, alt: 1 });
+                    expect(JSON.parse(hi.slice('mplog('.length, -1))).to.deep.equal({ t: 'hi', id: win.eval('session.id'), hr: 2, alt: 1, ev: 0 });
                 });
                 // sent again, and one it already had
                 cy.window().then((win) => { win.watchSays({ t: 'hr', b: 100, a: 5, n: 2 }); win.watchSays({ t: 'hr', b: 95, a: 10, n: 1 }); });

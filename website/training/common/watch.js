@@ -2,7 +2,7 @@
    (/training/watch/) on the watch, or its newer version, and opens it. Then
    the app's state is sent over whenever it changes, and what the watch sends
    back is the app's to act on. A watch that drops out is tried again while the
-   app is active; what was done on it meanwhile waits there till then.
+   app is active; what was done on it waits there till the page says it has it.
 
    The app gives `app.watchKey`, for the setting under the cog, and `app.watch`:
      state   : () => what Climb Log shows, its mode in m - see mplog.app.js
@@ -166,7 +166,7 @@ function pushWatch(){
     if(!watchReady || watchPush !== null){ return; }
     watchPush = bangle.idle().then(() => {
         watchPush = null;
-        return bangle.run(`if(global.mplog)mplog(${JSON.stringify(Object.assign({ "t" : "state" }, app.watch.state(), app.heart && app.heart.wanted() ? { "h" : 1 } : {}))})`);
+        return bangle.run(`if(global.mplog)mplog(${JSON.stringify(Object.assign({ "t" : "state" }, app.watch.state(), watchHas(), app.heart && app.heart.wanted() ? { "h" : 1 } : {}))})`);
     });
 }
 
@@ -181,14 +181,41 @@ function fromWatch(message){
     // a reading every few seconds changes nothing the watch shows
     if(message.t === "hr"){ return app.heart && app.heart.receive(message); }
     if(message.t === "alt"){ return app.heart && app.heart.height(message); }
+    // numbered q from 0 each session: each acted on once and in order, a gap asked for again
+    if(typeof message.q === "number"){
+        let next = watchNext();
+        if(message.q < next){ return; }
+        if(message.q > next){ return sayHi(); }
+        setWatchNext(next + 1);
+    }
     app.watch.receive(message);
     pushWatch();
 }
 
-// hi, with the readings missed - while the page slept, say - for the watch to send again
+/* The number of the next thing the watch sends, kept by session through a
+   reload, and sent as ev in hi and each state so the watch can let go of the rest */
+const watchNextKey = "watchNext";
+
+function watchNext(){
+    let id = app.watch.state().id;
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(watchNextKey)); } catch(err){}
+    return saved && saved.id === id ? saved.next : 0;
+}
+
+function setWatchNext(next){
+    localStorage.setItem(watchNextKey, JSON.stringify({ "id" : app.watch.state().id, "next" : next }));
+}
+
+function watchHas(){
+    let id = app.watch.state().id;
+    return id === undefined ? {} : { "id" : id, "ev" : watchNext() };
+}
+
+// hi, with what was missed - while the page slept, say - for the watch to send again
 function sayHi(){
     let missing = app.heart && app.heart.missing ? app.heart.missing() : null;
-    return bangle.run(`mplog(${JSON.stringify(Object.assign({ "t" : "hi" }, missing || {}))})`);
+    return bangle.run(`mplog(${JSON.stringify(Object.assign({ "t" : "hi" }, missing || {}, watchHas()))})`);
 }
 
 document.addEventListener("visibilitychange", () => {

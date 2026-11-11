@@ -13,12 +13,15 @@
      interval - tabata: work or rest and the time left, with a buzz as each starts,
                 and the screen woken and red for the last seconds of a rest.
    The time of day is in the widget bar, on every screen.
-   What the phone hasn't had yet waits in mplog.json until it connects again.
+   What it sends the phone is numbered from 0 each session (q) and kept in
+   mplog.json till the phone says, as ev in hi or a state, the first it has
+   yet to have: sent again from there on hi, so none is lost to a phone asleep
+   or away.
    With h in the state, a running session's heart rate is read and sent every
    few seconds, and the barometer's altitude, averaged, every two. The last
    hour of each is kept, numbered from 0 each session (n), and in mplog.rec as
    the app closes, so the phone can ask again for any it missed - asleep, or
-   away - with mplog({t:"hi", id, hr, alt}): the session, and the first number
+   away - with mplog({t:"hi", id, hr, alt, ev}): the session, and the first number
    of each it lacks. They come with how many seconds ago they were read.
 
    To the phone, a line of JSON each: add, undo, tab, harder, tick, finish, lap, hr, alt, then
@@ -31,7 +34,9 @@ var version = (storage.readJSON("mplog.info", 1) || {}).version || "";
 var title = "Climb Log " + (/^\d/.test(version) ? "v" : "") + version;   // the app version, as the phone's settings show it
 var state = saved.state || null;   // the phone's last word
 var stateAt = saved.stateAt || 0;  // when it came, for a clock counted on from it
-var queue = saved.queue || [];
+var sent = saved.sent || [];       // sent this session, till the phone has them
+var sentId = saved.sentId;         // the session
+var sentN = saved.sentN || 0;      // the next one's number
 var mine = saved.mine || [];       // [ladder, grade] ticked here, latest last, for undo
 var pick = saved.pick || {};       // the grade on show, by ladder
 var linked = false;                // the phone app, not just anything, is connected
@@ -94,7 +99,7 @@ function recFor(){
 }
 
 function keep(){
-  storage.writeJSON(file, { state : state, stateAt : stateAt, queue : queue, mine : mine, pick : pick });
+  storage.writeJSON(file, { state : state, stateAt : stateAt, sent : sent, sentId : sentId, sentN : sentN, mine : mine, pick : pick });
 }
 
 function tell(msg){
@@ -102,8 +107,22 @@ function tell(msg){
 }
 
 function send(msg){
+  if(sentId !== state.id){
+    sentId = state.id;
+    sent = [];
+    sentN = 0;
+  }
+  msg.q = sentN++;
+  sent.push(msg);
+  keep();
   if(linked){ tell(msg); }
-  else { queue.push(msg); keep(); }
+}
+
+// the phone has all before ev
+function had(ask){
+  if(ask.id !== sentId || typeof ask.ev !== "number"){ return false; }
+  sent = sent.filter(function(msg){ return msg.q >= ask.ev; });
+  return true;
 }
 
 function mode(){
@@ -489,11 +508,11 @@ function resend(ask){
   if(!ask || recId === null || ask.id !== recId){ return; }
   var now = getTime();
   var n, i;
-  for(n = Math.max(ask.hr | 0, beatN - beatsKept); n < beatN; n++){
+  for(n = typeof ask.hr === "number" ? Math.max(ask.hr, beatN - beatsKept) : beatN; n < beatN; n++){
     i = n % beatsKept;
     tell({ t : "hr", b : beatB[i], a : Math.round(now - beatT[i]), n : n });
   }
-  for(n = Math.max(ask.alt | 0, heightN - heightsKept); n < heightN; n++){
+  for(n = typeof ask.alt === "number" ? Math.max(ask.alt, heightN - heightsKept) : heightN; n < heightN; n++){
     i = n % heightsKept;
     tell({ t : "alt", m : Math.round(heightM[i] * 10) / 10, a : Math.round(now - heightT[i]), n : n });
   }
@@ -519,12 +538,13 @@ function show(){
   else { showLadder(); }
 }
 
-// The phone has connected, or woken: what waited, the readings it lacks, then hello
+// The phone has connected, or woken: what it lacks of this session, then hello
 function sync(ask){
   linked = true;
-  queue.forEach(tell);
-  queue = [];
-  keep();
+  if(had(ask)){
+    keep();
+    sent.forEach(tell);
+  }
   resend(ask);
   tell({ t : "hello" });
 }
@@ -540,6 +560,7 @@ global.mplog = function(msg){
   }
   state = msg;
   stateAt = getTime();
+  had(msg);
   keep();
   setHeart();
   var same = was && (was.m || "ladder") === mode() && was.s === state.s;
