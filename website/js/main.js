@@ -1267,10 +1267,16 @@ function loadNonEssential(type, url, mod = false){
     }
 }
 
+// Automated browsers run the page's JS too; keep them out of GA. Copied in training/common/functions.js
+function looksLikeBot(){
+    return navigator.webdriver === true || /bot|crawl|spider|slurp|headless|lighthouse|phantom|puppeteer|playwright|selenium/i.test(navigator.userAgent);
+}
+
 /**
  LOADS THE ANALYTICS AFTER THE PAGE LOADS
  **/
 function LoadAnalytics(){
+    if(looksLikeBot()){ return; }
     window.performance.mark('gta-start');
     loadNonEssential("script", "https://www.googletagmanager.com/gtag/js?id=G-XR0EG1VTTE");
     setTimeout(function(){

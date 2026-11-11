@@ -1316,9 +1316,14 @@ function beaconAnalytics(){
     send("page_view");
 }
 
+// Automated browsers run the page's JS too; keep them out of GA. Copied in /js/main.js
+function looksLikeBot(){
+    return navigator.webdriver === true || /bot|crawl|spider|slurp|headless|lighthouse|phantom|puppeteer|playwright|selenium/i.test(navigator.userAgent);
+}
+
 // Off on a page with <body data-analytics="off">, such as the style guide
 function loadAnalytics(){
-    if(document.body.dataset.analytics === "off"){ return; }
+    if(document.body.dataset.analytics === "off" || looksLikeBot()){ return; }
     if(localStorage.getItem(accountRefreshKey) !== null){
         if(navigator.sendBeacon){ beaconAnalytics(); }
         return;
