@@ -824,6 +824,36 @@ describe('Training apps', function () {
             cy.get('.toast').should('not.exist');
         });
 
+        it('saves on FINISH, the stars saved over it, and SAVE adds no second one', () => {
+            visitLoft();
+            startAndCountIn();
+            cy.get('#finishButton').click();
+            const savedLog = () => cy.window().its('localStorage').invoke('getItem', 'loftLog').then((log) => JSON.parse(log));
+            savedLog().should('have.length', 1);
+            cy.get('#star3').click();
+            savedLog().should((log) => {
+                expect(log).to.have.length(1);
+                expect(log[0].rating).to.equal(3);
+            });
+            cy.get('#saveSession').click();
+            savedLog().should('have.length', 1);
+        });
+
+        it('says in a warning toast, up until closed, when a session cannot be saved', () => {
+            visitLoft();
+            startAndCountIn();
+            cy.window().then((win) => {
+                cy.stub(win.Storage.prototype, 'setItem').callsFake(function (key) {
+                    if (key === 'loftLog') { throw new win.DOMException('full', 'QuotaExceededError'); }
+                });
+            });
+            cy.get('#finishButton').click();
+            cy.tick(100);
+            cy.get('.toast.warn').should('be.visible').and('contain', 'Session not saved');
+            cy.tick(10000);
+            cy.get('.toast.warn').should('be.visible');
+        });
+
         // the two tap reset is common/functions.js's, tested in full on the lap timer
         it('offers reset only while paused, disarms it after a few seconds, and clears the session on a second tap', () => {
             visitLoft();
@@ -1014,6 +1044,16 @@ describe('Training apps', function () {
             cy.get('#first').should('not.be.visible');
             cy.get('#hangs tr.done').should('have.length', 6);
             cy.get('#hangs .pip.done').should('have.length', 20);
+            // saved as it finishes, the stars and note saved over it
+            cy.window().its('localStorage').invoke('getItem', 'noHangsLog').then((log) => {
+                expect(JSON.parse(log)).to.have.length(1);
+            });
+            cy.get('#star4').click();
+            cy.get('#sessionComment').type('Easy.');
+            cy.window().its('localStorage').invoke('getItem', 'noHangsLog').then((log) => {
+                expect(JSON.parse(log)).to.have.length(1);
+                expect(JSON.parse(log)[0]).to.include({ rating: 4, comment: 'Easy.' });
+            });
             cy.get('#saveSession').click();
             cy.window().its('localStorage').invoke('getItem', 'noHangsLog').then((log) => {
                 expect(JSON.parse(log)).to.have.length(1);
@@ -3716,7 +3756,7 @@ describe('Training apps', function () {
                 cy.get('meta[name="apple-mobile-web-app-title"]').should('have.attr', 'content', 'Training');
                 cy.get('#fullscreen').should('be.visible').and('have.class', 'icon-resize-full');
                 cy.get('nav').should('have.css', 'background-color', 'rgb(18, 18, 18)');
-                cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
+                cy.get('.bottom-nav .bottom-nav-item').should('have.length', 4);
             });
         });
 
@@ -3734,12 +3774,12 @@ describe('Training apps', function () {
     describe('Bottom navigation', function () {
         it('leaves the app button empty until an app has been opened', () => {
             cy.visit(appUrl + '/training/');
-            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3);
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 4);
             // the overview is where you are, so Apps is not a link
             cy.get('.bottom-nav .bottom-nav-item').first().should('contain', 'Apps')
                 .and('have.attr', 'aria-current', 'page').and('not.have.attr', 'href');
             cy.get('.bottom-nav a').first().should('contain', 'Progress').and('have.attr', 'href', '/training/progress/');
-            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'empty');
+            cy.get('.bottom-nav .bottom-nav-item').last().should('have.class', 'empty');
         });
 
         it('marks Progress as the page you are on', () => {
@@ -3752,14 +3792,14 @@ describe('Training apps', function () {
         it('shows the app you are in, and links back to it from elsewhere', () => {
             cy.visit(appUrl + '/training/timer/');
             // where you are, not a link
-            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('have.class', 'current')
+            cy.get('.bottom-nav .bottom-nav-item').last().should('have.class', 'current')
                 .and('contain', 'Circuit').and('not.have.attr', 'href');
             cy.get('.bottom-nav a').first().should('have.attr', 'href', '/training/');
             cy.visit(appUrl + '/training/');
-            cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Circuit')
+            cy.get('.bottom-nav .bottom-nav-item').last().should('contain', 'Circuit')
                 .and('have.attr', 'href', '/training/timer/');
             // and following it gets there
-            cy.get('.bottom-nav .bottom-nav-item').eq(2).click();
+            cy.get('.bottom-nav .bottom-nav-item').last().click();
             cy.location('pathname').should('equal', '/training/timer/');
         });
     });
@@ -4652,7 +4692,7 @@ describe('Training apps', function () {
             cy.get('.apps li').eq(0).find('.app-card').trigger('pointerdown', { button: 0 });
             cy.tick(500);
             cy.get('body').should('have.class', 'reordering');
-            cy.get('.apps .drag-handle').should('have.length', 10).first().should('have.attr', 'aria-label', 'Move Gym Session');
+            cy.get('.apps .drag-handle').should('have.length', 9).first().should('have.attr', 'aria-label', 'Move Gym Session');
             cy.get('#saveOrder').should('be.visible').and('have.text', 'Save order');
             cy.document().trigger('pointerup');
             cy.get('.apps li').eq(1).find('.app-card').click();   // goes nowhere while reordering
@@ -4685,8 +4725,8 @@ describe('Training apps', function () {
             cy.contains('#settings button', 'Re-order or remove apps').click();
             cy.get('#settings').should('not.be.visible');
             cy.get('body').should('have.class', 'reordering');
-            cy.get('.apps .drag-handle').should('have.length', 10);
-            cy.get('.apps .remove-app').should('have.length', 10);
+            cy.get('.apps .drag-handle').should('have.length', 9);
+            cy.get('.apps .remove-app').should('have.length', 9);
             cy.get('#saveOrder').should('be.visible');
         });
 
@@ -4708,13 +4748,13 @@ describe('Training apps', function () {
             cy.get('.apps li:visible').first().should('contain', 'Gilford Wall');
             cy.get('#saveOrder').click();
             cy.reload();
-            cy.get('.apps li:visible').should('have.length', 9).first().should('contain', 'Gilford Wall');
+            cy.get('.apps li:visible').should('have.length', 8).first().should('contain', 'Gilford Wall');
             cy.get('nav .icon-cog').click();
             cy.contains('summary', 'Add removed apps').click();
             cy.get('#removedAppList button').should('have.length', 1).and('have.text', 'Gym Session').click();
             cy.get('#removedAppList button').should('not.exist');
             cy.get('#removedApps').should('not.be.visible');
-            cy.get('.apps li:visible').should('have.length', 10).first().should('contain', 'Gym Session');
+            cy.get('.apps li:visible').should('have.length', 9).first().should('contain', 'Gym Session');
             cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingRemovedApps'))).to.deep.equal([]));
         });
 
@@ -5273,6 +5313,20 @@ describe('Training apps', function () {
             cy.get('#gauge').should('not.be.visible');
         });
 
+        it('hides the Tindeq Arcade until "tindeq" is typed, unless it has been played', () => {
+            cy.visit(appUrl + '/training/');
+            cy.get('.apps a[href="/training/gaps/"]').should('not.exist');
+            cy.get('nav .icon-cog').click();
+            cy.get('#hiddenApp').type('Tindeq');
+            cy.get('.apps li').last().find('a').should('have.attr', 'href', '/training/gaps/').and('contain', 'Tindeq Arcade');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('trainingHiddenApps'))).to.deep.equal(['tindeq']));
+            cy.visit(appUrl + '/training/', { onBeforeLoad: (win) => {
+                win.localStorage.clear();
+                win.localStorage.setItem('gapsLog', JSON.stringify([{ id: 1, date: '2026-10-01', score: 100, input: 'tap' }]));
+            } });
+            cy.get('.apps a[href="/training/gaps/"]').should('contain', 'Tindeq Arcade');
+        });
+
         it('is hidden until "maxpull" is typed under the Apps page cog', () => {
             cy.visit(appUrl + '/training/');
             cy.get('.apps a[href="/training/maxpull/"]').should('not.exist');
@@ -5319,11 +5373,14 @@ describe('Training apps', function () {
             cy.contains('button', 'SET GOAL').click();
         }
 
-        it('is switched on in the account panel, which puts it in the bottom nav', () => {
+        it('is on by default, and switched off and on in the account panel, which takes it out of the bottom nav and back', () => {
             cy.visit(appUrl + '/training/rings/');
-            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3).and('not.contain', 'Goals');
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 4).eq(2).should('contain', 'Goals');
             cy.get('nav .account-button').click();
-            cy.get('#goalsOn').should('not.be.checked').check({ force: true });
+            cy.get('#goalsOn').should('be.checked').uncheck({ force: true });
+            cy.get('.bottom-nav .bottom-nav-item').should('have.length', 3).and('not.contain', 'Goals');
+            cy.window().then((win) => expect(win.localStorage.getItem('trainingGoalsOn')).to.equal('off'));
+            cy.get('#goalsOn').check({ force: true });
             cy.get('.bottom-nav .bottom-nav-item').should('have.length', 4);
             cy.get('.bottom-nav .bottom-nav-item').eq(2).should('contain', 'Goals').and('have.class', 'entering').and('have.attr', 'href', '/training/goals/');
             cy.window().then((win) => expect(win.localStorage.getItem('trainingGoalsOn')).to.equal('on'));

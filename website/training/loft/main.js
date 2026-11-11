@@ -208,10 +208,13 @@ function showTask(task){
     return task;
 }
 
-/* Saving: how long it ran and how many moves were called */
+/* Saving: how long it ran and how many moves were called. FINISH saves it, and
+   the stars, note and title save again as they change. */
+let storedId = null;   // this session's id in the log, once FINISH has saved it
 
 function openSavePanel(){
     pauseSession();
+    storeLoft();
     drawState("saving");
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
@@ -229,9 +232,10 @@ const logView = {
     }
 };
 
-function saveSession(){
+function storeLoft(){
+    storedId = storedId || Date.now();
     saveToLog(app.logKey, {
-        "id" : Date.now(),
+        "id" : storedId,
         "date" : today(),
         "seconds" : clock.seconds,
         "moves" : moves.made,
@@ -239,8 +243,16 @@ function saveSession(){
         "comment" : sessionComment,
         "title" : titleToSave()
     });
-    clearSession();
     drawSessionLog(logView);
+}
+
+function storeFinished(){
+    if(storedId !== null){ storeLoft(); }
+}
+
+function saveSession(){
+    storeLoft();
+    clearSession();
     openInfoBox();
     keepNoteToast();
 }
@@ -255,6 +267,7 @@ function clearSession(){
     clock.reset();
     paused = true;
     countedIn = false;
+    storedId = null;
     moves = freshMoves();
     document.getElementById("color").style.backgroundColor = "";
     showElapsed(0);

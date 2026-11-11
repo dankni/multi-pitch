@@ -200,7 +200,7 @@ function drawKindPicker(chosen){
     picker.id = "kindPicker";
     picker.className = "setting-group";
     picker.innerHTML = "<legend>Count it as</legend><div class=\"picker\">" + sessionKinds.map(kind =>
-        `<input type="radio" name="sessionKind" class="nice-radios" id="kind-${kind}" value="${kind}"${kind === chosen ? " checked" : ""} />`
+        `<input type="radio" name="sessionKind" class="nice-radios" id="kind-${kind}" value="${kind}"${kind === chosen ? " checked" : ""} data-change="storeChange" />`
         + `<label for="kind-${kind}">${kind}</label>`).join("") + "</div>";
     document.getElementById("endingDiv").insertBefore(picker, document.getElementById("saveSession"));
 }

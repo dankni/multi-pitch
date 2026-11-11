@@ -164,20 +164,6 @@
                 </div>
             </a>
         </li>
-        <!-- Tindeq Arcade: its icon is the Tindeq mark, two peaks -->
-        <li>
-            <a class="app-card" href="/training/gaps/">
-                <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-                    <path fill="none" stroke="currentColor" stroke-width="8" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/>
-                </svg>
-                <div class="app-text">
-                    <h2>Tindeq Arcade</h2>
-                    <p>
-                        A Tindeq Progressor game.
-                    </p>
-                </div>
-            </a>
-        </li>
     </ul>
     <button type="button" class="link-button save-order" id="saveOrder" data-action="saveAppOrder" hidden>Save order</button>
 
@@ -317,7 +303,9 @@
             "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
                 <path fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round" d="M7,68 V55.2 L39,32 H43.4 L93,63 V68 Z"/>
             </svg>` },
-        // after the rest
+        // after the rest; its icon is the Tindeq mark, two peaks
+        "tindeq" : { "name" : "Tindeq Arcade", "href" : "/training/gaps/", "text" : "A Tindeq Progressor game.", "before" : null,
+            "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="8" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/></svg>` },
         "maxpull" : { "name" : "Max Pull", "href" : "/training/maxpull/", "text" : "Track your max pull per arm", "before" : null,
             "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"><path d="M14,72 A38,38 0 1 1 86,72"/><path d="M50,62 L68,36"/></g><circle fill="currentColor" cx="50" cy="62" r="7"/></svg>` }
     };
@@ -368,6 +356,12 @@
         toast("No hidden app by that name");
     }
 
+    // anyone who has played the Arcade keeps it, from before it was hidden
+    try {
+        if(getLog("gapsLog").length > 0 && !addedHiddenApps().includes("tindeq")){
+            localStorage.setItem(hiddenAppsKey, JSON.stringify(addedHiddenApps().concat("tindeq")));
+        }
+    } catch(err){}
     addedHiddenApps().forEach(drawHiddenApp);
 
     /* The cards in an order of your own: a long press sets them wobbling, each

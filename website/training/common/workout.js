@@ -11,6 +11,9 @@
      onEditOpen : entry => draw the app's own part of the save panel from it
      editEntry  : () => the app's own fields to save over it
 
+   The session saves as the clock runs out, and the stars, note and title save
+   again as they change (storeFinished, from storeChange() in functions.js).
+
    What is on screen follows body[data-state] - idle, counting (the three, two,
    one), running, paused or finished - and data-saving once the save panel is up.
    See common/workout.css.
@@ -20,6 +23,7 @@
 let paused = true;
 let countedIn = false;
 let editing = null;   // the saved entry the save panel is open on, from the log
+let storedId = null;  // this session's id in the log, once the finish has saved it
 
 function toggleSession(){
     paused ? startSession() : pauseSession();
@@ -74,8 +78,21 @@ function finishSession(){
     app.clock.stop();
     stopHum();
     releaseWakeLock();
+    storeWorkout();
     showSavePanel();
     drawState("finished");
+}
+
+function storeWorkout(){
+    storedId = storedId || Date.now();
+    saveToLog(app.logKey, Object.assign({ "id" : storedId, "date" : today() }, app.logEntry(), {
+        "seconds" : app.clock.seconds   // how long it ran, for the time trained on the progress page
+    }, { "rating" : sessionRating, "comment" : sessionComment, "title" : titleToSave() }));
+    drawSessionLog(app.logView);
+}
+
+function storeFinished(){
+    if(storedId !== null && editing === null){ storeWorkout(); }
 }
 
 function reset(){
@@ -84,6 +101,7 @@ function reset(){
     app.clock.reset();
     paused = true;
     countedIn = false;
+    storedId = null;
     background("");
     showElapsed(0);
     document.body.removeAttribute("data-saving");
@@ -123,11 +141,8 @@ function saveSession(){
         reset();
         return;
     }
-    saveToLog(app.logKey, Object.assign({ "id" : Date.now(), "date" : today() }, app.logEntry(), {
-        "seconds" : app.clock.seconds   // how long it ran, for the time trained on the progress page
-    }, said));
+    storeWorkout();   // kept till reset, as rings can save before the clock runs out
     document.body.removeAttribute("data-saving");
     resetSavePanel();
-    drawSessionLog(app.logView);
     keepNoteToast();
 }

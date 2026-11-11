@@ -347,14 +347,21 @@ function askToKeepStorage(){
 
 // A new entry joins the log; an edited one replaces the one it came from.
 // updated decides which copy wins when two phones have both - see common/backup.js
+// false, with a warning up until closed, when it couldn't be saved - storage full or blocked
 function saveToLog(key, entry){
-    let log = getLog(key);
-    entry.updated = Date.now();
-    let existing = log.findIndex(item => item.id === entry.id);
-    existing === -1 ? log.push(entry) : log[existing] = entry;
-    setLog(key, log);
+    try {
+        let log = getLog(key);
+        entry.updated = Date.now();
+        let existing = log.findIndex(item => item.id === entry.id);
+        existing === -1 ? log.push(entry) : log[existing] = entry;
+        setLog(key, log);
+    } catch(err){
+        toast("Session not saved", null, true, true);
+        return false;
+    }
     askToKeepStorage();
     if(typeof syncSoon === "function"){ syncSoon(); }
+    return true;
 }
 
 // Deleted sessions, kept a while so a merge doesn't bring them back
@@ -1158,15 +1165,9 @@ function showAppVersion(){
 const goalsIcon = '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.25"/><circle cx="8" cy="8" r="3.25"/></g><circle cx="8" cy="8" r="1" fill="currentColor"/>';
 const goalsOnKey = "trainingGoalsOn";
 
-// Off until switched on, or on for anyone who had set weekly targets
+// On until switched off
 function goalsOn(){
-    let on = localStorage.getItem(goalsOnKey);
-    if(on === null){
-        let targets = null;
-        try { targets = JSON.parse(localStorage.getItem("trainingTargets")); } catch(err){ targets = null; }
-        return Array.isArray(targets) && targets.length > 0;
-    }
-    return on === "on";
+    return localStorage.getItem(goalsOnKey) !== "off";
 }
 
 function setGoalsOn(box){

@@ -27,12 +27,12 @@ const gradesContent = JSON.parse(fs.readFileSync('./website/climbing-grades/cont
 // The training apps are hand written static pages rather than generated from a
 // JSON source, so their dates live here - bump one when you change that app.
 const trainingPages = [
-    { url: '/training/', lastUpdated: '2026-11-04', priority: '0.7' },
+    { url: '/training/', lastUpdated: '2026-11-11', priority: '0.7' },
     { url: '/training/progress/', lastUpdated: '2026-11-04', priority: '0.6' },
-    { url: '/training/loft/', lastUpdated: '2026-11-04', priority: '0.6' },
-    { url: '/training/rings/', lastUpdated: '2026-11-04', priority: '0.6' },
-    { url: '/training/nohangs/', lastUpdated: '2026-11-04', priority: '0.6' },
-    { url: '/training/tabata/', lastUpdated: '2026-11-04', priority: '0.6' },
+    { url: '/training/loft/', lastUpdated: '2026-11-11', priority: '0.6' },
+    { url: '/training/rings/', lastUpdated: '2026-11-11', priority: '0.6' },
+    { url: '/training/nohangs/', lastUpdated: '2026-11-11', priority: '0.6' },
+    { url: '/training/tabata/', lastUpdated: '2026-11-11', priority: '0.6' },
     { url: '/training/gaps/', lastUpdated: '2026-11-05', priority: '0.6' },
     { url: '/training/gilford/', lastUpdated: '2026-11-04', priority: '0.6' },
     { url: '/training/timer/', lastUpdated: '2026-11-04', priority: '0.6' },
