@@ -1129,7 +1129,6 @@ nav .account-button svg {
 }
 .comment-pop-stars {
     margin: 0 0 8px;
-    font-size: var(--t-sm);
 }
 .comment-pop-text {
     margin: 0;
@@ -1151,24 +1150,74 @@ nav .account-button svg {
     display: block;
 }
 .save-title {
-    margin: 40px auto 0;
+    margin: var(--s5) auto var(--s2);
     font-size: var(--t-md);
     font-weight: 600;
     color: var(--strong);
 }
-.star-holder {
-    font-size: 32px;
+/* The rating: five faces, red to green, in one bar; the one picked filled in its colour */
+.rating-1 { --rating: var(--danger-ink); }
+.rating-2 { --rating: var(--warn-ink); }
+.rating-3 { --rating: var(--ink-2); }
+.rating-4, .rating-5 { --rating: var(--confirm-ink); }
+/* "Rate session" and the faces on one line */
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    max-width: var(--column);
+    margin: var(--s4) auto 0;
+}
+.rating-row .save-title {
+    margin: 0;
+    white-space: nowrap;
+}
+.rating-bar {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--track-edge);
+    border-radius: var(--r-pill);
+    background: var(--track);
     user-select: none;
     -webkit-user-select: none;
 }
-.icon-star {
-    color: var(--off);
+.rating-option, .rating-option:hover, .rating-option:focus {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    padding: var(--s2) 0;
+    color: var(--rating);
+    opacity: 0.55;
 }
-.icon-star.active {
-    color: var(--warn-ink);
+.rating-option + .rating-option {
+    border-left: 1px solid var(--track-edge);
 }
-.icon-star:hover {
-    color: color-mix(in srgb, var(--warn-ink) 70%, var(--surface));
+.rating-option:hover {
+    opacity: 0.85;
+}
+.rating-option.active {
+    background: color-mix(in srgb, var(--rating) 22%, var(--surface));
+    opacity: 1;
+}
+.rating-option:focus-visible {
+    outline-offset: -3px;
+}
+.rating-option svg {
+    width: 28px;
+    height: 28px;
+}
+.rating-face {
+    display: inline-flex;
+    vertical-align: middle;
+    color: var(--rating);
+}
+.rating-face svg {
+    width: 20px;
+    height: 20px;
 }
 .save-session-button {
     margin-top: 12px;
@@ -1280,9 +1329,15 @@ nav .account-button svg {
     margin: 0 0 0 4px;
     cursor: pointer;
 }
-.log-table .icon-star {
+.log-table .rating-face {
     margin: 0;
-    cursor: default;
+}
+/* the session DONE just saved, pulsed as the log opens on it */
+.log-table tr.log-new td {
+    animation: log-new 0.9s ease-in-out 3;
+}
+@keyframes log-new {
+    50% { background: color-mix(in srgb, var(--primary) 24%, transparent); }
 }
 /* 13px glyphs padded out to a thumb-sized target, without spreading the rows */
 .log-actions .demo-icon {

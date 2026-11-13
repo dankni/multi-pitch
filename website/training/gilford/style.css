@@ -60,7 +60,7 @@
     }
 }
 
-/* A route and, while falls are tracked, its falls under it */
+/* A route and, while falls are tracked, its waffle under it */
 .route-cell {
     display: flex;
     flex-direction: column;
@@ -70,7 +70,7 @@
 .route-cell .route {
     flex: 1 1 auto;
 }
-.route-cell .falls .falls-button {
-    flex: 1 1 0;
+.route-cell .ascent-open {
+    flex: 1 1 auto;
     width: auto;
 }

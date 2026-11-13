@@ -453,7 +453,7 @@ function escapeHtml(text){
 /* ================= Recent logs =================
    A session's last few taps and how long ago, behind "Show recent logs": the gym
    session, Outside and the lap timer. Kept on the session, never saved. */
-const recentShown = 3;
+const recentShown = 5;
 let recentTicker = null;
 
 // before the caller's keepSession()
@@ -490,8 +490,9 @@ function toggleRecent(details){
 
 /* ================= The save panel =================
    An app writes <div id="endingDiv" class="ending"></div> and this fills it with
-   the stars, a title, the note and the save button, which calls the app's
-   saveSession(). The title is optional, and saved only when there is one. */
+   a title, the note, the rating and the save button, which calls the app's
+   saveSession(). The title is optional, and saved only when there is one. The
+   rating is 1 to 5 (0 for none), shown as a face. */
 let sessionRating = 0;
 let sessionComment = "";
 let sessionTitle = "";
@@ -499,9 +500,24 @@ const commentLimit = 300;
 const commentCountFrom = 250;   // the count shows from here, red at the limit
 const titleLimit = 24;   // fits under the app's name in a log row
 
+// a face for each rating, 1 to 5
+const ratingFaces = [null,
+    '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M7.5 17.5q4.5-4.5 9 0"/>',
+    '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M8.5 16.5q3.5-2.5 7 0"/>',
+    '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M8.5 15.5h7"/>',
+    '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M8 14q4 4 8 0"/>',
+    '<path d="M7 11l2-2 2 2M13 11l2-2 2 2"/><path d="M8.5 14h7a3.5 3.5 0 0 1-7 0z" fill="currentColor"/>'
+];
+
+function ratingFace(value){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'
+        + '<circle cx="12" cy="12" r="9.5"/>' + ratingFaces[value] + '</g></svg>';
+}
+
 function setStar(value){
-    document.querySelectorAll(".star-holder .icon-star").forEach((star, index) => {
-        star.classList.toggle("active", index < value);
+    document.querySelectorAll(".rating-bar .rating-option").forEach((option, index) => {
+        option.classList.toggle("active", index + 1 === value);
+        option.setAttribute("aria-pressed", String(index + 1 === value));
     });
     sessionRating = value;
     if(session){
@@ -515,25 +531,25 @@ function storeChange(){
     if(typeof storeFinished === "function"){ storeFinished(); }
 }
 
-function rate(star){
-    setStar(Number(star.dataset.stars));
+function rate(option){
+    setStar(Number(option.dataset.rating));
     storeChange();
 }
 
 function drawSavePanel(){
     let panel = document.getElementById("endingDiv");
     if(panel === null){ return; }
-    let stars = "";
+    let options = "";
     for(let i = 1; i <= 5; i++){
-        stars += `<button type="button" class="icon-button demo-icon icon-star" id="star${i}" data-action="rate" data-stars="${i}" aria-label="Rate session ${i} of 5"></button>`;
+        options += `<button type="button" class="icon-button rating-option rating-${i}" id="rate${i}" data-action="rate" data-rating="${i}"
+            aria-pressed="false" aria-label="Rate session ${i} of 5">${ratingFace(i)}</button>`;
     }
-    panel.innerHTML = `<p class="save-title">Good Session?</p>
-        <div class="star-holder">${stars}</div>
-        <input type="text" id="sessionTitle" class="comment-field" maxlength="${titleLimit}" data-input="updateTitle"
+    panel.innerHTML = `<input type="text" id="sessionTitle" class="comment-field" maxlength="${titleLimit}" data-input="updateTitle"
             placeholder="Give it a title (optional)" aria-label="A title for this session" />
         <textarea id="sessionComment" class="comment-field" rows="2" maxlength="${commentLimit}" data-input="updateComment"
             placeholder="Anything worth remembering?" aria-label="A note about this session"></textarea>
         <p class="comment-count" id="commentCountLine" hidden><span id="commentCount">0</span>/${commentLimit}</p>
+        <div class="rating-row"><p class="save-title">Rate session</p><div class="rating-bar">${options}</div></div>
         <button id="saveSession" class="save-session-button" data-action="saveSession">SAVE SESSION</button>`;
 }
 
@@ -593,6 +609,7 @@ function resetSavePanel(){
 
    With no argument it redraws with what it was last given. */
 let sessionLogView = null;
+let logHighlight = null;   // a session's id: its row pulses the next time the log is drawn, as DONE saves it
 
 function sessionLogEntries(){
     let extra = sessionLogView.extra ? sessionLogView.extra() : [];
@@ -627,6 +644,10 @@ function drawSessionLog(view){
         </thead>
         <tbody>${log.map(sessionLogRow).join("")}</tbody>
     </table>`;
+    let row = holder.querySelector(".log-new");
+    logHighlight = null;
+    // once the info panel it is in is open
+    if(row !== null){ setTimeout(() => row.scrollIntoView({ "block" : "nearest" }), 100); }
 }
 
 /* With sessions in it, the log is what the info panel opens on: the cards above
@@ -659,14 +680,11 @@ function logDate(date){
     return when.year === "" ? when.day : when.day + " " + when.year;
 }
 
-// No stars at all for a read only row: UKC has no rating, and five empty stars would read as nought
+// The rating's face, none for no rating or a read only row: UKC has no rating
 function sessionStars(entry){
-    if(entry.readOnly){ return ""; }
-    let stars = "";
-    for(let i = 0; i < 5; i++){
-        stars += `<i class="demo-icon icon-star ${i < entry.rating ? "active" : ""}"></i>`;
-    }
-    return stars;
+    let value = Math.round(Number(entry.rating));
+    if(entry.readOnly || !(value >= 1 && value <= 5)){ return ""; }
+    return `<span class="rating-face rating-${value}" role="img" aria-label="Rated ${value} of 5">${ratingFace(value)}</span>`;
 }
 
 function logButton(action, id, icon, label){
@@ -677,7 +695,7 @@ function logButton(action, id, icon, label){
 const tindeqMark = '<svg class="tindeq-mark" viewBox="0 0 100 100" role="img" aria-label="pulled on a Tindeq Progressor">'
     + '<path fill="none" stroke="currentColor" stroke-width="9" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/></svg>';
 
-// No stars for a view that says it has no rating, as a game with a score
+// No rating for a view that says it has none, as a game with a score
 function logStars(entry){
     return sessionLogView.unrated ? "" : sessionStars(entry);
 }
@@ -700,7 +718,7 @@ function sessionLogRow(entry){
     let note = logComment(entry) ? logButton("note", entry.id, "icon-note", "Read the note from " + date) : "";
     let edit = sessionLogView.onEdit && !entry.readOnly ? logButton("edit", entry.id, "icon-wrench", "Edit session " + date) : "";
     let remove = entry.readOnly ? "" : " " + logButton("delete", entry.id, "icon-trash", "Delete session " + date);
-    return `<tr>
+    return `<tr${logHighlight !== null && entry.id === logHighlight ? " class=\"log-new\"" : ""}>
         <td class="log-date">${when.day}${when.year === "" ? "" : `<br /><span class="log-year">${when.year}</span>`}</td>
         <td>${logTitle(entry)}${described.title}${described.detail ? `<br /><span class="log-detail">${described.detail}</span>` : ""}</td>
         <td class="log-rating">${logStars(entry)}</td>

@@ -135,7 +135,7 @@ const app = {
             let hardest = [hardestGrade("boulder", entry.climbs), hardestGrade("sport", sport)].filter(grade => grade !== "");
             return {
                 "title" : title.filter(part => part !== "").join(", "),
-                "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", fallsDetail(entry), sessionLength(entry)])
+                "detail" : joinDetail([hardest.length > 0 ? "hardest " + hardest.join(" · ") : "", flashDetail(entry), sessionLength(entry)])
             };
         },
         "stats" : log => {

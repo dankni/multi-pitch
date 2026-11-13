@@ -35,6 +35,22 @@
 .chart .bar {
     fill: var(--c);
 }
+.chart .bar.dog {
+    opacity: 0.15;
+}
+.chart .flashes {
+    fill: var(--warn-ink);
+}
+.chart .flashes text {
+    fill: var(--warn-ink);
+    font-size: var(--t-2xs);
+    font-weight: 700;
+}
+.chart .falls {
+    fill: var(--danger-ink);
+    font-size: var(--t-2xs);
+    font-weight: 700;
+}
 .legend {
     display: flex;
     flex-wrap: wrap;

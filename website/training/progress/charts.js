@@ -46,13 +46,24 @@
         logKeys.forEach(key => entriesOf(logs, key).forEach(entry => {
             let read = key === "tradLog" ? Object.assign({}, entry, { "climbs" : ukc.session(entry).climbs }) : entry;
             entryClimbs(key, read).forEach(climb => {
-                if(climb.kind === kind){ climbs.push({ "date" : entry.date, "grade" : shown(climb.grade) }); }
+                if(climb.kind === kind){ climbs.push({ "date" : entry.date, "grade" : shown(climb.grade), "dog" : climb.dog === true, "flash" : climb.flash === true }); }
             });
         }));
         ukc.climbs().forEach(climb => {
             if(climb.type === kind && onLadder[kind](climb.grade)){ climbs.push({ "date" : climb.date, "grade" : shown(climb.grade) }); }
         });
         return climbs;
+    }
+
+    function fallsOfKind(logs, kind){
+        let falls = [];
+        let shown = climbKinds[kind].shown;
+        logKeys.forEach(key => entriesOf(logs, key).forEach(entry => {
+            entryFalls(key, entry).forEach(fall => {
+                if(fall.kind === kind){ falls.push({ "date" : entry.date, "grade" : shown(fall.grade), "count" : fall.count }); }
+            });
+        }));
+        return falls;
     }
 
     const sportClimbs = logs => climbsOfKind(logs, "sport");
@@ -114,9 +125,10 @@
     /* The two grade charts: a column per grade, with a line for the period
        before when there is one */
 
-    function drawGrades(climbs, range, columns, bandOf, noun, totalId){
+    function drawGrades(climbs, falls, range, columns, bandOf, noun, totalId){
         let windows = windowsFor(range);
         let current = climbs.filter(climb => within(climb.date, windows.current));
+        let fallen = falls.filter(fall => within(fall.date, windows.current));
         let previous = windows.previous ? climbs.filter(climb => within(climb.date, windows.previous)) : [];
         let total = document.getElementById(totalId);
 
@@ -127,17 +139,23 @@
                 : "No " + noun + "s logged yet.");
         }
 
-        let grades = columns(current.concat(previous).map(climb => climb.grade));
+        let grades = columns(current.concat(previous, fallen).map(climb => climb.grade));
         let countOf = (list, grade) => list.filter(climb => climb.grade === grade).length;
 
         let groups = grades.map(grade => {
             let now = countOf(current, grade);
+            let dogs = countOf(current.filter(climb => climb.dog), grade);
+            let flashes = countOf(current.filter(climb => climb.flash), grade);
+            let fell = fallen.filter(fall => fall.grade === grade).reduce((sum, fall) => sum + fall.count, 0);
             let before = windows.previous ? countOf(previous, grade) : null;
             let title = grade + ": " + now;
+            if(flashes > 0){ title += ", " + flashes + " flashed"; }
+            if(dogs > 0){ title += ", " + dogs + " dogged"; }
+            if(fell > 0){ title += ", " + plural(fell, "fall"); }
             if(before !== null){
                 title += " in " + periodName(range, "current") + ", " + before + " in " + periodName(range, "previous");
             }
-            return { "label" : grade, "title" : title, "value" : now, "cls" : bandOf(grade).cls, "before" : before };
+            return { "label" : grade, "title" : title, "value" : now, "dogs" : dogs, "flashes" : flashes, "falls" : fell, "cls" : bandOf(grade).cls, "before" : before };
         });
 
         let summary = windows.previous
@@ -192,12 +210,12 @@
         let range = selectedRange();
         chartWidth = Math.round(chartColumn().clientWidth) || 520;
         document.getElementById("sportChart").innerHTML =
-            drawGrades(sportClimbs(logs), range, sportColumns, sportBand, "climb", "sportTotal");
+            drawGrades(sportClimbs(logs), fallsOfKind(logs, "sport"), range, sportColumns, sportBand, "climb", "sportTotal");
         document.getElementById("boulderChart").innerHTML =
-            drawGrades(boulderClimbs(logs), range, boulderColumns, boulderBand, "boulder", "boulderTotal");
+            drawGrades(boulderClimbs(logs), fallsOfKind(logs, "boulder"), range, boulderColumns, boulderBand, "boulder", "boulderTotal");
         if(hasTrad(logs)){
             document.getElementById("tradChart").innerHTML =
-                drawGrades(tradClimbs(logs), range, tradColumns, tradBand, "trad climb", "tradTotal");
+                drawGrades(tradClimbs(logs), fallsOfKind(logs, "trad"), range, tradColumns, tradBand, "trad climb", "tradTotal");
         }
     }
 

@@ -21,14 +21,20 @@ function columnPath(x, y, width, height){
 
 /* One column chart, drawn at the width it is shown at so its 11px labels stay 11px.
 
-   groups : [{ label, title, value, cls, before }]
+   groups : [{ label, title, value, cls, before, dogs, flashes, falls }]
+
+   Dogs are part of value, drawn faint on top of the rest; flashes are a small
+   number with a lightning bolt over the bar, and falls a small red number under
+   the grade.
 
    Where there is something to compare with, `before` is its count, drawn as a
    thin line across the bar at that height - enough to see up or down at a
    glance without a second bar competing with the first. */
 function columnChart(groups, ariaLabel, width){
     const height = 200;
-    const left = 26, right = 4, top = 16, bottom = 22;
+    const left = 26, right = 4;
+    const top = groups.some(group => group.flashes > 0) ? 30 : 16;
+    const bottom = groups.some(group => group.falls > 0) ? 34 : 22;
     const plotWidth = width - left - right, plotHeight = height - top - bottom;
 
     let most = 0;
@@ -52,6 +58,10 @@ function columnChart(groups, ariaLabel, width){
     let labelEvery = Math.max(1, Math.ceil(groups.length / Math.floor(plotWidth / 20)));
     let barWidth = Math.min(40, slot * 0.66);
 
+    if(groups.some(group => group.falls > 0)){
+        svg += `<text class="falls" x="0" y="${height - bottom + 28}" text-anchor="start">Falls</text>`;
+    }
+
     groups.forEach((group, index) => {
         let x = left + slot * index + (slot - barWidth) / 2;
         let centre = x + barWidth / 2;
@@ -60,7 +70,12 @@ function columnChart(groups, ariaLabel, width){
         svg += `<g class="column" style="--i:${index}"><title>${escapeHtml(group.title)}</title>`
             + `<rect class="hit" x="${left + slot * index}" y="${top}" width="${slot}" height="${plotHeight}" />`;
 
-        if(total > 0){
+        let dogs = Math.min(total, group.dogs || 0);
+        if(dogs > 0){
+            let sent = total - dogs;
+            svg += `<path class="bar dog ${group.cls}" d="${columnPath(x, yOf(total), barWidth, yOf(sent) - yOf(total))}" />`;
+            if(sent > 0){ svg += `<rect class="bar ${group.cls}" x="${x}" y="${yOf(sent)}" width="${barWidth}" height="${yOf(0) - yOf(sent)}" />`; }
+        } else if(total > 0){
             svg += `<path class="bar ${group.cls}" d="${columnPath(x, yOf(total), barWidth, yOf(0) - yOf(total))}" />`;
         }
 
@@ -77,10 +92,20 @@ function columnChart(groups, ariaLabel, width){
             let line = group.before > total ? yOf(group.before) : null;
             if(line !== null && y - line < 14){ y = line - 5; }
             svg += `<text class="count" x="${centre}" y="${y}" text-anchor="middle">${total}</text>`;
+            if(group.flashes > 0){
+                // the bolt left of the number, the pair centred over the bar
+                let flashY = y - 13, width = String(group.flashes).length * 6 + 8;
+                let x0 = centre - width / 2;
+                svg += `<g class="flashes"><path transform="translate(${x0},${flashY - 8}) scale(0.4)" d="M14 2 4.5 13.5H11L9.5 22 19.5 9.5H13z" />`
+                    + `<text x="${x0 + 9}" y="${flashY}" text-anchor="start">${group.flashes}</text></g>`;
+            }
         }
 
         if(index % labelEvery === 0){
             svg += `<text class="label" x="${centre}" y="${height - bottom + 15}" text-anchor="middle">${escapeHtml(group.label)}</text>`;
+        }
+        if(group.falls > 0){
+            svg += `<text class="falls" x="${centre}" y="${height - bottom + 28}" text-anchor="middle">${group.falls}</text>`;
         }
         svg += `</g>`;
     });
@@ -220,7 +245,7 @@ const climbKinds = {
     "trad"    : { "columns" : tradColumns,    "shown" : sameGrade,         "band" : gradeBands.trad,    "noun" : "trad climb", "title" : "Trad" }
 };
 
-/* The climbs in one saved session, as [{ kind, grade }] with each grade as it was
+/* The climbs in one saved session, as [{ kind, grade, dog, flash }] with each grade as it was
    logged, read defensively as a hand-edited log could hold anything: tick list routes looked up on the wall,
    endurance grades, a gym session's boulders and its sport climbs (4c as 4+ and
    so on), the loft's routes as the boulder grade a plus is a shade of, a
@@ -228,29 +253,62 @@ const climbKinds = {
 function entryClimbs(logKey, entry){
     let list = value => Array.isArray(value) ? value : [];
     let climbs = [];
-    let add = (kind, grade) => { if(grade){ climbs.push({ "kind" : kind, "grade" : grade }); } };
+    // the nth send of a climb is its nth send in entry.ascents (common/log.js)
+    let sent = {};
+    let styleOf = key => {
+        let marks = entry.ascents && Array.isArray(entry.ascents[key]) ? entry.ascents[key].filter(mark => mark !== "fall") : [];
+        sent[key] = (sent[key] || 0) + 1;
+        return marks[sent[key] - 1];
+    };
+    let add = (kind, grade, key) => {
+        if(!grade){ return; }
+        let climb = { "kind" : kind, "grade" : grade };
+        let style = key === undefined ? undefined : styleOf(key);
+        if(style === "dog"){ climb.dog = true; }
+        if(style === "flash"){ climb.flash = true; }
+        climbs.push(climb);
+    };
     if(logKey === "gilfordLog"){
         list(entry.climbs).forEach(id => {
             let route = typeof getRoute === "function" ? getRoute(id) : undefined;
-            if(route){ add("sport", route.grade); }
+            if(route){ add("sport", route.grade, id); }
         });
     } else if(logKey === "enduranceLog"){
         list(entry.grades).forEach(grade => { if(typeof grade === "string"){ add("sport", grade); } });
     } else if(logKey === "boulderLog"){
-        list(entry.climbs).forEach(grade => { if(boulderV(grade) !== ""){ add("boulder", grade); } });
+        list(entry.climbs).forEach(grade => { if(boulderV(grade) !== ""){ add("boulder", grade, grade); } });
         list(entry.sport).forEach(tapped => {
-            if(typeof tapped === "string" && typeof ukc !== "undefined"){ add("sport", ukc.sportGrade(tapped)); }
+            if(typeof tapped === "string" && typeof ukc !== "undefined"){ add("sport", ukc.sportGrade(tapped), tapped); }
         });
     } else if(logKey === "dansLoftLog"){
-        list(entry.climbs).forEach(id => add("boulder", typeof loftBoulderGrade === "function" ? loftBoulderGrade(id) : undefined));
+        list(entry.climbs).forEach(id => add("boulder", typeof loftBoulderGrade === "function" ? loftBoulderGrade(id) : undefined, id));
     } else if(logKey === "lapTimerLog"){
         if(boulderRung(entry.grade) !== -1){
             for(let lap = 0; lap < Math.floor(Number(entry.laps) || 0); lap++){ add("boulder", entry.grade); }
         }
     } else if(logKey === "tradLog"){
-        list(entry.climbs).forEach(grade => { if(tradLadder.includes(grade)){ add("trad", grade); } });
+        list(entry.climbs).forEach(grade => { if(tradLadder.includes(grade)){ add("trad", grade, grade); } });
     }
     return climbs;
+}
+
+// The falls in one saved session, as [{ kind, grade, count }], read as entryClimbs() reads its climbs
+function entryFalls(logKey, entry){
+    let falls = [];
+    let falling = entry && entry.falls && typeof entry.falls === "object" ? entry.falls : {};
+    Object.keys(falling).forEach(key => {
+        let count = Math.floor(Number(falling[key]) || 0);
+        if(count <= 0){ return; }
+        let one = Object.assign({}, entry, { "climbs" : [], "sport" : [], "ascents" : {} });
+        if(logKey === "boulderLog"){
+            if(boulderV(key) !== ""){ one.climbs = [key]; }
+            else { one.sport = [key]; }
+        } else {
+            one.climbs = [isNaN(Number(key)) ? key : Number(key)];
+        }
+        entryClimbs(logKey, one).forEach(climb => falls.push({ "kind" : climb.kind, "grade" : climb.grade, "count" : count }));
+    });
+    return falls;
 }
 
 /* An SVG on the page as an image, for a canvas to draw: an SVG drawn as an

@@ -37,6 +37,9 @@ const app = {
         },
         "active" : () => session !== null
     },
+    "sendClimb" : id => addLoftRoute(Number(id)),
+    "unsendClimb" : id => removeLoftRoute(Number(id)),
+    "drawClimb" : id => drawRow(getLoftRoute(Number(id))),
     "newSession" : () => ({ "climbs" : [] }),
     "fromEntry" : entry => ({ "climbs" : entry.climbs.slice() }),
     "toEntry" : from => ({ "climbs" : from.climbs.slice() }),
@@ -58,7 +61,7 @@ const app = {
         "describe" : entry => {
             let hardest = hardestGrade(entry.climbs);
             return { "title" : plural(entry.climbs.length, "climb"),
-                     "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", routesDone(entry.climbs), fallsDetail(entry), sessionLength(entry)]) };
+                     "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", routesDone(entry.climbs), flashDetail(entry), sessionLength(entry)]) };
         },
         "stats" : log => {
             let total = log.reduce((count, entry) => count + entry.climbs.length, 0);
@@ -114,15 +117,17 @@ function addLoftClimb(button){
 function addLoftRoute(id){
     let route = getLoftRoute(id);
     if(session === null || route === undefined){ return; }
-    let earlier = session.climbs.map(loftBoulderGrade);
+    let earlier = withoutDogs(session.climbs, session.ascents).map(loftBoulderGrade);
     let wasAll = allClimbed();
     session.climbs.push(route.id);
+    noteSend(route.id);
     noteRecent(`${route.colour} ${route.grade} tapped`);
     heartTick(route.id, route.grade);
     keepSession();
     drawRow(route);
     flash(document.getElementById("row-" + route.id).querySelector(".grade-add"));
     updateSummary();
+    if(ascentStyle === "dog"){ return; }   // no cheer for a dog
     if(!wasAll && allClimbed()){ toast("Every route on the wall climbed, nice one!"); }
     cheerGrade("boulder", loftBoulderGrade(route.id), earlier);   // see common/records.js
 }
@@ -138,6 +143,7 @@ function removeLoftRoute(id){
     let position = session.climbs.lastIndexOf(route.id);
     if(position === -1){ return; }
     session.climbs.splice(position, 1);
+    noteUnsend(route.id);
     noteRecent(`${route.colour} ${route.grade} taken back`);
     heartUntick(route.id);
     keepSession();

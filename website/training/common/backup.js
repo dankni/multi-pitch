@@ -6,8 +6,9 @@
    dropped from both. Settings go as one block: the side changed last wins, and
    the other fills in what it hasn't set - so a backup with no date on its
    settings, or a phone never synced, only fills in. Only the keys named below
-   are ever written. The UKC logbook is left out: it comes from UKC, and is
-   imported from there again. So is a session still in progress. */
+   are ever written. A session still in progress is left out. The UKC logbook
+   goes in the backup file only, not the account's copy, which a long one could
+   take past its size; on a restore the one imported from UKC last is kept. */
 
 const backupFormat = "multi-pitch training apps";
 
@@ -144,8 +145,33 @@ function sameBackup(a, b){
    the same file can be loaded twice, or onto a phone already in use, without
    losing or doubling anything. The page then starts again with what was added,
    and says so (showRestored() in functions.js). */
+// The UKC logbook (common/ukc.js), read here as most pages don't load ukc.js
+const backupUkcKey = "ukcLogbook";
+
+function isUkcLogbook(logbook){
+    return Boolean(logbook) && typeof logbook === "object" && Array.isArray(logbook.climbs) && typeof logbook.imported === "string";
+}
+
+function backupUkc(){
+    let logbook = null;
+    try { logbook = JSON.parse(localStorage.getItem(backupUkcKey)); } catch(err){ logbook = null; }
+    return isUkcLogbook(logbook) ? logbook : null;
+}
+
+// A file's logbook, taken where there is none here or it was imported later. True if it was.
+function restoreUkc(logbook){
+    if(!isUkcLogbook(logbook)){ return false; }
+    let here = backupUkc();
+    if(here !== null && here.imported >= logbook.imported){ return false; }
+    localStorage.setItem(backupUkcKey, JSON.stringify(logbook));
+    return true;
+}
+
 function downloadBackup(){
-    let file = new Blob([JSON.stringify(backupData(), null, 2)], { "type" : "application/json" });
+    let data = backupData();
+    let logbook = backupUkc();
+    if(logbook !== null){ data.ukc = logbook; }
+    let file = new Blob([JSON.stringify(data, null, 2)], { "type" : "application/json" });
     let link = document.createElement("a");
     link.href = URL.createObjectURL(file);
     link.download = `training-backup-${today()}.json`;
@@ -159,22 +185,23 @@ function chooseBackupFile(){
     document.getElementById("backupFile").click();
 }
 
-// Adds what is not already here, and says how much that was
+// Adds what is not already here: how many sessions that was, and whether it took the UKC logbook
 function restoreBackup(data){
     if(!isBackup(data)){
         throw new Error("that is not a training apps backup");
     }
-    return applyBackup(mergeBackup(backupData(), data));
+    let added = applyBackup(mergeBackup(backupData(), data));
+    return { "added" : added, "ukc" : restoreUkc(data.ukc) };
 }
 
 function importBackupFile(input){
     let file = input.files && input.files[0];
     if(!file){ return; }
     file.text().then(text => {
-        let added = restoreBackup(JSON.parse(text));
-        sessionStorage.setItem(restoredKey, added === 0
-            ? "Nothing new in that backup - it's all here already"
-            : `Backup restored: ${plural(added, "session")} added`);
+        let restored = restoreBackup(JSON.parse(text));
+        sessionStorage.setItem(restoredKey, restored.added > 0 ? `Backup restored: ${plural(restored.added, "session")} added`
+            : restored.ukc ? "Log book added"
+            : "Nothing new in that backup - it's all here already");
         location.reload();
     }).catch(err => {
         toast("Couldn't restore that file: " + err.message, null, false, true);

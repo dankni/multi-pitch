@@ -5,19 +5,26 @@
    start and finish times) moved in under them, and a share of the lot as one
    picture. A full screen panel, as the overlays are.
 
+   The title, note and rating show as they were put in, with a pencil to edit
+   them (straight to the fields where there are none). Under them DONE - the
+   app's save button, moved in - and a Back link to the session. Shared from the
+   icon by the name.
+
    An app calls openSummary() as it finishes and closeSummary() as the session
    is closed or thrown away. Opening it saves the session to the log, through the
    app's storeSession(), and the stars, note and title save again as they change,
    so the save button only closes it. The app may give app.summaryEntry : () => the session as
    its log would save it, for entryClimbs() - app.toEntry(session) otherwise.
-   The cross goes back to the session through the app's own resumeSession(). */
+   BACK goes back to the session through the app's own resumeSession(). */
 
 let summaryMoved = [];   // [element, the placeholder it came from]
 let summaryWidth = 0;    // what the charts were drawn at
 let summarySaveLabel = "";   // the save button's own, while it reads DONE
 
+// with the falls and ascent styles log.js saves beside the app's own fields
 function summaryEntry(){
-    return app.summaryEntry ? app.summaryEntry() : app.toEntry(session);
+    let entry = app.summaryEntry ? app.summaryEntry() : app.toEntry(session);
+    return Object.assign({ "falls" : session.falls, "ascents" : session.ascents }, entry);
 }
 
 // The latest saved before this one, by date then id, leaving this one out if it is being reopened
@@ -43,11 +50,21 @@ function climbFigures(width){
         let { columns, shown, band, noun, title } = climbKinds[kind];
         let current = now.filter(climb => climb.kind === kind).map(climb => shown(climb.grade));
         let previous = before.filter(climb => climb.kind === kind).map(climb => shown(climb.grade));
+        let dogs = now.filter(climb => climb.kind === kind && climb.dog).map(climb => shown(climb.grade));
+        let flashes = now.filter(climb => climb.kind === kind && climb.flash).map(climb => shown(climb.grade));
+        let falls = entryFalls(app.logKey, summaryEntry()).filter(fall => fall.kind === kind);
         let count = (list, grade) => list.filter(each => each === grade).length;
-        let groups = columns(current.concat(previous)).map(grade => ({
+        let fallsAt = grade => falls.filter(fall => shown(fall.grade) === grade).reduce((sum, fall) => sum + fall.count, 0);
+        let groups = columns(current.concat(previous, falls.map(fall => shown(fall.grade)))).map(grade => ({
             "label" : grade,
-            "title" : `${grade}: ${count(current, grade)}` + (last === null ? "" : `, ${count(previous, grade)} last session`),
+            "title" : `${grade}: ${count(current, grade)}` + (count(flashes, grade) > 0 ? `, ${count(flashes, grade)} flashed` : "")
+                + (count(dogs, grade) > 0 ? `, ${count(dogs, grade)} dogged` : "")
+                + (fallsAt(grade) > 0 ? `, ${plural(fallsAt(grade), "fall")}` : "")
+                + (last === null ? "" : `, ${count(previous, grade)} last session`),
             "value" : count(current, grade),
+            "dogs" : count(dogs, grade),
+            "flashes" : count(flashes, grade),
+            "falls" : fallsAt(grade),
             "cls" : band(grade).cls,
             "before" : last === null ? null : count(previous, grade)
         }));
@@ -80,13 +97,20 @@ function openSummary(){
     document.getElementById("summaryName").innerText = summaryName();
     // the times and the save panel, from wherever the app keeps them
     let save = document.getElementById("summarySave");
-    [document.querySelector(".session-times"), document.getElementById("endingDiv")].forEach(element => {
-        if(element === null || save.contains(element)){ return; }
+    let move = (element, into) => {
+        if(element === null || into.contains(element)){ return; }
         let placeholder = document.createComment("summary");
         element.before(placeholder);
         summaryMoved.push([element, placeholder]);
-        save.appendChild(element);
-    });
+        into.appendChild(element);
+    };
+    move(document.querySelector(".session-times"), save);
+    move(document.getElementById("endingDiv"), save);
+    move(document.getElementById("saveSession"), document.getElementById("summaryActions"));
+    drawSummaryNotes();
+    // nothing put in yet: the fields themselves
+    document.getElementById("finishSummary").toggleAttribute("data-edit-notes",
+        sessionTitle.trim() === "" && sessionComment.trim() === "" && !(sessionRating > 0));
     storeSession();
     session.stored = true;
     keepSession();
@@ -122,8 +146,30 @@ function unstoreSession(){
     drawSessionLog();
 }
 
+// The title, note and rating as put in, and the pencil to change them
+const pencilIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></g></svg>';
+
+function drawSummaryNotes(){
+    let notes = document.getElementById("summaryNotes");
+    if(notes === null){ return; }
+    let title = sessionTitle.trim(), comment = sessionComment.trim();
+    notes.innerHTML = `<div class="summary-notes-text">
+            ${title ? `<p class="summary-notes-title">${escapeHtml(title)}</p>` : ""}
+            ${comment ? `<p class="summary-notes-comment">${escapeHtml(comment)}</p>` : ""}
+            ${sessionStars({ "rating" : sessionRating })}
+        </div>
+        <button type="button" class="icon-button summary-edit" data-action="editSummaryNotes" aria-label="Edit the title, note and rating">${pencilIcon}</button>`;
+}
+
+function editSummaryNotes(){
+    document.getElementById("finishSummary").setAttribute("data-edit-notes", "");
+    let field = document.getElementById("sessionTitle");
+    if(field !== null){ field.focus(); }
+}
+
 function closeSummary(){
-    summaryMoved.forEach(([element, placeholder]) => placeholder.replaceWith(element));
+    summaryMoved.reverse().forEach(([element, placeholder]) => placeholder.replaceWith(element));
     summaryMoved = [];
     let button = document.getElementById("saveSession");
     if(button !== null && summarySaveLabel !== ""){ button.innerText = summarySaveLabel; }
@@ -132,7 +178,7 @@ function closeSummary(){
     closeOverlay("finishSummary");
 }
 
-// the cross: back to the session, to climb on or put something right
+// BACK: to the session, to climb on or put something right
 function backToSession(){
     closeSummary();
     resumeSession();
@@ -140,7 +186,7 @@ function backToSession(){
 
 /* The whole summary as one picture: the name and date, each chart as it is
    drawn (see svgImage() in common/charts.js), and the title, the note and the
-   stars as typed */
+   rating's face as put in */
 function wrapText(pen, text, width){
     let lines = [];
     String(text).split("\n").forEach(paragraph => {
@@ -184,7 +230,16 @@ async function shareSummary(){
         probe.remove();
         return value;
     };
-    let ink = sheet.color, muted = resolve("var(--ink-2)"), amber = resolve("var(--warn-ink)");
+    let ink = sheet.color, muted = resolve("var(--ink-2)");
+    let face = null;
+    if(sessionRating > 0){
+        let probe = document.createElement("span");
+        probe.className = "rating-face rating-" + sessionRating;
+        probe.innerHTML = ratingFace(sessionRating);
+        panel.appendChild(probe);
+        face = await svgImage(probe.querySelector("svg"));
+        probe.remove();
+    }
 
     // laid out first, to know how tall to make the canvas
     let parts = [];
@@ -200,7 +255,7 @@ async function shareSummary(){
     let title = sessionTitle.trim();
     if(title || sessionComment.trim() || sessionRating > 0){ parts.push({ "gap" : gap }); }
     if(title){ parts.push({ "text" : title, "font" : font(18, 600), "colour" : ink, "height" : 26 }); }
-    if(sessionRating > 0){ parts.push({ "text" : "★".repeat(sessionRating) + "☆".repeat(5 - sessionRating), "font" : font(22), "colour" : amber, "height" : 30 }); }
+    if(face !== null){ parts.push({ "image" : face, "height" : face.height + 8 }); }
     if(sessionComment.trim()){
         probe.font = font(15);
         wrapText(probe, sessionComment.trim(), inner).forEach(line => parts.push({ "text" : line, "font" : font(15), "colour" : ink, "height" : 21 }));
@@ -233,18 +288,21 @@ async function shareSummary(){
 function drawSummaryMarkup(){
     document.body.insertAdjacentHTML("beforeend", `
         <aside id="finishSummary" class="overlay summary">
-            <h2><span id="summaryName"></span><button type="button" class="icon-button demo-icon icon-share summary-share-icon" data-action="shareSummary" aria-label="Share the summary"></button></h2>
+            <h2><span id="summaryName"></span><button type="button" class="icon-button summary-share-icon" data-action="shareSummary" aria-label="Share the summary"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 10.5H6.5a1.5 1.5 0 0 0-1.5 1.5v7.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V12a1.5 1.5 0 0 0-1.5-1.5H16"/></g></svg></button></h2>
             <div id="summaryCharts">
                 <div id="summaryClimbs"></div>
                 <div id="summaryHeart"></div>
                 <div id="summaryHeight"></div>
             </div>
-            <div id="summarySave"></div>
-            <div class="button-stack">
-                <button type="button" class="quiet" id="shareSummary" data-action="shareSummary"><i class="demo-icon icon-share"></i>SHARE</button>
+            <div id="summarySave"><div id="summaryNotes" class="summary-notes"></div></div>
+            <div class="summary-actions" id="summaryActions">
+                <button type="button" class="link-button text-link" id="summaryBack" data-action="backToSession">Back</button>
             </div>
-            <button type="button" class="icon-button close" data-action="backToSession" aria-label="Back to the session"></button>
         </aside>`);
+    // DONE: the session's row in the log pulses once it is drawn
+    document.getElementById("summaryActions").addEventListener("click", event => {
+        if(event.target.closest("#saveSession") && session !== null){ logHighlight = session.id; }
+    });
     // on a change of width only, and in the next frame: drawing changes the height,
     // and can bring on the panel's scrollbar, which would set it off again in this one
     new ResizeObserver(() => requestAnimationFrame(() => {

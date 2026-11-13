@@ -84,7 +84,7 @@ const app = {
             let hardest = hardestGrade("trad", merge.climbs);
             return {
                 "title" : plural(merge.climbs.length, "trad climb"),
-                "detail" : joinDetail([hardest ? "hardest " + hardest : "", fallsDetail(entry), sessionLength(entry), merge.merged ? "merged with UKC" : ""])
+                "detail" : joinDetail([hardest ? "hardest " + hardest : "", flashDetail(entry), sessionLength(entry), merge.merged ? "merged with UKC" : ""])
             };
         },
         // a merged session with no note of its own shows UKC's

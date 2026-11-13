@@ -47,6 +47,7 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Outside, Progress, All apps (account panel) | Remove the imported UKC logbook from this device? | Confirm | Until REMOVE, Cancel or closed | Remove by the UKC logbook, or under it in the account panel | common/ukc.js | Yes | Only REMOVE removes; the page then reloads |
 | All apps | Backup restored: N sessions added | Info | 5.2 s | After a backup file is restored from the person in the nav and the page reloads | common/backup.js | Yes | |
 | All apps | Nothing new in that backup - it's all here already | Info | 5.2 s | After restoring a backup that adds nothing | common/backup.js | Yes | |
+| All apps | Log book added | Info | 5.2 s | After restoring a backup that adds no sessions but takes its UKC logbook | common/backup.js | Yes | |
 | All apps | Couldn't restore that file: &lt;error&gt; | Warning | 5.2 s | A backup file fails to restore | common/backup.js | Yes | |
 | Progress | Synced - tap to reload | Action | Until tapped or closed | A sync adds sessions from the account while the progress page is open | common/account.js | Yes | In an app, its log redraws instead |
 | All apps | Delete your account? | Confirm | Until DELETE, Cancel or closed | "delete", in any case, is typed in the field Delete account opens in the account panel | common/account.js | Yes | Only DELETE deletes; the sessions stay on the phone |

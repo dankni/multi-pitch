@@ -14,23 +14,81 @@
     font-size: var(--t-sm);
     color: var(--ink-2);
 }
-/* the save panel and a log.js app's times, moved in from the app */
+/* the save panel and a log.js app's times, moved in from the app: the panel's
+   fields once the pencil is tapped, or straight away with nothing in them */
 #summarySave .ending {
-    display: block;
+    display: none;
     width: 100%;
     margin-bottom: 0;
 }
-/* SHARE close under SAVE SESSION, as the save panel spaces its own */
-.summary .button-stack {
-    margin-top: 0;
+[data-edit-notes] #summarySave .ending {
+    display: block;
 }
-#shareSummary {
-    margin-top: 12px;
+[data-edit-notes] #summaryNotes {
+    display: none;
+}
+.summary-notes {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s3);
+    margin: var(--s4) 0 0;
+    padding: var(--s3) var(--s4);
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    text-align: left;
+}
+.summary-notes-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.summary-notes-text p {
+    margin: 0 0 var(--s2);
+}
+.summary-notes-title {
+    font-weight: 600;
+    color: var(--strong);
+}
+.summary-notes-comment {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+.summary-notes .rating-face svg {
+    width: 28px;
+    height: 28px;
+}
+.summary-edit {
+    flex: 0 0 auto;
+    padding: var(--s2);
+    margin: calc(-1 * var(--s2));
+    color: var(--ink-2);
+}
+.summary-edit svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+/* DONE, and Back as a link under it */
+.summary-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s3);
+    margin-top: var(--s5);
+}
+.summary-actions > button {
+    margin: 0;
+}
+#summaryBack {
+    order: 1;
 }
 .summary-share-icon {
     margin-left: 12px;
-    font-size: var(--t-lg);
     vertical-align: middle;
+}
+.summary-share-icon svg {
+    display: block;
+    width: 24px;
+    height: 24px;
 }
 #summarySave .session-times {
     display: flex;

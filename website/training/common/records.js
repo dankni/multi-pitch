@@ -8,27 +8,42 @@
    A kind's grades can come from more than one app: a sport grade beats the gym
    session's sport, the tick list's and the endurance app's. Their ladders are
    common/grades.js, common/gilford-routes.js and common/dansloft-routes.js,
-   read only when a kind is. */
+   read only when a kind is.
+
+   A dogged climb (common/log.js) is no clean ascent: it is never cheered, and
+   never the grade to beat. */
 const recordDays = 30;
 const dayMs = 86400000;
 
 const recordKinds = {
     "boulder" : {
         "rank" : grade => Math.max(-1, boulderNumber(grade)),
-        "logs" : [["boulderLog", entry => entry.climbs],
-                  ["dansLoftLog", entry => (Array.isArray(entry.climbs) ? entry.climbs : []).map(loftBoulderGrade)]]
+        "logs" : [["boulderLog", entry => withoutDogs(entry.climbs, entry.ascents)],
+                  ["dansLoftLog", entry => withoutDogs(entry.climbs, entry.ascents).map(loftBoulderGrade)]]
     },
     "sport" : {
         "rank" : grade => gymSportOrder.indexOf(grade),
-        "logs" : [["boulderLog", entry => entry.sport],
-                  ["gilfordLog", entry => (Array.isArray(entry.climbs) ? entry.climbs : []).map(id => (getRoute(id) || {}).grade)],
+        "logs" : [["boulderLog", entry => withoutDogs(entry.sport, entry.ascents)],
+                  ["gilfordLog", entry => withoutDogs(entry.climbs, entry.ascents).map(id => (getRoute(id) || {}).grade)],
                   ["enduranceLog", entry => entry.grades]]
     },
     "trad" : {
         "rank" : grade => tradLadder.indexOf(grade),
-        "logs" : [["tradLog", entry => entry.climbs]]
+        "logs" : [["tradLog", entry => withoutDogs(entry.climbs, entry.ascents)]]
     }
 };
+
+// A session's climbs less the dogged ones: the nth send of a climb is its nth send in ascents
+function withoutDogs(climbs, ascents){
+    let list = Array.isArray(climbs) ? climbs : [];
+    if(!ascents || typeof ascents !== "object"){ return list.slice(); }   // a copy: the caller may be about to add to the one it gave
+    let sent = {};
+    return list.filter(climb => {
+        let marks = Array.isArray(ascents[climb]) ? ascents[climb].filter(mark => mark !== "fall") : [];
+        sent[climb] = (sent[climb] || 0) + 1;
+        return marks[sent[climb] - 1] !== "dog";
+    });
+}
 
 // A log's saved sessions, less the one on screen, and only the last 30 days' if recent
 function recordSessions(key, recent){

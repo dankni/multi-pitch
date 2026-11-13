@@ -30,6 +30,14 @@ const app = {
         },
         "active" : () => session !== null
     },
+    // from the waffle: a route already ticked keeps its tick, in the new style
+    "sendClimb" : (id, style) => {
+        if(session.climbs.includes(Number(id))){ restyleSend(id, style); }
+        else { toggleClimb(document.getElementById("route" + id)); }
+    },
+    "unsendClimb" : id => {
+        if(session.climbs.includes(Number(id))){ toggleClimb(document.getElementById("route" + id)); }
+    },
     "newSession" : () => ({ "climbs" : [] }),
     "fromEntry" : entry => ({ "climbs" : entry.climbs.slice() }),
     "toEntry" : from => ({ "climbs" : from.climbs.slice() }),
@@ -45,7 +53,7 @@ const app = {
         "onEdit" : editSession,
         "describe" : entry => {
             let hardest = hardestGrade(entry.climbs);
-            return { "title" : plural(entry.climbs.length, "climb"), "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", fallsDetail(entry), sessionLength(entry)]) };
+            return { "title" : plural(entry.climbs.length, "climb"), "detail" : joinDetail([hardest ? `hardest ${hardest}` : "", flashDetail(entry), sessionLength(entry)]) };
         },
         "stats" : log => {
             let total = log.reduce((count, entry) => count + entry.climbs.length, 0);
@@ -78,8 +86,9 @@ function toggleClimb(button){
     // what was already done before this tap, so a set is only cheered as it completes
     let before = { "sevens" : allTicked(sevens), "wall" : allTicked(everything), "count" : session.climbs.length };
     let position = session.climbs.indexOf(id);
-    let earlier = session.climbs.map(ticked => (getRoute(ticked) || {}).grade);   // a route since re-set has none
+    let earlier = withoutDogs(session.climbs, session.ascents).map(ticked => (getRoute(ticked) || {}).grade);   // a route since re-set has none
     position === -1 ? session.climbs.push(id) : session.climbs.splice(position, 1);
+    position === -1 ? noteSend(id) : noteUnsend(id);
     button.classList.toggle("ticked", position === -1);
     button.setAttribute("aria-pressed", position === -1);
     if(position === -1){ haptic(); }   // a tick, not taking one back
@@ -88,6 +97,7 @@ function toggleClimb(button){
     position === -1 ? heartTick(id, route.grade) : heartUntick(id);
     keepSession();
     updateSummary();
+    if(ascentStyle === "dog"){ return; }   // no cheer for a dog
     cheer(before);
     if(position === -1){ cheerGrade("sport", route.grade, earlier); }   // see common/records.js
 }

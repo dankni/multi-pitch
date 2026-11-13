@@ -161,8 +161,9 @@ function addClimb(button){
 function addGrade(name){
     let ladder = ladderOf(name);
     if(session === null || ladder === undefined){ return; }
-    let earlier = climbsOn(ladder).slice();
+    let earlier = withoutDogs(climbsOn(ladder), session.ascents);
     climbsOn(ladder).push(name);
+    noteSend(name);
     noteRecent(shownName(name) + " tapped");
     heartTick(name, shownName(name));
     keepSession();
@@ -172,7 +173,7 @@ function addGrade(name){
     flash(row === null ? null : row.querySelector(".grade-add"));
     updateSummary();
     // a ladder is named for its kind of climb - see common/records.js
-    if(recordKinds[ladder]){ cheerGrade(ladder, name, earlier); }
+    if(recordKinds[ladder] && ascentStyle !== "dog"){ cheerGrade(ladder, name, earlier); }
 }
 
 // one tap too many, or a climb that turned out to be the one next to it
@@ -187,6 +188,7 @@ function removeGrade(name){
     let position = list.lastIndexOf(name);
     if(position === -1){ return; }
     list.splice(position, 1);
+    noteUnsend(name);
     noteRecent(shownName(name) + " taken back");
     heartUntick(name);
     keepSession();

@@ -13,12 +13,12 @@
 [data-state="saving"] #discard {
     display: inline-block;
 }
-/* the note can be written as you go; the stars and save wait for FINISH */
+/* the title, note and rating can be put in as you go; the save waits for FINISH */
 [data-state="running"] #endingDiv {
     display: block;
     margin-bottom: 0;
 }
-[data-state="running"] #endingDiv :is(.save-title, .star-holder, #saveSession) {
+[data-state="running"] #endingDiv #saveSession {
     display: none;
 }
 
@@ -33,7 +33,7 @@
     font-size: var(--t-sm);
     margin-right: 8px;
 }
-/* Started and finished, once there is a finish to show - or from the off in a reopened session */
+/* Started and finished, once the session is finished */
 .session-times {
     display: none;
     flex-wrap: wrap;
@@ -42,8 +42,7 @@
     gap: 8px 16px;
     margin-top: 12px;
 }
-[data-state="saving"] .session-times,
-[data-editing] .session-times {
+[data-state="saving"] .session-times {
     display: flex;
 }
 #sessionBar .session-times label {
@@ -208,58 +207,178 @@
     }
 }
 
-/* ================= Falls =================
-   Red, by each climb while Track Attempts / Falls is on (body[data-falls]); the
-   ladder goes to one climb a line to make room. Filled once there is a fall. */
+/* ================= Falls and ascent style =================
+   While Track Falls or Ascent Style is on (body[data-falls]): the waffle by each
+   climb, its falls in a red badge, and the undo on the right of the last climb
+   marked, in place of the minus. The ladder goes to one climb a line to make
+   room. Fall, dog, tick and flash fan out to the left in a quarter circle,
+   labelled on their left in their own colours, over the page darkened behind them. */
 [data-falls] #grades {
     grid-template-columns: minmax(0, 1fr);
 }
-.falls {
+[data-falls] .grade-minus {
+    display: none;
+}
+.ascent {
     display: flex;
-    align-items: stretch;
+    flex: 0 0 auto;
+    gap: var(--s2);
+}
+.ascent-pick {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+}
+.ascent.open .ascent-pick {
+    z-index: 41;
+}
+.ascent-open, .ascent-open:hover, .ascent-open:focus,
+.ascent-undo, .ascent-undo:hover, .ascent-undo:focus {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 44px;
+    min-height: 32px;
+    border: 1px solid var(--track-edge);
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    color: var(--ink-2);
+}
+.ascent-undo, .ascent-undo:hover, .ascent-undo:focus {
     flex: 0 0 auto;
     overflow: hidden;
-    border: 1px solid var(--danger-ink);
-    border-radius: var(--r-md);
-    background: var(--danger-soft);
-    color: var(--danger-ink);
 }
-.falls-button, .falls-button:hover, .falls-button:focus {
-    width: 36px;
-    min-height: 32px;
+/* only on the last climb marked, sliding in from the right as the tile makes room */
+.ascent:not([data-last]) .ascent-undo {
+    display: none;
+}
+.ascent[data-last]:not(.settled) .ascent-undo {
+    animation: undo-in 0.28s ease-out;
+}
+@keyframes undo-in {
+    from {
+        width: 0;
+        margin-left: calc(-1 * var(--s2));
+        border-width: 0;
+        opacity: 0;
+        transform: translateX(24px);
+    }
+}
+.ascent.open .ascent-open {
+    border-color: var(--primary);
+    background: var(--surface);
+    color: var(--primary);
+}
+.ascent-open svg, .ascent-undo svg {
+    width: 18px;
+    height: 18px;
+}
+.ascent-falls {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: var(--r-pill);
+    background: var(--danger);
+    color: var(--on-accent);
+    font-size: var(--t-2xs);
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+}
+.ascent-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(16, 24, 40, 0.7);
+    animation: ascent-fade 0.2s ease-out both;
+}
+.ascent-scrim[hidden] {
+    display: none;
+}
+/* a point at the waffle's centre that each button is placed from */
+.ascent-menu {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    translate: var(--shift-x, 0) var(--shift-y, 0);
+}
+.ascent-menu[hidden] {
+    display: none;
+}
+.ascent-style, .ascent-style:hover, .ascent-style:focus {
+    position: absolute;
+    right: calc(-1 * var(--x) - 26px);
+    top: calc(var(--y) - 26px);
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    color: inherit;
-    font-size: var(--t-lg);
-    line-height: 1;
+    background: none;
+    color: var(--text);
+    white-space: nowrap;
+    outline: none;
+    animation: ascent-pop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+    animation-delay: calc(var(--i) * 35ms);
 }
-.falls-button:hover {
-    background: color-mix(in srgb, currentColor 14%, transparent);
+/* straight on the darkened page: the pastel in the light, the ink in the dark, 4.5:1 or better on it */
+.ascent-label {
+    color: light-dark(var(--ascent), var(--ascent-ink));
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    font-size: var(--t-sm);
+    font-weight: 600;
 }
-.falls-button:disabled {
-    opacity: 0.4;
-}
-.falls-count {
+.ascent-dot {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 32px;
-    font-size: var(--t-md);
-    font-weight: 700;
-    line-height: 1.1;
+    width: 52px;
+    height: 52px;
+    box-sizing: border-box;
+    border: 1.5px solid color-mix(in srgb, var(--ascent-ink) 35%, transparent);
+    border-radius: 50%;
+    background: var(--ascent);
+    color: var(--ascent-text);
+    box-shadow: var(--e2);
 }
-.falls-count small {
-    font-size: var(--t-2xs);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+.ascent-style:focus-visible .ascent-dot {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
 }
-.falls.fell {
-    background: var(--danger);
-    color: var(--on-accent);
+.ascent-style:active .ascent-dot {
+    transform: scale(0.92);
+}
+.ascent-dot svg {
+    width: 24px;
+    height: 24px;
+}
+/* pastel: the existing colours softened into the surface */
+.ascent-fall  { --ascent: var(--danger-soft); --ascent-ink: var(--danger-ink); }
+.ascent-dog   { --ascent: color-mix(in srgb, var(--off) 22%, var(--surface)); --ascent-ink: var(--ink-2); }
+.ascent-tick  { --ascent: color-mix(in srgb, var(--confirm) 22%, var(--surface)); --ascent-ink: var(--confirm-ink); }
+.ascent-flash { --ascent: color-mix(in srgb, var(--hold-yellow) 22%, var(--surface)); --ascent-ink: var(--warn-ink); }
+/* the ink pulled toward the text colour, for 4.5:1 or better on the pastel in either theme */
+.ascent-style { --ascent-text: color-mix(in srgb, var(--ascent-ink) 70%, var(--text)); }
+@keyframes ascent-pop {
+    from {
+        opacity: 0;
+        transform: translate(calc(-1 * var(--x)), calc(-1 * var(--y))) scale(0.3);
+    }
+}
+@keyframes ascent-fade {
+    from { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ascent-style, .ascent-scrim, .ascent[data-last] .ascent-undo { animation: none; }
 }
