@@ -63,6 +63,7 @@
     let match = /^\/training\/([a-z]+)\//.exec(location.pathname);
     let page = match ? match[1] : "overview";
     let here = apps[page] ? page : null;   // the app this is, if it is one
+    window.trainingPageName = here ? apps[here].name : page;   // for analytics
     let last = here;
     try {
         if(here){ localStorage.setItem(lastAppKey, here); }

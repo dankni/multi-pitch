@@ -16,7 +16,16 @@ function delegate(eventType, attribute){
         if(typeof handler !== "function"){ return; }
         if(target.tagName === "A"){ event.preventDefault(); }
         handler(target, event);
+        if(eventType === "change" && target.type === "checkbox"){ trackToggle(target); }
     });
+}
+
+// GA event "toggle", e.g. toggle = "gym|trackFalls|on"
+function trackToggle(box){
+    if(typeof gtag !== "function"){ return; }
+    let name = box.id || box.dataset.part || box.dataset.name || box.getAttribute("data-change");
+    let page = (window.trainingPageName || document.title).toLowerCase();
+    gtag("event", "toggle", { "toggle" : page + "|" + name + "|" + (box.checked ? "on" : "off") });
 }
 delegate("click", "data-action");
 delegate("change", "data-change");
