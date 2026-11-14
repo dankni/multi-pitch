@@ -80,6 +80,7 @@ const app = {
     "systemKey" : "boulderGradeSystem",
     "timed" : true,
     "fallsKey" : "boulderTrackFalls",
+    "bouldering" : climb => ladderOf(climb) === "boulder",
     "watchKey" : "boulderWatch",
     "watch" : ladderWatch,
     "defaultSystem" : "hueco",

@@ -355,7 +355,7 @@ describe('Training apps', function () {
             });
         });
 
-        it('saves at FINISH, saves the stars and note as they change, and takes it out again on a reset', () => {
+        it('saves at FINISH, saves the stars and note as they change, and takes it out again on DELETE SAVE', () => {
             cy.visit(timerUrl);
             runSession(2);
             cy.get('#finishButton').click();
@@ -370,8 +370,29 @@ describe('Training apps', function () {
             });
             cy.get('[data-action="backToSession"]').click();
             cy.get('#saveSession').should('have.text', 'SAVE SESSION');
-            cy.get('[data-action="resetTimer"]').click().click();
+            // back from it, RESET and DELETE SAVE in place of the timer's RESET
+            cy.get('#reset').should('not.be.visible');
+            cy.get('#resetStored').should('be.visible').and('have.text', 'RESET');
+            cy.get('#deleteSave').should('be.visible').and('have.text', 'DELETE SAVE');
+            cy.get('#deleteSave').click();
+            cy.tick(100);
+            cy.get('.toast.danger').should('be.visible').and('contain', 'Delete the session from');
+            cy.get('.toast.danger .toast-confirm').should('have.text', 'DELETE').click();
             cy.window().then((win) => expect(saved(win)).to.have.length(0));
+            cy.get('#deleteSave').should('not.be.visible');
+            cy.get('#log').should('not.contain', '2 laps');
+        });
+
+        it('keeps the session in the log on RESET back from the summary', () => {
+            cy.visit(timerUrl);
+            runSession(2);
+            cy.get('#finishButton').click();
+            cy.get('[data-action="backToSession"]').click();
+            cy.get('#resetStored').click();
+            cy.get('.toast.danger').should('not.exist');
+            cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('lapTimerLog')).map((entry) => entry.laps)).to.deep.equal([2]));
+            cy.get('#resetStored').should('not.be.visible');
+            cy.get('#reset').should('not.be.visible');
         });
 
         it('says on FINISH when a session has the most laps ever', () => {
@@ -2433,6 +2454,38 @@ describe('Training apps', function () {
             cy.get('#climbCount').should('have.text', '3');
             cy.get('#summary').should('contain', 'V7');
             cy.get('#row-V3 .grade-count').should('have.text', '2');
+        });
+
+        it('back from the summary, RESET keeps the session in the log as it is by then and DELETE SAVE takes it out', () => {
+            const saved = (win) => JSON.parse(win.localStorage.getItem('boulderLog') || '[]');
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#discard').should('be.visible').and('contain', 'DISCARD');
+            cy.get('#storedActions').should('not.be.visible');
+            tap('#row-V3 .grade-add');
+            cy.get('#finishButton').click();
+            cy.get('#summaryBack').click();
+            cy.get('#discard').should('not.be.visible');
+            cy.get('#resetStored').should('be.visible');
+            cy.get('#deleteSave').should('be.visible');
+            // still there after a reload
+            cy.reload();
+            cy.get('#deleteSave').should('be.visible');
+            tap('#row-V4 .grade-add', '#resetStored');
+            cy.get('body').should('have.attr', 'data-state', 'idle');
+            cy.window().then((win) => expect(saved(win).map((entry) => entry.climbs)).to.deep.equal([['V3', 'V4']]));
+
+            cy.tick(60000);   // a session's id is when it started
+            cy.get('#primaryButton').click();
+            cy.get('#discard').should('be.visible');
+            tap('#row-V5 .grade-add');
+            cy.get('#finishButton').click();
+            cy.get('#summaryBack').click();
+            cy.get('#deleteSave').click();
+            cy.tick(100);
+            cy.get('.toast.danger .toast-confirm').should('have.text', 'DELETE').click();
+            cy.get('body').should('have.attr', 'data-state', 'idle');
+            cy.window().then((win) => expect(saved(win).map((entry) => entry.climbs)).to.deep.equal([['V3', 'V4']]));
         });
 
         it('wears the Boulderworld Belfast circuit colours on the V grades when switched on', () => {
@@ -5132,8 +5185,9 @@ describe('Training apps', function () {
             cy.get('.ascent[data-last]').should('not.exist');
             cy.get('#ascent-V3 .ascent-open').click();
             cy.get('#ascentScrim').should('be.visible');
-            cy.get('#ascent-V3 .ascent-menu .ascent-label').then((labels) => expect([...labels].map((each) => each.textContent)).to.deep.equal(['Fall', 'Dog', 'Tick', 'Flash']));
-            cy.get('#ascent-V3 .ascent-style svg').should('have.length', 4);
+            // no dog on a boulder
+            cy.get('#ascent-V3 .ascent-menu .ascent-label').then((labels) => expect([...labels].map((each) => each.textContent)).to.deep.equal(['Fall', 'Tick', 'Flash']));
+            cy.get('#ascent-V3 .ascent-style svg').should('have.length', 3);
             // fanned out to the left of the waffle, labels left of each, and over the greyed page
             cy.get('#ascent-V3 .ascent-open').then((waffle) => {
                 let centre = waffle[0].getBoundingClientRect();
@@ -5156,9 +5210,12 @@ describe('Training apps', function () {
             tap('#ascent-V3 .ascent-undo');
             cy.get('#ascent-V3 .ascent-falls').should('have.text', '2');
             cy.get('#row-V3 .grade-count').should('have.text', '');
-            // a dog, a flash and a plain tap all send it; the undo then takes back the last of them
-            tap(...mark('V3', 'dog'), ...mark('V3', 'flash'), '#row-V3 .grade-add', '#ascent-V3 .ascent-undo');
-            cy.get('#row-V3 .grade-count').should('have.text', '2');
+            // a tick, a flash and a plain tap all send it; the undo then takes back the last of them
+            tap(...mark('V3', 'tick'), ...mark('V3', 'flash'), '#row-V3 .grade-add', '#ascent-V3 .ascent-undo');
+            cy.get('#row-V3 .grade-count').should(($count) => expect($count[0].firstChild.textContent).to.equal('2'));
+            // one of the two flashed, in amber with a bolt under the count
+            cy.get('#row-V3 .grade-flash').should('have.text', '50%').and(($flash) => expect(getComputedStyle($flash[0]).color).to.be.oneOf(['rgb(168, 118, 0)', 'rgb(237, 161, 0)'])).find('svg').should('exist');
+            cy.get('#row-V2 .grade-flash').should('not.exist');
             // the undo moves to the climb marked last, and back as that is undone
             tap(...mark('V2', 'fall'));
             cy.get('.ascent[data-last]').should('have.length', 1).and('have.id', 'ascent-V2');
@@ -5166,8 +5223,12 @@ describe('Training apps', function () {
             tap('#ascent-V2 .ascent-undo');
             cy.get('#ascent-V2 .ascent-falls').should('not.exist');
             cy.get('.ascent[data-last]').should('have.id', 'ascent-V3');
+            // the sport ladder keeps its dog
+            cy.get('label[for="tab-sport"]').click();
+            cy.get('#ascent-6a .ascent-open').click();
+            cy.get('#ascent-6a .ascent-menu .ascent-label').then((labels) => expect([...labels].map((each) => each.textContent)).to.deep.equal(['Fall', 'Dog', 'Tick', 'Flash']));
+            cy.get('#ascentScrim').click();
             cy.get('#finishButton').click();
-            cy.get('#summaryClimbs .chart .bar.dog').should('have.length', 1);
             cy.get('#summaryClimbs .chart .flashes').should('have.length', 1).and('have.text', '1').find('path').should('exist');
             cy.get('#summaryClimbs .chart .falls').then((falls) => expect([...falls].map((each) => each.textContent)).to.deep.equal(['Falls', '2']));
             // rated with a face, under the title and note
@@ -5178,7 +5239,7 @@ describe('Training apps', function () {
             cy.window().then((win) => {
                 let entry = JSON.parse(win.localStorage.getItem('boulderLog'))[0];
                 expect(entry.falls).to.deep.equal({ V3: 2 });
-                expect(entry.ascents).to.deep.equal({ V3: ['fall', 'fall', 'dog', 'flash'] });
+                expect(entry.ascents).to.deep.equal({ V3: ['fall', 'fall', 'tick', 'flash'] });
                 expect(entry.climbs).to.deep.equal(['V3', 'V3']);
                 expect(win.localStorage.getItem('boulderTrackFalls')).to.equal('true');
             });
@@ -5217,8 +5278,12 @@ describe('Training apps', function () {
                 cy.get('#primaryButton').click();
                 cy.get('.ascent').should('have.length.greaterThan', 3);
                 cy.get('.ascent .ascent-open').first().click();
+                cy.get('.ascent.open [data-style="dog"]').should(name === 'dansloft' ? 'not.exist' : 'exist');
                 cy.get('.ascent.open [data-style="fall"]').click();
                 cy.get('.ascent-falls').should('have.length', 1);
+                cy.get('.ascent .ascent-open').first().click();
+                cy.get('.ascent.open [data-style="flash"]').click();
+                cy.get('.grade-flash').should('have.length', 1).and('have.text', '100%');
             });
         });
 
@@ -5240,16 +5305,17 @@ describe('Training apps', function () {
             cy.visit(appUrl + '/training/boulder/', {
                 onBeforeLoad(win) {
                     win.localStorage.setItem('boulderTrackFalls', 'true');
-                    // a V6 saved, but dogged: V3 is the hardest clean one
-                    win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-01', climbs: ['V3', 'V6'], sport: [], ascents: { V6: ['dog'] }, rating: 0 }]));
+                    // a 7a saved, but dogged: 6a is the hardest clean one
+                    win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-01', climbs: [], sport: ['6a', '7a'], ascents: { '7a': ['dog'] }, rating: 0 }]));
                 }
             });
             cy.get('#primaryButton').click();
-            tap(...mark('V5', 'dog'));
+            cy.get('label[for="tab-sport"]').click();
+            tap(...mark('6c', 'dog'));
             cy.tick(100);
             cy.get('.toast').should('not.exist');
-            // the V5 dogged this session is no clean V5 to beat either
-            tap(...mark('V5', 'tick'));
+            // the 6c dogged this session is no clean 6c to beat either
+            tap(...mark('6c', 'tick'));
             cy.tick(100);
             cy.get('.toast').should('have.length', 1).and('contain', "Wow, that's the highest grade we have seen you tick! Congrats.");
         });

@@ -184,6 +184,43 @@ function backToSession(){
     resumeSession();
 }
 
+/* Back from the summary the session is already in the log, so DISCARD (the
+   timer's RESET) gives way to RESET, which saves it as it is now, and DELETE
+   SAVE. They show with body[data-stored], see markStored() in functions.js. */
+function drawStoredActions(){
+    let discard = document.getElementById("discard") || document.getElementById("reset");
+    if(discard === null || document.getElementById("storedActions") !== null){ return; }
+    discard.insertAdjacentHTML("afterend", `<div class="stored-actions" id="storedActions">
+            <button class="quiet" id="resetStored" data-action="resetStored"><i class="demo-icon icon-ccw"></i>RESET</button>
+            <button class="secondary" id="deleteSave" data-action="deleteSave"><i class="demo-icon icon-trash"></i>DELETE SAVE</button>
+        </div>`);
+    markStored();
+}
+document.addEventListener("DOMContentLoaded", drawStoredActions);
+
+// the timer's is clearSession()
+function endStoredSession(){
+    typeof closeSession === "function" ? closeSession() : clearSession();
+    drawSessionLog();
+}
+
+function resetStored(){
+    if(session === null){ return; }
+    storeSession();
+    endStoredSession();
+}
+
+function deleteSave(){
+    if(session === null){ return; }
+    let id = session.id;
+    confirmToast("Delete the session from " + logDate(session.date) + "?", "DELETE", () => {
+        setLog(app.logKey, getLog(app.logKey).filter(entry => entry.id !== id));
+        noteDeleted(app.logKey, id);
+        if(session !== null && session.id === id){ endStoredSession(); }
+        else { drawSessionLog(); }
+    });
+}
+
 /* The whole summary as one picture: the name and date, each chart as it is
    drawn (see svgImage() in common/charts.js), and the title, the note and the
    rating's face as put in */

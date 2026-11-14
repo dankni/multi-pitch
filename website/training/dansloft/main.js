@@ -17,6 +17,7 @@ const app = {
     "currentKey" : "dansLoftCurrent",
     "timed" : true,
     "fallsKey" : "dansLoftTrackFalls",
+    "bouldering" : () => true,
     "watchKey" : "dansLoftWatch",
     // On the watch (common/watch.js): the routes as one ladder, ticked there as the gym's grades are
     "watch" : {
@@ -162,7 +163,7 @@ function routeRow(route){
             aria-label="Add a ${name}, ${done} so far">
             <span class="route-colour">${route.colour}</span>
             <span class="route-grade">${route.grade}</span>
-            <span class="grade-count" aria-hidden="true">${done > 0 ? done : ""}</span>
+            <span class="grade-count" aria-hidden="true">${done > 0 ? done : ""}${flashShare(route.id, done)}</span>
         </button>
         <button type="button" class="quiet grade-minus" data-action="removeLoftClimb" data-route="${route.id}"
             aria-label="Take back a ${name}"${done === 0 ? " disabled" : ""}>&minus;</button>

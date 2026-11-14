@@ -223,7 +223,7 @@ function gradeRow(name){
             aria-label="Add a ${name} ${noun}, ${done} so far">
             ${grade ? `<span class="route-colour">${otherGrades(grade)}</span>` : ""}
             <span class="route-grade">${grade ? mainGrade(grade) : name}</span>
-            <span class="grade-count" aria-hidden="true">${done > 0 ? done : ""}</span>
+            <span class="grade-count" aria-hidden="true">${done > 0 ? done : ""}${flashShare(name, done)}</span>
         </button>
         <button type="button" class="quiet grade-minus" data-action="removeClimb" data-grade="${name}"
             aria-label="Take back a ${name} ${noun}"${done === 0 ? " disabled" : ""}>&minus;</button>

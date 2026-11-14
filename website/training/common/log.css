@@ -153,9 +153,24 @@
     top: 50%;
     right: 9px;
     transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     font-size: var(--t-xl);
     font-weight: 700;
     line-height: 1;
+}
+.grade-flash {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    margin-top: 2px;
+    color: var(--warn-ink);
+    font-size: var(--t-xs);
+}
+.grade-flash svg {
+    width: 1.1em;
+    height: 1.1em;
 }
 /* neutral, so the only colour along a row is what was climbed */
 .grade-minus, .grade-minus:hover, .grade-minus:focus {

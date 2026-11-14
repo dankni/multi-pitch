@@ -96,3 +96,25 @@
 #summarySave .session-times label {
     font-size: var(--t-sm);
 }
+
+/* back from the summary: RESET and DELETE SAVE in place of DISCARD, see drawStoredActions() */
+.stored-actions {
+    display: none;
+}
+body[data-stored] .stored-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--s3);
+}
+body[data-stored] .stored-actions button {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 0;
+}
+body[data-stored] #discard.secondary, body[data-stored] #reset.secondary {
+    display: none;
+}
+/* the timer's RESET only shows paused */
+body[data-stored][data-state="running"] #reset + .stored-actions {
+    display: none;
+}

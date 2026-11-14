@@ -166,7 +166,7 @@ function discardSession(){
 
 /* ================= Falls and ascent style =================
    With Track Falls or Ascent Style on under the cog, a waffle by each climb fans
-   out fall, dog, tick and flash in a quarter circle. A fall is counted on the session as { climb : count }
+   out fall, dog, tick and flash in a quarter circle (no dog where app.bouldering says so). A fall is counted on the session as { climb : count }
    - a grade, or a route's id; dog, tick and flash send it. What was marked on each
    climb is kept in order as { climb : ["fall", "dog", ...] } (`ascents`), a plain
    tap on the climb a tick. The session's `undo` lists each mark as it was made,
@@ -178,12 +178,13 @@ const waffleIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false
 const strokeIcon = paths => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
     + paths + '</g></svg>';
 const undoIcon = strokeIcon('<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>');
+const boltIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14 2 4.5 13.5H11L9.5 22 19.5 9.5H13z"/></svg>';
 const ascentStyles = [
     { "style" : "fall",  "label" : "Fall",  "icon" : strokeIcon('<path d="M12 4v15M6 13l6 6 6-6"/>') },
     // Zzz: a rest on the rope
     { "style" : "dog",   "label" : "Dog",   "icon" : strokeIcon('<path d="M3 13h7l-7 7h7"/><path d="M12.5 7.5h5l-5 5h5"/><path d="M19 2.5h3l-3 3h3" stroke-width="2"/>') },
     { "style" : "tick",  "label" : "Tick",  "icon" : strokeIcon('<path d="M5 12.5 9.5 17 19 7"/>') },
-    { "style" : "flash", "label" : "Flash", "icon" : '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14 2 4.5 13.5H11L9.5 22 19.5 9.5H13z"/></svg>' }
+    { "style" : "flash", "label" : "Flash", "icon" : boltIcon }
 ];
 const sendStyles = ["dog", "tick", "flash"];
 const fanRadius = 130;   // px from the waffle's centre to each button's, on a quarter circle centred to its left
@@ -315,8 +316,10 @@ function restyleSend(climb, style){
 function fallsControl(climb, name){
     if(!trackingFalls() || session === null){ return ""; }
     let count = fallsOn(climb);
-    let fan = ascentStyles.map((each, index) => {
-        let angle = (135 + index * 30) * Math.PI / 180;
+    // no dog on a boulder
+    let styles = app.bouldering && app.bouldering(climb) ? ascentStyles.filter(each => each.style !== "dog") : ascentStyles;
+    let fan = styles.map((each, index) => {
+        let angle = (135 + (ascentStyles.length - styles.length) * 15 + index * 30) * Math.PI / 180;
         let x = Math.round(Math.cos(angle) * fanRadius), y = -Math.round(Math.sin(angle) * fanRadius);
         return `<button type="button" class="ascent-style ascent-${each.style}" style="--i:${index};--x:${x}px;--y:${y}px" data-action="markAscent"
             data-climb="${climb}" data-style="${each.style}" aria-label="${each.label} on ${name}"><span class="ascent-label">${each.label}</span><span class="ascent-dot">${each.icon}</span></button>`;
@@ -325,7 +328,7 @@ function fallsControl(climb, name){
     return `<div class="ascent${settled ? " settled" : ""}" id="ascent-${climb}" data-climb="${climb}" data-name="${name}"${settled ? " data-last" : ""}>
         <div class="ascent-pick">
             <button type="button" class="icon-button ascent-open" data-action="toggleAscentMenu" aria-expanded="false"
-                aria-label="Fall, dog, tick or flash on ${name}${count > 0 ? ", " + plural(count, "fall") + " so far" : ""}">${waffleIcon}${count > 0 ? `<span class="ascent-falls" aria-hidden="true">${count}</span>` : ""}</button>
+                aria-label="Fall, ${styles.length < ascentStyles.length ? "" : "dog, "}tick or flash on ${name}${count > 0 ? ", " + plural(count, "fall") + " so far" : ""}">${waffleIcon}${count > 0 ? `<span class="ascent-falls" aria-hidden="true">${count}</span>` : ""}</button>
             <div class="ascent-menu" hidden>${fan}</div>
         </div>
         <button type="button" class="icon-button ascent-undo" data-action="undoAscent" aria-label="Undo the last on ${name}">${undoIcon}</button>
@@ -482,6 +485,13 @@ function flashDetail(entry){
     let ascents = entry.ascents && typeof entry.ascents === "object" ? Object.values(entry.ascents) : [];
     let total = ascents.reduce((sum, marks) => sum + (Array.isArray(marks) ? marks.filter(mark => mark === "flash").length : 0), 0);
     return total === 0 ? "" : total + (total === 1 ? " flash" : " flashes");
+}
+
+// under a tile's count: the share of its sends that were flashes
+function flashShare(climb, done){
+    let flashes = ascentsOf(climb).filter(mark => mark === "flash").length;
+    if(done === 0 || flashes === 0){ return ""; }
+    return `<span class="grade-flash">${boltIcon}${Math.round(flashes / done * 100)}%</span>`;
 }
 
 // Sessions here can be dated by hand, so the log is in date order rather than id order

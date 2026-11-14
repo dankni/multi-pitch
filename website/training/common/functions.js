@@ -284,13 +284,20 @@ function saveCurrent(key, current){
 
 function keepSession(){
     saveCurrent(app.currentKey, session);
+    markStored();
     if(app.onKept){ app.onKept(); }
 }
 
 function restoreSession(){
     let saved = localStorage.getItem(app.currentKey);
     session = saved ? JSON.parse(saved) : null;
+    markStored();
     return session;
+}
+
+// a session the summary has put in the log, for RESET and DELETE SAVE in common/summary.js
+function markStored(){
+    if(document.body !== null){ document.body.toggleAttribute("data-stored", Boolean(session && session.stored)); }
 }
 
 // "iPhone" or "iPad", which can report itself as a Mac, or null
