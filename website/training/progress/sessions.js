@@ -278,6 +278,24 @@
     }
     drawTimeSplit();
 
+    // The same 30 days' climbs by kind, from what the grade charts count (progress/charts.js)
+    function drawKindSplit(){
+        if(typeof climbsByKind !== "function"){ return; }
+        let since = new Date(Date.parse(today()) - 29 * 86400000).toISOString().slice(0, 10);
+        let parts = climbsByKind(since).filter(part => part.count > 0);
+        let total = parts.reduce((sum, part) => sum + part.count, 0);
+        if(total === 0){ return; }
+        parts.forEach(part => { part.percent = shareText(part.count / total * 100); });
+        let says = part => part.name + " " + part.percent + " · " + part.count;
+        let bar = document.getElementById("kindSplitBar");
+        bar.innerHTML = parts.map(part => `<span class="split-${part.kind}" style="flex-grow: ${part.count}" title="${escapeHtml(says(part))}"></span>`).join("");
+        bar.setAttribute("aria-label", "Climbs in the last 30 days: " + parts.map(says).join(", "));
+        document.getElementById("kindSplitLegend").innerHTML = parts.map(part => legendItem("split-" + part.kind, part.name, part.percent, String(part.count))).join("");
+        document.getElementById("kindSplitTotal").innerText = "Last 30 days · " + plural(total, "climb");
+        document.getElementById("kindSplit").hidden = false;
+    }
+    drawKindSplit();
+
     if(sessions.length > shown.length){
         document.getElementById("sessionsFoot").innerHTML = "The last " + shown.length + " of " + sessions.length
             + ". The rest are in each app, under the i. " + document.getElementById("sessionsFoot").innerHTML;

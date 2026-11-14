@@ -14,7 +14,7 @@ const heartZones = [["Max", 1, "max"], ["Hard", 0.85, "hard"], ["Moderate", 0.7,
 const heartGap = 60000;   // ms without a reading that breaks the line
 const heightSwing = 1.5;  // m a climb up or down must pass to count: a 2m problem, past the barometer's wobble and an arm's swing
 
-let heart = null;   // { id, beats : [[at, bpm]], heights : [[at, m]], ticks : [[at, key, label]] }, for the session open
+let heart = null;   // { id, beats : [[at, bpm]], heights : [[at, m]], ticks : [[at, key, label]], falls : [[at, key]] }, for the session open
 
 overlays.push("heartRate");
 
@@ -32,6 +32,7 @@ function openHeart(){
     try { saved = JSON.parse(localStorage.getItem(heartKey())); } catch(err){}
     heart = saved && saved.id === session.id ? saved : { "id" : session.id, "beats" : [], "ticks" : [] };
     if(!Array.isArray(heart.heights)){ heart.heights = []; }
+    if(!Array.isArray(heart.falls)){ heart.falls = []; }
     drawHeartLink();
 }
 
@@ -52,6 +53,21 @@ function keepHeart(){
 function heartTick(key, label){
     if(!heartWanted() || heart === null){ return; }
     heart.ticks.push([Date.now(), key, label]);
+    keepHeart();
+}
+
+// a fall, marked under the chart's axis
+function heartFall(key){
+    if(!heartWanted() || heart === null){ return; }
+    heart.falls.push([Date.now(), key]);
+    keepHeart();
+}
+
+function heartUnfall(key){
+    if(heart === null){ return; }
+    let last = heart.falls.map(fall => fall[1]).lastIndexOf(key);
+    if(last === -1){ return; }
+    heart.falls.splice(last, 1);
     keepHeart();
 }
 
@@ -265,8 +281,9 @@ function drawHeartChart(){
    readings. A session's start is its id where it keeps no start of its own. */
 function heartChartSvg(width){
     if(!hasHeartRate()){ return ""; }
-    const height = 240;
-    const left = 30, right = 78, top = 10, bottom = 22;
+    let falls = Array.isArray(heart.falls) ? heart.falls : [];
+    const height = falls.length > 0 ? 254 : 240;
+    const left = 30, right = 78, top = 10, bottom = falls.length > 0 ? 36 : 22;
     const plotWidth = width - left - right, plotHeight = height - top - bottom;
 
     let age = heartAge();
@@ -306,6 +323,13 @@ function heartChartSvg(width){
         let y = top + plotHeight - 4;
         svg += `<line class="climb" x1="${x}" x2="${x}" y1="${top}" y2="${top + plotHeight}" />`
             + `<text class="climb-label" x="${x - 3}" y="${y}" transform="rotate(-90 ${x - 3} ${y})">${escapeHtml(String(label))}</text>`;
+    });
+
+    // an arrow down under the axis
+    let axis = top + plotHeight;
+    falls.forEach(([at]) => {
+        let x = xOf(at).toFixed(1);
+        svg += `<path class="fall" d="M${x} ${axis + 3}v9M${x - 3} ${axis + 9}l3 3 3-3" />`;
     });
 
     // a line a stretch the watch was connected

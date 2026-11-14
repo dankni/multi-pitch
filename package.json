@@ -11,7 +11,7 @@
   "scripts": {
     "generate-climbs": "node generateCardClimb.js",
     "generate-sitemap": "node generateSiteMap.js",
-    "generate-blog" : "node generateBlogPages.js",
+    "generate-blog": "node generateBlogPages.js",
     "generate-content": "node generateContentPages.js",
     "generate-webp": "node generateWebP.js",
     "generate-pages": "npm run generate-climbs && npm run generate-sitemap && npm run generate-blog && npm run generate-content",
@@ -33,7 +33,7 @@
   "homepage": "https://github.com/dankni/multi-pitch#readme",
   "devDependencies": {
     "cypress": "^15.18.0",
-    "serve": "^14.2.4",
+    "serve": "^14.2.7",
     "webp-converter": "^2.2.3"
   },
   "overrides": {

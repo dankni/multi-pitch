@@ -2456,6 +2456,24 @@ describe('Training apps', function () {
             cy.get('#row-V3 .grade-count').should('have.text', '2');
         });
 
+        it('cannot finish a session with no climbs or falls', () => {
+            cy.visit(boulderUrl);
+            cy.get('#primaryButton').click();
+            cy.get('#finishButton').should('be.disabled');
+            cy.get('#row-V3 .grade-add').click();
+            cy.get('#finishButton').should('not.be.disabled');
+            cy.get('#row-V3 .grade-minus').click();
+            cy.get('#finishButton').should('be.disabled');
+            cy.get('nav .icon-cog').click();
+            cy.get('#trackFalls').check({ force: true });
+            cy.get('nav .icon-cog').click();
+            cy.get('#ascent-V3 .ascent-open').click();
+            cy.get('#ascent-V3 [data-style="fall"]').click();
+            cy.get('#finishButton').should('not.be.disabled');
+            cy.reload();
+            cy.get('#finishButton').should('not.be.disabled');
+        });
+
         it('back from the summary, RESET keeps the session in the log as it is by then and DELETE SAVE takes it out', () => {
             const saved = (win) => JSON.parse(win.localStorage.getItem('boulderLog') || '[]');
             cy.visit(boulderUrl);
@@ -3282,6 +3300,27 @@ describe('Training apps', function () {
                 cy.window().then((win) => expect(win.localStorage.getItem('boulderCurrentHeart')).to.equal(null));
             });
 
+            it('marks each fall under the heart rate chart, with no line', () => {
+                cy.visit(boulderUrl, { onBeforeLoad: (win) => { win.localStorage.setItem('boulderTrackFalls', 'true'); fakeBangle(win); } });
+                connect();
+                cy.window().then((win) => win.watchSays({ t: 'hr', b: 90, a: 0 }));
+                const fall = () => tap('#ascent-V3 .ascent-open', '#ascent-V3 [data-style="fall"]');
+                cy.tick(60000);
+                fall();
+                cy.tick(60000);
+                fall();
+                cy.window().then((win) => win.watchSays({ t: 'hr', b: 120, a: 0 }));
+                tap('#ascent-V3 .ascent-undo');
+                cy.window().should((win) => expect(JSON.parse(win.localStorage.getItem('boulderCurrentHeart')).falls.map((each) => each[1])).to.deep.equal(['V3']));
+                cy.get('#finishButton').click();
+                cy.get('#summaryHeart path.fall').should('have.length', 1);
+                cy.get('#summaryHeart line.climb').should('not.exist');
+                cy.get('#summaryHeart line.axis').then((axis) => {
+                    let below = axis[0].getBoundingClientRect().bottom;
+                    cy.get('#summaryHeart path.fall').should((path) => expect(path[0].getBoundingClientRect().top).to.be.at.least(below));
+                });
+            });
+
             it('acts on what the watch sends once each and in order, asking again past a gap', () => {
                 cy.visit(boulderUrl, { onBeforeLoad: (win) => fakeBangle(win) });
                 connect();
@@ -4072,6 +4111,21 @@ describe('Training apps', function () {
                 .and('have.attr', 'title', 'Other 14% · 15 min (Twister 15 min)');
             cy.get('#timeSplitLegend li').eq(0).should('have.text', 'Climbing\u00a086%\u00a0· 1h 30m');
             cy.get('#timeSplitBar button').eq(1).should('have.attr', 'aria-label', 'Other 14% · 15 min (Twister 15 min), show by app');
+        });
+
+        it('splits the last 30 days of climbs into bouldering, sport and trad', () => {
+            visitWith({
+                boulderLog: [
+                    { id: 1, date: '2026-09-10', climbs: ['V2', 'V3'], sport: ['6a'], rating: 3, minutes: 60 },
+                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 500 }   // over 30 days ago
+                ],
+                tradLog: [{ id: 3, date: '2026-09-04', climbs: ['VS'], rating: 0 }]
+            });
+            cy.get('#kindSplit').should('be.visible');
+            cy.get('#kindSplitTotal').should('have.text', 'Last 30 days · 4 climbs');
+            cy.get('#kindSplitBar span').then((parts) => expect([...parts].map((part) => part.className)).to.deep.equal(['split-boulder', 'split-sport', 'split-trad']));
+            cy.get('#kindSplitBar span').eq(0).should('have.attr', 'title', 'Bouldering 50% · 2');
+            cy.get('#kindSplitLegend li').eq(2).should('have.text', 'Trad 25% · 1');
         });
 
         it('counts Tabata repeaters as fingerboard and a classic Tabata as other, in a fixed order', () => {
@@ -5287,18 +5341,18 @@ describe('Training apps', function () {
             });
         });
 
-        it('charts a dog faint on top of its bar and the falls in red under the grade on the progress page', () => {
+        it('leaves dogs, flashes and falls off the progress page charts', () => {
             cy.visit(appUrl + '/training/progress/', {
                 onBeforeLoad(win) {
                     win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-12', climbs: ['V3', 'V3'], sport: [],
-                        falls: { V3: 1, V5: 3 }, ascents: { V3: ['fall', 'dog', 'tick'], V5: ['fall', 'fall', 'fall'] }, rating: 0 }]));
+                        falls: { V3: 1, V5: 3 }, ascents: { V3: ['fall', 'dog', 'flash'], V5: ['fall', 'fall', 'fall'] }, rating: 0 }]));
                 }
             });
             cy.get('#boulderTotal').should('have.text', '2 boulders in the last year, 0 in the year before');
-            cy.get('#boulderChart .bar.dog').should('have.length', 1);
-            cy.get('#boulderChart .falls').should('have.length', 3).then((falls) => {
-                expect([...falls].map((each) => each.textContent)).to.deep.equal(['Falls', '1', '3']);
-            });
+            cy.get('#boulderChart .bar').should('exist');
+            cy.get('#boulderChart .bar.dog').should('not.exist');
+            cy.get('#boulderChart .flashes').should('not.exist');
+            cy.get('#boulderChart .falls').should('not.exist');
         });
 
         it('never cheers a dog, nor counts one as the grade to beat', () => {

@@ -125,7 +125,19 @@ function setSessionTime(){
     drawSessionTimes();
 }
 
+// a climb or a fall: nothing less is saved
+function sessionHasAnything(from){
+    return app.hasClimbs(from) || Object.values(from.falls || {}).some(count => Number(count) > 0);
+}
+
+// called by keepSession(), so FINISH follows each change
+function drawFinishButton(){
+    let button = document.getElementById("finishButton");
+    if(button !== null){ button.disabled = session === null || !sessionHasAnything(session); }
+}
+
 function openSavePanel(){
+    if(!sessionHasAnything(session)){ return; }
     // a reopened session keeps its times; finishing again after climbing on moves the finish
     if(app.timed && !session.editing){
         session.finish = Date.now();
@@ -145,6 +157,7 @@ function resumeSession(){
 
 // on FINISH, and again as the summary changes it
 function storeSession(){
+    if(!sessionHasAnything(session)){ return; }
     saveToLog(app.logKey, Object.assign({ "id" : session.id, "date" : session.date }, timing(session), app.toEntry(session),
         { "falls" : fallsToSave(session), "ascents" : ascentsToSave(session), "rating" : session.rating, "comment" : sessionComment, "title" : titleToSave() }));
 }
@@ -454,9 +467,11 @@ function changeFalls(climb, by){
     if(by > 0){
         marks.push("fall");
         pushUndo({ "c" : climb });
+        heartFall(climb);
     } else if(marks.lastIndexOf("fall") !== -1){
         marks.splice(marks.lastIndexOf("fall"), 1);
         dropUndo(climb);
+        heartUnfall(climb);
     }
     setAscents(climb, marks);
     keepSession();

@@ -66,6 +66,13 @@
     stroke-dasharray: 2 3;
 }
 .heart-chart .climb-label { fill: var(--link); }
+.heart-chart .fall {
+    fill: none;
+    stroke: var(--danger-ink);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 .heart-chart .zone {
     stroke: var(--zone);
     stroke-dasharray: 6 4;

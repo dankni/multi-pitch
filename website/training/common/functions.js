@@ -285,6 +285,7 @@ function saveCurrent(key, current){
 function keepSession(){
     saveCurrent(app.currentKey, session);
     markStored();
+    if(typeof drawFinishButton === "function"){ drawFinishButton(); }
     if(app.onKept){ app.onKept(); }
 }
 

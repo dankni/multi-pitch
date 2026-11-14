@@ -182,6 +182,10 @@
 .split-app-3 { --c: #008300; }
 .split-app-4 { --c: light-dark(#6250d6, #9085e9); }
 .split-app-5 { --c: light-dark(#e34948, #e66767); }
+/* climbs by kind: slots 1, 4 and 3 of the apps' run above */
+.split-boulder { --c: light-dark(#eda100, #c98500); }
+.split-sport { --c: light-dark(#6250d6, #9085e9); }
+.split-trad { --c: #008300; }
 /* "Last 30 days · 37h 13m trained", and a kind's "Climbing · 36h 29m, by app" */
 .time-split figcaption, .split-title {
     margin: 0 0 8px;
