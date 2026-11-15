@@ -1,4 +1,4 @@
-const mockAxios = require("axios");
+const mockHttp = require("../http");
 
 const expect = require('chai').expect;
 const climbData = require('./climbing-data.json');
@@ -131,7 +131,7 @@ describe('tides (Open-Meteo Marine)', () => {
     });
 
     it('attaches low tides to tidal climbs and never fails the weather on marine errors', async () => {
-        mockAxios.get = (url) => url.includes('marine-api')
+        mockHttp.get = (url) => url.includes('marine-api')
             ? Promise.resolve({ data: { hourly: {
                 time: Array.from({ length: 48 }, (_, i) => fixtureOpenMeteo.daily.time[3] + i * 3600),
                 sea_level_height_msl: Array.from({ length: 48 }, (_, i) => Math.sin(i / 2))
@@ -142,7 +142,7 @@ describe('tides (Open-Meteo Marine)', () => {
         ]});
         expect(tidal.currently.lowTides).to.be.an('array').with.length.greaterThan(0);
 
-        mockAxios.get = (url) => url.includes('marine-api')
+        mockHttp.get = (url) => url.includes('marine-api')
             ? Promise.reject(new Error('marine down'))
             : Promise.resolve(okResponse);
         const [degraded] = await getWeather({ climbs: [
@@ -154,7 +154,7 @@ describe('tides (Open-Meteo Marine)', () => {
 
     it('non-tidal climbs never call the marine api', async () => {
         const urls = [];
-        mockAxios.get = (url) => { urls.push(url); return Promise.resolve(okResponse); };
+        mockHttp.get = (url) => { urls.push(url); return Promise.resolve(okResponse); };
         await getWeather({ climbs: [{ id: 2, status: 'publish', geoLocation: '46.5,11.8' }] });
         expect(urls.some(u => u.includes('marine-api'))).to.eql(false);
     });
@@ -344,7 +344,7 @@ describe('mapOpenMeteoToMultipitcherDomain edge cases', () => {
 
 describe('getWeather', () => {
     it('skips unpublished climbs and climbs with a broken geoLocation', async () => {
-        mockAxios.get = () => Promise.resolve(okResponse);
+        mockHttp.get = () => Promise.resolve(okResponse);
         const fixture = await getWeather({ climbs: [
             { id: 1, status: 'publish', geoLocation: '58.26094,-5.38266' },
             { id: 2, status: 'draft',   geoLocation: '51.5,-0.1' },
@@ -355,7 +355,7 @@ describe('getWeather', () => {
     });
 
     it('one failing climb does not poison the others', async () => {
-        mockAxios.get = (url) => url.includes('latitude=58.26094')
+        mockHttp.get = (url) => url.includes('latitude=58.26094')
             ? Promise.reject(new Error('boom'))
             : Promise.resolve(okResponse);
         const fixture = await getWeather({ climbs: [
@@ -368,7 +368,7 @@ describe('getWeather', () => {
     });
 
     it('maps mocked Open-Meteo responses for every published climb', async () => {
-        mockAxios.get = () => Promise.resolve(okResponse);
+        mockHttp.get = () => Promise.resolve(okResponse);
         const fixture = await getWeather(climbData);
 
         const published = climbData.climbs.filter(c => c.status === 'publish').length;
@@ -380,7 +380,7 @@ describe('getWeather', () => {
     });
 
     it('emits the legacy failure shape when the API errors', async () => {
-        mockAxios.get = () => Promise.reject(new Error('boom'));
+        mockHttp.get = () => Promise.reject(new Error('boom'));
         const fixture = await getWeather(climbData);
         fixture.forEach(entry => {
             expect(entry).to.eql({ "routes": [], "status": "REQUEST_DENIED" });

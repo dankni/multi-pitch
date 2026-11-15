@@ -1,4 +1,4 @@
-const axios = require('axios');
+const http = require('./http');
 
 // Open-Meteo Marine (https://open-meteo.com) - free for non-commercial use,
 // no API key. Replaced the RapidAPI tides endpoint that died behind its
@@ -43,7 +43,7 @@ function getTides(climbsData) {
             console.log("going to call Open-Meteo Marine for climb " + climb.id, url);
             // a timeout keeps one hung request from stalling the daily run;
             // one climb's failure only costs that climb its chart
-            return axios.get(url, { timeout: 10000 })
+            return http.get(url)
                 .then(response => mapMarineToMultipitchClimb(response.data, climb))
                 .catch(err => {
                     console.error(`marine fetch failed for climb ${climb.id}:`, err.message);

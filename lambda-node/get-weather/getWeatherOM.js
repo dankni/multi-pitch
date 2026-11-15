@@ -1,4 +1,4 @@
-const axios = require('axios');
+const http = require('./http');
 
 // Open-Meteo (https://open-meteo.com) — free for non-commercial use, no API key.
 // One call per climb returns the 4 past days + today + 7 forecast days,
@@ -264,7 +264,7 @@ function getWeather(climbsData) {
             // tidal crags also get sea-level data; a marine failure only
             // costs the tide times, never the weather
             const marinePromise = climb.tidal >= 1
-                ? axios.get(buildMarineUrl(encodeURIComponent(lat_raw.trim()), encodeURIComponent(lon_raw.trim())), { timeout: 10000 })
+                ? http.get(buildMarineUrl(encodeURIComponent(lat_raw.trim()), encodeURIComponent(lon_raw.trim())))
                     .then(response => response.data)
                     .catch(err => {
                         console.error(`marine fetch failed for climb ${climb.id}:`, err.message);
@@ -273,7 +273,7 @@ function getWeather(climbsData) {
                 : Promise.resolve(null);
 
             // a timeout keeps one hung request from stalling the whole daily run
-            return Promise.all([axios.get(url, { timeout: 10000 }), marinePromise])
+            return Promise.all([http.get(url), marinePromise])
                 .then(([response, marine]) => {
                     const entry = {
                         climbId: climb.id,

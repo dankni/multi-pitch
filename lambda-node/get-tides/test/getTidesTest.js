@@ -1,4 +1,4 @@
-const mockAxios = require("axios");
+const mockHttp = require("../http");
 const expect = require('chai').expect;
 
 const marineFixture = require('./marineResponse.json'); // real Open-Meteo Marine response
@@ -42,7 +42,7 @@ describe('mapMarineToMultipitchClimb', function () {
 
 describe('getTides', function () {
     it('maps the marine response for every tidal climb', async function () {
-        mockAxios.get = () => Promise.resolve({ data: marineFixture });
+        mockHttp.get = () => Promise.resolve({ data: marineFixture });
 
         const result = await getTides({ climbs: climbList });
 
@@ -54,7 +54,7 @@ describe('getTides', function () {
 
     it('one failing climb only loses its own chart', async function () {
         let call = 0;
-        mockAxios.get = () => (++call === 1)
+        mockHttp.get = () => (++call === 1)
             ? Promise.reject(new Error('boom'))
             : Promise.resolve({ data: marineFixture });
 
