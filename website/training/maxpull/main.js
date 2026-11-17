@@ -143,7 +143,7 @@ function keepDraft(){
 
 function showEditing(){
     document.body.toggleAttribute("data-editing", editing !== null);
-    document.getElementById("discardPull").innerHTML = `<i class="demo-icon icon-cancel"></i>${editing === null ? "DISCARD" : "CANCEL EDIT"}`;
+    document.getElementById("discard").innerHTML = `<i class="demo-icon icon-cancel"></i>${editing === null ? "DISCARD" : "CANCEL EDIT"}`;
 }
 
 function readDraft(){
@@ -227,7 +227,7 @@ function savePull(){
 }
 
 function discardPull(){
-    confirmReset("discardPull", unsaved(), endPull);
+    confirmReset("discard", unsaved(), endPull);
 }
 
 /* The Progressor */

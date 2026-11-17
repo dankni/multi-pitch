@@ -352,14 +352,14 @@ function drawHeartMarkup(){
     recent.before(links);
     links.append(recent);
     links.insertAdjacentHTML("beforeend",
-        `<button type="button" class="link-button text-link heart-link" id="showHeartRate" data-action="showHeartRate" hidden>Show heart rate</button>`);
+        `<button type="button" class="link-button heart-link" id="showHeartRate" data-action="showHeartRate" hidden>Show heart rate</button>`);
     links.append(document.getElementById("recentLogs"));
     let age = heartAge();
     document.body.insertAdjacentHTML("beforeend", `
         <aside id="heartRate" class="overlay">
             <h2>Heart rate</h2>
             <div class="heart-chart-holder column" id="heartChart"></div>
-            <p class="heart-note">Heart rate data not saved to log. Take a screenshot, or <button type="button" class="link-button text-link heart-share" id="shareHeartRate" data-action="shareHeartRate"><i class="demo-icon icon-share"></i>share it (even with yourself).</button></p>
+            <p class="heart-note">Heart rate data not saved to log. Take a screenshot, or <button type="button" class="link-button heart-share" id="shareHeartRate" data-action="shareHeartRate"><i class="demo-icon icon-share"></i>share it (even with yourself).</button></p>
             <fieldset class="setting-group">
                 <legend>Age:</legend>
                 <div class="picker compact heart-ages" role="radiogroup" aria-label="Age">

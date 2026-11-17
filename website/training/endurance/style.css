@@ -3,9 +3,6 @@ body:not([data-state="idle"]) #setup,
 [data-state="idle"] #sessionHolder {
     display: none;
 }
-body:not([data-state="idle"]) #discard {
-    display: inline-block;
-}
 #restClock, #skipRest, #anotherSet {
     display: none;
 }
@@ -19,26 +16,22 @@ body:not([data-state="idle"]) #discard {
 .style-hint {
     font-size: var(--t-sm);
     line-height: 1.5;
-    margin: 8px auto 0;
+    margin: var(--s2) auto 0;
     max-width: 420px;
     color: var(--ink-2);
 }
 
 /* Which part of the session you are in, and the rest clock */
-#stageBar {
-    margin: 16px auto 12px;
-    padding: 16px 12px;
-}
 #stageBar h2 {
     margin: 0;
     font-size: var(--t-xl);
 }
 #restClock {
     font-size: 60px;
-    margin: 8px 0 0;
+    margin: var(--s2) 0 0;
 }
 #stageHint {
-    margin: 8px 0 0;
+    margin: var(--s2) 0 0;
     font-size: var(--t-sm);
     color: var(--ink-2);
 }
@@ -49,21 +42,8 @@ body:not([data-state="idle"]) #discard {
 }
 .route {
     width: 100%;
-    margin: 0 0 8px;
-    padding: 12px 40px 12px 20px;
-}
-/* With the Gilford wall off there is no hold colour: the stripe is the grade's
-   band instead (gradeBands in common/grades.js), and a ticked climb takes the blue */
-.route.plain {
-    --hold: var(--c, transparent);
-}
-.route.plain .route-grade {
-    font-size: var(--t-xl);
-}
-.route.plain.ticked {
-    background: var(--primary);
-    color: var(--on-accent);
-    box-shadow: none;
+    margin: 0 0 var(--s2);
+    padding: var(--s3) 40px var(--s3) 20px;
 }
 .route .tick {
     position: absolute;
@@ -80,15 +60,12 @@ body:not([data-state="idle"]) #discard {
 #skipRest {
     width: fit-content;
     margin: 20px auto 20px;
-    padding: 8px 16px;
+    padding: var(--s2) var(--s4);
     font-size: var(--t-md);
     font-weight: 600;
 }
 [data-state="saving"] #finishButton {
     display: none;
-}
-.overlay .switch-label .icon-ok {
-    margin-right: 0;
 }
 
 @media (max-width: 380px) {

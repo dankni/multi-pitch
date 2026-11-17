@@ -5,7 +5,7 @@
     justify-content: center;
     align-items: flex-start;
     max-width: var(--column);
-    margin: 8px auto 0;
+    margin: var(--s2) auto 0;
     font-size: var(--t-sm);
 }
 .session-links .recent-logs {
@@ -24,7 +24,7 @@
     display: none;
 }
 .heart-link {
-    padding: 8px 12px;
+    padding: var(--s2) var(--s3);
     font-size: var(--t-sm);
 }
 .heart-link[hidden],
@@ -32,7 +32,7 @@
     display: none;
 }
 .heart-chart-holder {
-    margin: 16px auto 0;
+    margin: var(--s4) auto 0;
 }
 .heart-chart {
     display: block;
@@ -91,7 +91,7 @@
 }
 .heart-note {
     max-width: 450px;
-    margin: 12px auto;
+    margin: var(--s3) auto;
     font-size: var(--t-sm);
     color: var(--ink-2);
 }

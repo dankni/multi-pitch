@@ -7,7 +7,7 @@
 }
 #preview .ring {
     max-width: 50px;
-    margin: 12px;
+    margin: var(--s3);
 }
 
 @media (max-width: 380px) {

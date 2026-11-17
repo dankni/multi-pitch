@@ -584,7 +584,7 @@ describe('Training apps', function () {
             cy.get('#grade-V3').should('be.checked');
             // and the progress page counts them as boulders
             cy.visit(appUrl + '/training/progress/');
-            cy.get('#boulderTotal').should('have.text', '9 boulders in the last year, 0 in the year before');
+            cy.get('#boulderTotal').should('have.text', '9 boulders, 0 before');
             cy.get('#allLogs').should('contain', '9 laps of V3');
         });
 
@@ -3060,7 +3060,7 @@ describe('Training apps', function () {
             cy.get('#summaryClimbs line.before').should('have.length', 2);   // V3 and V5 last time
             cy.get('#summaryClimbs .legend').should('contain', 'Last session');
             cy.get('#summaryActions #saveSession').scrollIntoView().should('be.visible').and('have.text', 'DONE');
-            cy.get('#summaryBack').should('have.text', 'Back').and('have.class', 'text-link');
+            cy.get('#summaryBack').should('have.text', 'Back').and('have.class', 'link-button');
             cy.get('#saveSession').then((done) => cy.get('#summaryBack').should((back) => expect(back[0].getBoundingClientRect().top).to.be.at.least(done[0].getBoundingClientRect().bottom)));   // under DONE
             cy.get('#summarySave #sessionStart').should('exist');
             cy.get('#shareSummary').should('not.exist');   // shared from the icon by the name
@@ -3783,7 +3783,7 @@ describe('Training apps', function () {
                     win.localStorage.setItem('dansLoftLog', JSON.stringify([{ id: 1, date: '2026-09-12', climbs: [6, 6, 14], rating: 0 }]));
                 }
             });
-            cy.get('#boulderTotal').should('have.text', '3 boulders in the last year, 0 in the year before');
+            cy.get('#boulderTotal').should('have.text', '3 boulders, 0 before');
         });
     });
 
@@ -4066,11 +4066,11 @@ describe('Training apps', function () {
             cy.get('#boulderChart').then(chart => {
                 cy.get('#boulderChart svg').should('have.attr', 'viewBox', `0 0 ${Math.round(chart[0].clientWidth)} 200`);
             });
-            // every chart off takes the range picker with it
+            // every grade chart off leaves the range picker for the climbs by kind
             cy.get('[data-part="boulderFigure"]').uncheck({ force: true });
-            cy.get('#performance').should('not.be.visible');
+            cy.get('#kindFigure').should('be.visible');
+            cy.get('#performance .range-picker').should('be.visible');
             cy.get('[data-part="sportFigure"]').check({ force: true });
-            cy.get('#performance').should('be.visible');
             cy.get('#sportFigure').should('be.visible');
         });
 
@@ -4092,40 +4092,50 @@ describe('Training apps', function () {
                 .should('equal', 'Last 30 days · 6 sessions · 1h 49m trained · 5 climbs\nLast 7 days · 2 sessions · 1h 15m trained · 4 climbs');
         });
 
-        it('splits the last 30 days of time trained into climbing, fingerboard and other', () => {
+        it('shows the time trained in the range picked, a row for each kind of training', () => {
             visitWith({
                 boulderLog: [
                     { id: 1, date: '2026-09-10', climbs: ['V2'], rating: 3, minutes: 60 },
-                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 500 }   // over 30 days ago
+                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 500 }   // the 30 days before
                 ],
                 lapTimerLog: [{ id: 3, date: '2026-09-01', total: 30 * 60000, laps: 3, rating: 0 }],
                 loftLog: [{ id: 4, date: '2026-08-20', seconds: 900, moves: 20, rating: 0 }],
                 tradLog: [{ id: 5, date: '2026-09-04', climbs: ['VS'], rating: 0 }]   // no time kept
             });
-            cy.get('#timeSplit').should('be.visible');
-            cy.get('#timeSplitTotal').should('have.text', 'Last 30 days · 1h 45m trained');
-            cy.get('#timeSplitBar button').should('have.length', 2);   // no fingerboard to show
-            cy.get('#timeSplitBar button').eq(0).should('have.class', 'split-1')
-                .and('have.attr', 'title', 'Climbing 86% · 1h 30m (Gym Session 1h 00m, Lap Timer 30 min)');
-            cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3')
-                .and('have.attr', 'title', 'Other 14% · 15 min (Twister 15 min)');
-            cy.get('#timeSplitLegend li').eq(0).should('have.text', 'Climbing\u00a086%\u00a0· 1h 30m');
-            cy.get('#timeSplitBar button').eq(1).should('have.attr', 'aria-label', 'Other 14% · 15 min (Twister 15 min), show by app');
+            cy.get('label[for="range-30"]').click();
+            cy.get('#timeFigure').should('be.visible');
+            cy.get('#timeTotal').should('have.text', '1h 45m, 8h 20m before');
+            cy.get('#timeBars .bar-row').should('have.length', 2);   // no fingerboard to show
+            cy.get('#timeBars .bar-row').eq(0).should('have.class', 'train-climbing')
+                .and('have.attr', 'title', 'Climbing: 1h 30m, 8h 20m before');
+            cy.get('#timeBars .bar-row').eq(0).find('.bar-value').should('have.text', '1h 30m 86%');
+            cy.get('#timeBars .bar-row').eq(0).find('.before').should('have.length', 1);
+            cy.get('#timeBars .bar-row').eq(1).should('have.class', 'train-other')
+                .and('have.attr', 'aria-label', 'Other: 15 min, 0 min before, show by app');
+            cy.get('#timeBars .bar-row').eq(1).find('.before').should('not.exist');
+            cy.get('#timeLegend .legend').should('have.text', 'The 30 days before');
+            // all time has nothing to compare with
+            cy.get('label[for="range-all"]').click();
+            cy.get('#timeTotal').should('have.text', '10h 05m');
+            cy.get('#timeLegend .legend').should('not.exist');
         });
 
-        it('splits the last 30 days of climbs into bouldering, sport and trad', () => {
+        it('shows the climbs by kind in the range picked', () => {
             visitWith({
                 boulderLog: [
                     { id: 1, date: '2026-09-10', climbs: ['V2', 'V3'], sport: ['6a'], rating: 3, minutes: 60 },
-                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 500 }   // over 30 days ago
+                    { id: 2, date: '2026-08-01', climbs: ['V2'], rating: 3, minutes: 500 }   // the 30 days before
                 ],
                 tradLog: [{ id: 3, date: '2026-09-04', climbs: ['VS'], rating: 0 }]
             });
-            cy.get('#kindSplit').should('be.visible');
-            cy.get('#kindSplitTotal').should('have.text', 'Last 30 days · 4 climbs');
-            cy.get('#kindSplitBar span').then((parts) => expect([...parts].map((part) => part.className)).to.deep.equal(['split-boulder', 'split-sport', 'split-trad']));
-            cy.get('#kindSplitBar span').eq(0).should('have.attr', 'title', 'Bouldering 50% · 2');
-            cy.get('#kindSplitLegend li').eq(2).should('have.text', 'Trad 25% · 1');
+            cy.get('label[for="range-30"]').click();
+            cy.get('#kindFigure').should('be.visible');
+            cy.get('#kindTotal').should('have.text', '4 climbs, 1 before');
+            cy.get('#kindBars .bar-name').then((names) => expect([...names].map((name) => name.textContent)).to.deep.equal(['Bouldering', 'Sport', 'Trad']));
+            cy.get('#kindBars .bar-row').should('have.class', 'train-climbing');
+            cy.get('#kindBars .bar-row').eq(0).should('have.attr', 'title', 'Bouldering: 2, 1 before');
+            cy.get('#kindBars .bar-row').eq(2).find('.bar-value').should('have.text', '1 25%');
+            cy.get('#kindBars button').should('not.exist');
         });
 
         it('counts Tabata repeaters as fingerboard and a classic Tabata as other, in a fixed order', () => {
@@ -4139,12 +4149,16 @@ describe('Training apps', function () {
                 ],
                 gapsLog: [{ id: 5, date: day, input: 'tindeq', time: 3600, score: 1 }]
             });
-            cy.get('#timeSplitBar button').should('have.length', 2);
+            cy.get('#timeBars .bar-row').should('have.length', 2);
             // other is the bigger, but fingerboard still comes first
-            cy.get('#timeSplitBar button').eq(0).should('have.class', 'split-2')
-                .and('have.attr', 'title', 'Fingerboard 33% · 35 min (Tabata 20 min, No Hangs 10 min, Rock Rings 5 min)');
-            cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3')
-                .and('have.attr', 'title', 'Other 67% · 1h 10m (Tindeq Arcade 1h 00m, Tabata 10 min)');
+            cy.get('#timeBars .bar-row').eq(0).should('have.class', 'train-fingerboard')
+                .find('.bar-value').should('have.text', '35 min 33%');
+            cy.get('#timeBars .bar-row').eq(1).should('have.class', 'train-other')
+                .find('.bar-value').should('have.text', '1h 10m 67%');
+            cy.get('#timeBars .bar-row').eq(0).click();
+            cy.get('#timeDetailBars .bar-name').then((names) => expect([...names].map((name) => name.textContent)).to.deep.equal(['Tabata', 'No Hangs', 'Rock Rings']));
+            cy.get('#timeBars .bar-row').eq(1).click();
+            cy.get('#timeDetailBars .bar-name').then((names) => expect([...names].map((name) => name.textContent)).to.deep.equal(['Tindeq Arcade', 'Tabata']));
         });
 
         it('counts a Tabata as whatever it was saved as', () => {
@@ -4155,9 +4169,9 @@ describe('Training apps', function () {
                     { id: 2, date: day, work: 20, rest: 10, reps: 8, seconds: 600, rating: 0, kind: 'Climbing' }
                 ]
             });
-            cy.get('#timeSplitBar button').should('have.length', 2);
-            cy.get('#timeSplitBar button').eq(0).should('have.class', 'split-1').and('have.attr', 'title', 'Climbing 33% · 10 min (Tabata 10 min)');
-            cy.get('#timeSplitBar button').eq(1).should('have.class', 'split-3').and('have.attr', 'title', 'Other 67% · 20 min (Tabata 20 min)');
+            cy.get('#timeBars .bar-row').should('have.length', 2);
+            cy.get('#timeBars .bar-row').eq(0).should('have.class', 'train-climbing').find('.bar-value').should('have.text', '10 min 33%');
+            cy.get('#timeBars .bar-row').eq(1).should('have.class', 'train-other').find('.bar-value').should('have.text', '20 min 67%');
         });
 
         it('colours a workout day blue and darkens a day by how long it trained', () => {
@@ -4187,39 +4201,40 @@ describe('Training apps', function () {
                 lapTimerLog: [{ id: 3, date: day, total: 30 * 60000, laps: 3, rating: 0 }],
                 noHangsLog: [{ id: 4, date: day, seconds: 600, rating: 0 }]
             });
-            cy.get('#timeSplitDetail').should('not.be.visible');
-            cy.get('#timeSplitBar button').eq(0).click();
-            cy.get('#timeSplitBar button').eq(0).should('have.attr', 'aria-expanded', 'true').and('not.have.class', 'dim');
-            cy.get('#timeSplitBar button').eq(1).should('have.class', 'dim');
-            cy.get('#timeSplitLegend li').eq(0).should('not.have.class', 'dim');
-            cy.get('#timeSplitLegend li').eq(1).should('have.class', 'dim');   // its key fades with it
-            cy.get('#timeSplitDetail').should('be.visible');
-            cy.get('#timeSplitDetailTitle').should('have.text', 'Climbing · 4h 30m, by app');
-            cy.get('#timeSplitDetailBar span').should('have.length', 3);
-            cy.get('#timeSplitDetailBar span').eq(0).should('have.class', 'split-app-1').and('have.attr', 'title', 'Outside 67% · 3h 00m');
-            cy.get('#timeSplitDetailBar span').eq(2).should('have.attr', 'title', 'Lap Timer 11% · 30 min');
-            cy.get('#timeSplitDetailLegend li').eq(1).should('have.text', 'Gym Session\u00a022%\u00a0· 1h 00m');
+            cy.get('#timeDetail').should('not.be.visible');
+            cy.get('#timeBars .bar-row').eq(0).click();
+            cy.get('#timeBars .bar-row').eq(0).should('have.attr', 'aria-expanded', 'true').and('not.have.class', 'dim');
+            cy.get('#timeBars .bar-row').eq(1).should('have.class', 'dim');
+            cy.get('#timeDetail').should('be.visible');
+            cy.get('#timeDetailTitle').should('have.text', 'Climbing by app');
+            cy.get('#timeDetailBars .bar-row').should('have.length', 3);
+            // in its kind's colour, biggest first
+            cy.get('#timeDetailBars .bar-row').eq(0).should('have.class', 'train-climbing')
+                .and('have.attr', 'title', 'Outside: 3h 00m, 0 min before');
+            cy.get('#timeDetailBars .bar-row').eq(1).find('.bar-name').should('have.text', 'Gym Session');
+            cy.get('#timeDetailBars .bar-row').eq(1).find('.bar-value').should('have.text', '1h 00m 22%');
+            cy.get('#timeDetailBars .bar-row').eq(2).find('.bar-value').should('have.text', '30 min 11%');
             // another kind swaps it, the same kind closes it
-            cy.get('#timeSplitBar button').eq(1).click();
-            cy.get('#timeSplitDetailTitle').should('have.text', 'Fingerboard · 10 min, by app');
-            cy.get('#timeSplitBar button').eq(1).click();
-            cy.get('#timeSplitDetail').should('not.be.visible');
-            cy.get('#timeSplitBar button').should('not.have.class', 'dim');
-            cy.get('#timeSplitLegend li').should('not.have.class', 'dim');
+            cy.get('#timeBars .bar-row').eq(1).click();
+            cy.get('#timeDetailTitle').should('have.text', 'Fingerboard by app');
+            cy.get('#timeBars .bar-row').eq(1).click();
+            cy.get('#timeDetail').should('not.be.visible');
+            cy.get('#timeBars .bar-row').should('not.have.class', 'dim');
             // anywhere else closes it, and so does Escape
-            cy.get('#timeSplitBar button').eq(0).click();
-            cy.get('#timeSplitDetail').should('be.visible');
+            cy.get('#timeBars .bar-row').eq(0).click();
+            cy.get('#timeDetail').should('be.visible');
             cy.get('#sessions h2').click();
-            cy.get('#timeSplitDetail').should('not.be.visible');
-            cy.get('#timeSplitBar button').eq(0).click();
+            cy.get('#timeDetail').should('not.be.visible');
+            cy.get('#timeBars .bar-row').eq(0).click();
             cy.get('body').type('{esc}');
-            cy.get('#timeSplitDetail').should('not.be.visible');
+            cy.get('#timeDetail').should('not.be.visible');
         });
 
-        it('leaves out the time split with no time kept in the last 30 days', () => {
+        it('leaves out the time trained with no time kept', () => {
             visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
             cy.get('#sessions').should('be.visible');
-            cy.get('#timeSplit').should('not.be.visible');
+            cy.get('#kindFigure').should('be.visible');
+            cy.get('#timeFigure').should('not.be.visible');
         });
 
         it('says nothing of time trained when no session in the last 30 days kept any', () => {
@@ -4246,8 +4261,8 @@ describe('Training apps', function () {
 
         it('says there is nothing to chart with nothing logged', () => {
             cy.visit(progressUrl);
-            cy.get('#performance').should('not.be.visible');
             cy.get('#progressEmpty').should('be.visible');
+            cy.get('#performance .range-picker').should('not.be.visible');
             // and there is still the way to bring a UKC logbook in
             cy.get('#ukcPrompt').should('be.visible');
         });
@@ -4271,8 +4286,10 @@ describe('Training apps', function () {
 
         it('says the same when nothing graded has been logged', () => {
             visitWith({ lapTimerLog: [{ id: 1, date: '2026-09-13', laps: 4, total: 60000, rating: 0 }] });
-            cy.get('#performance').should('not.be.visible');
+            cy.get('#sportFigure, #boulderFigure').should('not.be.visible');
             cy.get('#progressEmpty').should('be.visible');
+            // the time trained still has its range picker
+            cy.get('#timeFigure, #performance .range-picker').should('be.visible');
             // the session is still listed
             cy.get('#sessions, #activity').should('be.visible');
         });
@@ -4294,7 +4311,7 @@ describe('Training apps', function () {
         it('shows everything over all time', () => {
             visitWith(logs);
             cy.get('label[for="range-all"]').click();
-            cy.get('#boulderTotal').should('have.text', '5 boulders in all');
+            cy.get('#boulderTotal').should('have.text', '5 boulders');
             cy.get('#boulderChart .legend').should('not.exist');
         });
 
@@ -4302,7 +4319,7 @@ describe('Training apps', function () {
             visitWith(logs);
             labels('#boulderChart').should('deep.equal',
                 ['V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10']);
-            cy.get('#boulderTotal').should('have.text', '5 boulders in the last year, 0 in the year before');
+            cy.get('#boulderTotal').should('have.text', '5 boulders, 0 before');
         });
 
         it('stops the boulder chart at V8 when nothing harder is logged', () => {
@@ -4317,12 +4334,12 @@ describe('Training apps', function () {
             labels('#sportChart').should('deep.equal',
                 ['4', '5', '5+', '6a', '6a+', '6b', '6c', '7a', '7a+', '7b', '8a']);
             // the endurance session saved before grades were kept adds nothing
-            cy.get('#sportTotal').should('have.text', '6 climbs in the last year, 0 in the year before');
+            cy.get('#sportTotal').should('have.text', '6 climbs, 0 before');
         });
 
         it('adds the sport climbs from a gym session', () => {
             visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: ['V2'], sport: ['6b', '7a', '4+'], rating: 0 }] });
-            cy.get('#sportTotal').should('have.text', '3 climbs in the last year, 0 in the year before');
+            cy.get('#sportTotal').should('have.text', '3 climbs, 0 before');
             labels('#sportChart').should('include.members', ['4+', '6b', '7a']);
             cy.get('#allLogs tbody tr').first().should('contain', 'Gym Session')
                 .and('contain', '1 boulder, 3 sport climbs').and('contain', 'hardest V2 · 7a');
@@ -4330,7 +4347,7 @@ describe('Training apps', function () {
 
         it('charts split out low grades on the rungs they fall on', () => {
             visitWith({ boulderLog: [{ id: 1, date: '2026-09-13', climbs: [], sport: ['4a', '4c', '5b', '5c'], rating: 0 }] });
-            cy.get('#sportTotal').should('have.text', '4 climbs in the last year, 0 in the year before');
+            cy.get('#sportTotal').should('have.text', '4 climbs, 0 before');
             labels('#sportChart').should('include.members', ['4', '4+', '5', '5+']);
             cy.get('#allLogs tbody tr').first().should('contain', '4 sport climbs').and('contain', 'hardest 5c');
             cy.get('.log-heading').should('have.text', 'Activity Log');
@@ -4339,7 +4356,7 @@ describe('Training apps', function () {
         it('compares the last 7 days with the 7 before', () => {
             visitWith(logs);
             cy.get('label[for="range-7"]').click();
-            cy.get('#boulderTotal').should('have.text', '3 boulders in the last 7 days, 1 in the 7 days before');
+            cy.get('#boulderTotal').should('have.text', '3 boulders, 1 before');
             // the 7 days before is a line on each bar, not a bar of its own
             cy.get('#boulderChart .bar').should('have.length', 3);
             cy.get('#boulderChart line.before').should('have.length', 1);
@@ -4350,10 +4367,10 @@ describe('Training apps', function () {
         it('keeps the range it was left on', () => {
             visitWith(logs);
             cy.get('label[for="range-30"]').click();
-            cy.get('#boulderTotal').should('have.text', '4 boulders in the last 30 days, 0 in the 30 days before');
+            cy.get('#boulderTotal').should('have.text', '4 boulders, 0 before');
             cy.reload();
             cy.get('#range-30').should('be.checked');
-            cy.get('#boulderTotal').should('have.text', '4 boulders in the last 30 days, 0 in the 30 days before');
+            cy.get('#boulderTotal').should('have.text', '4 boulders, 0 before');
         });
 
         describe('Trad', function () {
@@ -4369,20 +4386,20 @@ describe('Training apps', function () {
                 visitWith({ tradLog: [session(false)] });
                 cy.get('#tradFigure').should('be.visible');
                 cy.get('#ukcNote').should('not.be.visible');
-                cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                cy.get('#tradTotal').should('have.text', '3 trad climbs, 0 before');
                 cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', 'hardest VS');
             });
 
             it('counts both when the day is not on UKC', () => {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(false)] });
-                cy.get('#tradTotal').should('have.text', '6 trad climbs in the last year, 0 in the year before');
+                cy.get('#tradTotal').should('have.text', '6 trad climbs, 0 before');
                 cy.get('#allLogs tbody tr').should('have.length', 3);
             });
 
             it("merges the UKC day into the session, keeping the session's three over UKC's two", () => {
                 visitWith({ ukcLogbook: logbook, tradLog: [session(true)] });
                 // the app's three, and UKC's one from 6 Aug - not UKC's two from 31 Aug as well
-                cy.get('#tradTotal').should('have.text', '4 trad climbs in the last year, 0 in the year before');
+                cy.get('#tradTotal').should('have.text', '4 trad climbs, 0 before');
                 cy.get('#allLogs tbody tr').should('have.length', 2);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', '3 trad climbs')
                     .and('contain', 'merged with UKC');
@@ -4395,7 +4412,7 @@ describe('Training apps', function () {
                     [{ date: '2026-08-31', grade: '6a', type: 'sport', name: 'Sunny Side', crag: 'Moorhill Quarry', notes: '' }]) };
                 visitWith({ ukcLogbook: busier, tradLog: [{ id: 1, date: '2026-08-31', climbs: ['VS'], ukc: true, rating: 3, minutes: 240 }] });
                 // UKC's two from 31 Aug over the session's one, and its one from 6 Aug
-                cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                cy.get('#tradTotal').should('have.text', '3 trad climbs, 0 before');
                 cy.get('#allLogs tbody tr').should('have.length', 3);
                 cy.get('#allLogs tbody tr').first().should('contain', 'Outside').and('contain', '2 trad climbs')
                     .and('contain', 'hardest HS').and('contain', '4h 00m').and('contain', 'merged with UKC');
@@ -5126,7 +5143,7 @@ describe('Training apps', function () {
                 // with only a year are left out.
                 cy.get('label[for="range-all"]').click();
                 labels('#tradChart').should('deep.equal', ['VD', 'S', 'HS', 'VS', 'HVS', 'E1', 'E2']);
-                cy.get('#tradTotal').should('have.text', '4 trad climbs in all');
+                cy.get('#tradTotal').should('have.text', '4 trad climbs');
                 cy.get('#ukcImported').should('contain', 'Imported from UKC on 13 Sep 2026.')
                     .and('contain', '3 climbs left out');
             });
@@ -5135,7 +5152,7 @@ describe('Training apps', function () {
                 choose(csv);
                 // 4c as 4+, 5c as 5+, and 6a+ as it is
                 cy.get('label[for="range-all"]').click();
-                cy.get('#sportTotal').should('have.text', '3 climbs in all');
+                cy.get('#sportTotal').should('have.text', '3 climbs');
                 labels('#sportChart').should('include.members', ['4+', '5+', '6a+']);
             });
 
@@ -5154,7 +5171,7 @@ describe('Training apps', function () {
                     expect(grades).to.deep.equal(['boulder V3', 'boulder V3', 'boulder V0', 'boulder V5']);
                 });
                 cy.get('label[for="range-all"]').click();
-                cy.get('#boulderTotal').should('have.text', '4 boulders in all');
+                cy.get('#boulderTotal').should('have.text', '4 boulders');
                 cy.get('#ukcImported').should('contain', '1 climb left out');
                 cy.contains('#allLogs tbody tr', '19 Jun').should('contain', '3 boulders')
                     .and('contain', 'hardest Overhang (V5)');
@@ -5195,9 +5212,9 @@ describe('Training apps', function () {
 
             it('replaces the last import with a new one', () => {
                 choose(csv);
-                cy.get('#tradTotal').should('have.text', '3 trad climbs in the last year, 0 in the year before');
+                cy.get('#tradTotal').should('have.text', '3 trad climbs, 0 before');
                 choose(later);
-                cy.get('#tradTotal').should('have.text', '1 trad climb in the last year, 0 in the year before');
+                cy.get('#tradTotal').should('have.text', '1 trad climb, 0 before');
                 cy.get('#sportChart').should('contain', 'No climbs in the last year');
                 cy.get('#allLogs tbody tr').should('have.length', 1);
             });
@@ -5205,7 +5222,7 @@ describe('Training apps', function () {
             it('compares the last 30 days with the 30 before', () => {
                 choose(csv);
                 cy.get('label[for="range-30"]').click();
-                cy.get('#tradTotal').should('have.text', '2 trad climbs in the last 30 days, 1 in the 30 days before');
+                cy.get('#tradTotal').should('have.text', '2 trad climbs, 1 before');
             });
 
             it('can be removed again', () => {
@@ -5214,7 +5231,7 @@ describe('Training apps', function () {
                 cy.tick(100);
                 cy.get('.toast.danger').should('contain', 'Remove the imported UKC logbook from this device?');
                 cy.get('.toast.danger .toast-confirm').click();
-                cy.get('#performance').should('not.be.visible');
+                cy.get('#performance .range-picker').should('not.be.visible');
                 cy.get('#progressEmpty').should('be.visible');
                 cy.window().then((win) => expect(win.localStorage.getItem('ukcLogbook')).to.equal(null));
                 cy.get('#sessions').should('not.be.visible');
@@ -5348,7 +5365,7 @@ describe('Training apps', function () {
                         falls: { V3: 1, V5: 3 }, ascents: { V3: ['fall', 'dog', 'flash'], V5: ['fall', 'fall', 'fall'] }, rating: 0 }]));
                 }
             });
-            cy.get('#boulderTotal').should('have.text', '2 boulders in the last year, 0 in the year before');
+            cy.get('#boulderTotal').should('have.text', '2 boulders, 0 before');
             cy.get('#boulderChart .bar').should('exist');
             cy.get('#boulderChart .bar.dog').should('not.exist');
             cy.get('#boulderChart .flashes').should('not.exist');
@@ -5443,10 +5460,10 @@ describe('Training apps', function () {
             // the chart and START to begin with
             cy.get('#pullHistory .chart').should('be.visible');
             cy.get('#pullLeft').should('not.be.visible');
-            cy.get('#discardPull').should('not.be.visible');
+            cy.get('#discard').should('not.be.visible');
             cy.get('#primaryButton').click();
             cy.get('#pullHistory').should('not.be.visible');
-            cy.get('#discardPull').should('be.visible');
+            cy.get('#discard').should('be.visible');
             cy.get('#pullDate').should('have.value', '2026-09-13');
             // load cell to start with: the arms, the one not picked greyed out
             cy.get('#pullMode-loadcell').should('be.checked');
@@ -5528,7 +5545,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('#pullEdge').clear().type('15').trigger('change');
             cy.get('#pullLeft').should('have.value', '25');
-            cy.get('#discardPull').click();
+            cy.get('#discard').click();
             cy.get('#chartEdges label').then((labels) => expect([...labels].map((label) => label.innerText)).to.deep.equal(['No edge', '15mm', '20mm']));
             cy.get('#chartEdge-20').should('be.checked');
             cy.get('#pullHistory .bar.pull-left').should('have.length', 2);
@@ -5547,11 +5564,11 @@ describe('Training apps', function () {
             // a reload picks the session back up
             cy.reload();
             cy.get('#pullLeft').should('be.visible').and('have.value', '40');
-            cy.get('#discardPull').click().should('contain', 'SURE?');
+            cy.get('#discard').click().should('contain', 'SURE?');
             cy.get('#pullLeft').should('have.value', '40');
-            cy.get('#discardPull').click();
+            cy.get('#discard').click();
             cy.get('#primaryButton').should('be.visible');
-            cy.get('#discardPull').should('not.be.visible');
+            cy.get('#discard').should('not.be.visible');
             cy.window().then((win) => {
                 expect(JSON.parse(win.localStorage.getItem('maxPullLog'))[0].left).to.equal(30);
                 expect(win.localStorage.getItem('maxPullCurrent')).to.equal(null);
@@ -5559,7 +5576,7 @@ describe('Training apps', function () {
             cy.get('#primaryButton').click();
             cy.get('#pullLeft').should('have.value', '30');
             // nothing changed, so no SURE?
-            cy.get('#discardPull').click();
+            cy.get('#discard').click();
             cy.get('#primaryButton').should('be.visible');
         });
 
@@ -5572,7 +5589,7 @@ describe('Training apps', function () {
             cy.get('#pullLeft').should('be.visible').and('have.value', '30');
             cy.get('#pullRight').should('have.value', '28');
             cy.get('#savePull').should('contain', 'FINISH & SAVE');
-            cy.get('#discardPull').should('contain', 'CANCEL EDIT');
+            cy.get('#discard').should('contain', 'CANCEL EDIT');
             cy.get('#pullEdge').clear().type('15').trigger('change');
             cy.get('#pullLeft').should('have.value', '30');
             cy.get('#savePull').click();
@@ -5600,10 +5617,10 @@ describe('Training apps', function () {
             cy.get('nav .icon-info').click();
             cy.get('#log [data-log="edit"][data-id="2"]').click();
             cy.get('#pullEdge').clear().type('25').trigger('change');
-            cy.get('#discardPull').click().should('contain', 'SURE?');
-            cy.get('#discardPull').click();
+            cy.get('#discard').click().should('contain', 'SURE?');
+            cy.get('#discard').click();
             cy.get('#primaryButton').should('be.visible');
-            cy.get('#discardPull').should('contain', 'DISCARD');
+            cy.get('#discard').should('contain', 'DISCARD');
             cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('maxPullLog'))[0].edge).to.equal(15));
         });
 

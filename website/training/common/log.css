@@ -9,10 +9,6 @@
 [data-state="saving"] #finishButton {
     display: none;
 }
-[data-state="running"] #discard,
-[data-state="saving"] #discard {
-    display: inline-block;
-}
 /* the title, note and rating can be put in as you go; the save waits for FINISH */
 [data-state="running"] #endingDiv {
     display: block;
@@ -23,15 +19,9 @@
 }
 
 /* The top of a session: its date, the count and the hardest */
-#sessionBar {
-    display: block;
-    width: 100%;
-    margin: 16px auto 12px;
-    padding: 16px;
-}
 #sessionBar label {
     font-size: var(--t-sm);
-    margin-right: 8px;
+    margin-right: var(--s2);
 }
 /* Started and finished, once the session is finished */
 .session-times {
@@ -39,8 +29,8 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 8px 16px;
-    margin-top: 12px;
+    gap: var(--s2) var(--s4);
+    margin-top: var(--s3);
 }
 [data-state="saving"] .session-times {
     display: flex;
@@ -49,7 +39,7 @@
     margin-right: 0;
 }
 .session-times .field {
-    margin-left: 8px;
+    margin-left: var(--s2);
 }
 .session-length {
     font-size: var(--t-sm);
@@ -57,7 +47,7 @@
 }
 #sessionBar h3 {
     font-size: 44px;
-    margin: 12px 0 0;
+    margin: var(--s3) 0 0;
 }
 #sessionBar .of {
     font-size: var(--t-lg);
@@ -65,7 +55,7 @@
     color: var(--ink-2);
 }
 #summary {
-    margin: 4px 0 0;
+    margin: var(--s1) 0 0;
     font-size: var(--t-md);
     color: var(--ink-2);
 }
@@ -77,18 +67,18 @@
 #grades {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: var(--s2);
 }
 .grade-row {
     display: flex;
     align-items: stretch;
-    gap: 8px;
+    gap: var(--s2);
     margin: 0;
 }
 .grade-add {
     flex: 1 1 auto;
     min-width: 0;
-    padding: 8px 40px 8px 20px;
+    padding: var(--s2) 40px var(--s2) 20px;
 }
 /* band colour as a stripe down the inside edge, faint until climbed; blue if the ladder has no bands */
 .grade-add, .grade-add:hover, .grade-add:focus {
@@ -172,10 +162,15 @@
     width: 1.1em;
     height: 1.1em;
 }
-/* neutral, so the only colour along a row is what was climbed */
-.grade-minus, .grade-minus:hover, .grade-minus:focus {
+/* The small buttons beside a tile - the minus, the waffle and its undo, a loft
+   route's i: neutral, so the only colour along a row is what was climbed */
+.grade-minus, .ascent-open, .ascent-undo, .route-info {
+    display: flex;
     flex: 0 0 auto;
-    width: 40px;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: 1px solid var(--line);
@@ -185,22 +180,28 @@
     font-size: var(--t-lg);
     line-height: 1;
 }
-.grade-minus:hover {
+:is(.grade-minus, .ascent-open, .ascent-undo, .route-info):is(:hover, :focus) {
     background: var(--tile-hover);
+    color: var(--text);
+    outline: none;
+}
+:is(.grade-minus, .ascent-open, .ascent-undo, .route-info):focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
 }
 .grade-harder {
     min-height: 56px;
     margin: 0;
-    padding: 8px 12px;
+    padding: var(--s2) var(--s3);
     border-radius: var(--r-md);
     font-size: var(--t-sm);
 }
 @media (max-width: 380px) {
     #grades {
-        gap: 8px;
+        gap: var(--s2);
     }
     .grade-add {
-        padding: 8px 32px 8px 16px;
+        padding: var(--s2) var(--s6) var(--s2) var(--s4);
     }
     .grade-row .route-grade {
         font-size: var(--t-md);
@@ -208,9 +209,8 @@
     .route-colour {
         font-size: var(--t-xs);
     }
-    .grade-minus, .grade-minus:hover, .grade-minus:focus {
+    .grade-minus, .ascent-undo, .route-info {
         width: 36px;
-        font-size: var(--t-lg);
     }
     .grade-count {
         right: 7px;
@@ -218,7 +218,7 @@
     }
     .grade-harder {
         font-size: var(--t-sm);
-        padding: 8px 4px;
+        padding: var(--s2) var(--s1);
     }
 }
 
@@ -247,23 +247,13 @@
 .ascent.open .ascent-pick {
     z-index: 41;
 }
-.ascent-open, .ascent-open:hover, .ascent-open:focus,
-.ascent-undo, .ascent-undo:hover, .ascent-undo:focus {
+.ascent-open {
     position: relative;
-    display: flex;
     flex: 1 1 auto;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    width: 44px;
     min-height: 32px;
-    border: 1px solid var(--track-edge);
-    border-radius: var(--r-md);
-    background: var(--surface-2);
-    color: var(--ink-2);
 }
-.ascent-undo, .ascent-undo:hover, .ascent-undo:focus {
-    flex: 0 0 auto;
+.ascent-undo {
+    min-height: 32px;
     overflow: hidden;
 }
 /* only on the last climb marked, sliding in from the right as the tile makes room */
@@ -297,7 +287,7 @@
     right: -7px;
     min-width: 18px;
     height: 18px;
-    padding: 0 4px;
+    padding: 0 var(--s1);
     box-sizing: border-box;
     border-radius: var(--r-pill);
     background: var(--danger);
@@ -342,6 +332,7 @@
     border: 0;
     background: none;
     color: var(--text);
+    text-transform: none;
     white-space: nowrap;
     outline: none;
     animation: ascent-pop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;

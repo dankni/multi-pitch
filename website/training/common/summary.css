@@ -3,14 +3,14 @@
     padding-bottom: 40px;   /* SHARE clear of the foot of the screen */
 }
 .summary-figure {
-    margin: 20px 0 8px;
+    margin: 20px 0 var(--s2);
 }
 .summary-figure figcaption {
     font-weight: 600;
     font-size: var(--t-md);
 }
 .summary-total {
-    margin: 2px 0 8px;
+    margin: 2px 0 var(--s2);
     font-size: var(--t-sm);
     color: var(--ink-2);
 }
@@ -82,7 +82,7 @@
     order: 1;
 }
 .summary-share-icon {
-    margin-left: 12px;
+    margin-left: var(--s3);
     vertical-align: middle;
 }
 .summary-share-icon svg {
@@ -98,18 +98,11 @@
 }
 
 /* back from the summary: RESET and DELETE SAVE in place of DISCARD, see drawStoredActions() */
-.stored-actions {
+body:not([data-stored]) .stored-actions {
     display: none;
-}
-body[data-stored] .stored-actions {
-    display: flex;
-    justify-content: center;
-    gap: var(--s3);
 }
 body[data-stored] .stored-actions button {
     display: inline-block;
-    margin-left: 0;
-    margin-right: 0;
 }
 body[data-stored] #discard.secondary, body[data-stored] #reset.secondary {
     display: none;

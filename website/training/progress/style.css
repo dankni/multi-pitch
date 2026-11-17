@@ -10,9 +10,9 @@
 #settings .toggle-icon {
     margin: 0 0.3em 0 0;
 }
-/* The way to import a UKC logbook, above everything until there is one */
-.ukc-prompt {
-    margin: 20px auto 0;
+/* The way to import a UKC logbook, under the charts until there is one */
+.performance .ukc-prompt {
+    margin: var(--s4) 0 0;
     font-size: var(--t-sm);
     opacity: 1;
 }
@@ -28,7 +28,7 @@
     font-size: var(--t-sm);
 }
 .conversion-table td {
-    padding: 8px 3px;
+    padding: var(--s2) var(--s1);
 }
 .conversion-table .between {
     font-size: var(--t-xs);
@@ -36,7 +36,7 @@
 }
 .conversion-table small {
     display: block;
-    padding-left: 16px;   /* under the grade, past its swatch */
+    padding-left: var(--s4);   /* under the grade, past its swatch */
     font-size: var(--t-xs);
     color: var(--ink-2);
 }
@@ -48,18 +48,18 @@
 }
 .conversion-table + .show-more {
     display: block;
-    margin: 12px auto 0;
-    padding: 0.6rem 1.5rem;
+    margin: var(--s3) auto 0;
+    padding: var(--s2) var(--s5);
 }
 .overlay .conversion-note {
-    margin: 16px auto 0;
+    margin: var(--s4) auto 0;
 }
 .conversion-picker.picker {
     margin-left: auto;
     margin-right: auto;
 }
 .performance {
-    margin: 20px auto 32px;
+    margin: var(--s5) auto var(--s6);
 }
 /* Four ranges on one row, all the same size, up to a width that fits ALL TIME:
    four 90px chips, the gaps between them and the track's padding */
@@ -72,44 +72,52 @@
     box-sizing: border-box;   /* chips are content-box; these share the row equally */
     max-width: 90px;
     min-width: 0;
-    padding: 8px 4px;
+    padding: var(--s2) var(--s1);
     letter-spacing: 0.5px;
     white-space: nowrap;
 }
 .conversion-picker.picker {
     max-width: calc(2 * 120px + 2px + 6px);
-    margin-top: -4px;
+    margin-top: calc(-1 * var(--s1));
 }
+/* every figure the same: caption, total, chart, key */
 .performance figure {
-    margin: 20px 0 28px;
+    margin: var(--s5) 0 var(--s6);
 }
 .performance figcaption {
     font-weight: 600;
     font-size: var(--t-md);
 }
 .performance .sessions-note {
-    margin: 0 0 8px;
+    margin: 0 0 var(--s2);
 }
-/* see growOnFirstSight() */
+/* see growOnFirstSight(): columns grow up, and the rows of bars out from their axis */
 .chart .bar {
     transform-box: fill-box;
     transform-origin: bottom;
 }
 [data-grow="wait"] .bar { transform: scaleY(0); }
+[data-grow="wait"] .bar-fill { transform: scaleX(0); }
 [data-grow="wait"] .count,
+[data-grow="wait"] .bar-value,
 [data-grow="wait"] .before { opacity: 0; }
 [data-grow="go"] .bar {
     animation: grow 0.9s calc(var(--i) * 45ms) ease-out both;
 }
+[data-grow="go"] .bar-fill {
+    animation: grow-x 0.9s calc(var(--i) * 45ms) ease-out both;
+}
 [data-grow="go"] .count,
+[data-grow="go"] .bar-value,
 [data-grow="go"] .before {
     animation: fade-in 0.4s calc(var(--i) * 45ms + 0.75s) both;
 }
 @keyframes grow { from { transform: scaleY(0); } }
+@keyframes grow-x { from { transform: scaleX(0); } }
 @keyframes fade-in { from { opacity: 0; } }
 .chart-empty {
-    margin: 12px 0;
-    padding: 24px 12px;
+    margin: var(--s5) 0;
+    padding: var(--s5) var(--s3);
     font-size: var(--t-sm);
     color: var(--ink-2);
     border: 1px dashed var(--grid);
@@ -118,10 +126,10 @@
 /* Every app's log on one page: the apps' .log-table, but on the page rather
    than in a black overlay, so the stripe and the star follow the theme */
 .sessions {
-    margin: 20px auto 12px;
+    margin: var(--s5) auto var(--s3);
 }
 .sessions h2 {
-    margin: 0 0 8px;
+    margin: 0 0 var(--s2);
     font-size: var(--t-md);
 }
 .sessions .log-heading {
@@ -139,7 +147,7 @@
     display: block;
     max-width: 100%;
     height: auto;
-    margin: 20px auto 8px;   /* the same 20px above as the arrows have below */
+    margin: var(--s5) auto var(--s2);   /* the same above as the arrows have below */
 }
 .calendar text {
     font-family: 'Hind', sans-serif;
@@ -157,107 +165,31 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    margin: 0 auto 20px;   /* as wide as the calendar, and under it */
+    gap: var(--s2);
+    margin: 0 auto var(--s5);   /* as wide as the calendar, and under it */
 }
 .calendar-key {
     margin: 0;
 }
-/* Time trained: one bar, climbing, fingerboard and other a segment each, with a
-   2px gap of page between. The palette's first three categorical slots, light
-   and dark, which tell apart side by side or not, checked against #fff and
-   #111; the legend says each in words, as the third is under 3:1 on white. */
-.time-split {
-    --split-1: light-dark(#2a78d6, #3987e5);
-    --split-2: light-dark(#eb6834, #d95926);
-    --split-3: light-dark(#1baf7a, #199e70);
-    margin: 12px 0 24px;
-}
-.split-1 { --c: var(--split-1); }
-.split-2 { --c: var(--split-2); }
-.split-3 { --c: var(--split-3); }
-/* a kind's apps: slots 4 to 8, a run that tells apart side by side */
-.split-app-1 { --c: light-dark(#eda100, #c98500); }
-.split-app-2 { --c: light-dark(#e87ba4, #d55181); }
-.split-app-3 { --c: #008300; }
-.split-app-4 { --c: light-dark(#6250d6, #9085e9); }
-.split-app-5 { --c: light-dark(#e34948, #e66767); }
-/* climbs by kind: slots 1, 4 and 3 of the apps' run above */
-.split-boulder { --c: light-dark(#eda100, #c98500); }
-.split-sport { --c: light-dark(#6250d6, #9085e9); }
-.split-trad { --c: #008300; }
-/* "Last 30 days · 37h 13m trained", and a kind's "Climbing · 36h 29m, by app" */
-.time-split figcaption, .split-title {
-    margin: 0 0 8px;
-    font-weight: 600;
-    font-size: var(--t-md);
-}
-.split-bar {
-    display: flex;
-    gap: 2px;
-    height: 18px;
-}
-.split-bar > * {
-    flex-basis: 0;
-    min-width: 3px;
-    background: var(--c);
-}
-/* a segment to tap: none of a button's own look */
-.split-bar button {
-    all: unset;
-    display: block;
-    flex-basis: 0;
-    min-width: 3px;
-    background: var(--c);
-    cursor: pointer;
-    transition: opacity 150ms ease;
-}
-.split-bar button:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
-}
-/* the others fade while one is open, segments and legend both */
-.split-bar button.dim, .split-legend li.dim {
-    opacity: 0.35;
-}
-.split-legend li {
-    transition: opacity 150ms ease;
-}
-.split-bar > :first-child {
-    border-radius: var(--r-sm) 0 0 var(--r-sm);
-}
-.split-bar > :last-child {
-    border-radius: 0 var(--r-sm) var(--r-sm) 0;
-}
-.split-bar > :only-child {
-    border-radius: var(--r-sm);
-}
+/* A kind of training's apps, once its row is tapped */
 .split-detail {
-    margin-top: 16px;
-    padding-top: 12px;
+    margin-top: var(--s3);
+    padding-top: var(--s3);
     border-top: 1px solid var(--grid);
 }
-/* The calendar fills in a week at a time, left to right, and a time bar grows
-   in from the left - backwards, so each lets go once it has played */
-@keyframes split-grow {
-    from { clip-path: inset(0 100% 0 0); }
-    to   { clip-path: inset(0 0 0 0); }
+.split-title {
+    margin: 0 0 var(--s2);
+    font-weight: 600;
+    font-size: var(--t-sm);
 }
+/* The calendar fills in a week at a time, left to right */
 .calendar .day {
     animation: fade-in 0.35s calc(var(--week, 0) * 35ms) ease-out backwards;
 }
-.split-bar {
-    animation: split-grow 0.8s 0.2s ease-out backwards;
-}
 @media (prefers-reduced-motion: reduce) {
-    .calendar .day, .split-bar {
+    .calendar .day {
         animation: none;
     }
-}
-.split-legend {
-    margin: 12px 0 0;
-    padding: 0;
-    list-style: none;
 }
 .sessions .log-table tbody tr:nth-child(even) {
     background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08));
@@ -283,11 +215,12 @@
     vertical-align: top;
 }
 /* switched off under the cog - after the above, which it beats */
-.switched-off {
+.switched-off,
+.range-picker.switched-off {   /* as specific as the picker's own .picker:has(> [type="radio"]) */
     display: none;
 }
 @media (min-width: 1100px) {
     .performance, .sessions {
-        margin: 20px 20px 40px;
+        margin: var(--s5) var(--s5) var(--s7);
     }
 }

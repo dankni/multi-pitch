@@ -282,7 +282,7 @@ const accountPanel = `<aside id="account" class="overlay">
                     ${showPassword}
                 </div>
                 ${passwordRulesList}
-                <p class="backup-actions">
+                <p class="button-row even">
                     <button type="button" data-action="signInAccount">SIGN IN</button>
                     <button type="button" class="quiet" data-action="signUpAccount">SIGN UP</button>
                 </p>
@@ -298,7 +298,7 @@ const accountPanel = `<aside id="account" class="overlay">
                     ${showPassword}
                 </div>
                 ${passwordRulesList}
-                <p class="backup-actions">
+                <p class="button-row even">
                     <button type="button" data-action="confirmAccountCode">CONFIRM</button>
                     <button type="button" class="quiet" data-action="cancelAccountCode">CANCEL</button>
                 </p>
@@ -325,7 +325,7 @@ const accountPanel = `<aside id="account" class="overlay">
                     and restore it here to put it back, or to move it to a new device or browser. Restoring adds what's
                     missing and keeps what's already here. Your UKC logbook isn't included: import it again from UKC.
                 </p>
-                <p class="backup-actions">
+                <p class="button-row even">
                     <button type="button" data-action="downloadBackup">
                         <svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v10M3.5 7.5 8 12l4.5-4.5M2 14.5h12"/></svg>SAVE
                     </button>

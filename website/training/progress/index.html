@@ -29,36 +29,14 @@
 
     <!-- Filled in by sessions.js, and hidden until there is something to put in it -->
     <section class="sessions column" id="sessions" hidden>
-        <h2>Your sessions</h2>
+        <h2>Your Sessions</h2>
         <p class="sessions-note" id="sessionsStats"></p>
         <div id="sessionCalendar"></div>
-        <!-- the last 30 days' time trained: climbing, fingerboard and the rest, as shares of one bar -->
-        <figure class="time-split" id="timeSplit" hidden>
-            <figcaption id="timeSplitTotal"></figcaption>
-            <div class="split-bar" id="timeSplitBar" role="group" aria-label="Time trained in the last 30 days"></div>
-            <ul class="legend split-legend" id="timeSplitLegend"></ul>
-            <!-- a segment's apps, once it is tapped -->
-            <div class="split-detail" id="timeSplitDetail" hidden>
-                <p class="split-title" id="timeSplitDetailTitle"></p>
-                <div class="split-bar" id="timeSplitDetailBar" role="img"></div>
-                <ul class="legend split-legend" id="timeSplitDetailLegend"></ul>
-            </div>
-        </figure>
-        <!-- the same 30 days' climbs, bouldering, sport and trad, as shares of one bar -->
-        <figure class="time-split" id="kindSplit" hidden>
-            <figcaption id="kindSplitTotal"></figcaption>
-            <div class="split-bar" id="kindSplitBar" role="img"></div>
-            <ul class="legend split-legend" id="kindSplitLegend"></ul>
-        </figure>
     </section>
 
-    <!-- until a UKC logbook has been imported -->
-    <p class="sessions-note ukc-prompt column" id="ukcPrompt" hidden>
-        Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
-    </p>
-
-    <!-- Drawn by charts.js from the apps' logs and an imported UKC logbook, and
-         hidden until there is something graded to draw -->
+    <!-- Everything under the range picker follows it: the time and climbs bars from
+         sessions.js, and the grade charts from charts.js, drawn from the apps' logs
+         and an imported UKC logbook -->
     <section class="performance column" id="performance" hidden>
         <div class="picker range-picker" role="radiogroup" aria-label="Time range">
             <input type="radio" name="overviewRange" class="nice-radios" id="range-all" value="all" />
@@ -70,6 +48,23 @@
             <input type="radio" name="overviewRange" class="nice-radios" id="range-7" value="7" />
             <label for="range-7">7 days</label>
         </div>
+        <!-- a kind of training a row; tapping one opens its apps under it -->
+        <figure id="timeFigure" hidden>
+            <figcaption>Time trained</figcaption>
+            <p class="sessions-note" id="timeTotal"></p>
+            <div class="bar-rows" id="timeBars" role="group" aria-label="Time trained"></div>
+            <div class="split-detail" id="timeDetail" hidden>
+                <p class="split-title" id="timeDetailTitle"></p>
+                <div class="bar-rows" id="timeDetailBars" role="img"></div>
+            </div>
+            <div id="timeLegend"></div>
+        </figure>
+        <figure id="kindFigure" hidden>
+            <figcaption>Climbs by kind</figcaption>
+            <p class="sessions-note" id="kindTotal"></p>
+            <div class="bar-rows" id="kindBars" role="img"></div>
+            <div id="kindLegend"></div>
+        </figure>
         <figure id="sportFigure">
             <figcaption>Sport climbs by grade</figcaption>
             <p class="sessions-note" id="sportTotal"></p>
@@ -88,14 +83,15 @@
                 <span id="ukcImported"></span><button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
             </p>
         </figure>
-    </section>
-
-    <!-- in place of the charts on a device with nothing graded logged yet -->
-    <section class="performance column" id="progressEmpty" hidden>
-        <p class="chart-empty">
+        <!-- in place of the grade charts on a device with nothing graded logged yet -->
+        <p class="chart-empty" id="progressEmpty" hidden>
             Nothing graded logged yet. Climbs from the Gym Session, Circuit Session,
             Gilford Wall, Endurance and Outside Climbing apps are charted here, and so is an
             imported UKC logbook.
+        </p>
+        <!-- until a UKC logbook has been imported -->
+        <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
+            Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
         </p>
     </section>
 

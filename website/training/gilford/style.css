@@ -3,9 +3,9 @@
 .section-block {
     display: grid;
     grid-template-columns: 38px repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    gap: var(--s2);
     width: 100%;
-    margin: 0 auto 12px;
+    margin: 0 auto var(--s3);
 }
 .section-number {
     display: flex;
@@ -27,7 +27,7 @@
 }
 .route {
     min-width: 0;
-    padding: 8px 8px 8px 20px;
+    padding: var(--s2) var(--s2) var(--s2) 20px;
 }
 .route .tick {
     position: absolute;
@@ -40,11 +40,11 @@
 @media (max-width: 380px) {
     .section-block {
         grid-template-columns: 32px repeat(3, minmax(0, 1fr));
-        gap: 8px;
+        gap: var(--s2);
     }
     .route {
         --stripe: 6px;
-        padding: 8px 4px 8px 14px;
+        padding: var(--s2) var(--s1) var(--s2) 14px;
     }
     .section-number {
         font-size: var(--t-sm);

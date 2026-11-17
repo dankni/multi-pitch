@@ -1,5 +1,5 @@
 /* The session bar and the ladder are common/log.css. This is the one thing only
    trad has: "Merge with UKC", under the summary. */
 .ukc-toggle {
-    margin: 16px auto 8px;
+    margin: var(--s4) auto var(--s2);
 }

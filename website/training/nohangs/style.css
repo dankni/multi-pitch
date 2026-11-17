@@ -1,21 +1,21 @@
 /* A little smaller than the rings app's, so "Half Crimp · Front 2" fits a phone's line */
 #first .task {
     font-size: var(--t-xl);
-    margin-bottom: 4px;
+    margin-bottom: var(--s1);
 }
 
 /* Every grip, a dot a rep: the one you're on stands out, and the ones done fade */
 .hangs {
-    margin: 24px auto;
+    margin: var(--s5) auto;
     border-collapse: collapse;
     text-align: left;
 }
 .hangs td {
-    padding: 12px 12px;
+    padding: var(--s3) var(--s3);
     transition: opacity 0.3s ease;
 }
 .hangs tr {
-    border-bottom: 1px solid var(--box);
+    border-bottom: 1px solid var(--line);
 }
 .hangs tr.done td {
     opacity: 0.4;
@@ -34,7 +34,7 @@
     display: inline-block;
     width: 12px;
     height: 12px;
-    margin-left: 4px;
+    margin-left: var(--s1);
     border: 2px solid currentColor;
     border-radius: 50%;
     vertical-align: middle;
@@ -50,7 +50,7 @@
 .grips {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: var(--s4);
 }
 @media (max-width: 480px) {
     .grips {
@@ -62,13 +62,13 @@
 }
 .grips img {
     display: block;
-    margin: 0 auto 8px;
+    margin: 0 auto var(--s2);
 }
 .routine {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 12px;
+    margin-top: var(--s3);
 }
 .routine td {
-    padding: 4px 0;
+    padding: var(--s1) 0;
 }

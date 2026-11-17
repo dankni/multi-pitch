@@ -2,13 +2,15 @@
 
 /* The small print under a heading or a chart */
 .sessions-note {
-    margin: 0 0 12px;
+    margin: 0 0 var(--s3);
     font-size: var(--t-sm);
     line-height: 1.4;
     color: var(--ink-2);
 }
-.sessions-note a, .sessions-note .link-button {
+.sessions-note a {
     color: var(--link);
+}
+.sessions-note a, .sessions-note .link-button {
     text-decoration: none;
 }
 .sessions-note a:hover, .sessions-note a:focus,

@@ -5,7 +5,7 @@
    short, since its own log has the whole of it. */
 (function(){
     const showAtMost = 25;
-    const kinds = ["Climbing", "Fingerboard", "Other"];   // the time split's, in its order
+    const kinds = ["Climbing", "Fingerboard", "Other"];   // the time bars', in their order
 
     // V grades by their number: V9 is below V10, which it isn't as text. A Font grade as logged.
     function hardestV(climbs){
@@ -204,97 +204,125 @@
     }
     document.getElementById("sessionsStats").innerText = periodLine(30) + "\n" + periodLine(7);
 
-    /* The last 30 days' time trained, a kind of training a segment of one bar by
-       its share - always in this order and colour, so each keeps its place - and
-       the apps in it, biggest first, in its hover text. Tapping a segment opens a
-       bar of its apps under it; tapping it again, or anywhere else, closes it. */
-    const minutesText = minutes => sessionLength({ "minutes" : Math.max(1, Math.round(minutes)) });
-    const shareText = share => share < 1 ? "<1%" : Math.round(share) + "%";
-    let splitParts = [];
+    /* Time trained and climbs by kind over the period picked above the charts, a
+       row each on one scale with the period before as a line across it, as the
+       grade charts have. Kinds of training keep their order and colour; tapping one
+       opens its apps under it, biggest first, and tapping it again, or anywhere
+       else, closes it. */
+    const minutesText = minutes => minutes > 0 ? sessionLength({ "minutes" : Math.max(1, Math.round(minutes)) }) : "0 min";
+    const shareText = (part, whole) => whole === 0 || part === 0 ? "0%" : part / whole < 0.01 ? "<1%" : Math.round(part / whole * 100) + "%";
+    const minutesOf = list => list.reduce((sum, session) => sum + session.minutes, 0);
+    let timeParts = [];
     let openKind = null;
 
-    function legendItem(cls, name, percent, time){
-        return `<li class="legend-item ${cls}"><span class="swatch" aria-hidden="true"></span>${escapeHtml(name)}&nbsp;<strong>${percent}</strong>&nbsp;· ${time}</li>`;
+    // "Climbing: 1h 30m, 20 min before", as a column's hover text has it
+    function rowTitle(name, now, before, period){
+        return name + ": " + withBefore(now, period.previous ? before : null);
     }
 
-    // An app a segment, biggest first, as its share of the kind: the palette's
-    // slots 4 to 8 in order, so none is the colour of a kind in the bar above
+    function totalLine(now, before, period){
+        return withBefore(now, period.previous ? before : null);
+    }
+
     function showKind(index){
         openKind = index;
-        document.querySelectorAll("#timeSplitBar button").forEach(button => {
-            let open = Number(button.dataset.kind) === index;
-            button.setAttribute("aria-expanded", String(open));
-            button.classList.toggle("dim", index !== null && !open);
+        document.querySelectorAll("#timeBars .bar-row").forEach(row => {
+            let open = Number(row.dataset.row) === index;
+            row.setAttribute("aria-expanded", String(open));
+            row.classList.toggle("dim", index !== null && !open);
         });
-        // the legend is in the bar's order, so its items fade with their segments
-        document.querySelectorAll("#timeSplitLegend li").forEach((item, place) => item.classList.toggle("dim", index !== null && place !== index));
-        let detail = document.getElementById("timeSplitDetail");
+        let detail = document.getElementById("timeDetail");
         detail.hidden = index === null;
         if(index === null){ return; }
-        let part = splitParts[index];
-        let apps = part.apps.map((app, place) => Object.assign({}, app, { "cls" : "split-app-" + (place + 1),
-            "percent" : shareText(app.minutes / part.minutes * 100), "time" : minutesText(app.minutes) }));
-        let says = app => app.name + " " + app.percent + " · " + app.time;
-        document.getElementById("timeSplitDetailTitle").innerText = part.name + " · " + part.time + ", by app";
-        let bar = document.getElementById("timeSplitDetailBar");
-        bar.innerHTML = apps.map(app => `<span class="${app.cls}" style="flex-grow: ${app.minutes}" title="${escapeHtml(says(app))}"></span>`).join("");
-        bar.setAttribute("aria-label", part.name + " by app: " + apps.map(says).join(", "));
-        document.getElementById("timeSplitDetailLegend").innerHTML = apps.map(app => legendItem(app.cls, app.name, app.percent, app.time)).join("");
+        let part = timeParts[index];
+        let rows = part.apps.map(app => ({ "name" : app.name, "cls" : part.cls, "value" : app.minutes, "before" : app.previous,
+            "text" : minutesText(app.minutes), "share" : shareText(app.minutes, part.minutes),
+            "title" : rowTitle(app.name, minutesText(app.minutes), minutesText(app.previous), part.period) }));
+        document.getElementById("timeDetailTitle").innerText = part.name + " by app";
+        let bars = document.getElementById("timeDetailBars");
+        bars.innerHTML = barRows(rows);
+        bars.setAttribute("aria-label", part.name + " by app: " + rows.map(row => row.title).join("; "));
     }
 
-    document.getElementById("timeSplitBar").addEventListener("click", event => {
-        let button = event.target.closest("button");
-        if(button === null){ return; }
+    document.getElementById("timeBars").addEventListener("click", event => {
+        let row = event.target.closest("button.bar-row");
+        if(row === null){ return; }
         event.stopPropagation();   // or the page's listener below closes it again
-        let index = Number(button.dataset.kind);
+        let index = Number(row.dataset.row);
         showKind(openKind === index ? null : index);
     });
     document.addEventListener("click", () => { if(openKind !== null){ showKind(null); } });
     document.addEventListener("keydown", event => { if(event.key === "Escape" && openKind !== null){ showKind(null); } });
 
-    function drawTimeSplit(){
-        let since = new Date(Date.parse(today()) - 29 * 86400000).toISOString().slice(0, 10);
-        let recent = sessions.filter(session => session.date >= since && session.minutes > 0);
-        if(recent.length === 0){ return; }
-        let total = recent.reduce((sum, session) => sum + session.minutes, 0);
-        let parts = kinds.map((name, index) => {
-            let apps = {};
-            recent.filter(session => session.kind === name)
-                .forEach(session => { apps[session.app.name] = (apps[session.app.name] || 0) + session.minutes; });
-            let minutes = Object.values(apps).reduce((sum, each) => sum + each, 0);
-            return { "name" : name, "minutes" : minutes, "cls" : "split-" + (index + 1),
-                "percent" : shareText(minutes / total * 100), "time" : minutesText(minutes),
-                "apps" : Object.keys(apps).sort((a, b) => apps[b] - apps[a]).map(app => ({ "name" : app, "minutes" : apps[app] })) };
-        }).filter(part => part.minutes > 0);
-        splitParts = parts;
-        let says = part => part.name + " " + part.percent + " · " + part.time
-            + " (" + part.apps.map(app => app.name + " " + minutesText(app.minutes)).join(", ") + ")";
-        document.getElementById("timeSplitBar").innerHTML = parts.map((part, index) =>
-            `<button type="button" class="${part.cls}" style="flex-grow: ${part.minutes}" data-kind="${index}" aria-expanded="false"
-                title="${escapeHtml(says(part))}" aria-label="${escapeHtml(says(part))}, show by app"></button>`).join("");
-        document.getElementById("timeSplitLegend").innerHTML = parts.map(part => legendItem(part.cls, part.name, part.percent, part.time)).join("");
-        document.getElementById("timeSplitTotal").innerText = "Last 30 days · " + sessionLength({ "minutes" : Math.round(total) }) + " trained";
-        document.getElementById("timeSplit").hidden = false;
-    }
-    drawTimeSplit();
+    function drawTimeBars(period){
+        let timed = sessions.filter(session => session.minutes > 0);
+        let inside = range => range ? timed.filter(session => session.date >= range.from && session.date <= range.to) : [];
+        let now = inside(period.current), before = inside(period.previous);
+        let figure = document.getElementById("timeFigure");
+        showKind(null);
+        figure.hidden = now.length + before.length === 0;
+        if(figure.hidden){ return; }
 
-    // The same 30 days' climbs by kind, from what the grade charts count (progress/charts.js)
-    function drawKindSplit(){
-        if(typeof climbsByKind !== "function"){ return; }
-        let since = new Date(Date.parse(today()) - 29 * 86400000).toISOString().slice(0, 10);
-        let parts = climbsByKind(since).filter(part => part.count > 0);
-        let total = parts.reduce((sum, part) => sum + part.count, 0);
-        if(total === 0){ return; }
-        parts.forEach(part => { part.percent = shareText(part.count / total * 100); });
-        let says = part => part.name + " " + part.percent + " · " + part.count;
-        let bar = document.getElementById("kindSplitBar");
-        bar.innerHTML = parts.map(part => `<span class="split-${part.kind}" style="flex-grow: ${part.count}" title="${escapeHtml(says(part))}"></span>`).join("");
-        bar.setAttribute("aria-label", "Climbs in the last 30 days: " + parts.map(says).join(", "));
-        document.getElementById("kindSplitLegend").innerHTML = parts.map(part => legendItem("split-" + part.kind, part.name, part.percent, String(part.count))).join("");
-        document.getElementById("kindSplitTotal").innerText = "Last 30 days · " + plural(total, "climb");
-        document.getElementById("kindSplit").hidden = false;
+        let total = minutesOf(now);
+        let byApp = list => list.reduce((apps, session) => {
+            apps[session.app.name] = (apps[session.app.name] || 0) + session.minutes;
+            return apps;
+        }, {});
+        timeParts = kinds.map(name => {
+            let mine = now.filter(session => session.kind === name), was = before.filter(session => session.kind === name);
+            let apps = byApp(mine), wasApps = byApp(was);
+            let names = Object.keys(apps).concat(Object.keys(wasApps).filter(app => !(app in apps)));
+            return { "name" : name, "cls" : "train-" + name.toLowerCase(), "period" : period,
+                "minutes" : minutesOf(mine), "previous" : period.previous ? minutesOf(was) : null,
+                "apps" : names.sort((a, b) => (apps[b] || 0) - (apps[a] || 0))
+                    .map(app => ({ "name" : app, "minutes" : apps[app] || 0, "previous" : period.previous ? wasApps[app] || 0 : null })) };
+        }).filter(part => part.minutes > 0 || part.previous > 0);
+
+        let rows = timeParts.map(part => {
+            let title = rowTitle(part.name, minutesText(part.minutes), minutesText(part.previous), period);
+            return { "name" : part.name, "cls" : part.cls, "value" : part.minutes, "before" : part.previous,
+                "text" : minutesText(part.minutes), "share" : shareText(part.minutes, total),
+                "title" : title, "label" : title + ", show by app", "open" : false };
+        });
+        document.getElementById("timeBars").innerHTML = barRows(rows);
+        document.getElementById("timeTotal").innerText = totalLine(minutesText(total), minutesText(minutesOf(before)), period);
+        document.getElementById("timeLegend").innerHTML = period.legend;
     }
-    drawKindSplit();
+
+    // From what the grade charts count (progress/charts.js), so a kind is climbing's colour
+    function drawKindBars(period){
+        let figure = document.getElementById("kindFigure");
+        if(typeof climbsByKind !== "function"){ figure.hidden = true; return; }
+        let now = climbsByKind(period.current), before = period.previous ? climbsByKind(period.previous) : null;
+        let total = now.reduce((sum, part) => sum + part.count, 0);
+        let previous = before ? before.reduce((sum, part) => sum + part.count, 0) : 0;
+        figure.hidden = total + previous === 0;
+        if(figure.hidden){ return; }
+
+        let rows = now.map((part, index) => {
+            let was = before ? before[index].count : null;
+            return { "name" : part.name, "cls" : "train-climbing", "value" : part.count, "before" : was,
+                "text" : String(part.count), "share" : shareText(part.count, total),
+                "title" : rowTitle(part.name, part.count, was, period) };
+        }).filter(row => row.value > 0 || row.before > 0);
+        let summary = totalLine(plural(total, "climb"), previous, period);
+        let bars = document.getElementById("kindBars");
+        bars.innerHTML = barRows(rows);
+        bars.setAttribute("aria-label", period.label + summary + ". " + rows.map(row => row.title).join("; "));
+        document.getElementById("kindTotal").innerText = summary;
+        document.getElementById("kindLegend").innerHTML = period.legend;
+    }
+
+    // charts.js draws them again when the range changes
+    window.drawProgressBars = function(){
+        if(typeof progressPeriod !== "function"){ return; }
+        let period = progressPeriod();
+        drawTimeBars(period);
+        drawKindBars(period);
+        if(typeof showProgressParts === "function"){ showProgressParts(); }
+    };
+    drawProgressBars();
+
 
     if(sessions.length > shown.length){
         document.getElementById("sessionsFoot").innerHTML = "The last " + shown.length + " of " + sessions.length

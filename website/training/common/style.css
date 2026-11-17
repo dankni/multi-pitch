@@ -156,6 +156,12 @@
     --band-hard: light-dark(#e34948, #e25550);
     --band-vhard: light-dark(#7b3fc4, #9170e6);
 
+    /* Kinds of training on the progress page: a kind's climbs and apps take its
+       colour. Clear of the bands; climbing is the calendar's workout blue. */
+    --train-climbing: light-dark(#2a78d6, #3987e5);
+    --train-fingerboard: light-dark(#c7457a, #e87ba4);
+    --train-other: light-dark(#6b7684, #8d97a5);
+
     /* A gym's hold colours, the same in either theme */
     --hold-yellow: #ffd400;
     --hold-white: #e8e8e8;
@@ -180,6 +186,9 @@
 .band-medium   { --c: var(--band-medium); }
 .band-hard     { --c: var(--band-hard); }
 .band-vhard    { --c: var(--band-vhard); }
+.train-climbing    { --c: var(--train-climbing); }
+.train-fingerboard { --c: var(--train-fingerboard); }
+.train-other       { --c: var(--train-other); }
 :root.light { color-scheme: light; }
 :root.dark { color-scheme: dark; }
 
@@ -240,7 +249,7 @@ h1 {
 h2 {
     text-transform: capitalize;
     display: block;
-    margin: 24px 0 0 0;
+    margin: var(--s5) 0 0 0;
     font-size: var(--t-xl);
     font-weight: 600;
     line-height: 1.25;
@@ -255,11 +264,11 @@ h3 {
 /* ================= Buttons ================= */
 /* 48px tall whatever the label, in Hind like everything else */
 button {
-    margin: 24px auto 0;
+    margin: var(--s5) auto 0;
     display: inline-block;
     min-height: 48px;
     border: 1px solid transparent;
-    padding: 12px 24px;
+    padding: var(--s3) var(--s5);
     text-decoration: none;
     background: var(--primary);
     color: var(--on-accent);
@@ -273,7 +282,7 @@ button {
     -webkit-appearance: none;
     -moz-appearance: none;
     border-radius: var(--r-md);
-    text-transform: capitalize;
+    text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 button:hover, button:focus {
@@ -300,6 +309,11 @@ button:active {
     border-color: currentColor;
     color: var(--danger-ink);
     background: var(--surface);
+}
+/* Nothing to discard before a start; a clock's RESET waits for it to be paused */
+[data-state="idle"] .secondary,
+[data-state="counting"] #reset,
+[data-state="running"] #reset {
     display: none;
 }
 .secondary:hover, .secondary:focus {
@@ -327,11 +341,44 @@ button:active {
 .button-stack {
     display: grid;
     justify-content: center;
-    gap: 12px;
-    margin-top: 24px;
+    gap: var(--s3);
+    margin-top: var(--s5);
 }
 .button-stack > button {
     margin: 0;
+}
+/* Buttons side by side, centred, 12px apart; .even shares the row out between them */
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s3);
+    margin-top: var(--s5);
+}
+.button-row > button {
+    margin: 0;
+}
+.button-row.even > button {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s2);
+    padding-left: var(--s4);
+    padding-right: var(--s4);
+}
+.button-row.even > button:only-child {
+    flex: 0 1 auto;
+}
+.button-row .arrow {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 /* A button that is only an icon - the nav's, the stars, the log's - with none of
    the look above. Before the icon rules, so they can size and place it. */
@@ -355,7 +402,7 @@ button:active {
     padding: 0;
     border: 0;
     background: none;
-    color: inherit;
+    color: var(--link);
     font: inherit;
     letter-spacing: normal;
     text-transform: none;
@@ -370,6 +417,16 @@ button:active {
     color: inherit;
     transform: none;
     outline: none;
+}
+.link-button:focus, .link-button:active {
+    color: var(--link);
+}
+.link-button:hover {
+    color: var(--link-hover);
+}
+/* a destructive one in red */
+.link-button.danger-link, .link-button.danger-link:hover, .link-button.danger-link:focus {
+    color: var(--danger-ink);
 }
 .icon-button:focus-visible, .link-button:focus-visible {
     outline: 2px solid var(--focus);
@@ -392,6 +449,7 @@ button:active {
     font-size: var(--t-md);
     font-weight: 500;
     letter-spacing: normal;
+    text-transform: none;
 }
 .step-arrow:hover, .step-arrow:focus, .step-arrow:focus-visible {
     color: var(--text);
@@ -415,17 +473,6 @@ button:active {
     stroke-linejoin: round;
 }
 
-/* A button that reads as a link, in the link colour; a destructive one in red */
-.text-link, .text-link:focus {
-    color: var(--link);
-}
-.text-link:hover {
-    color: var(--link-hover);
-}
-.text-link.danger-link, .text-link.danger-link:hover, .text-link.danger-link:focus {
-    color: var(--danger-ink);
-}
-
 /* The column: everything with content in it, 90% of a phone and --column at most */
 .column, .holder, .ending, #setup, #data, #actions, .overlay > *:not(.close) {
     width: 90%;
@@ -442,6 +489,12 @@ button:active {
     color: var(--strong);
     margin-bottom: var(--s3);
     transition: all 0.2s ease;
+}
+/* The panel at the top of a session: its date, where it is up to, its count */
+.panel.session-bar {
+    display: block;
+    margin: var(--s4) auto var(--s3);
+    padding: var(--s4);
 }
 
 /* ================= Overlays =================
@@ -544,21 +597,21 @@ nav .icon-button[aria-expanded="true"] {
     display: block;
     width: fit-content;
     margin: 20px auto;
-    padding: 4px 0;
+    padding: var(--s1) 0;
 }
 
 /* ================= Settings =================
    A group is a fieldset, so a row of radios is announced as the one choice it is */
 .setting-group {
     margin-top: 20px;
-    margin-bottom: 12px;
+    margin-bottom: var(--s3);
     padding: 0;
     border: 0;
     text-align: center;
 }
 .setting-group legend {
     margin: 0 auto;
-    padding: 0 0 8px;
+    padding: 0 0 var(--s2);
     font-size: var(--t-md);
 }
 /* flex, so the whitespace between labels can't push the row off centre */
@@ -567,7 +620,7 @@ nav .icon-button[aria-expanded="true"] {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
+    gap: var(--s2);
 }
 .setting-group .picker label {
     margin: 0;
@@ -576,19 +629,19 @@ nav .icon-button[aria-expanded="true"] {
 .switch-label {
     min-width: 280px;
     display: block;
-    margin: 12px auto;
+    margin: var(--s3) auto;
 }
 /* Under the cog, a list: the name on the left, On or Off and the switch on the
    right, a hairline between rows, and a run of them rounded at its two ends */
 .overlay .switch-label {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--s3);
     min-width: 0;
-    min-height: 52px;
+    min-height: 52px;   /* as .card-rows */
     margin-top: 0;
     margin-bottom: 0;
-    padding: 8px 16px;
+    padding: var(--s2) var(--s4);
     border: 1px solid var(--line);
     border-top-width: 0;
     background: var(--surface);
@@ -596,13 +649,13 @@ nav .icon-button[aria-expanded="true"] {
     cursor: pointer;
 }
 .overlay :not(.switch-label) + .switch-label, .overlay .switch-label:first-child {
-    margin-top: 24px;
+    margin-top: var(--s5);
     border-top-width: 1px;
     border-top-left-radius: var(--r-lg);
     border-top-right-radius: var(--r-lg);
 }
 .overlay .switch-label:not(:has(+ .switch-label)) {
-    margin-bottom: 24px;
+    margin-bottom: var(--s5);
     border-bottom-left-radius: var(--r-lg);
     border-bottom-right-radius: var(--r-lg);
 }
@@ -614,7 +667,7 @@ nav .icon-button[aria-expanded="true"] {
     flex: 1 1 auto;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--s1);
     width: auto;
 }
 .overlay .switch-state {
@@ -696,7 +749,7 @@ input[type="checkbox"].nice-radios {
 .nice-radios:not(:checked) + label {
     position: relative;
     display: inline-block;
-    padding: 8px 12px;
+    padding: var(--s2) var(--s3);
     font-size: var(--t-sm);
     font-weight: 600;
     line-height: 20px;
@@ -707,7 +760,7 @@ input[type="checkbox"].nice-radios {
     transition: box-shadow 150ms ease;
     min-width: 40px;
     box-sizing: content-box;   /* 40px of label, whatever the padding */
-    margin-bottom: 12px;
+    margin-bottom: var(--s3);
     box-shadow: var(--e1);
 }
 .nice-radios:checked + label {
@@ -760,7 +813,7 @@ input[type="checkbox"].nice-radios:checked + label:before {
     width: fit-content;
     max-width: 100%;
     box-sizing: border-box;
-    margin: 0 auto 12px;
+    margin: 0 auto var(--s3);
     padding: 3px;
     border-radius: 20px;   /* a pill on one row, a rounded panel once it wraps */
     background-color: var(--track);
@@ -866,11 +919,11 @@ input[type="checkbox"].nice-radios:checked + label:before {
 nav .icon-menu, nav .icon-info, nav .icon-cog {
     float: left;
     margin: 0;
-    padding: 12px 11px;
+    padding: var(--s3) 11px;
     line-height: 1;
 }
 nav .icon-info + .icon-cog {
-    margin-left: 8px;
+    margin-left: var(--s2);
 }
 @keyframes cog-spin {
     to { transform: rotate(720deg); }
@@ -881,7 +934,7 @@ nav .icon-cog {
 nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon-volume-off {
     float: right;
     margin: 0;
-    padding: 12px 12px 0 6px;
+    padding: var(--s3) var(--s3) 0 6px;
 }
 /* The person, furthest right, for the account and the backup file */
 nav .account-button {
@@ -902,12 +955,6 @@ nav .account-button svg {
 .signed-in .person-solid {
     display: inline;
 }
-.icon-trash {
-    margin-left: 8px;
-}
-.icon-ok {
-    margin-right: 40px;
-}
 .icon-ok, .icon-cancel {
     font-size: var(--t-md);
 }
@@ -925,9 +972,9 @@ nav .account-button svg {
     z-index: 5;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s2);
     max-width: 266px;
-    padding: 8px;
+    padding: var(--s2);
     border: 1px solid var(--line);
     border-radius: var(--r-md);
     background: var(--card);
@@ -954,7 +1001,7 @@ nav .account-button svg {
     width: auto;
     margin: 0;
     font-size: inherit;
-    padding: 0 8px;
+    padding: 0 var(--s2);
     line-height: inherit;
     animation: cog-turn 8s linear infinite;
 }
@@ -964,11 +1011,11 @@ nav .account-button svg {
 .toast-stack {
     position: fixed;
     left: 50%;
-    top: calc(66px + env(safe-area-inset-top));
+    top: calc(var(--nav-height) + var(--s2) + env(safe-area-inset-top));
     z-index: 6;
     display: flex;
     flex-direction: column-reverse;
-    gap: 8px;
+    gap: var(--s2);
     width: calc(100% - 20px);
     max-width: var(--column);
     transform: translateX(-50%);
@@ -979,9 +1026,9 @@ nav .account-button svg {
 .toast {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--s3);
     min-height: 70px;
-    padding: 12px 12px 12px 16px;
+    padding: var(--s3) var(--s3) var(--s3) var(--s4);
     border: 1px solid var(--line);
     border-top: 3px solid var(--confirm);
     border-radius: var(--r-lg);
@@ -1032,19 +1079,16 @@ nav .account-button svg {
     flex-basis: 100%;
     text-align: center;
 }
-.keep-note-links .link-button {
-    color: var(--link);
-}
 .toast-choices {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
+    gap: var(--s2);
     flex-basis: 100%;
 }
 .toast-choices button {
     min-height: 0;
     margin: 0;
-    padding: 8px 16px;
+    padding: var(--s2) var(--s4);
     font-size: var(--t-sm);
 }
 .toast-choices .toast-confirm {
@@ -1085,7 +1129,7 @@ nav .account-button svg {
     flex: 0 0 auto;
     min-height: 0;
     margin: -2px 0 0;
-    padding: 0 4px;
+    padding: 0 var(--s1);
     border: 0;
     border-radius: var(--r-sm);
     background: none;
@@ -1117,7 +1161,7 @@ nav .account-button svg {
     position: fixed;
     z-index: 10;
     max-width: 284px;
-    padding: 12px 12px;
+    padding: var(--s3) var(--s3);
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
     background: var(--card);
@@ -1128,7 +1172,7 @@ nav .account-button svg {
     text-align: left;
 }
 .comment-pop-stars {
-    margin: 0 0 8px;
+    margin: 0 0 var(--s2);
 }
 .comment-pop-text {
     margin: 0;
@@ -1220,15 +1264,15 @@ nav .account-button svg {
     height: 20px;
 }
 .save-session-button {
-    margin-top: 12px;
+    margin-top: var(--s3);
 }
 /* The note to go with a session, with its count underneath */
 .comment-field {
     display: block;
     width: 100%;
     max-width: var(--column);
-    margin: 12px auto 0;
-    padding: 12px 12px;
+    margin: var(--s3) auto 0;
+    padding: var(--s3) var(--s3);
     border: 1px solid var(--field-edge);
     border-radius: var(--r-sm);
     background: var(--field);
@@ -1246,7 +1290,7 @@ nav .account-button svg {
     color: var(--placeholder);
 }
 .comment-count {
-    margin: 4px auto 0;
+    margin: var(--s1) auto 0;
     font-size: var(--t-xs);
     color: var(--ink-2);
 }
@@ -1260,10 +1304,10 @@ nav .account-button svg {
 #log {
     display: block;
     text-align: left;
-    padding: 4px 12px;
+    padding: var(--s1) var(--s3);
 }
 #log p {
-    margin: 12px auto;
+    margin: var(--s3) auto;
     font-size: var(--t-sm);
     line-height: 1.5;
 }
@@ -1278,7 +1322,7 @@ nav .account-button svg {
     text-align: left;
 }
 .log-table th {
-    padding: 8px 4px;
+    padding: var(--s2) var(--s1);
     font-size: var(--t-xs);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -1286,7 +1330,7 @@ nav .account-button svg {
     color: var(--ink-2);
 }
 .log-table td {
-    padding: 8px 4px;
+    padding: var(--s2) var(--s1);
     vertical-align: top;
 }
 /* a faint stripe a row, enough to follow one across on a phone */
@@ -1316,7 +1360,7 @@ nav .account-button svg {
 .tindeq-mark {
     width: 1.3em;
     height: 1.3em;
-    margin-left: 8px;
+    margin-left: var(--s2);
     vertical-align: -0.3em;
     color: var(--primary);
 }
@@ -1326,7 +1370,7 @@ nav .account-button svg {
     font-size: var(--t-sm);
 }
 .log-table .demo-icon {
-    margin: 0 0 0 4px;
+    margin: 0 0 0 var(--s1);
     cursor: pointer;
 }
 .log-table .rating-face {
@@ -1342,7 +1386,7 @@ nav .account-button svg {
 /* 13px glyphs padded out to a thumb-sized target, without spreading the rows */
 .log-actions .demo-icon {
     display: inline-block;
-    padding: 12px 8px;
+    padding: var(--s3) var(--s2);
     margin: -12px 0;
 }
 .log-actions .icon-note {
@@ -1366,7 +1410,7 @@ nav .account-button svg {
 }
 .box h3 {
     font-size: 28px;
-    margin: 28px 16px;
+    margin: 28px var(--s4);
 }
 /* Anything that counts, so the digits don't jitter as it runs */
 .tabular {
@@ -1443,6 +1487,18 @@ nav .account-button svg {
     color: var(--on-accent);
     transform: scale(0.99);
 }
+/* No hold colour: the stripe is the grade's band (gradeBands in common/grades.js), and ticked it takes the blue */
+.route.plain {
+    --hold: var(--c, transparent);
+}
+.route.plain .route-grade {
+    font-size: var(--t-xl);
+}
+.route.plain.ticked {
+    background: var(--primary);
+    color: var(--on-accent);
+    box-shadow: none;
+}
 .route-colour {
     font-size: var(--t-sm);
     font-weight: 500;
@@ -1460,18 +1516,19 @@ nav .account-button svg {
    A session's last few taps behind a line to tap - drawRecent() in functions.js */
 .recent-logs {
     max-width: var(--column);
-    margin: 8px auto 0;
+    margin: var(--s2) auto 0;
     font-size: var(--t-sm);
     text-align: center;
 }
-.recent-logs summary {
+/* A fold opened by a line of link text */
+.disclosure > summary {
     display: inline-block;
-    padding: 8px 12px;
+    padding: var(--s2) var(--s3);
     color: var(--link);
     text-decoration: underline;
     cursor: pointer;
 }
-.recent-logs summary::-webkit-details-marker {
+.disclosure > summary::-webkit-details-marker {
     display: none;
 }
 .recent-logs ol {
@@ -1665,37 +1722,6 @@ nav .account-button svg {
 details[open] .card-chevron {
     transform: rotate(180deg);
 }
-/* Two buttons side by side, each with its arrow where it has one */
-.overlay .backup-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--s3);
-}
-.backup-actions button {
-    flex: 1 1 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--s2);
-    margin: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
-/* one on its own is as wide as its label */
-.backup-actions button:only-child {
-    flex: 0 1 auto;
-}
-.backup-actions .arrow {
-    flex: 0 0 auto;
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
 /* The account: fields stacked full width */
 .account-form {
     display: flex;
@@ -1713,9 +1739,6 @@ details[open] .card-chevron {
     justify-content: center;
     align-items: baseline;
     gap: var(--s2) var(--s5);
-}
-.card .link-button {
-    color: var(--link);
 }
 /* Rows under a card's head, as the settings' switches are, the deed on the right: the account signed in, the Apps page's contact links */
 .card-rows {
@@ -1825,7 +1848,7 @@ details[open] .card-chevron {
 /* ================= Fields ================= */
 .field {
     height: 40px;
-    padding: 8px 12px;
+    padding: var(--s2) var(--s3);
     border: 1px solid var(--field-edge);
     border-radius: var(--r-sm);
     background: var(--field);
@@ -1847,7 +1870,7 @@ details[open] .card-chevron {
     justify-content: center;
     width: fit-content;
     max-width: 100%;
-    margin: 12px auto;
+    margin: var(--s3) auto;
     border: 1px solid var(--field-edge);
     border-radius: var(--r-sm);
     overflow: hidden;
@@ -1866,7 +1889,7 @@ details[open] .card-chevron {
     height: 40px;
     min-height: 0;
     margin: 0;
-    padding: 0 16px;
+    padding: 0 var(--s4);
     border-radius: 0;
     font-size: var(--t-sm);
 }
@@ -1879,7 +1902,7 @@ details[open] .card-chevron {
 }
 .field-colour {
     width: 52px;
-    padding: 2px 4px;
+    padding: 2px var(--s1);
     cursor: pointer;
 }
 .field-group:focus-within {
@@ -1892,14 +1915,14 @@ details[open] .card-chevron {
 .field-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: var(--s3);
     justify-content: center;
     align-items: center;
 }
 .field-row button {
     min-height: 40px;
     margin: 0;
-    padding: 8px 16px;
+    padding: var(--s2) var(--s4);
 }
 
 /* ================= The countdown =================
@@ -1936,17 +1959,17 @@ body.red, body.orange, body.yellow {
     }
     /* still a 32px target or more, so up to three a side and the title fit a zoomed phone */
     nav .icon-menu, nav .icon-info, nav .icon-cog {
-        padding: 12px 8px;
+        padding: var(--s3) var(--s2);
     }
     nav .icon-info + .icon-cog {
-        margin-left: 4px;
+        margin-left: var(--s1);
     }
     nav .icon-resize-full, nav .icon-resize-normal, nav .icon-volume-high, nav .icon-volume-off, nav .account-button {
-        padding: 12px 8px 0 8px;
+        padding: var(--s3) var(--s2) 0 var(--s2);
     }
     button {
-        padding: 12px 16px;
-        margin-right: 8px;
+        padding: var(--s3) var(--s4);
+        margin-right: var(--s2);
     }
     .overlay {
         font-size: var(--t-sm);
@@ -1956,7 +1979,7 @@ body.red, body.orange, body.yellow {
     }
     .box h3 {
         font-size: var(--t-xl);
-        margin: 24px 8px;
+        margin: var(--s5) var(--s2);
     }
     .log-rating {
         display: none;
@@ -2051,7 +2074,7 @@ a.bottom-nav-item:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--s2);
     margin: 0;
     font-size: var(--t-md);
 }
@@ -2077,30 +2100,22 @@ a.bottom-nav-item:focus-visible {
     }
 }
 .device-detail, .device-error {
-    margin: 8px 0 0;
+    margin: var(--s2) 0 0;
     font-size: var(--t-sm);
 }
 .device-error {
     color: var(--danger-ink);
 }
-.device-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-}
-.device-buttons button {
-    margin-top: 12px;
-}
 .device-steps {
-    margin: 16px auto 0;
-    padding-left: 24px;
+    margin: var(--s4) auto 0;
+    padding-left: var(--s5);
     max-width: 320px;
     text-align: left;
     font-size: var(--t-sm);
     line-height: 1.5;
 }
 .device-tips {
-    margin: 12px auto 0;
+    margin: var(--s3) auto 0;
     max-width: 320px;
     font-size: var(--t-sm);
     text-align: left;
@@ -2109,14 +2124,14 @@ a.bottom-nav-item:focus-visible {
 
 /* The watch, switched on under the cog - see common/watch.js */
 .watch-bar {
-    margin-top: 12px;
+    margin-top: var(--s3);
 }
 /* its connection as a switch, the status its label */
 .watch-line {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: var(--s4);
 }
 .watch-line .switch-label {
     min-width: 0;
@@ -2124,19 +2139,19 @@ a.bottom-nav-item:focus-visible {
 }
 .watch-line .label-content {
     width: auto;
-    margin-left: 8px;
+    margin-left: var(--s2);
 }
 /* how to use it, under the setting, always open */
 .watch-help {
     max-width: 320px;
-    margin: 12px auto 0;
-    padding: 4px 16px 12px;
+    margin: var(--s3) auto 0;
+    padding: var(--s1) var(--s4) var(--s3);
     border: 1px solid var(--line);
     border-radius: var(--r-md);
     text-align: center;
 }
 .watch-help p {
-    margin: 8px 0 0;
+    margin: var(--s2) 0 0;
     font-size: var(--t-sm);
     line-height: 1.5;
 }

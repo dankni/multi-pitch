@@ -176,6 +176,30 @@ function groupedBarChart(groups, series, ariaLabel, width){
     return svg + `</svg>`;
 }
 
+/* A bar a row on one scale, the column chart turned on its side: name, bar, value.
+
+   rows : [{ name, cls, value, before, text, share, title, open }]
+
+   `before` is the line across the bar, as on a column. A row with `open` (true or
+   false) is a button, with a chevron by its name. */
+function barRows(rows){
+    let most = Math.max(1, ...rows.map(row => Math.max(row.value, row.before || 0)));
+    let at = value => (value / most * 100).toFixed(1) + "%";
+    return rows.map((row, index) => {
+        let button = typeof row.open === "boolean";
+        let tag = button ? "button" : "div";
+        return `<${tag} class="bar-row ${row.cls}" style="--i:${index}" title="${escapeHtml(row.title)}"`
+            + (button ? ` type="button" data-row="${index}" aria-expanded="${row.open}" aria-label="${escapeHtml(row.label || row.title)}"` : "") + `>`
+            + `<span class="bar-name">${escapeHtml(row.name)}`
+            + (button ? `<svg class="bar-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>` : "") + `</span>`
+            + `<span class="bar-track">` + (row.value > 0 ? `<span class="bar-fill" style="width: ${at(row.value)}"></span>` : "")
+            + (row.before ? `<span class="before" style="left: ${at(row.before)}"></span>` : "") + `</span>`
+            + `<span class="bar-value"><strong>${escapeHtml(row.text)}</strong>`
+            + (row.share ? ` <span class="bar-share">${escapeHtml(row.share)}</span>` : "") + `</span>`
+            + `</${tag}>`;
+    }).join("");
+}
+
 function chartLegend(items){
     if(items.length === 0){ return ""; }
     return `<p class="legend">` + items.map(item =>

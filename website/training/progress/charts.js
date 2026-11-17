@@ -88,6 +88,16 @@
         return which === "current" ? "the last " + days + " days" : "the " + days + " days before";
     }
 
+    // "5 boulders, 3 before": the picker names the period and the key the one before
+    window.withBefore = (now, before) => before === null || before === undefined ? String(now) : now + ", " + before + " before";
+
+    // for a screen reader, which has no picker beside the chart: "The last 30 days: 5 boulders, 3 before"
+    function periodLabel(range){
+        if(ranges[range].days === 0){ return ""; }
+        let name = periodName(range, "current");
+        return name.charAt(0).toUpperCase() + name.slice(1) + ": ";
+    }
+
     /* Reading the logs - defensively, as the table below the charts does */
 
     function list(value){
@@ -134,20 +144,15 @@
         let groups = grades.map(grade => {
             let now = countOf(current, grade);
             let before = windows.previous ? countOf(previous, grade) : null;
-            let title = grade + ": " + now;
-            if(before !== null){
-                title += " in " + periodName(range, "current") + ", " + before + " in " + periodName(range, "previous");
-            }
+            let title = grade + ": " + withBefore(now, before);
             return { "label" : grade, "title" : title, "value" : now, "cls" : bandOf(grade).cls, "before" : before };
         });
 
-        let summary = windows.previous
-            ? plural(current.length, noun) + " in " + periodName(range, "current") + ", " + previous.length + " in " + periodName(range, "previous")
-            : plural(current.length, noun) + " in all";
+        let summary = withBefore(plural(current.length, noun), windows.previous ? previous.length : null);
         total.innerText = summary;
 
         let described = groups.map(group => group.label + " " + group.value).join(", ");
-        return columnChart(groups, summary + ". By grade: " + described + ".", chartWidth)
+        return columnChart(groups, periodLabel(range) + summary + ". By grade: " + described + ".", chartWidth)
             + chartLegend(beforeLegend(range));
     }
 
@@ -200,7 +205,18 @@
             document.getElementById("tradChart").innerHTML =
                 drawGrades(tradClimbs(logs), range, tradColumns, tradBand, "trad climb", "tradTotal");
         }
+        // the time and climbs bars, from sessions.js once it has loaded
+        if(typeof window.drawProgressBars === "function"){ window.drawProgressBars(); }
     }
+
+    // The period picked, for the bars in sessions.js: its windows, its label for a screen reader and the key to the line
+    window.progressPeriod = function(){
+        let range = selectedRange();
+        let windows = windowsFor(range);
+        return { "current" : windows.current, "previous" : windows.previous,
+                 "label" : periodLabel(range),
+                 "legend" : chartLegend(beforeLegend(range)) };
+    };
 
     /* The logs the charts are drawn from, as the apps saved them. A key someone
        has hand-edited into something that is not a list counts as empty rather
@@ -224,7 +240,7 @@
             entry.target.dataset.grow = "go";
             setTimeout(() => delete entry.target.dataset.grow, 3000);
         }), { "threshold" : 0.4 });
-        ["sportChart", "boulderChart", "tradChart"].forEach(id => {
+        ["timeBars", "kindBars", "sportChart", "boulderChart", "tradChart"].forEach(id => {
             let chart = document.getElementById(id);
             chart.dataset.grow = "wait";
             seen.observe(chart);
@@ -236,12 +252,12 @@
         // the way to import a UKC logbook, until there is one - even with nothing else to show
         document.getElementById("ukcPrompt").hidden = ukc.load() !== null;
         // only the timer apps used, say - empty charts would say nothing, so the
-        // page says so instead
-        if(sportClimbs(logs).length + boulderClimbs(logs).length === 0 && !hasTrad(logs)){
-            document.getElementById("progressEmpty").hidden = false;
-            return;
-        }
-        describeImport(logs);
+        // page says so instead, under the time bars
+        let graded = sportClimbs(logs).length + boulderClimbs(logs).length > 0 || hasTrad(logs);
+        document.getElementById("progressEmpty").hidden = graded;
+        document.getElementById("sportFigure").hidden = !graded;
+        document.getElementById("boulderFigure").hidden = !graded;
+        if(graded){ describeImport(logs); }
 
         let saved = null;
         try { saved = localStorage.getItem(rangeKey); } catch(err){ saved = null; }
@@ -296,11 +312,11 @@
         return hardest;
     };
 
-    // how many of each kind were climbed from that day on - for the bar in sessions.js
-    window.climbsByKind = function(since){
+    // how many of each kind were climbed in a window - for the bars in sessions.js
+    window.climbsByKind = function(period){
         let logs = readLogs();
         return ["boulder", "sport", "trad"].map(kind => ({ "kind" : kind, "name" : climbKinds[kind].title,
-            "count" : climbsOfKind(logs, kind).filter(climb => climb.date >= since).length }));
+            "count" : climbsOfKind(logs, kind).filter(climb => within(climb.date, period)).length }));
     };
 
     // the last script on the page, so everything it draws into is already there

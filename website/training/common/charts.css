@@ -1,7 +1,7 @@
 /* The column charts of common/charts.js: the progress page's and the session
    summary's. The one before is a thin line across each bar in the page ink,
    quieter than the bars. */
-.chart, .legend {
+.chart, .legend, .bar-rows {
     --before: light-dark(#2b2b30, #e8e8e8);
 }
 .chart {
@@ -55,8 +55,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 4px 16px;
-    margin: 8px 0 0;
+    gap: var(--s1) var(--s4);
+    margin: var(--s2) 0 0;
     font-size: var(--t-sm);
 }
 .legend-item {
@@ -68,7 +68,7 @@
     display: inline-block;
     width: 11px;
     height: 11px;
-    margin-right: 4px;
+    margin-right: var(--s1);
     border-radius: 3px;
     border: 1.5px solid var(--c);
     background: var(--c);
@@ -81,4 +81,77 @@
     border-radius: 1px;
     background: var(--before);
     opacity: 0.75;
+}
+/* barRows(): the columns on their side, name | bar | value on a shared grid, each
+   bar square at its axis and rounded at its end, as a column is */
+.bar-rows {
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    gap: var(--s1) var(--s3);
+    font-size: var(--t-sm);
+}
+/* a row to tap: none of a button's own look */
+button.bar-row { all: unset; cursor: pointer; }
+.bar-rows > .bar-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+    padding: var(--s1) var(--s2);
+    margin: 0 calc(-1 * var(--s2));
+    border-radius: var(--r-sm);
+    transition: opacity 150ms ease;
+}
+.bar-rows > .bar-row:hover { background: var(--grid); }
+button.bar-row:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+.bar-row.dim { opacity: 0.35; }
+.bar-name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s1);
+}
+.bar-chevron {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--ink-2);
+    transition: transform 150ms ease;
+}
+[aria-expanded="true"] .bar-chevron { transform: rotate(180deg); }
+.bar-track {
+    position: relative;
+    height: 16px;
+    border-left: 1px solid var(--ink-2);   /* the axis */
+}
+.bar-fill {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    background: var(--c);
+    border-radius: 0 4px 4px 0;
+    transform-origin: left;
+}
+.bar-track .before {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 1px;
+    background: var(--before);
+    opacity: 0.75;
+}
+.bar-value {
+    text-align: right;
+    white-space: nowrap;
+}
+.bar-share {
+    color: var(--ink-2);
 }

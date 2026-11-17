@@ -264,7 +264,7 @@ function ukcCard(ids){
                     Your CSV is never uploaded anywhere.
                 </p>
                 <input type="file" id="${ids.file}" accept=".csv,text/csv" hidden data-change="importUkcFile" />
-                <p class="backup-actions">
+                <p class="button-row even">
                     <button type="button" class="quiet" data-action="${ids.choose}">Upload UKC Logbook CSV</button>
                 </p>
                 <p class="card-links" id="${ids.status}" hidden>

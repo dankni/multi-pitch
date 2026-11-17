@@ -5,10 +5,6 @@
 [data-state="counting"] .holder {
     display: none;
 }
-[data-state="paused"] #reset,
-[data-state="finished"] #reset {
-    display: inline-block;
-}
 [data-state="finished"] #primaryButton {
     display: none;
 }
@@ -26,8 +22,9 @@
 #preview div {
     width: 100%;
     flex: 50%;
-    margin: 4px;
-    border-radius: var(--r-sm);
+    margin: var(--s1);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
     background: var(--panel);
     transition: all 0.2s ease;
 }
@@ -39,7 +36,7 @@
 }
 #preview .task {
     font-size: var(--t-md);
-    margin: 12px;
+    margin: var(--s3);
 }
 
 @media (max-width: 380px) {

@@ -8,7 +8,7 @@ body:not([data-repeater]) .repeater-only {
 }
 .routine-save {
     width: 100%;
-    margin: 12px 0 4px;
+    margin: var(--s3) 0 var(--s1);
 }
 .routine-save .field {
     flex: 1;
@@ -18,8 +18,8 @@ body:not([data-repeater]) .repeater-only {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 4px;
-    border-bottom: 1px solid var(--box);
+    padding: var(--s3) var(--s1);
+    border-bottom: 1px solid var(--line);
     text-align: left;
 }
 .setting-name {
@@ -30,7 +30,7 @@ body:not([data-repeater]) .repeater-only {
 .stepper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s2);
 }
 .stepper output {
     min-width: 64px;
@@ -67,7 +67,7 @@ body:not([data-repeater]) .repeater-only {
 
 /* Work or rest, then the rep: the rest is common/workout.css */
 #first .task {
-    margin-bottom: 4px;
+    margin-bottom: var(--s1);
 }
 /* repeater mode: the set and its name, under the rep */
 .set-line {
@@ -82,8 +82,8 @@ body:not([data-repeater]) .repeater-only {
 .timeline {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin: 24px auto;
+    gap: var(--s4);
+    margin: var(--s5) auto;
 }
 .tracks {
     position: relative;
@@ -97,11 +97,11 @@ body:not([data-repeater]) .repeater-only {
     display: block;
     width: 100%;
     height: 32px;
-    margin-bottom: 8px;
+    margin-bottom: var(--s2);
     font-size: var(--t-sm);
 }
 .set-label {
-    margin: 0 0 4px;
+    margin: 0 0 var(--s1);
     font-size: var(--t-sm);
     text-align: left;
     opacity: 0.7;
@@ -181,8 +181,8 @@ body:not([data-state="idle"]) .set-name-field,
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 4px 12px;
-    margin-bottom: 8px;
+    gap: var(--s1) var(--s3);
+    margin-bottom: var(--s2);
 }
 .routine-open {
     font-size: var(--t-md);

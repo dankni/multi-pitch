@@ -13,13 +13,11 @@
 }
 
 /* The session, as the Gym app's bar: its day, edge and readings */
-.pull-bar {
+.panel.pull-bar {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--s3);
-    margin: var(--s3) 0;
-    padding: var(--s4);
 }
 
 /* A reading as a Gym grade tile: the colour down its edge, faint on the arm not picked */
@@ -33,31 +31,25 @@
 .pull-tiles > .pull-radio {
     position: absolute;
 }
+/* a .route tile, laid out in a row */
 .pull-tile {
-    --stripe: 8px;
-    display: flex;
+    --hold: var(--c);
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: var(--s3);
-    min-height: 56px;
     padding: var(--s2) var(--s2) var(--s2) var(--s5);
+}
+.pull-tile:not(.pull-arm):hover {
     background: var(--tile);
-    color: var(--tile-ink);
-    border: 1px solid var(--line);
-    border-radius: var(--r-md);
-    box-shadow: inset var(--stripe) 0 0 var(--c);
-    text-align: left;
 }
 .pull-arm {
+    --hold: color-mix(in srgb, var(--c) 35%, transparent);
     cursor: pointer;
-    box-shadow: inset var(--stripe) 0 0 color-mix(in srgb, var(--c) 35%, transparent);
-}
-.pull-arm:hover {
-    background: var(--tile-hover);
 }
 /* the arm picked in full colour, the other faded right back */
 .pull-radio:checked + .pull-arm {
-    box-shadow: inset var(--stripe) 0 0 var(--c);
+    --hold: var(--c);
 }
 .pull-radio:not(:checked) + .pull-arm {
     opacity: 0.45;
@@ -145,9 +137,6 @@
 [data-state="running"] .pull-history,
 body:not([data-state="running"]) .pull-session {
     display: none;
-}
-[data-state="running"] #discardPull {
-    display: inline-block;
 }
 .pull-history #chartEdges {
     margin-bottom: var(--s3);

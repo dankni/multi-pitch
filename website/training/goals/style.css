@@ -127,14 +127,10 @@
     min-width: 8px;
 }
 
-.goal-month .backup-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--s3);
+.goal-month .button-row {
     margin: var(--s4) 0 0;
 }
-.goal-form .backup-actions {
+.goal-form .button-row {
     margin-top: var(--s2);
 }
 #copyGoalsLine {

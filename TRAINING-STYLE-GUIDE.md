@@ -97,7 +97,7 @@ And the surfaces they sit on:
 | `#121212` | Nav bar and bottom nav, dark in both themes |
 | `--page` `#f4f6f8` / `#0e1013` | The page, faintly blue so a white surface shows on it |
 | `--surface` `#fff` / `#181a1f` | Panels, tiles, cards, and the overlays |
-| `--surface-2` `#e2e6ec` / `#0b0c0f` | Set into a surface, a step darker than it: counter boxes, picker tracks, the minus beside a grade |
+| `--surface-2` `#e2e6ec` / `#0b0c0f` | Set into a surface, a step darker than it: counter boxes, picker tracks, the small buttons beside a tile (the minus, the waffle and its undo, a loft route's i) |
 | `--line` | The hairline round a surface, which is what separates it rather than a shadow |
 | `--text`, `--ink-2` | Text (`#14171c` / `#f5f6f8`), and quieter text (`#555b66` / `#b8bdc6`, 6.4:1 light, 9.2:1 dark) in place of `opacity` |
 
@@ -163,16 +163,16 @@ starts or repeats something. One per screen. Use `disabled` when the action exis
 (LAP before the clock runs); hide it when it doesn't belong on the screen at all.
 
 **Every button** is 48px tall, `--r-md` corners, Hind 600 at 16px with a little letter-spacing, and
-spaced by the `gap` of the stack it is in — `.button-stack` puts 12px between buttons.
+spaced by the `gap` of the stack it is in — `.button-stack` puts 12px between buttons, and `.button-row` the same side by side (`.even` shares the row out between them).
 
 **Secondary button** (`.secondary`) is the destructive one: a `--danger-ink` outline and label on a solid `--surface` fill — never a red fill, so it never looks like the thing you are meant to press, and solid so it still reads when a workout turns the screen green, red or orange. Its hover is the `--danger-soft` tint. It
-ships `display: none` because it only appears once there is a session worth protecting. It
+is hidden while `body[data-state="idle"]` (and a clock app's `#reset` while it counts or runs) because it only appears once there is a session worth protecting. It
 is **always** two taps — `confirmReset(buttonId, worthKeeping, onConfirm)` swaps the label
 to SURE? and disarms itself after four seconds. Call `disarmReset()` if you hide the button
 again.
 
 **Quiet action** (`.quiet`) — the lesser of two real choices (ANOTHER SET beside FINISH
-SESSION, the minus beside a grade in the bouldering app): a
+SESSION): a
 pale `#e8f0fe` tint with `#0053ba` ink, so the solid primary beside it is plainly the
 louder one. It needs two things the primary does not: its own hover (`#d2e3fc`), since the
 shared `button:hover` would fill it solid; and its own focus ring, since the shared one is
@@ -181,7 +181,7 @@ white and invisible on a tint. In dark mode it inverts — `#16294a` with a whit
 than the pale blue that mirrors the light version: 14.5:1 against 8:1, and what makes the
 button quiet is its fill sitting close to the page, not a dimmed label.
 
-**Link action** is an `<a>` for a deliberate, quiet escape (*Skip the rest →*): underlined,
+**Link action** (`.link-button`, in `--link` by itself; `.danger-link` for red) is for a deliberate, quiet escape (*Skip the rest →*): underlined,
 bold, solid blue, shrink-wrapped and centred so the full width isn't a hit area.
 
 **Toast** (`toast("…")`, `.toast`) is for the one case the confirmation flash cannot
@@ -260,7 +260,7 @@ that are merely near each other, **`.field-group`** for fields that are one cont
 edges under a single border, as in the loft app's *colour name + swatch + ADD*. The group
 takes the focus ring, so a ring is never drawn inside it on top of its neighbours.
 
-**Recent logs** — `<details class="recent-logs" id="recentDetails">` with *Show recent logs* as its
+**Recent logs** — `<details class="recent-logs disclosure" id="recentDetails">` (`.disclosure` is the link-styled summary, shared with the Apps page's *Add removed apps*) with *Show recent logs* as its
 summary and an empty `<ol id="recentLogs">`: the session's last three taps and how long ago, for
 checking a tap landed. The app calls `noteRecent(text)` before `keepSession()` and `drawRecent()`
 when it draws; the rest is `functions.js`. Hidden while idle. In the gym session, Outside and the
@@ -496,9 +496,14 @@ Above the table, [progress/charts.js](website/training/progress/charts.js) draws
 plain SVG, with no library - sport climbs, boulders and trad climbs by grade. Until
 something graded has been logged the page says so instead. A switch sets the range to all
 time, the last year (the default), 30 days or 7 days, and it is remembered as
-`overviewRange`. In the year, 30- and 7-day views, the period
+`overviewRange`. Everything under it follows it, the time trained and climbs by kind
+bars (`barRows()` in common/charts.js, drawn by sessions.js) as well as the grade charts,
+and every figure is laid out the same: caption, total, chart, key. In the year, 30- and 7-day views, the period
 before is a thin line across each bar at the height it reached. It is a quiet comparison,
 not a second bar.
+- **Kinds of training** have a colour each, `--train-climbing`, `--train-fingerboard` and
+  `--train-other`, kept clear of the grade bands; climbing shares the calendar's workout blue. A kind's
+  apps and the climbs by kind take its colour, since every row is labelled.
 - **Sport grades** come from tick-list route ids looked up in `gilford-routes.js`, plus the
   `grades` list that endurance sessions have saved since September 2026. Earlier endurance
   sessions stored only a count, so they are not in this chart.
@@ -546,8 +551,8 @@ nothing is thrown away, and running it twice changes nothing.
 The tick list, the gym session and trad log what was climbed the same way: start, tap,
 finish, rate, save, and reopen from the log. `log.js` is that flow once; an app describes
 its session in a global `app`. The gym session and trad share `ladder.js` for the grade
-ladder - trad is the gym session with one ladder - and `log.css` for the session bar, the
-ladder tiles and what each session state shows.
+ladder - trad is the gym session with one ladder - and `log.css` for the
+ladder tiles, the small buttons beside them and what each session state shows.
 
 ### Moved into `common/style.css`
 
@@ -560,6 +565,11 @@ ladder tiles and what each session state shows.
 | Tabular figures on a clock — now `.tabular` | endurance, timer, by id |
 | `.field` and `.field-row` | replaced two different input shapes in gilford and loft |
 | `.quiet`, the pale tint button | endurance, by id — the bouldering app wanted the same button, so it stopped being one app’s |
+| `.route.plain`, the tile with a band for a stripe | endurance, copied into the style guide |
+| `.panel.session-bar` | `#sessionBar` in log.css, `#stageBar` in endurance, `.pull-bar` in maxpull |
+| `.button-row` (and `.even`) | `.backup-actions`, `.device-buttons`, `.stored-actions` and goals |
+| `.disclosure` | the recent logs, and the Apps page's removed apps |
+| `.secondary` shown and hidden by state | a rule an app, under three ids |
 | `.toast` and `toast()` | new with the bouldering app, in `common/` from the start — the next app that needs to say something wants the same one |
 
 Two shared rules were fixed rather than worked around. `section, aside div` handed a light
@@ -570,9 +580,6 @@ grey panel in dark mode that every app replaced; it is the `--panel` variable no
 ### Left alone, on purpose
 
 - **`saveSession()`** in the apps outside `log.js`, because what a session *is* differs per app.
-- **`.icon-ok { margin-right: 40px }`** in the shared sheet. It was the log's spacing and
-  now lands on every tick icon on the page, including the one inside a FINISH SESSION
-  button — changing it moves a label in three apps, so the log table scopes it away instead.
 
 ## Installing to a phone, and working offline
 
@@ -618,13 +625,13 @@ Two things to keep in mind when you change an app:
 The style guide page is deliberately *not* in the shell: it is a development reference, not
 something to carry up a hill.
 
-## Legacy in `common/style.css`
+## Legacy cleared from `common/style.css`
 
-Don't build on these, and don't be surprised by them:
+None of these is left; the table is a record of what went and why.
 
 | Rule | What it really is |
 |---|---|
 | ~~`#log { max-width: 300px }`~~ | Gone. From when the log was a short list of lines; being an id it quietly beat the column rule and squeezed the session table into 300px |
 | ~~`.ring`, `.task`, `#preview`, `#next`, `#color`, `.slim`, `.active`, `.shrink`~~ | Gone: the rings and loft rules moved into those apps, and the rest were unused |
 | ~~`button { font-family: sans-serif }`~~ | Gone: buttons are in Hind, at 600 |
-| `.icon-ok { margin-right: 40px }` | Once the log's spacing, now landing on every tick icon including the one inside a FINISH SESSION button. Left alone for that reason; the log table scopes it away, so do the same where it bites |
+| ~~`.icon-ok { margin-right: 40px }`~~ | Gone: the tick in FINISH SESSION is spaced as every other button's icon |

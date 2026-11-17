@@ -2,7 +2,7 @@
    ones from functions.js and ukc.js. */
 (function(){
     const hiddenKey = "progressHidden";
-    const charts = ["sportFigure", "boulderFigure", "tradFigure"];
+    const figures = ["timeFigure", "kindFigure", "sportFigure", "boulderFigure", "tradFigure"];
 
     function hiddenParts(){
         let saved = null;
@@ -10,23 +10,25 @@
         return Array.isArray(saved) ? saved : [];
     }
 
-    function showParts(){
+    window.showProgressParts = function(){
         let hidden = hiddenParts();
         document.querySelectorAll("[data-part]").forEach(box => {
             let off = hidden.includes(box.dataset.part);
             box.checked = !off;
             document.getElementById(box.dataset.part).classList.toggle("switched-off", off);
         });
-        // no range picker on its own; trad is also hidden when there is none
-        document.getElementById("performance").classList.toggle("switched-off",
-            charts.every(id => hidden.includes(id) || document.getElementById(id).hidden));
-    }
+        // no range picker with nothing under it to pick for, and no section with nothing in it
+        let none = figures.every(id => hidden.includes(id) || document.getElementById(id).hidden);
+        document.querySelector("#performance .range-picker").classList.toggle("switched-off", none);
+        document.getElementById("performance").classList.toggle("switched-off", none
+            && document.getElementById("progressEmpty").hidden && document.getElementById("ukcPrompt").hidden);
+    };
 
     window.toggleProgressPart = function(input){
         let hidden = hiddenParts().filter(id => id !== input.dataset.part);
         if(!input.checked){ hidden.push(input.dataset.part); }
         try { localStorage.setItem(hiddenKey, JSON.stringify(hidden)); } catch(err){ /* only a preference */ }
-        showParts();
+        showProgressParts();
     };
 
     // Font or V on the bouldering chart - see common/charts.js
@@ -37,5 +39,5 @@
     let grades = document.getElementById("boulderChartGrades-" + (boulderChartFont() ? "font" : "hueco"));
     if(grades){ grades.checked = true; }
 
-    showParts();
+    showProgressParts();
 })();

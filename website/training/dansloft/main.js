@@ -168,7 +168,7 @@ function routeRow(route){
         <button type="button" class="quiet grade-minus" data-action="removeLoftClimb" data-route="${route.id}"
             aria-label="Take back a ${name}"${done === 0 ? " disabled" : ""}>&minus;</button>
         ${fallsControl(route.id, name)}
-        <button type="button" class="quiet route-info demo-icon icon-info" data-action="showRouteInfo" data-route="${route.id}"
+        <button type="button" class="route-info demo-icon icon-info" data-action="showRouteInfo" data-route="${route.id}"
             aria-label="Where the ${name} goes"></button>
     </div>`;
 }

@@ -4,15 +4,13 @@
 }
 [data-state="running"] #finishButton,
 [data-state="paused"] #finishButton,
-[data-state="saving"] #finishButton,
-[data-state="paused"] #reset,
-[data-state="saving"] #reset {
+[data-state="saving"] #finishButton {
     display: inline-block;
 }
 
 /* The move called out, and the colour it is to */
 #task {
-    margin: 12px;
+    margin: var(--s3);
     color: var(--strong);
 }
 #color {

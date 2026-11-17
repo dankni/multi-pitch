@@ -6,10 +6,6 @@ body:not([data-state="idle"]) #lapButton {
 body:not([data-state="idle"]) #finishButton {
     display: inline-block;
 }
-[data-state="paused"] #reset,
-[data-state="saving"] #reset {
-    display: inline-block;
-}
 body:not([data-state="idle"]) #addMissingLink {
     display: none;
 }
@@ -22,7 +18,7 @@ body:not([data-state="idle"]) #addMissingLink {
     display: none;
 }
 .missing-numbers {
-    margin-top: 12px;
+    margin-top: var(--s3);
 }
 .missing-numbers .field {
     width: 72px;

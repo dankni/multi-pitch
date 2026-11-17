@@ -2,18 +2,10 @@
    gym session's, in common/log.css. */
 #loftRoutes {
     display: grid;
-    gap: 8px;
+    gap: var(--s2);
 }
 /* the route's hold colours are its stripe, the same climbed or not - see .loft-row in common/log.css */
-.route-info {
-    flex: 0 0 auto;
-    width: 42px;
-    margin: 0;
-    padding: 0;
-    border-radius: var(--r-md);
-    font-size: var(--t-lg);
-}
-.holds-yellow       { --holds: var(--hold-yellow); }
+.holds-yellow      { --holds: var(--hold-yellow); }
 /* --holds-first is a gradient's first colour, for the watch (common/watch.js) */
 .holds-green-white  { --holds: linear-gradient(var(--hold-green) 50%, var(--hold-white) 50%); --holds-first: var(--hold-green); }
 .holds-grey         { --holds: var(--hold-grey); }
@@ -35,7 +27,7 @@
     display: block;
     width: 100%;
     max-height: 60vh;
-    margin: 16px auto 0;
+    margin: var(--s4) auto 0;
 }
 .plan.editing {
     cursor: crosshair;
@@ -95,10 +87,4 @@
 }
 #planEditor .secondary {
     display: inline-block;
-}
-@media (max-width: 380px) {
-    .route-info {
-        width: 36px;
-        font-size: var(--t-md);
-    }
 }

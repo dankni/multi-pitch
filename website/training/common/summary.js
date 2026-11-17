@@ -190,7 +190,7 @@ function backToSession(){
 function drawStoredActions(){
     let discard = document.getElementById("discard") || document.getElementById("reset");
     if(discard === null || document.getElementById("storedActions") !== null){ return; }
-    discard.insertAdjacentHTML("afterend", `<div class="stored-actions" id="storedActions">
+    discard.insertAdjacentHTML("afterend", `<div class="button-row stored-actions" id="storedActions">
             <button class="quiet" id="resetStored" data-action="resetStored"><i class="demo-icon icon-ccw"></i>RESET</button>
             <button class="secondary" id="deleteSave" data-action="deleteSave"><i class="demo-icon icon-trash"></i>DELETE SAVE</button>
         </div>`);
@@ -333,7 +333,7 @@ function drawSummaryMarkup(){
             </div>
             <div id="summarySave"><div id="summaryNotes" class="summary-notes"></div></div>
             <div class="summary-actions" id="summaryActions">
-                <button type="button" class="link-button text-link" id="summaryBack" data-action="backToSession">Back</button>
+                <button type="button" class="link-button" id="summaryBack" data-action="backToSession">Back</button>
             </div>
         </aside>`);
     // DONE: the session's row in the log pulses once it is drawn
