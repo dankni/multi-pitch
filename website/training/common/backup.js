@@ -10,18 +10,18 @@
    goes in the backup file only, not the account's copy, which a long one could
    take past its size; on a restore the one imported from UKC last is kept. */
 
-const backupFormat = "multi-pitch training apps";
+var backupFormat = "multi-pitch training apps";
 
-const backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "loftLog", "rockRingsLog", "tradLog", "noHangsLog", "tabataLog", "gapsLog", "dansLoftLog", "maxPullLog"];
+var backupLogs = ["boulderLog", "gilfordLog", "enduranceLog", "lapTimerLog", "loftLog", "rockRingsLog", "tradLog", "noHangsLog", "tabataLog", "gapsLog", "dansLoftLog", "maxPullLog"];
 
 // stored as the apps wrote them, strings and all
-const backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "boulderTrackFalls", "tradTrackFalls", "gilfordTrackFalls", "dansLoftTrackFalls", "enduranceWall", "enduranceRest",
+var backupSettings = ["boulderGradeSystem", "boulderSplitLow", "boulderPlusGrades", "boulderBoulderworld", "tradGradeSystem", "boulderTrackFalls", "tradTrackFalls", "gilfordTrackFalls", "dansLoftTrackFalls", "enduranceWall", "enduranceRest",
     "enduranceGrade", "enduranceStyle", "lapTimerGrade", "colours", "tradMode", "difficulty", "gapsMaxPull", "gapsClimber", "tabataSettings", "tabataOneSecond", "tabataRepeaterMode", "tabataRepeaters", "tabataRoutines",
     "preventSleep", "overviewRange", "progressHidden", "progressBoulderGrades", "seenSettings", "trainingLastApp", "trainingHiddenApps", "trainingRemovedApps", "trainingTheme", "dansLoftDraft", "maxPullMode", "maxPullArm", "maxPullEdge", "trainingGoals", "trainingGoalsOn", "trainingGoalsCopy"];
 
 // when this phone's settings last changed, and what they were then
-const settingsSavedKey = "syncSettingsSaved";
-const settingsSeenKey = "syncSettingsSeen";
+var settingsSavedKey = "syncSettingsSaved";
+var settingsSeenKey = "syncSettingsSeen";
 
 function currentSettings(){
     let settings = {};
@@ -146,7 +146,7 @@ function sameBackup(a, b){
    losing or doubling anything. The page then starts again with what was added,
    and says so (showRestored() in functions.js). */
 // The UKC logbook (common/ukc.js), read here as most pages don't load ukc.js
-const backupUkcKey = "ukcLogbook";
+var backupUkcKey = "ukcLogbook";
 
 function isUkcLogbook(logbook){
     return Boolean(logbook) && typeof logbook === "object" && Array.isArray(logbook.climbs) && typeof logbook.imported === "string";

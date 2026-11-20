@@ -2,22 +2,22 @@
    with every grip in a table that marks them off as they go. The session itself
    is common/workout.js. */
 
-const app = { "logKey" : "noHangsLog" };
+var app = { "logKey" : "noHangsLog" };
 
 // the hand shapes, whose photos are above the routine in the info panel
-const holds = {
+var holds = {
     "open"      : "Open Hand",
     "halfCrimp" : "Half Crimp"
 };
 
-const fingerSets = {
+var fingerSets = {
     "four"    : "4 Fingers",
     "front3"  : "Front 3",
     "front2"  : "Front 2",
     "middle2" : "Middle 2"
 };
 
-const plan = [
+var plan = [
     { "hold" : "open",      "fingers" : "four",    "reps" : 6 },
     { "hold" : "open",      "fingers" : "front3",  "reps" : 6 },
     { "hold" : "open",      "fingers" : "front2",  "reps" : 2 },
@@ -25,19 +25,19 @@ const plan = [
     { "hold" : "halfCrimp", "fingers" : "front2",  "reps" : 2 },
     { "hold" : "halfCrimp", "fingers" : "middle2", "reps" : 2 }
 ];
-const hangSeconds = 10;
-const restSeconds = 20;
-const warningSeconds = 5;   // the rest goes red this long before the next hang
-const beeps = 3;            // a beep a second for the last of the red
-const repSeconds = hangSeconds + restSeconds;
-const vibrateSeconds = 1;              // the phone buzzes this long before a hang starts and ends
-const hangSoonBuzz = [200];            // one long one: go
-const letGoSoonBuzz = [100, 80, 100];  // two short ones: let go
+var hangSeconds = 10;
+var restSeconds = 20;
+var warningSeconds = 5;   // the rest goes red this long before the next hang
+var beeps = 3;            // a beep a second for the last of the red
+var repSeconds = hangSeconds + restSeconds;
+var vibrateSeconds = 1;              // the phone buzzes this long before a hang starts and ends
+var hangSoonBuzz = [200];            // one long one: go
+var letGoSoonBuzz = [100, 80, 100];  // two short ones: let go
 
 // Every rep in order, as { hold, fingers, rep, of, step } - step its row in the plan
-const reps = plan.flatMap((step, row) => Array.from({ "length" : step.reps }, (_, index) => ({ "hold" : step.hold, "fingers" : step.fingers, "rep" : index + 1, "of" : step.reps, "step" : row })));
+var reps = plan.flatMap((step, row) => Array.from({ "length" : step.reps }, (_, index) => ({ "hold" : step.hold, "fingers" : step.fingers, "rep" : index + 1, "of" : step.reps, "step" : row })));
 // no rest after the last hang
-const totalSeconds = reps.length * repSeconds - restSeconds;
+var totalSeconds = reps.length * repSeconds - restSeconds;
 
 // the main clock counts down what is left of the session
 app.clock = secondsClock(seconds => {

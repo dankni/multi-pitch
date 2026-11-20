@@ -3,7 +3,7 @@
 //
 // Shared by the tick list app and the endurance app, so there is one copy to
 // update when the wall is re-set rather than two that can drift apart.
-const routes = [
+var routes = [
     { "id" : 1,  "section" : 1, "colour" : "Yellow", "grade" : "4"   },
     { "id" : 2,  "section" : 1, "colour" : "Orange", "grade" : "5+"  },
     { "id" : 3,  "section" : 1, "colour" : "Green",  "grade" : "6b"  },
@@ -31,7 +31,7 @@ const routes = [
 ];
 
 // Easiest to hardest, used to work out the hardest climb of a session
-const gradeOrder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
+var gradeOrder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
 
 function getRoute(id){
     return routes.find(route => route.id === id);
@@ -41,7 +41,7 @@ function getRoute(id){
 // grade below it rather than a grade of its own, so 6a+ is still 6a and the next
 // grade up is 6b. The endurance app steps down this list when it picks climbs
 // a number of grades below a climber's max.
-const gradeSteps = [
+var gradeSteps = [
     ["4", "4+"],
     ["5", "5+"],
     ["6a", "6a+"],

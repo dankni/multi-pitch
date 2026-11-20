@@ -1,7 +1,7 @@
 /* The tick list for the 24 routes on the Gilford wall. The session flow is
    common/log.js; the routes are common/gilford-routes.js. */
 
-const app = {
+var app = {
     "logKey" : "gilfordLog",
     "currentKey" : "gilfordCurrent",
     "timed" : true,
@@ -72,9 +72,9 @@ function hardestGrade(climbs){
 
 /* Worth a word when a tick completes one: half the wall, the sevens, or all of
    it. Read off the routes, so a re-set wall still says the right thing. */
-const sevens = routes.filter(route => route.grade.startsWith("7")).map(route => route.id);
-const everything = routes.map(route => route.id);
-const halfway = Math.ceil(routes.length / 2);
+var sevens = routes.filter(route => route.grade.startsWith("7")).map(route => route.id);
+var everything = routes.map(route => route.id);
+var halfway = Math.ceil(routes.length / 2);
 
 function allTicked(ids){
     return ids.length > 0 && ids.every(id => session.climbs.includes(id));

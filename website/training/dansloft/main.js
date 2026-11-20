@@ -6,13 +6,13 @@
    passes through, or the end where the plan is tapped, and takes notes, kept on this device under draftKey until COPY ROUTES
    hands them over to go in dansloft-routes.js. */
 
-const draftKey = "dansLoftDraft";
-const editing = new URLSearchParams(location.search).has("edit");
-let infoRoute = null;   // the route the info panel is showing
+var draftKey = "dansLoftDraft";
+var editing = new URLSearchParams(location.search).has("edit");
+var infoRoute = null;   // the route the info panel is showing
 
 overlays.push("routeInfo");
 
-const app = {
+var app = {
     "logKey" : "dansLoftLog",
     "currentKey" : "dansLoftCurrent",
     "timed" : true,

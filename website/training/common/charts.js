@@ -215,7 +215,7 @@ function boulderRung(grade){
 }
 
 // 5 to 7b always, as the Gilford wall grades them; anything else on the ladder once climbed
-const sportAlways = ["5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
+var sportAlways = ["5", "5+", "6a", "6a+", "6b", "6c", "7a", "7a+", "7b"];
 
 function sportColumns(present){
     let columns = sportLadder.filter(grade => sportAlways.includes(grade) || present.includes(grade));
@@ -240,7 +240,7 @@ function fontColumns(present){
 /* Boulders are charted in Font or V, as picked on the progress page, whichever
    they were logged in: a V grade as Font is the first Font grade that counts as
    it, so the two only roughly agree */
-const boulderChartKey = "progressBoulderGrades";
+var boulderChartKey = "progressBoulderGrades";
 
 function boulderChartFont(){
     return localStorage.getItem(boulderChartKey) === "font";
@@ -255,15 +255,15 @@ function boulderColumns(present){
 }
 
 // British adjectival grades: VD to E2 always, the rest once climbed
-const tradAlways = ["VD", "S", "HS", "VS", "HVS", "E1", "E2"];
+var tradAlways = ["VD", "S", "HS", "VS", "HVS", "E1", "E2"];
 
 function tradColumns(present){
     return tradLadder.filter(grade => tradAlways.includes(grade) || present.includes(grade));
 }
 
 // Each kind of climb a chart is drawn for: its columns, a grade as charted, its grade colours and what one is called
-const sameGrade = grade => grade;
-const climbKinds = {
+var sameGrade = grade => grade;
+var climbKinds = {
     "sport"   : { "columns" : sportColumns,   "shown" : sameGrade,         "band" : gradeBands.sport,   "noun" : "climb",      "title" : "Sport" },
     "boulder" : { "columns" : boulderColumns, "shown" : boulderChartGrade, "band" : gradeBands.boulder, "noun" : "boulder",    "title" : "Bouldering" },
     "trad"    : { "columns" : tradColumns,    "shown" : sameGrade,         "band" : gradeBands.trad,    "noun" : "trad climb", "title" : "Trad" }
@@ -338,7 +338,7 @@ function entryFalls(logKey, entry){
 /* An SVG on the page as an image, for a canvas to draw: an SVG drawn as an
    image has no stylesheet, so each part's colours and sizes are written onto a
    copy of it. Resolves null if it won't draw. */
-const svgImageStyles = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linecap", "stroke-linejoin",
+var svgImageStyles = ["fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linecap", "stroke-linejoin",
     "font-size", "font-family", "font-weight", "opacity"];
 
 function svgImage(svg){

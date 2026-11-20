@@ -11,7 +11,7 @@
    first tapped, or on every page once signed in (loadAccount() in functions.js). */
 
 // from the stack's outputs; none of them is a secret
-const accountConfig = {
+var accountConfig = {
     "region" : "eu-west-1",
     "userPoolId" : "eu-west-1_d3cYoqyyB",
     "clientId" : "2tig0k06r5n2dfvij1lt5t4dek",
@@ -19,20 +19,20 @@ const accountConfig = {
     "table" : "multi-pitch-training-users"
 };
 
-const accountEmailKey = "accountEmail";
-const accountIdentityKey = "accountIdentity";
-const accountLastSyncKey = "accountLastSync";
-const accountUsedKey = "accountUsed";     // signed in here at least once: the account goes above the backup
+var accountEmailKey = "accountEmail";
+var accountIdentityKey = "accountIdentity";
+var accountLastSyncKey = "accountLastSync";
+var accountUsedKey = "accountUsed";     // signed in here at least once: the account goes above the backup
 
-const syncDelay = 5000;
-const syncTries = 3;
-const itemLimit = 390000;   // a DynamoDB item tops out at 400 KB
+var syncDelay = 5000;
+var syncTries = 3;
+var itemLimit = 390000;   // a DynamoDB item tops out at 400 KB
 
-let accountTokens = null;   // { id, access, expires }
-let accountKeys = null;     // { accessKeyId, secretAccessKey, sessionToken, expires }
-let accountCode = null;     // { email, password, reset } while a code is awaited
-let accountTypedAt = 0;     // the first key into the form, for signUpAccount()'s bot check
-const signUpSlowest = 2000; // ms from it that a person needs to fill the form in
+var accountTokens = null;   // { id, access, expires }
+var accountKeys = null;     // { accessKeyId, secretAccessKey, sessionToken, expires }
+var accountCode = null;     // { email, password, reset } while a code is awaited
+var accountTypedAt = 0;     // the first key into the form, for signUpAccount()'s bot check
+var signUpSlowest = 2000; // ms from it that a person needs to fill the form in
 
 function signedIn(){
     return localStorage.getItem(accountRefreshKey) !== null;
@@ -164,9 +164,9 @@ async function gunzip(base64){
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
 }
 
-let syncing = null;
-let syncAgain = false;
-let syncTimer = null;
+var syncing = null;
+var syncAgain = false;
+var syncTimer = null;
 
 // One at a time; asked again while one runs, it runs once more after
 function syncNow(){
@@ -190,8 +190,16 @@ function syncNow(){
 function syncSoon(){
     if(!signedIn()){ return; }
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(syncNow, syncDelay);
+    syncTimer = setTimeout(() => { syncTimer = null; syncNow(); }, syncDelay);
 }
+
+// not left waiting on a page that is going
+window.addEventListener("trainingleave", () => {
+    if(syncTimer === null){ return; }
+    clearTimeout(syncTimer);
+    syncTimer = null;
+    syncNow();
+});
 
 /* Read the account's copy, merge, write the merge here and back. The write only
    lands if nobody else wrote since the read (the version number); if another
@@ -252,22 +260,22 @@ function showSynced(){
    signed in, the account comes first. */
 
 // an open eye, struck through while the password shows
-const eyeIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">'
+var eyeIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">'
     + '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.25"/><path class="eye-slash" d="M2.5 13.5 13.5 2.5"/></g></svg>';
 
-const showPassword = `<button type="button" class="show-password" data-action="togglePasswordShown" aria-label="Show password" aria-pressed="false">${eyeIcon}</button>`;
+var showPassword = `<button type="button" class="show-password" data-action="togglePasswordShown" aria-label="Show password" aria-pressed="false">${eyeIcon}</button>`;
 
-const backupIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 13.5h11"/></svg>';
+var backupIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 13.5h11"/></svg>';
 
 // what infra/accounts.yml asks of a new password, ticked off as it is typed
-const passwordRulesList = `<ul class="password-rules" hidden>
+var passwordRulesList = `<ul class="password-rules" hidden>
                     <li data-rule="length">10+ characters</li>
                     <li data-rule="lower">Lowercase</li>
                     <li data-rule="upper">Uppercase</li>
                     <li data-rule="number">Number</li>
                 </ul>`;
 
-const accountPanel = `<aside id="account" class="overlay">
+var accountPanel = `<aside id="account" class="overlay">
     <h2>Account</h2>
     <section class="card-group" id="accountLogin">
         <div class="card">
@@ -369,7 +377,7 @@ function drawAccountPanel(){
 
 // Signed in, the backup file is the lesser way to keep sessions: folded away, once
 // each time the account is signed in, and left as it is put after that
-let backupFolded = false;
+var backupFolded = false;
 
 function showBackup(){
     let details = document.getElementById("backupDetails");
@@ -448,7 +456,7 @@ function checkEmail(field){
 }
 
 // The pool's password policy, as infra/accounts.yml sets it
-const passwordRules = {
+var passwordRules = {
     "length" : text => text.length >= 10,
     "lower" : text => /[a-z]/.test(text),
     "upper" : text => /[A-Z]/.test(text),
@@ -489,7 +497,7 @@ function fieldsOk(checks){
 }
 
 // Which fields AWS's refusals are about
-const errorFields = {
+var errorFields = {
     "NotAuthorizedException" : ["accountEmail", "accountPassword"],
     "UsernameExistsException" : ["accountEmail"],
     "InvalidPasswordException" : ["accountPassword", "accountNewPassword"],

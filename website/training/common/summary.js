@@ -17,9 +17,9 @@
    its log would save it, for entryClimbs() - app.toEntry(session) otherwise.
    BACK goes back to the session through the app's own resumeSession(). */
 
-let summaryMoved = [];   // [element, the placeholder it came from]
-let summaryWidth = 0;    // what the charts were drawn at
-let summarySaveLabel = "";   // the save button's own, while it reads DONE
+var summaryMoved = [];   // [element, the placeholder it came from]
+var summaryWidth = 0;    // what the charts were drawn at
+var summarySaveLabel = "";   // the save button's own, while it reads DONE
 
 // with the falls and ascent styles log.js saves beside the app's own fields
 function summaryEntry(){
@@ -147,7 +147,7 @@ function unstoreSession(){
 }
 
 // The title, note and rating as put in, and the pencil to change them
-const pencilIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+var pencilIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
     + '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></g></svg>';
 
 function drawSummaryNotes(){

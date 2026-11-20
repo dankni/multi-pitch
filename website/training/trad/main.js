@@ -10,7 +10,7 @@
 /* British grades as a UK crag gives them - the half steps UK guides barely use
    are left off - and roughly the UIAA equivalent, which follows the table ukc.js
    reads UIAA grades back with. Only ever displayed: a session stores the British. */
-const grades = [
+var grades = [
     { "brit" : "M",   "uiaa" : "II" },
     { "brit" : "D",   "uiaa" : "III" },
     { "brit" : "VD",  "uiaa" : "III+" },
@@ -32,7 +32,7 @@ const grades = [
     { "brit" : "E11", "uiaa" : "XI-" }
 ];
 
-const app = {
+var app = {
     "logKey" : "tradLog",
     "currentKey" : "tradCurrent",
     "systemKey" : "tradGradeSystem",

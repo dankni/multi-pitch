@@ -5,7 +5,7 @@
    payload, all little endian. PullForce (gaps/pull_force_ble.ino) sends kg as
    text, all the time it's connected, and has no start, stop or battery. */
 
-const progressor = (function(){
+var progressor = (function(){
     const response = { "reply" : 0, "weight" : 1, "lowPower" : 4 };
 
     const tindeq = {
@@ -158,6 +158,8 @@ const progressor = (function(){
         self.kg = 0;
         return send(meter.command.stop);
     }
+
+    window.addEventListener("trainingleave", disconnect);
 
     return self;
 })();

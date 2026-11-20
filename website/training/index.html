@@ -252,6 +252,7 @@
         </details>
     </aside>
 
+    <script src="/training/common/router.js"></script>
     <script>
     /* Local storage in use, against what a browser allows. There is no API for
        the limit: Chrome, Firefox and Safari all stop a site at about 5 million
@@ -296,8 +297,8 @@
     <script>
     /* Apps left off this list until their name is typed under the cog, then on it
        for good on this device. A name matches whatever its case and spacing. */
-    const hiddenAppsKey = "trainingHiddenApps";
-    const hiddenApps = {
+    var hiddenAppsKey = "trainingHiddenApps";
+    var hiddenApps = {
         "dansloft" : { "name" : "Dans Loft", "href" : "/training/dansloft/", "text" : "The routes on the loft wall.", "before" : "ringsCard",
             // the loft's end wall under the roof; the long slope is 58 degrees off vertical
             "icon" : `<svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
@@ -368,17 +369,17 @@
        with a handle to drag it up or down by (or move with the arrow keys), and
        Save order keeps it on this device. A card is known by its link; one not
        in the saved order - a new app - goes after those that are. */
-    const appOrderKey = "trainingAppOrder";
-    const appPress = 500;      // ms held still that starts reordering
-    const appPressSlop = 10;   // px a finger can wander in that time
-    const appEdge = 70;        // px from the top, or the bottom nav, that scrolls the page while dragging
-    let appPressTimer = null;
-    let appPressFrom = null;
-    let appDrag = null;        // { card, x, y } while a card is being dragged
+    var appOrderKey = "trainingAppOrder";
+    var appPress = 500;      // ms held still that starts reordering
+    var appPressSlop = 10;   // px a finger can wander in that time
+    var appEdge = 70;        // px from the top, or the bottom nav, that scrolls the page while dragging
+    var appPressTimer = null;
+    var appPressFrom = null;
+    var appDrag = null;        // { card, x, y } while a card is being dragged
 
-    const appList = document.querySelector(".apps");
+    var appList = document.querySelector(".apps");
 
-    const removedAppsKey = "trainingRemovedApps";
+    var removedAppsKey = "trainingRemovedApps";
 
     function appCards(){
         return [...appList.children];
@@ -565,10 +566,10 @@
     /* How to add the apps to the home screen, on an iPhone or iPad, or on Android -
        where Chrome also offers a button that does it - and on a computer, that a
        phone can. Not once opened from the home screen. */
-    const installPlatform = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios"
+    var installPlatform = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ios"
         : /Android/.test(navigator.userAgent) ? "android" : "computer";
-    const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-    let installPrompt = null;
+    var installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    var installPrompt = null;
 
     function showInstallHelp(){
         let help = document.getElementById("installHelp");

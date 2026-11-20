@@ -9,14 +9,14 @@
    below V0 while low grades are split out. With Font picked it is Font's own
    ladder, plus grades and all, and a session keeps the one it was logged on
    (session.boulderScale, "v" or "font") - so it reopens as it was tapped. */
-const vRows = [{ "v" : "VB", "font" : "f3", "brit" : "3c" }].concat(boulderGradeTable).map(row => Object.assign({ "key" : row.v }, row));
-const fontRows = fontBoulderTable.map(row => ({ "key" : row.font, "font" : row.font, "v" : row.v,
+var vRows = [{ "v" : "VB", "font" : "f3", "brit" : "3c" }].concat(boulderGradeTable).map(row => Object.assign({ "key" : row.v }, row));
+var fontRows = fontBoulderTable.map(row => ({ "key" : row.font, "font" : row.font, "v" : row.v,
     "brit" : vRows.find(each => each.v === row.v).brit, "system" : "font" }));
-const grades = vRows.concat(fontRows);
+var grades = vRows.concat(fontRows);
 // both ladders, each Font grade after the V grade it counts as, to find the hardest by
-const boulderOrder = vBoulderOrder.flatMap(v => [v, ...fontRows.filter(row => row.v === v).map(row => row.key)]);
+var boulderOrder = vBoulderOrder.flatMap(v => [v, ...fontRows.filter(row => row.v === v).map(row => row.key)]);
 
-let scaleFrom = null;   // an entry being reopened, before it is the session
+var scaleFrom = null;   // an entry being reopened, before it is the session
 
 function systemScale(){
     return gradeSystem === "font" ? "font" : "v";
@@ -33,8 +33,8 @@ function entryScale(entry){
 
 // The sport ladder, from common/grades.js: 4 to 5+, or 4a to 5c once split out,
 // and 6a up with or without the plus grades
-const splitKey = "boulderSplitLow";
-const plusKey = "boulderPlusGrades";
+var splitKey = "boulderSplitLow";
+var plusKey = "boulderPlusGrades";
 
 function splitLowGrades(){
     return localStorage.getItem(splitKey) !== "false";   // on unless switched off
@@ -61,8 +61,8 @@ function sportStarts(){
 /* Boulderworld Belfast sets its circuits a colour a grade: with it on under the
    cog, each V grade's tile wears its circuit's colour - V0 both of its two, and
    V7 up pink - in place of the easy to very hard bands */
-const boulderworldKey = "boulderBoulderworld";
-const boulderworldHolds = { "VB" : "orange-blue", "V0" : "orange-blue", "V1" : "white", "V2" : "green", "V3" : "yellow", "V4" : "purple", "V5" : "red", "V6" : "black" };
+var boulderworldKey = "boulderBoulderworld";
+var boulderworldHolds = { "VB" : "orange-blue", "V0" : "orange-blue", "V1" : "white", "V2" : "green", "V3" : "yellow", "V4" : "purple", "V5" : "red", "V6" : "black" };
 
 function boulderworld(){
     return localStorage.getItem(boulderworldKey) === "true";
@@ -74,7 +74,7 @@ function boulderBand(){
     return boulderworld() ? grade => boulderworldBand(boulderV(grade)) : gradeBands.boulder;
 }
 
-const app = {
+var app = {
     "logKey" : "boulderLog",
     "currentKey" : "boulderCurrent",
     "systemKey" : "boulderGradeSystem",

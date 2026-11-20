@@ -4,7 +4,7 @@
    common/watch.js connects it in
    place of the Bangle. Shaped like common/bangle.js, so it can stand in for it. */
 
-const hrm = (function(){
+var hrm = (function(){
     let device = null;
     let leaving = false;
 
@@ -85,6 +85,8 @@ const hrm = (function(){
         leaving = true;
         device.gatt.disconnect();
     }
+
+    window.addEventListener("trainingleave", disconnect);
 
     return self;
 })();

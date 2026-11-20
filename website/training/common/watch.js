@@ -22,19 +22,19 @@
    under the cog in place of the Bangle - one or the other, never both. It only
    reads the heart rate, kept to one reading every hrmEvery. */
 
-const watchApp = "/training/watch/mplog.app.js";
-const watchRetryWait = 10000;
-const watchDeviceKey = "trainingWatchDevice";   // bangle or hrm, the same in every app
-const hrmEvery = 5000;   // ms between readings kept, as the Bangle sends them
-const watchHrm = typeof hrm === "undefined" ? null : hrm;   // only the apps with heart rate load it
+var watchApp = "/training/watch/mplog.app.js";
+var watchRetryWait = 10000;
+var watchDeviceKey = "trainingWatchDevice";   // bangle or hrm, the same in every app
+var hrmEvery = 5000;   // ms between readings kept, as the Bangle sends them
+var watchHrm = typeof hrm === "undefined" ? null : hrm;   // only the apps with heart rate load it
 
-let watchReady = false;     // Climb Log is open on the watch and has said hello
-let watchStage = "";        // what setting it up is up to
-let watchRetrying = false;
-let watchPush = null;
-let watchWasConnected = false;
-let watchVersion = "";      // the app version Climb Log was put there with, as its menu shows it
-let hrmBeatAt = 0;
+var watchReady = false;     // Climb Log is open on the watch and has said hello
+var watchStage = "";        // what setting it up is up to
+var watchRetrying = false;
+var watchPush = null;
+var watchWasConnected = false;
+var watchVersion = "";      // the app version Climb Log was put there with, as its menu shows it
+var hrmBeatAt = 0;
 
 function watchWanted(){
     return localStorage.getItem(app.watchKey) === "true";
@@ -194,7 +194,7 @@ function fromWatch(message){
 
 /* The number of the next thing the watch sends, kept by session through a
    reload, and sent as ev in hi and each state so the watch can let go of the rest */
-const watchNextKey = "watchNext";
+var watchNextKey = "watchNext";
 
 function watchNext(){
     let id = app.watch.state().id;
@@ -300,8 +300,8 @@ function drawWatchMarkup(){
         <p class="device-tips" id="noBluetoothWatch" hidden>This browser can't connect to a watch.</p>`;
 }
 
-const watchWords = { "off" : "Watch not connected", "connecting" : "Connecting to the watch…", "connected" : "Watch connected" };
-const hrmWords = { "off" : "Heart rate monitor not connected", "connecting" : "Connecting to the heart rate monitor…", "connected" : "Heart rate monitor connected" };
+var watchWords = { "off" : "Watch not connected", "connecting" : "Connecting to the watch…", "connected" : "Watch connected" };
+var hrmWords = { "off" : "Heart rate monitor not connected", "connecting" : "Connecting to the heart rate monitor…", "connected" : "Heart rate monitor connected" };
 
 function drawWatch(){
     let link = watchLink();

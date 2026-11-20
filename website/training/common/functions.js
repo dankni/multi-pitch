@@ -1,8 +1,8 @@
 /* Shared by every training page. A classic script, so everything here is a
    global the apps call directly. */
 
-let sound = true;
-let debug = false;
+var sound = true;
+var debug = false;
 
 /* ================= Actions =================
    Markup names the function a control calls rather than carrying inline script:
@@ -35,7 +35,7 @@ delegate("input", "data-input");
    CSS fills the checked chip of a radio picker whatever happens here; this only
    slides the fill over from the chip it was on, so a choice set from code just
    appears. The old chip is noted on the press, before the radio has changed. */
-let pickedBefore = null;
+var pickedBefore = null;
 
 function rememberPick(event){
     let picker = event.target.closest ? event.target.closest(".picker") : null;
@@ -62,10 +62,10 @@ document.addEventListener("change", event => {
    A session asks for the wake lock when it starts and lets it go when it ends.
    The browser drops the lock whenever the page is hidden, so wakeLockWanted
    remembers to ask again when it comes back. */
-let wakeLock = null;
-let wakeLockWanted = false;
-let preventSleep = true;   // the Prevent Screen Sleep setting
-const preventSleepKey = "preventSleep";
+var wakeLock = null;
+var wakeLockWanted = false;
+var preventSleep = true;   // the Prevent Screen Sleep setting
+var preventSleepKey = "preventSleep";
 
 async function requestWakeLock(){
     wakeLockWanted = true;
@@ -109,6 +109,12 @@ function loadPreventSleepSetting(){
     if(box !== null){ box.checked = preventSleep; }
 }
 
+// another page swapped in by router.js
+window.addEventListener("trainingleave", () => {
+    releaseWakeLock();
+    if(audio !== null){ audio.close(); }
+});
+
 document.addEventListener("visibilitychange", () => {
     if(document.visibilityState === "visible" && wakeLockWanted && wakeLock === null){
         requestWakeLock();
@@ -147,7 +153,7 @@ function showFullscreenState(){
 document.addEventListener("fullscreenchange", showFullscreenState);
 
 // Muted or not is remembered for next time, across every app
-const soundOffKey = "soundOff";
+var soundOffKey = "soundOff";
 
 function toggleSound(){
     sound = !sound;
@@ -179,7 +185,7 @@ function toggleDebug(input){
    app - even when it matches the phone, which may change over at night, and
    which a missing key would let a sync fill back in from the account. Applied as
    soon as this loads, in the <head>, so there is no flash of the other theme. */
-const themeKey = "trainingTheme";   // not the main site's "theme"
+var themeKey = "trainingTheme";   // not the main site's "theme"
 
 function prefersDark(){
     return Boolean(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -222,11 +228,11 @@ if(window.matchMedia){ window.matchMedia("(prefers-color-scheme: dark)").addEven
    reads SURE? - and a second within a few seconds does the deed; otherwise it
    goes back to its own wording. A session with nothing worth keeping goes on the
    first tap. An app that hides the button should call disarmReset(). */
-let resetArmed = false;
-let resetButtonId = null;
-let resetRestingLabel = null;
-let resetDisarmTimer = null;
-const resetArmedTimeout = 4000;
+var resetArmed = false;
+var resetButtonId = null;
+var resetRestingLabel = null;
+var resetDisarmTimer = null;
+var resetArmedTimeout = 4000;
 
 function confirmReset(buttonId, worthKeeping, onConfirm){
     if(!resetArmed && worthKeeping){
@@ -262,7 +268,7 @@ function showState(state){
    An app keeps the session in progress in `session`, and writes it to local
    storage under app.currentKey on every change, so a reload picks it back up.
    Finished sessions go in a log under app.logKey. */
-let session = null;
+var session = null;
 
 function today(){
     return new Date().toISOString().slice(0, 10); // yyyy-mm-dd
@@ -324,7 +330,7 @@ function keepNoteText(){
     return `Your ${appleDevice()} can clear your sessions if you don't visit for a week.`;
 }
 
-const keepNoteLink = '<button type="button" class="link-button" data-action="keepNoteAccount">Create free account</button>';
+var keepNoteLink = '<button type="button" class="link-button" data-action="keepNoteAccount">Create free account</button>';
 
 function keepNoteToast(){
     if(!keepNoteDue()){ return; }
@@ -355,7 +361,7 @@ function keepNoteAccount(){
 }
 
 // iOS can clear a site's storage. Not asked elsewhere, as Firefox makes it a permission prompt
-let storageAsked = false;
+var storageAsked = false;
 function askToKeepStorage(){
     if(storageAsked || appleDevice() === null || !navigator.storage || !navigator.storage.persist){ return; }
     storageAsked = true;
@@ -382,8 +388,8 @@ function saveToLog(key, entry){
 }
 
 // Deleted sessions, kept a while so a merge doesn't bring them back
-const deletedKey = "syncDeleted";
-const deletedDays = 180;
+var deletedKey = "syncDeleted";
+var deletedDays = 180;
 
 function noteDeleted(key, id){
     let cutoff = Date.now() - deletedDays * 86400000;
@@ -461,8 +467,8 @@ function escapeHtml(text){
 /* ================= Recent logs =================
    A session's last few taps and how long ago, behind "Show recent logs": the gym
    session, Outside and the lap timer. Kept on the session, never saved. */
-const recentShown = 5;
-let recentTicker = null;
+var recentShown = 5;
+var recentTicker = null;
 
 // before the caller's keepSession()
 function noteRecent(text){
@@ -501,15 +507,15 @@ function toggleRecent(details){
    a title, the note, the rating and the save button, which calls the app's
    saveSession(). The title is optional, and saved only when there is one. The
    rating is 1 to 5 (0 for none), shown as a face. */
-let sessionRating = 0;
-let sessionComment = "";
-let sessionTitle = "";
-const commentLimit = 300;
-const commentCountFrom = 250;   // the count shows from here, red at the limit
-const titleLimit = 24;   // fits under the app's name in a log row
+var sessionRating = 0;
+var sessionComment = "";
+var sessionTitle = "";
+var commentLimit = 300;
+var commentCountFrom = 250;   // the count shows from here, red at the limit
+var titleLimit = 24;   // fits under the app's name in a log row
 
 // a face for each rating, 1 to 5
-const ratingFaces = [null,
+var ratingFaces = [null,
     '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M7.5 17.5q4.5-4.5 9 0"/>',
     '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M8.5 16.5q3.5-2.5 7 0"/>',
     '<circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><path d="M8.5 15.5h7"/>',
@@ -616,8 +622,8 @@ function resetSavePanel(){
      })
 
    With no argument it redraws with what it was last given. */
-let sessionLogView = null;
-let logHighlight = null;   // a session's id: its row pulses the next time the log is drawn, as DONE saves it
+var sessionLogView = null;
+var logHighlight = null;   // a session's id: its row pulses the next time the log is drawn, as DONE saves it
 
 function sessionLogEntries(){
     let extra = sessionLogView.extra ? sessionLogView.extra() : [];
@@ -660,7 +666,7 @@ function drawSessionLog(view){
 
 /* With sessions in it, the log is what the info panel opens on: the cards above
    it start folded, once a page load, and stay as they are put after that */
-let foldedAboveLog = false;
+var foldedAboveLog = false;
 
 function foldAboveLog(holder, count){
     if(foldedAboveLog || count === 0){ return; }
@@ -674,7 +680,7 @@ function foldAboveLog(holder, count){
 }
 
 // yyyy-mm-dd as "12 Jan" over "2026"; anything else as it was stored
-const logMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var logMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function logDateParts(date){
     let parts = String(date).split("-");
@@ -700,7 +706,7 @@ function logButton(action, id, icon, label){
 }
 
 // The Tindeq mark, two peaks, after a session that was pulled on a Progressor
-const tindeqMark = '<svg class="tindeq-mark" viewBox="0 0 100 100" role="img" aria-label="pulled on a Tindeq Progressor">'
+var tindeqMark = '<svg class="tindeq-mark" viewBox="0 0 100 100" role="img" aria-label="pulled on a Tindeq Progressor">'
     + '<path fill="none" stroke="currentColor" stroke-width="9" d="M44,43.7 L34.6,28.3 L8,71.7 H38.8 L65.4,28.3 L92,71.7 H47.2"/></svg>';
 
 // No rating for a view that says it has none, as a game with a score
@@ -796,9 +802,9 @@ document.addEventListener("click", event => {
 });
 
 /* ================= Speech and the countdown ================= */
-const speechStartTimeout = 1000;
-let voiceOff = false;   // the Voice disabled setting: beeps and pings only
-const voiceOffKey = "voiceOff";
+var speechStartTimeout = 1000;
+var voiceOff = false;   // the Voice disabled setting: beeps and pings only
+var voiceOffKey = "voiceOff";
 
 function toggleVoiceOff(input){
     voiceOff = input.checked;
@@ -834,8 +840,8 @@ function speak(text, onStart){
 
 /* Tones, made with Web Audio so there are no files to cache. A browser only
    lets the sound start from a tap, so a start button calls unlockAudio(). */
-let audio = null;
-let squash = null;   // the tones' compressor, so they can be loud without clipping
+var audio = null;
+var squash = null;   // the tones' compressor, so they can be loud without clipping
 
 function unlockAudio(){
     let Context = window.AudioContext || window.webkitAudioContext;
@@ -874,7 +880,7 @@ function beep(){ tone(1320, 0.12, 0.5); }
 /* Android drops a stream that goes quiet, and over Bluetooth the switch can pause
    the music mid rest. A hum far too quiet to hear keeps it open while a clock runs;
    not pure silence, which Chrome treats as no stream at all. */
-let hum = null;
+var hum = null;
 
 function startHum(){
     if(!sound || audio === null || hum !== null){ return; }
@@ -895,9 +901,9 @@ function stopHum(){
 /* A buzz to feel when the screen is out of sight - on whatever the phone allows,
    which is not an iPhone. Not silenced by the mute: that is for the noise, and
    the Vibration disabled setting is for this. */
-let vibrateOff = false;
-const vibrateOffKey = "vibrateOff";
-const canVibrate = typeof navigator.vibrate === "function";
+var vibrateOff = false;
+var vibrateOffKey = "vibrateOff";
+var canVibrate = typeof navigator.vibrate === "function";
 
 // with nothing to buzz, the switch stays on
 function toggleVibrateOff(input){
@@ -947,7 +953,7 @@ function countdown(onComplete){
 }
 
 // The page colour for the countdown and the rings' go - "" for the theme's own
-const countdownColours = ["red", "orange", "yellow", "green"];
+var countdownColours = ["red", "orange", "yellow", "green"];
 
 function background(colour){
     document.body.classList.remove(...countdownColours);
@@ -957,9 +963,9 @@ function background(colour){
 /* ================= Hints and toasts ================= */
 
 // The first time an app is opened, a word about the cog - until the settings are opened
-const cogHintKey = "seenSettings";
-const cogHintDelay = 700;
-const cogHintLife = 8000;
+var cogHintKey = "seenSettings";
+var cogHintDelay = 700;
+var cogHintLife = 8000;
 
 function showCogHint(){
     if(document.getElementById("settings") === null || document.body.dataset.cogHint === "off" || localStorage.getItem(cogHintKey) === "true"){ return; }
@@ -1002,7 +1008,7 @@ function haptic(){
    message is a button, and it stays until tapped or closed; sticky keeps a
    plain one up until closed, and warn makes it an orange warning. message is
    text, or a <template> whose markup it shows - for a link. */
-const toastLife = 5200;
+var toastLife = 5200;
 
 function toastStack(){
     let stack = document.getElementById("toasts");
@@ -1080,11 +1086,11 @@ function hideToast(box){
 /* ================= Overlays =================
    Info behind the i, settings behind the cog. One at a time; CSS holds the page
    still behind whichever is open. */
-const overlays = ["about", "settings", "account"];
+var overlays = ["about", "settings", "account"];
 
 /* These three sit between the navs, which stay up, and close from the button that
    opened them, the page's name, the current page's in the bottom nav, or Escape. */
-const navPanels = { "about" : "openInfoBox", "settings" : "openSettings", "account" : "openAccount" };
+var navPanels = { "about" : "openInfoBox", "settings" : "openSettings", "account" : "openAccount" };
 
 function showNavPanel(){
     let open = Object.keys(navPanels).filter(isOpen);
@@ -1197,8 +1203,8 @@ function showAppVersion(){
    The fold on a card's head, and the contact card every info panel ends with -
    or has where it holds a <div data-contact-card>, as the Apps page does */
 // Goals' target, in the bottom nav and by its switch in the account panel
-const goalsIcon = '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.25"/><circle cx="8" cy="8" r="3.25"/></g><circle cx="8" cy="8" r="1" fill="currentColor"/>';
-const goalsOnKey = "trainingGoalsOn";
+var goalsIcon = '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.25"/><circle cx="8" cy="8" r="3.25"/></g><circle cx="8" cy="8" r="1" fill="currentColor"/>';
+var goalsOnKey = "trainingGoalsOn";
 
 // On until switched off
 function goalsOn(){
@@ -1211,9 +1217,9 @@ function setGoalsOn(box){
     if(typeof syncSoon === "function"){ syncSoon(); }
 }
 
-const foldChevron = '<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
+var foldChevron = '<svg class="card-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg>';
 
-const contactCard = `<section class="card-group folds">
+var contactCard = `<section class="card-group folds">
     <details class="card" open>
         <summary class="card-head">
             <span class="card-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg></span>
@@ -1252,8 +1258,8 @@ function tagFeedbackLinks(){
 /* The account and the backup file, behind the person at the top right of every
    page. Their scripts load when it is first tapped - or straight away when signed
    in, so every page syncs. */
-const accountRefreshKey = "accountRefresh";
-let accountLoading = null;
+var accountRefreshKey = "accountRefresh";
+var accountLoading = null;
 
 function loadAccount(){
     if(accountLoading === null){
@@ -1283,7 +1289,7 @@ function openAccount(button){
 }
 
 // outlined, and solid while signed in
-const personIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g class="person-outline" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">'
+var personIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g class="person-outline" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">'
     + '<circle cx="8" cy="5" r="3"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/></g>'
     + '<g class="person-solid" fill="currentColor"><circle cx="8" cy="4.75" r="3.5"/>'
     + '<path d="M1.2 15.2c0-3.7 3-6.1 6.8-6.1s6.8 2.4 6.8 6.1c0 .45-.35.8-.8.8H2c-.45 0-.8-.35-.8-.8z"/></g></svg>';
@@ -1310,7 +1316,7 @@ function showSignedIn(){
 }
 
 // A restored backup file reloads the page, and says what it added once it has
-const restoredKey = "backupRestored";
+var restoredKey = "backupRestored";
 
 function showRestored(){
     let message = sessionStorage.getItem(restoredKey);
@@ -1320,8 +1326,8 @@ function showRestored(){
     }
 }
 
-const analyticsId = "G-XR0EG1VTTE";
-const analyticsClientKey = "analyticsClient";
+var analyticsId = "G-XR0EG1VTTE";
+var analyticsClientKey = "analyticsClient";
 
 /* Signed in, no third-party script shares a page with the account's token: the
    page view and the apps' own events go straight to GA with sendBeacon, under a
@@ -1361,6 +1367,11 @@ function loadAnalytics(){
     if(document.body.dataset.analytics === "off" || looksLikeBot()){ return; }
     if(localStorage.getItem(accountRefreshKey) !== null){
         if(navigator.sendBeacon){ beaconAnalytics(); }
+        return;
+    }
+    // a page swapped in by router.js, with the tag already loaded
+    if(window.dataLayer){
+        gtag("event", "page_view", { "page_location" : location.href, "page_title" : document.title });
         return;
     }
     let tag = document.createElement("script");

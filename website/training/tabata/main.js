@@ -3,43 +3,43 @@
    own that can be named, and the whole saved as a named routine. Set on the main
    screen and remembered for next time. The session itself is common/workout.js. */
 
-const app = { "logKey" : "tabataLog" };
-const settingsKey = "tabataSettings";
-const repeatersKey = "tabataRepeaters";       // the repeater settings in use, routine or not
-const routinesKey = "tabataRoutines";         // the named routines saved
-const repeaterModeKey = "tabataRepeaterMode";
-const oneSecondKey = "tabataOneSecond";
+var app = { "logKey" : "tabataLog" };
+var settingsKey = "tabataSettings";
+var repeatersKey = "tabataRepeaters";       // the repeater settings in use, routine or not
+var routinesKey = "tabataRoutines";         // the named routines saved
+var repeaterModeKey = "tabataRepeaterMode";
+var oneSecondKey = "tabataOneSecond";
 
 // what each setting can be, and how far a tap of - or + moves it
-const limits = {
+var limits = {
     "work" :    { "min" : 5, "max" : 300, "step" : 5, "seconds" : true },
     "rest" :    { "min" : 0, "max" : 300, "step" : 5, "seconds" : true },
     "reps" :    { "min" : 1, "max" : 50,  "step" : 1 },
     "sets" :    { "min" : 1, "max" : 20,  "step" : 1 },
     "setRest" : { "min" : 0, "max" : 900, "step" : 15 }   // minutes long, so 15 s a tap whatever the increments
 };
-const nameLimit = 40;
-const setNameLimit = 24;
+var nameLimit = 40;
+var setNameLimit = 24;
 
 // the classic Tabata: 20 seconds on, 10 off, eight times
-const tabata = { "work" : 20, "rest" : 10, "reps" : 8 };
+var tabata = { "work" : 20, "rest" : 10, "reps" : 8 };
 // a hangboard repeater: 7 on, 3 off, ten times, six sets four minutes apart
-const repeaterDefaults = { "name" : "", "work" : 7, "rest" : 3, "reps" : 10, "sets" : 6, "setRest" : 240, "setNames" : [] };
-const repeaters = copyRoutine(repeaterDefaults);
-let routines = [];
-let repeaterMode = false;
-let oneSecond = false;   // the Use 1 second increments setting: work and rest step by 1, not 5
-const warningSeconds = 3;   // a rest goes red, a beep a second, this long before the next work
-const vibrateSeconds = 1;   // the phone buzzes this long before a work or a rest
-const goSoonBuzz = [200];            // one long one: go, as no hangs
-const stopSoonBuzz = [100, 80, 100]; // two short ones: stop
+var repeaterDefaults = { "name" : "", "work" : 7, "rest" : 3, "reps" : 10, "sets" : 6, "setRest" : 240, "setNames" : [] };
+var repeaters = copyRoutine(repeaterDefaults);
+var routines = [];
+var repeaterMode = false;
+var oneSecond = false;   // the Use 1 second increments setting: work and rest step by 1, not 5
+var warningSeconds = 3;   // a rest goes red, a beep a second, this long before the next work
+var vibrateSeconds = 1;   // the phone buzzes this long before a work or a rest
+var goSoonBuzz = [200];            // one long one: go, as no hangs
+var stopSoonBuzz = [100, 80, 100]; // two short ones: stop
 
-const current = () => repeaterMode ? repeaters : tabata;
-const setsOf = () => repeaterMode ? repeaters.sets : 1;
+var current = () => repeaterMode ? repeaters : tabata;
+var setsOf = () => repeaterMode ? repeaters.sets : 1;
 
 /* The whole session as work, rest and the rest between sets, in order: a set's
    last rep has the rest between sets after it instead of its own rest */
-let plan = [];
+var plan = [];
 
 function buildPlan(){
     let settings = current();
@@ -58,7 +58,7 @@ function buildPlan(){
     }
 }
 
-const totalSeconds = () => {
+var totalSeconds = () => {
     let last = plan[plan.length - 1];
     return last.start + last.length;
 };
@@ -88,7 +88,7 @@ app.logEntry = () => Object.assign(repeaterMode
     : { "work" : tabata.work, "rest" : tabata.rest, "reps" : tabata.reps }, { "kind" : chosenKind() });
 
 // saved before reps were called reps, a session's reps were its "sets"
-const repsOf = entry => typeof entry.reps === "number" ? entry.reps : entry.sets;
+var repsOf = entry => typeof entry.reps === "number" ? entry.reps : entry.sets;
 
 app.logView = {
     "key" : app.logKey,
@@ -193,7 +193,7 @@ function finish(){
 
 /* What the session counts as on the progress page's time split, chosen as it is
    saved: repeaters are fingerboard sessions and a classic Tabata other, unless changed */
-const sessionKinds = ["Climbing", "Fingerboard", "Other"];
+var sessionKinds = ["Climbing", "Fingerboard", "Other"];
 
 function drawKindPicker(chosen){
     let picker = document.getElementById("kindPicker") || document.createElement("fieldset");
@@ -341,7 +341,7 @@ function setSetName(input){
     input.parentNode.querySelector(".set-label").innerText = setLine(set);
 }
 
-const sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+var sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
 function saveRoutine(){
     let name = repeaters.name.trim();

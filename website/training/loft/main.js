@@ -5,29 +5,29 @@
    What is on screen follows body[data-state]: idle, counting (the three, two,
    one), running, paused or saving (see style.css). */
 
-const app = { "logKey" : "loftLog" };
-const limbs = ["left arm", "right arm", "left leg", "right leg"];
-const gear = ["cam", "nut", "sling"];
-const defaultColours = ["white", "yellow", "orange", "grey", "red", "pink", "blue", "purple", "black", "green"];
+var app = { "logKey" : "loftLog" };
+var limbs = ["left arm", "right arm", "left leg", "right leg"];
+var gear = ["cam", "nut", "sling"];
+var defaultColours = ["white", "yellow", "orange", "grey", "red", "pink", "blue", "purple", "black", "green"];
 
-let colours = [];
-let moves = freshMoves();
-let paused = true;       // the clock and the listening are stopped
-let countedIn = false;   // this session's countdown has run
-let listening = false;   // the recogniser is on, from its start to its end
+var colours = [];
+var moves = freshMoves();
+var paused = true;       // the clock and the listening are stopped
+var countedIn = false;   // this session's countdown has run
+var listening = false;   // the recogniser is on, from its start to its end
 
 function freshMoves(){
     return { "made" : 0, "gear" : 0, "belays" : 0, "justPlaced" : false, "anchorJustPlaced" : false };
 }
 
-const clock = secondsClock(seconds => {
+var clock = secondsClock(seconds => {
     if(seconds === 1){ background(""); }   // the countdown's yellow goes after a second
     showElapsed(seconds);
 });
 
 /* Listening for "next" */
-const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = Recognition ? new Recognition() : null;
+var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recognition = Recognition ? new Recognition() : null;
 if(recognition !== null){
     recognition.continuous = false;
     recognition.lang = "en-GB";
@@ -48,8 +48,8 @@ if(recognition !== null){
         noVoiceWarning();
     };
 }
-const voiceFailures = ["not-allowed", "service-not-allowed", "audio-capture", "language-not-supported"];
-let voiceBroken = recognition === null || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+var voiceFailures = ["not-allowed", "service-not-allowed", "audio-capture", "language-not-supported"];
+var voiceBroken = recognition === null || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 
 function noVoiceWarning(){
     unsupportedToast(document.getElementById("noVoiceToast"));
@@ -210,7 +210,7 @@ function showTask(task){
 
 /* Saving: how long it ran and how many moves were called. FINISH saves it, and
    the stars, note and title save again as they change. */
-let storedId = null;   // this session's id in the log, once FINISH has saved it
+var storedId = null;   // this session's id in the log, once FINISH has saved it
 
 function openSavePanel(){
     pauseSession();
@@ -219,7 +219,7 @@ function openSavePanel(){
     document.getElementById("endingDiv").scrollIntoView({ "behavior" : "smooth", "block" : "end" });
 }
 
-const logView = {
+var logView = {
     "key" : app.logKey,
     "describe" : entry => ({
         "title" : plural(entry.moves, "move"),

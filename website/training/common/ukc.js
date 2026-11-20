@@ -10,7 +10,7 @@
    A day the trad app has logged with "Merge with UKC" is one session - see
    session() below. ukc.climbs() leaves out only that day's trad climbs, which
    the session carries. */
-const ukc = (function(){
+var ukc = (function(){
     const key = "ukcLogbook";
     const tradLogKey = "tradLog";
 
@@ -237,7 +237,7 @@ function removeUkcLogbook(){
 }
 
 // UKC's logo
-const ukcIcon = '<svg class="ukc-logo" viewBox="0 0 457.9 167.8" aria-hidden="true" focusable="false">'
+var ukcIcon = '<svg class="ukc-logo" viewBox="0 0 457.9 167.8" aria-hidden="true" focusable="false">'
     + '<path d="M454.3 53.8c-10.5-10.1-26.2-17.2-45.8-17.2-27.9 0-43.9 19.7-43.9 47.3 0 28.7 18.2 47.3 45.6 47.3 20.2 0 32.7-5.7 47.6-16.9v41.5c-16.5 9.6-32.2 12-49.5 12-53.2 0-87.1-34.7-87.1-83.9 0-49.4 34.7-83.9 87.1-83.9 17.4 0 32.5 2.7 46.1 10.4v43.4z"/>'
     + '<path d="M269.7 2.8h49l-54.4 78.7 58.1 83.6h-49.8l-54.4-80.3zM174.9 2.8h42.4v162.3h-42.4z"/>'
     + '<path d="M0 2.8h42.4v95c0 26.8 11.4 36.1 30.5 36.1 11.7 0 19.1-1.1 26.8-2.2V2.8h42.4v156.5c-14.5 4.4-47.6 8.5-69.2 8.5C34.2 167.8 0 153 0 106.9z"/></svg>';

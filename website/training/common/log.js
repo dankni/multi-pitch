@@ -184,24 +184,24 @@ function discardSession(){
    climb is kept in order as { climb : ["fall", "dog", ...] } (`ascents`), a plain
    tap on the climb a tick. The session's `undo` lists each mark as it was made,
    for the undo button by the last one. Not on the watch. */
-const fallsIcon = '<svg class="toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
+var fallsIcon = '<svg class="toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
     + '<path d="M4 1.5l6 3-5 3 5 3"/><path d="M10 10.5v4M7.5 12.5 10 15l2.5-2.5"/></g></svg>';
-const waffleIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="currentColor">'
+var waffleIcon = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="currentColor">'
     + [2, 8, 14].map(y => [2, 8, 14].map(x => `<circle cx="${x}" cy="${y}" r="1.7"/>`).join("")).join("") + '</g></svg>';
-const strokeIcon = paths => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
+var strokeIcon = paths => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
     + paths + '</g></svg>';
-const undoIcon = strokeIcon('<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>');
-const boltIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14 2 4.5 13.5H11L9.5 22 19.5 9.5H13z"/></svg>';
-const ascentStyles = [
+var undoIcon = strokeIcon('<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>');
+var boltIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14 2 4.5 13.5H11L9.5 22 19.5 9.5H13z"/></svg>';
+var ascentStyles = [
     { "style" : "fall",  "label" : "Fall",  "icon" : strokeIcon('<path d="M12 4v15M6 13l6 6 6-6"/>') },
     // Zzz: a rest on the rope
     { "style" : "dog",   "label" : "Dog",   "icon" : strokeIcon('<path d="M3 13h7l-7 7h7"/><path d="M12.5 7.5h5l-5 5h5"/><path d="M19 2.5h3l-3 3h3" stroke-width="2"/>') },
     { "style" : "tick",  "label" : "Tick",  "icon" : strokeIcon('<path d="M5 12.5 9.5 17 19 7"/>') },
     { "style" : "flash", "label" : "Flash", "icon" : boltIcon }
 ];
-const sendStyles = ["dog", "tick", "flash"];
-const fanRadius = 130;   // px from the waffle's centre to each button's, on a quarter circle centred to its left
-let ascentStyle = null;   // the style a climb sent from the waffle goes in with
+var sendStyles = ["dog", "tick", "flash"];
+var fanRadius = 130;   // px from the waffle's centre to each button's, on a quarter circle centred to its left
+var ascentStyle = null;   // the style a climb sent from the waffle goes in with
 
 function trackingFalls(){
     return Boolean(app.fallsKey) && localStorage.getItem(app.fallsKey) === "true";
@@ -286,7 +286,7 @@ function dropUndo(climb){
 
 /* The undo slides in on a climb as it becomes the last marked; a row redrawn
    while it still is the last has it there already (.settled) */
-let undoShownOn = null;
+var undoShownOn = null;
 
 function drawUndo(){
     let last = lastMarked();

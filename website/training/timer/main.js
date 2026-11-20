@@ -9,7 +9,7 @@
    With a boulder grade set under the cog, each lap is logged as a boulder of that
    grade, which the progress page charts with the gym session's. */
 
-const app = {
+var app = {
     "logKey" : "lapTimerLog",
     "currentKey" : "lapTimerCurrent",
     "watchKey" : "lapTimerWatch",
@@ -25,11 +25,11 @@ const app = {
     "summaryEntry" : () => ({ "laps" : session.laps, "grade" : session.grade || undefined })
 };
 
-const gradeKey = "lapTimerGrade";
-const boulderGrades = Array.from({ "length" : 11 }, (_, number) => "V" + number);   // V0 to V10
+var gradeKey = "lapTimerGrade";
+var boulderGrades = Array.from({ "length" : 11 }, (_, number) => "V" + number);   // V0 to V10
 
-let ticker = null;
-let saving = false;
+var ticker = null;
+var saving = false;
 
 /* The boulder grade: "" for none */
 
@@ -184,7 +184,7 @@ function resumeSession(){
     drawAll();
 }
 
-const logView = {
+var logView = {
     "key" : app.logKey,
     "describe" : entry => ({
         "title" : plural(entry.laps, "lap") + (entry.grade ? " of " + entry.grade : ""),

@@ -2,10 +2,10 @@
    with the next one shown 15 seconds before it starts. The session itself is
    common/workout.js. */
 
-const app = { "logKey" : "rockRingsLog" };
+var app = { "logKey" : "rockRingsLog" };
 
 // Which minute, which hold, what to do. A minute with two exercises has an order 2.
-const plans = {
+var plans = {
     "easy" : [
         { "min" : 1,  "order" : 1, "hold" : "jug.png",           "task" : "2 pull ups" },
         { "min" : 2,  "order" : 1, "hold" : "three_fingers.png", "task" : "10 second bent-arm hang" },
@@ -65,7 +65,7 @@ const plans = {
     ]
 };
 
-let difficulty = "original";
+var difficulty = "original";
 
 /* The minute's exercises go up on the minute, and the next minute's at :45 in
    the red. The save panel comes up at 9:30. */

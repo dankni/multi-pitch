@@ -2018,7 +2018,20 @@ body.red, body.orange, body.yellow {
     letter-spacing: 0.5px;
 }
 .bottom-nav-item.current {
+    position: relative;
     color: var(--nav-current);
+}
+/* slides to the item tapped, as router.js swaps the page in */
+.bottom-nav-mark {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 32px;
+    height: 3px;
+    margin-left: -16px;
+    border-radius: var(--r-pill) var(--r-pill) 0 0;
+    background: var(--nav-current);
+    view-transition-name: bottom-nav-mark;
 }
 a.bottom-nav-item:hover, a.bottom-nav-item:focus {
     color: var(--nav-hover);
@@ -2060,6 +2073,17 @@ a.bottom-nav-item:focus-visible {
     .bottom-nav-item.entering, .bottom-nav-item.leaving {
         animation: none;
     }
+}
+/* router.js swaps pages in a view transition: the bar is its own layer, held
+   still over the page as that fades, the current item's colour fading across
+   as its mark slides */
+.bottom-nav {
+    view-transition-name: bottom-nav;
+}
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+    animation-duration: 0.25s;
 }
 .has-bottom-nav body {
     padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));

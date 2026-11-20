@@ -77,7 +77,7 @@
     function item(href, icon, label, current){
         let inner = `${icon}<span class="bottom-nav-label">${label}</span>`;
         return current
-            ? `<span class="bottom-nav-item current" aria-current="page">${inner}</span>`
+            ? `<span class="bottom-nav-item current" aria-current="page"><span class="bottom-nav-mark" aria-hidden="true"></span>${inner}</span>`
             : `<a class="bottom-nav-item" href="${href}">${inner}</a>`;
     }
 

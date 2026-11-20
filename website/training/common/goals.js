@@ -6,11 +6,11 @@
    month with no list of its own is empty, or with Copy goals forwards on
    (trainingGoalsCopy), carries the last one before it. Needs apps.js,
    grades.js and charts.js. */
-const goalsKey = "trainingGoals";
-const goalsCopyKey = "trainingGoalsCopy";
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const monthsAhead = 3;
-const paceNames = { "on" : "On Track", "behind" : "A Bit Behind", "far" : "Very Behind" };
+var goalsKey = "trainingGoals";
+var goalsCopyKey = "trainingGoalsCopy";
+var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var monthsAhead = 3;
+var paceNames = { "on" : "On Track", "behind" : "A Bit Behind", "far" : "Very Behind" };
 
 /* Months */
 
@@ -165,7 +165,7 @@ function goalDetail(goal){
 
 /* The page */
 
-let shownMonth = null;
+var shownMonth = null;
 
 // back a month, or to the first with goals; on to three ahead
 function monthRange(){
@@ -248,7 +248,7 @@ function swipeMonths(area){
     });
 }
 
-let editingGoal = null;   // the id of the goal the form is changing
+var editingGoal = null;   // the id of the goal the form is changing
 
 // A new goal, or from its wrench, one to change
 function openGoalForm(button){

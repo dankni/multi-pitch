@@ -6,7 +6,7 @@
    Lines are written 20 bytes at a time, each waiting for the last, which is as
    much as the watch takes before it has negotiated more. */
 
-const bangle = (function(){
+var bangle = (function(){
     const service = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
     const rxPoint = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";   // to the watch
     const txPoint = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";   // from it
@@ -164,6 +164,8 @@ const bangle = (function(){
         leaving = true;
         device.gatt.disconnect();
     }
+
+    window.addEventListener("trainingleave", disconnect);
 
     return self;
 })();

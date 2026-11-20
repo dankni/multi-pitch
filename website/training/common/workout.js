@@ -20,10 +20,10 @@
 
    app.onState, if set, is called on each change of state - common/watch.js sets it. */
 
-let paused = true;
-let countedIn = false;
-let editing = null;   // the saved entry the save panel is open on, from the log
-let storedId = null;  // this session's id in the log, once the finish has saved it
+var paused = true;
+var countedIn = false;
+var editing = null;   // the saved entry the save panel is open on, from the log
+var storedId = null;  // this session's id in the log, once the finish has saved it
 
 function toggleSession(){
     paused ? startSession() : pauseSession();

@@ -22,7 +22,7 @@
 
    A grade with no row - the gym's sport grades - is shown by its name alone.
    HARDER adds a rung for that session only; the next starts back at `starts`. */
-let gradeSystem = null;
+var gradeSystem = null;
 
 function ladderNames(){
     return Object.keys(app.ladders);
@@ -278,7 +278,7 @@ function loadGradeSystem(){
 
 /* On the watch (common/watch.js), an app's `app.watch`: the ladders as far as
    they are on show here, named as here, and what is tapped there tapped here */
-const ladderWatch = {
+var ladderWatch = {
     "state" : () => {
         let state = { "m" : "ladder", "s" : session === null ? "idle" : document.body.dataset.state };
         if(session !== null){

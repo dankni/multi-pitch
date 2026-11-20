@@ -6,33 +6,33 @@
    What is on screen follows body[data-state]: idle, then warmup, rest, set and
    choice as the session goes, and saving (see style.css). */
 
-const app = {
+var app = {
     "logKey" : "enduranceLog",
     "currentKey" : "enduranceCurrent",
     // for the summary at FINISH (common/summary.js): the grades, as saveSession() saves them
     "summaryEntry" : () => ({ "grades" : climbsDone().map(climb => climb.grade) })
 };
-const wallKey = "enduranceWall";
-const restKey = "enduranceRest";
-const gradeKey = "enduranceGrade";
-const styleKey = "enduranceStyle";
+var wallKey = "enduranceWall";
+var restKey = "enduranceRest";
+var gradeKey = "enduranceGrade";
+var styleKey = "enduranceStyle";
 
-const warmUpSize = 4;
-const warmUpSteps = [0, 1];     // the warm up is 4s and 5s, whatever the max
-const defaultRestMinutes = 5;
-const setsBeforeChoice = 3;     // then it offers to finish
+var warmUpSize = 4;
+var warmUpSteps = [0, 1];     // the warm up is 4s and 5s, whatever the max
+var defaultRestMinutes = 5;
+var setsBeforeChoice = 3;     // then it offers to finish
 
 // How big a set is, and how many grades below the max its route comes from
-const sessionTypes = {
+var sessionTypes = {
     "endurance" : { "climbs" : 4, "gradesBelow" : [2, 3, 4], "name" : "Endurance" },
     "power"     : { "climbs" : 2, "gradesBelow" : [1, 2],    "name" : "Power endurance" }
 };
 
 // 6a upwards, one per letter - 6a+ would build the same session as 6a
-const maxGrades = gradeSteps.slice(gradeStep("6a")).map(step => step[0]);
+var maxGrades = gradeSteps.slice(gradeStep("6a")).map(step => step[0]);
 
-let restTicker = null;
-let saving = false;
+var restTicker = null;
+var saving = false;
 
 /* Picking climbs. With the Gilford wall on, a pick is a named route off it;
    off, it is only a grade, for training the same way anywhere else. */
@@ -274,7 +274,7 @@ function resumeSession(){
     drawAll();
 }
 
-const logView = {
+var logView = {
     "key" : app.logKey,
     "describe" : entry => ({
         "title" : `${sessionTypes[entry.style] ? sessionTypes[entry.style].name : entry.style} off ${entry.maxGrade}`,

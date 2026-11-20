@@ -7,14 +7,14 @@
    ladder.js and the apps call heartTick() and heartUntick(). The watch's
    altitude is kept the same way, for the summary's elevation chart. */
 
-const heartAgeKey = "heartRateAge";
-const heartAges = [20, 30, 40, 50, 60, 70];
+var heartAgeKey = "heartRateAge";
+var heartAges = [20, 30, 40, 50, 60, 70];
 // each zone's top, as a share of the age-predicted maximum of 220 less the age
-const heartZones = [["Max", 1, "max"], ["Hard", 0.85, "hard"], ["Moderate", 0.7, "moderate"], ["Light", 0.5, "light"]];
-const heartGap = 60000;   // ms without a reading that breaks the line
-const heightSwing = 1.5;  // m a climb up or down must pass to count: a 2m problem, past the barometer's wobble and an arm's swing
+var heartZones = [["Max", 1, "max"], ["Hard", 0.85, "hard"], ["Moderate", 0.7, "moderate"], ["Light", 0.5, "light"]];
+var heartGap = 60000;   // ms without a reading that breaks the line
+var heightSwing = 1.5;  // m a climb up or down must pass to count: a 2m problem, past the barometer's wobble and an arm's swing
 
-let heart = null;   // { id, beats : [[at, bpm]], heights : [[at, m]], ticks : [[at, key, label]], falls : [[at, key]] }, for the session open
+var heart = null;   // { id, beats : [[at, bpm]], heights : [[at, m]], ticks : [[at, key, label]], falls : [[at, key]] }, for the session open
 
 overlays.push("heartRate");
 
@@ -82,7 +82,11 @@ function heartUntick(key){
 /* A reading from the watch is numbered n from 0 each session, kept as [at, value, n],
    so one sent again is known; heart.skip holds the numbers of those turned away.
    A run sent again is kept once it has all come, not as each arrives. */
-let heartKeepTimer = null;
+var heartKeepTimer = null;
+window.addEventListener("trainingleave", () => {
+    clearTimeout(heartKeepTimer);
+    if(heart !== null){ keepHeart(); }
+});
 
 function heartReading(list, kind, message, value, ok){
     let at = Date.now() - (Number(message.a) || 0) * 1000;
@@ -139,7 +143,7 @@ function hasHeights(){
 }
 
 // each reading the average of the ten seconds around it, or the noise reads as climbing
-const heightSmoothing = 2;   // readings either side
+var heightSmoothing = 2;   // readings either side
 function smoothHeights(){
     return heart.heights.map(([at], index) => {
         let near = heart.heights.slice(Math.max(0, index - heightSmoothing), index + heightSmoothing + 1);

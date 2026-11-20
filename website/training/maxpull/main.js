@@ -6,26 +6,26 @@
    hang against the right, one edge at a time; a day with nothing logged has no
    place on it. */
 
-const app = { "logKey" : "maxPullLog" };
-const modeKey = "maxPullMode";
-const armKey = "maxPullArm";
-const edgeKey = "maxPullEdge";
-const draftKey = "maxPullCurrent";   // the session in progress, so a reload picks it back up
-const chartDays = 14;
-const traceSeconds = 10;
+var app = { "logKey" : "maxPullLog" };
+var modeKey = "maxPullMode";
+var armKey = "maxPullArm";
+var edgeKey = "maxPullEdge";
+var draftKey = "maxPullCurrent";   // the session in progress, so a reload picks it back up
+var chartDays = 14;
+var traceSeconds = 10;
 
-const kinds = {
+var kinds = {
     "left"  : { "name" : "Left arm",  "cls" : "pull-left",  "axis" : "left" },
     "right" : { "name" : "Right arm", "cls" : "pull-right", "axis" : "left" },
     "hang"  : { "name" : "Max hang",  "cls" : "pull-hang",  "axis" : "right" }
 };
 
-let trace = [];        // [{ at, kg }] for the last few seconds off the Progressor
-let peaks = { "left" : 0, "right" : 0, "hang" : 0 };   // the most pulled on each since connecting
-let traceFrame = null;
-let shown = "";        // the boxes as last loaded or saved, to tell what is unsaved
-let chartEdge;         // the edge charted, once more than one is logged
-let editing = null;    // { id, date, edge } of the log entry reopened, which a new day or edge moves
+var trace = [];        // [{ at, kg }] for the last few seconds off the Progressor
+var peaks = { "left" : 0, "right" : 0, "hang" : 0 };   // the most pulled on each since connecting
+var traceFrame = null;
+var shown = "";        // the boxes as last loaded or saved, to tell what is unsaved
+var chartEdge;         // the edge charted, once more than one is logged
+var editing = null;    // { id, date, edge } of the log entry reopened, which a new day or edge moves
 
 function pullMode(){
     return localStorage.getItem(modeKey) === "manual" ? "manual" : "loadcell";
@@ -232,7 +232,7 @@ function discardPull(){
 
 /* The Progressor */
 
-const gaugeWords = { "off" : "Tindeq not connected", "connecting" : "Connecting to the Tindeq…", "connected" : "Tindeq connected" };
+var gaugeWords = { "off" : "Tindeq not connected", "connecting" : "Connecting to the Tindeq…", "connected" : "Tindeq connected" };
 
 function switchGauge(input){
     if(input.checked && !progressor.supported){
@@ -373,7 +373,7 @@ function describePull(entry){
     return { "title" : joinDetail(arms) || hang, "detail" : joinDetail([joinDetail(arms) ? hang : "", edge]) };
 }
 
-const logView = {
+var logView = {
     "key" : app.logKey,
     "unrated" : true,
     "order" : (a, b) => b.date.localeCompare(a.date),

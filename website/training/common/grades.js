@@ -5,7 +5,7 @@
 /* Bouldering in the three systems a UK wall labels in, following the usual UK
    gym tables. Font grades carry their f so a tile can't be read as the French
    sport grade. */
-const boulderGradeTable = [
+var boulderGradeTable = [
     { "v" : "V0",  "font" : "f4",   "brit" : "4a" },
     { "v" : "V1",  "font" : "f5",   "brit" : "4b" },
     { "v" : "V2",  "font" : "f5+",  "brit" : "4c" },
@@ -29,7 +29,7 @@ const boulderGradeTable = [
 /* Font one grade at a time, its plus grades too, each with the V grade it counts
    as - two Font grades can share one. A boulder is kept in whichever it was
    logged in. */
-const fontBoulderTable = [
+var fontBoulderTable = [
     { "font" : "f3",   "v" : "VB" },
     { "font" : "f4",   "v" : "V0" },
     { "font" : "f4+",  "v" : "V0" },
@@ -55,8 +55,8 @@ const fontBoulderTable = [
     { "font" : "f8C+", "v" : "V16" },
     { "font" : "f9A",  "v" : "V17" }
 ];
-const fontBoulderOrder = fontBoulderTable.map(row => row.font);
-const vBoulderOrder = ["VB"].concat(boulderGradeTable.map(row => row.v));
+var fontBoulderOrder = fontBoulderTable.map(row => row.font);
+var vBoulderOrder = ["VB"].concat(boulderGradeTable.map(row => row.v));
 
 // A boulder grade as V, however it was logged - f6B+ is V4 - or "" for neither
 function boulderV(grade){
@@ -82,18 +82,18 @@ function boulderNumber(grade){
    all on the progress page's sport ladder. With "split out low grades" on, 4 to
    5+ are 4a to 5c, as the chart counts them - see ukc.sportGrade. "Show plus
    grades" adds 6a+ after 6a and so on; there is no 9c+. */
-const gymSportLow = ["4", "4+", "5", "5+"];
-const gymSportLowSplit = ["4a", "4b", "4c", "5a", "5b", "5c"];
-const gymSportHigher = ["6a", "6b", "6c", "7a", "7b", "7c", "8a", "8b", "8c", "9a", "9b", "9c"];
-const gymSportHigherPlus = gymSportHigher.flatMap(grade => grade === "9c" ? [grade] : [grade, grade + "+"]);
+var gymSportLow = ["4", "4+", "5", "5+"];
+var gymSportLowSplit = ["4a", "4b", "4c", "5a", "5b", "5c"];
+var gymSportHigher = ["6a", "6b", "6c", "7a", "7b", "7c", "8a", "8b", "8c", "9a", "9b", "9c"];
+var gymSportHigherPlus = gymSportHigher.flatMap(grade => grade === "9c" ? [grade] : [grade, grade + "+"]);
 // all of them in one order, to find the hardest of a session with any in it
-const gymSportOrder = ["4", "4a", "4b", "4+", "4c", "5", "5a", "5b", "5+", "5c"].concat(gymSportHigherPlus);
+var gymSportOrder = ["4", "4a", "4b", "4+", "4c", "5", "5a", "5b", "5+", "5c"].concat(gymSportHigherPlus);
 
 /* Routes, a row per British adjectival grade, each other system as the range
    it spans - [easiest, hardest], or one grade. D to E2 are the table on
    /climbing-grades/ (its E2 row stops at the table's end, so E2's harder end is
    the published tables'); E3 to E11 follow the commonly published tables. */
-const routeGradeTable = [
+var routeGradeTable = [
     { "uk" : "D",   "tech" : ["3a", "3b"], "uiaa" : ["II", "III"],     "french" : ["3a", "3c"],   "yds" : ["5.3", "5.4"],     "nordic" : ["2", "4"] },
     { "uk" : "VD",  "tech" : ["3b", "3c"], "uiaa" : "III",             "french" : ["3c", "4a"],   "yds" : ["5.4", "5.5"],     "nordic" : ["4", "4+"] },
     { "uk" : "S",   "tech" : ["3c", "4a"], "uiaa" : ["III", "IV"],     "french" : ["4a", "4b"],   "yds" : ["5.5", "5.6"],     "nordic" : ["4+", "5-"] },
@@ -114,14 +114,14 @@ const routeGradeTable = [
 ];
 
 // easiest first
-const tradLadder = ["M", "D", "HD", "VD", "HVD", "MS", "S", "HS", "MVS", "VS", "HVS",
+var tradLadder = ["M", "D", "HD", "VD", "HVD", "MS", "S", "HS", "MVS", "VS", "HVS",
     "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11"];
-const sportLadder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+",
+var sportLadder = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+",
     "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+",
     "9a", "9a+", "9b", "9b+", "9c"];
 
 // A grade's colour band. Trad is banded on its own terms, not lined up with sport.
-const gradeBands = (function(){
+var gradeBands = (function(){
     const bands = [
         { "cls" : "band-easy",   "name" : "Easy" },
         { "cls" : "band-medium", "name" : "Medium" },

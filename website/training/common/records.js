@@ -12,10 +12,10 @@
 
    A dogged climb (common/log.js) is no clean ascent: it is never cheered, and
    never the grade to beat. */
-const recordDays = 30;
-const dayMs = 86400000;
+var recordDays = 30;
+var dayMs = 86400000;
 
-const recordKinds = {
+var recordKinds = {
     "boulder" : {
         "rank" : grade => Math.max(-1, boulderNumber(grade)),
         "logs" : [["boulderLog", entry => withoutDogs(entry.climbs, entry.ascents)],

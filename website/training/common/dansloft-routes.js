@@ -4,7 +4,7 @@
 // holds, so a new route takes the next one up wherever it sits in the list.
 //
 // Shared by the app, the progress page and common/records.js.
-const loftRoutes = [
+var loftRoutes = [
     { "id" : 1,   "grade" : "V0",  "colour" : "Yellow",               "holds" : "yellow",
       "start" : [239, 868], "end" : [152, 672],
       "path" : [[621, 859], [627, 564], [627, 521], [572, 607], [378, 597], [182, 519], [154, 478]],
@@ -71,7 +71,7 @@ const loftRoutes = [
       "notes" : "Sit Start · Continuous Circuits Possible" }
 ];
 
-const loftGradeOrder = ["V0", "V1", "V2", "V3", "V3+", "V4", "V4+", "V5", "V5+", "V6", "V7"];
+var loftGradeOrder = ["V0", "V1", "V2", "V3", "V3+", "V4", "V4+", "V5", "V5+", "V6", "V7"];
 
 function getLoftRoute(id){
     return loftRoutes.find(route => route.id === id);

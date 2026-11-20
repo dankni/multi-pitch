@@ -31,7 +31,7 @@ function ranFor(entry, fullSeconds){
 /* The timed apps save minutes; the lap timer, Twister, the arcade and the two
    workouts say how long in their own units. Neither Tindeq app counts towards a
    target, and only a run pulled on a Progressor is a session at all. */
-const trainingLogs = [
+var trainingLogs = [
     { "key" : "boulderLog", "name" : "Gym Session", "href" : "/training/boulder/",
       "climbs" : entry => logList(entry.climbs).length + logList(entry.sport).length },
     { "key" : "gilfordLog", "name" : "Tick List", "href" : "/training/gilford/", "climbs" : entry => logList(entry.climbs).length },
