@@ -131,7 +131,7 @@ var bangle = (function(){
 
     function failed(err){
         // closing the picker with nothing chosen is an error too, and needs no telling
-        self.error = err.name === "NotFoundError" && /cancel/i.test(err.message) ? "" : err.message;
+        self.error = bluetoothError(err);
         rx = null;
         setStatus("off");
         console.log("Bangle:", err.message);

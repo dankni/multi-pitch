@@ -1055,6 +1055,29 @@ function unsupportedToast(message){
     toast(message, null, true, true);
 }
 
+// An error's message if the apps wrote it; the browser's own read as code, so fallback
+function friendlyError(err, fallback){
+    console.log(err);
+    let fault = err instanceof TypeError || err instanceof ReferenceError || err instanceof SyntaxError || err instanceof RangeError
+        || (typeof DOMException === "function" && err instanceof DOMException);
+    return fault || !err.message ? fallback : err.message;
+}
+
+// What follows "Couldn't connect: " for a Bluetooth device; "" for a picker closed with nothing chosen
+function bluetoothError(err){
+    if(err.name === "NotFoundError"){
+        if(/cancel/i.test(err.message)){ return ""; }
+        if(/adapter|not available/i.test(err.message)){ return "Bluetooth is off"; }
+    }
+    let words = {
+        "NetworkError" : "lost the connection - keep it close and try again",
+        "SecurityError" : "Bluetooth permission was refused",
+        "NotAllowedError" : "Bluetooth permission was refused",
+        "NotSupportedError" : "this device doesn't work with the app"
+    };
+    return words[err.name] || friendlyError(err, "try again");
+}
+
 /* A warning that asks first, edged in red: the deed, and Cancel. Cancel or the
    cross leave things as they were. One at a time - a second replaces the first. */
 function confirmToast(message, deed, onConfirm){
@@ -1260,8 +1283,11 @@ function tagFeedbackLinks(){
    in, so every page syncs. */
 var accountRefreshKey = "accountRefresh";
 var accountLoading = null;
+var accountFiles = ["grades.js", "ukc.js", "gilford-routes.js", "dansloft-routes.js", "charts.js", "apps.js", "aws4fetch.js", "backup.js", "account.js"];
 
 function loadAccount(){
+    // once, kept through page changes, so a sync can outlast the page that started it
+    if(window.trainingKeep){ return trainingKeep(accountFiles.map(file => "/training/common/" + file)); }
     if(accountLoading === null){
         accountLoading = new Promise(resolve => {
             // the UKC import, and what it reads, on a page without it
@@ -1407,6 +1433,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if(full !== null && document.documentElement.requestFullscreen && document.fullscreenEnabled !== false && !installedApp()){ full.hidden = false; }
     addAccountButton();
     showRestored();
-    if(localStorage.getItem(accountRefreshKey) !== null){ loadAccount(); }
+    if(localStorage.getItem(accountRefreshKey) !== null){ loadAccount().then(() => { if(signedIn()){ syncNow(); } }); }
     loadAnalytics();
 });

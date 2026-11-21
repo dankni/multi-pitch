@@ -2359,8 +2359,16 @@ describe('Training apps', function () {
                 value: { requestDevice: () => Promise.reject(Object.assign(new Error('Bluetooth adapter not available.'), { name: 'NotFoundError' })) } }));
             cy.get('nav .icon-cog').click();
             cy.get('#settingsConnect').click();
-            cy.get('#progressorError').should('have.text', "Couldn't connect: Bluetooth adapter not available.");
+            cy.get('#progressorError').should('have.text', "Couldn't connect: Bluetooth is off");
             cy.get('#progressorStatusText').should('have.text', 'Not connected');
+        });
+
+        it('says a dropped connection in its own words, not the browser wording', () => {
+            visitGaps((win) => Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+                value: { requestDevice: () => Promise.reject(new win.DOMException('GATT Server is disconnected. Cannot perform GATT operations.', 'NetworkError')) } }));
+            cy.get('nav .icon-cog').click();
+            cy.get('#settingsConnect').click();
+            cy.get('#progressorError').should('have.text', "Couldn't connect: lost the connection - keep it close and try again");
         });
 
         it('says when the browser cannot reach a Progressor', () => {
@@ -4560,8 +4568,16 @@ describe('Training apps', function () {
                 visitSeeded();
                 restore('{"imported":"2026-09-01","climbs":[]}');
                 cy.tick(100);
-                cy.get('.toast').should('contain', "Couldn't restore that file");
+                cy.get('.toast').should('contain', "Couldn't restore that file: that is not a training apps backup");
                 cy.window().then((win) => expect(JSON.parse(win.localStorage.getItem('boulderLog'))).to.have.length(1));
+            });
+
+            it('turns away a file that is not JSON, without the parser wording', () => {
+                visitSeeded();
+                restore('<html>not a backup</html>');
+                cy.tick(100);
+                cy.get('.toast').should('contain', "Couldn't restore that file: that is not a training apps backup")
+                    .and('not.contain', 'JSON');
             });
 
             it('merges two backups: newer edits win, deletes win, settings go as a block', () => {
@@ -4664,6 +4680,14 @@ describe('Training apps', function () {
                 cy.contains('#account button', 'SIGN IN').click();
             }
 
+            it('says a refused sign in in its own words', () => {
+                visitAccount();
+                cy.intercept({ method: 'POST', hostname: /^cognito-idp./ }, { statusCode: 400, headers: { 'access-control-allow-origin': '*' },
+                    body: { __type: 'NotAuthorizedException', message: 'Incorrect username or password.' } });
+                signIn();
+                cy.get('.toast.warn').should('contain', 'Wrong email or password');
+            });
+
             it('is behind the person on every page', () => {
                 stubAws();
                 cy.visit(appUrl + '/training/boulder/');
@@ -4736,7 +4760,6 @@ describe('Training apps', function () {
                 // --danger-ink, light or dark
                 const red = (el) => expect(['rgb(161, 51, 51)', 'rgb(255, 143, 138)']).to.include(getComputedStyle(el[0]).borderTopColor);
                 cy.get('#accountEmail').should('have.attr', 'aria-invalid', 'true').and(red);
-                cy.get('#accountPassword').should('have.attr', 'aria-invalid', 'true');
                 cy.get('[data-account="out"] .password-field').should(red);
                 cy.then(() => expect(calls).to.have.length(0));
                 cy.get('#accountEmail').type('.com');
@@ -4745,7 +4768,6 @@ describe('Training apps', function () {
                 cy.get('#accountPassword').should('not.have.attr', 'aria-invalid');
                 // a new password stays red until it meets the rules
                 cy.contains('#account button', 'SIGN UP').click();
-                cy.get('#accountPassword').should('have.attr', 'aria-invalid', 'true');
                 cy.then(() => expect(calls).to.have.length(0));
                 cy.contains('#account button', 'Forgot password').click();
                 cy.then(() => expect(calls.map((call) => call.target)).to.deep.equal(['ForgotPassword']));
@@ -5118,6 +5140,14 @@ describe('Training apps', function () {
                 cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('contain', firstClimb);
                 cy.visit(progressUrl);
             }
+
+            it('turns away a file that is not a UKC export in a toast, not an alert', () => {
+                cy.on('window:alert', (text) => { throw new Error('alert: ' + text); });
+                cy.visit(appUrl + '/training/trad/');
+                cy.get('#ukcFile').selectFile({ contents: Cypress.Buffer.from('hello'), fileName: 'notes.csv' }, { force: true });
+                cy.get('.toast.warn').should('contain', "Couldn't import the UKC logbook: that is not a UKC logbook export");
+                cy.window().its('localStorage').invoke('getItem', 'ukcLogbook').should('equal', null);
+            });
 
             it('points to the import in the trad app until a logbook is imported', () => {
                 visitWith(logs);

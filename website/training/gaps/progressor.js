@@ -129,7 +129,7 @@ var progressor = (function(){
             await start();
         } catch(err){
             // closing the picker with nothing chosen is an error too, and needs no telling
-            self.error = err.name === "NotFoundError" && /cancel/i.test(err.message) ? "" : err.message;
+            self.error = bluetoothError(err);
             control = null;
             setStatus("off");
             console.log("Progressor:", err.message);

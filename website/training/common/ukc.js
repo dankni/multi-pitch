@@ -225,7 +225,8 @@ function importUkcFile(input){
         ukc.importText(text);
         location.href = "/training/progress/";
     }).catch(err => {
-        alert("Couldn't import the UKC logbook: " + err.message);
+        let why = friendlyError(err, "");
+        toast(why ? "Couldn't import the UKC logbook: " + why : "Couldn't import the UKC logbook - is it the CSV from UKC?", null, false, true);
     }).finally(() => { input.value = ""; });
 }
 

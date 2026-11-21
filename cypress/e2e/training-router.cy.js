@@ -81,6 +81,56 @@ describe('Training router', function () {
         });
     });
 
+    it('lets a sync started on one page finish on the next', () => {
+        const identity = 'eu-west-1:0000-test';
+        let targets = [];
+        const cors = { 'access-control-allow-origin': '*' };
+        cy.intercept({ method: 'OPTIONS', hostname: /\.amazonaws\.com$/ }, { statusCode: 204, headers: Object.assign({
+            'access-control-allow-methods': 'POST',
+            'access-control-allow-headers': 'content-type,x-amz-target,x-amz-date,x-amz-security-token,x-amz-content-sha256,authorization' }, cors) });
+        cy.intercept({ method: 'POST', hostname: /\.amazonaws\.com$/ }, (req) => {
+            let target = req.headers['x-amz-target'].split('.').pop();
+            targets.push(target);
+            const answer = (body, delay) => req.reply({ statusCode: 200, headers: cors, body: body, delay: delay || 0 });
+            switch (target) {
+                case 'InitiateAuth': return answer({ AuthenticationResult: { IdToken: 'id', AccessToken: 'access', ExpiresIn: 3600 } });
+                case 'GetId': return answer({ IdentityId: identity });
+                case 'GetCredentialsForIdentity': return answer({ IdentityId: identity, Credentials: {
+                    AccessKeyId: 'AKIDTEST', SecretKey: 'secret', SessionToken: 'session', Expiration: Date.now() / 1000 + 3600 } });
+                // the first read held back till the page has changed
+                case 'GetItem': return answer({}, targets.filter((seen) => seen === 'GetItem').length === 1 ? 1500 : 0);
+                default: return answer({});
+            }
+        });
+        // the account's reply lands while the next page is still without the account's code
+        let moved = false;
+        cy.intercept('/training/common/account.js', (req) => {
+            req.on('response', (res) => {
+                res.headers['cache-control'] = 'no-store';
+                if (moved) { res.setDelay(3000); }
+            });
+        });
+        cy.visit(appUrl + '/training/progress/', {
+            onBeforeLoad(win) {
+                win.localStorage.setItem('accountRefresh', 'refresh-token');
+                win.localStorage.setItem('accountIdentity', identity);
+                win.localStorage.setItem('boulderLog', JSON.stringify([{ id: 1, date: '2026-09-10', climbs: ['V2'] }]));
+                // every toast shown, even one gone by the end
+                win.document.toastsSeen = [];
+                new win.MutationObserver(() => win.document.querySelectorAll('.toast').forEach((box) => {
+                    if (!win.document.toastsSeen.includes(box.dataset.message)) { win.document.toastsSeen.push(box.dataset.message); }
+                })).observe(win.document.documentElement, { childList: true, subtree: true });
+            }
+        });
+        cy.wrap(null).should(() => expect(targets).to.include('GetItem'));
+        cy.then(() => { moved = true; });
+        follow('/training/rings/');
+        cy.get('nav h1').should('not.have.text', 'Progress');
+        cy.window().should((win) => expect(win.localStorage.getItem('accountLastSync')).not.to.equal(null));
+        cy.wrap(null).should(() => expect(targets).to.include('PutItem'));
+        cy.document().its('toastsSeen').should('deep.equal', []);
+    });
+
     it('loads the Tindeq Arcade in full', () => {
         cy.visit(appUrl + '/training/');
         cy.document().then((doc) => { doc.notReloaded = true; });

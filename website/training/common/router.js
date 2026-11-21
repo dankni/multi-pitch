@@ -3,6 +3,7 @@
    fires, in one go so nothing half drawn is painted. The page going is torn down
    first: its listeners outside the body, timers, frames, observers and globals,
    after "trainingleave" on window lets it drop the rest (wake lock, Bluetooth).
+   trainingKeep() loads files that outlast every page instead: the account.
 
    The first script on every page it swaps. Scripts run again on each visit, so
    none may have a let, const or class at the top level - only var. */
@@ -19,14 +20,27 @@
 
     const builtIn = new Set(Object.getOwnPropertyNames(window));
     // analytics' own, which outlive a page
-    const kept = /^(dataLayer|gtag|google_|gaGlobal|gaplugins|_ga)/;
+    const analytics = /^(dataLayer|gtag|google_|gaGlobal|gaplugins|_ga)/;
 
     let listeners = [];
     let timeouts = new Set(), intervals = new Set(), frames = new Set();
     let observers = [];
 
+    // trainingKeep()'s files, and the globals they declare
+    let keptFiles = {};
+    let keptUrls = [];
+    let keptNames = new Set();
+    let keeping = Promise.resolve();
+
+    // called from a kept file, even after an await, so it outlasts the page
+    function fromKept(){
+        if(keptUrls.length === 0){ return false; }
+        let stack = new Error().stack || "";
+        return keptUrls.some(url => stack.includes(url));
+    }
+
     EventTarget.prototype.addEventListener = function(type, listener, options){
-        if(listener && (!(this instanceof Node) || this === document || this === document.documentElement || this === document.body)){
+        if(listener && (!(this instanceof Node) || this === document || this === document.documentElement || this === document.body) && !fromKept()){
             listeners.push([this, type, listener, options]);
         }
         return addListener.call(this, type, listener, options);
@@ -37,20 +51,20 @@
             timeouts.delete(id);
             if(typeof callback === "function"){ callback.apply(this, args); }
         }, delay);
-        timeouts.add(id);
+        if(!fromKept()){ timeouts.add(id); }
         return id;
     };
     window.clearTimeout = function(id){ timeouts.delete(id); realClearTimeout.call(window, id); };
     window.setInterval = function(...args){
         let id = realInterval.apply(window, args);
-        intervals.add(id);
+        if(!fromKept()){ intervals.add(id); }
         return id;
     };
     window.clearInterval = function(id){ intervals.delete(id); realClearInterval.call(window, id); };
     if(realFrame){
         window.requestAnimationFrame = function(callback){
             let id = realFrame.call(window, time => { frames.delete(id); callback(time); });
-            frames.add(id);
+            if(!fromKept()){ frames.add(id); }
             return id;
         };
         window.cancelAnimationFrame = function(id){ frames.delete(id); realCancelFrame.call(window, id); };
@@ -62,7 +76,7 @@
         window[name] = class extends Real {
             constructor(...args){
                 super(...args);
-                observers.push(this);
+                if(!fromKept()){ observers.push(this); }
             }
         };
     });
@@ -80,7 +94,7 @@
         if("speechSynthesis" in window && window.speechSynthesis){ window.speechSynthesis.cancel(); }
         // a var or function can't be deleted, only emptied
         Object.getOwnPropertyNames(window).forEach(name => {
-            if(builtIn.has(name) || kept.test(name)){ return; }
+            if(builtIn.has(name) || keptNames.has(name) || analytics.test(name)){ return; }
             try {
                 if(!delete window[name]){ window[name] = undefined; }
             } catch(err){
@@ -94,6 +108,35 @@
         tag.textContent = src ? text + "\n//# sourceURL=" + src : text;
         document.head.appendChild(tag);   // an inline script runs as it goes in
         tag.remove();
+    }
+
+    /* Files run once, in order, and kept through every page change - each
+       loaded as a file, so its url is in the stack of anything it calls */
+    function keep(urls){
+        urls = urls.map(url => new URL(url, location.href).href);
+        urls.filter(url => !keptFiles[url]).forEach(url => {
+            keptUrls.push(url);
+            let text = fetchText(url);
+            keptFiles[url] = Promise.all([text, keeping]).then(([text]) => new Promise((resolve, reject) => {
+                let before = new Set(Object.getOwnPropertyNames(window));
+                let tag = document.createElement("script");
+                tag.src = url;
+                tag.onload = () => {
+                    let declared = [...text.matchAll(/^(?:async\s+)?(?:function\s*\*?\s*|var\s+)([A-Za-z_$][\w$]*)/gm)].map(match => match[1]);
+                    let added = Object.getOwnPropertyNames(window).filter(name => !before.has(name));   // a UMD build's
+                    declared.concat(added).forEach(name => keptNames.add(name));
+                    resolve();
+                };
+                tag.onerror = () => reject(new Error("Couldn't load " + url));
+                document.head.appendChild(tag);   // not the body, which the next page replaces
+            })).catch(err => {
+                delete keptFiles[url];
+                keptUrls = keptUrls.filter(other => other !== url);
+                throw err;
+            });
+            keeping = keptFiles[url].catch(() => {});
+        });
+        return Promise.all(urls.map(url => keptFiles[url]));
     }
 
     function fetchText(url){
@@ -209,6 +252,8 @@
         if(target.origin === location.origin && pages.test(target.pathname)){ go(target.href, true); }
         else { location.assign(target.href); }
     };
+    window.trainingKeep = keep;
+    builtIn.add("trainingGo").add("trainingKeep");
 
     history.scrollRestoration = "manual";
 

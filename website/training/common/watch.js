@@ -156,7 +156,7 @@ async function setUpWatch(){
         }
     } catch(err){
         watchStage = "";
-        bangle.error = err.message;
+        bangle.error = bluetoothError(err);
         bangle.disconnect();
     }
 }

@@ -198,12 +198,15 @@ function importBackupFile(input){
     let file = input.files && input.files[0];
     if(!file){ return; }
     file.text().then(text => {
-        let restored = restoreBackup(JSON.parse(text));
+        let data;
+        try { data = JSON.parse(text); } catch(err){ throw new Error("that is not a training apps backup"); }
+        let restored = restoreBackup(data);
         sessionStorage.setItem(restoredKey, restored.added > 0 ? `Backup restored: ${plural(restored.added, "session")} added`
             : restored.ukc ? "Log book added"
             : "Nothing new in that backup - it's all here already");
         location.reload();
     }).catch(err => {
-        toast("Couldn't restore that file: " + err.message, null, false, true);
+        let why = friendlyError(err, "");
+        toast(why ? "Couldn't restore that file: " + why : "Couldn't restore that file", null, false, true);
     }).finally(() => { input.value = ""; });
 }

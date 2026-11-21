@@ -44,6 +44,7 @@ function signedIn(){
 function awsError(data){
     let error = new Error(data.message || data.Message || "Something went wrong");
     error.name = String(data.__type || "Error").split("#").pop();
+    error.aws = true;
     return error;
 }
 
@@ -175,7 +176,10 @@ function syncNow(){
         return syncing;
     }
     syncing = runSync().catch(err => {
-        if(err.name !== "Offline" && err.name !== "NotAuthorizedException"){ toast(err.message, null, false, true); }
+        if(err.name === "Offline" || err.name === "NotAuthorizedException"){ return; }
+        console.log("Sync:", err);
+        // only this file's own messages are worded for people; a fault or an AWS refusal isn't
+        toast(err.name === "Error" && !err.aws ? err.message : "Couldn't sync - try again", null, false, true);
     }).finally(() => {
         syncing = null;
         if(syncAgain){
@@ -192,14 +196,6 @@ function syncSoon(){
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => { syncTimer = null; syncNow(); }, syncDelay);
 }
-
-// not left waiting on a page that is going
-window.addEventListener("trainingleave", () => {
-    if(syncTimer === null){ return; }
-    clearTimeout(syncTimer);
-    syncTimer = null;
-    syncNow();
-});
 
 /* Read the account's copy, merge, write the merge here and back. The write only
    lands if nobody else wrote since the read (the version number); if another
@@ -505,6 +501,19 @@ var errorFields = {
     "ExpiredCodeException" : ["accountCodeField"]
 };
 
+// Cognito's refusals in our words; one not here keeps Cognito's
+var errorWords = {
+    "NotAuthorizedException" : "Wrong email or password",
+    "UserNotFoundException" : "No account with that email",
+    "UsernameExistsException" : "There's already an account with that email",
+    "InvalidPasswordException" : "Password needs at least 10 characters, with upper and lower case and a number",
+    "CodeMismatchException" : "That code isn't right",
+    "ExpiredCodeException" : "That code has expired - send a new one",
+    "LimitExceededException" : "Too many tries - wait a few minutes",
+    "TooManyRequestsException" : "Too many tries - wait a few minutes",
+    "InvalidParameterException" : "Check the email and password"
+};
+
 // Buttons off while AWS is asked; a refusal marks its fields and says why
 async function accountBusy(work){
     let buttons = [...document.getElementById("accountLogin").querySelectorAll("button")];
@@ -513,7 +522,7 @@ async function accountBusy(work){
         await work();
     } catch(err){
         (errorFields[err.name] || []).forEach(markInvalid);
-        toast(err.message, null, false, true);
+        toast(errorWords[err.name] || (err.aws ? err.message : friendlyError(err, "Couldn't sign in - try again")), null, false, true);
     } finally {
         buttons.forEach(button => { button.disabled = false; });
         showAccount();
@@ -617,5 +626,4 @@ function deleteAccountTyped(field){
     }));
 }
 
-if(signedIn()){ syncNow(); }
 window.addEventListener("online", () => { if(signedIn()){ syncNow(); } });
