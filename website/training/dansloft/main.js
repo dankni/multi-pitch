@@ -19,6 +19,9 @@ var app = {
     "fallsKey" : "dansLoftTrackFalls",
     "bouldering" : () => true,
     "watchKey" : "dansLoftWatch",
+    "clickerKey" : "dansLoftClicker",
+    // the clicker (common/clicker.js) has no colour
+    "clickerName" : (id, grade) => id === null ? grade : grade + " " + loftRoutes.find(route => route.id === id).colour,
     // On the watch (common/watch.js): the routes as one ladder, ticked there as the gym's grades are
     "watch" : {
         "state" : () => {

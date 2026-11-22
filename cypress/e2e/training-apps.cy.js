@@ -145,6 +145,52 @@ describe('Training apps', function () {
             value: { requestDevice: (options) => options.filters.some((filter) => filter.services) ? Promise.resolve(device) : bangle(options) } });
     }
 
+    // A stand-in Bluetooth clicker, beside a stand-in Bangle if there is one:
+    // what is written to it is kept in `toClicker`, a line of JSON each, and hi
+    // says what `hi` gives
+    function fakeClicker(win, hi = () => [{ t: 'hello' }]) {
+        win.toClicker = [];
+        let tx = new win.EventTarget();
+        tx.startNotifications = () => Promise.resolve();
+        win.clickerSays = (message) => {
+            tx.value = new win.DataView(new win.TextEncoder().encode(JSON.stringify(message) + '\n').buffer);
+            tx.dispatchEvent(new win.Event('characteristicvaluechanged'));
+        };
+        let typed = '';
+        let rx = { writeValue: (bytes) => {
+            typed += new win.TextDecoder().decode(bytes);
+            let lines = typed.split('\n');
+            typed = lines.pop();
+            lines.forEach((line) => {
+                let message = JSON.parse(line);
+                win.toClicker.push(message);
+                if (message.t === 'hi') { Promise.resolve().then(() => hi().forEach(win.clickerSays)); }
+            });
+            return Promise.resolve();
+        } };
+        let service = { getCharacteristic: (uuid) => Promise.resolve(uuid.startsWith('6e400003') ? tx : rx) };
+        let device = new win.EventTarget();
+        device.name = 'Clicker';
+        device.gatt = {
+            connected: false,
+            connect: () => { device.gatt.connected = true; return Promise.resolve({ getPrimaryService: () => Promise.resolve(service) }); },
+            disconnect: () => { device.gatt.connected = false; device.dispatchEvent(new win.Event('gattserverdisconnected')); }
+        };
+        win.clickerDevice = device;
+        let others = win.navigator.bluetooth && win.navigator.bluetooth.requestDevice;
+        Object.defineProperty(win.navigator, 'bluetooth', { configurable: true,
+            value: { requestDevice: (options) => options.filters.some((filter) => filter.namePrefix === 'Clicker') ? Promise.resolve(device) : others(options) } });
+    }
+
+    function lastClickerState(win) {
+        return win.toClicker.filter((message) => message.t === 'state').pop();
+    }
+
+    function connectClicker() {
+        cy.get('#useClicker').check({ force: true });
+        cy.get('#clickerStatusText').should('have.text', 'Clicker connected');
+    }
+
     // what the phone last sent Climb Log to show
     function lastState(win) {
         let sent = win.ran.filter((line) => line.startsWith('if(global.mplog)mplog('));
@@ -673,6 +719,31 @@ describe('Training apps', function () {
             cy.get('#recentLogs li').eq(1).should('contain', 'Blue 7a ticked');
             cy.window().should((win) => expect(lastState(win).P[3][2]).to.deep.equal([12, '7a', 1, '#0074d9', '#fff']));
             cy.window().then((win) => win.watchSays({ t: 'finish' }));
+            cy.get('body').should('have.attr', 'data-state', 'saving');
+        });
+
+        it('shows the panels as text on a Bluetooth clicker beside the watch, and ticks from it once each and in order', () => {
+            cy.visit(gilfordUrl, { onBeforeLoad: (win) => { fakeBangle(win); fakeClicker(win); } });
+            cy.get('#primaryButton').click();
+            cy.get('#clickerBar').should('not.be.visible');   // until switched on under the cog
+            connectWatch();
+            connectClicker();
+            cy.window().should((win) => {
+                let state = lastClickerState(win);
+                expect(state).to.include({ m: 'panel', s: 'running', n: 0, of: 24, ev: 0 });
+                expect(state.P[2]).to.deep.equal([[7, '4+ Yellow', 0], [8, '6a+ Orange', 0], [9, '6c Green', 0]]);
+            });
+            cy.window().then((win) => { win.clickerSays({ t: 'tick', r: 7, on: 1, q: 0 }); win.clickerSays({ t: 'tick', r: 7, on: 1, q: 0 }); });
+            cy.get('#tickCount').should('have.text', '1');
+            cy.window().should((win) => {
+                expect(lastClickerState(win)).to.include({ n: 1, ev: 1 });
+                expect(lastState(win).P[2][0].slice(0, 3)).to.deep.equal([7, '4+', 1]);   // and the watch told
+            });
+            // the next lost: this one waits for it
+            cy.window().then((win) => win.clickerSays({ t: 'tick', r: 8, on: 1, q: 2 }));
+            cy.window().should((win) => expect(win.toClicker.filter((message) => message.t === 'hi').pop()).to.include({ ev: 1 }));
+            cy.get('#tickCount').should('have.text', '1');
+            cy.window().then((win) => win.clickerSays({ t: 'finish', q: 1 }));
             cy.get('body').should('have.attr', 'data-state', 'saving');
         });
 
@@ -3693,6 +3764,26 @@ describe('Training apps', function () {
             cy.get('#watchHelp').should('contain', 'Swipe left / right to change grades.');
             cy.window().then((win) => win.watchSays({ t: 'finish' }));
             cy.get('body').should('have.attr', 'data-state', 'saving');
+        });
+
+        it('names its routes on a Bluetooth clicker, and ticks and takes them back from it', () => {
+            cy.visit(loftUrl, { onBeforeLoad: (win) => fakeClicker(win) });
+            cy.get('#primaryButton').click();
+            connectClicker();
+            cy.window().should((win) => {
+                let state = lastClickerState(win);
+                expect(state).to.include({ m: 'ladder', s: 'running', l: 'loft' });
+                expect(state).not.to.have.property('h');
+                expect(state.L[0].n).to.equal('Loft');
+                expect(state.L[0].r).to.have.length(16);
+                expect(state.L[0].r[0]).to.deep.equal([1, 'V0 Yellow', 0]);
+                expect(state.L[0].r[1]).to.deep.equal([2, 'V1 Green & White', 0]);
+            });
+            cy.window().then((win) => ['add', 'add', 'undo'].forEach((t, q) => win.clickerSays({ t, g: 6, q })));
+            cy.get('#row-6 .grade-count').should('have.text', '1');
+            cy.window().should((win) => expect(lastClickerState(win).L[0].r.find((row) => row[0] === 6)[2]).to.equal(1));
+            cy.get('#useClicker').uncheck({ force: true });
+            cy.get('#clickerBar').should('not.be.visible');
         });
 
         it('says when a route is harder than any boulder saved, a plus as its grade', () => {

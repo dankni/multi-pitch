@@ -39,6 +39,7 @@ var app = {
     "timed" : true,   // START to FINISH - the day out, walk in and all
     "fallsKey" : "tradTrackFalls",
     "watchKey" : "tradWatch",
+    "clickerKey" : "tradClicker",
     "watch" : ladderWatch,
     "defaultSystem" : "british",
     // M to E3 to start with, as far as E11 - the hardest trad route there is

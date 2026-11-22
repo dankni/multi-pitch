@@ -33,6 +33,7 @@
 	<script src="/training/common/bangle.js" ></script>
 	<script src="/training/common/hrm.js" ></script>
 	<script src="/training/common/watch.js" ></script>
+	<script src="/training/common/clicker.js" ></script>
 	<script src="/training/common/heartrate.js" ></script>
 	<script src="/training/common/charts.js" ></script>
 	<script src="/training/common/summary.js" ></script>
@@ -58,6 +59,7 @@
 			</div>
 			<!-- with the watch switched on under the cog - see common/watch.js -->
 			<div class="watch-bar" id="watchBar" hidden></div>
+			<div class="watch-bar" id="clickerBar" hidden></div>
 			<h3><span id="tickCount">0</span> <span class="of">/ 24</span></h3>
 			<p id="summary"></p>
 			<details class="recent-logs disclosure" id="recentDetails">
@@ -129,6 +131,7 @@
 			</span>
 		</label>
 		<div id="watchSetting"></div>
+		<div id="clickerSetting"></div>
 	</aside>
   </body>
 </html>

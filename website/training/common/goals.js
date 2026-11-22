@@ -175,7 +175,7 @@ function monthRange(){
     return { "first" : first !== null && first < back ? first : back, "last" : shiftMonth(now, monthsAhead), "now" : now };
 }
 
-function goalRow(goal, month){
+function goalRow(goal, month, index){
     let done = goalDone(goal, month);
     let met = done >= goal.amount;
     let share = Math.min(100, Math.round(done / goal.amount * 100));
@@ -184,7 +184,7 @@ function goalRow(goal, month){
     let detail = goalDetail(goal);
     // nothing done in a month begun: a red stub
     let none = done === 0 && month <= monthOf(today());
-    return `<li class="goal${met ? " met" : ""}${none ? " none" : ""}"${pace ? ` data-pace="${pace}"` : ""}>
+    return `<li class="goal${met ? " met" : ""}${none ? " none" : ""}" style="--i:${index}"${pace ? ` data-pace="${pace}"` : ""}>
         <div class="goal-head">
             <span class="goal-name">${escapeHtml(goalName(goal))}${detail ? `<span class="goal-detail">${escapeHtml(detail)}</span>` : ""}</span>
             <span class="goal-done">${met ? "✓ Met" : `${done} / ${goal.amount}`}</span>
@@ -194,6 +194,8 @@ function goalRow(goal, month){
             expected === null ? "" : `<i class="goal-mark" style="left: ${Math.min(100, expected / goal.amount * 100)}%"></i>`}</div>
     </li>`;
 }
+
+var goalsGrown = false;
 
 function drawGoals(slide){
     let range = monthRange();
@@ -207,7 +209,14 @@ function drawGoals(slide){
     document.getElementById("goalOn").disabled = after > range.last;
     let list = document.getElementById("goalList");
     let goals = monthGoals(shownMonth);
-    list.innerHTML = goals.map(goal => goalRow(goal, shownMonth)).join("");
+    list.innerHTML = goals.map((goal, index) => goalRow(goal, shownMonth, index)).join("");
+    // the bars grow in as the page opens and as the month changes, as progress does
+    if(slide || !goalsGrown){
+        goalsGrown = true;
+        list.dataset.grow = "";
+    } else {
+        delete list.dataset.grow;
+    }
     document.getElementById("copyGoalsLine").hidden = !(shownMonth > range.now && goals.length === 0 && monthGoals(before).length > 0);
     document.getElementById("addGoalLine").hidden = !document.getElementById("goalForm").hidden;
     let panel = document.getElementById("goalMonthPanel");
@@ -216,6 +225,24 @@ function drawGoals(slide){
         void panel.offsetWidth;   // restarts the animation
         panel.dataset.slide = slide;
     }
+}
+
+var confettiColours = ["yellow", "red", "pink", "green", "blue", "purple", "orange"];
+
+// a met goal, as its bar reaches the end
+function popConfetti(bar){
+    let burst = document.createElement("span");
+    burst.className = "confetti";
+    burst.setAttribute("aria-hidden", "true");
+    for(let i = 0; i < 16; i++){
+        let angle = Math.PI * (0.9 + Math.random() * 0.75);   // up and back along the bar
+        let far = 18 + Math.random() * 26;
+        let piece = document.createElement("i");
+        piece.style.cssText = `--x:${Math.round(Math.cos(angle) * far)}px; --y:${Math.round(Math.sin(angle) * far)}px; --r:${Math.round(Math.random() * 540 - 270)}deg; --c:var(--hold-${confettiColours[i % confettiColours.length]})`;
+        burst.append(piece);
+    }
+    bar.append(burst);
+    setTimeout(() => burst.remove(), 1000);
 }
 
 function copyLastMonth(){
@@ -354,6 +381,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById("goalList") === null){ return; }
     document.getElementById("goalsCopy").checked = copyForwards();
     drawGoals();
+    document.getElementById("goalList").addEventListener("animationend", event => {
+        if(event.animationName === "goal-grow" && event.target.closest(".goal.met")){ popConfetti(event.target.parentElement); }
+    });
     swipeMonths(document.querySelector(".goals"));
     // a sync, or another tab, changed them
     window.addEventListener("storage", event => { if(event.key === goalsKey || event.key === goalsCopyKey || event.key === null){ drawGoals(); } });

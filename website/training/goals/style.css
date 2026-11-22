@@ -2,6 +2,7 @@
    a row each with its bar under it, green once met */
 .goals {
     margin: var(--s4) auto var(--s6);
+    overflow-x: clip;   /* the confetti */
 }
 
 /* the month in the middle, the ones either side quieter and tappable */
@@ -125,6 +126,39 @@
 }
 .goal.none .goal-bar span {
     min-width: 8px;
+}
+
+/* see drawGoals(): the bars grow from nothing, one after another */
+.goal-list[data-grow] .goal-bar > span {
+    animation: goal-grow 0.9s calc(var(--i) * 90ms + 0.1s) ease-out both;
+}
+@keyframes goal-grow { from { width: 0; } }
+
+/* popConfetti(): a burst from the end of a met goal's bar */
+.confetti {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    pointer-events: none;
+}
+.confetti i {
+    position: absolute;
+    width: 5px;
+    height: 7px;
+    margin: -3px 0 0 -2px;
+    border-radius: 1px;
+    background: var(--c);
+    animation: confetti-pop 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes confetti-pop {
+    0% { transform: translate(0, 0) rotate(0) scale(0.4); opacity: 1; }
+    60% { opacity: 1; }
+    100% { transform: translate(var(--x), calc(var(--y) + 14px)) rotate(var(--r)) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .goal-list[data-grow] .goal-bar > span {
+        animation: none;
+    }
 }
 
 .goal-month .button-row {

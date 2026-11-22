@@ -33,6 +33,7 @@
 	<script src="/training/common/bangle.js" ></script>
 	<script src="/training/common/hrm.js" ></script>
 	<script src="/training/common/watch.js" ></script>
+	<script src="/training/common/clicker.js" ></script>
 	<script src="/training/common/heartrate.js" ></script>
 	<script src="/training/common/grades.js" ></script>
 	<script src="/training/common/charts.js" ></script>
@@ -59,6 +60,7 @@
 			</div>
 			<!-- with the watch switched on under the cog - see common/watch.js -->
 			<div class="watch-bar" id="watchBar" hidden></div>
+			<div class="watch-bar" id="clickerBar" hidden></div>
 			<template id="watchHelpText">
 				<p>Swipe left / right to change grades.<br>Swipe up / down to open the menu.<br>Press the button or long press the screen to track a grade.</p>
 			</template>
@@ -161,6 +163,7 @@
 			</span>
 		</label>
 		<div id="watchSetting"></div>
+		<div id="clickerSetting"></div>
 	</aside>
   </body>
 </html>

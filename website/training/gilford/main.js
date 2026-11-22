@@ -7,6 +7,9 @@ var app = {
     "timed" : true,
     "fallsKey" : "gilfordTrackFalls",
     "watchKey" : "gilfordWatch",
+    "clickerKey" : "gilfordClicker",
+    // the clicker (common/clicker.js) has no colour
+    "clickerName" : (id, grade) => grade + " " + routes.find(route => route.id === id).colour,
     // On the watch (common/watch.js): a panel's three routes at a time, ticked there as here
     "watch" : {
         "state" : () => {

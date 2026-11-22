@@ -14,6 +14,8 @@ newest at the top. Sources are under `website/training/` — search the file for
 | Gym Session, Outside | You wish! Less clicking more climbing | Info | 5.2 s | Tapping harder past the top of the grade ladder | common/ladder.js | Yes | |
 | Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | The watch disconnected | Info | 5.2 s | The Bangle.js watch, or the heart rate monitor picked in its place, drops out mid session without being disconnected in the app; it is tried again every 10 s | common/watch.js | Yes | |
 | Gym Session, Outside, Tick List, Dans Loft, Circuit Session, Tabata | This browser can't connect to a watch. | Warning | Until closed | Connect watch is switched on under the cog in a browser without Web Bluetooth; the switch goes back off | common/watch.js | Yes | |
+| Gym Session, Outside, Tick List, Dans Loft | The clicker disconnected | Info | 5.2 s | The Bluetooth clicker drops out mid session without being disconnected in the app; it is tried again every 10 s | common/clicker.js | No | |
+| Gym Session, Outside, Tick List, Dans Loft | This browser can't connect to a clicker. | Warning | Until closed | Bluetooth clicker is switched on under the cog in a browser without Web Bluetooth; the switch goes back off | common/clicker.js | No | |
 | Tick List | Half the routes on the wall ticked, nice one! | Info | 5.2 s | A tick takes the session to half the routes on the wall | gilford/main.js | Yes | |
 | Tick List | Nice work ticking the 7's | Info | 5.2 s | The last of the 7s is ticked | gilford/main.js | Yes | |
 | Tick List | Amazing! you ticked them all, that's the goal this app was made for | Info | 5.2 s | Every route on the wall is ticked | gilford/main.js | Yes | |

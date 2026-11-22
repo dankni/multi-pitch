@@ -85,7 +85,7 @@ page behind it — those two rules decided the values, not taste:
 | `#6b6b73` | Off — unchecked radio labels, the toggle track, an unearned star | 5.3 |
 | `#17812a` | Confirmation flash | 5.0 |
 | `#1a73e8` | Focus ring — the one blue that clears 3:1 on a light tile and a dark one | — |
-| `--danger-ink` `#a13333` / `#ff8f8a` | Destructive: border and label of `.secondary` on its `--surface` fill (hover `--danger-soft`) | 6.9 light, 7.9 dark |
+| `--danger-ink` `#a13333` / `#ff8f8a` | Destructive: the label of `.secondary` on its `--surface` fill, edged in `--line` (hover `--danger-soft`) | 6.9 light, 7.9 dark |
 | `--disabled` + `--disabled-ink` | Disabled: a muted surface and label. Below AA on purpose: disabled controls are exempt, and it has to read as unavailable | — |
 | `--confirm-ink` `#17812a` / `#4cd964` | The green as a glyph or text: a toast's face, a connected dot | 5.0 light, 9.6 dark |
 | `--warn-ink` `#a87600` / `#eda100` | The amber as a glyph: a rated star, the warning face. `--warn` itself stays for fills and the medium band | 4.0 light, 7.0 dark (against 3:1) |
@@ -165,7 +165,7 @@ starts or repeats something. One per screen. Use `disabled` when the action exis
 **Every button** is 48px tall, `--r-md` corners, Hind 600 at 16px with a little letter-spacing, and
 spaced by the `gap` of the stack it is in — `.button-stack` puts 12px between buttons, and `.button-row` the same side by side (`.even` shares the row out between them).
 
-**Secondary button** (`.secondary`) is the destructive one: a `--danger-ink` outline and label on a solid `--surface` fill — never a red fill, so it never looks like the thing you are meant to press, and solid so it still reads when a workout turns the screen green, red or orange. Its hover is the `--danger-soft` tint. It
+**Secondary button** (`.secondary`) is the destructive one: a `--danger-ink` label on a solid `--surface` fill edged in `--line`, the same as Delete account in the account panel — never a red fill, so it never looks like the thing you are meant to press, and solid so it still reads when a workout turns the screen green, red or orange. Its hover is the `--danger-soft` tint. It
 is hidden while `body[data-state="idle"]` (and a clock app's `#reset` while it counts or runs) because it only appears once there is a session worth protecting. It
 is **always** two taps — `confirmReset(buttonId, worthKeeping, onConfirm)` swaps the label
 to SURE? and disarms itself after four seconds. Call `disarmReset()` if you hide the button

@@ -82,6 +82,7 @@ var app = {
     "fallsKey" : "boulderTrackFalls",
     "bouldering" : climb => ladderOf(climb) === "boulder",
     "watchKey" : "boulderWatch",
+    "clickerKey" : "boulderClicker",
     "watch" : ladderWatch,
     "defaultSystem" : "hueco",
     // V0 to V10 and 4 to 7c to start with, as far as V17 and 9c. The sport

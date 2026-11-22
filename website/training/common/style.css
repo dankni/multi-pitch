@@ -303,10 +303,10 @@ button:focus {
 button:active {
     transform: scale(0.99);
 }
-/* The destructive one: outline and label, so it never looks like the thing to press.
-   A solid surface behind it, so it reads on the workouts' green, red and orange too. */
+/* The destructive one: a red label on a hairline card, so it never looks like the thing
+   to press, as Delete account. Solid, so it reads on the workouts' green, red and orange too. */
 .secondary {
-    border-color: currentColor;
+    border-color: var(--line);
     color: var(--danger-ink);
     background: var(--surface);
 }
@@ -1775,7 +1775,6 @@ details[open] .card-chevron {
     font-size: var(--t-md);
     font-weight: 600;
     text-align: center;
-    text-transform: none;
     color: var(--danger-ink);
     background: var(--surface);
     border: 1px solid var(--line);
