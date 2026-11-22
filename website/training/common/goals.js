@@ -234,7 +234,7 @@ function popConfetti(bar){
     let burst = document.createElement("span");
     burst.className = "confetti";
     burst.setAttribute("aria-hidden", "true");
-    for(let i = 0; i < 16; i++){
+    for(let i = 0; i < 48; i++){
         let angle = Math.PI * (0.9 + Math.random() * 0.75);   // up and back along the bar
         let far = 18 + Math.random() * 26;
         let piece = document.createElement("i");

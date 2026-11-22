@@ -143,9 +143,9 @@
 }
 .confetti i {
     position: absolute;
-    width: 5px;
-    height: 7px;
-    margin: -3px 0 0 -2px;
+    width: 2.5px;
+    height: 3.5px;
+    margin: -1.75px 0 0 -1.25px;
     border-radius: 1px;
     background: var(--c);
     animation: confetti-pop 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
