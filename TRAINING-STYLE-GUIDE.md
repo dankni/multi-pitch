@@ -496,14 +496,17 @@ Above the table, [progress/charts.js](website/training/progress/charts.js) draws
 plain SVG, with no library - sport climbs, boulders and trad climbs by grade. Until
 something graded has been logged the page says so instead. A switch sets the range to all
 time, the last year (the default), 30 days or 7 days, and it is remembered as
-`overviewRange`. Everything under it follows it, the time trained and climbs by kind
+`overviewRange`. Everything under it follows it, the time trained and climbs done
 bars (`barRows()` in common/charts.js, drawn by sessions.js) as well as the grade charts,
-and every figure is laid out the same: caption, total, chart, key. In the year, 30- and 7-day views, the period
+and every figure is laid out the same: caption, total, chart, key. The time trained and the
+climbs done fold to their caption (`.figure-fold`), the total and its change in it after a dot
+(`.title-total`). A change on a total is green with ▲ up or red with ▼ down, in a smaller type
+(`withChange()`): a share for those two and the climbs by grade, nothing from a period of none. In the year, 30- and 7-day views, the period
 before is a thin line across each bar at the height it reached. It is a quiet comparison,
 not a second bar.
 - **Kinds of training** have a colour each, `--train-climbing`, `--train-fingerboard` and
-  `--train-other`, kept clear of the grade bands; climbing shares the calendar's workout blue. A kind's
-  apps and the climbs by kind take its colour, since every row is labelled.
+  `--train-other`, kept clear of the grade bands; climbing shares the calendar's workout blue. The
+  time trained and climbs done rows are all that blue, since every row is labelled.
 - **Sport grades** come from tick-list route ids looked up in `gilford-routes.js`, plus the
   `grades` list that endurance sessions have saved since September 2026. Earlier endurance
   sessions stored only a count, so they are not in this chart.

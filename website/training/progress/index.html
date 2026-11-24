@@ -48,22 +48,21 @@
             <input type="radio" name="overviewRange" class="nice-radios" id="range-7" value="7" />
             <label for="range-7">7 days</label>
         </div>
-        <!-- a kind of training a row; tapping one opens its apps under it -->
+        <!-- folded to the total and its change; an app a row, grouped by kind of training -->
         <figure id="timeFigure" hidden>
-            <figcaption>Time trained</figcaption>
-            <p class="sessions-note" id="timeTotal"></p>
-            <div class="bar-rows" id="timeBars" role="group" aria-label="Time trained"></div>
-            <div class="split-detail" id="timeDetail" hidden>
-                <p class="split-title" id="timeDetailTitle"></p>
-                <div class="bar-rows" id="timeDetailBars" role="img"></div>
-            </div>
-            <div id="timeLegend"></div>
+            <details class="figure-fold" id="timeFold">
+                <summary><span class="fold-name">Time trained</span><span class="title-total" id="timeTotal"></span><svg class="fold-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></summary>
+                <div class="bar-rows" id="timeBars" role="img"></div>
+                <div id="timeLegend"></div>
+            </details>
         </figure>
         <figure id="kindFigure" hidden>
-            <figcaption>Climbs by kind</figcaption>
-            <p class="sessions-note" id="kindTotal"></p>
-            <div class="bar-rows" id="kindBars" role="img"></div>
-            <div id="kindLegend"></div>
+            <!-- folded as the time trained is; bouldering, sport and trad a row each -->
+            <details class="figure-fold" id="kindFold">
+                <summary><span class="fold-name">Climbs done</span><span class="title-total" id="kindTotal"></span><svg class="fold-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></summary>
+                <div class="bar-rows" id="kindBars" role="img"></div>
+                <div id="kindLegend"></div>
+            </details>
         </figure>
         <figure id="sportFigure">
             <figcaption>Sport climbs by grade</figcaption>

@@ -88,6 +88,47 @@
     font-weight: 600;
     font-size: var(--t-md);
 }
+/* Time trained and climbs done, folded to the total and its change: the summary
+   set as a caption, its parts a word space apart */
+.figure-fold > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    padding: var(--s2) 0;
+    font-weight: 600;
+    font-size: var(--t-md);
+    list-style: none;
+    cursor: pointer;
+}
+.figure-fold > summary::-webkit-details-marker {
+    display: none;
+}
+.figure-fold > summary:focus:not(:focus-visible) {
+    outline: none;
+}
+/* the total and its change in the title, after a dot */
+.title-total::before {
+    content: "·";
+    margin-right: 0.35em;
+}
+.title-total {
+    color: var(--ink-2);
+}
+.fold-chevron {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s;
+}
+.figure-fold[open] .fold-chevron {
+    transform: rotate(180deg);
+}
 .performance .sessions-note {
     margin: 0 0 var(--s2);
 }
@@ -171,17 +212,11 @@
 .calendar-key {
     margin: 0;
 }
-/* A kind of training's apps, once its row is tapped */
-.split-detail {
-    margin-top: var(--s3);
-    padding-top: var(--s3);
-    border-top: 1px solid var(--grid);
-}
-.split-title {
-    margin: 0 0 var(--s2);
-    font-weight: 600;
-    font-size: var(--t-sm);
-}
+/* withChange(): the period before, against this one */
+.change.up { color: var(--confirm-ink); }
+.change.down { color: var(--danger-ink); }
+/* a share, small as on a ticker */
+.change.share { font-size: 0.67em; font-weight: 600; }
 /* The calendar fills in a week at a time, left to right */
 .calendar .day {
     animation: fade-in 0.35s calc(var(--week, 0) * 35ms) ease-out backwards;

@@ -204,16 +204,13 @@
     }
     document.getElementById("sessionsStats").innerText = periodLine(30) + "\n" + periodLine(7);
 
-    /* Time trained and climbs by kind over the period picked above the charts, a
-       row each on one scale with the period before as a line across it, as the
-       grade charts have. Kinds of training keep their order and colour; tapping one
-       opens its apps under it, biggest first, and tapping it again, or anywhere
-       else, closes it. */
+    /* Time trained over the period picked above the charts, an app a row on one
+       scale with the period before as a line across it, as the grade charts have:
+       grouped by kind of training in its order, biggest first within it. The
+       climbs done under it the same, a row a kind of climb. */
     const minutesText = minutes => minutes > 0 ? sessionLength({ "minutes" : Math.max(1, Math.round(minutes)) }) : "0 min";
     const shareText = (part, whole) => whole === 0 || part === 0 ? "0%" : part / whole < 0.01 ? "<1%" : Math.round(part / whole * 100) + "%";
     const minutesOf = list => list.reduce((sum, session) => sum + session.minutes, 0);
-    let timeParts = [];
-    let openKind = null;
 
     // "Climbing: 1h 30m, 20 min before", as a column's hover text has it
     function rowTitle(name, now, before, period){
@@ -224,42 +221,15 @@
         return withBefore(now, period.previous ? before : null);
     }
 
-    function showKind(index){
-        openKind = index;
-        document.querySelectorAll("#timeBars .bar-row").forEach(row => {
-            let open = Number(row.dataset.row) === index;
-            row.setAttribute("aria-expanded", String(open));
-            row.classList.toggle("dim", index !== null && !open);
-        });
-        let detail = document.getElementById("timeDetail");
-        detail.hidden = index === null;
-        if(index === null){ return; }
-        let part = timeParts[index];
-        let rows = part.apps.map(app => ({ "name" : app.name, "cls" : part.cls, "value" : app.minutes, "before" : app.previous,
-            "text" : minutesText(app.minutes), "share" : shareText(app.minutes, part.minutes),
-            "title" : rowTitle(app.name, minutesText(app.minutes), minutesText(app.previous), part.period) }));
-        document.getElementById("timeDetailTitle").innerText = part.name + " by app";
-        let bars = document.getElementById("timeDetailBars");
-        bars.innerHTML = barRows(rows);
-        bars.setAttribute("aria-label", part.name + " by app: " + rows.map(row => row.title).join("; "));
+    function changeLine(now, before, nowValue, beforeValue, period, asShare){
+        return withChange(now, period.previous ? before : null, nowValue, beforeValue, asShare);
     }
-
-    document.getElementById("timeBars").addEventListener("click", event => {
-        let row = event.target.closest("button.bar-row");
-        if(row === null){ return; }
-        event.stopPropagation();   // or the page's listener below closes it again
-        let index = Number(row.dataset.row);
-        showKind(openKind === index ? null : index);
-    });
-    document.addEventListener("click", () => { if(openKind !== null){ showKind(null); } });
-    document.addEventListener("keydown", event => { if(event.key === "Escape" && openKind !== null){ showKind(null); } });
 
     function drawTimeBars(period){
         let timed = sessions.filter(session => session.minutes > 0);
         let inside = range => range ? timed.filter(session => session.date >= range.from && session.date <= range.to) : [];
         let now = inside(period.current), before = inside(period.previous);
         let figure = document.getElementById("timeFigure");
-        showKind(null);
         figure.hidden = now.length + before.length === 0;
         if(figure.hidden){ return; }
 
@@ -268,28 +238,26 @@
             apps[session.app.name] = (apps[session.app.name] || 0) + session.minutes;
             return apps;
         }, {});
-        timeParts = kinds.map(name => {
-            let mine = now.filter(session => session.kind === name), was = before.filter(session => session.kind === name);
-            let apps = byApp(mine), wasApps = byApp(was);
-            let names = Object.keys(apps).concat(Object.keys(wasApps).filter(app => !(app in apps)));
-            return { "name" : name, "cls" : "train-" + name.toLowerCase(), "period" : period,
-                "minutes" : minutesOf(mine), "previous" : period.previous ? minutesOf(was) : null,
-                "apps" : names.sort((a, b) => (apps[b] || 0) - (apps[a] || 0))
-                    .map(app => ({ "name" : app, "minutes" : apps[app] || 0, "previous" : period.previous ? wasApps[app] || 0 : null })) };
-        }).filter(part => part.minutes > 0 || part.previous > 0);
-
-        let rows = timeParts.map(part => {
-            let title = rowTitle(part.name, minutesText(part.minutes), minutesText(part.previous), period);
-            return { "name" : part.name, "cls" : part.cls, "value" : part.minutes, "before" : part.previous,
-                "text" : minutesText(part.minutes), "share" : shareText(part.minutes, total),
-                "title" : title, "label" : title + ", show by app", "open" : false };
+        let rows = kinds.flatMap(kind => {
+            let apps = byApp(now.filter(session => session.kind === kind));
+            let was = byApp(before.filter(session => session.kind === kind));
+            let names = Object.keys(apps).concat(Object.keys(was).filter(app => !(app in apps)));
+            return names.sort((a, b) => (apps[b] || 0) - (apps[a] || 0)).map(app => {
+                let minutes = apps[app] || 0, previous = period.previous ? was[app] || 0 : null;
+                return { "name" : app, "cls" : "train-climbing", "value" : minutes, "before" : previous,
+                    "text" : minutesText(minutes), "share" : shareText(minutes, total),
+                    "title" : rowTitle(app, minutesText(minutes), minutesText(previous || 0), period) };
+            });
         });
-        document.getElementById("timeBars").innerHTML = barRows(rows);
-        document.getElementById("timeTotal").innerText = totalLine(minutesText(total), minutesText(minutesOf(before)), period);
+        let bars = document.getElementById("timeBars");
+        bars.innerHTML = barRows(rows);
+        bars.setAttribute("aria-label", "Time trained by app: " + rows.map(row => row.title).join("; "));
+        let previous = minutesOf(before);
+        document.getElementById("timeTotal").innerHTML = changeLine(minutesText(total), minutesText(previous), total, previous, period, true);
         document.getElementById("timeLegend").innerHTML = period.legend;
     }
 
-    // From what the grade charts count (progress/charts.js), so a kind is climbing's colour
+    // From what the grade charts count (progress/charts.js)
     function drawKindBars(period){
         let figure = document.getElementById("kindFigure");
         if(typeof climbsByKind !== "function"){ figure.hidden = true; return; }
@@ -305,11 +273,10 @@
                 "text" : String(part.count), "share" : shareText(part.count, total),
                 "title" : rowTitle(part.name, part.count, was, period) };
         }).filter(row => row.value > 0 || row.before > 0);
-        let summary = totalLine(plural(total, "climb"), previous, period);
         let bars = document.getElementById("kindBars");
         bars.innerHTML = barRows(rows);
-        bars.setAttribute("aria-label", period.label + summary + ". " + rows.map(row => row.title).join("; "));
-        document.getElementById("kindTotal").innerText = summary;
+        bars.setAttribute("aria-label", period.label + totalLine(plural(total, "climb"), previous, period) + ". " + rows.map(row => row.title).join("; "));
+        document.getElementById("kindTotal").innerHTML = changeLine(plural(total, "climb"), previous, total, previous, period, true);
         document.getElementById("kindLegend").innerHTML = period.legend;
     }
 

@@ -91,6 +91,18 @@
     // "5 boulders, 3 before": the picker names the period and the key the one before
     window.withBefore = (now, before) => before === null || before === undefined ? String(now) : now + ", " + before + " before";
 
+    // the same as HTML, green and up or red and down against the one before; with
+    // asShare, "6 climbs, ▲ 50%". Nothing before has nothing to go up from.
+    window.withChange = (now, before, nowValue, beforeValue, asShare) => {
+        if(before === null || before === undefined){ return escapeHtml(String(now)); }
+        if(beforeValue === 0){ return escapeHtml(now + ", " + before + " before"); }
+        let way = nowValue > beforeValue ? "up" : nowValue < beforeValue ? "down" : "";
+        let arrow = way ? `<span aria-hidden="true">${way === "up" ? "▲" : "▼"}</span> ` : "";
+        let said = asShare ? (way ? `<span class="sr-only">${way} </span>` : "") + Math.round(Math.abs(nowValue - beforeValue) / beforeValue * 100) + "%"
+            : escapeHtml(before + " before");
+        return escapeHtml(String(now)) + ", " + `<span class="change${way ? " " + way : ""}${asShare ? " share" : ""}">${arrow}${said}</span>`;
+    };
+
     // for a screen reader, which has no picker beside the chart: "The last 30 days: 5 boulders, 3 before"
     function periodLabel(range){
         if(ranges[range].days === 0){ return ""; }
@@ -149,7 +161,7 @@
         });
 
         let summary = withBefore(plural(current.length, noun), windows.previous ? previous.length : null);
-        total.innerText = summary;
+        total.innerHTML = withChange(plural(current.length, noun), windows.previous ? previous.length : null, current.length, previous.length, true);
 
         let described = groups.map(group => group.label + " " + group.value).join(", ");
         return columnChart(groups, periodLabel(range) + summary + ". By grade: " + described + ".", chartWidth)
