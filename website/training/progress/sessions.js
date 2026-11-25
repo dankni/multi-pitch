@@ -191,7 +191,7 @@
         showNote(button, session.comment, session.unrated ? "" : sessionStars(session), "Note from " + session.date);
     });
 
-    // "Last 30 days · 6 sessions · 1h 49m trained · 5 climbs", today and the
+    // "Last 30 days · 6 sessions · 1h 49m · 5 climbs", today and the
     // days before it - the time trained from the apps that keep it, and nothing
     // said of it with none
     function periodLine(days){
@@ -199,10 +199,10 @@
         let inPeriod = sessions.filter(session => session.date >= since);
         let trained = sessionLength({ "minutes" : Math.round(inPeriod.reduce((total, session) => total + (session.minutes || 0), 0)) });
         let climbed = inPeriod.reduce((total, session) => total + (session.climbs || 0), 0);
-        return ["Last " + days + " days", plural(inPeriod.length, "session"), trained ? trained + " trained" : "", plural(climbed, "climb")]
+        return ["Last " + days + " days", plural(inPeriod.length, "session"), trained, plural(climbed, "climb")]
             .filter(part => part !== "").join(" · ");
     }
-    document.getElementById("sessionsStats").innerText = periodLine(30) + "\n" + periodLine(7);
+    document.getElementById("sessionsStats").innerText = periodLine(30);
 
     /* Time trained over the period picked above the charts, an app a row on one
        scale with the period before as a line across it, as the grade charts have:

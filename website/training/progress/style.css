@@ -12,7 +12,7 @@
 }
 /* The way to import a UKC logbook, under the charts until there is one */
 .performance .ukc-prompt {
-    margin: var(--s4) 0 0;
+    margin: var(--s3) 0 0;
     font-size: var(--t-sm);
     opacity: 1;
 }

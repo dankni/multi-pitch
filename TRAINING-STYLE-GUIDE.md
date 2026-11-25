@@ -498,9 +498,9 @@ something graded has been logged the page says so instead. A switch sets the ran
 time, the last year (the default), 30 days or 7 days, and it is remembered as
 `overviewRange`. Everything under it follows it, the time trained and climbs done
 bars (`barRows()` in common/charts.js, drawn by sessions.js) as well as the grade charts,
-and every figure is laid out the same: caption, total, chart, key. The time trained and the
-climbs done fold to their caption (`.figure-fold`), the total and its change in it after a dot
-(`.title-total`). A change on a total is green with ▲ up or red with ▼ down, in a smaller type
+and every figure is laid out the same: caption, total, chart, key. Every figure folds to its caption
+(`.figure-fold`), the total and its change in it after a dot (`.title-total`); a grade chart opens
+by itself while the period has climbs, and trad, always there, holds the UKC import note and prompt. A change on a total is green with ▲ up or red with ▼ down, in a smaller type
 (`withChange()`): a share for those two and the climbs by grade, nothing from a period of none. In the year, 30- and 7-day views, the period
 before is a thin line across each bar at the height it reached. It is a quiet comparison,
 not a second bar.

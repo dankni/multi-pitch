@@ -64,33 +64,37 @@
                 <div id="kindLegend"></div>
             </details>
         </figure>
+        <!-- the grade charts folded the same way, open while the period has climbs -->
         <figure id="sportFigure">
-            <figcaption>Sport climbs by grade</figcaption>
-            <p class="sessions-note" id="sportTotal"></p>
-            <div id="sportChart"></div>
+            <details class="figure-fold grade-fold" id="sportFold">
+                <summary><span class="fold-name">Sport climbs by grade</span><span class="title-total" id="sportTotal"></span><svg class="fold-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></summary>
+                <div id="sportChart"></div>
+            </details>
         </figure>
         <figure id="boulderFigure">
-            <figcaption>Boulders by grade</figcaption>
-            <p class="sessions-note" id="boulderTotal"></p>
-            <div id="boulderChart"></div>
+            <details class="figure-fold grade-fold" id="boulderFold">
+                <summary><span class="fold-name">Boulders by grade</span><span class="title-total" id="boulderTotal"></span><svg class="fold-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></summary>
+                <div id="boulderChart"></div>
+            </details>
         </figure>
-        <figure id="tradFigure" hidden>
-            <figcaption>Trad climbs by grade</figcaption>
-            <p class="sessions-note" id="tradTotal"></p>
-            <div id="tradChart"></div>
-            <p class="sessions-note" id="ukcNote" hidden>
-                <span id="ukcImported"></span><button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
-            </p>
+        <figure id="tradFigure">
+            <details class="figure-fold grade-fold" id="tradFold">
+                <summary><span class="fold-name">Trad climbs by grade</span><span class="title-total" id="tradTotal"></span><svg class="fold-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4"/></svg></summary>
+                <div id="tradChart"></div>
+                <p class="sessions-note" id="ukcNote" hidden>
+                    <span id="ukcImported"></span><button type="button" class="link-button" data-action="removeUkcLogbook">Remove</button>
+                </p>
+                <!-- until a UKC logbook has been imported -->
+                <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
+                    Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
+                </p>
+            </details>
         </figure>
         <!-- in place of the grade charts on a device with nothing graded logged yet -->
         <p class="chart-empty" id="progressEmpty" hidden>
             Nothing graded logged yet. Climbs from the Gym Session, Circuit Session,
             Gilford Wall, Endurance and Outside Climbing apps are charted here, and so is an
             imported UKC logbook.
-        </p>
-        <!-- until a UKC logbook has been imported -->
-        <p class="sessions-note ukc-prompt" id="ukcPrompt" hidden>
-            Log climbs on UKC? <a href="/training/trad/#ukc">Import your UKC logbook</a> to chart them here too.
         </p>
     </section>
 

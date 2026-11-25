@@ -18,10 +18,11 @@
             document.getElementById(box.dataset.part).classList.toggle("switched-off", off);
         });
         // no range picker with nothing under it to pick for, and no section with nothing in it
-        let none = figures.every(id => hidden.includes(id) || document.getElementById(id).hidden);
+        // with nothing graded, trad is only there for the UKC import
+        let empty = !document.getElementById("progressEmpty").hidden;
+        let none = figures.every(id => hidden.includes(id) || document.getElementById(id).hidden || (empty && id === "tradFigure"));
         document.querySelector("#performance .range-picker").classList.toggle("switched-off", none);
-        document.getElementById("performance").classList.toggle("switched-off", none
-            && document.getElementById("progressEmpty").hidden && document.getElementById("ukcPrompt").hidden);
+        document.getElementById("performance").classList.toggle("switched-off", none && document.getElementById("progressEmpty").hidden);
     };
 
     window.toggleProgressPart = function(input){

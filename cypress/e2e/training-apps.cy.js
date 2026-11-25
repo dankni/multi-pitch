@@ -4188,7 +4188,7 @@ describe('Training apps', function () {
             // 45 + 30 + 15 + 9.5 + 9 2/3 minutes; a boulder, 3 laps and a trad climb
             // the last 7 days, from the 7th: the boulder and the laps
             cy.get('#sessionsStats').invoke('prop', 'innerText')
-                .should('equal', 'Last 30 days · 6 sessions · 1h 49m trained · 5 climbs\nLast 7 days · 2 sessions · 1h 15m trained · 4 climbs');
+                .should('equal', 'Last 30 days · 6 sessions · 1h 49m · 5 climbs');
         });
 
         it('shows the time trained in the range picked, a row for each app grouped by kind of training', () => {
@@ -4318,7 +4318,7 @@ describe('Training apps', function () {
 
         it('says nothing of time trained when no session in the last 30 days kept any', () => {
             visitWith({ tradLog: [{ id: 7, date: '2026-09-04', climbs: ['VS'], rating: 0 }] });
-            cy.get('#sessionsStats').invoke('prop', 'innerText').should('equal', 'Last 30 days · 1 session · 1 climb\nLast 7 days · 0 sessions · 0 climbs');
+            cy.get('#sessionsStats').invoke('prop', 'innerText').should('equal', 'Last 30 days · 1 session · 1 climb');
         });
 
         it('saves how long a No Hangs session ran', () => {
@@ -4342,7 +4342,9 @@ describe('Training apps', function () {
             cy.visit(progressUrl);
             cy.get('#progressEmpty').should('be.visible');
             cy.get('#performance .range-picker').should('not.be.visible');
-            // and there is still the way to bring a UKC logbook in
+            // and there is still the way to bring a UKC logbook in, under trad folded to none
+            cy.get('#tradTotal').should('have.text', '0 trad climbs, 0 before');
+            cy.get('#tradFold summary').click();
             cy.get('#ukcPrompt').should('be.visible');
         });
 
@@ -5223,7 +5225,8 @@ describe('Training apps', function () {
             it('points to the import in the trad app until a logbook is imported', () => {
                 visitWith(logs);
                 cy.get('#performance').should('be.visible');
-                cy.get('#tradFigure').should('not.be.visible');
+                cy.get('#tradFold').should('not.have.attr', 'open');   // no trad yet
+                cy.get('#tradFold summary').click();
                 cy.get('#ukcPrompt').should('be.visible');
                 cy.get('#ukcPrompt a').should('have.attr', 'href', '/training/trad/#ukc');
                 // and not once there is one

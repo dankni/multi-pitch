@@ -142,9 +142,9 @@
         let current = climbs.filter(climb => within(climb.date, windows.current));
         let previous = windows.previous ? climbs.filter(climb => within(climb.date, windows.previous)) : [];
         let total = document.getElementById(totalId);
+        total.innerHTML = withChange(plural(current.length, noun), windows.previous ? previous.length : null, current.length, previous.length, true);
 
         if(current.length + previous.length === 0){
-            total.innerText = "";
             return empty(windows.previous
                 ? "No " + noun + "s in " + periodName(range, "current") + " or " + periodName(range, "previous") + "."
                 : "No " + noun + "s logged yet.");
@@ -161,23 +161,16 @@
         });
 
         let summary = withBefore(plural(current.length, noun), windows.previous ? previous.length : null);
-        total.innerHTML = withChange(plural(current.length, noun), windows.previous ? previous.length : null, current.length, previous.length, true);
 
         let described = groups.map(group => group.label + " " + group.value).join(", ");
         return columnChart(groups, periodLabel(range) + summary + ". By grade: " + described + ".", chartWidth)
             + chartLegend(beforeLegend(range));
     }
 
-    // Whether there is any trad to chart: a trad app session, or a UKC logbook
-    function hasTrad(logs){
-        return entriesOf(logs, "tradLog").length > 0 || ukc.load() !== null;
-    }
-
     // Under the trad chart: when the logbook came in, what was left off it, and
     // the way to take it off this device again - once there is a logbook
     function describeImport(logs){
         let logbook = ukc.load();
-        document.getElementById("tradFigure").hidden = !hasTrad(logs);
         document.getElementById("ukcNote").hidden = logbook === null;
         document.getElementById("ukcSettingsNote").hidden = logbook === null;
         if(logbook === null){ return; }
@@ -206,17 +199,28 @@
             .find(chart => chart.clientWidth > 0) || document.getElementById("sportChart");
     }
 
+    // a grade chart opens with climbs in the period and folds with none, as the range changes;
+    // in between it stays as it is put
+    var foldedFor = null;
+    function foldGrades(logs, range){
+        if(foldedFor === range){ return; }
+        foldedFor = range;
+        let current = windowsFor(range).current;
+        [["sportFold", sportClimbs], ["boulderFold", boulderClimbs], ["tradFold", tradClimbs]].forEach(([id, climbs]) => {
+            document.getElementById(id).open = climbs(logs).some(climb => within(climb.date, current));
+        });
+    }
+
     function draw(logs){
         let range = selectedRange();
+        foldGrades(logs, range);
         chartWidth = Math.round(chartColumn().clientWidth) || 520;
         document.getElementById("sportChart").innerHTML =
             drawGrades(sportClimbs(logs), range, sportColumns, sportBand, "climb", "sportTotal");
         document.getElementById("boulderChart").innerHTML =
             drawGrades(boulderClimbs(logs), range, boulderColumns, boulderBand, "boulder", "boulderTotal");
-        if(hasTrad(logs)){
-            document.getElementById("tradChart").innerHTML =
-                drawGrades(tradClimbs(logs), range, tradColumns, tradBand, "trad climb", "tradTotal");
-        }
+        document.getElementById("tradChart").innerHTML =
+            drawGrades(tradClimbs(logs), range, tradColumns, tradBand, "trad climb", "tradTotal");
         // the time and climbs bars, from sessions.js once it has loaded
         if(typeof window.drawProgressBars === "function"){ window.drawProgressBars(); }
     }
@@ -265,11 +269,12 @@
         document.getElementById("ukcPrompt").hidden = ukc.load() !== null;
         // only the timer apps used, say - empty charts would say nothing, so the
         // page says so instead, under the time bars
-        let graded = sportClimbs(logs).length + boulderClimbs(logs).length > 0 || hasTrad(logs);
+        // trad stays, folded, for the way to import a logbook
+        let graded = sportClimbs(logs).length + boulderClimbs(logs).length + tradClimbs(logs).length > 0;
         document.getElementById("progressEmpty").hidden = graded;
         document.getElementById("sportFigure").hidden = !graded;
         document.getElementById("boulderFigure").hidden = !graded;
-        if(graded){ describeImport(logs); }
+        describeImport(logs);
 
         let saved = null;
         try { saved = localStorage.getItem(rangeKey); } catch(err){ saved = null; }
